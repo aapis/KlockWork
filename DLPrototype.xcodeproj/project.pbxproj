@@ -56,6 +56,7 @@
 		53218D7924B800610088ABE9 /* Daily.log */ = {isa = PBXFileReference; lastKnownFileType = text; path = Daily.log; sourceTree = "<group>"; };
 		53218D7C24B801A60088ABE9 /* Standup.log */ = {isa = PBXFileReference; lastKnownFileType = text; path = Standup.log; sourceTree = "<group>"; };
 		53218D7E24B801B60088ABE9 /* Reflection.log */ = {isa = PBXFileReference; lastKnownFileType = text; path = Reflection.log; sourceTree = "<group>"; };
+		53218D8024B8094C0088ABE9 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +87,7 @@
 		53218D3B24B7F6EB0088ABE9 = {
 			isa = PBXGroup;
 			children = (
+				53218D8024B8094C0088ABE9 /* README.md */,
 				53218D4624B7F6EB0088ABE9 /* DLPrototype */,
 				53218D5F24B7F6EC0088ABE9 /* DLPrototypeTests */,
 				53218D6A24B7F6EC0088ABE9 /* DLPrototypeUITests */,
