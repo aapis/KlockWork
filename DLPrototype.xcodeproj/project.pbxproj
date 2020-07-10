@@ -15,6 +15,9 @@
 		53218D5524B7F6EC0088ABE9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 53218D5324B7F6EC0088ABE9 /* Main.storyboard */; };
 		53218D6124B7F6EC0088ABE9 /* DLPrototypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D6024B7F6EC0088ABE9 /* DLPrototypeTests.swift */; };
 		53218D6C24B7F6EC0088ABE9 /* DLPrototypeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D6B24B7F6EC0088ABE9 /* DLPrototypeUITests.swift */; };
+		53218D7A24B800610088ABE9 /* Daily.log in Resources */ = {isa = PBXBuildFile; fileRef = 53218D7924B800610088ABE9 /* Daily.log */; };
+		53218D7D24B801A60088ABE9 /* Standup.log in Resources */ = {isa = PBXBuildFile; fileRef = 53218D7C24B801A60088ABE9 /* Standup.log */; };
+		53218D7F24B801B60088ABE9 /* Reflection.log in Resources */ = {isa = PBXBuildFile; fileRef = 53218D7E24B801B60088ABE9 /* Reflection.log */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +53,9 @@
 		53218D6724B7F6EC0088ABE9 /* DLPrototypeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DLPrototypeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		53218D6B24B7F6EC0088ABE9 /* DLPrototypeUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DLPrototypeUITests.swift; sourceTree = "<group>"; };
 		53218D6D24B7F6EC0088ABE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		53218D7924B800610088ABE9 /* Daily.log */ = {isa = PBXFileReference; lastKnownFileType = text; path = Daily.log; sourceTree = "<group>"; };
+		53218D7C24B801A60088ABE9 /* Standup.log */ = {isa = PBXFileReference; lastKnownFileType = text; path = Standup.log; sourceTree = "<group>"; };
+		53218D7E24B801B60088ABE9 /* Reflection.log */ = {isa = PBXFileReference; lastKnownFileType = text; path = Reflection.log; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +114,7 @@
 				53218D5724B7F6EC0088ABE9 /* DLPrototype.entitlements */,
 				53218D4B24B7F6EB0088ABE9 /* DLPrototype.xcdatamodeld */,
 				53218D5024B7F6EC0088ABE9 /* Preview Content */,
+				53218D7B24B801870088ABE9 /* Rolling Logs */,
 			);
 			path = DLPrototype;
 			sourceTree = "<group>";
@@ -136,6 +143,16 @@
 				53218D6D24B7F6EC0088ABE9 /* Info.plist */,
 			);
 			path = DLPrototypeUITests;
+			sourceTree = "<group>";
+		};
+		53218D7B24B801870088ABE9 /* Rolling Logs */ = {
+			isa = PBXGroup;
+			children = (
+				53218D7924B800610088ABE9 /* Daily.log */,
+				53218D7C24B801A60088ABE9 /* Standup.log */,
+				53218D7E24B801B60088ABE9 /* Reflection.log */,
+			);
+			path = "Rolling Logs";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -242,7 +259,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53218D7D24B801A60088ABE9 /* Standup.log in Resources */,
+				53218D7A24B800610088ABE9 /* Daily.log in Resources */,
 				53218D5524B7F6EC0088ABE9 /* Main.storyboard in Resources */,
+				53218D7F24B801B60088ABE9 /* Reflection.log in Resources */,
 				53218D5224B7F6EC0088ABE9 /* Preview Assets.xcassets in Resources */,
 				53218D4F24B7F6EC0088ABE9 /* Assets.xcassets in Resources */,
 			);
