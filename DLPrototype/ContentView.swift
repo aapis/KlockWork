@@ -22,14 +22,11 @@ struct ContentView: View {
         categories.append(Category(title: "Standup"))
         categories.append(Category(title: "Reflection"))
         
-        createLogFiles()
+//        createLogFiles()
     }
     
     var body: some View {
         VStack {
-            Text("DailyLogger Prototype")
-                .font(.largeTitle)
-            
             NavigationView {
                 List {
                     ForEach(categories) { category in
@@ -50,16 +47,13 @@ struct ContentView: View {
             }
             .navigationViewStyle(DoubleColumnNavigationViewStyle())
         }
-//        .frame(minWidth: 700, minHeight: 700)
     }
     
-    func createLogFiles() -> URL {
-        let paths = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
-        
-        
-        
-        return paths[0]
-    }
+//    func createLogFiles() -> URL {
+//        let paths = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
+//
+//        return paths[0]
+//    }
 }
 
 struct AddView : View {
@@ -84,55 +78,76 @@ struct AddView : View {
             
             Spacer()
             
-            Button("Log", action: {
-                if self.$text.wrappedValue.count > 0 {
-                    if self.$jobId.wrappedValue > 0 {
-                        self.logLine()
-                        
-                        self.$text.wrappedValue = ""
-                        self.$jobId.wrappedValue = 0
+            HStack {
+                Button("Log", action: {
+                    if self.$text.wrappedValue.count > 0 {
+                        if self.$jobId.wrappedValue > 0 {
+                            self.logLine()
+                            
+                            self.$text.wrappedValue = ""
+                            self.$jobId.wrappedValue = 0
+                        } else {
+                            self.noJobIdAlert = true
+                        }
                     } else {
-                        self.noJobIdAlert = true
+                        print("You have to type something")
+                        self.noLogMessageAlert = true
                     }
-                } else {
-                    print("You have to type something")
-                    self.noLogMessageAlert = true
-                }
+                })
+                    .alert(isPresented: $noLogMessageAlert) {
+                        Alert(title: Text("Log text is a required field"), message: Text("You cannot log an empty string"), primaryButton: .default(Text("OK")), secondaryButton: .cancel()
+                        )
+                    }
+                    .alert(isPresented: $noJobIdAlert) {
+                        Alert(title: Text("Job ID is a required field"), message: Text("There is no job ID 0"), primaryButton: .default(Text("OK")), secondaryButton: .cancel()
+                        )
+                    }
                 
-                
-            })
-                .alert(isPresented: $noLogMessageAlert) {
-                    Alert(title: Text("Log text is a required field"), message: Text("You cannot log an empty string"), primaryButton: .default(Text("OK")), secondaryButton: .cancel()
-                    )
-                }
-                .alert(isPresented: $noJobIdAlert) {
-                    Alert(title: Text("Job ID is a required field"), message: Text("There is no job ID 0"), primaryButton: .default(Text("OK")), secondaryButton: .cancel()
-                    )
-                }
+                Button("New Day", action: {
+                    self.logNewDay()
+                })
+            }
         }
             .frame(width: 700, height: 700)
             .padding()
     }
     
     func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
+        let paths = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask)
         
         return paths[0]
     }
     
-    func logLine() -> Void {
+    func writeToLog(output: Data) -> Void {
         print("Logged: \(self.$text.wrappedValue)")
         
-//        let fileName = Bundle.main.path(forResource: category.title, ofType: "log")
-        let fileName = "/Rolling Logs/\(category.title).log"
+        let fileName = "\(category.title).log"
         let filePath = getDocumentsDirectory().appendingPathComponent(fileName)
-        print(fileName)
+        
         
         do {
-            try self.$text.wrappedValue.write(to: filePath, atomically: true, encoding: String.Encoding.utf8)
+            if let fileHandle = try? FileHandle(forWritingTo: filePath) {
+                fileHandle.seekToEndOfFile()
+                fileHandle.write(output)
+                fileHandle.closeFile()
+            }
         } catch {
             print("Unable to write to file")
         }
+    }
+    
+    func logNewDay() -> Void {
+        let time = Date()
+        guard let line: Data = ("=========================\n\(time)\n=========================\n").data(using: String.Encoding.utf8) else { return }
+        
+        writeToLog(output: line)
+    }
+    
+    func logLine() -> Void {
+        let time = Date()
+        guard let line: Data = ("\(time) - \(self.$jobId.wrappedValue) - \(self.$text.wrappedValue)").data(using: String.Encoding.utf8) else { return }
+        
+        writeToLog(output: line)
     }
 }
 
@@ -174,14 +189,21 @@ struct LogView: View {
         .padding()
     }
     
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask)
+        
+        return paths[0]
+    }
+    
     func readFile() -> String {
         var lines: String = "nothing to see here"
 
-        if let log = Bundle.main.url(forResource: category.title, withExtension: "log") {
-            if let logLines = try? String(contentsOf: log) {
-                if !logLines.isEmpty {
-                    lines = logLines
-                }
+//        if let log = Bundle.main.url(forResource: category.title, withExtension: "log") {
+        let log = getDocumentsDirectory().appendingPathComponent("\(category.title).log")
+            
+        if let logLines = try? String(contentsOf: log) {
+            if !logLines.isEmpty {
+                lines = logLines
             }
         }
         
