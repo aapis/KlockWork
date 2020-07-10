@@ -15,3 +15,6 @@ logt "I'm done for the day"
 ```
 
 New workflow will be basically that but with a GUI.  Eventually it will be a cross platform database of sorts.
+
+![content view](Screenshots/content-view.png)
+![log view](Screenshots/log-view.png)
