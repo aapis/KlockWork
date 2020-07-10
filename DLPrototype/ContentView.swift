@@ -89,7 +89,7 @@ struct AddView : View {
                 })
             }
             
-            VStack(alignment: .leading) {
+            ScrollView {
                 TextField("Content here", text: $todayLogLines)
                     .disabled(true)
             }
