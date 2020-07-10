@@ -63,6 +63,7 @@ struct AddView : View {
     @State private var jobId: String = ""
     @State private var noLogMessageAlert = false
     @State private var noJobIdAlert = false
+    @State private var todayLogLines: String = ""
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -81,20 +82,32 @@ struct AddView : View {
                         
                         self.$text.wrappedValue = ""
                         self.$jobId.wrappedValue = ""
+                        self.populateTodayView()
                     } else {
                         print("You have to type something")
                     }
                 })
             }
             
+            VStack(alignment: .leading) {
+                TextField("Content here", text: $todayLogLines)
+                    .disabled(true)
+            }
+                
             Spacer()
             
             Button("New Day", action: {
                 self.logNewDay()
+                self.populateTodayView()
             })
         }
             .frame(width: 700, height: 700)
             .padding()
+            .onAppear(perform: populateTodayView)
+    }
+    
+    func populateTodayView() -> Void {
+        self.$todayLogLines.wrappedValue = self.readToday()
     }
     
     func getDocumentsDirectory() -> URL {
@@ -122,10 +135,35 @@ struct AddView : View {
     }
     
     func logLine() -> Void {
-        let time = Date()
-        guard let line: Data = ("\n\(time) - \(self.$jobId.wrappedValue) - \(self.$text.wrappedValue)").data(using: String.Encoding.utf8) else { return }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        
+        let date = formatter.string(from: Date())
+        
+        guard let line: Data = ("\n\(date) - \(self.$jobId.wrappedValue) - \(self.$text.wrappedValue)").data(using: String.Encoding.utf8) else { return }
         
         writeToLog(output: line)
+    }
+    
+    func readToday() -> String {
+        var lines: [String] = []
+
+        let log = getDocumentsDirectory().appendingPathComponent("\(category.title).log")
+//        let dateComponents = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        
+        let date = formatter.string(from: Date())
+            
+        if let logLines = try? String(contentsOf: log) {
+            for line in logLines.components(separatedBy: .newlines) {
+                if line.hasPrefix(date) {
+                    lines.append(line)
+                }
+            }
+        }
+        
+        return lines.joined(separator: "\n")
     }
 }
 
