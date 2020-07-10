@@ -1,51 +1,61 @@
 {
   "images" : [
     {
+      "filename" : "icons8-typewriter-without-paper-16.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "16x16"
     },
     {
+      "filename" : "icons8-typewriter-without-paper-30.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "16x16"
     },
     {
+      "filename" : "icons8-typewriter-without-paper-31.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "32x32"
     },
     {
+      "filename" : "icons8-typewriter-without-paper-80.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "32x32"
     },
     {
+      "filename" : "icons8-typewriter-without-paper-81.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "128x128"
     },
     {
+      "filename" : "icons8-typewriter-without-paper-82.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "128x128"
     },
     {
+      "filename" : "icons8-typewriter-without-paper-83.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "256x256"
     },
     {
+      "filename" : "icons8-typewriter-without-paper-84.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "256x256"
     },
     {
+      "filename" : "icons8-typewriter-without-paper-85.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "512x512"
     },
     {
+      "filename" : "icons8-typewriter-without-paper-86.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "512x512"
