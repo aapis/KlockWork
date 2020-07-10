@@ -93,13 +93,21 @@ struct AddView : View {
                 TextField("Content here", text: $todayLogLines)
                     .disabled(true)
             }
-                
-            Spacer()
             
-            Button("New Day", action: {
-                self.logNewDay()
-                self.populateTodayView()
-            })
+            HStack {
+                Button("New Day", action: {
+                    self.logNewDay()
+                    self.populateTodayView()
+                })
+                
+                Button("Copy log contents", action: {
+                    let pasteBoard = NSPasteboard.general
+                    let data = self.readToday()
+                    
+                    pasteBoard.clearContents()
+                    pasteBoard.setString(data, forType: .string)
+                })
+            }
         }
             .frame(width: 700, height: 700)
             .padding()
@@ -128,8 +136,12 @@ struct AddView : View {
     }
     
     func logNewDay() -> Void {
-        let time = Date()
-        guard let line: Data = ("=========================\n\(time)\n=========================\n").data(using: String.Encoding.utf8) else { return }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        
+        let date = formatter.string(from: Date())
+        
+        guard let line: Data = ("=========================\n\(date)\n=========================\n").data(using: String.Encoding.utf8) else { return }
         
         writeToLog(output: line)
     }
@@ -149,7 +161,6 @@ struct AddView : View {
         var lines: [String] = []
 
         let log = getDocumentsDirectory().appendingPathComponent("\(category.title).log")
-//        let dateComponents = Date()
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         
