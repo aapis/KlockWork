@@ -1,62 +1,14 @@
 //
-//  ContentView.swift
+//  Add.swift
 //  DLPrototype
 //
-//  Created by Ryan Priebe on 2020-07-09.
+//  Created by Ryan Priebe on 2020-07-10.
 //  Copyright © 2020 YegCollective. All rights reserved.
 //
 
-import Combine
 import SwiftUI
 
-struct Category: Identifiable {
-    var id = UUID()
-    var title: String
-}
-
-struct ContentView: View {
-    var categories = [Category]()
-    
-    init() {
-        categories.append(Category(title: "Daily"))
-        categories.append(Category(title: "Standup"))
-        categories.append(Category(title: "Reflection"))
-        
-//        createLogFiles()
-    }
-    
-    var body: some View {
-        VStack {
-            NavigationView {
-                List {
-                    ForEach(categories) { category in
-                        Text(category.title)
-                            .bold()
-                        
-                        NavigationLink(destination: AddView(category: category)) {
-                            Text("Add")
-                                .padding(10)
-                        }
-                        
-                        NavigationLink(destination: LogView(category: category)) {
-                            Text("View")
-                                .padding(10)
-                        }
-                    }
-                }.listStyle(SidebarListStyle())
-            }
-            .navigationViewStyle(DoubleColumnNavigationViewStyle())
-        }
-    }
-    
-//    func createLogFiles() -> URL {
-//        let paths = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)
-//
-//        return paths[0]
-//    }
-}
-
-struct AddView : View {
+struct Add : View {
     var category: Category
     
     @State private var text: String = ""
@@ -175,52 +127,5 @@ struct AddView : View {
         }
         
         return lines.joined(separator: "\n")
-    }
-}
-
-struct LogView: View {
-    var category: Category
-    
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text("\(category.title).log")
-                .font(.title)
-            
-            Spacer()
-            
-            ScrollView {
-                Text(readFile())
-            }
-            
-            Spacer()
-        }
-        .frame(width: 700, height: 700)
-        .padding()
-    }
-    
-    func getDocumentsDirectory() -> URL {
-        let paths = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask)
-        
-        return paths[0]
-    }
-    
-    func readFile() -> String {
-        var lines: String = "nothing to see here"
-
-        let log = getDocumentsDirectory().appendingPathComponent("\(category.title).log")
-            
-        if let logLines = try? String(contentsOf: log) {
-            if !logLines.isEmpty {
-                lines = logLines
-            }
-        }
-        
-        return lines
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
     }
 }
