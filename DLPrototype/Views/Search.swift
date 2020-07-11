@@ -11,19 +11,25 @@ import SwiftUI
 struct Search: View {
     var category: Category
     
-    @State private var searchText: String = ""
-    @State private var searchResults: String = ""
+    @State public var searchText: String = ""
+    @State public var searchResults: String = ""
     
     var body: some View {
         VStack(alignment: .leading) {
             Text("Search \(category.title).log")
                 .font(.title)
+                .bold()
+            Divider()
             
             HStack {
                 TextField("Search terms", text: $searchText)
                 
                 Button("Search", action: {
                     self.doSearch()
+                })
+                
+                Button("Reset", action: {
+                    self.doReset()
                 })
                     
             }
@@ -42,6 +48,7 @@ struct Search: View {
                 pasteBoard.clearContents()
                 pasteBoard.setString(data, forType: .string)
             })
+                .disabled(self.$searchResults.wrappedValue != "" ? false : true)
         }
             .frame(width: 700, height: 700)
             .padding()
@@ -49,10 +56,17 @@ struct Search: View {
     
     private func doSearch() -> Void {
         if self.$searchText.wrappedValue != "" {
-            self.filterLogRows()
+//            self.filterLogRows()
+//            self.$searchResults.wrappedValue = FileIO.filter(text: self.$searchText, results: self.$searchResults)
+            self.$searchResults.wrappedValue = FileIO(searchText: $searchText, searchResults: $searchResults).filter()
         } else {
             print("You have to type something")
         }
+    }
+    
+    private func doReset() -> Void {
+        self.$searchResults.wrappedValue = ""
+        self.$searchText.wrappedValue = ""
     }
     
     private func getDocumentsDirectory() -> URL {

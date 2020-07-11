@@ -15,6 +15,8 @@ struct Log: View {
         VStack(alignment: .leading) {
             Text("\(category.title).log")
                 .font(.title)
+                .bold()
+            Divider()
             
             Spacer()
             
@@ -28,13 +30,13 @@ struct Log: View {
         .padding()
     }
     
-    func getDocumentsDirectory() -> URL {
+    private func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask)
         
         return paths[0]
     }
     
-    func readFile() -> String {
+    public func readFile() -> String {
         var lines: String = "nothing to see here"
 
         let log = getDocumentsDirectory().appendingPathComponent("\(category.title).log")

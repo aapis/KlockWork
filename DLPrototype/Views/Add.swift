@@ -21,6 +21,8 @@ struct Add : View {
         VStack(alignment: .leading) {
             Text("Append to \(category.title).log")
                 .font(.title)
+                .bold()
+            Divider()
             
             HStack {
                 TextField("Job ID", text: self.$jobId)
@@ -66,17 +68,17 @@ struct Add : View {
             .onAppear(perform: populateTodayView)
     }
     
-    func populateTodayView() -> Void {
+    private func populateTodayView() -> Void {
         self.$todayLogLines.wrappedValue = self.readToday()
     }
     
-    func getDocumentsDirectory() -> URL {
+    private func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask)
         
         return paths[0]
     }
     
-    func writeToLog(output: Data) -> Void {
+    private func writeToLog(output: Data) -> Void {
         let fileName = "\(category.title).log"
         let filePath = getDocumentsDirectory().appendingPathComponent(fileName)
         
@@ -87,7 +89,7 @@ struct Add : View {
         }
     }
     
-    func logNewDay() -> Void {
+    private func logNewDay() -> Void {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         
@@ -98,7 +100,7 @@ struct Add : View {
         writeToLog(output: line)
     }
     
-    func logLine() -> Void {
+    private func logLine() -> Void {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm"
         
@@ -109,7 +111,7 @@ struct Add : View {
         writeToLog(output: line)
     }
     
-    func readToday() -> String {
+    private func readToday() -> String {
         var lines: [String] = []
 
         let log = getDocumentsDirectory().appendingPathComponent("\(category.title).log")

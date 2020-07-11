@@ -50,7 +50,9 @@ struct ContentView: View {
                 }.listStyle(SidebarListStyle())
             }
             .navigationViewStyle(DoubleColumnNavigationViewStyle())
-        }
+        }.onAppear(perform: {
+//            Log.readFile()
+        })
     }
     
 //    func createLogFiles() -> URL {
