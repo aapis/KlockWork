@@ -89,11 +89,11 @@ struct Add : View {
     
     func logNewDay() -> Void {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
         
         let date = formatter.string(from: Date())
         
-        guard let line: Data = ("=========================\n\(date)\n=========================\n").data(using: String.Encoding.utf8) else { return }
+        guard let line: Data = ("\n=========================\n\(date)\n=========================").data(using: String.Encoding.utf8) else { return }
         
         writeToLog(output: line)
     }

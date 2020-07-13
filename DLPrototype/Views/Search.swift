@@ -8,11 +8,20 @@
 
 import SwiftUI
 
+struct CustomPickerItem: Identifiable {
+    var id = UUID()
+    var title: String
+    var tag: Int
+}
+
 struct Search: View {
     var category: Category
     
+    @State private var searchByDate: String = ""
     @State private var searchText: String = ""
     @State private var searchResults: String = ""
+    @State private var dateList: [CustomPickerItem] = [CustomPickerItem(title: "Default", tag: 0)]
+    @State private var selection = 1
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -20,12 +29,24 @@ struct Search: View {
                 .font(.title)
             
             HStack {
+                // formerly in ComboBox
+                Picker("Date", selection: $selection) {
+                    ForEach(dateList) { item in
+                        Text(item.title).tag(item.tag)
+                    }
+                }
+                    .frame(width: 200)
+                    .onAppear(perform: {
+                        self.dateList = self.generateDateList()
+                    })
+
                 TextField("Search terms", text: $searchText)
                 
                 Button("Search", action: {
-                    self.doSearch()
-                })
+                    self.$searchByDate.wrappedValue = self.dateList[self.$selection.wrappedValue].title
                     
+                    self.getFilteredLogRows()
+                })
             }
             
             ScrollView {
@@ -37,7 +58,7 @@ struct Search: View {
             
             Button("Copy search results", action: {
                 let pasteBoard = NSPasteboard.general
-                let data = self.filterLogRows()
+                let data = self.getFilteredLogRows()
                 
                 pasteBoard.clearContents()
                 pasteBoard.setString(data, forType: .string)
@@ -46,22 +67,14 @@ struct Search: View {
             .frame(width: 700, height: 700)
             .padding()
     }
-    
-    private func doSearch() -> Void {
-        if self.$searchText.wrappedValue != "" {
-            self.filterLogRows()
-        } else {
-            print("You have to type something")
-        }
-    }
-    
+        
     private func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask)
         
         return paths[0]
     }
     
-    private func filterLogRows() -> String {
+    private func getFilteredLogRows() -> String {
         var lines: [String] = []
 
         let log = getDocumentsDirectory().appendingPathComponent("\(category.title).log")
@@ -84,6 +97,8 @@ struct Search: View {
         var term = ""
         
         switch self.$searchText.wrappedValue {
+        case "":
+            term = self.$searchByDate.wrappedValue
         case "today":
             term = getRelativeDate(0)
         case "yesterday":
@@ -106,5 +121,15 @@ struct Search: View {
         let formatted = formatter.string(from: requestedDate)
         
         return formatted
+    }
+    
+    private func generateDateList() -> [CustomPickerItem] {
+        var dates: [CustomPickerItem] = []
+        
+        for i in 0...30 {
+            dates.append(CustomPickerItem(title: getRelativeDate(i * -1), tag: i))
+        }
+        
+        return dates
     }
 }
