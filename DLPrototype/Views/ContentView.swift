@@ -35,13 +35,18 @@ struct ContentView: View {
                                     .padding(10)
                             }
                             
+                            NavigationLink(destination: Search(category: category)) {
+                                Text("Search")
+                                    .padding(10)
+                            }
+                            
                             NavigationLink(destination: Log(category: category)) {
                                 Text("View")
                                     .padding(10)
                             }
                             
-                            NavigationLink(destination: Search(category: category)) {
-                                Text("Search")
+                            NavigationLink(destination: Backup(category: category)) {
+                                Text("Backup")
                                     .padding(10)
                             }
                         }
