@@ -19,37 +19,40 @@ struct ContentView: View {
     
     init() {
         categories.append(Category(title: "Daily"))
-        categories.append(Category(title: "Standup"))
-        categories.append(Category(title: "Reflection"))
+//        categories.append(Category(title: "Standup"))
+//        categories.append(Category(title: "Reflection"))
 //        createLogFiles()
     }
     
     var body: some View {
-        VStack {
-            NavigationView {
-                List {
-                    ForEach(categories) { category in
-                        Text(category.title)
-                            .bold()
-                        
-                        NavigationLink(destination: Add(category: category)) {
-                            Text("Add")
-                                .padding(10)
+        GeometryReader { geometry in
+            VStack {
+                NavigationView {
+                    List {
+                        ForEach(categories) { category in
+                            Text(category.title)
+                                .bold()                                
+                            
+                            NavigationLink(destination: Add(category: category)) {
+                                Text("Add")
+                                    .padding(10)
+                            }
+                            
+                            NavigationLink(destination: Log(category: category)) {
+                                Text("View")
+                                    .padding(10)
+                            }
+                            
+                            NavigationLink(destination: Search(category: category)) {
+                                Text("Search")
+                                    .padding(10)
+                            }
                         }
-                        
-                        NavigationLink(destination: Log(category: category)) {
-                            Text("View")
-                                .padding(10)
-                        }
-                        
-                        NavigationLink(destination: Search(category: category)) {
-                            Text("Search")
-                                .padding(10)
-                        }
-                    }
-                }.listStyle(SidebarListStyle())
+                    }.listStyle(SidebarListStyle())
+                }
+                .navigationViewStyle(DoubleColumnNavigationViewStyle())
+                .frame(width: geometry.size.width, height: geometry.size.height)
             }
-            .navigationViewStyle(DoubleColumnNavigationViewStyle())
         }
     }
     
