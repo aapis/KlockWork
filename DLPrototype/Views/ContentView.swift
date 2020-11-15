@@ -29,10 +29,7 @@ struct ContentView: View {
             VStack {
                 NavigationView {
                     List {
-                        ForEach(categories) { category in
-                            Text(category.title)
-                                .bold()                                
-                            
+                        ForEach(categories) { category in                            
                             NavigationLink(destination: Add(category: category)) {
                                 Text("Add")
                                     .padding(10)
@@ -48,7 +45,10 @@ struct ContentView: View {
                                     .padding(10)
                             }
                         }
-                    }.listStyle(SidebarListStyle())
+                    }
+                    .listStyle(SidebarListStyle())
+                    .padding(.top)
+                    .frame(minWidth: 300, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                 }
                 .navigationViewStyle(DoubleColumnNavigationViewStyle())
                 .frame(width: geometry.size.width, height: geometry.size.height)
