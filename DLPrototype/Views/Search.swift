@@ -25,33 +25,48 @@ struct Search: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Search \(category.title).log")
-                .font(.title)
+            HStack {
+                Text(Image(systemName: "magnifyingglass.circle.fill"))
+                    .font(.title)
+                Text("Search \(category.title).log")
+                    .font(.title)
+            }
+            
+            Divider()
             
             HStack {
                 // formerly in ComboBox
                 Picker("Date", selection: $selection) {
                     ForEach(dateList) { item in
-                        Text(item.title).tag(item.tag)
+                        Text(item.title)
+                            .tag(item.tag)
+                            .font(Font.system(size: 16, design: .default))
                     }
                 }
                     .frame(width: 200)
+                    .font(Font.system(size: 16, design: .default))
                     .onAppear(perform: {
                         self.dateList = self.generateDateList()
                     })
 
                 TextField("Search terms", text: $searchText)
+                    .font(Font.system(size: 16, design: .default))
                 
                 Button("Search", action: {
                     self.$searchByDate.wrappedValue = self.dateList[self.$selection.wrappedValue].title
                     
                     self.getFilteredLogRows()
                 })
+                .background(Color.accentColor)
+                .font(Font.system(size: 16, design: .default))
             }
+            
+            Divider()
             
             ScrollView {
                 TextField("No results", text: $searchResults)
                     .disabled(true)
+                    .font(Font.system(size: 16, design: .default))
             }
             
             Spacer()
