@@ -19,14 +19,22 @@ struct Add : View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Append to \(category.title).log")
-                .font(.title)
+            HStack {
+                Text(Image(systemName: "doc.append.fill"))
+                    .font(.title)
+                Text("Append to \(category.title).log")
+                    .font(.title)
+            }
+            
+            Divider()
             
             HStack {
                 TextField("Job ID", text: self.$jobId)
                     .frame(width: 100)
+                    .font(Font.system(size: 16, design: .default))
                 
                 TextField("Enter your daily log text here", text: $text)
+                    .font(Font.system(size: 16, design: .default))
                 
                 Button("Log", action: {
                     if self.$text.wrappedValue != "" && self.$jobId.wrappedValue != "" {
@@ -39,11 +47,16 @@ struct Add : View {
                         print("You have to type something")
                     }
                 })
+                .background(Color.accentColor)
+                .font(Font.system(size: 16, design: .default))
             }
             
+            Divider()
+            
             ScrollView {
-                TextField("Content here", text: $todayLogLines)
+                TextField("Click \"New Day\" below to get started", text: $todayLogLines)
                     .disabled(true)
+                    .font(Font.system(size: 16, design: .default))
             }
             
             HStack {
@@ -61,7 +74,7 @@ struct Add : View {
                 })
             }
         }
-            .frame(width: 700, height: 700)
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .padding()
             .onAppear(perform: populateTodayView)
     }

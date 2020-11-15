@@ -13,10 +13,14 @@ struct Log: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("\(category.title).log")
-                .font(.title)
+            HStack {
+                Text(Image(systemName: "doc.fill"))
+                    .font(.title)
+                Text("\(category.title).log")
+                    .font(.title)
+            }
             
-            Spacer()
+            Divider()
             
             ScrollView {
                 Text(readFile())
@@ -24,7 +28,7 @@ struct Log: View {
             
             Spacer()
         }
-        .frame(width: 700, height: 700)
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
         .padding()
     }
     
