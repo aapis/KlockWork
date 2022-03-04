@@ -76,18 +76,20 @@ struct Add : View {
                     self.populateTodayView()
                 })
                 
-                Button("Copy log contents", action: {
-                    let pasteBoard = NSPasteboard.general
-                    let data = self.readToday()
-                    
-                    pasteBoard.clearContents()
-                    pasteBoard.setString(data, forType: .string)
-                })
+                Button("Copy all rows", action: self.copyAction)
             }
         }
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .padding()
             .onAppear(perform: populateTodayView)
+    }
+    
+    private func copyAction() -> Void {
+        let pasteBoard = NSPasteboard.general
+        let data = self.readToday()
+        
+        pasteBoard.clearContents()
+        pasteBoard.setString(data, forType: .string)
     }
     
     func populateTodayView() -> Void {

@@ -28,7 +28,7 @@ struct Search: View {
             HStack {
                 Text(Image(systemName: "magnifyingglass.circle.fill"))
                     .font(.title)
-                Text("Find entries")
+                Text("Find records")
                     .font(.title)
             }
             
@@ -52,13 +52,17 @@ struct Search: View {
                 TextField("Search terms", text: $searchText)
                     .font(Font.system(size: 16, design: .default))
                 
-                Button("Search", action: {
-                    self.$searchByDate.wrappedValue = self.dateList[self.$selection.wrappedValue].title
-                    
-                    self.getFilteredLogRows()
+                Button(action: self.findAction, label: {
+                    Image(systemName: "magnifyingglass")
                 })
-                .background(Color.accentColor)
-                .font(Font.system(size: 16, design: .default))
+                    .background(Color.accentColor)
+                    .help("Search")
+                
+                Button(action: self.findAndCopy, label: {
+                    Image(systemName: "doc.on.doc")
+                })
+                    .background(Color.accentColor)
+                    .help("Search and copy results")
             }
             
             Divider()
@@ -68,19 +72,28 @@ struct Search: View {
                     .disabled(true)
                     .font(Font.system(size: 16, design: .default))
             }
-            
-            Spacer()
-            
-            Button("Copy search results", action: {
-                let pasteBoard = NSPasteboard.general
-                let data = self.getFilteredLogRows()
-                
-                pasteBoard.clearContents()
-                pasteBoard.setString(data, forType: .string)
-            })
         }
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .padding()
+    }
+    
+    private func findAction() -> Void {
+        self.$searchByDate.wrappedValue = self.dateList[self.$selection.wrappedValue].title
+        
+        self.getFilteredLogRows()
+    }
+    
+    private func copyAction() -> Void {
+        let pasteBoard = NSPasteboard.general
+        let data = self.getFilteredLogRows()
+        
+        pasteBoard.clearContents()
+        pasteBoard.setString(data, forType: .string)
+    }
+    
+    private func findAndCopy() -> Void {
+        self.findAction()
+        self.copyAction()
     }
         
     private func getDocumentsDirectory() -> URL {
