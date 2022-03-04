@@ -16,13 +16,14 @@ struct Add : View {
     @State private var noLogMessageAlert = false
     @State private var noJobIdAlert = false
     @State private var todayLogLines: String = ""
+
     
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
                 Text(Image(systemName: "doc.append.fill"))
                     .font(.title)
-                Text("Append to \(category.title).log")
+                Text("Record an entry")
                     .font(.title)
             }
             
@@ -35,13 +36,23 @@ struct Add : View {
                 
                 TextField("Enter your daily log text here", text: $text)
                     .font(Font.system(size: 16, design: .default))
+// TODO: upgrade to macos12 so we can have onSubmit callbacks
+//                    .onSubmit {
+//                        if self.$text.wrappedValue != "" && self.$jobId.wrappedValue != "" {
+//                            self.logLine()
+//
+//                            self.$text.wrappedValue = ""
+//                            self.populateTodayView()
+//                        } else {
+//                            print("You have to type something")
+//                        }
+//                    }
                 
                 Button("Log", action: {
                     if self.$text.wrappedValue != "" && self.$jobId.wrappedValue != "" {
                         self.logLine()
                         
                         self.$text.wrappedValue = ""
-                        self.$jobId.wrappedValue = ""
                         self.populateTodayView()
                     } else {
                         print("You have to type something")
