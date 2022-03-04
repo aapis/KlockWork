@@ -16,6 +16,7 @@ struct Category: Identifiable {
 
 struct ContentView: View {
     var categories = [Category]()
+    @State private var activeTab = true;
     
     init() {
         categories.append(Category(title: "Daily"))
@@ -30,8 +31,8 @@ struct ContentView: View {
                 NavigationView {
                     List {
                         ForEach(categories) { category in                            
-                            NavigationLink(destination: Add(category: category)) {
-                                Text("Add")
+                            NavigationLink(destination: Add(category: category), isActive: $activeTab) {
+                                Text("Record")
                                     .padding(10)
                             }
                             
@@ -54,6 +55,7 @@ struct ContentView: View {
                     .listStyle(SidebarListStyle())
                     .padding(.top)
                     .frame(minWidth: 300, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+
                 }
                 .navigationViewStyle(DoubleColumnNavigationViewStyle())
                 .frame(width: geometry.size.width, height: geometry.size.height)

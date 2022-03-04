@@ -28,7 +28,7 @@ struct Search: View {
             HStack {
                 Text(Image(systemName: "magnifyingglass.circle.fill"))
                     .font(.title)
-                Text("Search \(category.title).log")
+                Text("Find entries")
                     .font(.title)
             }
             
