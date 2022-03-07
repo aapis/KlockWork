@@ -67,10 +67,12 @@ struct Search: View {
             
             Divider()
             
-            ScrollView {
-                TextField("No results", text: $searchResults)
-                    .disabled(true)
-                    .font(Font.system(size: 16, design: .default))
+            Table(getDatesForTable()) {
+                TableColumn("Timestamp", value: \.timestamp)
+                    .width(120)
+                TableColumn("Job ID", value: \.job)
+                    .width(60)
+                TableColumn("Message", value: \.message)
             }
         }
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
@@ -80,12 +82,12 @@ struct Search: View {
     private func findAction() -> Void {
         self.$searchByDate.wrappedValue = self.dateList[self.$selection.wrappedValue].title
         
-        self.getFilteredLogRows()
+        self.setSearchResults()
     }
     
     private func copyAction() -> Void {
         let pasteBoard = NSPasteboard.general
-        let data = self.getFilteredLogRows()
+        let data = self.getAllRows()
         
         pasteBoard.clearContents()
         pasteBoard.setString(data, forType: .string)
@@ -102,7 +104,17 @@ struct Search: View {
         return paths[0]
     }
     
-    private func getFilteredLogRows() -> String {
+    private func setSearchResults() -> Void {
+        self.$searchResults.wrappedValue = getAllRows()
+    }
+    
+    private func getAllRows() -> String {
+        let lines: [String] = getFilteredRows()
+        
+        return lines.joined(separator: "\n")
+    }
+    
+    private func getFilteredRows() -> [String] {
         var lines: [String] = []
 
         let log = getDocumentsDirectory().appendingPathComponent("\(category.title).log")
@@ -116,9 +128,7 @@ struct Search: View {
             }
         }
         
-        self.$searchResults.wrappedValue = lines.joined(separator: "\n")
-        
-        return self.$searchResults.wrappedValue
+        return lines
     }
     
     private func getSearchTerm() -> String {
@@ -159,5 +169,26 @@ struct Search: View {
         }
         
         return dates
+    }
+    
+    private func getDatesForTable() -> [Entry] {
+        var data = getFilteredRows()
+        var entries: [Entry] = []
+        
+        if data.isEmpty {
+            return entries;
+        }
+        
+        // removes the "new day" entry
+        data.removeFirst()
+        
+        for line in data {
+            let parts = line.components(separatedBy: " - ")
+            let entry = Entry(timestamp: parts[0], job: parts[1], message: parts[2])
+            
+            entries.append(entry)
+        }
+        
+        return entries
     }
 }
