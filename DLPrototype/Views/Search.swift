@@ -35,7 +35,6 @@ struct Search: View {
             Divider()
             
             HStack {
-                // formerly in ComboBox
                 Picker("Date", selection: $selection) {
                     ForEach(dateList) { item in
                         Text(item.title)
@@ -45,20 +44,13 @@ struct Search: View {
                 }
                     .frame(width: 200)
                     .font(Font.system(size: 16, design: .default))
-                    .onAppear(perform: {
-                        self.dateList = self.generateDateList()
-                    })
+                    .onAppear(perform: setDateList)
+                    .onChange(of: selection) { date in print("\(date)"); findAction() } // TODO: why must I print date here for this to compile??
 
                 TextField("Search terms", text: $searchText)
                     .font(Font.system(size: 16, design: .default))
-                
-                Button(action: self.findAction, label: {
-                    Image(systemName: "magnifyingglass")
-                })
-                    .background(Color.accentColor)
-                    .help("Search")
-                
-                Button(action: self.findAndCopy, label: {
+
+                Button(action: findAndCopy, label: {
                     Image(systemName: "doc.on.doc")
                 })
                     .background(Color.accentColor)
@@ -77,6 +69,10 @@ struct Search: View {
         }
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .padding()
+    }
+    
+    private func setDateList() -> Void {
+        self.dateList = self.generateDateList()
     }
     
     private func findAction() -> Void {
@@ -175,7 +171,10 @@ struct Search: View {
         var data = getFilteredRows()
         var entries: [Entry] = []
         
-        if data.isEmpty {
+        guard !data.isEmpty else {
+            let entry = Entry(timestamp: "0", job: "0", message: "No results for that search term or date")
+            entries.append(entry)
+            
             return entries;
         }
         

@@ -159,8 +159,15 @@ struct Add : View {
     }
     
     private func readTodayTable() -> [Entry] {
-        var data = self.readTodayLines()
+        var data = readTodayLines()
         var entries: [Entry] = []
+        
+        guard !data.isEmpty else {
+            let entry = Entry(timestamp: "0", job: "0", message: "No results for that search term or date")
+            entries.append(entry)
+            
+            return entries;
+        }
         
         // removes the "new day" entry
         data.removeFirst()
