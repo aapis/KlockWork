@@ -36,30 +36,15 @@ struct Add : View {
                 
                 TextField("Enter your daily log text here", text: $text)
                     .font(Font.system(size: 16, design: .default))
-// TODO: upgrade to macos12 so we can have onSubmit callbacks
-//                    .onSubmit {
-//                        if self.$text.wrappedValue != "" && self.$jobId.wrappedValue != "" {
-//                            self.logLine()
-//
-//                            self.$text.wrappedValue = ""
-//                            self.populateTodayView()
-//                        } else {
-//                            print("You have to type something")
-//                        }
-//                    }
+                    .onSubmit {
+                        submitAction()
+                    }
                 
                 Button("Log", action: {
-                    if self.$text.wrappedValue != "" && self.$jobId.wrappedValue != "" {
-                        self.logLine()
-                        
-                        self.$text.wrappedValue = ""
-                        self.populateTodayView()
-                    } else {
-                        print("You have to type something")
-                    }
+                    submitAction()
                 })
-                .background(Color.accentColor)
-                .font(Font.system(size: 16, design: .default))
+                    .background(Color.accentColor)
+                    .font(Font.system(size: 16, design: .default))
             }
             
             Divider()
@@ -90,6 +75,17 @@ struct Add : View {
         
         pasteBoard.clearContents()
         pasteBoard.setString(data, forType: .string)
+    }
+    
+    private func submitAction() -> Void {
+        if self.$text.wrappedValue != "" && self.$jobId.wrappedValue != "" {
+            self.logLine()
+            
+            self.$text.wrappedValue = ""
+            self.populateTodayView()
+        } else {
+            print("You have to type something")
+        }
     }
     
     func populateTodayView() -> Void {
