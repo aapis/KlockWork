@@ -73,6 +73,7 @@ struct Search: View {
     
     private func setDateList() -> Void {
         self.dateList = self.generateDateList()
+        findAction()
     }
     
     private func findAction() -> Void {
