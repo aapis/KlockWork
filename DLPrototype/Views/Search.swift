@@ -35,7 +35,6 @@ struct Search: View {
             Divider()
             
             HStack {
-                // formerly in ComboBox
                 Picker("Date", selection: $selection) {
                     ForEach(dateList) { item in
                         Text(item.title)
@@ -45,20 +44,13 @@ struct Search: View {
                 }
                     .frame(width: 200)
                     .font(Font.system(size: 16, design: .default))
-                    .onAppear(perform: {
-                        self.dateList = self.generateDateList()
-                    })
+                    .onAppear(perform: setDateList)
+                    .onChange(of: selection) { date in print("\(date)"); findAction() } // TODO: why must I print date here for this to compile??
 
                 TextField("Search terms", text: $searchText)
                     .font(Font.system(size: 16, design: .default))
-                
-                Button(action: self.findAction, label: {
-                    Image(systemName: "magnifyingglass")
-                })
-                    .background(Color.accentColor)
-                    .help("Search")
-                
-                Button(action: self.findAndCopy, label: {
+
+                Button(action: findAndCopy, label: {
                     Image(systemName: "doc.on.doc")
                 })
                     .background(Color.accentColor)
@@ -67,25 +59,31 @@ struct Search: View {
             
             Divider()
             
-            ScrollView {
-                TextField("No results", text: $searchResults)
-                    .disabled(true)
-                    .font(Font.system(size: 16, design: .default))
+            Table(getDatesForTable()) {
+                TableColumn("Timestamp", value: \.timestamp)
+                    .width(120)
+                TableColumn("Job ID", value: \.job)
+                    .width(60)
+                TableColumn("Message", value: \.message)
             }
         }
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .padding()
     }
     
+    private func setDateList() -> Void {
+        self.dateList = self.generateDateList()
+    }
+    
     private func findAction() -> Void {
         self.$searchByDate.wrappedValue = self.dateList[self.$selection.wrappedValue].title
         
-        self.getFilteredLogRows()
+        self.setSearchResults()
     }
     
     private func copyAction() -> Void {
         let pasteBoard = NSPasteboard.general
-        let data = self.getFilteredLogRows()
+        let data = self.getAllRows()
         
         pasteBoard.clearContents()
         pasteBoard.setString(data, forType: .string)
@@ -102,7 +100,17 @@ struct Search: View {
         return paths[0]
     }
     
-    private func getFilteredLogRows() -> String {
+    private func setSearchResults() -> Void {
+        self.$searchResults.wrappedValue = getAllRows()
+    }
+    
+    private func getAllRows() -> String {
+        let lines: [String] = getFilteredRows()
+        
+        return lines.joined(separator: "\n")
+    }
+    
+    private func getFilteredRows() -> [String] {
         var lines: [String] = []
 
         let log = getDocumentsDirectory().appendingPathComponent("\(category.title).log")
@@ -116,9 +124,7 @@ struct Search: View {
             }
         }
         
-        self.$searchResults.wrappedValue = lines.joined(separator: "\n")
-        
-        return self.$searchResults.wrappedValue
+        return lines
     }
     
     private func getSearchTerm() -> String {
@@ -159,5 +165,29 @@ struct Search: View {
         }
         
         return dates
+    }
+    
+    private func getDatesForTable() -> [Entry] {
+        var data = getFilteredRows()
+        var entries: [Entry] = []
+        
+        guard !data.isEmpty else {
+            let entry = Entry(timestamp: "0", job: "0", message: "No results for that search term or date")
+            entries.append(entry)
+            
+            return entries;
+        }
+        
+        // removes the "new day" entry
+        data.removeFirst()
+        
+        for line in data {
+            let parts = line.components(separatedBy: " - ")
+            let entry = Entry(timestamp: parts[0], job: parts[1], message: parts[2])
+            
+            entries.append(entry)
+        }
+        
+        return entries
     }
 }
