@@ -21,7 +21,7 @@ struct Search: View {
     @State private var searchText: String = ""
     @State private var searchResults: String = ""
     @State private var dateList: [CustomPickerItem] = [CustomPickerItem(title: "Default", tag: 0)]
-    @State private var selection = 1
+    @State private var selection = 0
     
     var body: some View {
         VStack(alignment: .leading) {
