@@ -8,6 +8,13 @@
 
 import SwiftUI
 
+struct Entry: Identifiable {
+    let timestamp: String
+    let job: String
+    let message: String
+    let id = UUID()
+}
+
 struct Add : View {
     var category: Category
     
@@ -16,7 +23,6 @@ struct Add : View {
     @State private var noLogMessageAlert = false
     @State private var noJobIdAlert = false
     @State private var todayLogLines: String = ""
-
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -26,47 +32,44 @@ struct Add : View {
                 Text("Record an entry")
                     .font(.title)
             }
-            
+
             Divider()
-            
+
             HStack {
-                TextField("Job ID", text: self.$jobId)
+                TextField("Job ID", text: $jobId)
                     .frame(width: 100)
                     .font(Font.system(size: 16, design: .default))
-                
-                TextField("Enter your daily log text here", text: $text)
+
+                TextField("Type and hit enter to save...", text: $text)
                     .font(Font.system(size: 16, design: .default))
                     .onSubmit {
                         submitAction()
                     }
-                
-                Button("Log", action: {
-                    submitAction()
-                })
-                    .background(Color.accentColor)
-                    .font(Font.system(size: 16, design: .default))
             }
-            
+
             Divider()
             
-            ScrollView {
-                TextField("Click \"New Day\" below to get started", text: $todayLogLines)
-                    .disabled(true)
-                    .font(Font.system(size: 16, design: .default))
+            Table(readTodayTable()) {
+                TableColumn("Timestamp", value: \.timestamp)
+                    .width(120)
+                TableColumn("Job ID", value: \.job)
+                    .width(60)
+                TableColumn("Message", value: \.message)
             }
-            
+
             HStack {
-                Button("New Day", action: {
-                    self.logNewDay()
-                    self.populateTodayView()
-                })
-                
-                Button("Copy all rows", action: self.copyAction)
+                Button("New Day", action: newDayAction)
+                Button("Copy all rows", action: copyAction)
             }
         }
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .padding()
             .onAppear(perform: populateTodayView)
+    }
+    
+    private func newDayAction() -> Void {
+        self.logNewDay()
+        self.populateTodayView()
     }
     
     private func copyAction() -> Void {
@@ -132,6 +135,10 @@ struct Add : View {
     }
     
     func readToday() -> String {
+        return readTodayLines().joined(separator: "\n")
+    }
+    
+    private func readTodayLines() -> [String] {
         var lines: [String] = []
 
         let log = getDocumentsDirectory().appendingPathComponent("\(category.title).log")
@@ -148,6 +155,23 @@ struct Add : View {
             }
         }
         
-        return lines.joined(separator: "\n")
+        return lines
+    }
+    
+    private func readTodayTable() -> [Entry] {
+        var data = self.readTodayLines()
+        var entries: [Entry] = []
+        
+        // removes the "new day" entry
+        data.removeFirst()
+        
+        for line in data {
+            let parts = line.components(separatedBy: " - ")
+            let entry = Entry(timestamp: parts[0], job: parts[1], message: parts[2])
+            
+            entries.append(entry)
+        }
+        
+        return entries
     }
 }
