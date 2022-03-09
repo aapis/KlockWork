@@ -30,6 +30,14 @@ struct Search: View {
                     .font(.title)
                 Text("Find records")
                     .font(.title)
+                
+                Spacer()
+                
+                Button(action: findAndCopy, label: {
+                    Image(systemName: "doc.on.doc")
+                })
+                    .background(Color.accentColor)
+                    .help("Search and copy results")
             }
             
             Divider()
@@ -50,11 +58,7 @@ struct Search: View {
                 TextField("Search terms", text: $searchText)
                     .font(Font.system(size: 16, design: .default))
 
-                Button(action: findAndCopy, label: {
-                    Image(systemName: "doc.on.doc")
-                })
-                    .background(Color.accentColor)
-                    .help("Search and copy results")
+                
             }
             
             Divider()
