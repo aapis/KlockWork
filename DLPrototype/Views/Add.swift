@@ -23,6 +23,7 @@ struct Add : View {
     @State private var noLogMessageAlert = false
     @State private var noJobIdAlert = false
     @State private var todayLogLines: String = ""
+    @State private var statusMessage: String = ""
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -31,6 +32,18 @@ struct Add : View {
                     .font(.title)
                 Text("Record an entry")
                     .font(.title)
+                
+                Spacer()
+                
+                Button(action: copyAction, label: {
+                    Image(systemName: "doc.on.doc")
+                })
+                    .help("Copy all rows")
+                
+                Button(action: newDayAction, label: {
+                    Image(systemName: "sunrise")
+                })
+                    .help("New day")
             }
 
             Divider()
@@ -56,10 +69,18 @@ struct Add : View {
                     .width(60)
                 TableColumn("Message", value: \.message)
             }
-
+            //.onTapGesture(count: 1, perform: copyRow)
+//            .contextMenu {
+//                Button("Copy row", action: copyRow)
+//                Divider()
+//                Button(action: {}) { Text("Copy job ID") }
+//                Button(action: {}) { Text("Copy timestamp") }
+//                Button(action: {}) { Text("Copy message") }
+//                Button(action: {}) { Text("Copy row ID") }
+//            }
+            
             HStack {
-                Button("New Day", action: newDayAction)
-                Button("Copy all rows", action: copyAction)
+                Text(statusMessage)
             }
         }
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
@@ -67,9 +88,23 @@ struct Add : View {
             .onAppear(perform: populateTodayView)
     }
     
+//    private func copyRow() -> Void {
+//        print($0)
+//        print($selection.wrappedValue)
+//        print("tapped")
+//    }
+    
     private func newDayAction() -> Void {
-        self.logNewDay()
-        self.populateTodayView()
+        logNewDay()
+        populateTodayView()
+        
+        statusMessage = "New day!"
+        
+        Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { timer in
+            statusMessage = ""
+            
+            timer.invalidate()
+        }
     }
     
     private func copyAction() -> Void {
@@ -92,7 +127,7 @@ struct Add : View {
     }
     
     func populateTodayView() -> Void {
-        self.$todayLogLines.wrappedValue = self.readToday()
+        todayLogLines = readToday()
     }
     
     func getDocumentsDirectory() -> URL {
