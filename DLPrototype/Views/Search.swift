@@ -176,7 +176,7 @@ struct Search: View {
         var data = getFilteredRows()
         var entries: [Entry] = []
         
-        guard !data.isEmpty else {
+        guard !data.isEmpty || data.count == 1 else {
             let entry = Entry(timestamp: "0", job: "0", message: "No results for that search term or date")
             entries.append(entry)
             
@@ -188,9 +188,12 @@ struct Search: View {
         
         for line in data {
             let parts = line.components(separatedBy: " - ")
-            let entry = Entry(timestamp: parts[0], job: parts[1], message: parts[2])
             
-            entries.append(entry)
+            if parts.count > 1 {
+                let entry = Entry(timestamp: parts[0], job: parts[1], message: parts[2])
+            
+                entries.append(entry)
+            }
         }
         
         return entries

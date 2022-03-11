@@ -140,7 +140,7 @@ struct Add : View {
     
     private func newDayAction() -> Void {
         logNewDay()
-        populateTodayView()
+        clearTodayView()
         
         statusMessage = "New day!"
         
@@ -157,6 +157,14 @@ struct Add : View {
         
         pasteBoard.clearContents()
         pasteBoard.setString(data, forType: .string)
+        
+        statusMessage = "Copied!"
+        
+        Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { timer in
+            statusMessage = ""
+            
+            timer.invalidate()
+        }
     }
     
     private func submitAction() -> Void {
@@ -172,6 +180,10 @@ struct Add : View {
     
     private func populateTodayView() -> Void {
         todayLogLines = readToday()
+    }
+    
+    private func clearTodayView() -> Void {
+        todayLogLines = ""
     }
     
     private func getDocumentsDirectory() -> URL {
@@ -241,7 +253,7 @@ struct Add : View {
         var data = readTodayLines()
         var entries: [Entry] = []
         
-        guard !data.isEmpty else {
+        guard !data.isEmpty || data.count == 1 else {
             let entry = Entry(timestamp: "0", job: "0", message: "No results for that search term or date")
             entries.append(entry)
             
@@ -253,9 +265,12 @@ struct Add : View {
         
         for line in data {
             let parts = line.components(separatedBy: " - ")
-            let entry = Entry(timestamp: parts[0], job: parts[1], message: parts[2])
             
-            entries.append(entry)
+            if parts.count > 1 {
+                let entry = Entry(timestamp: parts[0], job: parts[1], message: parts[2])
+                
+                entries.append(entry)
+            }
         }
         
         return entries
