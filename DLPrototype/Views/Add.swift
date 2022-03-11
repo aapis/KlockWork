@@ -114,22 +114,25 @@ struct Add : View {
     /// Pull the recent job IDs from today's log entries
     private func buildRecentJobIdList() -> Void {
         let todayLines = readTodayLines()
-        var todaysJobs: [String] = []
+        var todaysJobs: [Int] = []
         
         if (!todayLines.isEmpty) {
             todayLines.forEach { line in
                 let lineParts = line.components(separatedBy: " - ")
+                
                 if lineParts.count > 1 {
-                    let timestamp = lineParts[1]
+                    let timestamp = Int(lineParts[1]) ?? 0
 
                     todaysJobs.append(timestamp)
                 }
             }
             
-            let uniqueJobsToday = Array(Set(todaysJobs))
+            var uniqueJobsToday = Array(Set(todaysJobs))
+            // sort unique job ID list numerically
+            uniqueJobsToday.sort()
             
             for job in uniqueJobsToday {
-                let pickerJob = CustomPickerItem(title: job, tag: Int(job) ?? 0)
+                let pickerJob = CustomPickerItem(title: String(job), tag: job)
                 recentJobs.append(pickerJob)
             }
         }
