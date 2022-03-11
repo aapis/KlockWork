@@ -24,6 +24,8 @@ struct Add : View {
     @State private var noJobIdAlert = false
     @State private var todayLogLines: String = ""
     @State private var statusMessage: String = ""
+    @State private var recentJobs: [CustomPickerItem] = [CustomPickerItem(title: "Recent jobs", tag: 0)]
+    @State private var jobPickerSelection = 0
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -52,7 +54,22 @@ struct Add : View {
                 TextField("Job ID", text: $jobId)
                     .frame(width: 100)
                     .font(Font.system(size: 16, design: .default))
-
+                
+                Picker("Job", selection: $jobPickerSelection) {
+                    ForEach(recentJobs) { item in
+                        Text(item.title)
+                            .tag(item.tag)
+                            .font(Font.system(size: 16, design: .default))
+                    }
+                }
+                    .frame(width: 200)
+                    .font(Font.system(size: 16, design: .default))
+                    .onAppear(perform: buildRecentJobIdList)
+                    .onChange(of: jobPickerSelection) { _ in
+                        // modifies jobId to associate the job to the message
+                        jobId = String(jobPickerSelection)
+                    }
+                
                 TextField("Type and hit enter to save...", text: $text)
                     .font(Font.system(size: 16, design: .default))
                     .onSubmit {
@@ -94,6 +111,30 @@ struct Add : View {
 //        print("tapped")
 //    }
     
+    /// Pull the recent job IDs from today's log entries
+    private func buildRecentJobIdList() -> Void {
+        let todayLines = readTodayLines()
+        var todaysJobs: [String] = []
+        
+        if (!todayLines.isEmpty) {
+            todayLines.forEach { line in
+                let lineParts = line.components(separatedBy: " - ")
+                if lineParts.count > 1 {
+                    let timestamp = lineParts[1]
+
+                    todaysJobs.append(timestamp)
+                }
+            }
+            
+            let uniqueJobsToday = Array(Set(todaysJobs))
+            
+            for job in uniqueJobsToday {
+                let pickerJob = CustomPickerItem(title: job, tag: Int(job) ?? 0)
+                recentJobs.append(pickerJob)
+            }
+        }
+    }
+    
     private func newDayAction() -> Void {
         logNewDay()
         populateTodayView()
@@ -126,17 +167,17 @@ struct Add : View {
         }
     }
     
-    func populateTodayView() -> Void {
+    private func populateTodayView() -> Void {
         todayLogLines = readToday()
     }
     
-    func getDocumentsDirectory() -> URL {
+    private func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask)
         
         return paths[0]
     }
     
-    func writeToLog(output: Data) -> Void {
+    private func writeToLog(output: Data) -> Void {
         let fileName = "\(category.title).log"
         let filePath = getDocumentsDirectory().appendingPathComponent(fileName)
         
@@ -147,7 +188,7 @@ struct Add : View {
         }
     }
     
-    func logNewDay() -> Void {
+    private func logNewDay() -> Void {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm"
         
@@ -158,7 +199,7 @@ struct Add : View {
         writeToLog(output: line)
     }
     
-    func logLine() -> Void {
+    private func logLine() -> Void {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm"
         
@@ -169,7 +210,7 @@ struct Add : View {
         writeToLog(output: line)
     }
     
-    func readToday() -> String {
+    private func readToday() -> String {
         return readTodayLines().joined(separator: "\n")
     }
     
