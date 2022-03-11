@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct CustomPickerItem: Identifiable {
+struct CustomPickerItem: Identifiable, Hashable {
     var id = UUID()
     var title: String
     var tag: Int

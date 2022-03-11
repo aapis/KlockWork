@@ -1,18 +1,6 @@
 #  DLPrototype
 
-MacOS 11 is currently in dev/public beta, but I cannot upgrade any of my Macs to the new version to test the new cross platform SwiftUI 2.  So, this is a simple prototype that should capture what the DailyLogger application intends to accomplish.
-
-The current workflow is basically:
-
-```
-# open terminal
-
-logt "This is what I'm doing now"
-logt "This is what I'm doing now"
-logt "This is what I'm doing now"
-logt "This is what I'm doing now"
-logt "I'm done for the day"
-```
+This is a small macOS application I've been using to play with `swiftui` and to dabble in `swift` development in general over the past few years.  The whole thing is a WIP and I caution you that it does NOT follow any swift coding standards beyond what the compiler enforces, nor is there any attempt at system architecture.  It's an app front end for a plain text file. 
 
 New workflow will be basically that but with a GUI.  Eventually it will be a cross platform database of sorts.
 
