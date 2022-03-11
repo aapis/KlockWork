@@ -15,6 +15,9 @@ struct Entry: Identifiable {
     let id = UUID()
 }
 
+let defaultPickerChoice: CustomPickerItem  = CustomPickerItem(title: "Recent jobs", tag: 0)
+//let defaultCopiedRow: Entry = Entry(timestamp: "00", job: "11", message: "Row not found")
+
 struct Add : View {
     var category: Category
     
@@ -24,8 +27,9 @@ struct Add : View {
     @State private var noJobIdAlert = false
     @State private var todayLogLines: String = ""
     @State private var statusMessage: String = ""
-    @State private var recentJobs: [CustomPickerItem] = [CustomPickerItem(title: "Recent jobs", tag: 0)]
+    @State private var recentJobs: [CustomPickerItem] = [defaultPickerChoice]
     @State private var jobPickerSelection = 0
+//    @State private var copiedRow: Entry = defaultCopiedRow
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -64,7 +68,6 @@ struct Add : View {
                 }
                     .frame(width: 200)
                     .font(Font.system(size: 16, design: .default))
-                    .onAppear(perform: buildRecentJobIdList)
                     .onChange(of: jobPickerSelection) { _ in
                         // modifies jobId to associate the job to the message
                         jobId = String(jobPickerSelection)
@@ -87,14 +90,14 @@ struct Add : View {
                 TableColumn("Message", value: \.message)
             }
             //.onTapGesture(count: 1, perform: copyRow)
-//            .contextMenu {
-//                Button("Copy row", action: copyRow)
-//                Divider()
-//                Button(action: {}) { Text("Copy job ID") }
-//                Button(action: {}) { Text("Copy timestamp") }
-//                Button(action: {}) { Text("Copy message") }
-//                Button(action: {}) { Text("Copy row ID") }
-//            }
+//                .contextMenu {
+//                    Button("Copy row", action: { copiedRow = $0 })
+//                    Divider()
+//                    Button(action: {}) { Text("Copy job ID") }
+//                    Button(action: {}) { Text("Copy timestamp") }
+//                    Button(action: {}) { Text("Copy message") }
+//                    Button(action: {}) { Text("Copy row ID") }
+//                }
             
             HStack {
                 Text(statusMessage)
@@ -127,15 +130,24 @@ struct Add : View {
                 }
             }
             
+            // remove duplicates
             var uniqueJobsToday = Array(Set(todaysJobs))
             // sort unique job ID list numerically
             uniqueJobsToday.sort()
+            
+            resetPickerToDefault()
             
             for job in uniqueJobsToday {
                 let pickerJob = CustomPickerItem(title: String(job), tag: job)
                 recentJobs.append(pickerJob)
             }
         }
+    }
+    
+    /// Resets the recentJobs picker to it's default state by removing all elements and appending the default option
+    private func resetPickerToDefault() -> Void {
+        recentJobs.removeAll()
+        recentJobs.append(defaultPickerChoice)
     }
     
     private func newDayAction() -> Void {
@@ -180,6 +192,7 @@ struct Add : View {
     
     private func populateTodayView() -> Void {
         todayLogLines = readToday()
+        buildRecentJobIdList()
     }
     
     private func clearTodayView() -> Void {
