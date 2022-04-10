@@ -69,14 +69,16 @@ struct CalendarThisWeek: View {
         let dayFormatter = DateFormatter()
         dayFormatter.dateFormat = "d"
         
+        let rows = model.rowsStartsWith(term: formatted)
+        
         let viewData = DayViewData(
             dayOfWeek: dayOfWeek,
             month: monthFormatter.string(from: requestedDate),
             day: dayFormatter.string(from: requestedDate),
             isWeekend: dayOfWeek.contains("Saturday") || dayOfWeek.contains("Sunday"),
             isToday: isToday,
-            tableData: model.rowsStartsWith(term: formatted),
-            numRecords: model.rowsStartsWith(term: formatted).count
+            tableData: rows,
+            numRecords: rows.count
         )
         
         return viewData
@@ -121,6 +123,7 @@ struct DayView: View {
                     .background(Color.black.opacity(0.2))
                     .clipShape(Circle())
                     .buttonStyle(.borderless)
+                    .help("Copy \(data.numRecords) rows")
                 
                 Divider()
                 
@@ -147,6 +150,7 @@ struct Badge: View {
             ZStack {
                 Color.black.opacity(0.1)
                     .clipShape(Capsule())
+                    .help("\(count) records on this day")
                 Text("\(count)")
                     .font(.body)
             }
