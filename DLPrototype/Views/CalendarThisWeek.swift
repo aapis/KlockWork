@@ -14,6 +14,7 @@ struct DayViewData: Identifiable, Hashable {
     public var month: String
     public var day: String
     public var isWeekend: Bool = false
+    public var isToday: Bool = false
     public var tableData: String
 }
 
@@ -25,10 +26,10 @@ struct CalendarThisWeek: View {
     var body: some View {
         HStack {
             ForEach(thisWeek.reversed(), id: \.self) { data in
-                DayView(viewData: data)
+                DayView(data: data)
             }
         }
-            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 100)
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 110, maxHeight: 150)
             .onAppear(perform: afterAppear)
     }
     
@@ -36,9 +37,10 @@ struct CalendarThisWeek: View {
         generateDateList()
     }
     
+    /// TODO: this method sucks, refactor and remove all the lets
     private func getRelativeDate(_ relativeDate: Int) -> DayViewData {
         let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE, MMMM d"
+        formatter.dateFormat = "YYYY-MM-dd"
         
         let calendar = Calendar.current
         
@@ -46,6 +48,11 @@ struct CalendarThisWeek: View {
         let requestedDate = calendar.date(byAdding: .day, value: relativeDate, to: midnight)!
         let formatted = formatter.string(from: requestedDate)
         
+        let todayFormatter = DateFormatter()
+        todayFormatter.dateFormat = "YYYY-MM-dd"
+        let currentDate = todayFormatter.string(from: Date())
+        
+        let isToday = formatted.starts(with: currentDate)
         
         let dayOfWeekFormatter = DateFormatter()
         dayOfWeekFormatter.dateFormat = "EEEE"
@@ -55,21 +62,15 @@ struct CalendarThisWeek: View {
         let monthFormatter = DateFormatter()
         monthFormatter.dateFormat = "MMMM"
         
-        let month = monthFormatter.string(from: requestedDate)
-        
         let dayFormatter = DateFormatter()
         dayFormatter.dateFormat = "d"
         
-        let day = dayFormatter.string(from: requestedDate)
-        
-        let isWeekend: Bool = dayOfWeek.contains("Saturday") || dayOfWeek.contains("Sunday")
-        
-        
         let viewData = DayViewData(
             dayOfWeek: dayOfWeek,
-            month: month,
-            day: day,
-            isWeekend: isWeekend,
+            month: monthFormatter.string(from: requestedDate),
+            day: dayFormatter.string(from: requestedDate),
+            isWeekend: dayOfWeek.contains("Saturday") || dayOfWeek.contains("Sunday"),
+            isToday: isToday,
             tableData: "hello"
         )
         
@@ -84,19 +85,26 @@ struct CalendarThisWeek: View {
 }
 
 struct DayView: View {
-    public var viewData: DayViewData
+    public var data: DayViewData
     
     var body: some View {
         ZStack {
+            // frame background colours
+            // .secondary for weekends
+            // .red for today
+            // .orange for all other days
+            (data.isToday ? Color.red : (data.isWeekend ? Color.secondary : Color.orange))
+                .edgesIgnoringSafeArea(.horizontal)
+            
             VStack {
-//                Text(viewData.dayOfWeek)
-//                    .frame(width: .infinity, height: .infinity, alignment: .top)
-            }
-            
-            ZStack {
-                Rectangle()
-                    .foregroundColor(viewData.isWeekend ? Color.secondary : Color.orange)
-            
+                Text(data.dayOfWeek)
+                    .fontWeight(.semibold)
+                
+                // TODO: badge UI not ready for primetime yet
+//                Badge(count: 0)
+                
+                Divider()
+                
                 Button(action: selectDay, label: {
                     Image(systemName: "arrow.down.app.fill")
                 })
@@ -104,33 +112,35 @@ struct DayView: View {
                     .font(.largeTitle)
                     .background(Color.black.opacity(0.2))
                     .clipShape(Circle())
-                    .keyboardShortcut(.defaultAction)
                     .buttonStyle(.borderless)
                 
-    //            Button(title, action: selectDay)
-    //                .frame(minWidth: 0, maxWidth: .infinity)
-    //                .padding()
-    //                .frame(minWidth: 100, maxWidth: .infinity, minHeight: 10, maxHeight: .infinity)
-    //                .overlay(
-    //                        RoundedRectangle(cornerRadius: 25)
-    //                            .foregroundColor(Color.orange)
-    //                        )
+                Divider()
+                
+                Text(data.month + " " + data.day)
+                    .font(.subheadline)
+                    .fontWeight(.light)
             }
-            
-            VStack {
-//                Text(viewData.dayOfWeek)
-//                Text(viewData.month)
-//                Text(viewData.day)
-            }
+            .frame(alignment: .topTrailing)
         }
     }
     
     private func selectDay() -> Void {
-//        print(data)
         let pasteBoard = NSPasteboard.general
         
         pasteBoard.clearContents()
-        pasteBoard.setString(viewData.tableData, forType: .string)
+        pasteBoard.setString(data.tableData, forType: .string)
+    }
+}
+
+struct Badge: View {
+    public var count: Int = 0
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .foregroundColor(Color.black.opacity(0.1))
+            Text("\(count)")
+        }
     }
 }
 

@@ -4,5 +4,5 @@ This is a small macOS application I've been using to play with `swiftui` and to 
 
 New workflow will be basically that but with a GUI.  Eventually it will be a cross platform database of sorts.
 
-![content view](Screenshots/content-view.png)
-![log view](Screenshots/log-view.png)
+![record view](Screenshots/record-view.png)
+![search view (beta)](Screenshots/search-view-beta.png)
