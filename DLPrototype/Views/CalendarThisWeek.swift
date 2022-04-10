@@ -15,13 +15,16 @@ struct DayViewData: Identifiable, Hashable {
     public var day: String
     public var isWeekend: Bool = false
     public var isToday: Bool = false
-    public var tableData: String
+    public var tableData: [String]
+    public var numRecords: Int
 }
 
 struct CalendarThisWeek: View {
     public var data: String = ""
     
     @State private var thisWeek: [DayViewData] = []
+    
+//    private let model: Records
     
     var body: some View {
         HStack {
@@ -39,6 +42,7 @@ struct CalendarThisWeek: View {
     
     /// TODO: this method sucks, refactor and remove all the lets
     private func getRelativeDate(_ relativeDate: Int) -> DayViewData {
+        let model = Records()
         let formatter = DateFormatter()
         formatter.dateFormat = "YYYY-MM-dd"
         
@@ -71,14 +75,15 @@ struct CalendarThisWeek: View {
             day: dayFormatter.string(from: requestedDate),
             isWeekend: dayOfWeek.contains("Saturday") || dayOfWeek.contains("Sunday"),
             isToday: isToday,
-            tableData: "hello"
+            tableData: model.rowsStartsWith(term: formatted),
+            numRecords: model.rowsStartsWith(term: formatted).count
         )
         
         return viewData
     }
     
     private func generateDateList() -> Void {
-        for i in -1...5 {
+        for i in 0...6 {
             thisWeek.append(getRelativeDate(i * -1))
         }
     }
@@ -97,11 +102,14 @@ struct DayView: View {
                 .edgesIgnoringSafeArea(.horizontal)
             
             VStack {
-                Text(data.dayOfWeek)
-                    .fontWeight(.semibold)
-                
-                // TODO: badge UI not ready for primetime yet
-//                Badge(count: 0)
+                HStack(alignment: .center) {
+                    Text(data.dayOfWeek)
+                        .fontWeight(.semibold)
+                        .padding(.leading)
+                    Spacer()
+                    
+                    Badge(count: data.numRecords)
+                }
                 
                 Divider()
                 
@@ -120,7 +128,6 @@ struct DayView: View {
                     .font(.subheadline)
                     .fontWeight(.light)
             }
-            .frame(alignment: .topTrailing)
         }
     }
     
@@ -128,7 +135,7 @@ struct DayView: View {
         let pasteBoard = NSPasteboard.general
         
         pasteBoard.clearContents()
-        pasteBoard.setString(data.tableData, forType: .string)
+        pasteBoard.setString(data.tableData.joined(separator: "\n"), forType: .string)
     }
 }
 
@@ -136,10 +143,15 @@ struct Badge: View {
     public var count: Int = 0
     
     var body: some View {
-        ZStack {
-            Circle()
-                .foregroundColor(Color.black.opacity(0.1))
-            Text("\(count)")
+        VStack {
+            ZStack {
+                Color.black.opacity(0.1)
+                    .clipShape(Capsule())
+                Text("\(count)")
+                    .font(.body)
+            }
+                .frame(minWidth: 10, maxWidth: 30, minHeight: 10, maxHeight: 25)
+                .padding(.trailing, 5)
         }
     }
 }
