@@ -14,6 +14,7 @@ struct DayViewData: Identifiable, Hashable {
     public var month: String
     public var day: String
     public var isWeekend: Bool = false
+    public var tableData: String
 }
 
 struct CalendarThisWeek: View {
@@ -22,8 +23,6 @@ struct CalendarThisWeek: View {
     @State private var thisWeek: [DayViewData] = []
     
     var body: some View {
-        Divider()
-        
         HStack {
             ForEach(thisWeek.reversed(), id: \.self) { data in
                 DayView(viewData: data)
@@ -31,8 +30,6 @@ struct CalendarThisWeek: View {
         }
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 50, maxHeight: 100)
             .onAppear(perform: afterAppear)
-        
-        Divider()
     }
     
     private func afterAppear() -> Void {
@@ -68,10 +65,15 @@ struct CalendarThisWeek: View {
         let isWeekend: Bool = dayOfWeek.contains("Saturday") || dayOfWeek.contains("Sunday")
         
         
-        let dayData = DayViewData(dayOfWeek: dayOfWeek, month: month, day: day, isWeekend: isWeekend)
+        let viewData = DayViewData(
+            dayOfWeek: dayOfWeek,
+            month: month,
+            day: day,
+            isWeekend: isWeekend,
+            tableData: "hello"
+        )
         
-//        return formatted
-        return dayData
+        return viewData
     }
     
     private func generateDateList() -> Void {
@@ -82,22 +84,28 @@ struct CalendarThisWeek: View {
 }
 
 struct DayView: View {
-//    public var title: String = ""
-//    public var data: String = ""
     public var viewData: DayViewData
     
-//    @State private var isWeekend: Bool = true // TODO: FALSE by default!
-    
     var body: some View {
-        VStack {
-            Text(viewData.dayOfWeek)
-            Text(viewData.month)
-            Text(viewData.day)
-                .font(.largeTitle)
+        ZStack {
+            VStack {
+//                Text(viewData.dayOfWeek)
+//                    .frame(width: .infinity, height: .infinity, alignment: .top)
+            }
             
             ZStack {
                 Rectangle()
                     .foregroundColor(viewData.isWeekend ? Color.secondary : Color.orange)
+            
+                Button(action: selectDay, label: {
+                    Image(systemName: "arrow.down.app.fill")
+                })
+                    .padding(15)
+                    .font(.largeTitle)
+                    .background(Color.black.opacity(0.2))
+                    .clipShape(Circle())
+                    .keyboardShortcut(.defaultAction)
+                    .buttonStyle(.borderless)
                 
     //            Button(title, action: selectDay)
     //                .frame(minWidth: 0, maxWidth: .infinity)
@@ -108,25 +116,27 @@ struct DayView: View {
     //                            .foregroundColor(Color.orange)
     //                        )
             }
-//            .onAppear(perform: setIsWeekend)
+            
+            VStack {
+//                Text(viewData.dayOfWeek)
+//                Text(viewData.month)
+//                Text(viewData.day)
+            }
         }
     }
     
-//    private func setIsWeekend() -> Void {
-//        if viewData.dayOfWeek.contains("Saturday") || viewData.dayOfWeek.contains("Sunday") {
-//            isWeekend = true
-//        }
-//    }
-    
     private func selectDay() -> Void {
 //        print(data)
+        let pasteBoard = NSPasteboard.general
+        
+        pasteBoard.clearContents()
+        pasteBoard.setString(viewData.tableData, forType: .string)
     }
 }
 
 struct CalendarThisWeek_Previews: PreviewProvider {
     static var previews: some View {
         let data: String = "hi"
-//        let title: String = "title"
         
         CalendarThisWeek(data: data)
     }

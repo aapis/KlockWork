@@ -61,6 +61,8 @@ struct Search: View {
                 
             }
             
+            Divider()
+            
             CalendarThisWeek(data: searchResults)
             
             Table(getDatesForTable()) {
