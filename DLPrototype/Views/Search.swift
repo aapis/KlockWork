@@ -53,7 +53,7 @@ struct Search: View {
                     .frame(width: 200)
                     .font(Font.system(size: 16, design: .default))
                     .onAppear(perform: setDateList)
-                    .onChange(of: selection) { date in print("\(date)"); findAction() } // TODO: why must I print date here for this to compile??
+                    .onChange(of: selection) { _ in findAction() }
 
                 TextField("Search terms", text: $searchText)
                     .font(Font.system(size: 16, design: .default))
@@ -62,6 +62,8 @@ struct Search: View {
             }
             
             Divider()
+            
+            CalendarThisWeek(data: searchResults)
             
             Table(getDatesForTable()) {
                 TableColumn("Timestamp", value: \.timestamp)

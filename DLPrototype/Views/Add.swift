@@ -16,7 +16,7 @@ struct Entry: Identifiable {
 }
 
 let defaultPickerChoice: CustomPickerItem  = CustomPickerItem(title: "Recent jobs", tag: 0)
-//let defaultCopiedRow: Entry = Entry(timestamp: "00", job: "11", message: "Row not found")
+let defaultCopiedRow: Entry = Entry(timestamp: "00", job: "11", message: "Row not found")
 
 struct Add : View {
     var category: Category
@@ -29,7 +29,8 @@ struct Add : View {
     @State private var statusMessage: String = ""
     @State private var recentJobs: [CustomPickerItem] = [defaultPickerChoice]
     @State private var jobPickerSelection = 0
-//    @State private var copiedRow: Entry = defaultCopiedRow
+    @State private var copiedRow: Entry = defaultCopiedRow
+    @State private var tableData: [Entry] = []
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -41,7 +42,7 @@ struct Add : View {
                 
                 Spacer()
                 
-                Button(action: copyAction, label: {
+                Button(action: { copyAction() }, label: {
                     Image(systemName: "doc.on.doc")
                 })
                     .help("Copy all rows")
@@ -82,16 +83,18 @@ struct Add : View {
 
             Divider()
             
-            Table(readTodayTable()) {
+            Table(tableData) {
                 TableColumn("Timestamp", value: \.timestamp)
                     .width(120)
                 TableColumn("Job ID", value: \.job)
                     .width(60)
                 TableColumn("Message", value: \.message)
             }
-            //.onTapGesture(count: 1, perform: copyRow)
 //                .contextMenu {
-//                    Button("Copy row", action: { copiedRow = $0 })
+//                    Button("Copy row", action: {
+//                        copyAction(tableData[0])
+//
+//                    })
 //                    Divider()
 //                    Button(action: {}) { Text("Copy job ID") }
 //                    Button(action: {}) { Text("Copy timestamp") }
@@ -163,12 +166,15 @@ struct Add : View {
         }
     }
     
-    private func copyAction() -> Void {
+    private func copyAction(data: String? = nil) -> Void {
         let pasteBoard = NSPasteboard.general
-        let data = self.readToday()
+        
+        if var data = data {
+            data = readToday()
+        }
         
         pasteBoard.clearContents()
-        pasteBoard.setString(data, forType: .string)
+        pasteBoard.setString(data!, forType: .string)
         
         statusMessage = "Copied!"
         
@@ -191,7 +197,11 @@ struct Add : View {
     }
     
     private func populateTodayView() -> Void {
+        // read log data into memory
         todayLogLines = readToday()
+        // convert log data into [Entry]
+        tableData = readTodayTable()
+        // update the recent job picker
         buildRecentJobIdList()
     }
     
