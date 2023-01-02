@@ -9,13 +9,28 @@
 import Foundation
 import SwiftUI
 
+extension Color {
+    static func random() -> Color {
+        return Color(red: Double.random(in: 0...1), green: Double.random(in: 0...1), blue: Double.random(in: 0...1))
+    }
+    
+    public func isBright() -> Bool {
+        guard let components = cgColor?.components, components.count > 2 else {return false}
+        let brightness = ((components[0] * 299) + (components[1] * 587) + (components[2] * 114)) / 1000
+        return (brightness > 0.5)
+    }
+}
+
 struct LogTable: View, Identifiable {
     public var entries: [Entry]
     public var id = UUID()
     
     @State private var wordCount: Int = 0
     @State private var isReversed: Bool = false
-//    @State private var lines: [Entry] = []
+    @State private var colourMap: [String: Color] = [
+        "11": LogTable.rowColour
+    ]
+    @State private var colours: [Color] = []
     
     static public var rowColour: Color = Color.gray.opacity(0.2)
     static public var headerColour: Color = Color.blue
@@ -88,9 +103,14 @@ struct LogTable: View, Identifiable {
         VStack(spacing: 1) {
             if entries.count > 0 {
                 ForEach(entries) { entry in
-                    LogRow(entry: entry, index: entries.firstIndex(of: entry), colour: LogTable.rowColour)
+                    LogRow(entry: entry, index: entries.firstIndex(of: entry), colour: colourizeRow(entry))
                 }
-                    .onAppear(perform: updateWordCount)
+                .onAppear(perform: {
+                    Task {
+                        updateWordCount()
+                        createRowColourMap()
+                    }
+                })
             } else {
                 LogRowEmpty(message: "No entries found for today", index: 0, colour: LogTable.rowColour)
             }
@@ -150,6 +170,41 @@ struct LogTable: View, Identifiable {
     
     private func sort() -> Void {
         isReversed.toggle()
+    }
+    
+    private func createRowColourMap() -> Void {
+        let ids = getAllJobIds()
+        
+        // generate twice as many colours as required as there is some weirdness sometimes
+        for _ in 0...(ids.count*2) {
+            colours.append(Color.random())
+        }
+        
+        for jid in ids {
+            let colour = colours.randomElement()
+            
+            if colourMap.contains(where: {$0.value == colour}) {
+                colourMap.updateValue(colours.randomElement() ?? LogTable.rowColour, forKey: jid)
+            } else {
+                colourMap.updateValue(colour ?? LogTable.rowColour, forKey: jid)
+            }
+        }
+    }
+    
+    private func colourizeRow(_ current: Entry) -> Color {
+        return colourMap[current.job] ?? LogTable.rowColour
+    }
+    
+    private func getAllJobIds() -> Set<String> {
+        var jobIds: [String] = []
+        
+        for entry in entries {
+            if entry.job != "11" {
+                jobIds.append(entry.job)
+            }
+        }
+        
+        return Set(jobIds)
     }
 }
 

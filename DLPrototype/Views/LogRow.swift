@@ -23,6 +23,7 @@ struct LogRow: View, Identifiable {
                         tigerStripe()
                         Text("\(adjustedIndex())")
                             .padding(10)
+                            .foregroundColor(rowTextColour())
                             
                     }
                 }
@@ -32,6 +33,7 @@ struct LogRow: View, Identifiable {
                         tigerStripe()
                         Text(formatted(entry.timestamp))
                             .padding(10)
+                            .foregroundColor(rowTextColour())
                     }
                 }
                     .frame(maxWidth: 100)
@@ -40,6 +42,7 @@ struct LogRow: View, Identifiable {
                         tigerStripe()
                         Text(entry.job)
                             .padding(10)
+                            .foregroundColor(rowTextColour())
                     }
                 }
                     .frame(maxWidth: 100)
@@ -48,6 +51,7 @@ struct LogRow: View, Identifiable {
                         tigerStripe()
                         Text(entry.message)
                             .padding(10)
+                            .foregroundColor(rowTextColour())
                     }
                 }
                 Group {
@@ -64,7 +68,13 @@ struct LogRow: View, Identifiable {
     }
     
     private func tigerStripe() -> Color {
-        return colour.opacity(index!.isMultiple(of: 2) ? 1 : 0.5)
+        // this maintains tiger stripes, not sure if we want to keep this yet??
+//        return colour.opacity(index!.isMultiple(of: 2) ? 1 : 0.5)
+        return colour
+    }
+    
+    private func rowTextColour() -> Color {
+        return colour.isBright() ? Color.black : Color.white
     }
     
     private func adjustedIndex() -> Int {
