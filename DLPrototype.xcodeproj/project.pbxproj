@@ -26,6 +26,9 @@
 		539C96EA27EE7AFF007DA058 /* CalendarThisWeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539C96E927EE7AFF007DA058 /* CalendarThisWeek.swift */; };
 		53B940D92800A9F10024AA5F /* Records.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B940D82800A9F10024AA5F /* Records.swift */; };
 		53DCA3422803BBBF0032FD60 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DCA3412803BBBF0032FD60 /* CalendarView.swift */; };
+		53EDDF9E29634852008D34C7 /* Entry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDF9D29634852008D34C7 /* Entry.swift */; };
+		53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */; };
+		53EDDFA22963502A008D34C7 /* LogRowEmpty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDFA12963502A008D34C7 /* LogRowEmpty.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +76,9 @@
 		539C96E927EE7AFF007DA058 /* CalendarThisWeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarThisWeek.swift; sourceTree = "<group>"; };
 		53B940D82800A9F10024AA5F /* Records.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Records.swift; sourceTree = "<group>"; };
 		53DCA3412803BBBF0032FD60 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		53EDDF9D29634852008D34C7 /* Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entry.swift; sourceTree = "<group>"; };
+		53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPickerItem.swift; sourceTree = "<group>"; };
+		53EDDFA12963502A008D34C7 /* LogRowEmpty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRowEmpty.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +131,7 @@
 		53218D4624B7F6EB0088ABE9 /* DLPrototype */ = {
 			isa = PBXGroup;
 			children = (
+				53EDDF9C29634840008D34C7 /* Shared */,
 				53B940D72800A9CC0024AA5F /* Models */,
 				53218D4724B7F6EB0088ABE9 /* AppDelegate.swift */,
 				537368D224B93DF700193E88 /* Views */,
@@ -177,6 +184,7 @@
 				537AEB9E29627DCC00385787 /* LogTable.swift */,
 				537AEBA0296287B900385787 /* LogRow.swift */,
 				537AEBA229629DE400385787 /* LogRowActions.swift */,
+				53EDDFA12963502A008D34C7 /* LogRowEmpty.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -195,6 +203,15 @@
 				53B940D82800A9F10024AA5F /* Records.swift */,
 			);
 			path = PlainText;
+			sourceTree = "<group>";
+		};
+		53EDDF9C29634840008D34C7 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				53EDDF9D29634852008D34C7 /* Entry.swift */,
+				53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */,
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -329,14 +346,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53EDDF9E29634852008D34C7 /* Entry.swift in Sources */,
 				53218D4A24B7F6EB0088ABE9 /* ContentView.swift in Sources */,
 				5309EE3D25619A6D00B3BC06 /* Backup.swift in Sources */,
 				537368CD24B93D6A00193E88 /* Search.swift in Sources */,
 				53B940D92800A9F10024AA5F /* Records.swift in Sources */,
+				53EDDFA22963502A008D34C7 /* LogRowEmpty.swift in Sources */,
 				537368CF24B93D9300193E88 /* Log.swift in Sources */,
 				537AEBA1296287B900385787 /* LogRow.swift in Sources */,
 				537368D124B93DB600193E88 /* Add.swift in Sources */,
 				53218D4D24B7F6EB0088ABE9 /* DLPrototype.xcdatamodeld in Sources */,
+				53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */,
 				53218D4824B7F6EB0088ABE9 /* AppDelegate.swift in Sources */,
 				539C96EA27EE7AFF007DA058 /* CalendarThisWeek.swift in Sources */,
 				537AEB9F29627DCC00385787 /* LogTable.swift in Sources */,
@@ -511,7 +531,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 24;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -536,7 +556,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 23;
+				CURRENT_PROJECT_VERSION = 24;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
 				ENABLE_HARDENED_RUNTIME = YES;

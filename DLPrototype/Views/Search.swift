@@ -8,13 +8,6 @@
 
 import SwiftUI
 
-struct CustomPickerItem: Identifiable, Hashable {
-    var id = UUID()
-    var title: String
-    var tag: Int
-    var disabled: Bool = false
-}
-
 struct Search: View {
     var category: Category
     

@@ -14,25 +14,28 @@ struct LogTable: View, Identifiable {
     public var id = UUID()
     
     @State private var wordCount: Int = 0
+    @State private var isReversed: Bool = false
+//    @State private var lines: [Entry] = []
     
     static public var rowColour: Color = Color.gray.opacity(0.2)
     static public var headerColour: Color = Color.blue
     static public var footerColour: Color = Color.gray.opacity(0.5)
     
+    private let font: Font = .system(.body, design: .monospaced)
+    
     var body: some View {
-        
-            Grid(alignment: .top, horizontalSpacing: 1, verticalSpacing: 1) {
-                headers
-                
-                ScrollView {
-                    rows
-                    .onAppear(perform: updateWordCount)
-                }
-                
-                footer
+        Grid(alignment: .top, horizontalSpacing: 1, verticalSpacing: 1) {
+            headers
+                .font(font)
+            
+            ScrollView {
+                rows
+                    .font(font)
             }
             
-        
+            footer
+                .font(font)
+        }
     }
     
     var headers: some View {
@@ -47,30 +50,33 @@ struct LogTable: View, Identifiable {
             }
                 .frame(width: 50)
             Group {
-                ZStack {
+                ZStack(alignment: .leading) {
                     LogTable.headerColour
                     Text("Timestamp")
                         .padding(10)
                 }
             }
-                .frame(width: 150)
+                .frame(width: 100)
             Group {
-                ZStack {
+                ZStack(alignment: .leading) {
                     LogTable.headerColour
                     Text("Job ID")
+                        .padding(10)
                 }
             }
                 .frame(width: 100)
             Group {
-                ZStack {
+                ZStack(alignment: .leading) {
                     LogTable.headerColour
                     Text("Message")
+                        .padding(10)
                 }
             }
             Group {
-                ZStack {
+                ZStack(alignment: .leading) {
                     LogTable.headerColour
                     Text("Actions")
+                        .padding(10)
                 }
             }
                 .frame(width: 100)
@@ -84,8 +90,9 @@ struct LogTable: View, Identifiable {
                 ForEach(entries) { entry in
                     LogRow(entry: entry, index: entries.firstIndex(of: entry), colour: LogTable.rowColour)
                 }
+                    .onAppear(perform: updateWordCount)
             } else {
-                Text("No entries found for today")
+                LogRowEmpty(message: "No entries found for today", index: 0, colour: LogTable.rowColour)
             }
         }
     }
@@ -105,9 +112,9 @@ struct LogTable: View, Identifiable {
                     LogTable.footerColour
                 }
             }
-                .frame(width: 150)
+                .frame(width: 100)
             Group {
-                ZStack {
+                ZStack(alignment: .leading) {
                     LogTable.footerColour
                 }
             }
@@ -120,7 +127,7 @@ struct LogTable: View, Identifiable {
                 }
             }
             Group {
-                ZStack {
+                ZStack(alignment: .leading) {
                     LogTable.footerColour
                 }
             }
@@ -142,7 +149,7 @@ struct LogTable: View, Identifiable {
     }
     
     private func sort() -> Void {
-        print("TODO: implement sorting")
+        isReversed.toggle()
     }
 }
 

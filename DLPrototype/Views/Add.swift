@@ -8,15 +8,6 @@
 
 import SwiftUI
 
-struct Entry: Identifiable, Equatable {
-    let timestamp: String
-    let job: String
-    let message: String
-    let id = UUID()
-    
-    
-}
-
 let defaultPickerChoice: CustomPickerItem  = CustomPickerItem(title: "Recent jobs", tag: 0)
 let defaultCopiedRow: Entry = Entry(timestamp: "00", job: "11", message: "Row not found")
 
@@ -25,6 +16,7 @@ struct Add : View {
     
     @State private var text: String = ""
     @State private var jobId: String = ""
+    @State private var taskUrl: String = "" // only treated as a string, no need to be URL-type
     @State private var noLogMessageAlert = false
     @State private var noJobIdAlert = false
     @State private var todayLogLines: String = ""
@@ -33,6 +25,7 @@ struct Add : View {
     @State private var jobPickerSelection = 0
     @State private var copiedRow: Entry = defaultCopiedRow
     @State private var tableData: [Entry] = []
+    @State private var isPresented: Bool = false
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -44,15 +37,24 @@ struct Add : View {
                 
                 Spacer()
                 
-                Button(action: { copyAction() }, label: {
-                    Image(systemName: "doc.on.doc")
-                })
-                    .help("Copy all rows")
+                // TODO: this causes a crash that I have not had time to investigate yet
+//                Button(action: { copyAction() }, label: {
+//                    Image(systemName: "doc.on.doc")
+//                })
+//                    .help("Copy all rows")
                 
-                Button(action: newDayAction, label: {
+                Button(action: populateTodayView, label: {
+                    Image(systemName: "arrow.counterclockwise")
+                })
+                    .help("Reload data")
+                    .keyboardShortcut("r")
+                
+                Button(action: { isPresented = true; newDayAction() }, label: {
                     Image(systemName: "sunrise")
                 })
                     .help("New day")
+                    .keyboardShortcut("n")
+                    .alert("It's a brand new day!", isPresented: $isPresented) {}
             }
 
             Divider()
@@ -62,13 +64,20 @@ struct Add : View {
                     .frame(width: 100)
                     .font(Font.system(size: 16, design: .default))
                 
+                Text("Or")
+                
+                TextField("Task URL", text: $taskUrl)
+                    .font(Font.system(size: 16, design: .default))
+                
                 Picker("Job", selection: $jobPickerSelection) {
                     ForEach(recentJobs) { item in
                         Text(item.title)
                             .tag(item.tag)
+                            .disabled(item.disabled)
                             .font(Font.system(size: 16, design: .default))
                     }
                 }
+                    .labelsHidden()
                     .frame(width: 200)
                     .font(Font.system(size: 16, design: .default))
                     .onChange(of: jobPickerSelection) { _ in
@@ -148,18 +157,18 @@ struct Add : View {
         }
         
         var jobs: [CustomPickerItem] = [
-            CustomPickerItem(title: sectionTitle, tag: -1),
+            CustomPickerItem(title: sectionTitle, tag: -1, disabled: true),
         ]
         
         // remove duplicates
         var uniqueJobs = Array(Set(jobIds))
+        
         // sort unique job ID list numerically
         uniqueJobs.sort()
+        
         // create set of picker items
-        
-        
         for job in uniqueJobs {
-            let pickerJob = CustomPickerItem(title: String(job), tag: job)
+            let pickerJob = CustomPickerItem(title: String(" - \(job)"), tag: job)
             jobs.append(pickerJob)
         }
         
@@ -197,7 +206,10 @@ struct Add : View {
     }
     
     private func todayIsMonday() -> Bool {
-        return true
+        let calendar = Calendar.current
+        let currentDay = calendar.dateComponents([.day], from: Date())
+        
+        return currentDay.day == 1
     }
     
     /// Resets the recentJobs picker to it's default state by removing all elements and appending the default option
@@ -239,11 +251,11 @@ struct Add : View {
     }
     
     private func submitAction() -> Void {
-        if self.$text.wrappedValue != "" && self.$jobId.wrappedValue != "" {
-            self.logLine()
+        if !text.isEmpty && (!jobId.isEmpty || !taskUrl.isEmpty) {
+            logLine()
             
-            self.$text.wrappedValue = ""
-            self.populateTodayView()
+            text = ""
+            populateTodayView()
         } else {
             print("You have to type something")
         }
@@ -296,9 +308,17 @@ struct Add : View {
         
         let date = formatter.string(from: Date())
         
-        guard let line: Data = ("\n\(date) - \(self.$jobId.wrappedValue) - \(self.$text.wrappedValue)").data(using: String.Encoding.utf8) else { return }
+        guard let line: Data = ("\n\(date) - \(getJobId()) - \(text)").data(using: String.Encoding.utf8) else { return }
         
         writeToLog(output: line)
+    }
+    
+    private func getJobId() -> String {
+        if !taskUrl.isEmpty {
+            jobId = String(taskUrl.suffix(5))
+        }
+        
+        return jobId
     }
     
     private func readToday() -> String {

@@ -34,9 +34,9 @@ struct LogRow: View, Identifiable {
                             .padding(10)
                     }
                 }
-                    .frame(maxWidth: 150)
+                    .frame(maxWidth: 100)
                 Group {
-                    ZStack {
+                    ZStack(alignment: .leading) {
                         tigerStripe()
                         Text(entry.job)
                             .padding(10)
@@ -88,7 +88,7 @@ struct LogRow: View, Identifiable {
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = TimeZone(abbreviation: "MST")
         dateFormatter.locale = NSLocale.current
-        dateFormatter.dateFormat = "yyyy-MM-dd hh:mm:ss"
+        dateFormatter.dateFormat = "h:mm a"
         
         return dateFormatter.string(from: inputDate!)
     }
