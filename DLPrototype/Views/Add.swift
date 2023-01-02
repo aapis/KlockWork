@@ -8,11 +8,13 @@
 
 import SwiftUI
 
-struct Entry: Identifiable {
+struct Entry: Identifiable, Equatable {
     let timestamp: String
     let job: String
     let message: String
     let id = UUID()
+    
+    
 }
 
 let defaultPickerChoice: CustomPickerItem  = CustomPickerItem(title: "Recent jobs", tag: 0)
@@ -72,10 +74,15 @@ struct Add : View {
                     .onChange(of: jobPickerSelection) { _ in
                         // modifies jobId to associate the job to the message
                         jobId = String(jobPickerSelection)
+//                        jobPickerSelection = 0 // TODO: should reset picker to first item but doesn't for $reasons
                     }
-                
-                TextField("Type and hit enter to save...", text: $text)
+            }
+            
+            VStack {
+                TextField("Type and hit enter to save...", text: $text, axis: .vertical)
                     .font(Font.system(size: 16, design: .default))
+                    .lineLimit(3...)
+                    .disableAutocorrection(true)
                     .onSubmit {
                         submitAction()
                     }
@@ -83,13 +90,18 @@ struct Add : View {
 
             Divider()
             
-            Table(tableData) {
-                TableColumn("Timestamp", value: \.timestamp)
-                    .width(120)
-                TableColumn("Job ID", value: \.job)
-                    .width(60)
-                TableColumn("Message", value: \.message)
-            }
+            // TODO: testing new/custom table row display
+//            ForEach(tableData) { _ in LogTable(entries: tableData) }
+            LogTable(entries: tableData)
+            
+            
+//            Table(tableData) {
+//                TableColumn("Timestamp", value: \.timestamp)
+//                    .width(120)
+//                TableColumn("Job ID", value: \.job)
+//                    .width(60)
+//                TableColumn("Message", value: \.message)
+//            }
 //                .contextMenu {
 //                    Button("Copy row", action: {
 //                        copyAction(tableData[0])
@@ -117,34 +129,75 @@ struct Add : View {
 //        print("tapped")
 //    }
     
-    /// Pull the recent job IDs from today's log entries
-    private func buildRecentJobIdList() -> Void {
-        let todayLines = readTodayLines()
-        var todaysJobs: [Int] = []
+    private func jobIdList(from: [String], sectionTitle: String) -> [CustomPickerItem]? {
+        if (from.isEmpty) {
+            return []
+        }
         
-        if (!todayLines.isEmpty) {
-            todayLines.forEach { line in
-                let lineParts = line.components(separatedBy: " - ")
-                
-                if lineParts.count > 1 {
-                    let timestamp = Int(lineParts[1]) ?? 0
+        // get all job IDs from the set
+        var jobIds: [Int] = []
+        
+        from.forEach { line in
+            let lineParts = line.components(separatedBy: " - ")
+            
+            if lineParts.count > 1 {
+                let timestamp = Int(lineParts[1]) ?? 0
 
-                    todaysJobs.append(timestamp)
-                }
-            }
-            
-            // remove duplicates
-            var uniqueJobsToday = Array(Set(todaysJobs))
-            // sort unique job ID list numerically
-            uniqueJobsToday.sort()
-            
-            resetPickerToDefault()
-            
-            for job in uniqueJobsToday {
-                let pickerJob = CustomPickerItem(title: String(job), tag: job)
-                recentJobs.append(pickerJob)
+                jobIds.append(timestamp)
             }
         }
+        
+        var jobs: [CustomPickerItem] = [
+            CustomPickerItem(title: sectionTitle, tag: -1),
+        ]
+        
+        // remove duplicates
+        var uniqueJobs = Array(Set(jobIds))
+        // sort unique job ID list numerically
+        uniqueJobs.sort()
+        // create set of picker items
+        
+        
+        for job in uniqueJobs {
+            let pickerJob = CustomPickerItem(title: String(job), tag: job)
+            jobs.append(pickerJob)
+        }
+        
+        return jobs
+    }
+    
+    /// Pull the recent job IDs from today's log entries
+    private func buildRecentJobIdList() -> Void {
+        resetPickerToDefault()
+        
+        var jobs: [CustomPickerItem] = []
+        let todayLines: [String] = readNeighbourLines() // get today's jobs
+        
+        if todayLines.count > 0 {
+            jobs.append(contentsOf: jobIdList(from: todayLines, sectionTitle: "Today")!)
+        }
+        
+        if todayIsMonday() {
+            let fridayLines: [String] = readNeighbourLines(-3) // get friday's jobs
+            
+            if fridayLines.count > 0 {
+                jobs.append(contentsOf: jobIdList(from: fridayLines, sectionTitle: "Friday")!)
+            }
+        }
+        
+        let yesterdayLines: [String] = readNeighbourLines(-1) // get yesterday's jobs
+        
+        if yesterdayLines.count > 0 {
+            jobs.append(contentsOf: jobIdList(from: yesterdayLines, sectionTitle: "Yesterday")!)
+        }
+        
+        for job in jobs {
+            recentJobs.append(job)
+        }
+    }
+    
+    private func todayIsMonday() -> Bool {
+        return true
     }
     
     /// Resets the recentJobs picker to it's default state by removing all elements and appending the default option
@@ -252,14 +305,29 @@ struct Add : View {
         return readTodayLines().joined(separator: "\n")
     }
     
+    private func readNeighbourLines(_ neighbour: Int? = 0) -> [String] {
+        var components = DateComponents()
+        components.day = neighbour
+        
+        let calendar = Calendar.current
+        let date = Date()
+        let neighbourDate = calendar.date(byAdding: components, to: date)!
+        
+        return readLines(forDate: neighbourDate)
+    }
+    
     private func readTodayLines() -> [String] {
+        return readNeighbourLines() // aka, today - 0 == today
+    }
+    
+    private func readLines(forDate: Date) -> [String] {
         var lines: [String] = []
 
         let log = getDocumentsDirectory().appendingPathComponent("\(category.title).log")
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         
-        let date = formatter.string(from: Date())
+        let date = formatter.string(from: forDate)
             
         if let logLines = try? String(contentsOf: log) {
             for line in logLines.components(separatedBy: .newlines) {

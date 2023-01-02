@@ -12,6 +12,7 @@ struct CustomPickerItem: Identifiable, Hashable {
     var id = UUID()
     var title: String
     var tag: Int
+    var disabled: Bool = false
 }
 
 struct Search: View {
@@ -63,7 +64,8 @@ struct Search: View {
             
             Divider()
             
-            CalendarThisWeek(data: searchResults)
+//            CalendarThisWeek(data: searchResults)
+            CalendarThisWeek()
             
             Table(getDatesForTable()) {
                 TableColumn("Timestamp", value: \.timestamp)
@@ -72,6 +74,9 @@ struct Search: View {
                     .width(60)
                 TableColumn("Message", value: \.message)
             }
+            
+            // TODO: this performs shittily
+//            LogTable(entries: getDatesForTable())
         }
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .padding()

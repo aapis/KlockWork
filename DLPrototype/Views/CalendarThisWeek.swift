@@ -20,7 +20,7 @@ struct DayViewData: Identifiable, Hashable {
 }
 
 struct CalendarThisWeek: View {
-    public var data: String = ""
+//    public var data: String = ""
     
     @State private var thisWeek: [DayViewData] = []
     
@@ -30,6 +30,7 @@ struct CalendarThisWeek: View {
         HStack {
             ForEach(thisWeek.reversed(), id: \.self) { data in
                 DayView(data: data)
+//                DayView()
             }
         }
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 110, maxHeight: 150)
@@ -162,8 +163,9 @@ struct Badge: View {
 
 struct CalendarThisWeek_Previews: PreviewProvider {
     static var previews: some View {
-        let data: String = "hi"
+//        let data: String = "hi"
         
-        CalendarThisWeek(data: data)
+//        CalendarThisWeek(data: data)
+        CalendarThisWeek()
     }
 }

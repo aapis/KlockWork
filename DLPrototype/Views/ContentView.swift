@@ -32,23 +32,43 @@ struct ContentView: View {
                     List {
                         ForEach(categories) { category in                            
                             NavigationLink(destination: Add(category: category), isActive: $activeTab) {
-                                Text("Record")
-                                    .padding(10)
+                                HStack {
+                                    Image(systemName: "doc.append.fill")
+                                        .padding(.trailing, 10)
+                                    Text("Record")
+                                }.padding(10)
                             }
                             
                             NavigationLink(destination: Search(category: category)) {
-                                Text("Search")
-                                    .padding(10)
+                                HStack {
+                                    Image(systemName: "magnifyingglass.circle.fill")
+                                        .padding(.trailing, 10)
+                                    Text("Search")
+                                }.padding(10)
+                            }
+                            
+                            NavigationLink(destination: CalendarView(category: category)) {
+                                HStack {
+                                    Image(systemName: "calendar")
+                                        .padding(.trailing, 10)
+                                    Text("Calendar")
+                                }.padding(10)
                             }
                             
                             NavigationLink(destination: Log(category: category)) {
-                                Text("View")
-                                    .padding(10)
+                                HStack {
+                                    Image(systemName: "doc.fill")
+                                        .padding(.trailing, 10)
+                                    Text("View")
+                                }.padding(10)
                             }
                             
                             NavigationLink(destination: Backup(category: category)) {
-                                Text("Backup")
-                                    .padding(10)
+                                HStack {
+                                    Image(systemName: "cloud.fill")
+                                        .padding(.trailing, 10)
+                                    Text("Backup")
+                                }.padding(10)
                             }
                         }
                     }
