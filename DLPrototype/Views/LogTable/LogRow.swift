@@ -15,6 +15,8 @@ struct LogRow: View, Identifiable {
     public var colour: Color
     public var id = UUID()
     
+    @AppStorage("tigerStriped") private var tigerStriped = false
+    
     var body: some View {
         HStack(spacing: 1) {
             GridRow {
@@ -63,13 +65,15 @@ struct LogRow: View, Identifiable {
                 }
                     .frame(maxWidth: 100)
             }
-        }
+        }.defaultAppStorage(.standard)
 //        .onHover(perform: onHover)
     }
     
     private func tigerStripe() -> Color {
-        // this maintains tiger stripes, not sure if we want to keep this yet??
-//        return colour.opacity(index!.isMultiple(of: 2) ? 1 : 0.5)
+        if tigerStriped {
+            return colour.opacity(index!.isMultiple(of: 2) ? 1 : 0.5)
+        }
+        
         return colour
     }
     

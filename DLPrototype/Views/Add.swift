@@ -27,6 +27,8 @@ struct Add : View {
     @State private var tableData: [Entry] = []
     @State private var isPresented: Bool = false
     
+    @AppStorage("defaultTableSortOrder") private var defaultTableSortOrder = "DESC"
+    
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -130,6 +132,7 @@ struct Add : View {
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .padding()
             .onAppear(perform: populateTodayView)
+            .defaultAppStorage(.standard)
     }
     
 //    private func copyRow() -> Void {
@@ -382,6 +385,10 @@ struct Add : View {
                 
                 entries.append(entry)
             }
+        }
+        
+        if defaultTableSortOrder == "ASC" {
+            entries.reverse()
         }
         
         return entries
