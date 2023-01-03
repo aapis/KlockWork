@@ -16,13 +16,13 @@ struct LogRowActions: View, Identifiable {
     // TODO: this specific view causes different perf problems in Search
     var body: some View {
         HStack {
-//            Button(action: {}) {
-//                Image(systemName: "nosign")
-//            }
-//
-//            Button(action: {}) {
-//                Image(systemName: "doc.on.doc")
-//            }
+            Button(action: {}) {
+                Image(systemName: "nosign")
+            }
+
+            Button(action: {}) {
+                Image(systemName: "doc.on.doc")
+            }
         }
     }
 }

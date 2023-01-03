@@ -11,9 +11,14 @@ import SwiftUI
 
 @main
 struct DLPrototype: App {
+    @StateObject public var records: Records = Records()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(records: records)
+                .onAppear(perform: {
+                    records.reload()
+                })
         }
         
         #if os(macOS)

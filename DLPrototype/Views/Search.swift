@@ -10,6 +10,7 @@ import SwiftUI
 
 struct Search: View {
     var category: Category
+    @ObservedObject public var records: Records
     
     @State private var searchByDate: String = ""
     @State private var searchText: String = ""
@@ -58,7 +59,7 @@ struct Search: View {
             Divider()
             
 //            CalendarThisWeek(data: searchResults)
-            CalendarThisWeek()
+            CalendarThisWeek(records: records)
             
             Table(getDatesForTable()) {
                 TableColumn("Timestamp", value: \.timestamp)
@@ -68,8 +69,8 @@ struct Search: View {
                 TableColumn("Message", value: \.message)
             }
             
-            // TODO: this performs shittily
-//            LogTable(entries: getDatesForTable())
+            // TODO: does not support search yet
+//            LogTable(records: records)
         }
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .padding()

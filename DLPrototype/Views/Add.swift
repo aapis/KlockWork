@@ -13,6 +13,7 @@ let defaultCopiedRow: Entry = Entry(timestamp: "00", job: "11", message: "Row no
 
 struct Add : View {
     var category: Category
+    @ObservedObject public var records: Records
     
     @State private var text: String = ""
     @State private var jobId: String = ""
@@ -45,7 +46,7 @@ struct Add : View {
 //                })
 //                    .help("Copy all rows")
                 
-                Button(action: populateTodayView, label: {
+                Button(action: reloadRecords, label: {
                     Image(systemName: "arrow.counterclockwise")
                 })
                     .help("Reload data")
@@ -101,29 +102,10 @@ struct Add : View {
 
             Divider()
             
-            // TODO: testing new/custom table row display
-//            ForEach(tableData) { _ in LogTable(entries: tableData) }
-            LogTable(entries: tableData)
-            
-            
-//            Table(tableData) {
-//                TableColumn("Timestamp", value: \.timestamp)
-//                    .width(120)
-//                TableColumn("Job ID", value: \.job)
-//                    .width(60)
-//                TableColumn("Message", value: \.message)
-//            }
-//                .contextMenu {
-//                    Button("Copy row", action: {
-//                        copyAction(tableData[0])
-//
-//                    })
-//                    Divider()
-//                    Button(action: {}) { Text("Copy job ID") }
-//                    Button(action: {}) { Text("Copy timestamp") }
-//                    Button(action: {}) { Text("Copy message") }
-//                    Button(action: {}) { Text("Copy row ID") }
-//                }
+            // TODO: in an HStack for future widget(s) placed next door
+            HStack {
+                LogTable(records: records)
+            }
             
             HStack {
                 Text(statusMessage)
@@ -131,15 +113,12 @@ struct Add : View {
         }
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .padding()
-            .onAppear(perform: populateTodayView)
             .defaultAppStorage(.standard)
     }
     
-//    private func copyRow() -> Void {
-//        print($0)
-//        print($selection.wrappedValue)
-//        print("tapped")
-//    }
+    private func reloadRecords() -> Void {
+        records.reload()
+    }
     
     private func jobIdList(from: [String], sectionTitle: String) -> [CustomPickerItem]? {
         if (from.isEmpty) {
@@ -258,7 +237,7 @@ struct Add : View {
             logLine()
             
             text = ""
-            populateTodayView()
+            records.reload()
         } else {
             print("You have to type something")
         }

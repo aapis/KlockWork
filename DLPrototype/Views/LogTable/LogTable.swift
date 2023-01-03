@@ -10,11 +10,14 @@ import Foundation
 import SwiftUI
 
 struct LogTable: View, Identifiable {
-    public var entries: [Entry]
+//    public var entries: [Entry]
     public var id = UUID()
+    
+    @ObservedObject public var records: Records
     
     @State private var wordCount: Int = 0
     @State private var isReversed: Bool = false
+    @State private var wordCountUpdated: Bool = false
     @State private var colourMap: [String: Color] = [
         "11": LogTable.rowColour
     ]
@@ -39,6 +42,7 @@ struct LogTable: View, Identifiable {
             footer
                 .font(font)
         }
+        .onAppear(perform: createRowColourMap)
     }
     
     var headers: some View {
@@ -46,9 +50,9 @@ struct LogTable: View, Identifiable {
             Group {
                 ZStack {
                     LogTable.headerColour
-                    Button(action: sort) {
+                    Button(action: setIsReversed) {
                         Image(systemName: "arrow.up.arrow.down")
-                    }
+                    }.onChange(of: isReversed) { _ in sort() }
                 }
             }
                 .frame(width: 50)
@@ -75,30 +79,25 @@ struct LogTable: View, Identifiable {
                         .padding(10)
                 }
             }
-            Group {
-                ZStack(alignment: .leading) {
-                    LogTable.headerColour
-                    Text("Actions")
-                        .padding(10)
-                }
-            }
-                .frame(width: 100)
+            // TODO: temp commented out until perf issues fixed
+//            Group {
+//                ZStack(alignment: .leading) {
+//                    LogTable.headerColour
+//                    Text("Actions")
+//                        .padding(10)
+//                }
+//            }
+//                .frame(width: 100)
         }
         .frame(height: 40)
     }
     
     var rows: some View {
         VStack(spacing: 1) {
-            if entries.count > 0 {
-                ForEach(entries) { entry in
-                    LogRow(entry: entry, index: entries.firstIndex(of: entry), colour: colourizeRow(entry))
+            if records.entries.count > 0 {
+                ForEach(records.entries) { entry in
+                    LogRow(entry: entry, index: records.entries.firstIndex(of: entry), colour: colourizeRow(entry))
                 }
-                .onAppear(perform: {
-                    Task {
-                        updateWordCount()
-                        createRowColourMap()
-                    }
-                })
             } else {
                 LogRowEmpty(message: "No entries found for today", index: 0, colour: LogTable.rowColour)
             }
@@ -110,7 +109,7 @@ struct LogTable: View, Identifiable {
             Group {
                 ZStack {
                     LogTable.footerColour
-                    Text("\(entries.count)")
+                    Text("\(records.entries.count)")
                         .padding(10)
                 }
             }
@@ -130,51 +129,47 @@ struct LogTable: View, Identifiable {
             Group {
                 ZStack(alignment: .leading) {
                     LogTable.footerColour
-                    Text("Word count: \(wordCount)")
+                    Text("Word count: \(records.wordCount())")
                         .padding(10)
                 }
             }
-            Group {
-                ZStack(alignment: .leading) {
-                    LogTable.footerColour
-                }
-            }
-                .frame(width: 100)
+            // TODO: temp commented out until perf issues fixed
+//            Group {
+//                ZStack(alignment: .leading) {
+//                    LogTable.footerColour
+//                }
+//            }
+//                .frame(width: 100)
         }
         .frame(height: 40)
     }
     
-    private func updateWordCount() -> Void {
-        var words: [String] = []
-        
-        for entry in entries {
-            words.append(entry.message)
-        }
-        
-        let wordSet: Set = Set(words.joined(separator: " ").split(separator: " "))
-
-        wordCount = wordSet.count
-    }
-    
-    private func sort() -> Void {
+    private func setIsReversed() -> Void {
         isReversed.toggle()
     }
     
+    private func sort() -> Void {
+        // just always reverse the records
+        records.entries.reverse()
+    }
+    
     private func createRowColourMap() -> Void {
-        let ids = getAllJobIds()
-        
-        // generate twice as many colours as required as there is some weirdness sometimes
-        for _ in 0...(ids.count*2) {
-            colours.append(Color.random())
-        }
-        
-        for jid in ids {
-            let colour = colours.randomElement()
+        if (records.entries.count > 0) {
+            let ids = getAllJobIds()
             
-            if colourMap.contains(where: {$0.value == colour}) {
-                colourMap.updateValue(colours.randomElement() ?? LogTable.rowColour, forKey: jid)
-            } else {
-                colourMap.updateValue(colour ?? LogTable.rowColour, forKey: jid)
+            // generate twice as many colours as required as there is some weirdness sometimes
+            for _ in 0...(ids.count*2) {
+                colours.append(Color.random())
+            }
+            
+            for jid in ids {
+                let colour = colours.randomElement()
+                
+                if colourMap.contains(where: {$0.value == colour}) {
+                    colourMap.updateValue(colours.randomElement() ?? LogTable.rowColour, forKey: jid)
+                } else {
+                    colourMap.updateValue(colour ?? LogTable.rowColour, forKey: jid)
+                }
             }
         }
     }
@@ -186,7 +181,7 @@ struct LogTable: View, Identifiable {
     private func getAllJobIds() -> Set<String> {
         var jobIds: [String] = []
         
-        for entry in entries {
+        for entry in records.entries {
             if entry.job != "11" {
                 jobIds.append(entry.job)
             }
@@ -197,21 +192,8 @@ struct LogTable: View, Identifiable {
 }
 
 struct LogTablePreview: PreviewProvider {
-    static var previews: some View {
-        let entries: [Entry] = [
-            Entry(timestamp: "2023-01-01 19:48", job: "88888", message: "Hello, world"),
-            Entry(timestamp: "2023-01-01 19:48", job: "88888", message: "Hello, world"),
-            Entry(timestamp: "2023-01-01 19:48", job: "11", message: "Hello, world"),
-            Entry(timestamp: "2023-01-01 19:48", job: "11", message: "Hello, world"),
-            Entry(timestamp: "2023-01-01 19:48", job: "11", message: "Hello, world"),
-            Entry(timestamp: "2023-01-01 19:48", job: "11", message: "Hello, world"),
-            Entry(timestamp: "2023-01-01 19:48", job: "11", message: "Hello, world"),
-            Entry(timestamp: "2023-01-01 19:48", job: "11", message: "Hello, world"),
-            Entry(timestamp: "2023-01-01 19:48", job: "23164", message: "Hello, world"),
-            Entry(timestamp: "2023-01-01 19:48", job: "11", message: "Hello, world")
-        ]
-        
-        LogTable(entries: entries)
+    static var previews: some View {        
+        LogTable(records: Records())
             .frame(height: 700)
     }
 }

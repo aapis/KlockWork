@@ -22,6 +22,8 @@ struct DayViewData: Identifiable, Hashable {
 struct CalendarThisWeek: View {
 //    public var data: String = ""
     
+    @ObservedObject public var records: Records
+    
     @State private var thisWeek: [DayViewData] = []
     
 //    private let model: Records
@@ -43,7 +45,6 @@ struct CalendarThisWeek: View {
     
     /// TODO: this method sucks, refactor and remove all the lets
     private func getRelativeDate(_ relativeDate: Int) -> DayViewData {
-        let model = Records()
         let formatter = DateFormatter()
         formatter.dateFormat = "YYYY-MM-dd"
         
@@ -70,7 +71,7 @@ struct CalendarThisWeek: View {
         let dayFormatter = DateFormatter()
         dayFormatter.dateFormat = "d"
         
-        let rows = model.rowsStartsWith(term: formatted)
+        let rows = records.rowsStartsWith(term: formatted)
         
         let viewData = DayViewData(
             dayOfWeek: dayOfWeek,
@@ -166,6 +167,6 @@ struct CalendarThisWeek_Previews: PreviewProvider {
 //        let data: String = "hi"
         
 //        CalendarThisWeek(data: data)
-        CalendarThisWeek()
+        CalendarThisWeek(records: Records())
     }
 }

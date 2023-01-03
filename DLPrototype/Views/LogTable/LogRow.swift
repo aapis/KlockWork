@@ -56,14 +56,14 @@ struct LogRow: View, Identifiable {
                             .foregroundColor(rowTextColour())
                     }
                 }
-                Group {
-                    ZStack {
-                        tigerStripe()
-                        // TODO: commented out until I can fix the perf issue
+                // TODO: commented out until I can fix the perf issue
+//                Group {
+//                    ZStack {
+//                        tigerStripe()
 //                        LogRowActions()
-                    }
-                }
-                    .frame(maxWidth: 100)
+//                    }
+//                }
+//                    .frame(maxWidth: 100)
             }
         }.defaultAppStorage(.standard)
 //        .onHover(perform: onHover)
