@@ -7,12 +7,14 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct Entry: Identifiable, Equatable {
     let timestamp: String
     var job: String = ""
     let message: String
     var url: String = ""
+    var colour: Color //= Color.gray.opacity(0.2)
     let id = UUID()
     
     init(timestamp: String, job: String, message: String) {
@@ -20,6 +22,15 @@ struct Entry: Identifiable, Equatable {
         self.job = job
         self.message = message
         self.url = ""
+        self.colour = Color.gray.opacity(0.2)
+    }
+    
+    init(timestamp: String, job: String, message: String, colour: Color) {
+        self.timestamp = timestamp
+        self.job = job
+        self.message = message
+        self.url = ""
+        self.colour = colour
     }
     
     init(timestamp: String, url: String, message: String) {
@@ -27,8 +38,13 @@ struct Entry: Identifiable, Equatable {
         self.url = url
         self.job = ""
         self.message = message
+        self.colour = Color.gray.opacity(0.2)
         
         setJobFromUrl()
+    }
+    
+    mutating public func setColour(_ colour: Color) -> Void {
+        self.colour = colour
     }
     
     mutating private func setJobFromUrl() -> Void {

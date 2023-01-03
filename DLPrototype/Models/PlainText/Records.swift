@@ -13,6 +13,11 @@ class Records: ObservableObject, Identifiable {
     public var records: [String] = []
     public var id = UUID()
     
+    private var colourMap: [String: Color] = [
+        "11": LogTable.rowColour
+    ]
+    private var colours: [Color] = []
+    
     @Published public var entries: [Entry] = []
     @Published public var sortOrder: Bool = false // DESC==false, ASC==true
     
@@ -113,7 +118,7 @@ class Records: ObservableObject, Identifiable {
             CustomPickerItem(title: "Recent jobs", tag: 0)
         ]
         var components = DateComponents()
-        components.day = -2 // -1 is not yesterday for some reason
+        components.day = -1 // -1 is not yesterday for some reason
         
         let calendar = Calendar.current
         let yesterday = calendar.date(byAdding: components, to: Date())
@@ -138,7 +143,7 @@ class Records: ObservableObject, Identifiable {
         
         for record in today() {
             let parts = record.components(separatedBy: " - ")
-            
+
             if parts.count > 1 {
                 let entry = Entry(timestamp: parts[0], job: parts[1], message: parts[2])
 
@@ -169,6 +174,7 @@ class Records: ObservableObject, Identifiable {
         records = read("Daily.log")
         entries = []
         makeConsumable() // TODO: makeComsumable only creates TODAY's ENTRIES
+        createColourMap()
     }
     
     // Returns list of strings representing all log lines since a given date, from a given file
@@ -197,6 +203,89 @@ class Records: ObservableObject, Identifiable {
         }
         
         return lines
+    }
+    
+    // TODO: this func doesn't belong in this class
+    public func createColourMap() -> Void {
+        print("Records::createColourMap")
+
+        generateDefaultColours()
+        
+        if colourMap.count == 1 { // there is 1 item in there by default
+            if (entries.count > 0) {
+                let ids = jobIdsFor(Date())
+                
+                // generate twice as many colours as required as there is some weirdness sometimes
+                for _ in 0...(ids.count*2) {
+                    colours.append(Color.random())
+                }
+                
+                for jid in ids {
+                    let colour = colours.randomElement()
+                    
+                    if colourMap.contains(where: {$0.value == colour}) {
+                        colourMap.updateValue(getUnusedColourFromBank(), forKey: jid)
+                    } else {
+                        colourMap.updateValue(colour ?? LogTable.rowColour, forKey: jid)
+                    }
+                }
+            }
+        } else {
+            // determine which job IDs need to be assigned a colour from the bank
+            print("Records::createColourMap - colourMap is not empty")
+            
+            for e in entries {
+                if !colourMap.keys.contains(e.job) {
+                    // e.job is the new kid on the block, pull a new item from the unused colour bank
+                    colourMap.updateValue(getUnusedColourFromBank(), forKey: e.job)
+                }
+            }
+        }
+        
+        applyColourMap()
+    }
+    
+    // TODO: This shouldn't be in this class
+    public func applyColourMap() -> Void {
+        for index in entries.indices {
+            entries[index].colour = colourMap[entries[index].job] ?? LogTable.rowColour
+        }
+        
+        print("Records::applyColourMap - map: \(colourMap)")
+    }
+    
+    // TODO: this shouldn't be here either
+    private func generateDefaultColours() -> Void {
+        if (entries.count > 0) {
+            let ids = jobIdsFor(Date())
+            
+            // generate twice as many colours as required as there is some weirdness sometimes
+            for _ in 0...(ids.count*2) {
+                colours.append(Color.random())
+            }
+        }
+    }
+    
+    // TODO: this shouldn't be here either
+    private func getUnusedColourFromBank() -> Color {
+        var used: [Color] = []
+        var tmpColours = colours // TODO: this should actually modify self.colours if we can
+
+        for index in colourMap.indices {
+            used.append(colourMap[index].value)
+            
+            for uc in used {
+                tmpColours.removeAll(where: { $0 == uc})
+            }
+            
+            if tmpColours.isEmpty {
+                break
+            }
+            
+            return tmpColours.randomElement()!
+        }
+        
+        return LogTable.rowColour
     }
     
     // Returns logs added in the last 3 months
@@ -238,14 +327,6 @@ class Records: ObservableObject, Identifiable {
         
         return df.string(from: Date())
     }
-    
-//    private func rowToEntry(row: String) -> Entry {
-//        let lineComponents = row.components(separatedBy: " - ")
-//
-//        if lineComponents.count > 1 { // each actual data row contains 3 distinct sections: timestamp, jobID, message
-//
-//        }
-//    }
     
     private func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask)
