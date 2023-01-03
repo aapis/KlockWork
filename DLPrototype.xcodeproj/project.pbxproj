@@ -32,6 +32,7 @@
 		53EFCE7629637CC6004E45EC /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EFCE7529637CC6004E45EC /* Color.swift */; };
 		53EFCE7929637F35004E45EC /* GeneralSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EFCE7829637F35004E45EC /* GeneralSettings.swift */; };
 		53EFCE7B29637F49004E45EC /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EFCE7A29637F49004E45EC /* Settings.swift */; };
+		53EFCE7D2963D309004E45EC /* LogTableDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EFCE7C2963D309004E45EC /* LogTableDetails.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,6 +86,7 @@
 		53EFCE7529637CC6004E45EC /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		53EFCE7829637F35004E45EC /* GeneralSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettings.swift; sourceTree = "<group>"; };
 		53EFCE7A29637F49004E45EC /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		53EFCE7C2963D309004E45EC /* LogTableDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTableDetails.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -235,6 +237,7 @@
 				537AEBA0296287B900385787 /* LogRow.swift */,
 				537AEBA229629DE400385787 /* LogRowActions.swift */,
 				53EDDFA12963502A008D34C7 /* LogRowEmpty.swift */,
+				53EFCE7C2963D309004E45EC /* LogTableDetails.swift */,
 			);
 			path = LogTable;
 			sourceTree = "<group>";
@@ -302,7 +305,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1150;
-				LastUpgradeCheck = 1320;
+				LastUpgradeCheck = 1420;
 				ORGANIZATIONNAME = YegCollective;
 				TargetAttributes = {
 					53218D4324B7F6EB0088ABE9 = {
@@ -379,6 +382,7 @@
 				53EFCE7629637CC6004E45EC /* Color.swift in Sources */,
 				53B940D92800A9F10024AA5F /* Records.swift in Sources */,
 				53EDDFA22963502A008D34C7 /* LogRowEmpty.swift in Sources */,
+				53EFCE7D2963D309004E45EC /* LogTableDetails.swift in Sources */,
 				537368CF24B93D9300193E88 /* Log.swift in Sources */,
 				537AEBA1296287B900385787 /* LogRow.swift in Sources */,
 				537368D124B93DB600193E88 /* Add.swift in Sources */,
@@ -470,6 +474,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -487,7 +492,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -531,6 +536,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -542,7 +548,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -560,6 +566,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 27;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -585,6 +592,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 27;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -608,6 +616,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
 				INFOPLIST_FILE = DLPrototypeTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -630,6 +639,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
 				INFOPLIST_FILE = DLPrototypeTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -651,6 +661,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
 				INFOPLIST_FILE = DLPrototypeUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -671,6 +682,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
 				INFOPLIST_FILE = DLPrototypeUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

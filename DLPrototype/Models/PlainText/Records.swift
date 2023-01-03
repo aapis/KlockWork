@@ -47,25 +47,96 @@ class Records: ObservableObject, Identifiable {
     }
     
     public func today() -> [String] {
-        let inputDateFormatter = DateFormatter()
-        inputDateFormatter.timeZone = TimeZone(abbreviation: "MST")
-        inputDateFormatter.locale = NSLocale.current
-        inputDateFormatter.dateFormat = "yyyy-MM-dd"
-        let date = inputDateFormatter.string(from: Date())
-        
-        return rowsStartsWith(term: date)
+        return rowsStartsWith(term: dateFormat(Date()))
     }
     
+    public func forDate(_ date: Date) -> [String] {
+        return rowsStartsWith(term: dateFormat(date))
+    }
+    
+    public func entriesFor(_ date: Date) -> [Entry] {
+        return entries
+    }
+    
+    public func jobIdsFor(_ date: Date) -> Set<String> {
+        var ids: [String] = []
+        let lines = rowsStartsWith(term: dateFormat(date))
+        
+        for line in lines {
+            let lineComponents = line.components(separatedBy: " - ")
+            
+            if lineComponents[1] != "11" {
+                // ["2023-01-02 19:08", "11", "please work"]
+                ids.append(lineComponents[1])
+            }
+        }
+        
+        let idSet = Set(ids)
+        
+        return idSet
+    }
+    
+    public func jobs(date: Date, sectionTitle: String) -> [CustomPickerItem] {
+        var jobIds: [Int] = []
+        var jobs: [CustomPickerItem] = [
+            CustomPickerItem(title: sectionTitle, tag: -1, disabled: true),
+        ]
+        
+        forDate(date).forEach { line in
+            let lineParts = line.components(separatedBy: " - ")
+            
+            if lineParts.count > 1 {
+                let jid = Int(lineParts[1]) ?? 0
+
+                jobIds.append(jid)
+            }
+        }
+        
+        // remove duplicates
+        var uniqueJobs = Array(Set(jobIds))
+        
+        // sort unique job ID list numerically
+        uniqueJobs.sort()
+        
+        // create set of picker items
+        for job in uniqueJobs {
+            let pickerJob = CustomPickerItem(title: String(" - \(job)"), tag: job)
+            jobs.append(pickerJob)
+        }
+        
+        return jobs
+    }
+    
+    // Compiles today and yesterday's job IDs into a list for a Picker
+    public func recentJobs() -> [CustomPickerItem] {
+        var recent: [CustomPickerItem] = [
+            CustomPickerItem(title: "Recent jobs", tag: 0)
+        ]
+        var components = DateComponents()
+        components.day = -2 // -1 is not yesterday for some reason
+        
+        let calendar = Calendar.current
+        let yesterday = calendar.date(byAdding: components, to: Date())
+        
+        recent.append(contentsOf: jobs(date: Date(), sectionTitle: "Today"))
+        
+        if yesterday != nil {
+            recent.append(contentsOf: jobs(date: yesterday!, sectionTitle: "Yesterday"))
+        }
+        
+        return recent
+    }
+    
+    // Converts string data to Entry objects, which are usable in the UI
     public func makeConsumable() -> Void {
         print("Records::makeConsumable")
-        let to = today()
         
         // don't attempt to convert if we already have entries
         if entries.count > 0 {
             return
         }
         
-        for record in to {
+        for record in today() {
             let parts = record.components(separatedBy: " - ")
             
             if parts.count > 1 {
@@ -97,9 +168,10 @@ class Records: ObservableObject, Identifiable {
         
         records = read("Daily.log")
         entries = []
-        makeConsumable() // TODO: only creates TODAY's ENTRIES
+        makeConsumable() // TODO: makeComsumable only creates TODAY's ENTRIES
     }
     
+    // Returns list of strings representing all log lines since a given date, from a given file
     public func dataSince(date: Date, fileName: String) -> [String] {
         var lines: [String] = []
         
@@ -157,20 +229,22 @@ class Records: ObservableObject, Identifiable {
         return lines
     }
     
-//    private func startsWithOld(term: String) -> [String] {
-//        var lines: [String] = []
+    // Returns string like 2020-06-11 representing a date, for use in filtering
+    private func dateFormat(_ date: Date) -> String {
+        let df = DateFormatter()
+        df.timeZone = TimeZone(abbreviation: "MST")
+        df.locale = NSLocale.current
+        df.dateFormat = "yyyy-MM-dd"
+        
+        return df.string(from: Date())
+    }
+    
+//    private func rowToEntry(row: String) -> Entry {
+//        let lineComponents = row.components(separatedBy: " - ")
 //
-//        let log = getDocumentsDirectory().appendingPathComponent("Daily.log")
+//        if lineComponents.count > 1 { // each actual data row contains 3 distinct sections: timestamp, jobID, message
 //
-//        if let logLines = try? String(contentsOf: log) {
-//            for line in logLines.components(separatedBy: .newlines) {
-//                if line.starts(with: term) {
-//                    lines.append(line)
-//                }
-//            }
 //        }
-//
-//        return lines
 //    }
     
     private func getDocumentsDirectory() -> URL {

@@ -10,7 +10,6 @@ import Foundation
 import SwiftUI
 
 struct LogTable: View, Identifiable {
-//    public var entries: [Entry]
     public var id = UUID()
     
     @ObservedObject public var records: Records
@@ -18,7 +17,7 @@ struct LogTable: View, Identifiable {
     @State private var wordCount: Int = 0
     @State private var isReversed: Bool = false
     @State private var wordCountUpdated: Bool = false
-    @State private var colourMap: [String: Color] = [
+    @State public var colourMap: [String: Color] = [
         "11": LogTable.rowColour
     ]
     @State private var colours: [Color] = []
@@ -30,19 +29,27 @@ struct LogTable: View, Identifiable {
     private let font: Font = .system(.body, design: .monospaced)
     
     var body: some View {
-        Grid(alignment: .top, horizontalSpacing: 1, verticalSpacing: 1) {
-            headers
-                .font(font)
-            
-            ScrollView {
-                rows
+        HStack {
+            table
+            tableDetails
+        }.onAppear(perform: createRowColourMap)
+    }
+    
+    var table: some View {
+        Section {
+            Grid(alignment: .top, horizontalSpacing: 1, verticalSpacing: 1) {
+                headers
+                    .font(font)
+                
+                ScrollView {
+                    rows
+                        .font(font)
+                }
+                
+                footer
                     .font(font)
             }
-            
-            footer
-                .font(font)
         }
-        .onAppear(perform: createRowColourMap)
     }
     
     var headers: some View {
@@ -144,6 +151,11 @@ struct LogTable: View, Identifiable {
         .frame(height: 40)
     }
     
+    var tableDetails: some View {
+//        LogTableDetails(records: records, colours: colourMap)
+        Group {}
+    }
+    
     private func setIsReversed() -> Void {
         isReversed.toggle()
     }
@@ -155,7 +167,7 @@ struct LogTable: View, Identifiable {
     
     private func createRowColourMap() -> Void {
         if (records.entries.count > 0) {
-            let ids = getAllJobIds()
+            let ids = records.jobIdsFor(Date())
             
             // generate twice as many colours as required as there is some weirdness sometimes
             for _ in 0...(ids.count*2) {
@@ -178,21 +190,21 @@ struct LogTable: View, Identifiable {
         return colourMap[current.job] ?? LogTable.rowColour
     }
     
-    private func getAllJobIds() -> Set<String> {
-        var jobIds: [String] = []
-        
-        for entry in records.entries {
-            if entry.job != "11" {
-                jobIds.append(entry.job)
-            }
-        }
-        
-        return Set(jobIds)
-    }
+//    private func getAllJobIds() -> Set<String> {
+//        var jobIds: [String] = []
+//
+//        for entry in records.entries {
+//            if entry.job != "11" {
+//                jobIds.append(entry.job)
+//            }
+//        }
+//
+//        return Set(jobIds)
+//    }
 }
 
 struct LogTablePreview: PreviewProvider {
-    static var previews: some View {        
+    static var previews: some View {
         LogTable(records: Records())
             .frame(height: 700)
     }

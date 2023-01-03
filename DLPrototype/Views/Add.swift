@@ -73,7 +73,7 @@ struct Add : View {
                     .font(Font.system(size: 16, design: .default))
                 
                 Picker("Job", selection: $jobPickerSelection) {
-                    ForEach(recentJobs) { item in
+                    ForEach(records.recentJobs()) { item in
                         Text(item.title)
                             .tag(item.tag)
                             .disabled(item.disabled)
