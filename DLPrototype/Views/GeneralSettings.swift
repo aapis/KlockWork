@@ -10,14 +10,16 @@ import Foundation
 import SwiftUI
 
 struct GeneralSettings: View {
-    @AppStorage("tigerStriped") private var tigerStriped = false
-    @AppStorage("defaultTableSortOrder") private var defaultTableSortOrder = "DESC"
-    @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
-    @AppStorage("showExperiment.actions") private var showExperimentActions = false
+    @AppStorage("tigerStriped") private var tigerStriped: Bool = false
+    @AppStorage("defaultTableSortOrder") private var defaultTableSortOrder: String = "DESC"
+    @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures: Bool = false
+    @AppStorage("showExperiment.actions") private var showExperimentActions: Bool = false
+    @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
 
     var body: some View {
         Form {
             Toggle("Tiger stripe table rows", isOn: $tigerStriped)
+            Toggle("Auto-correct text in text boxes", isOn: $enableAutoCorrection)
             
             Group {
                 Toggle("Experimental features (may tank performance)", isOn: $showExperimentalFeatures)

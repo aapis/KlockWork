@@ -9,6 +9,7 @@
 import Foundation
 import SwiftUI
 
+// TODO: this whole view should be based on a given day (param?), not on "today" (for Search)
 struct LogTableDetails: View {
     @ObservedObject public var records: Records
     public var colours: [String: Color]

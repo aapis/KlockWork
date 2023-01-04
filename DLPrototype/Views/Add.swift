@@ -15,7 +15,8 @@ struct Add : View {
     var category: Category
     @ObservedObject public var records: Records
     
-    @State private var text: String = ""
+    @State public var text: String = ""
+    
     @State private var jobId: String = ""
     @State private var taskUrl: String = "" // only treated as a string, no need to be URL-type
     @State private var noLogMessageAlert = false
@@ -63,6 +64,8 @@ struct Add : View {
             Divider()
 
             HStack {
+                LogTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, text: $jobId)
+                    .frame(height: 40)
                 TextField("Job ID", text: $jobId)
                     .frame(width: 100)
                     .font(Font.system(size: 16, design: .default))
@@ -92,21 +95,19 @@ struct Add : View {
             }
             
             VStack {
-                TextField("Type and hit enter to save...", text: $text, axis: .vertical)
-                    .font(Font.system(size: 16, design: .default))
-                    .lineLimit(3...)
-                    .disableAutocorrection(true)
-                    .onSubmit {
-                        submitAction()
-                    }
+//                TextField("Type and hit enter to save...", text: $text, axis: .vertical)
+//                    .font(Font.system(size: 16, design: .default))
+//                    .lineLimit(3...)
+//                    .disableAutocorrection(true)
+//                    .onSubmit {
+//                        submitAction()
+//                    }
+                LogTextField(placeholder: "Type and hit enter to save...", lineLimit: 6, onSubmit: submitAction, text: $text)
             }
 
             Divider()
             
-            // TODO: in an HStack for future widget(s) placed next door
-            HStack {
-                LogTable(records: records)
-            }
+            LogTable(records: records)
             
             HStack {
                 Text(statusMessage)
@@ -371,5 +372,12 @@ struct Add : View {
         }
         
         return entries
+    }
+}
+
+struct AddPreview: PreviewProvider {
+    static var previews: some View {
+        Add(category: Category(title: "Daily"), records: Records())
+            .frame(width: 800, height: 800)
     }
 }

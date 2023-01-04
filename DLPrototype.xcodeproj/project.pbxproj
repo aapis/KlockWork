@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		5309EE3D25619A6D00B3BC06 /* Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5309EE3C25619A6D00B3BC06 /* Backup.swift */; };
 		53218D4824B7F6EB0088ABE9 /* DLPrototype.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */; };
-		53218D4A24B7F6EB0088ABE9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4924B7F6EB0088ABE9 /* ContentView.swift */; };
+		53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4924B7F6EB0088ABE9 /* Home.swift */; };
 		53218D4D24B7F6EB0088ABE9 /* DLPrototype.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4B24B7F6EB0088ABE9 /* DLPrototype.xcdatamodeld */; };
 		53218D4F24B7F6EC0088ABE9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 53218D4E24B7F6EC0088ABE9 /* Assets.xcassets */; };
 		53218D5224B7F6EC0088ABE9 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 53218D5124B7F6EC0088ABE9 /* Preview Assets.xcassets */; };
@@ -38,6 +38,7 @@
 		53EFCE7929637F35004E45EC /* GeneralSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EFCE7829637F35004E45EC /* GeneralSettings.swift */; };
 		53EFCE7B29637F49004E45EC /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EFCE7A29637F49004E45EC /* Settings.swift */; };
 		53EFCE7D2963D309004E45EC /* LogTableDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EFCE7C2963D309004E45EC /* LogTableDetails.swift */; };
+		53FEF578296603D9000B94FC /* LogTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FEF577296603D9000B94FC /* LogTextField.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,7 +62,7 @@
 		5309EE3C25619A6D00B3BC06 /* Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
 		53218D4424B7F6EB0088ABE9 /* DLPrototype.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DLPrototype.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DLPrototype.swift; sourceTree = "<group>"; };
-		53218D4924B7F6EB0088ABE9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		53218D4924B7F6EB0088ABE9 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
 		53218D4C24B7F6EB0088ABE9 /* DLPrototype.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DLPrototype.xcdatamodel; sourceTree = "<group>"; };
 		53218D4E24B7F6EC0088ABE9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		53218D5124B7F6EC0088ABE9 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -97,6 +98,7 @@
 		53EFCE7829637F35004E45EC /* GeneralSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettings.swift; sourceTree = "<group>"; };
 		53EFCE7A29637F49004E45EC /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		53EFCE7C2963D309004E45EC /* LogTableDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTableDetails.swift; sourceTree = "<group>"; };
+		53FEF577296603D9000B94FC /* LogTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTextField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,8 +195,9 @@
 		537368D224B93DF700193E88 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				53FEF576296603CA000B94FC /* LogTextField */,
 				53EFCE7729637EA0004E45EC /* LogTable */,
-				53218D4924B7F6EB0088ABE9 /* ContentView.swift */,
+				53218D4924B7F6EB0088ABE9 /* Home.swift */,
 				537368CC24B93D6A00193E88 /* Search.swift */,
 				537368CE24B93D9300193E88 /* Log.swift */,
 				537368D024B93DB600193E88 /* Add.swift */,
@@ -271,6 +274,14 @@
 				53EFCE7C2963D309004E45EC /* LogTableDetails.swift */,
 			);
 			path = LogTable;
+			sourceTree = "<group>";
+		};
+		53FEF576296603CA000B94FC /* LogTextField */ = {
+			isa = PBXGroup;
+			children = (
+				53FEF577296603D9000B94FC /* LogTextField.swift */,
+			);
+			path = LogTextField;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -405,9 +416,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53FEF578296603D9000B94FC /* LogTextField.swift in Sources */,
 				53EDDF9E29634852008D34C7 /* Entry.swift in Sources */,
 				53C6D0912965044C00EA6129 /* DetailsColumn.swift in Sources */,
-				53218D4A24B7F6EB0088ABE9 /* ContentView.swift in Sources */,
+				53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */,
 				53EFCE7929637F35004E45EC /* GeneralSettings.swift in Sources */,
 				5309EE3D25619A6D00B3BC06 /* Backup.swift in Sources */,
 				537368CD24B93D6A00193E88 /* Search.swift in Sources */,
@@ -601,7 +613,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 30;
+				CURRENT_PROJECT_VERSION = 31;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -627,7 +639,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 30;
+				CURRENT_PROJECT_VERSION = 31;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;

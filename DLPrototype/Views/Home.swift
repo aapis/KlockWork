@@ -14,7 +14,7 @@ struct Category: Identifiable {
     var title: String
 }
 
-struct ContentView: View {
+struct Home: View {
     @ObservedObject public var records: Records    
     
     var body: some View {
@@ -65,5 +65,11 @@ struct ContentView: View {
                 }
             }.listStyle(.sidebar)
         }
+    }
+}
+
+struct HomePreview: PreviewProvider {
+    static var previews: some View {
+        Home(records: Records())
     }
 }

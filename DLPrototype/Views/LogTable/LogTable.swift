@@ -22,11 +22,14 @@ struct LogTable: View, Identifiable {
     ]
     @State private var colours: [Color] = []
     @State private var isShowingAlert: Bool = false
+    @State private var selectedTab: Int = 0
     
     static public var rowColour: Color = Color.gray.opacity(0.2)
     static public var headerColour: Color = Color.blue
     static public var footerColour: Color = Color.gray.opacity(0.5)
-    static public var toolbarColour: Color = headerColour.opacity(0.2)
+    static public var toolbarColour: Color = Color.indigo.opacity(0.2)
+    static public var tabColour: Color = Color.white.opacity(0.2)
+    static public var tabActiveColour: Color = Color.white.opacity(0.7)
     
     private let font: Font = .system(.body, design: .monospaced)
     
@@ -38,15 +41,19 @@ struct LogTable: View, Identifiable {
             toolbar.font(font)
             
             HStack(spacing: 1) {
-                table
+                if selectedTab == 0 {
+                    table
+                } else if selectedTab == 1 {
+                    Text("GROUPED TABLE NOT IMPLEMENTED")
+                }
                 
                 if showSidebar {
-                    tableDetails.frame(width: 300)
+                    tableDetails.frame(maxWidth: 300)
                 }
             }
             .onAppear(perform: {
                 records.applyColourMap()
-                records.updateWordCount()
+                let _ = records.updateWordCount()
             })
         }
     }
@@ -65,6 +72,7 @@ struct LogTable: View, Identifiable {
         }
     }
     
+    // TODO: add picker OR buttons that filter or group based on a given column
     var toolbar: some View {
         GridRow {
             Group {
@@ -72,35 +80,66 @@ struct LogTable: View, Identifiable {
                     LogTable.toolbarColour
                     
                     HStack {
-                        Button(action: reload, label: {
-                            Image(systemName: "arrow.counterclockwise")
-                        })
-                        .help("Reload data")
-                        .keyboardShortcut("r")
-                        .buttonStyle(BorderlessButtonStyle())
+                        HStack(spacing: 1) {
+                            // TODO: convert these button/styles to custom button views and styles
+                            Button(action: {setActive(0)}, label: {
+                                ZStack {
+                                    (selectedTab == 0 ? LogTable.tabActiveColour : LogTable.tabColour)
+                                    Image(systemName: "tray.2.fill")
+                                }
+                            })
+                            .buttonStyle(.borderless)
+                            .foregroundColor(selectedTab == 0 ? Color.black : Color.white)
+                            .help("View all of today's records")
+                            .frame(width: 50)
+                            
+                            Button(action: {setActive(1)}, label: {
+                                ZStack {
+                                    (selectedTab == 1 ? LogTable.tabActiveColour : LogTable.tabColour)
+                                    Image(systemName: "folder")
+                                }
+                            })
+                            .buttonStyle(.borderless)
+                            .foregroundColor(selectedTab == 1 ? Color.black : Color.white)
+                            .help("View today's records, grouped")
+                            .frame(width: 50)
+                        }
                         
-                        Button(action: {isShowingAlert = true; newDayAction() }, label: {
-                            Image(systemName: "sunrise")
-                        })
-                        .help("New day")
-                        .keyboardShortcut("n")
-                        .buttonStyle(BorderlessButtonStyle())
-    //                        .alert("It's a brand new day!", isPresented: $isPresented) {}
-                        
-                        Button(action: copyAll, label: {
-                            Image(systemName: "doc.on.doc")
-                        })
-                        .buttonStyle(BorderlessButtonStyle())
-                        .keyboardShortcut("c")
-                        .help("Copy all rows")
-                        
-                        Spacer()
-                        Button(action: toggleSidebar, label: {
-                            Image(systemName: "sidebar.right")
-                        })
-                        .help("Toggle sidebar")
-                        .buttonStyle(BorderlessButtonStyle())
-                    }.padding(8)
+                        HStack {
+                            Button(action: reload, label: {
+                                Image(systemName: "arrow.counterclockwise")
+                            })
+                            .help("Reload data")
+                            .keyboardShortcut("r")
+                            .buttonStyle(.borderless)
+                            .foregroundColor(Color.white)
+                            
+                            Button(action: {isShowingAlert = true; newDayAction() }, label: {
+                                Image(systemName: "sunrise")
+                            })
+                            .help("New day")
+                            .keyboardShortcut("n")
+                            .buttonStyle(.borderless)
+                            .foregroundColor(Color.white)
+                            //                        .alert("It's a brand new day!", isPresented: $isPresented) {}
+                            
+                            Button(action: copyAll, label: {
+                                Image(systemName: "doc.on.doc")
+                            })
+                            .buttonStyle(.borderless)
+                            .keyboardShortcut("c")
+                            .help("Copy all rows")
+                            .foregroundColor(Color.white)
+                            
+                            Spacer()
+                            Button(action: toggleSidebar, label: {
+                                Image(systemName: "sidebar.right")
+                            })
+                            .help("Toggle sidebar")
+                            .buttonStyle(.borderless)
+                            .foregroundColor(Color.white)
+                        }.padding(8)
+                    }
                 }
             }
         }.frame(height: 35)
@@ -220,6 +259,10 @@ struct LogTable: View, Identifiable {
     
     var tableDetails: some View {
         LogTableDetails(records: records, colours: colourMap)
+    }
+    
+    private func setActive(_ index: Int) -> Void {
+        selectedTab = index
     }
     
     private func setIsReversed() -> Void {

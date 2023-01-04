@@ -15,7 +15,7 @@ struct DLPrototype: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView(records: records)
+            Home(records: records)
                 .onAppear(perform: {
                     records.reload()
                 })
@@ -25,7 +25,6 @@ struct DLPrototype: App {
         Settings {
             SettingsView()
         }
-        #endif
         
         // TODO: temp commented out, too early to include this
 //        MenuBarExtra("name", systemImage: "keyboard.macwindow") {
@@ -41,5 +40,6 @@ struct DLPrototype: App {
 //                NSApplication.shared.terminate(nil)
 //            }.keyboardShortcut("q")
 //        }
+        #endif
     }
 }
