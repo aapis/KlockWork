@@ -12,12 +12,30 @@ import SwiftUI
 struct Statistic: Identifiable {
     public let key: String
     public var value: String
+    public let group: StatisticPeriod
     public let id = UUID()
+}
+
+struct StatisticGroup: Identifiable {
+    public let title: String
+    public let enumKey: StatisticPeriod
+    public let id = UUID()
+}
+
+public enum StatisticPeriod: String, CaseIterable {
+    case today = "Today"
+    case yesterday = "Yesterday"
+    case overall = "Overall"
 }
 
 class Records: ObservableObject, Identifiable {
     public var records: [String] = []
     public var statistics: [Statistic] = []
+    public var groups: [StatisticGroup] = [ // TODO: I tried to pull these from the enum but it was so FUCKING FRUSTRATING that I almost yeeted the codebase into the sun
+        StatisticGroup(title: "Today", enumKey: .today),
+        StatisticGroup(title: "Yesterday", enumKey: .yesterday),
+        StatisticGroup(title: "Overall", enumKey: .overall),
+    ]
     public var id = UUID()
     
     private var colourMap: [String: Color] = [
@@ -114,7 +132,7 @@ class Records: ObservableObject, Identifiable {
         // remove duplicates
         var uniqueJobs = Array(Set(jobIds))
         
-        trackStatistic(key: "Unique jobs for \(sectionTitle)", value: String(uniqueJobs.count))
+        trackStatistic(key: "Unique jobs for \(sectionTitle)", value: String(uniqueJobs.count), group: .today)
         
         // sort unique job ID list numerically
         uniqueJobs.sort()
@@ -171,7 +189,7 @@ class Records: ObservableObject, Identifiable {
             }
         }
         
-        trackStatistic(key: "# Records today", value: String(entries.count))
+        trackStatistic(key: "# Records", value: String(entries.count), group: .today)
     }
     
     public func updateWordCount() -> Int {
@@ -183,7 +201,7 @@ class Records: ObservableObject, Identifiable {
         
         let wordSet: Set = Set(words.joined(separator: " ").split(separator: " "))
         
-        trackStatistic(key: "Word count", value: String(wordSet.count))
+        trackStatistic(key: "Word count", value: String(wordSet.count), group: .overall)
         
         return wordSet.count
     }
@@ -191,10 +209,15 @@ class Records: ObservableObject, Identifiable {
     public func reload() -> Void {
         print("Records::reload - re/loading records")
         
+        clear()
         records = read("Daily.log")
-        entries = []
         makeConsumable() // TODO: makeComsumable only creates TODAY's ENTRIES
         createColourMap()
+    }
+    
+    public func clear() -> Void {
+        entries = []
+        records = []
     }
     
     // Returns list of strings representing all log lines since a given date, from a given file
@@ -222,10 +245,47 @@ class Records: ObservableObject, Identifiable {
             }
         }
         
-        trackStatistic(key: "Total records", value: String(lines.count))
+        trackStatistic(key: "Total records", value: String(lines.count), group: .overall)
         
         return lines
     }
+    
+    // MARK: below this are the forsaken methods
+    
+    // TODO: move to some kind of log writer class
+    public func logNewDay() -> Void {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        
+        let date = formatter.string(from: Date())
+        
+        guard let line: Data = ("\n=========================\n\(date)\n=========================").data(using: String.Encoding.utf8) else { return }
+        
+        writeToLog(output: line)
+    }
+    
+    // TODO: move to some kind of log write class
+    private func writeToLog(output: Data) -> Void {
+        let filePath = getDocumentsDirectory().appendingPathComponent("Daily.log")
+        
+        if let fileHandle = try? FileHandle(forWritingTo: filePath) {
+            fileHandle.seekToEndOfFile()
+            fileHandle.write(output)
+            fileHandle.closeFile()
+        }
+    }
+    
+    // TODO: move to some kind of log write class
+//    public func create() -> Void {
+//        let formatter = DateFormatter()
+//        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+//
+//        let date = formatter.string(from: Date())
+//
+//        guard let line: Data = ("\n\(date) - \(getJobId()) - \(text)").data(using: String.Encoding.utf8) else { return }
+//
+//        writeToLog(output: line)
+//    }
     
     // TODO: this func doesn't belong in this class
     public func createColourMap() -> Void {
@@ -311,11 +371,10 @@ class Records: ObservableObject, Identifiable {
     }
     
     // TODO: this shouldn't be here (should be in some Statistics class
-    private func trackStatistic(key: String, value: String) -> Void {
+    private func trackStatistic(key: String, value: String, group: StatisticPeriod) -> Void {
         print("TRACKING STAT \(key) value: \(value)")
         if !statistics.contains(where: {$0.key == key}) {
-            print([key, value])
-            statistics.append(Statistic(key: key, value: value))
+            statistics.append(Statistic(key: key, value: value, group: group))
         } else {
             // key exists, check if value is different
             // if so, update value

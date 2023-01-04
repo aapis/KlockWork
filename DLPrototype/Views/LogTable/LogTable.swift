@@ -21,6 +21,7 @@ struct LogTable: View, Identifiable {
         "11": LogTable.rowColour
     ]
     @State private var colours: [Color] = []
+    @State private var isShowingAlert: Bool = false
     
     static public var rowColour: Color = Color.gray.opacity(0.2)
     static public var headerColour: Color = Color.blue
@@ -30,7 +31,6 @@ struct LogTable: View, Identifiable {
     private let font: Font = .system(.body, design: .monospaced)
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
-    @AppStorage("showExperiment.tableDetails") private var showExperimentTableDetails = false
     @AppStorage("showExperiment.actions") private var showExperimentActions = false
     
     var body: some View {
@@ -72,16 +72,38 @@ struct LogTable: View, Identifiable {
                     LogTable.toolbarColour
                     
                     HStack {
+                        Button(action: reload, label: {
+                            Image(systemName: "arrow.counterclockwise")
+                        })
+                        .help("Reload data")
+                        .keyboardShortcut("r")
+                        .buttonStyle(BorderlessButtonStyle())
+                        
+                        Button(action: {isShowingAlert = true; newDayAction() }, label: {
+                            Image(systemName: "sunrise")
+                        })
+                        .help("New day")
+                        .keyboardShortcut("n")
+                        .buttonStyle(BorderlessButtonStyle())
+    //                        .alert("It's a brand new day!", isPresented: $isPresented) {}
+                        
+                        Button(action: copyAll, label: {
+                            Image(systemName: "doc.on.doc")
+                        })
+                        .buttonStyle(BorderlessButtonStyle())
+                        .keyboardShortcut("c")
+                        .help("Copy all rows")
+                        
+                        Spacer()
                         Button(action: toggleSidebar, label: {
                             Image(systemName: "sidebar.right")
                         })
                         .help("Toggle sidebar")
                         .buttonStyle(BorderlessButtonStyle())
-                        .padding(5)
-                    }
+                    }.padding(8)
                 }
             }
-        }.frame(height: 20)
+        }.frame(height: 35)
     }
     
     var headers: some View {
@@ -93,6 +115,7 @@ struct LogTable: View, Identifiable {
                         Image(systemName: "arrow.up.arrow.down")
                     }
                     .buttonStyle(BorderlessButtonStyle())
+                    .foregroundColor(Color.white)
                     .onChange(of: isReversed) { _ in sort() }
                 }
             }
@@ -226,6 +249,28 @@ struct LogTable: View, Identifiable {
         withAnimation(.easeInOut) {
             showSidebar.toggle()
         }
+    }
+    
+    private func reload() -> Void {
+        records.reload()
+    }
+    
+    private func newDayAction() -> Void {
+        records.clear()
+        records.logNewDay()
+    }
+    
+    private func copyAll() -> Void {
+        let pasteBoard = NSPasteboard.general
+        let df = DateFormatter()
+        df.timeZone = TimeZone(abbreviation: "MST")
+        df.locale = NSLocale.current
+        df.dateFormat = "yyyy-MM-dd"
+        let today = df.string(from: Date())
+        let data = records.rowsStartsWith(term: today).joined(separator: "\n")
+        
+        pasteBoard.clearContents()
+        pasteBoard.setString(data, forType: .string)
     }
 }
 

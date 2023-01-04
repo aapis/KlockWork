@@ -13,7 +13,6 @@ struct GeneralSettings: View {
     @AppStorage("tigerStriped") private var tigerStriped = false
     @AppStorage("defaultTableSortOrder") private var defaultTableSortOrder = "DESC"
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
-    @AppStorage("showExperiment.tableDetails") private var showExperimentTableDetails = false
     @AppStorage("showExperiment.actions") private var showExperimentActions = false
 
     var body: some View {
@@ -24,7 +23,6 @@ struct GeneralSettings: View {
                 Toggle("Experimental features (may tank performance)", isOn: $showExperimentalFeatures)
                 
                 if showExperimentalFeatures {
-                    Toggle("Show Table Details view on Record", isOn: $showExperimentTableDetails)
                     Toggle("Show row actions", isOn: $showExperimentActions)
                 }
             }

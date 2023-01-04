@@ -12,8 +12,9 @@ import SwiftUI
 struct DetailsRow: View {
     public var key: String
     public var value: String
+//    public var group: StatisticGroup
     
-    @AppStorage("tigerStriped") private var tigerStriped = false
+//    @AppStorage("tigerStriped") private var tigerStriped = false
     
     var body: some View {
         HStack(spacing: 1) {

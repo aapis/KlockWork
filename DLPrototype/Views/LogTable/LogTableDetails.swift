@@ -46,9 +46,13 @@ struct LogTableDetails: View {
         GridRow {
             VStack(spacing: 1) {
                 if records.statistics.count > 0 {
-                    ForEach(records.statistics) { stat in
-                        DetailsRow(key: stat.key, value: stat.value)
-                    }
+                    ForEach(records.groups) { group in
+                        let children = records.statistics.filter({ $0.group == group.enumKey})
+                        
+                        if children.count > 0 {
+                            DetailGroup(name: group.title, children: children)
+                        }
+                    }                    
                 } else {
                     LogRowEmpty(message: "No entries found for today", index: 0, colour: LogTable.rowColour)
                 }

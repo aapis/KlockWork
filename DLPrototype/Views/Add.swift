@@ -38,7 +38,7 @@ struct Add : View {
                 Text("Record an entry")
                     .font(.title)
                 
-                Spacer()
+//                Spacer()
                 
                 // TODO: this causes a crash that I have not had time to investigate yet
 //                Button(action: { copyAction() }, label: {
@@ -46,18 +46,18 @@ struct Add : View {
 //                })
 //                    .help("Copy all rows")
                 
-                Button(action: reloadRecords, label: {
-                    Image(systemName: "arrow.counterclockwise")
-                })
-                    .help("Reload data")
-                    .keyboardShortcut("r")
-                
-                Button(action: { isPresented = true; newDayAction() }, label: {
-                    Image(systemName: "sunrise")
-                })
-                    .help("New day")
-                    .keyboardShortcut("n")
-                    .alert("It's a brand new day!", isPresented: $isPresented) {}
+//                Button(action: reloadRecords, label: {
+//                    Image(systemName: "arrow.counterclockwise")
+//                })
+//                    .help("Reload data")
+//                    .keyboardShortcut("r")
+//
+//                Button(action: { isPresented = true; newDayAction() }, label: {
+//                    Image(systemName: "sunrise")
+//                })
+//                    .help("New day")
+//                    .keyboardShortcut("n")
+//                    .alert("It's a brand new day!", isPresented: $isPresented) {}
             }
 
             Divider()

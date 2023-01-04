@@ -145,31 +145,6 @@ struct LogRow: View, Identifiable {
         
         return String(adjusted)
     }
-    
-//    private func formatted(_ date: String) -> String {
-//        let inputDateFormatter = DateFormatter()
-//        inputDateFormatter.timeZone = TimeZone(abbreviation: "MST")
-//        inputDateFormatter.locale = NSLocale.current
-//        inputDateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
-//        let inputDate = inputDateFormatter.date(from: date)
-//        
-//        if inputDate == nil {
-//            return "Invalid date"
-//        }
-//        
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.timeZone = TimeZone(abbreviation: "MST")
-//        dateFormatter.locale = NSLocale.current
-//        dateFormatter.dateFormat = "h:mm a"
-//        
-//        return dateFormatter.string(from: inputDate!)
-//    }
-    
-//    private func onHover(hovering: Bool) -> Void {
-//        if hovering {
-//            colour.opacity(0.7)
-//        }
-//    }
 }
 
 struct LogTableRowPreview: PreviewProvider {
