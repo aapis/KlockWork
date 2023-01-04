@@ -137,23 +137,11 @@ struct LogTable: View, Identifiable {
             }
                 .frame(width: 100)
             Group {
-//                HStack {
-                    ZStack(alignment: .leading) {
-                        LogTable.headerColour
-                        Text("Message")
-                            .padding(10)
-                    }
-                // TODO: commented out this button because there's a weird space and I don't want to fix it rn
-//                    ZStack(alignment: .trailing) {
-//                        LogTable.headerColour
-//                        Button(action: {}, label: {
-//                            Image(systemName: "sidebar.right")
-//                        })
-//                        .help("Open sidebar")
-//                        .buttonStyle(BorderlessButtonStyle())
-//                        .padding(10)
-//                    }
-//                }
+                ZStack(alignment: .leading) {
+                    LogTable.headerColour
+                    Text("Message")
+                        .padding(10)
+                }
             }
             
             // TODO: temp commented out until perf issues fixed
