@@ -217,6 +217,7 @@ class Records: ObservableObject, Identifiable {
     
     public func clear() -> Void {
         entries = []
+        statistics = []
         records = []
     }
     
