@@ -15,8 +15,8 @@ struct LogTable: View, Identifiable {
     @ObservedObject public var records: Records
     
     @State private var wordCount: Int = 0
+    @State private var showSidebar: Bool = true // TODO: TMP
     @State private var isReversed: Bool = false
-    @State private var wordCountUpdated: Bool = false
     @State public var colourMap: [String: Color] = [
         "11": LogTable.rowColour
     ]
@@ -25,6 +25,7 @@ struct LogTable: View, Identifiable {
     static public var rowColour: Color = Color.gray.opacity(0.2)
     static public var headerColour: Color = Color.blue
     static public var footerColour: Color = Color.gray.opacity(0.5)
+    static public var toolbarColour: Color = headerColour.opacity(0.2)
     
     private let font: Font = .system(.body, design: .monospaced)
     
@@ -33,28 +34,54 @@ struct LogTable: View, Identifiable {
     @AppStorage("showExperiment.actions") private var showExperimentActions = false
     
     var body: some View {
-        HStack {
-            table
-            tableDetails
+        VStack(spacing: 1) {
+            toolbar.font(font)
+            
+            HStack(spacing: 1) {
+                table
+                
+                if showSidebar {
+                    tableDetails.frame(width: 300)
+                }
+            }
+            .onAppear(perform: {
+                records.applyColourMap()
+                records.updateWordCount()
+            })
         }
-        .onAppear(perform: records.applyColourMap)
     }
     
     var table: some View {
-        Section {
+        VStack(spacing: 1) {
             Grid(alignment: .top, horizontalSpacing: 1, verticalSpacing: 1) {
-                headers
-                    .font(font)
+                headers.font(font)
                 
                 ScrollView {
-                    rows
-                        .font(font)
+                    rows.font(font)
                 }
                 
-                footer
-                    .font(font)
+//                footer.font(font)
             }
         }
+    }
+    
+    var toolbar: some View {
+        GridRow {
+            Group {
+                ZStack(alignment: .leading) {
+                    LogTable.toolbarColour
+                    
+                    HStack {
+                        Button(action: toggleSidebar, label: {
+                            Image(systemName: "sidebar.right")
+                        })
+                        .help("Toggle sidebar")
+                        .buttonStyle(BorderlessButtonStyle())
+                        .padding(5)
+                    }
+                }
+            }
+        }.frame(height: 20)
     }
     
     var headers: some View {
@@ -64,7 +91,9 @@ struct LogTable: View, Identifiable {
                     LogTable.headerColour
                     Button(action: setIsReversed) {
                         Image(systemName: "arrow.up.arrow.down")
-                    }.onChange(of: isReversed) { _ in sort() }
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    .onChange(of: isReversed) { _ in sort() }
                 }
             }
                 .frame(width: 50)
@@ -85,12 +114,25 @@ struct LogTable: View, Identifiable {
             }
                 .frame(width: 100)
             Group {
-                ZStack(alignment: .leading) {
-                    LogTable.headerColour
-                    Text("Message")
-                        .padding(10)
-                }
+//                HStack {
+                    ZStack(alignment: .leading) {
+                        LogTable.headerColour
+                        Text("Message")
+                            .padding(10)
+                    }
+                // TODO: commented out this button because there's a weird space and I don't want to fix it rn
+//                    ZStack(alignment: .trailing) {
+//                        LogTable.headerColour
+//                        Button(action: {}, label: {
+//                            Image(systemName: "sidebar.right")
+//                        })
+//                        .help("Open sidebar")
+//                        .buttonStyle(BorderlessButtonStyle())
+//                        .padding(10)
+//                    }
+//                }
             }
+            
             // TODO: temp commented out until perf issues fixed
             if showExperimentalFeatures {
                 if showExperimentActions {
@@ -145,11 +187,12 @@ struct LogTable: View, Identifiable {
             Group {
                 ZStack(alignment: .leading) {
                     LogTable.footerColour
-                    Text("Word count: \(records.wordCount())")
+                    Text("Word count: \(wordCount)")
                         .padding(10)
                 }
+                .onAppear(perform: {wordCount = records.updateWordCount()})
             }
-            // TODO: temp commented out until perf issues fixed
+
             if showExperimentalFeatures {
                 if showExperimentActions {
                     Group {
@@ -165,13 +208,7 @@ struct LogTable: View, Identifiable {
     }
     
     var tableDetails: some View {
-        Group {
-            if showExperimentalFeatures {
-                if showExperimentTableDetails {
-                    LogTableDetails(records: records, colours: colourMap)
-                }
-            }
-        }
+        LogTableDetails(records: records, colours: colourMap)
     }
     
     private func setIsReversed() -> Void {
@@ -179,8 +216,16 @@ struct LogTable: View, Identifiable {
     }
     
     private func sort() -> Void {
-        // just always reverse the records
-        records.entries.reverse()
+        withAnimation(.easeInOut) {
+            // just always reverse the records
+            records.entries.reverse()
+        }
+    }
+    
+    private func toggleSidebar() -> Void {
+        withAnimation(.easeInOut) {
+            showSidebar.toggle()
+        }
     }
 }
 

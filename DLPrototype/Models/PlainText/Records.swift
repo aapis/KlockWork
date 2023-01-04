@@ -9,8 +9,15 @@
 import Foundation
 import SwiftUI
 
+struct Statistic: Identifiable {
+    public let key: String
+    public var value: String
+    public let id = UUID()
+}
+
 class Records: ObservableObject, Identifiable {
     public var records: [String] = []
+    public var statistics: [Statistic] = []
     public var id = UUID()
     
     private var colourMap: [String: Color] = [
@@ -23,6 +30,13 @@ class Records: ObservableObject, Identifiable {
     
     init() {
         print("Records::init")
+        
+//        let df = DateFormatter()
+//        df.timeZone = TimeZone(abbreviation: "MST")
+//        df.locale = NSLocale.current
+//        df.dateFormat = "yyyy-MM-dd"
+//        let today = df.string(from: Date())
+//        trackStatistic(key: "Today's date", value: today)
         
         sortOrder = (UserDefaults.standard.string(forKey: "defaultTableSortOrder") != nil)
     }
@@ -100,6 +114,8 @@ class Records: ObservableObject, Identifiable {
         // remove duplicates
         var uniqueJobs = Array(Set(jobIds))
         
+        trackStatistic(key: "Unique jobs for \(sectionTitle)", value: String(uniqueJobs.count))
+        
         // sort unique job ID list numerically
         uniqueJobs.sort()
         
@@ -154,9 +170,11 @@ class Records: ObservableObject, Identifiable {
                 }
             }
         }
+        
+        trackStatistic(key: "# Records today", value: String(entries.count))
     }
     
-    public func wordCount() -> Int {
+    public func updateWordCount() -> Int {
         var words: [String] = []
         
         for entry in entries {
@@ -164,6 +182,8 @@ class Records: ObservableObject, Identifiable {
         }
         
         let wordSet: Set = Set(words.joined(separator: " ").split(separator: " "))
+        
+        trackStatistic(key: "Word count", value: String(wordSet.count))
         
         return wordSet.count
     }
@@ -201,6 +221,8 @@ class Records: ObservableObject, Identifiable {
                 }
             }
         }
+        
+        trackStatistic(key: "Total records", value: String(lines.count))
         
         return lines
     }
@@ -286,6 +308,23 @@ class Records: ObservableObject, Identifiable {
         }
         
         return LogTable.rowColour
+    }
+    
+    // TODO: this shouldn't be here (should be in some Statistics class
+    private func trackStatistic(key: String, value: String) -> Void {
+        print("TRACKING STAT \(key) value: \(value)")
+        if !statistics.contains(where: {$0.key == key}) {
+            print([key, value])
+            statistics.append(Statistic(key: key, value: value))
+        } else {
+            // key exists, check if value is different
+            // if so, update value
+            if var stat = statistics.first(where: {$0.key == key && $0.value != value}) {
+                print(stat)
+                // if so, update value
+                stat.value = value
+            }
+        }
     }
     
     // Returns logs added in the last 3 months

@@ -32,9 +32,10 @@ struct LogTableDetails: View {
     var header: some View {
         GridRow {
             Group {
-                ZStack {
+                ZStack(alignment: .leading) {
                     LogTable.headerColour
-                    Text("Job IDs")
+                    Text("Statistics & Information")
+                        .padding(10)
                 }
             }
         }
@@ -42,13 +43,15 @@ struct LogTableDetails: View {
     }
     
     var rows: some View {
-        VStack(spacing: 1) {
-            if records.entries.count > 0 {
-//                ForEach(records.jobIdsFor(Date())) { jid in
-//                    Text("\(jid)")
-//                }
-            } else {
-                LogRowEmpty(message: "No entries found for today", index: 0, colour: LogTable.rowColour)
+        GridRow {
+            VStack(spacing: 1) {
+                if records.statistics.count > 0 {
+                    ForEach(records.statistics) { stat in
+                        DetailsRow(key: stat.key, value: stat.value)
+                    }
+                } else {
+                    LogRowEmpty(message: "No entries found for today", index: 0, colour: LogTable.rowColour)
+                }
             }
         }
     }

@@ -1,5 +1,5 @@
 //
-//  Column.swift
+//  DetailsColumn.swift
 //  DLPrototype
 //
 //  Created by Ryan Priebe on 2023-01-03.
@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-struct Column: View {
+struct DetailsColumn: View {
     public var colour: Color
     public var textColour: Color
     public var index: Array<Entry>.Index?
@@ -19,13 +19,19 @@ struct Column: View {
     @AppStorage("tigerStriped") private var tigerStriped = false
     
     var body: some View {
-        Group {
-            ZStack(alignment: .center) {
-                colour
+        HStack(spacing: 1) {
+            ZStack(alignment: .leading) {
+                LogTable.rowColour
                 
-                Text(text)
+                Text("key")
                     .padding(10)
-                    .foregroundColor(textColour)
+            }
+            
+            ZStack(alignment: .leading) {
+                LogTable.rowColour
+                
+                Text("Value")
+                    .padding(10)
             }
         }
     }

@@ -73,21 +73,22 @@ struct Add : View {
                     .font(Font.system(size: 16, design: .default))
                 
                 Picker("Job", selection: $jobPickerSelection) {
-                    ForEach(records.recentJobs()) { item in
+                    ForEach(recentJobs) { item in
                         Text(item.title)
                             .tag(item.tag)
                             .disabled(item.disabled)
                             .font(Font.system(size: 16, design: .default))
                     }
                 }
-                    .labelsHidden()
-                    .frame(width: 200)
-                    .font(Font.system(size: 16, design: .default))
-                    .onChange(of: jobPickerSelection) { _ in
-                        // modifies jobId to associate the job to the message
-                        jobId = String(jobPickerSelection)
+                .onAppear(perform: {recentJobs = records.recentJobs()}) // calling ForEach directly with records.recentJobs() resulted in weird behaviour
+                .labelsHidden()
+                .frame(width: 200)
+                .font(Font.system(size: 16, design: .default))
+                .onChange(of: jobPickerSelection) { _ in
+                    // modifies jobId to associate the job to the message
+                    jobId = String(jobPickerSelection)
 //                        jobPickerSelection = 0 // TODO: should reset picker to first item but doesn't for $reasons
-                    }
+                }
             }
             
             VStack {
@@ -120,85 +121,85 @@ struct Add : View {
         records.reload()
     }
     
-    private func jobIdList(from: [String], sectionTitle: String) -> [CustomPickerItem]? {
-        if (from.isEmpty) {
-            return []
-        }
-        
-        // get all job IDs from the set
-        var jobIds: [Int] = []
-        
-        from.forEach { line in
-            let lineParts = line.components(separatedBy: " - ")
-            
-            if lineParts.count > 1 {
-                let timestamp = Int(lineParts[1]) ?? 0
-
-                jobIds.append(timestamp)
-            }
-        }
-        
-        var jobs: [CustomPickerItem] = [
-            CustomPickerItem(title: sectionTitle, tag: -1, disabled: true),
-        ]
-        
-        // remove duplicates
-        var uniqueJobs = Array(Set(jobIds))
-        
-        // sort unique job ID list numerically
-        uniqueJobs.sort()
-        
-        // create set of picker items
-        for job in uniqueJobs {
-            let pickerJob = CustomPickerItem(title: String(" - \(job)"), tag: job)
-            jobs.append(pickerJob)
-        }
-        
-        return jobs
-    }
+//    private func jobIdList(from: [String], sectionTitle: String) -> [CustomPickerItem]? {
+//        if (from.isEmpty) {
+//            return []
+//        }
+//
+//        // get all job IDs from the set
+//        var jobIds: [Int] = []
+//
+//        from.forEach { line in
+//            let lineParts = line.components(separatedBy: " - ")
+//
+//            if lineParts.count > 1 {
+//                let timestamp = Int(lineParts[1]) ?? 0
+//
+//                jobIds.append(timestamp)
+//            }
+//        }
+//
+//        var jobs: [CustomPickerItem] = [
+//            CustomPickerItem(title: sectionTitle, tag: -1, disabled: true),
+//        ]
+//
+//        // remove duplicates
+//        var uniqueJobs = Array(Set(jobIds))
+//
+//        // sort unique job ID list numerically
+//        uniqueJobs.sort()
+//
+//        // create set of picker items
+//        for job in uniqueJobs {
+//            let pickerJob = CustomPickerItem(title: String(" - \(job)"), tag: job)
+//            jobs.append(pickerJob)
+//        }
+//
+//        return jobs
+//    }
     
     /// Pull the recent job IDs from today's log entries
-    private func buildRecentJobIdList() -> Void {
-        resetPickerToDefault()
-        
-        var jobs: [CustomPickerItem] = []
-        let todayLines: [String] = readNeighbourLines() // get today's jobs
-        
-        if todayLines.count > 0 {
-            jobs.append(contentsOf: jobIdList(from: todayLines, sectionTitle: "Today")!)
-        }
-        
-        if todayIsMonday() {
-            let fridayLines: [String] = readNeighbourLines(-3) // get friday's jobs
-            
-            if fridayLines.count > 0 {
-                jobs.append(contentsOf: jobIdList(from: fridayLines, sectionTitle: "Friday")!)
-            }
-        }
-        
-        let yesterdayLines: [String] = readNeighbourLines(-1) // get yesterday's jobs
-        
-        if yesterdayLines.count > 0 {
-            jobs.append(contentsOf: jobIdList(from: yesterdayLines, sectionTitle: "Yesterday")!)
-        }
-        
-        for job in jobs {
-            recentJobs.append(job)
-        }
-    }
+//    private func buildRecentJobIdList() -> Void {
+//        resetPickerToDefault()
+//
+//        var jobs: [CustomPickerItem] = []
+//        let todayLines: [String] = readNeighbourLines() // get today's jobs
+//
+//        if todayLines.count > 0 {
+//            jobs.append(contentsOf: jobIdList(from: todayLines, sectionTitle: "Today")!)
+//        }
+//
+//        if todayIsMonday() {
+//            let fridayLines: [String] = readNeighbourLines(-3) // get friday's jobs
+//
+//            if fridayLines.count > 0 {
+//                jobs.append(contentsOf: jobIdList(from: fridayLines, sectionTitle: "Friday")!)
+//            }
+//        }
+//
+//        let yesterdayLines: [String] = readNeighbourLines(-1) // get yesterday's jobs
+//
+//        if yesterdayLines.count > 0 {
+//            jobs.append(contentsOf: jobIdList(from: yesterdayLines, sectionTitle: "Yesterday")!)
+//        }
+//
+//        for job in jobs {
+//            recentJobs.append(job)
+//        }
+//    }
     
-    private func todayIsMonday() -> Bool {
-        let calendar = Calendar.current
-        let currentDay = calendar.dateComponents([.day], from: Date())
-        
-        return currentDay.day == 1
-    }
+//    private func todayIsMonday() -> Bool {
+//        let calendar = Calendar.current
+//        let currentDay = calendar.dateComponents([.day], from: Date())
+//
+//        return currentDay.day == 1
+//    }
     
     /// Resets the recentJobs picker to it's default state by removing all elements and appending the default option
-    private func resetPickerToDefault() -> Void {
-        recentJobs.removeAll()
-        recentJobs.append(defaultPickerChoice)
-    }
+//    private func resetPickerToDefault() -> Void {
+//        recentJobs.removeAll()
+//        recentJobs.append(defaultPickerChoice)
+//    }
     
     private func newDayAction() -> Void {
         logNewDay()
@@ -216,12 +217,10 @@ struct Add : View {
     private func copyAction(data: String? = nil) -> Void {
         let pasteBoard = NSPasteboard.general
         
-        if var data = data {
-            data = readToday()
-        }
+        let data = readToday()
         
         pasteBoard.clearContents()
-        pasteBoard.setString(data!, forType: .string)
+        pasteBoard.setString(data, forType: .string)
         
         statusMessage = "Copied!"
         
@@ -238,19 +237,20 @@ struct Add : View {
             
             text = ""
             records.reload()
+            records.updateWordCount()
         } else {
             print("You have to type something")
         }
     }
     
-    private func populateTodayView() -> Void {
-        // read log data into memory
-        todayLogLines = readToday()
-        // convert log data into [Entry]
-        tableData = readTodayTable()
-        // update the recent job picker
-        buildRecentJobIdList()
-    }
+//    private func populateTodayView() -> Void {
+//        // read log data into memory
+//        todayLogLines = readToday()
+//        // convert log data into [Entry]
+//        tableData = readTodayTable()
+//        // update the recent job picker
+//        buildRecentJobIdList()
+//    }
     
     private func clearTodayView() -> Void {
         todayLogLines = ""
@@ -258,7 +258,7 @@ struct Add : View {
     
     private func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask)
-        
+
         return paths[0]
     }
     

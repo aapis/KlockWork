@@ -102,11 +102,12 @@ struct LogRow: View, Identifiable {
     }
     
     // this can be forced to work but it causes perf and state modification problems
+    // TODO: maybe show actions on hover?
 //    private func onHover(hovering: Bool) -> Void {
 //        let oldColour = colour
 //
 //        if hovering {
-//            activeColour = oldColour.opacity(0.1)
+//            activeColour = Color.white.opacity(0.1)
 //        } else {
 //            activeColour = oldColour
 //        }
