@@ -20,46 +20,50 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             List {
-                NavigationLink {
-                    Add(category: Category(title: "Daily"), records: records)
-                } label: {
-                    HStack {
-                        Image(systemName: "doc.append.fill")
-                            .padding(.trailing, 10)
-                        Text("Record")
-                    }.padding(10)
+                Section {
+                    NavigationLink {
+                        Add(category: Category(title: "Daily"), records: records)
+                    } label: {
+                        HStack {
+                            Image(systemName: "doc.append.fill")
+                                .padding(.trailing, 10)
+                            Text("Record")
+                        }.padding(10)
+                    }
+                    
+                    NavigationLink {
+                        Search(category: Category(title: "Daily"), records: records)
+                    } label: {
+                        HStack {
+                            Image(systemName: "magnifyingglass.circle.fill")
+                                .padding(.trailing, 10)
+                            Text("Search")
+                        }.padding(10)
+                    }
+                    
+                    NavigationLink {
+                        CalendarView(category: Category(title: "Daily"), records: records)
+                    } label: {
+                        HStack {
+                            Image(systemName: "calendar")
+                                .padding(.trailing, 10)
+                            Text("Calendar")
+                        }.padding(10)
+                    }
+                    
+                    NavigationLink {
+                        Backup(category: Category(title: "Daily"))
+                    } label: {
+                        HStack {
+                            Image(systemName: "cloud.fill")
+                                .padding(.trailing, 10)
+                            Text("Backup")
+                        }.padding(10)
+                    }
+                } header: {
+                    Text("Pages")
                 }
-                
-                NavigationLink {
-                    Search(category: Category(title: "Daily"), records: records)
-                } label: {
-                    HStack {
-                        Image(systemName: "magnifyingglass.circle.fill")
-                            .padding(.trailing, 10)
-                        Text("Search")
-                    }.padding(10)
-                }
-                
-                NavigationLink {
-                    CalendarView(category: Category(title: "Daily"), records: records)
-                } label: {
-                    HStack {
-                        Image(systemName: "calendar")
-                            .padding(.trailing, 10)
-                        Text("Calendar")
-                    }.padding(10)
-                }
-
-                NavigationLink {
-                    Backup(category: Category(title: "Daily"))
-                } label: {
-                    HStack {
-                        Image(systemName: "cloud.fill")
-                            .padding(.trailing, 10)
-                        Text("Backup")
-                    }.padding(10)
-                }
-            }.listStyle(SidebarListStyle())
+            }.listStyle(.sidebar)
         }
     }
 }

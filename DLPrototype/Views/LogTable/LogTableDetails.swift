@@ -38,6 +38,7 @@ struct LogTableDetails: View {
                 }
             }
         }
+        .frame(height: 40)
     }
     
     var rows: some View {

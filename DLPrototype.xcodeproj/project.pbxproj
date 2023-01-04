@@ -25,6 +25,8 @@
 		537AEBA329629DE400385787 /* LogRowActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA229629DE400385787 /* LogRowActions.swift */; };
 		539C96EA27EE7AFF007DA058 /* CalendarThisWeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539C96E927EE7AFF007DA058 /* CalendarThisWeek.swift */; };
 		53B940D92800A9F10024AA5F /* Records.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B940D82800A9F10024AA5F /* Records.swift */; };
+		53C6D08D2964E25400EA6129 /* EditableColumn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C6D08C2964E25400EA6129 /* EditableColumn.swift */; };
+		53C6D08F2964E25F00EA6129 /* Column.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C6D08E2964E25F00EA6129 /* Column.swift */; };
 		53DCA3422803BBBF0032FD60 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DCA3412803BBBF0032FD60 /* CalendarView.swift */; };
 		53EDDF9E29634852008D34C7 /* Entry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDF9D29634852008D34C7 /* Entry.swift */; };
 		53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */; };
@@ -79,6 +81,8 @@
 		537AEBA229629DE400385787 /* LogRowActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRowActions.swift; sourceTree = "<group>"; };
 		539C96E927EE7AFF007DA058 /* CalendarThisWeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarThisWeek.swift; sourceTree = "<group>"; };
 		53B940D82800A9F10024AA5F /* Records.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Records.swift; sourceTree = "<group>"; };
+		53C6D08C2964E25400EA6129 /* EditableColumn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableColumn.swift; sourceTree = "<group>"; };
+		53C6D08E2964E25F00EA6129 /* Column.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Column.swift; sourceTree = "<group>"; };
 		53DCA3412803BBBF0032FD60 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		53EDDF9D29634852008D34C7 /* Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entry.swift; sourceTree = "<group>"; };
 		53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPickerItem.swift; sourceTree = "<group>"; };
@@ -213,6 +217,15 @@
 			path = PlainText;
 			sourceTree = "<group>";
 		};
+		53C6D08B2964E22700EA6129 /* ColumnTypes */ = {
+			isa = PBXGroup;
+			children = (
+				53C6D08C2964E25400EA6129 /* EditableColumn.swift */,
+				53C6D08E2964E25F00EA6129 /* Column.swift */,
+			);
+			path = ColumnTypes;
+			sourceTree = "<group>";
+		};
 		53EDDF9C29634840008D34C7 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
@@ -233,6 +246,7 @@
 		53EFCE7729637EA0004E45EC /* LogTable */ = {
 			isa = PBXGroup;
 			children = (
+				53C6D08B2964E22700EA6129 /* ColumnTypes */,
 				537AEB9E29627DCC00385787 /* LogTable.swift */,
 				537AEBA0296287B900385787 /* LogRow.swift */,
 				537AEBA229629DE400385787 /* LogRowActions.swift */,
@@ -384,10 +398,12 @@
 				53EDDFA22963502A008D34C7 /* LogRowEmpty.swift in Sources */,
 				53EFCE7D2963D309004E45EC /* LogTableDetails.swift in Sources */,
 				537368CF24B93D9300193E88 /* Log.swift in Sources */,
+				53C6D08D2964E25400EA6129 /* EditableColumn.swift in Sources */,
 				537AEBA1296287B900385787 /* LogRow.swift in Sources */,
 				537368D124B93DB600193E88 /* Add.swift in Sources */,
 				53218D4D24B7F6EB0088ABE9 /* DLPrototype.xcdatamodeld in Sources */,
 				53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */,
+				53C6D08F2964E25F00EA6129 /* Column.swift in Sources */,
 				53218D4824B7F6EB0088ABE9 /* DLPrototype.swift in Sources */,
 				539C96EA27EE7AFF007DA058 /* CalendarThisWeek.swift in Sources */,
 				537AEB9F29627DCC00385787 /* LogTable.swift in Sources */,
@@ -565,7 +581,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 29;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -591,7 +607,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 29;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;

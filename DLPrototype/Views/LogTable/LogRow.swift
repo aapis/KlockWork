@@ -15,65 +15,116 @@ struct LogRow: View, Identifiable {
     public var colour: Color
     public var id = UUID()
     
+    @State public var isEditing: Bool = false
+    @State public var isDeleting: Bool = false
+    @State public var message: String = ""
+    @State public var job: String = ""
+    @State public var timestamp: String = ""
+    @State public var aIndex: String = "0"
+    @State public var activeColour: Color = LogTable.rowColour
+    
     @AppStorage("tigerStriped") private var tigerStriped = false
+    @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
+    @AppStorage("showExperiment.actions") private var showExperimentActions = false
     
     var body: some View {
         HStack(spacing: 1) {
             GridRow {
-                Group {
-                    ZStack {
-                        tigerStripe()
-                        Text("\(adjustedIndex())")
-                            .padding(10)
-                            .foregroundColor(rowTextColour())
-                            
+                Column(
+                    colour: applyColour(),
+                    textColour: rowTextColour(),
+                    text: $aIndex
+                ).frame(maxWidth: 50)
+                
+                EditableColumn(
+                    type: "timestamp",
+                    entry: entry,
+                    colour: applyColour(),
+                    textColour: rowTextColour(),
+                    index: index,
+                    isEditing: $isEditing,
+                    isDeleting: $isDeleting,
+                    text: $timestamp
+                ).frame(maxWidth: 100)
+                
+                EditableColumn(
+                    type: "job",
+                    entry: entry,
+                    colour: applyColour(),
+                    textColour: rowTextColour(),
+                    index: index,
+                    isEditing: $isEditing,
+                    isDeleting: $isDeleting,
+                    text: $job
+                ).frame(maxWidth: 100)
+                
+                EditableColumn(
+                    type: "message",
+                    entry: entry,
+                    colour: applyColour(),
+                    textColour: rowTextColour(),
+                    index: index,
+                    isEditing: $isEditing,
+                    isDeleting: $isDeleting,
+                    text: $message
+                )
+                
+                if showExperimentalFeatures {
+                    if showExperimentActions {
+                        Group {
+                            ZStack {
+                                applyColour()
+                                
+                                LogRowActions(
+                                    entry: entry,
+                                    colour: rowTextColour(),
+                                    index: index,
+                                    isEditing: $isEditing,
+                                    isDeleting: $isDeleting
+                                )
+                            }
+                        }
+                        .frame(maxWidth: 100)
                     }
                 }
-                    .frame(maxWidth: 50)
-                Group {
-                    ZStack(alignment: .leading) {
-                        tigerStripe()
-                        Text(formatted(entry.timestamp))
-                            .padding(10)
-                            .foregroundColor(rowTextColour())
-                    }
-                }
-                    .frame(maxWidth: 100)
-                Group {
-                    ZStack(alignment: .leading) {
-                        tigerStripe()
-                        Text(entry.job)
-                            .padding(10)
-                            .foregroundColor(rowTextColour())
-                    }
-                }
-                    .frame(maxWidth: 100)
-                Group {
-                    ZStack(alignment: .leading) {
-                        tigerStripe()
-                        Text(entry.message)
-                            .padding(10)
-                            .foregroundColor(rowTextColour())
-                    }
-                }
-                // TODO: commented out until I can fix the perf issue
-//                Group {
-//                    ZStack {
-//                        tigerStripe()
-//                        LogRowActions()
-//                    }
-//                }
-//                    .frame(maxWidth: 100)
             }
-        }.defaultAppStorage(.standard)
+        }
+        .defaultAppStorage(.standard)
+        .onAppear(perform: setEditableValues)
 //        .onHover(perform: onHover)
     }
+
+    private func setEditableValues() -> Void {
+        message = entry.message
+        job = entry.job
+        timestamp = entry.timestamp
+        aIndex = adjustedIndexAsString()
+    }
     
-    private func tigerStripe() -> Color {
+    // this can be forced to work but it causes perf and state modification problems
+//    private func onHover(hovering: Bool) -> Void {
+//        let oldColour = colour
+//
+//        if hovering {
+//            activeColour = oldColour.opacity(0.1)
+//        } else {
+//            activeColour = oldColour
+//        }
+//    }
+    
+    private func applyColour() -> Color {
+        if isEditing {
+            return Color.orange
+        }
+
+        if isDeleting {
+            return Color.red
+        }
+
         if tigerStriped {
             return colour.opacity(index!.isMultiple(of: 2) ? 1 : 0.5)
         }
-        
+
         return colour
     }
     
@@ -88,24 +139,30 @@ struct LogRow: View, Identifiable {
         return adjusted
     }
     
-    private func formatted(_ date: String) -> String {
-        let inputDateFormatter = DateFormatter()
-        inputDateFormatter.timeZone = TimeZone(abbreviation: "MST")
-        inputDateFormatter.locale = NSLocale.current
-        inputDateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
-        let inputDate = inputDateFormatter.date(from: date)
+    private func adjustedIndexAsString() -> String {
+        let adjusted = adjustedIndex()
         
-        if inputDate == nil {
-            return "Invalid date"
-        }
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = TimeZone(abbreviation: "MST")
-        dateFormatter.locale = NSLocale.current
-        dateFormatter.dateFormat = "h:mm a"
-        
-        return dateFormatter.string(from: inputDate!)
+        return String(adjusted)
     }
+    
+//    private func formatted(_ date: String) -> String {
+//        let inputDateFormatter = DateFormatter()
+//        inputDateFormatter.timeZone = TimeZone(abbreviation: "MST")
+//        inputDateFormatter.locale = NSLocale.current
+//        inputDateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+//        let inputDate = inputDateFormatter.date(from: date)
+//        
+//        if inputDate == nil {
+//            return "Invalid date"
+//        }
+//        
+//        let dateFormatter = DateFormatter()
+//        dateFormatter.timeZone = TimeZone(abbreviation: "MST")
+//        dateFormatter.locale = NSLocale.current
+//        dateFormatter.dateFormat = "h:mm a"
+//        
+//        return dateFormatter.string(from: inputDate!)
+//    }
     
 //    private func onHover(hovering: Bool) -> Void {
 //        if hovering {

@@ -28,6 +28,10 @@ struct LogTable: View, Identifiable {
     
     private let font: Font = .system(.body, design: .monospaced)
     
+    @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
+    @AppStorage("showExperiment.tableDetails") private var showExperimentTableDetails = false
+    @AppStorage("showExperiment.actions") private var showExperimentActions = false
+    
     var body: some View {
         HStack {
             table
@@ -88,14 +92,18 @@ struct LogTable: View, Identifiable {
                 }
             }
             // TODO: temp commented out until perf issues fixed
-//            Group {
-//                ZStack(alignment: .leading) {
-//                    LogTable.headerColour
-//                    Text("Actions")
-//                        .padding(10)
-//                }
-//            }
-//                .frame(width: 100)
+            if showExperimentalFeatures {
+                if showExperimentActions {
+                    Group {
+                        ZStack(alignment: .leading) {
+                            LogTable.headerColour
+                            Text("Actions")
+                                .padding(10)
+                        }
+                    }
+                    .frame(width: 100)
+                }
+            }
         }
         .frame(height: 40)
     }
@@ -142,19 +150,28 @@ struct LogTable: View, Identifiable {
                 }
             }
             // TODO: temp commented out until perf issues fixed
-//            Group {
-//                ZStack(alignment: .leading) {
-//                    LogTable.footerColour
-//                }
-//            }
-//                .frame(width: 100)
+            if showExperimentalFeatures {
+                if showExperimentActions {
+                    Group {
+                        ZStack(alignment: .leading) {
+                            LogTable.footerColour
+                        }
+                    }
+                    .frame(width: 100)
+                }
+            }
         }
         .frame(height: 40)
     }
     
     var tableDetails: some View {
-//        LogTableDetails(records: records, colours: colourMap)
-        Group {}
+        Group {
+            if showExperimentalFeatures {
+                if showExperimentTableDetails {
+                    LogTableDetails(records: records, colours: colourMap)
+                }
+            }
+        }
     }
     
     private func setIsReversed() -> Void {
