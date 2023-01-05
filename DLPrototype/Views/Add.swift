@@ -34,12 +34,7 @@ struct Add : View, Identifiable, Hashable {
     
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Text(Image(systemName: "doc.append.fill"))
-                    .font(.title)
-                Text("Record an entry")
-                    .font(.title)
-            }
+            Title(text: "Record an entry", image: "doc.append.fill")
 
             Divider()
 
@@ -49,25 +44,25 @@ struct Add : View, Identifiable, Hashable {
 //                    .frame(height: 40)
                 TextField("Job ID", text: $jobId)
                     .frame(width: 100)
-                    .font(Font.system(size: 16, design: .default))
+                    .font(Theme.font)
                 
                 Text("Or")
                 
                 TextField("Task URL", text: $taskUrl)
-                    .font(Font.system(size: 16, design: .default))
+                    .font(Theme.font)
                 
                 Picker("Job", selection: $jobPickerSelection) {
                     ForEach(recentJobs) { item in
                         Text(item.title)
                             .tag(item.tag)
                             .disabled(item.disabled)
-                            .font(Font.system(size: 16, design: .default))
+                            .font(Theme.font)
                     }
                 }
                 .onAppear(perform: {recentJobs = records.recentJobs()}) // calling ForEach directly with records.recentJobs() resulted in weird behaviour
                 .labelsHidden()
                 .frame(width: 200)
-                .font(Font.system(size: 16, design: .default))
+                .font(Theme.font)
                 .onChange(of: jobPickerSelection) { _ in
                     // modifies jobId to associate the job to the message
                     jobId = String(jobPickerSelection)
@@ -76,14 +71,12 @@ struct Add : View, Identifiable, Hashable {
             }
             
             VStack {
-//                TextField("Type and hit enter to save...", text: $text, axis: .vertical)
-//                    .font(Font.system(size: 16, design: .default))
-//                    .lineLimit(3...)
-//                    .disableAutocorrection(true)
-//                    .onSubmit {
-//                        submitAction()
-//                    }
-                LogTextField(placeholder: "Type and hit enter to save...", lineLimit: 6, onSubmit: submitAction, text: $text)
+                LogTextField(
+                    placeholder: "Type and hit enter to save...",
+                    lineLimit: 6,
+                    onSubmit: submitAction,
+                    text: $text
+                )
             }
 
             Divider()

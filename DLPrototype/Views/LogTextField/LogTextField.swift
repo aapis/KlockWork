@@ -13,6 +13,7 @@ struct LogTextField: View {
     public var placeholder: String
     public var lineLimit: Int
     public var onSubmit: () -> Void
+    public var transparent: Bool? = false
     
     @Binding public var text: String
     
@@ -20,27 +21,60 @@ struct LogTextField: View {
     
     var body: some View {
         ZStack(alignment: .top) {
-            Theme.toolbarColour
-            
-            TextField(placeholder, text: $text, axis: .vertical)
-                .font(Font.system(size: 16, design: .default))
-                .textFieldStyle(.plain)
-                .lineLimit(lineLimit...)
-                .disableAutocorrection(enableAutoCorrection)
-                .padding()
-                .onSubmit(onSubmit)
+            if lineLimit == 1 {
+                oneLine
+            } else if lineLimit < 9 {
+                oneBigLine
+            } else {
+                multiLine
+            }
         }
-        .frame(maxHeight: 150)
     }
     
-    private func submitAction() {
-        print("hi")
+    private var oneLine: some View {
+        TextField(placeholder, text: $text)
+            .font(Theme.font)
+            .textFieldStyle(.plain)
+            .disableAutocorrection(enableAutoCorrection)
+            .padding()
+            .onSubmit(onSubmit)
+            .background(transparent! ? Color.clear : Theme.toolbarColour)
+            .frame(height: 45)
+            .lineLimit(1)
+    }
+    
+    private var oneBigLine: some View {
+        TextField(placeholder, text: $text, axis: .vertical)
+            .font(Theme.font)
+            .textFieldStyle(.plain)
+            .disableAutocorrection(enableAutoCorrection)
+            .padding()
+            .onSubmit(onSubmit)
+            .background(transparent! ? Color.clear : Theme.toolbarColour)
+            .lineLimit(lineLimit...)
+    }
+    
+    private var multiLine: some View {
+        TextEditor(text: $text)
+            .font(Theme.font)
+            .textFieldStyle(.plain)
+            .disableAutocorrection(enableAutoCorrection)
+                    .padding()
+            .onSubmit(onSubmit)
+            .background(transparent! ? Color.black.opacity(0.1) : Theme.toolbarColour)
+            .scrollContentBackground(.hidden)
+            .lineLimit(lineLimit...)
     }
 }
 
 struct LogTextFieldPreview: PreviewProvider {
     static var previews: some View {
         let pView = Add(category: Category(title: "Daily"), records: Records())
-        LogTextField(placeholder: "Type and hit enter to save", lineLimit: 6, onSubmit: {}, text: pView.$text)
+        
+        VStack {
+            LogTextField(placeholder: "Small one", lineLimit: 1, onSubmit: {}, text: pView.$text)
+            LogTextField(placeholder: "Medium one", lineLimit: 9, onSubmit: {}, text: pView.$text)
+            LogTextField(placeholder: "Big one", lineLimit: 100, onSubmit: {}, text: pView.$text)
+        }
     }
 }

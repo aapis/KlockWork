@@ -17,23 +17,21 @@ struct NoteCreate: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            HStack(alignment: .top) {
-                ZStack {
-                    Theme.toolbarColour
-                    
-                    VStack {
-                        
-                        Text("Create a note")
-                        TextField("Title", text: $title)
-                        TextField("Content", text: $content)
-                        
-                        Button(action: save) {
-                            Text("Save")
-                        }
-                    }
+            VStack(alignment: .leading, spacing: 22) {
+                Title(text: "Create a note", image: "note.text.badge.plus")
+                
+                LogTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
+                
+                LogTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
+                
+                Spacer()
+                
+                Button(action: save) {
+                    Text("Create")
                 }
-            }
+            }.padding()
         }
+        .background(Theme.toolbarColour)
     }
     
     private func save() -> Void {

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5309EE3D25619A6D00B3BC06 /* Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5309EE3C25619A6D00B3BC06 /* Backup.swift */; };
+		531B38FC29674EC400E74013 /* Title.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531B38FB29674EC400E74013 /* Title.swift */; };
 		53218D4824B7F6EB0088ABE9 /* DLPrototype.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */; };
 		53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4924B7F6EB0088ABE9 /* Home.swift */; };
 		53218D4D24B7F6EB0088ABE9 /* DLPrototype.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4B24B7F6EB0088ABE9 /* DLPrototype.xcdatamodeld */; };
@@ -69,6 +70,7 @@
 
 /* Begin PBXFileReference section */
 		5309EE3C25619A6D00B3BC06 /* Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
+		531B38FB29674EC400E74013 /* Title.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Title.swift; sourceTree = "<group>"; };
 		53218D4424B7F6EB0088ABE9 /* DLPrototype.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DLPrototype.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DLPrototype.swift; sourceTree = "<group>"; };
 		53218D4924B7F6EB0088ABE9 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
@@ -226,7 +228,6 @@
 				53DCA3412803BBBF0032FD60 /* CalendarView.swift */,
 				53EFCE7829637F35004E45EC /* GeneralSettings.swift */,
 				53EFCE7A29637F49004E45EC /* Settings.swift */,
-				537628A929665B2600DE8ECF /* NotesHome.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -243,6 +244,7 @@
 		537628AD29665B7B00DE8ECF /* Notes */ = {
 			isa = PBXGroup;
 			children = (
+				537628A929665B2600DE8ECF /* NotesHome.swift */,
 				537628AB29665B4E00DE8ECF /* NoteView.swift */,
 				53999C1E29669C4E00125E65 /* NoteCreate.swift */,
 			);
@@ -291,6 +293,7 @@
 				53EDDF9D29634852008D34C7 /* Entry.swift */,
 				53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */,
 				5376289D29664F8C00DE8ECF /* Theme.swift */,
+				531B38FB29674EC400E74013 /* Title.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -487,6 +490,7 @@
 				53C6D08F2964E25F00EA6129 /* Column.swift in Sources */,
 				53C6D0942965048500EA6129 /* DetailsRow.swift in Sources */,
 				53218D4824B7F6EB0088ABE9 /* DLPrototype.swift in Sources */,
+				531B38FC29674EC400E74013 /* Title.swift in Sources */,
 				537628AA29665B2600DE8ECF /* NotesHome.swift in Sources */,
 				539C96EA27EE7AFF007DA058 /* CalendarThisWeek.swift in Sources */,
 				537AEB9F29627DCC00385787 /* LogTable.swift in Sources */,

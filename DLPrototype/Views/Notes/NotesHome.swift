@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 struct NotesHome: View {
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.postedDate)]) public var notes: FetchedResults<Note>
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.postedDate, order: .reverse)]) public var notes: FetchedResults<Note>
     
     @Environment(\.managedObjectContext) var managedObjectContext
 
@@ -21,7 +21,7 @@ struct NotesHome: View {
             }
             .navigationDestination(for: Note.self) {
                 NoteView(note: $0)
-                    .navigationTitle($0.title!)
+                    .navigationTitle("Editing: \($0.title!)")
             }
             Divider()
             VStack {
