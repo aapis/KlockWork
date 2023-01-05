@@ -63,7 +63,9 @@ struct LogTableDetails: View {
     
     private func createColourMapFrom(_ map: [String: Color]) -> Void {
         for row in map {
-            records.statistics.append(Statistic(key: row.key, value: "\(row.value)", colour: row.value, group: .colourReference))
+            if !records.statistics.contains(where: {$0.key == row.key}) {
+                records.statistics.append(Statistic(key: row.key, value: "\(row.value)", colour: row.value, group: .colourReference))
+            }
         }
     }
 }
