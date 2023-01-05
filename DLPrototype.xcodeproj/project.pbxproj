@@ -20,6 +20,8 @@
 		537368CD24B93D6A00193E88 /* Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537368CC24B93D6A00193E88 /* Search.swift */; };
 		537368CF24B93D9300193E88 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537368CE24B93D9300193E88 /* Log.swift */; };
 		537368D124B93DB600193E88 /* Add.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537368D024B93DB600193E88 /* Add.swift */; };
+		5376289B2966467100DE8ECF /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376289A2966467100DE8ECF /* SearchBar.swift */; };
+		5376289E29664F8C00DE8ECF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376289D29664F8C00DE8ECF /* Theme.swift */; };
 		537AEB9F29627DCC00385787 /* LogTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEB9E29627DCC00385787 /* LogTable.swift */; };
 		537AEBA1296287B900385787 /* LogRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA0296287B900385787 /* LogRow.swift */; };
 		537AEBA329629DE400385787 /* LogRowActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA229629DE400385787 /* LogRowActions.swift */; };
@@ -80,6 +82,8 @@
 		537368CC24B93D6A00193E88 /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
 		537368CE24B93D9300193E88 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		537368D024B93DB600193E88 /* Add.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Add.swift; sourceTree = "<group>"; };
+		5376289A2966467100DE8ECF /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
+		5376289D29664F8C00DE8ECF /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		537AEB9E29627DCC00385787 /* LogTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTable.swift; sourceTree = "<group>"; };
 		537AEBA0296287B900385787 /* LogRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRow.swift; sourceTree = "<group>"; };
 		537AEBA229629DE400385787 /* LogRowActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRowActions.swift; sourceTree = "<group>"; };
@@ -151,11 +155,11 @@
 		53218D4624B7F6EB0088ABE9 /* DLPrototype */ = {
 			isa = PBXGroup;
 			children = (
+				537368D224B93DF700193E88 /* Views */,
 				53EFCE7429637CB8004E45EC /* Extensions */,
 				53EDDF9C29634840008D34C7 /* Shared */,
 				53B940D72800A9CC0024AA5F /* Models */,
 				53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */,
-				537368D224B93DF700193E88 /* Views */,
 				53218D4E24B7F6EC0088ABE9 /* Assets.xcassets */,
 				53218D5324B7F6EC0088ABE9 /* Main.storyboard */,
 				53218D5624B7F6EC0088ABE9 /* Info.plist */,
@@ -241,6 +245,7 @@
 			children = (
 				53C6D0932965048500EA6129 /* DetailsRow.swift */,
 				53C6D09729654F4C00EA6129 /* DetailGroup.swift */,
+				5376289A2966467100DE8ECF /* SearchBar.swift */,
 			);
 			path = RowTypes;
 			sourceTree = "<group>";
@@ -250,6 +255,7 @@
 			children = (
 				53EDDF9D29634852008D34C7 /* Entry.swift */,
 				53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */,
+				5376289D29664F8C00DE8ECF /* Theme.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -429,7 +435,9 @@
 				53EFCE7D2963D309004E45EC /* LogTableDetails.swift in Sources */,
 				537368CF24B93D9300193E88 /* Log.swift in Sources */,
 				53C6D08D2964E25400EA6129 /* EditableColumn.swift in Sources */,
+				5376289E29664F8C00DE8ECF /* Theme.swift in Sources */,
 				53C6D09829654F4C00EA6129 /* DetailGroup.swift in Sources */,
+				5376289B2966467100DE8ECF /* SearchBar.swift in Sources */,
 				537AEBA1296287B900385787 /* LogRow.swift in Sources */,
 				537368D124B93DB600193E88 /* Add.swift in Sources */,
 				53218D4D24B7F6EB0088ABE9 /* DLPrototype.xcdatamodeld in Sources */,

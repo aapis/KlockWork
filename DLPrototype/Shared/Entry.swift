@@ -47,6 +47,10 @@ struct Entry: Identifiable, Equatable {
         self.colour = colour
     }
     
+    public func toString() -> String {
+        return "\(timestamp) - \(job) - \(message)"
+    }
+    
     mutating private func setJobFromUrl() -> Void {
         job = String(url.suffix(5))
     }

@@ -12,25 +12,28 @@ import SwiftUI
 struct DetailsRow: View {
     public var key: String
     public var value: String
-//    public var group: StatisticGroup
-    
-//    @AppStorage("tigerStriped") private var tigerStriped = false
     
     var body: some View {
         HStack(spacing: 1) {
             ZStack(alignment: .leading) {
-                LogTable.rowColour
+                Theme.rowColour
                 
                 Text(key)
                     .padding(10)
-            }
+            }.frame(width: 200)
             
             ZStack(alignment: .leading) {
-                LogTable.rowColour
+                Theme.rowColour
                 
                 Text(value)
                     .padding(10)
             }
         }
+    }
+}
+
+struct DetailsRowPreview: PreviewProvider {
+    static var previews: some View {        
+        DetailsRow(key: "Unique jobs", value: "22")
     }
 }

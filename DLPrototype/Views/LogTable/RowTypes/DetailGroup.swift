@@ -14,19 +14,37 @@ struct DetailGroup: View {
     public var children: [Statistic]
     
     var body: some View {
-        HStack(spacing: 1) {
-            ZStack(alignment: .leading) {
-                LogTable.toolbarColour
-                
-                Text(name)
-                    .padding(10)
+        VStack(spacing: 0) {
+            HStack(spacing: 1) {
+                ZStack(alignment: .leading) {
+                    Theme.toolbarColour
+                    
+                    Text(name)
+                        .padding(10)
+                }
             }
-        }
-        
-        if children.count > 0 {
-            ForEach(children) { stat in
-                DetailsRow(key: stat.key, value: stat.value)
+            .frame(height: 52)
+            
+            Divider()
+                .frame(height: 1)
+                .background(Color.clear)
+            
+            if children.count > 0 {
+                ForEach(children) { stat in
+                    DetailsRow(key: stat.key, value: stat.value)
+                }
             }
         }
     }
 }
+
+struct DetailGroupPreview: PreviewProvider {
+    static var previews: some View {
+        let statistics: [Statistic] = [
+            Statistic(key: "Name", value: "Ryan Priebe", group: .today)
+        ]
+        
+        DetailGroup(name: "Naughty List", children: statistics)
+    }
+}
+

@@ -21,7 +21,7 @@ struct LogRow: View, Identifiable {
     @State public var job: String = ""
     @State public var timestamp: String = ""
     @State public var aIndex: String = "0"
-    @State public var activeColour: Color = LogTable.rowColour
+    @State public var activeColour: Color = Theme.rowColour
     
     @AppStorage("tigerStriped") private var tigerStriped = false
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
@@ -45,7 +45,7 @@ struct LogRow: View, Identifiable {
                     isEditing: $isEditing,
                     isDeleting: $isDeleting,
                     text: $timestamp
-                ).frame(maxWidth: 100)
+                ).frame(maxWidth: 101)
                 
                 EditableColumn(
                     type: "job",
@@ -150,8 +150,8 @@ struct LogRow: View, Identifiable {
 struct LogTableRowPreview: PreviewProvider {
     static var previews: some View {
         VStack {
-            LogRow(entry: Entry(timestamp: "2023-01-01 19:48", job: "88888", message: "Hello, world"), index: 0, colour: LogTable.rowColour)
-            LogRow(entry: Entry(timestamp: "2023-01-01 19:49", job: "11", message: "Hello, world"), index: 1, colour: LogTable.rowColour)
+            LogRow(entry: Entry(timestamp: "2023-01-01 19:48", job: "88888", message: "Hello, world"), index: 0, colour: Theme.rowColour)
+            LogRow(entry: Entry(timestamp: "2023-01-01 19:49", job: "11", message: "Hello, world"), index: 1, colour: Theme.rowColour)
         }
     }
 }

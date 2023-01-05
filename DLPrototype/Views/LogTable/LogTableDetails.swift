@@ -34,7 +34,7 @@ struct LogTableDetails: View {
         GridRow {
             Group {
                 ZStack(alignment: .leading) {
-                    LogTable.headerColour
+                    Theme.headerColour
                     Text("Statistics & Information")
                         .padding(10)
                 }
@@ -55,7 +55,7 @@ struct LogTableDetails: View {
                         }
                     }                    
                 } else {
-                    LogRowEmpty(message: "No entries found for today", index: 0, colour: LogTable.rowColour)
+                    LogRowEmpty(message: "No entries found for today", index: 0, colour: Theme.rowColour)
                 }
             }
         }

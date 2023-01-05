@@ -21,14 +21,14 @@ struct DetailsColumn: View {
     var body: some View {
         HStack(spacing: 1) {
             ZStack(alignment: .leading) {
-                LogTable.rowColour
+                Theme.rowColour
                 
                 Text("key")
                     .padding(10)
             }
             
             ZStack(alignment: .leading) {
-                LogTable.rowColour
+                Theme.rowColour
                 
                 Text("Value")
                     .padding(10)

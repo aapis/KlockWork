@@ -27,7 +27,7 @@ struct Home: View {
                         HStack {
                             Image(systemName: "doc.append.fill")
                                 .padding(.trailing, 10)
-                            Text("Record")
+                            Text("Today")
                         }.padding(10)
                     }
                     

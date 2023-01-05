@@ -39,7 +39,7 @@ class Records: ObservableObject, Identifiable {
     public var id = UUID()
     
     private var colourMap: [String: Color] = [
-        "11": LogTable.rowColour
+        "11": Theme.rowColour
     ]
     private var colours: [Color] = []
     
@@ -251,6 +251,29 @@ class Records: ObservableObject, Identifiable {
         return lines
     }
     
+    public func sortByJob() -> [Entry] {
+        return entries.sorted(by: { $0.job > $1.job })
+    }
+    
+    public func search(term: String) -> [Entry] {
+        // TODO: there's probably a better way to do this that doesn't involve creating a new object
+        var results: [Entry] = []
+
+        for entry in entries {
+            do {
+                let caseInsensitiveTerm = try Regex("\(term)").ignoresCase()
+                    
+                if entry.message.contains(caseInsensitiveTerm) {
+                    results.append(entry)
+                }
+            } catch {
+                print("Records::search(term: String) - Unable to process string \(term)")
+            }
+        }
+        
+        return results
+    }
+    
     // MARK: below this are the forsaken methods
     
     // TODO: move to some kind of log writer class
@@ -309,7 +332,7 @@ class Records: ObservableObject, Identifiable {
                     if colourMap.contains(where: {$0.value == colour}) {
                         colourMap.updateValue(getUnusedColourFromBank(), forKey: jid)
                     } else {
-                        colourMap.updateValue(colour ?? LogTable.rowColour, forKey: jid)
+                        colourMap.updateValue(colour ?? Theme.rowColour, forKey: jid)
                     }
                 }
             }
@@ -331,7 +354,7 @@ class Records: ObservableObject, Identifiable {
     // TODO: This shouldn't be in this class
     public func applyColourMap() -> Void {
         for index in entries.indices {
-            entries[index].colour = colourMap[entries[index].job] ?? LogTable.rowColour
+            entries[index].colour = colourMap[entries[index].job] ?? Theme.rowColour
         }
         
         print("Records::applyColourMap - map: \(colourMap)")
@@ -368,7 +391,7 @@ class Records: ObservableObject, Identifiable {
             return tmpColours.randomElement()!
         }
         
-        return LogTable.rowColour
+        return Theme.rowColour
     }
     
     // TODO: this shouldn't be here (should be in some Statistics class

@@ -20,7 +20,7 @@ struct LogTextField: View {
     
     var body: some View {
         ZStack(alignment: .top) {
-            LogTable.toolbarColour
+            Theme.toolbarColour
             
             TextField(placeholder, text: $text, axis: .vertical)
                 .font(Font.system(size: 16, design: .default))

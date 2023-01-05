@@ -1,5 +1,5 @@
 //
-//  LogTable.swift
+//  Theme.swift
 //  DLPrototype
 //
 //  Created by Ryan Priebe on 2023-01-01.
@@ -18,18 +18,12 @@ struct LogTable: View, Identifiable {
     @State private var showSidebar: Bool = true // TODO: TMP
     @State private var isReversed: Bool = false
     @State public var colourMap: [String: Color] = [
-        "11": LogTable.rowColour
+        "11": Theme.rowColour
     ]
     @State private var colours: [Color] = []
     @State private var isShowingAlert: Bool = false
     @State private var selectedTab: Int = 0
-    
-    static public var rowColour: Color = Color.gray.opacity(0.2)
-    static public var headerColour: Color = Color.blue
-    static public var footerColour: Color = Color.gray.opacity(0.5)
-    static public var toolbarColour: Color = Color.indigo.opacity(0.2)
-    static public var tabColour: Color = Color.white.opacity(0.2)
-    static public var tabActiveColour: Color = Color.white.opacity(0.7)
+    @State private var searchText: String = ""
     
     private let font: Font = .system(.body, design: .monospaced)
     
@@ -41,11 +35,7 @@ struct LogTable: View, Identifiable {
             toolbar.font(font)
             
             HStack(spacing: 1) {
-                if selectedTab == 0 {
-                    table
-                } else if selectedTab == 1 {
-                    Text("GROUPED TABLE NOT IMPLEMENTED")
-                }
+                table
                 
                 if showSidebar {
                     tableDetails.frame(maxWidth: 300)
@@ -58,6 +48,7 @@ struct LogTable: View, Identifiable {
         }
     }
     
+    // MARK: table view
     var table: some View {
         VStack(spacing: 1) {
             Grid(alignment: .top, horizontalSpacing: 1, verticalSpacing: 1) {
@@ -72,36 +63,47 @@ struct LogTable: View, Identifiable {
         }
     }
     
-    // TODO: add picker OR buttons that filter or group based on a given column
+    // MARK: toolbar view
     var toolbar: some View {
         GridRow {
             Group {
                 ZStack(alignment: .leading) {
-                    LogTable.toolbarColour
+                    Theme.toolbarColour
                     
                     HStack {
                         HStack(spacing: 1) {
                             // TODO: convert these button/styles to custom button views and styles
                             Button(action: {setActive(0)}, label: {
                                 ZStack {
-                                    (selectedTab == 0 ? LogTable.tabActiveColour : LogTable.tabColour)
+                                    (selectedTab == 0 ? Theme.tabActiveColour : Theme.tabColour)
                                     Image(systemName: "tray.2.fill")
                                 }
                             })
                             .buttonStyle(.borderless)
-                            .foregroundColor(selectedTab == 0 ? Color.black : Color.white)
+                            .foregroundColor(Color.white)
                             .help("View all of today's records")
                             .frame(width: 50)
                             
                             Button(action: {setActive(1)}, label: {
                                 ZStack {
-                                    (selectedTab == 1 ? LogTable.tabActiveColour : LogTable.tabColour)
-                                    Image(systemName: "folder")
+                                    (selectedTab == 1 ? Theme.tabActiveColour : Theme.tabColour)
+                                    Image(systemName: "square.grid.3x1.fill.below.line.grid.1x2")
                                 }
                             })
                             .buttonStyle(.borderless)
-                            .foregroundColor(selectedTab == 1 ? Color.black : Color.white)
-                            .help("View today's records, grouped")
+                            .foregroundColor(Color.white)
+                            .help("Today's records grouped by JOB ID")
+                            .frame(width: 50)
+                            
+                            Button(action: {setActive(2)}, label: {
+                                ZStack {
+                                    (selectedTab == 2 ? Theme.tabActiveColour : Theme.tabColour)
+                                    Image(systemName: "magnifyingglass")
+                                }
+                            })
+                            .buttonStyle(.borderless)
+                            .foregroundColor(Color.white)
+                            .help("Search today's records")
                             .frame(width: 50)
                         }
                         
@@ -145,11 +147,12 @@ struct LogTable: View, Identifiable {
         }.frame(height: 35)
     }
     
+    // MARK: header view
     var headers: some View {
         GridRow {
             Group {
                 ZStack {
-                    LogTable.headerColour
+                    Theme.headerColour
                     Button(action: setIsReversed) {
                         Image(systemName: "arrow.up.arrow.down")
                     }
@@ -161,15 +164,15 @@ struct LogTable: View, Identifiable {
                 .frame(width: 50)
             Group {
                 ZStack(alignment: .leading) {
-                    LogTable.headerColour
+                    Theme.headerColour
                     Text("Timestamp")
                         .padding(10)
                 }
             }
-                .frame(width: 100)
+                .frame(width: 101)
             Group {
                 ZStack(alignment: .leading) {
-                    LogTable.headerColour
+                    Theme.headerColour
                     Text("Job ID")
                         .padding(10)
                 }
@@ -177,7 +180,7 @@ struct LogTable: View, Identifiable {
                 .frame(width: 100)
             Group {
                 ZStack(alignment: .leading) {
-                    LogTable.headerColour
+                    Theme.headerColour
                     Text("Message")
                         .padding(10)
                 }
@@ -188,7 +191,7 @@ struct LogTable: View, Identifiable {
                 if showExperimentActions {
                     Group {
                         ZStack(alignment: .leading) {
-                            LogTable.headerColour
+                            Theme.headerColour
                             Text("Actions")
                                 .padding(10)
                         }
@@ -200,23 +203,45 @@ struct LogTable: View, Identifiable {
         .frame(height: 40)
     }
     
+    // MARK: rows view
     var rows: some View {
         VStack(spacing: 1) {
-            if records.entries.count > 0 {
-                ForEach(records.entries) { entry in
-                    LogRow(entry: entry, index: records.entries.firstIndex(of: entry), colour: entry.colour)
+            if selectedTab == 0 { // all tab
+                if records.entries.count > 0 {
+                    ForEach(records.entries) { entry in
+                        LogRow(entry: entry, index: records.entries.firstIndex(of: entry), colour: entry.colour)
+                    }
+                } else {
+                    LogRowEmpty(message: "No entries found for today", index: 0, colour: Theme.rowColour)
                 }
-            } else {
-                LogRowEmpty(message: "No entries found for today", index: 0, colour: LogTable.rowColour)
+            } else if selectedTab == 1 { // grouped tab
+                if records.entries.count > 0 {
+                    ForEach(records.sortByJob()) { entry in
+                        LogRow(entry: entry, index: records.entries.firstIndex(of: entry), colour: entry.colour)
+                    }
+                } else {
+                    LogRowEmpty(message: "No entries found for today", index: 0, colour: Theme.rowColour)
+                }
+            } else if selectedTab == 2 { // search tab
+                if records.entries.count > 0 {
+                    SearchBar(text: $searchText)
+                    
+                    ForEach(records.search(term: searchText)) { entry in
+                        LogRow(entry: entry, index: records.entries.firstIndex(of: entry), colour: entry.colour)
+                    }                    
+                } else {
+                    LogRowEmpty(message: "No entries found for today", index: 0, colour: Theme.rowColour)
+                }
             }
         }
     }
     
+    // MARK: footer view
     var footer: some View {
         GridRow {
             Group {
                 ZStack {
-                    LogTable.footerColour
+                    Theme.footerColour
                     Text("\(records.entries.count)")
                         .padding(10)
                 }
@@ -224,19 +249,19 @@ struct LogTable: View, Identifiable {
                 .frame(width: 50)
             Group {
                 ZStack(alignment: .leading) {
-                    LogTable.footerColour
+                    Theme.footerColour
+                }
+            }
+                .frame(width: 101)
+            Group {
+                ZStack(alignment: .leading) {
+                    Theme.footerColour
                 }
             }
                 .frame(width: 100)
             Group {
                 ZStack(alignment: .leading) {
-                    LogTable.footerColour
-                }
-            }
-                .frame(width: 100)
-            Group {
-                ZStack(alignment: .leading) {
-                    LogTable.footerColour
+                    Theme.footerColour
                     Text("Word count: \(wordCount)")
                         .padding(10)
                 }
@@ -247,7 +272,7 @@ struct LogTable: View, Identifiable {
                 if showExperimentActions {
                     Group {
                         ZStack(alignment: .leading) {
-                            LogTable.footerColour
+                            Theme.footerColour
                         }
                     }
                     .frame(width: 100)
@@ -293,15 +318,30 @@ struct LogTable: View, Identifiable {
     
     private func copyAll() -> Void {
         let pasteBoard = NSPasteboard.general
-        let df = DateFormatter()
-        df.timeZone = TimeZone(abbreviation: "MST")
-        df.locale = NSLocale.current
-        df.dateFormat = "yyyy-MM-dd"
-        let today = df.string(from: Date())
-        let data = records.rowsStartsWith(term: today).joined(separator: "\n")
+        var source: [Entry] = []
+        
+        if selectedTab == 0 {
+            source = records.entries
+        } else if selectedTab == 1 {
+            source = records.sortByJob()
+        } else if selectedTab == 2 {
+            source = records.search(term: searchText)
+        }
+        
+        let data = toStringList(source)
         
         pasteBoard.clearContents()
         pasteBoard.setString(data, forType: .string)
+    }
+    
+    private func toStringList(_ items: [Entry]) -> String {
+        var out = ""
+        
+        for item in items {
+            out += item.toString() + "\n"
+        }
+        
+        return out
     }
 }
 
