@@ -15,56 +15,70 @@ struct Category: Identifiable {
 }
 
 struct Home: View {
-    @ObservedObject public var records: Records    
+    @ObservedObject public var records: Records
+    
+    @Environment(\.managedObjectContext) var managedObjectContext
+    
+    @State private var selected: String?
+    @State public var appVersion: String?
     
     var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    NavigationLink {
-                        Add(category: Category(title: "Daily"), records: records)
-                    } label: {
-                        HStack {
-                            Image(systemName: "doc.append.fill")
-                                .padding(.trailing, 10)
-                            Text("Today")
-                        }.padding(10)
-                    }
-                    
-                    NavigationLink {
-                        Search(category: Category(title: "Daily"), records: records)
-                    } label: {
-                        HStack {
-                            Image(systemName: "magnifyingglass.circle.fill")
-                                .padding(.trailing, 10)
-                            Text("Search")
-                        }.padding(10)
-                    }
-                    
-                    NavigationLink {
-                        CalendarView(category: Category(title: "Daily"), records: records)
-                    } label: {
-                        HStack {
-                            Image(systemName: "calendar")
-                                .padding(.trailing, 10)
-                            Text("Calendar")
-                        }.padding(10)
-                    }
-                    
-                    NavigationLink {
-                        Backup(category: Category(title: "Daily"))
-                    } label: {
-                        HStack {
-                            Image(systemName: "cloud.fill")
-                                .padding(.trailing, 10)
-                            Text("Backup")
-                        }.padding(10)
-                    }
-                } header: {
-                    Text("Pages")
+        NavigationSplitView {
+            List(selection: $selected) {
+                NavigationLink {
+                    Add(category: Category(title: "Daily"), records: records)
+                        .navigationTitle("Today")
+                } label: {
+                    Image(systemName: "doc.append.fill")
+                        .padding(.trailing, 10)
+                    Text("Today")
                 }
-            }.listStyle(.sidebar)
+                
+                NavigationLink {
+                    Search(category: Category(title: "Daily"), records: records)
+                        .navigationTitle("Search")
+                } label: {
+                    Image(systemName: "magnifyingglass.circle.fill")
+                        .padding(.trailing, 10)
+                    Text("Search")
+                }
+                
+                NavigationLink {
+                    NotesHome()
+                        .navigationTitle("Notes")
+                } label: {
+                    Image(systemName: "note.text")
+                        .padding(.trailing, 10)
+                    Text("Notes")
+                }
+
+                NavigationLink {
+                    CalendarView(category: Category(title: "Daily"), records: records)
+                        .navigationTitle("Calendar")
+                } label: {
+                    Image(systemName: "calendar")
+                        .padding(.trailing, 10)
+                    Text("Calendar")
+                }
+
+                NavigationLink {
+                    Backup(category: Category(title: "Daily"))
+                        .navigationTitle("Backup")
+                } label: {
+                    Image(systemName: "cloud.fill")
+                        .padding(.trailing, 10)
+                    Text("Backup")
+                }
+            }
+        } detail: {
+            Text("Hello, world")
         }
+        .navigationTitle("DailyLogger b.\(appVersion ?? "0")")
+        .onAppear(perform: updateName)
+    }
+    
+    private func updateName() -> Void {
+        appVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
     }
 }
 

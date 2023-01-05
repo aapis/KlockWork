@@ -16,4 +16,6 @@ struct Theme {
     static public var toolbarColour: Color = Color.indigo.opacity(0.2)
     static public var tabColour: Color = Color.white.opacity(0.2)
     static public var tabActiveColour: Color = headerColour
+    static public let font: Font = .system(.body, design: .monospaced)
+    static public let fontTitle: Font = .system(.title, design: .monospaced)
 }

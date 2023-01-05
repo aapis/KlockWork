@@ -11,11 +11,12 @@ import SwiftUI
 let defaultPickerChoice: CustomPickerItem  = CustomPickerItem(title: "Recent jobs", tag: 0)
 let defaultCopiedRow: Entry = Entry(timestamp: "00", job: "11", message: "Row not found")
 
-struct Add : View {
+struct Add : View, Identifiable, Hashable {
     var category: Category
     @ObservedObject public var records: Records
     
     @State public var text: String = ""
+    @State public var id = UUID()
     
     @State private var jobId: String = ""
     @State private var taskUrl: String = "" // only treated as a string, no need to be URL-type
@@ -33,12 +34,7 @@ struct Add : View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Text(Image(systemName: "doc.append.fill"))
-                    .font(.title)
-                Text("Record an entry")
-                    .font(.title)
-            }
+            Title(text: "Record an entry", image: "doc.append.fill")
 
             Divider()
 
@@ -48,25 +44,25 @@ struct Add : View {
 //                    .frame(height: 40)
                 TextField("Job ID", text: $jobId)
                     .frame(width: 100)
-                    .font(Font.system(size: 16, design: .default))
+                    .font(Theme.font)
                 
                 Text("Or")
                 
                 TextField("Task URL", text: $taskUrl)
-                    .font(Font.system(size: 16, design: .default))
+                    .font(Theme.font)
                 
                 Picker("Job", selection: $jobPickerSelection) {
                     ForEach(recentJobs) { item in
                         Text(item.title)
                             .tag(item.tag)
                             .disabled(item.disabled)
-                            .font(Font.system(size: 16, design: .default))
+                            .font(Theme.font)
                     }
                 }
                 .onAppear(perform: {recentJobs = records.recentJobs()}) // calling ForEach directly with records.recentJobs() resulted in weird behaviour
                 .labelsHidden()
                 .frame(width: 200)
-                .font(Font.system(size: 16, design: .default))
+                .font(Theme.font)
                 .onChange(of: jobPickerSelection) { _ in
                     // modifies jobId to associate the job to the message
                     jobId = String(jobPickerSelection)
@@ -75,14 +71,12 @@ struct Add : View {
             }
             
             VStack {
-//                TextField("Type and hit enter to save...", text: $text, axis: .vertical)
-//                    .font(Font.system(size: 16, design: .default))
-//                    .lineLimit(3...)
-//                    .disableAutocorrection(true)
-//                    .onSubmit {
-//                        submitAction()
-//                    }
-                LogTextField(placeholder: "Type and hit enter to save...", lineLimit: 6, onSubmit: submitAction, text: $text)
+                LogTextField(
+                    placeholder: "Type and hit enter to save...",
+                    lineLimit: 6,
+                    onSubmit: submitAction,
+                    text: $text
+                )
             }
 
             Divider()
@@ -96,6 +90,14 @@ struct Add : View {
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .padding()
             .defaultAppStorage(.standard)
+    }
+    
+    static func == (lhs: Add, rhs: Add) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
     
     private func reloadRecords() -> Void {
