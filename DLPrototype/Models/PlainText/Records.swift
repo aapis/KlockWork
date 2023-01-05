@@ -406,7 +406,6 @@ class Records: ObservableObject, Identifiable {
             // key exists, check if value is different
             // if so, update value
             if var stat = statistics.first(where: {$0.key == key && $0.value != value}) {
-                print(stat)
                 // if so, update value
                 stat.value = value
             }
