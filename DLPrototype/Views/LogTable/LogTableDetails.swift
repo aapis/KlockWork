@@ -53,11 +53,17 @@ struct LogTableDetails: View {
                         if children.count > 0 {
                             DetailGroup(name: group.title, children: children)
                         }
-                    }                    
+                    }.onAppear(perform: {createColourMapFrom(records.colourMap)})
                 } else {
                     LogRowEmpty(message: "No entries found for today", index: 0, colour: Theme.rowColour)
                 }
             }
+        }
+    }
+    
+    private func createColourMapFrom(_ map: [String: Color]) -> Void {
+        for row in map {
+            records.statistics.append(Statistic(key: row.key, value: "\(row.value)", colour: row.value, group: .colourReference))
         }
     }
 }
