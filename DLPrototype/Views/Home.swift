@@ -26,6 +26,15 @@ struct Home: View {
         NavigationSplitView {
             List(selection: $selected) {
                 NavigationLink {
+                    ExperimentalToday(category: Category(title: "Daily"), records: records)
+                        .navigationTitle("[Experimental] Today")
+                } label: {
+                    Image(systemName: "command")
+                        .padding(.trailing, 10)
+                    Text("[Experimental] Today")
+                }
+                
+                NavigationLink {
                     Add(category: Category(title: "Daily"), records: records)
                         .navigationTitle("Today")
                 } label: {

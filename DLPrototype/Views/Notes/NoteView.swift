@@ -14,41 +14,51 @@ struct NoteView: View {
     
     @State private var title: String = ""
     @State private var content: String = ""
-    @State private var isDeleted: Bool = false
+    @State private var isShowingEditor: Bool = true
     
     @Environment(\.managedObjectContext) var managedObjectContext
     
     var body: some View {
-        if !isDeleted {
-            VStack(alignment: .leading) {
-                VStack(alignment: .leading, spacing: 22) {
-                    Title(text: "Editing", image: "pencil")
-                    
-                    LogTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
-                    
-                    LogTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
-                    
-                    Spacer()
-                    
-                    HStack {
-                        Button(action: update) {
-                            Text("Update")
-                        }
+        VStack {
+            if isShowingEditor {
+                VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 22) {
+                        Title(text: "Editing", image: "pencil")
+                        
+                        LogTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
+                        
+                        LogTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
                         
                         Spacer()
                         
-                        Button(action: delete) {
-                            Text("Delete")
+                        HStack {
+                            Button(action: update) {
+                                Text("Update")
+                            }
+                            
+                            Button(action: cancel) {
+                                Text("Cancel")
+                            }
+                            
+                            Spacer()
+                            
+                            Button(action: delete) {
+                                Text("Delete")
+                            }
                         }
-                    }
-                }.padding()
+                    }.padding()
+                }
+                .background(Theme.toolbarColour)
+            } else {
+                Text("Please select a note, or create a new one")
             }
-            .background(Theme.toolbarColour)
-            .onAppear(perform: {createBindings(note: note)})
-            .onChange(of: note, perform: createBindings)
-        } else {
-            Text("Note does not exist")
         }
+        .onAppear(perform: {createBindings(note: note)})
+        .onChange(of: note, perform: createBindings)
+    }
+    
+    private func cancel() -> Void {
+        isShowingEditor = false
     }
     
     private func update() -> Void {
@@ -60,7 +70,7 @@ struct NoteView: View {
     
     private func delete() -> Void {
         managedObjectContext.delete(note)
-        isDeleted = true
+        isShowingEditor = false
         title = ""
         content = ""
         
@@ -70,6 +80,7 @@ struct NoteView: View {
     private func createBindings(note: Note) -> Void {
         title = note.title!
         content = note.body!
+        isShowingEditor = true
     }
 }
 
