@@ -222,9 +222,6 @@ class Records: ObservableObject, Identifiable {
         entries = []
         statistics = []
         records = []
-        colourMap = [
-            "11": Theme.rowColour
-        ]
     }
     
     // Returns list of strings representing all log lines since a given date, from a given file
