@@ -45,7 +45,14 @@ struct LogRow: View, Identifiable {
                     isEditing: $isEditing,
                     isDeleting: $isDeleting,
                     text: $timestamp
-                ).frame(maxWidth: 101)
+                )
+                .frame(maxWidth: 101)
+                .contextMenu {
+                    Button(action: {copy(entry.timestamp)}, label: {
+                        Text("Copy \"\(entry.timestamp)\"")
+                    })
+                }
+                
                 
                 EditableColumn(
                     type: "job",
@@ -56,7 +63,13 @@ struct LogRow: View, Identifiable {
                     isEditing: $isEditing,
                     isDeleting: $isDeleting,
                     text: $job
-                ).frame(maxWidth: 100)
+                )
+                .frame(maxWidth: 100)
+                .contextMenu {
+                    Button(action: {copy(entry.job)}, label: {
+                        Text("Copy \"\(entry.job)\"")
+                    })
+                }
                 
                 EditableColumn(
                     type: "message",
@@ -68,6 +81,11 @@ struct LogRow: View, Identifiable {
                     isDeleting: $isDeleting,
                     text: $message
                 )
+                .contextMenu {
+                    Button(action: {copy(entry.message)}, label: {
+                        Text("Copy \"\(entry.message)\"")
+                    })
+                }
                 
                 if showExperimentalFeatures {
                     if showExperimentActions {
@@ -144,6 +162,15 @@ struct LogRow: View, Identifiable {
         let adjusted = adjustedIndex()
         
         return String(adjusted)
+    }
+    
+    private func copy(_ textToCopy: String) -> Void {
+        let pasteBoard = NSPasteboard.general
+        let data = textToCopy
+        
+        
+        pasteBoard.clearContents()
+        pasteBoard.setString(data, forType: .string)
     }
 }
 

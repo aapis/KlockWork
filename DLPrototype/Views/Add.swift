@@ -38,34 +38,14 @@ struct Add : View {
                     .font(.title)
                 Text("Record an entry")
                     .font(.title)
-                
-//                Spacer()
-                
-                // TODO: this causes a crash that I have not had time to investigate yet
-//                Button(action: { copyAction() }, label: {
-//                    Image(systemName: "doc.on.doc")
-//                })
-//                    .help("Copy all rows")
-                
-//                Button(action: reloadRecords, label: {
-//                    Image(systemName: "arrow.counterclockwise")
-//                })
-//                    .help("Reload data")
-//                    .keyboardShortcut("r")
-//
-//                Button(action: { isPresented = true; newDayAction() }, label: {
-//                    Image(systemName: "sunrise")
-//                })
-//                    .help("New day")
-//                    .keyboardShortcut("n")
-//                    .alert("It's a brand new day!", isPresented: $isPresented) {}
             }
 
             Divider()
 
             HStack {
-                LogTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, text: $jobId)
-                    .frame(height: 40)
+                // TODO: not ready for primetime
+//                LogTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, text: $jobId)
+//                    .frame(height: 40)
                 TextField("Job ID", text: $jobId)
                     .frame(width: 100)
                     .font(Font.system(size: 16, design: .default))

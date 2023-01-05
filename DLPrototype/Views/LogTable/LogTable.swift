@@ -30,6 +30,7 @@ struct LogTable: View, Identifiable {
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("showExperiment.actions") private var showExperimentActions = false
     
+    // MARK: body view
     var body: some View {
         VStack(spacing: 1) {
             toolbar.font(font)
@@ -57,8 +58,6 @@ struct LogTable: View, Identifiable {
                 ScrollView {
                     rows.font(font)
                 }
-                
-//                footer.font(font)
             }
         }
     }
@@ -71,76 +70,14 @@ struct LogTable: View, Identifiable {
                     Theme.toolbarColour
                     
                     HStack {
-                        HStack(spacing: 1) {
-                            // TODO: convert these button/styles to custom button views and styles
-                            Button(action: {setActive(0)}, label: {
-                                ZStack {
-                                    (selectedTab == 0 ? Theme.tabActiveColour : Theme.tabColour)
-                                    Image(systemName: "tray.2.fill")
-                                }
-                            })
-                            .buttonStyle(.borderless)
-                            .foregroundColor(Color.white)
-                            .help("View all of today's records")
-                            .frame(width: 50)
-                            
-                            Button(action: {setActive(1)}, label: {
-                                ZStack {
-                                    (selectedTab == 1 ? Theme.tabActiveColour : Theme.tabColour)
-                                    Image(systemName: "square.grid.3x1.fill.below.line.grid.1x2")
-                                }
-                            })
-                            .buttonStyle(.borderless)
-                            .foregroundColor(Color.white)
-                            .help("Today's records grouped by JOB ID")
-                            .frame(width: 50)
-                            
-                            Button(action: {setActive(2)}, label: {
-                                ZStack {
-                                    (selectedTab == 2 ? Theme.tabActiveColour : Theme.tabColour)
-                                    Image(systemName: "magnifyingglass")
-                                }
-                            })
-                            .buttonStyle(.borderless)
-                            .foregroundColor(Color.white)
-                            .help("Search today's records")
-                            .frame(width: 50)
-                        }
-                        
-                        HStack {
-                            Button(action: reload, label: {
-                                Image(systemName: "arrow.counterclockwise")
-                            })
-                            .help("Reload data")
-                            .keyboardShortcut("r")
-                            .buttonStyle(.borderless)
-                            .foregroundColor(Color.white)
-                            
-                            Button(action: {isShowingAlert = true; newDayAction() }, label: {
-                                Image(systemName: "sunrise")
-                            })
-                            .help("New day")
-                            .keyboardShortcut("n")
-                            .buttonStyle(.borderless)
-                            .foregroundColor(Color.white)
-                            //                        .alert("It's a brand new day!", isPresented: $isPresented) {}
-                            
-                            Button(action: copyAll, label: {
-                                Image(systemName: "doc.on.doc")
-                            })
-                            .buttonStyle(.borderless)
-                            .keyboardShortcut("c")
-                            .help("Copy all rows")
-                            .foregroundColor(Color.white)
-                            
-                            Spacer()
-                            Button(action: toggleSidebar, label: {
-                                Image(systemName: "sidebar.right")
-                            })
-                            .help("Toggle sidebar")
-                            .buttonStyle(.borderless)
-                            .foregroundColor(Color.white)
-                        }.padding(8)
+                        ToolbarTabs(selectedTab: $selectedTab)
+                        ToolbarButtons(
+                            selectedTab: $selectedTab,
+                            isShowingAlert: $isShowingAlert,
+                            showSidebar: $showSidebar,
+                            searchText: $searchText,
+                            records: records
+                        )
                     }
                 }
             }
@@ -236,112 +173,19 @@ struct LogTable: View, Identifiable {
         }
     }
     
-    // MARK: footer view
-    var footer: some View {
-        GridRow {
-            Group {
-                ZStack {
-                    Theme.footerColour
-                    Text("\(records.entries.count)")
-                        .padding(10)
-                }
-            }
-                .frame(width: 50)
-            Group {
-                ZStack(alignment: .leading) {
-                    Theme.footerColour
-                }
-            }
-                .frame(width: 101)
-            Group {
-                ZStack(alignment: .leading) {
-                    Theme.footerColour
-                }
-            }
-                .frame(width: 100)
-            Group {
-                ZStack(alignment: .leading) {
-                    Theme.footerColour
-                    Text("Word count: \(wordCount)")
-                        .padding(10)
-                }
-                .onAppear(perform: {wordCount = records.updateWordCount()})
-            }
-
-            if showExperimentalFeatures {
-                if showExperimentActions {
-                    Group {
-                        ZStack(alignment: .leading) {
-                            Theme.footerColour
-                        }
-                    }
-                    .frame(width: 100)
-                }
-            }
-        }
-        .frame(height: 40)
-    }
-    
     var tableDetails: some View {
         LogTableDetails(records: records, colours: colourMap)
-    }
-    
-    private func setActive(_ index: Int) -> Void {
-        selectedTab = index
     }
     
     private func setIsReversed() -> Void {
         isReversed.toggle()
     }
-    
+
     private func sort() -> Void {
         withAnimation(.easeInOut) {
             // just always reverse the records
             records.entries.reverse()
         }
-    }
-    
-    private func toggleSidebar() -> Void {
-        withAnimation(.easeInOut) {
-            showSidebar.toggle()
-        }
-    }
-    
-    private func reload() -> Void {
-        records.reload()
-    }
-    
-    private func newDayAction() -> Void {
-        records.clear()
-        records.logNewDay()
-    }
-    
-    private func copyAll() -> Void {
-        let pasteBoard = NSPasteboard.general
-        var source: [Entry] = []
-        
-        if selectedTab == 0 {
-            source = records.entries
-        } else if selectedTab == 1 {
-            source = records.sortByJob()
-        } else if selectedTab == 2 {
-            source = records.search(term: searchText)
-        }
-        
-        let data = toStringList(source)
-        
-        pasteBoard.clearContents()
-        pasteBoard.setString(data, forType: .string)
-    }
-    
-    private func toStringList(_ items: [Entry]) -> String {
-        var out = ""
-        
-        for item in items {
-            out += item.toString() + "\n"
-        }
-        
-        return out
     }
 }
 
