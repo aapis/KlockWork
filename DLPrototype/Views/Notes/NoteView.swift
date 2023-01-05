@@ -14,43 +14,56 @@ struct NoteView: View {
     
     @State private var title: String = ""
     @State private var content: String = ""
+    @State private var isDeleted: Bool = false
     
     @Environment(\.managedObjectContext) var managedObjectContext
     
     var body: some View {
-        VStack(alignment: .leading) {
-            VStack(alignment: .leading, spacing: 22) {
-                Title(text: "Editing", image: "pencil")
-                
-                LogTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
-                
-                LogTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
-                
-                Spacer()
-                
-                HStack {
-                    Button(action: update) {
-                        Text("Update")
-                    }
+        if !isDeleted {
+            VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 22) {
+                    Title(text: "Editing", image: "pencil")
+                    
+                    LogTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
+                    
+                    LogTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
                     
                     Spacer()
                     
-                    Button(action: {}) {
-                        Text("Delete")
+                    HStack {
+                        Button(action: update) {
+                            Text("Update")
+                        }
+                        
+                        Spacer()
+                        
+                        Button(action: delete) {
+                            Text("Delete")
+                        }
                     }
-                }
-            }.padding()
+                }.padding()
+            }
+            .background(Theme.toolbarColour)
+            .onAppear(perform: {createBindings(note: note)})
+            .onChange(of: note, perform: createBindings)
+        } else {
+            Text("Note does not exist")
         }
-        .background(Theme.toolbarColour)
-        .onAppear(perform: {createBindings(note: note)})
-        .onChange(of: note, perform: createBindings)
     }
     
-    // TODO: copy/pasted from NoteCreate
     private func update() -> Void {
         note.title = title
         note.body = content
 
+        PersistenceController.shared.save()
+    }
+    
+    private func delete() -> Void {
+        managedObjectContext.delete(note)
+        isDeleted = true
+        title = ""
+        content = ""
+        
         PersistenceController.shared.save()
     }
     
