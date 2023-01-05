@@ -12,21 +12,24 @@ import SwiftUI
 struct DetailsRow: View {
     public var key: String
     public var value: String
+    public var colour: Color
     
     var body: some View {
         HStack(spacing: 1) {
             ZStack(alignment: .leading) {
-                Theme.rowColour
+                colour
                 
                 Text(key)
                     .padding(10)
+                    .foregroundColor(colour.isBright() ? Color.black : Color.white)
             }.frame(width: 200)
             
             ZStack(alignment: .leading) {
-                Theme.rowColour
+                colour
                 
                 Text(value)
                     .padding(10)
+                    .foregroundColor(colour.isBright() ? Color.black : Color.white)
             }
         }
     }
@@ -34,6 +37,6 @@ struct DetailsRow: View {
 
 struct DetailsRowPreview: PreviewProvider {
     static var previews: some View {        
-        DetailsRow(key: "Unique jobs", value: "22")
+        DetailsRow(key: "Unique jobs", value: "22", colour: Color.red)
     }
 }

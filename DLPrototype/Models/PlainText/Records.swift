@@ -12,6 +12,7 @@ import SwiftUI
 struct Statistic: Identifiable {
     public let key: String
     public var value: String
+    public var colour: Color
     public let group: StatisticPeriod
     public let id = UUID()
 }
@@ -26,6 +27,7 @@ public enum StatisticPeriod: String, CaseIterable {
     case today = "Today"
     case yesterday = "Yesterday"
     case overall = "Overall"
+    case colourReference = "Colour Reference"
 }
 
 class Records: ObservableObject, Identifiable {
@@ -35,10 +37,11 @@ class Records: ObservableObject, Identifiable {
         StatisticGroup(title: "Today", enumKey: .today),
         StatisticGroup(title: "Yesterday", enumKey: .yesterday),
         StatisticGroup(title: "Overall", enumKey: .overall),
+        StatisticGroup(title: "Colour Reference", enumKey: .colourReference),
     ]
     public var id = UUID()
     
-    private var colourMap: [String: Color] = [
+    public var colourMap: [String: Color] = [
         "11": Theme.rowColour
     ]
     private var colours: [Color] = []
@@ -398,7 +401,7 @@ class Records: ObservableObject, Identifiable {
     private func trackStatistic(key: String, value: String, group: StatisticPeriod) -> Void {
         print("TRACKING STAT \(key) value: \(value)")
         if !statistics.contains(where: {$0.key == key}) {
-            statistics.append(Statistic(key: key, value: value, group: group))
+            statistics.append(Statistic(key: key, value: value, colour: Theme.rowColour, group: group))
         } else {
             // key exists, check if value is different
             // if so, update value

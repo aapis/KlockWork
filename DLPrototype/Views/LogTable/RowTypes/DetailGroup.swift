@@ -31,7 +31,7 @@ struct DetailGroup: View {
             
             if children.count > 0 {
                 ForEach(children) { stat in
-                    DetailsRow(key: stat.key, value: stat.value)
+                    DetailsRow(key: stat.key, value: stat.value, colour: stat.colour)
                 }
             }
         }
@@ -41,10 +41,9 @@ struct DetailGroup: View {
 struct DetailGroupPreview: PreviewProvider {
     static var previews: some View {
         let statistics: [Statistic] = [
-            Statistic(key: "Name", value: "Ryan Priebe", group: .today)
+            Statistic(key: "Name", value: "Ryan Priebe", colour: Color.red, group: .today)
         ]
         
         DetailGroup(name: "Naughty List", children: statistics)
     }
 }
-
