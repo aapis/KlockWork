@@ -11,11 +11,12 @@ import SwiftUI
 let defaultPickerChoice: CustomPickerItem  = CustomPickerItem(title: "Recent jobs", tag: 0)
 let defaultCopiedRow: Entry = Entry(timestamp: "00", job: "11", message: "Row not found")
 
-struct Add : View {
+struct Add : View, Identifiable, Hashable {
     var category: Category
     @ObservedObject public var records: Records
     
     @State public var text: String = ""
+    @State public var id = UUID()
     
     @State private var jobId: String = ""
     @State private var taskUrl: String = "" // only treated as a string, no need to be URL-type
@@ -96,6 +97,14 @@ struct Add : View {
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .padding()
             .defaultAppStorage(.standard)
+    }
+    
+    static func == (lhs: Add, rhs: Add) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
     
     private func reloadRecords() -> Void {

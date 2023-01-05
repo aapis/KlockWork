@@ -24,9 +24,14 @@
 		5376289E29664F8C00DE8ECF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376289D29664F8C00DE8ECF /* Theme.swift */; };
 		537628A02966518B00DE8ECF /* ToolbarTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376289F2966518B00DE8ECF /* ToolbarTabs.swift */; };
 		537628A22966525500DE8ECF /* ToolbarButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537628A12966525500DE8ECF /* ToolbarButtons.swift */; };
+		537628A8296659DC00DE8ECF /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537628A7296659DC00DE8ECF /* PersistenceController.swift */; };
+		537628AA29665B2600DE8ECF /* NotesHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537628A929665B2600DE8ECF /* NotesHome.swift */; };
+		537628AC29665B4E00DE8ECF /* NoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537628AB29665B4E00DE8ECF /* NoteView.swift */; };
+		537628B429665F4E00DE8ECF /* Data.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 537628B229665F4E00DE8ECF /* Data.xcdatamodeld */; };
 		537AEB9F29627DCC00385787 /* LogTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEB9E29627DCC00385787 /* LogTable.swift */; };
 		537AEBA1296287B900385787 /* LogRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA0296287B900385787 /* LogRow.swift */; };
 		537AEBA329629DE400385787 /* LogRowActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA229629DE400385787 /* LogRowActions.swift */; };
+		53999C1F29669C4E00125E65 /* NoteCreate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53999C1E29669C4E00125E65 /* NoteCreate.swift */; };
 		539C96EA27EE7AFF007DA058 /* CalendarThisWeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539C96E927EE7AFF007DA058 /* CalendarThisWeek.swift */; };
 		53B940D92800A9F10024AA5F /* Records.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B940D82800A9F10024AA5F /* Records.swift */; };
 		53C6D08D2964E25400EA6129 /* EditableColumn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C6D08C2964E25400EA6129 /* EditableColumn.swift */; };
@@ -88,9 +93,14 @@
 		5376289D29664F8C00DE8ECF /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		5376289F2966518B00DE8ECF /* ToolbarTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarTabs.swift; sourceTree = "<group>"; };
 		537628A12966525500DE8ECF /* ToolbarButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarButtons.swift; sourceTree = "<group>"; };
+		537628A7296659DC00DE8ECF /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
+		537628A929665B2600DE8ECF /* NotesHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesHome.swift; sourceTree = "<group>"; };
+		537628AB29665B4E00DE8ECF /* NoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteView.swift; sourceTree = "<group>"; };
+		537628B329665F4E00DE8ECF /* Note.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Note.xcdatamodel; sourceTree = "<group>"; };
 		537AEB9E29627DCC00385787 /* LogTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTable.swift; sourceTree = "<group>"; };
 		537AEBA0296287B900385787 /* LogRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRow.swift; sourceTree = "<group>"; };
 		537AEBA229629DE400385787 /* LogRowActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRowActions.swift; sourceTree = "<group>"; };
+		53999C1E29669C4E00125E65 /* NoteCreate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteCreate.swift; sourceTree = "<group>"; };
 		539C96E927EE7AFF007DA058 /* CalendarThisWeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarThisWeek.swift; sourceTree = "<group>"; };
 		53B940D82800A9F10024AA5F /* Records.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Records.swift; sourceTree = "<group>"; };
 		53C6D08C2964E25400EA6129 /* EditableColumn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableColumn.swift; sourceTree = "<group>"; };
@@ -159,6 +169,7 @@
 		53218D4624B7F6EB0088ABE9 /* DLPrototype */ = {
 			isa = PBXGroup;
 			children = (
+				537628A62966593500DE8ECF /* CoreData */,
 				537368D224B93DF700193E88 /* Views */,
 				53EFCE7429637CB8004E45EC /* Extensions */,
 				53EDDF9C29634840008D34C7 /* Shared */,
@@ -203,6 +214,7 @@
 		537368D224B93DF700193E88 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				537628AD29665B7B00DE8ECF /* Notes */,
 				53FEF576296603CA000B94FC /* LogTextField */,
 				53EFCE7729637EA0004E45EC /* LogTable */,
 				53218D4924B7F6EB0088ABE9 /* Home.swift */,
@@ -214,8 +226,27 @@
 				53DCA3412803BBBF0032FD60 /* CalendarView.swift */,
 				53EFCE7829637F35004E45EC /* GeneralSettings.swift */,
 				53EFCE7A29637F49004E45EC /* Settings.swift */,
+				537628A929665B2600DE8ECF /* NotesHome.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		537628A62966593500DE8ECF /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				537628A7296659DC00DE8ECF /* PersistenceController.swift */,
+				537628B229665F4E00DE8ECF /* Data.xcdatamodeld */,
+			);
+			path = CoreData;
+			sourceTree = "<group>";
+		};
+		537628AD29665B7B00DE8ECF /* Notes */ = {
+			isa = PBXGroup;
+			children = (
+				537628AB29665B4E00DE8ECF /* NoteView.swift */,
+				53999C1E29669C4E00125E65 /* NoteCreate.swift */,
+			);
+			path = Notes;
 			sourceTree = "<group>";
 		};
 		53B940D72800A9CC0024AA5F /* Models */ = {
@@ -429,6 +460,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				53FEF578296603D9000B94FC /* LogTextField.swift in Sources */,
+				537628B429665F4E00DE8ECF /* Data.xcdatamodeld in Sources */,
 				53EDDF9E29634852008D34C7 /* Entry.swift in Sources */,
 				53C6D0912965044C00EA6129 /* DetailsColumn.swift in Sources */,
 				53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */,
@@ -448,16 +480,20 @@
 				537628A22966525500DE8ECF /* ToolbarButtons.swift in Sources */,
 				537AEBA1296287B900385787 /* LogRow.swift in Sources */,
 				537368D124B93DB600193E88 /* Add.swift in Sources */,
+				537628AC29665B4E00DE8ECF /* NoteView.swift in Sources */,
+				53999C1F29669C4E00125E65 /* NoteCreate.swift in Sources */,
 				53218D4D24B7F6EB0088ABE9 /* DLPrototype.xcdatamodeld in Sources */,
 				53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */,
 				53C6D08F2964E25F00EA6129 /* Column.swift in Sources */,
 				53C6D0942965048500EA6129 /* DetailsRow.swift in Sources */,
 				53218D4824B7F6EB0088ABE9 /* DLPrototype.swift in Sources */,
+				537628AA29665B2600DE8ECF /* NotesHome.swift in Sources */,
 				539C96EA27EE7AFF007DA058 /* CalendarThisWeek.swift in Sources */,
 				537AEB9F29627DCC00385787 /* LogTable.swift in Sources */,
 				537AEBA329629DE400385787 /* LogRowActions.swift in Sources */,
 				53DCA3422803BBBF0032FD60 /* CalendarView.swift in Sources */,
 				53EFCE7B29637F49004E45EC /* Settings.swift in Sources */,
+				537628A8296659DC00DE8ECF /* PersistenceController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -627,6 +663,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = DLPrototype/DLPrototype.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 32;
@@ -653,6 +690,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = DLPrototype/DLPrototype.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 32;
@@ -810,6 +848,16 @@
 			);
 			currentVersion = 53218D4C24B7F6EB0088ABE9 /* DLPrototype.xcdatamodel */;
 			path = DLPrototype.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+		537628B229665F4E00DE8ECF /* Data.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				537628B329665F4E00DE8ECF /* Note.xcdatamodel */,
+			);
+			currentVersion = 537628B329665F4E00DE8ECF /* Note.xcdatamodel */;
+			path = Data.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

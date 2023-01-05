@@ -10,7 +10,9 @@ import Foundation
 import SwiftUI
 
 struct NoteView: View {
+    public var note: Note
+    
     var body: some View {
-        Text("HI")
+        Text(note.title!)
     }
 }

@@ -12,6 +12,9 @@ import SwiftUI
 @main
 struct DLPrototype: App {
     @StateObject public var records: Records = Records()
+    private let persistenceController = PersistenceController.shared
+    
+    @Environment(\.scenePhase) var scenePhase
     
     var body: some Scene {
         WindowGroup {
@@ -19,6 +22,10 @@ struct DLPrototype: App {
                 .onAppear(perform: {
                     records.reload()
                 })
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .onChange(of: scenePhase) { _ in
+                    persistenceController.save()
+                }
         }
         
         #if os(macOS)
