@@ -30,6 +30,11 @@ struct DetailsRow: View {
                 Text(value)
                     .padding(10)
                     .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                    .contextMenu {
+                        Button(action: {ClipboardHelper.copy("\(colour)".debugDescription)}, label: {
+                            Text("Copy colour code")
+                        })
+                    }
             }
         }
     }

@@ -13,12 +13,12 @@ struct ExperimentalToday: View {
     @FetchRequest(sortDescriptors: [SortDescriptor(\.postedDate, order: .reverse)]) public var notes: FetchedResults<Note>
     
     @Environment(\.managedObjectContext) var managedObjectContext
-    @EnvironmentObject public var cdRecords: LogRecords
+    @EnvironmentObject public var recordsModel: LogRecords
 
     var body: some View {
         HSplitView {
             Today()
-                .environmentObject(cdRecords)
+                .environmentObject(recordsModel)
             NotesHome()
         }
     }
