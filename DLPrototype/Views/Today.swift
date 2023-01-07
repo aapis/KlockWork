@@ -42,7 +42,6 @@ struct Today : View, Identifiable {
             SortDescriptor(\.timestamp, order: .reverse)
         ],
         predicate: NSPredicate(format: "timestamp > %@ && timestamp <= %@", DateHelper.thisAm(), DateHelper.tomorrow())
-//        predicate: NSPredicate(format: "timestamp > %@", DateHelper.thisAm()) // TODO: predicate is ONLY FOR TESTING
     ) public var today: FetchedResults<LogRecord>
     
     @Environment(\.managedObjectContext) var moc
@@ -95,27 +94,12 @@ struct Today : View, Identifiable {
                 Text("Or").font(Theme.font)
                 
                 LogTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
-                
-                Picker("Job", selection: $jobPickerSelection) {
-                    ForEach(recentJobs) { item in
-                        Text(item.title)
-                            .tag(item.tag)
-                            .disabled(item.disabled)
-                            .font(Theme.font)
-                    }
-                }
-                .onChange(of: ltd, perform: { _ in
-                    updateRecentJobs()
-                })
-                .onAppear(perform: reloadUi)
-                .labelsHidden()
-                .frame(width: 200)
-                .font(Theme.font)
-                .onChange(of: jobPickerSelection) { _ in
-                    // modifies jobId to associate the job to the message
-                    jobId = String(jobPickerSelection)
-//                    jobPickerSelection = 0 // TODO: should reset picker to first item but doesn't for $reasons
-                }
+
+                FancyPicker(onChange: pickerChange, items: recentJobs)
+                    .onAppear(perform: reloadUi)
+                    .onChange(of: ltd, perform: { _ in
+                        updateRecentJobs()
+                    })
             }
             
             VStack {
@@ -149,6 +133,10 @@ struct Today : View, Identifiable {
             Spacer()
         }
 //        .onDisappear(perform: reloadUi)
+    }
+    
+    private func pickerChange(selected: Int) -> Void {
+        jobId = String(selected)
     }
     
     private func received() -> Void {
@@ -237,9 +225,9 @@ struct Today : View, Identifiable {
             record.message = text
             record.id = UUID()
             
-            let matchingJob = recordsModel.jobMatch(jid)
+            let matchingJob = recordsModel.jobMatchWithSet(jid, today)
             
-            if matchingJob.0 {
+            if !matchingJob.0 {
                 let job = Job(context: moc)
                 job.jid = jid
                 job.id = UUID()
@@ -251,7 +239,6 @@ struct Today : View, Identifiable {
                 }
                 
                 record.job = job
-                PersistenceController.shared.save()
             } else {
                 record.job = matchingJob.1
             }

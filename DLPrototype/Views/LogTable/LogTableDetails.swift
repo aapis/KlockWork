@@ -75,9 +75,7 @@ struct LogTableDetails: View {
         }.onAppear(perform: update)
     }
     
-    private func update() -> Void {
-//        let items: [LogRecord] = LogRecords(moc: moc).fromToday()!
-        
+    private func update() -> Void {        
         for record in today {
             if record.job != nil {
                 let colour = Color.fromStored(record.job?.colour ?? Theme.rowColourAsDouble)
