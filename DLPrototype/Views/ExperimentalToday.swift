@@ -19,7 +19,7 @@ struct ExperimentalToday: View {
 
     var body: some View {
         HSplitView {
-            Add(category: category, records: records)
+            Today(category: category)
             NotesHome()
         }
     }

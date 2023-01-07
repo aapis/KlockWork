@@ -12,7 +12,8 @@ import SwiftUI
 struct LogTable: View, Identifiable {
     public var id = UUID()
     
-    @ObservedObject public var records: Records
+//    @ObservedObject public var records: Records
+    public var today: FetchedResults<LogRecord>
     
     @State private var wordCount: Int = 0
     @State private var showSidebar: Bool = true // TODO: TMP
@@ -24,11 +25,19 @@ struct LogTable: View, Identifiable {
     @State private var isShowingAlert: Bool = false
     @State private var selectedTab: Int = 0
     @State private var searchText: String = ""
+    @State private var fetched: [Entry] = []
+    @State private var refreshing: Bool = false
+    
+    @Binding public var ltd: UUID
     
     private let font: Font = .system(.body, design: .monospaced)
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("showExperiment.actions") private var showExperimentActions = false
+    
+    @Environment(\.managedObjectContext) var moc
+    
+    public var didSave = NotificationCenter.default.publisher(for: .NSManagedObjectContextDidSave)
     
     // MARK: body view
     var body: some View {
@@ -42,11 +51,16 @@ struct LogTable: View, Identifiable {
                     tableDetails.frame(maxWidth: 300)
                 }
             }
-            .onAppear(perform: {
-                records.applyColourMap()
-                let _ = records.updateWordCount()
-            })
+//            .onAppear(perform: {
+//                records.applyColourMap()
+//                let _ = records.updateWordCount()
+//            })
         }
+//        .onAppear(perform: update)
+//        .onChange(of: today, perform: update)
+//        .onReceive(didSave) { _ in
+//            refreshing.toggle()
+//        }
     }
     
     // MARK: table view
@@ -75,8 +89,7 @@ struct LogTable: View, Identifiable {
                             selectedTab: $selectedTab,
                             isShowingAlert: $isShowingAlert,
                             showSidebar: $showSidebar,
-                            searchText: $searchText,
-                            records: records
+                            searchText: $searchText
                         )
                     }
                 }
@@ -144,28 +157,45 @@ struct LogTable: View, Identifiable {
     var rows: some View {
         VStack(spacing: 1) {
             if selectedTab == 0 { // all tab
-                if records.entries.count > 0 {
-                    ForEach(records.entries) { entry in
-                        LogRow(entry: entry, index: records.entries.firstIndex(of: entry), colour: entry.colour)
+                if today.count > 0 {
+                    ForEach(today, id: \LogRecord.id) { record in
+                        let entry = Entry(
+                            timestamp: LogRecords.timestampToString(record.timestamp!),
+                            job: String(record.job?.jid ?? 0),
+                            message: record.message!
+                        )
+                        
+                        LogRow(
+                            entry: entry,
+                            index: today.firstIndex(of: record),
+                            colour: Color.fromStored((record.job?.colour) ?? Theme.rowColourAsDouble)
+                        )
                     }
                 } else {
-                    LogRowEmpty(message: "No entries found for today", index: 0, colour: Theme.rowColour)
+                    LogRowEmpty(message: "No CoreData entries found for today", index: 0, colour: Theme.rowColour)
                 }
             } else if selectedTab == 1 { // grouped tab
-                if records.entries.count > 0 {
-                    ForEach(records.sortByJob()) { entry in
-                        LogRow(entry: entry, index: records.entries.firstIndex(of: entry), colour: entry.colour)
+                if today.count > 0 {
+                    let groupedResults = grouped()
+                    
+                    ForEach(groupedResults) { entry in
+                        LogRow(
+                            entry: entry,
+                            index: groupedResults.firstIndex(of: entry),
+                            colour: entry.colour
+                        )
                     }
                 } else {
                     LogRowEmpty(message: "No entries found for today", index: 0, colour: Theme.rowColour)
                 }
             } else if selectedTab == 2 { // search tab
-                if records.entries.count > 0 {
+                if today.count > 0 {
                     SearchBar(text: $searchText)
+                    let searchResults = search()
                     
-                    ForEach(records.search(term: searchText)) { entry in
-                        LogRow(entry: entry, index: records.entries.firstIndex(of: entry), colour: entry.colour)
-                    }                    
+                    ForEach(searchResults) { entry in
+                        LogRow(entry: entry, index: searchResults.firstIndex(of: entry), colour: entry.colour)
+                    }
                 } else {
                     LogRowEmpty(message: "No entries found for today", index: 0, colour: Theme.rowColour)
                 }
@@ -174,7 +204,59 @@ struct LogTable: View, Identifiable {
     }
     
     var tableDetails: some View {
-        LogTableDetails(records: records, colours: colourMap)
+        LogTableDetails(colours: colourMap, today: today)
+            .id(ltd)
+    }
+    
+    private func update() -> Void {
+//        for record in today {
+//            print("COLOUR: \(record.jobRel?.colour)")
+//        }
+//        fetched = LogRecords.todayFromFetched(results: today)
+//        print("FILTER: [logTable] \(fetched)")
+    }
+    
+    private func search() -> [Entry] {
+        var filtered: [Entry] = []
+        let term = searchText
+        
+        for record in today {
+            let entry = Entry(
+                timestamp: LogRecords.timestampToString(record.timestamp!),
+                job: String(record.job?.jid ?? 0),
+                message: record.message!,
+                colour: Color.fromStored(record.job?.colour ?? Theme.rowColourAsDouble)
+            )
+            
+            do {
+                let caseInsensitiveTerm = try Regex("\(term)").ignoresCase()
+
+                if entry.message.contains(caseInsensitiveTerm) {
+                    filtered.append(entry)
+                }
+            } catch {
+                print("LogTable::search(term: String) - Unable to process string \(term)")
+            }
+        }
+
+        return filtered
+    }
+    
+    private func grouped() -> [Entry] {
+        var grouped: [Entry] = []
+        
+        for record in today {
+            let entry = Entry(
+                timestamp: LogRecords.timestampToString(record.timestamp!),
+                job: String(record.job?.jid ?? 0),
+                message: record.message!,
+                colour: Color.fromStored(record.job?.colour ?? Theme.rowColourAsDouble)
+            )
+            
+            grouped.append(entry)
+        }
+
+        return grouped.sorted(by: { $0.job > $1.job })
     }
     
     private func setIsReversed() -> Void {
@@ -184,14 +266,14 @@ struct LogTable: View, Identifiable {
     private func sort() -> Void {
         withAnimation(.easeInOut) {
             // just always reverse the records
-            records.entries.reverse()
+//            today.reversed()
         }
     }
 }
 
-struct LogTablePreview: PreviewProvider {
-    static var previews: some View {
-        LogTable(records: Records())
-            .frame(height: 700)
-    }
-}
+//struct LogTablePreview: PreviewProvider {
+//    static var previews: some View {
+//        LogTable(records: Records(), today: )
+//            .frame(height: 700)
+//    }
+//}

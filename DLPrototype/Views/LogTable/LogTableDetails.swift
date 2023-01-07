@@ -11,8 +11,19 @@ import SwiftUI
 
 // TODO: this whole view should be based on a given day (param?), not on "today" (for Search)
 struct LogTableDetails: View {
-    @ObservedObject public var records: Records
     public var colours: [String: Color]
+    public var today: FetchedResults<LogRecord>
+    
+    @State private var statistics: [Statistic] = []
+    
+    public var groups: [StatisticGroup] = [ // TODO: I tried to pull these from the enum but it was so FUCKING FRUSTRATING that I almost yeeted the codebase into the sun
+        StatisticGroup(title: "Today", enumKey: .today),
+        StatisticGroup(title: "Yesterday", enumKey: .yesterday),
+        StatisticGroup(title: "Overall", enumKey: .overall),
+        StatisticGroup(title: "Colour Reference", enumKey: .colourReference),
+    ]
+    
+    @Environment(\.managedObjectContext) var moc
     
     private let font: Font = .system(.body, design: .monospaced)
     
@@ -46,32 +57,55 @@ struct LogTableDetails: View {
     var rows: some View {
         GridRow {
             VStack(spacing: 1) {
-                if records.statistics.count > 0 {
-                    ForEach(records.groups) { group in
-                        let children = records.statistics.filter({ $0.group == group.enumKey})
+                if statistics.count > 0 {
+                    ForEach(groups) { group in
+                        let children = statistics.filter({ $0.group == group.enumKey})
                         
                         if children.count > 0 {
                             DetailGroup(name: group.title, children: children)
                         }
-                    }.onAppear(perform: {createColourMapFrom(records.colourMap)})
+                    }
                 } else {
                     LogRowEmpty(message: "No entries found for today", index: 0, colour: Theme.rowColour)
                 }
             }
-        }
+        }.onAppear(perform: update)
     }
     
-    private func createColourMapFrom(_ map: [String: Color]) -> Void {
-        for row in map {
-            if !records.statistics.contains(where: {$0.key == row.key}) {
-                records.statistics.append(Statistic(key: row.key, value: "\(row.value)", colour: row.value, group: .colourReference))
+    private func update() -> Void {
+//        let items: [LogRecord] = LogRecords(moc: moc).fromToday()!
+        
+        for record in today {
+            if record.job != nil {
+                let colour = Color.fromStored(record.job?.colour ?? Theme.rowColourAsDouble)
+                
+                statistics.append(Statistic(key: record.job?.jid.string ?? "No ID", value: "\(colour)", colour: colour, group: .colourReference))
             }
         }
+        
+        // Number of records in the set
+        statistics.append(Statistic(key: "# Records", value: String(today.count), colour: Theme.rowColour, group: .today))
+        // Number of records overall
+        // Word count in the current set
+        statistics.append(Statistic(key: "Word count", value: String(wordCount()), colour: Theme.rowColour, group: .overall))
+    }
+    
+    private func wordCount() -> Int {
+        var words: [String] = []
+        
+        for item in today {
+            words.append(item.message!)
+        }
+        
+        let wordSet: Set = Set(words.joined(separator: " ").split(separator: " "))
+        
+        return wordSet.count
     }
 }
 
-struct LogTableDetailsPreview: PreviewProvider {
-    static var previews: some View {
-        LogTableDetails(records: Records(), colours: ["11": Color.red])
-    }
-}
+//struct LogTableDetailsPreview: PreviewProvider {
+//    static var previews: some View {
+//        LogTableDetails(records: Records(), colours: ["11": Color.red])
+//            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+//    }
+//}

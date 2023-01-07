@@ -9,6 +9,8 @@
 import Foundation
 import SwiftUI
 
+// TODO: THIS CLASS IS NO LONGER USED, REMOVE
+
 struct Statistic: Identifiable {
     public let key: String
     public var value: String
@@ -401,7 +403,7 @@ class Records: ObservableObject, Identifiable {
     private func trackStatistic(key: String, value: String, group: StatisticPeriod) -> Void {
         print("TRACKING STAT \(key) value: \(value)")
         if !statistics.contains(where: {$0.key == key}) {
-            statistics.append(Statistic(key: key, value: value, colour: Theme.rowColour, group: group))
+//            statistics.append(Statistic(key: key, value: value, colour: Theme.rowColour, group: group))
         } else {
             // key exists, check if value is different
             // if so, update value
@@ -428,7 +430,8 @@ class Records: ObservableObject, Identifiable {
     }
 
     // Returns ALL rows in the current log file
-    private func readFile(_ fileName: String) -> [String] {
+    // TODO: temp public
+    public func readFile(_ fileName: String) -> [String] {
         var lines: [String] = []
 
         let log = getDocumentsDirectory().appendingPathComponent(fileName)

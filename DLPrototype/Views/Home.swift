@@ -22,6 +22,10 @@ struct Home: View {
     @State private var selected: String?
     @State public var appVersion: String?
     
+//    private let sm: SyncMonitor = SyncMonitor()
+    
+    @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
+    
     var body: some View {
         NavigationSplitView {
             List(selection: $selected) {
@@ -35,12 +39,16 @@ struct Home: View {
                 }
                 
                 NavigationLink {
-                    Add(category: Category(title: "Daily"), records: records)
+                    Today(category: Category(title: "Daily"))
                         .navigationTitle("Today")
                 } label: {
-                    Image(systemName: "doc.append.fill")
-                        .padding(.trailing, 10)
-                    Text("Today")
+                    HStack {
+                        Image(systemName: "doc.append.fill")
+                            .padding(.trailing, 10)
+                        Text("Today")
+//                        Spacer()
+//                        ProgressView()
+                    }
                 }
                 
                 NavigationLink {
@@ -78,17 +86,34 @@ struct Home: View {
                         .padding(.trailing, 10)
                     Text("Backup")
                 }
+                
+                NavigationLink {
+                    Import()
+                        .navigationTitle("Import")
+                } label: {
+                    Image(systemName: "square.and.arrow.up.fill")
+                        .padding(.trailing, 10)
+                    Text("Import")
+                }
             }
         } detail: {
             Text("Hello, world")
         }
         .navigationTitle("DailyLogger b.\(appVersion ?? "0")")
         .onAppear(perform: updateName)
+//        .onReceive(sm.pub) { x in
+//            print(x)
+//            received()
+//        }
     }
     
     private func updateName() -> Void {
         appVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
     }
+    
+//    private func received() -> Void {
+//        print("SM: [Home] Received")
+//    }
 }
 
 struct HomePreview: PreviewProvider {

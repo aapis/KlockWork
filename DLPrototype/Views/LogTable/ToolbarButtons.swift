@@ -14,34 +14,27 @@ struct ToolbarButtons: View {
     @Binding public var isShowingAlert: Bool
     @Binding public var showSidebar: Bool
     @Binding public var searchText: String
-    public var records: Records
+//    public var records: Records
     
     var body: some View {
         HStack {
-            Button(action: reload, label: {
-                Image(systemName: "arrow.counterclockwise")
-            })
-            .help("Reload data")
-            .keyboardShortcut("r")
-            .buttonStyle(.borderless)
-            .foregroundColor(Color.white)
+            // TODO: this one is coming back
+//            Button(action: reload, label: {
+//                Image(systemName: "arrow.counterclockwise")
+//            })
+//            .help("Reload data")
+//            .keyboardShortcut("r")
+//            .buttonStyle(.borderless)
+//            .foregroundColor(Color.white)
             
-            Button(action: {isShowingAlert = true; newDayAction() }, label: {
-                Image(systemName: "sunrise")
-            })
-            .help("New day")
-            .keyboardShortcut("n")
-            .buttonStyle(.borderless)
-            .foregroundColor(Color.white)
-            //                        .alert("It's a brand new day!", isPresented: $isPresented) {}
-            
-            Button(action: copyAll, label: {
-                Image(systemName: "doc.on.doc")
-            })
-            .buttonStyle(.borderless)
-            .keyboardShortcut("c")
-            .help("Copy all rows")
-            .foregroundColor(Color.white)
+            // TODO: this one is coming back
+//            Button(action: copyAll, label: {
+//                Image(systemName: "doc.on.doc")
+//            })
+//            .buttonStyle(.borderless)
+//            .keyboardShortcut("c")
+//            .help("Copy all rows")
+//            .foregroundColor(Color.white)
             
             Spacer()
             Button(action: toggleSidebar, label: {
@@ -60,30 +53,27 @@ struct ToolbarButtons: View {
     }
     
     private func reload() -> Void {
-        records.reload()
+        //
     }
     
-    private func newDayAction() -> Void {
-        records.clear()
-        records.logNewDay()
-    }
     
     private func copyAll() -> Void {
-        let pasteBoard = NSPasteboard.general
-        var source: [Entry] = []
-        
-        if selectedTab == 0 {
-            source = records.entries
-        } else if selectedTab == 1 {
-            source = records.sortByJob()
-        } else if selectedTab == 2 {
-            source = records.search(term: searchText)
-        }
-        
-        let data = toStringList(source)
-        
-        pasteBoard.clearContents()
-        pasteBoard.setString(data, forType: .string)
+//        let pasteBoard = NSPasteboard.general
+//        var source: [Entry] = []
+        //TODO: removed Records so will need to re-do this
+//
+//        if selectedTab == 0 {
+//            source = records.entries
+//        } else if selectedTab == 1 {
+//            source = records.sortByJob()
+//        } else if selectedTab == 2 {
+//            source = records.search(term: searchText)
+//        }
+//
+//        let data = toStringList(source)
+//
+//        pasteBoard.clearContents()
+//        pasteBoard.setString(data, forType: .string)
     }
     
     private func toStringList(_ items: [Entry]) -> String {
