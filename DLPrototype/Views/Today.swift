@@ -9,6 +9,8 @@ import Foundation
 import SwiftUI
 
 struct Today : View, Identifiable {
+//    @ObservedObject public var recordsModel: LogRecords
+    
     @State public var text: String = ""
     @State public var id = UUID()
     @State private var jobId: String = ""
@@ -16,11 +18,24 @@ struct Today : View, Identifiable {
     @State private var taskUrl: String = ""
     @State private var recentJobs: [CustomPickerItem] = [CustomPickerItem(title: "Recent jobs", tag: 0)]
     @State private var jobPickerSelection = 0
+    // Workspace is ready to use
     @State private var workspaceReady: Bool = false
+    // Current date
+    @State private var currentDate: Date = Date()
+    // Date value the last time we checked
+    @State private var dateAtLastCheck: Date = Date()
+    // Flag to determine whether the date has changed and thus the UI needs a reload
+    @State private var dateHasChanged: Bool = false
+    // Flag for whether we are currently loading
+    @State private var isLoading: Bool = true
+    // Number of records synced from CD, for the loading view
+    @State private var numSyncedRecords: Float = 0.0
     // LogTableDetail object id.  We change this on submit and it triggers this view to re-render, showing the new content
     @State private var ltd: UUID = UUID()
     // Table object UUID
     @State private var tableUuid: UUID = UUID()
+    
+    private let sm: SyncMonitor = SyncMonitor()
     
     @FetchRequest(
         sortDescriptors: [
@@ -33,31 +48,54 @@ struct Today : View, Identifiable {
             SortDescriptor(\.timestamp, order: .reverse)
         ],
 //        predicate: NSPredicate(format: "timestamp > %@ && timestamp <= %@", DateHelper.daysPast(5), DateHelper.tomorrow())
-        predicate: NSPredicate(format: "timestamp > %@", DateHelper.yesterday()) // TODO: predicate is ONLY FOR TESTING
+        predicate: NSPredicate(format: "timestamp > %@", DateHelper.thisAm()) // TODO: predicate is ONLY FOR TESTING
     ) public var today: FetchedResults<LogRecord>
+//    public var today: FetchedResults<LogRecord>
+//    public var today: [LogRecord] = []
     
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var recordsModel: LogRecords
+    
+//    public init() {
+////        self.recordsModel = recordsModel
+//
+//        self.today = recordsModel.recordsForToday
+//    }
     
     // MARK: body view
     var body: some View {
         VStack(alignment: .leading) {
-            Title(text: "Record an entry", image: "doc.append.fill")
-            
-            if today.count == 0 {
+            HStack {
+                Title(text: "Record an entry", image: "doc.append.fill")
+                
+                Spacer()
+                Button(action: startLoading, label: {
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                })
+                .buttonStyle(.borderless)
+                .font(.title)
+            }
+
+            if isLoading {
                 loading
             } else {
-                if workspaceReady {
-                    editor
-                    table
-                } else {
-                    loading
-                }
+                editor.onAppear(perform: checkDate)
+                table
             }
         }
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .padding()
             .defaultAppStorage(.standard)
             .background(Theme.toolbarColour)
+            .onReceive(sm.publisher) { _ in
+                // this currently does the data/status updating
+                received()
+            }
+//            .onChange(of: recordsModel.recordsForToday, perform: { something in
+//                print("oh noes")
+//                print(something)
+//                reloadUi()
+//            })
             
     }
     
@@ -91,7 +129,7 @@ struct Today : View, Identifiable {
                 .onChange(of: jobPickerSelection) { _ in
                     // modifies jobId to associate the job to the message
                     jobId = String(jobPickerSelection)
-                    jobPickerSelection = 0 // TODO: should reset picker to first item but doesn't for $reasons
+//                    jobPickerSelection = 0 // TODO: should reset picker to first item but doesn't for $reasons
                 }
             }
             
@@ -119,27 +157,67 @@ struct Today : View, Identifiable {
             
             HStack {
                 Spacer()
-                ProgressView("Loading Workspace")
+                ProgressView("Loading Workspace...")
                 Spacer()
             }
             
             Spacer()
         }
-        .onDisappear(perform: reloadUi)
+//        .onDisappear(perform: reloadUi)
+    }
+    
+    private func received() -> Void {
+        print("SM: [Today] Received \(sm.ready)")
+        
+        if sm.ready {
+            isLoading = false
+        }
+    }
+    
+    private func checkDate() -> Void {
+        print("Today::checkDate [init] \(DateHelper.todayShort(currentDate))")
+        dateAtLastCheck = currentDate
+        Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { timer in
+            let shortCurrentDate = DateHelper.shortDate(
+                DateHelper.todayShort(currentDate)
+            )
+            let shortLastCheckDate = DateHelper.shortDate(
+                DateHelper.todayShort(dateAtLastCheck)
+            )
+            
+            print("Today::checkDate [timer] \(shortCurrentDate) > \(shortLastCheckDate) \(currentDate)")
+            
+            if shortCurrentDate != nil && shortLastCheckDate != nil {
+                if shortCurrentDate! > shortLastCheckDate! {
+                    print("Today::checkDate [timer.dateChanged]")
+                    dateHasChanged = true
+                }
+            }
+            
+            currentDate = Date() + 86400 // TODO: this is just for testing
+        }
     }
 
     private func reloadUi() -> Void {
+//        isLoading = true
+        
         func reload() {
             ltd = UUID()
             tableUuid = UUID()
             updateRecentJobs()
             workspaceReady = true
+            dateHasChanged = false
+            isLoading = false
         }
 
         // if we have records reload the after 1s
         Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { timer in
             reload()
         }
+    }
+    
+    private func startLoading() -> Void {
+        isLoading = true
     }
     
     private func updateRecentJobs() -> Void {
@@ -159,8 +237,9 @@ struct Today : View, Identifiable {
             let unique = Array(Set(jobs))
             
             for jid in unique {
-//                print("Today::recentJobs \(jid)")
-                recentJobs.append(CustomPickerItem(title: jid, tag: Int(jid) ?? 1))
+                let correctedJid = String(jid.dropLast(2))
+                
+                recentJobs.append(CustomPickerItem(title: correctedJid, tag: Int(correctedJid) ?? 1))
             }
         }
     }
@@ -194,9 +273,8 @@ struct Today : View, Identifiable {
             
             // clear text box
             text = ""
-            // TODO: find a better solution to this updating the view problem
             // redraw the views that need to be updated
-            ltd = UUID()
+            reloadUi()
             
             PersistenceController.shared.save()
         } else {
@@ -216,7 +294,8 @@ struct Today : View, Identifiable {
 struct AddPreview: PreviewProvider {
     static var previews: some View {
         Today()
-//            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+            .environmentObject(LogRecords(moc: PersistenceController.preview.container.viewContext))
             .frame(width: 800, height: 800)
     }
 }

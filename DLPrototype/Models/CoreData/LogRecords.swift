@@ -9,17 +9,18 @@
 import Foundation
 import SwiftUI
 
-class LogRecords: ObservableObject, Identifiable {
+class LogRecords: ObservableObject, Identifiable, Equatable {
     public var moc: NSManagedObjectContext?
     public var id = UUID()
+    
+    @Published public var recordsForToday: [LogRecord] = []
     
     public init(moc: NSManagedObjectContext) {
         self.moc = moc
     }
     
-    // TODO: do I need this init anymore?
-    public init() {
-        self.moc = nil
+    static func == (lhs: LogRecords, rhs: LogRecords) -> Bool {
+        return lhs.id == rhs.id
     }
     
     static public func todayFromFetched(results: FetchedResults<LogRecord>) -> [Entry] {
@@ -44,27 +45,25 @@ class LogRecords: ObservableObject, Identifiable {
         return df.string(from: timestamp)
     }
     
-    public func fromToday() -> [LogRecord]? {
+    public func fromToday() -> Void {
         let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: true)]
-        fetch.predicate = NSPredicate(format: "timestamp > %@ && timestamp <= %@", DateHelper.yesterday(), DateHelper.thisAm())
+        fetch.predicate = NSPredicate(format: "timestamp > %@", DateHelper.thisAm())
         
         do {
-            return try moc!.fetch(fetch)
+            recordsForToday = try moc!.fetch(fetch)
         } catch {
             print("Unable to find records for today")
         }
-        
-        return nil
     }
     
-    public func today() -> [Entry]? {
-        if let results = fromToday() {
-            return asEntries(results)
-        }
-        
-        return nil
-    }    
+//    public func today() -> [Entry]? {
+//        if let results = fromToday() {
+//            return asEntries(results)
+//        }
+//
+//        return nil
+//    }
     
     public func asEntries(_ records: [LogRecord]) -> [Entry] {
         var entries: [Entry] = []

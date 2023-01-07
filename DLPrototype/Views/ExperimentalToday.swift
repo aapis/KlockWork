@@ -13,10 +13,12 @@ struct ExperimentalToday: View {
     @FetchRequest(sortDescriptors: [SortDescriptor(\.postedDate, order: .reverse)]) public var notes: FetchedResults<Note>
     
     @Environment(\.managedObjectContext) var managedObjectContext
+    @EnvironmentObject public var cdRecords: LogRecords
 
     var body: some View {
         HSplitView {
             Today()
+                .environmentObject(cdRecords)
             NotesHome()
         }
     }
@@ -24,6 +26,8 @@ struct ExperimentalToday: View {
 
 struct ExperimentalTodayPreview: PreviewProvider {
     static var previews: some View {
-        ExperimentalToday().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        ExperimentalToday()
+            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+            .environmentObject(LogRecords(moc: PersistenceController.preview.container.viewContext))
     }
 }

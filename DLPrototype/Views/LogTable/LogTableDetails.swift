@@ -56,16 +56,20 @@ struct LogTableDetails: View {
     var rows: some View {
         GridRow {
             VStack(spacing: 1) {
-                if statistics.count > 0 {
+                if statistics.count > 0 && today.count > 0 {
                     ForEach(groups) { group in
                         let children = statistics.filter({ $0.group == group.enumKey})
                         
                         if children.count > 0 {
-                            DetailGroup(name: group.title, children: children)
+                            if group.enumKey == .today {
+                                DetailGroup(name: group.title, children: children, subTitle: DateHelper.dateFromRecord(today.first!))
+                            } else {
+                                DetailGroup(name: group.title, children: children)
+                            }
                         }
                     }
                 } else {
-                    LogRowEmpty(message: "No entries found for today", index: 0, colour: Theme.rowColour)
+                    LogRowEmpty(message: "Stats are loading", index: 0, colour: Theme.rowColour)
                 }
             }
         }.onAppear(perform: update)

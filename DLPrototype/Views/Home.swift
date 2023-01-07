@@ -16,8 +16,10 @@ struct Category: Identifiable {
 
 struct Home: View {
     @ObservedObject public var records: Records
+//    @ObservedObject public var recordsModel: LogRecords
     
-    @Environment(\.managedObjectContext) var managedObjectContext
+    @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var recordsModel: LogRecords
     
     @State private var selected: String?
     @State public var appVersion: String?
@@ -32,6 +34,7 @@ struct Home: View {
                 NavigationLink {
                     ExperimentalToday()
                         .navigationTitle("[Experimental] Today")
+                        .environmentObject(recordsModel)
                 } label: {
                     Image(systemName: "command")
                         .padding(.trailing, 10)
@@ -41,14 +44,11 @@ struct Home: View {
                 NavigationLink {
                     Today()
                         .navigationTitle("Today")
+                        .environmentObject(recordsModel)
                 } label: {
-                    HStack {
-                        Image(systemName: "doc.append.fill")
-                            .padding(.trailing, 10)
-                        Text("Today")
-//                        Spacer()
-//                        ProgressView()
-                    }
+                    Image(systemName: "doc.append.fill")
+                        .padding(.trailing, 10)
+                    Text("Today")
                 }
                 
                 NavigationLink {
@@ -101,10 +101,7 @@ struct Home: View {
         }
         .navigationTitle("DailyLogger b.\(appVersion ?? "0")")
         .onAppear(perform: updateName)
-//        .onReceive(sm.pub) { x in
-//            print(x)
-//            received()
-//        }
+        .environmentObject(recordsModel)
     }
     
     private func updateName() -> Void {
@@ -116,8 +113,10 @@ struct Home: View {
 //    }
 }
 
-struct HomePreview: PreviewProvider {
-    static var previews: some View {
-        Home(records: Records())
-    }
-}
+//struct HomePreview: PreviewProvider {
+//    static var previews: some View {
+//        Home(records: Records(), recordsModel: LogRecords(moc: PersistenceController.preview.container.viewContext))
+//            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+//            .environmentObject(LogRecords(moc: PersistenceController.preview.container.viewContext))
+//    }
+//}
