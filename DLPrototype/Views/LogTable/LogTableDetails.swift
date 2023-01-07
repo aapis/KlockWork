@@ -82,7 +82,9 @@ struct LogTableDetails: View {
             if record.job != nil {
                 let colour = Color.fromStored(record.job?.colour ?? Theme.rowColourAsDouble)
                 
-                statistics.append(Statistic(key: record.job?.jid.string ?? "No ID", value: "\(colour)", colour: colour, group: .colourReference))
+                if !statistics.contains(where: {$0.value == "\(colour)"}) {
+                    statistics.append(Statistic(key: record.job?.jid.string ?? "No ID", value: "\(colour)", colour: colour, group: .colourReference))
+                }
             }
         }
         

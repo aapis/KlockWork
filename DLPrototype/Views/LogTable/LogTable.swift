@@ -51,16 +51,7 @@ struct LogTable: View, Identifiable {
                     tableDetails.frame(maxWidth: 300)
                 }
             }
-//            .onAppear(perform: {
-//                records.applyColourMap()
-//                let _ = records.updateWordCount()
-//            })
         }
-//        .onAppear(perform: update)
-//        .onChange(of: today, perform: update)
-//        .onReceive(didSave) { _ in
-//            refreshing.toggle()
-//        }
     }
     
     // MARK: table view
@@ -136,7 +127,6 @@ struct LogTable: View, Identifiable {
                 }
             }
             
-            // TODO: temp commented out until perf issues fixed
             if showExperimentalFeatures {
                 if showExperimentActions {
                     Group {
@@ -208,14 +198,6 @@ struct LogTable: View, Identifiable {
             .id(ltd)
     }
     
-    private func update() -> Void {
-//        for record in today {
-//            print("COLOUR: \(record.jobRel?.colour)")
-//        }
-//        fetched = LogRecords.todayFromFetched(results: today)
-//        print("FILTER: [logTable] \(fetched)")
-    }
-    
     private func search() -> [Entry] {
         var filtered: [Entry] = []
         let term = searchText
@@ -266,6 +248,7 @@ struct LogTable: View, Identifiable {
     private func sort() -> Void {
         withAnimation(.easeInOut) {
             // just always reverse the records
+            // TODO: fix this
 //            today.reversed()
         }
     }

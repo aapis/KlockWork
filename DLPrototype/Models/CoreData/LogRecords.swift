@@ -45,6 +45,16 @@ class LogRecords: ObservableObject, Identifiable, Equatable {
         return df.string(from: timestamp)
     }
     
+    public func jobMatch(_ job: Double) -> (Bool, Job?) {
+        for rec in recordsForToday {
+            if rec.job?.jid == job {
+                return (true, rec.job)
+            }
+        }
+        
+        return (false, nil)
+    }
+    
     public func fromToday() -> Void {
         let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: true)]

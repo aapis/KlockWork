@@ -16,15 +16,12 @@ struct Category: Identifiable {
 
 struct Home: View {
     @ObservedObject public var records: Records
-//    @ObservedObject public var recordsModel: LogRecords
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var recordsModel: LogRecords
     
     @State private var selected: String?
     @State public var appVersion: String?
-    
-//    private let sm: SyncMonitor = SyncMonitor()
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     
@@ -107,10 +104,6 @@ struct Home: View {
     private func updateName() -> Void {
         appVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
     }
-    
-//    private func received() -> Void {
-//        print("SM: [Home] Received")
-//    }
 }
 
 //struct HomePreview: PreviewProvider {

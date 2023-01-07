@@ -39,46 +39,22 @@ struct Today : View, Identifiable {
     
     @FetchRequest(
         sortDescriptors: [
-            SortDescriptor(\.jid)
-        ]
-    ) public var jobs: FetchedResults<Job>
-    
-    @FetchRequest(
-        sortDescriptors: [
             SortDescriptor(\.timestamp, order: .reverse)
         ],
-//        predicate: NSPredicate(format: "timestamp > %@ && timestamp <= %@", DateHelper.daysPast(5), DateHelper.tomorrow())
-        predicate: NSPredicate(format: "timestamp > %@", DateHelper.thisAm()) // TODO: predicate is ONLY FOR TESTING
+        predicate: NSPredicate(format: "timestamp > %@ && timestamp <= %@", DateHelper.thisAm(), DateHelper.tomorrow())
+//        predicate: NSPredicate(format: "timestamp > %@", DateHelper.thisAm()) // TODO: predicate is ONLY FOR TESTING
     ) public var today: FetchedResults<LogRecord>
-//    public var today: FetchedResults<LogRecord>
-//    public var today: [LogRecord] = []
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var recordsModel: LogRecords
     
-//    public init() {
-////        self.recordsModel = recordsModel
-//
-//        self.today = recordsModel.recordsForToday
-//    }
-    
     // MARK: body view
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Title(text: "Record an entry", image: "doc.append.fill")
-                
-                Spacer()
-                Button(action: startLoading, label: {
-                    Image(systemName: "arrow.triangle.2.circlepath")
-                })
-                .buttonStyle(.borderless)
-                .font(.title)
-            }
-
             if isLoading {
                 loading
             } else {
+                header
                 editor.onAppear(perform: checkDate)
                 table
             }
@@ -91,12 +67,21 @@ struct Today : View, Identifiable {
                 // this currently does the data/status updating
                 received()
             }
-//            .onChange(of: recordsModel.recordsForToday, perform: { something in
-//                print("oh noes")
-//                print(something)
-//                reloadUi()
-//            })
             
+    }
+    
+    // MARK: title/header
+    var header: some View {
+        HStack {
+            Title(text: "Record an entry", image: "doc.append.fill")
+
+            Spacer()
+            Button(action: startLoading, label: {
+                Image(systemName: "arrow.triangle.2.circlepath")
+            })
+            .buttonStyle(.borderless)
+            .font(.title)
+        }
     }
     
     // MARK: Editor view
@@ -252,9 +237,9 @@ struct Today : View, Identifiable {
             record.message = text
             record.id = UUID()
             
-            let matchingJob = jobs.first(where: { $0.jid == jid })
+            let matchingJob = recordsModel.jobMatch(jid)
             
-            if matchingJob == nil {
+            if matchingJob.0 {
                 let job = Job(context: moc)
                 job.jid = jid
                 job.id = UUID()
@@ -268,7 +253,7 @@ struct Today : View, Identifiable {
                 record.job = job
                 PersistenceController.shared.save()
             } else {
-                record.job = matchingJob
+                record.job = matchingJob.1
             }
             
             // clear text box
