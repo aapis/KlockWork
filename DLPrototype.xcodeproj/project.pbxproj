@@ -11,6 +11,7 @@
 		53152CC929690E7300A14E43 /* LosslessStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CC829690E7300A14E43 /* LosslessStringConvertible.swift */; };
 		53152CCC2969453000A14E43 /* DateHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CCB2969453000A14E43 /* DateHelper.swift */; };
 		53152CCE2969E69700A14E43 /* JobPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CCD2969E69700A14E43 /* JobPicker.swift */; };
+		53152CD0296A245200A14E43 /* ClipboardHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CCF296A245200A14E43 /* ClipboardHelper.swift */; };
 		531B38FC29674EC400E74013 /* Title.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531B38FB29674EC400E74013 /* Title.swift */; };
 		53218D4824B7F6EB0088ABE9 /* DLPrototype.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */; };
 		53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4924B7F6EB0088ABE9 /* Home.swift */; };
@@ -80,6 +81,7 @@
 		53152CC829690E7300A14E43 /* LosslessStringConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LosslessStringConvertible.swift; sourceTree = "<group>"; };
 		53152CCB2969453000A14E43 /* DateHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHelper.swift; sourceTree = "<group>"; };
 		53152CCD2969E69700A14E43 /* JobPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobPicker.swift; sourceTree = "<group>"; };
+		53152CCF296A245200A14E43 /* ClipboardHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardHelper.swift; sourceTree = "<group>"; };
 		531B38FB29674EC400E74013 /* Title.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Title.swift; sourceTree = "<group>"; };
 		53218D4424B7F6EB0088ABE9 /* DLPrototype.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DLPrototype.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DLPrototype.swift; sourceTree = "<group>"; };
@@ -164,6 +166,7 @@
 			isa = PBXGroup;
 			children = (
 				53152CCB2969453000A14E43 /* DateHelper.swift */,
+				53152CCF296A245200A14E43 /* ClipboardHelper.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -531,6 +534,7 @@
 				53C6D0942965048500EA6129 /* DetailsRow.swift in Sources */,
 				53218D4824B7F6EB0088ABE9 /* DLPrototype.swift in Sources */,
 				531B38FC29674EC400E74013 /* Title.swift in Sources */,
+				53152CD0296A245200A14E43 /* ClipboardHelper.swift in Sources */,
 				537628AA29665B2600DE8ECF /* NotesHome.swift in Sources */,
 				53152CCC2969453000A14E43 /* DateHelper.swift in Sources */,
 				539C96EA27EE7AFF007DA058 /* CalendarThisWeek.swift in Sources */,
@@ -714,7 +718,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 39;
+				CURRENT_PROJECT_VERSION = 40;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -741,7 +745,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 39;
+				CURRENT_PROJECT_VERSION = 40;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
