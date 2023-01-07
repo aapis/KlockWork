@@ -51,7 +51,7 @@ struct EditableColumn: View {
         let inputDateFormatter = DateFormatter()
         inputDateFormatter.timeZone = TimeZone(abbreviation: "MST")
         inputDateFormatter.locale = NSLocale.current
-        inputDateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        inputDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         let inputDate = inputDateFormatter.date(from: text)
         
         if inputDate == nil {

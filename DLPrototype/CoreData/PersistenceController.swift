@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import SwiftUI
 
 struct PersistenceController {
     // A singleton for our entire app to use
@@ -20,13 +21,30 @@ struct PersistenceController {
     static var preview: PersistenceController = {
         let controller = PersistenceController(inMemory: true)
 
-        // Create 10 example programming languages.
+        // preview notes
         for _ in 0..<10 {
             let note = Note(context: controller.container.viewContext)
             note.title = "Sample Note"
             note.postedDate = Date()
             note.body = "Some text"
+            note.id = UUID()
         }
+        
+        // preview records
+        for _ in 0..<10 {
+            let record = LogRecord(context: controller.container.viewContext)
+            record.timestamp = Date()
+            record.message = "Lorem ipsum dolor"
+            record.id = UUID()
+        }
+        
+//        // preview jobs
+//        for i in 0..<10 {
+//            let job = Job(context: controller.container.viewContext)
+//            job.colour = Theme.rowColourAsDouble
+//            job.jid = Double(i)
+//            job.id = UUID()
+//        }
 
         return controller
     }()
@@ -50,9 +68,12 @@ struct PersistenceController {
 //
         // Create a store description for a CloudKit-backed local store
         let cloudStoreLocation = URL(fileURLWithPath: "\(address!)/Cloud.sqlite")
-        print("STORE LOCATION cloud: \(cloudStoreLocation)")
         let cloudStoreDescription = NSPersistentStoreDescription(url: cloudStoreLocation)
         cloudStoreDescription.configuration = "Cloud"
+        print("CLOUD LOC: \(cloudStoreLocation)")
+        
+        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        container.viewContext.automaticallyMergesChangesFromParent = true
         
         // Set the container options on the cloud store
         cloudStoreDescription.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(containerIdentifier: "iCloud.DLPrototype.data")
