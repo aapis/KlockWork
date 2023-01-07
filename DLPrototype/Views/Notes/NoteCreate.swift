@@ -26,9 +26,7 @@ struct NoteCreate: View {
                 
                 Spacer()
                 
-                Button(action: save) {
-                    Text("Create")
-                }
+                FancyButton(text: "Create", action: save)
             }.padding()
         }
         .background(Theme.toolbarColour)

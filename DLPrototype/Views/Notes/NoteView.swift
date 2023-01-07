@@ -32,19 +32,10 @@ struct NoteView: View {
                         Spacer()
                         
                         HStack {
-                            Button(action: update) {
-                                Text("Update")
-                            }
-                            
-                            Button(action: cancel) {
-                                Text("Cancel")
-                            }
-                            
+                            FancyButton(text: "Update", action: update)
+                            FancyButton(text: "Cancel", action: cancel)
                             Spacer()
-                            
-                            Button(action: delete) {
-                                Text("Delete")
-                            }
+                            FancyButton(text: "Delete", action: delete)
                         }
                     }.padding()
                 }

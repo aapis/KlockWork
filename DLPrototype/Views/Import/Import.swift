@@ -32,9 +32,7 @@ struct Import: View {
             TabView {
                 VStack {
                     Text("From file: \(getDocumentsDirectory())/allLogs.log")
-                    Button(action: importFromFile) {
-                        Text("Import")
-                    }
+                    FancyButton(text: "Import", action: importFromFile)
                 }.tabItem {
                     Text("From File")
                 }
@@ -42,9 +40,7 @@ struct Import: View {
                 VStack {
                     LogTextField(placeholder: "Some text...", lineLimit: 100, onSubmit: {}, transparent: true, text: $importText)
                         
-                    Button(action: importFromString) {
-                        Text("Import")
-                    }
+                    FancyButton(text: "Import", action: importFromString)
                 }.tabItem {
                     Text("From String")
                 }
@@ -52,50 +48,19 @@ struct Import: View {
             
             // MARK: status
             VStack {
-                // MARK: danger buttons
+                // MARK: danger button(s)
                 HStack {
-                    Button(action: burnItAllDown) {
-                        Text("Truncate \(records.count) records")
-                    }
-                    
-                    Button(action: testQuery) {
-                        Text("timestamp > @%")
-                    }
+                    FancyButton(text: "Truncate \(records.count) records", action: burnItAllDown)
                 }
                 
-                
-                Text("Processed \(linesProcessed) lines")
-
                 if importRun {
+                    Text("Processed \(linesProcessed) lines")
                     Text("There are now \(importCount) records")
                 }
             }
         }
         .padding()
         .background(Theme.toolbarColour)
-    }
-    
-    private func testQuery() -> Void {
-        let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
-
-        let today = DateHelper.thisAm()
-        let twoDays = DateHelper.twoDays()
-        let yesterday = DateHelper.yesterday()
-
-        let todayPredicate = NSPredicate(format: "timestamp > %@", twoDays)
-        
-        
-        fetch.predicate = todayPredicate
-
-        do {
-            let res = try moc.fetch(fetch)
-
-            for item in res {
-                print("FILTER: \([item.job, item.timestamp, item.message])")
-            }
-        } catch {
-            print("Couldn't find records for today")
-        }
     }
     
     private func importFromFile() -> Void {

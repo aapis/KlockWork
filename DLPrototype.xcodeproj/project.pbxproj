@@ -12,6 +12,8 @@
 		53152CCC2969453000A14E43 /* DateHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CCB2969453000A14E43 /* DateHelper.swift */; };
 		53152CCE2969E69700A14E43 /* JobPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CCD2969E69700A14E43 /* JobPicker.swift */; };
 		53152CD0296A245200A14E43 /* ClipboardHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CCF296A245200A14E43 /* ClipboardHelper.swift */; };
+		53152CD4296A296A00A14E43 /* FancyButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CD3296A296A00A14E43 /* FancyButton.swift */; };
+		53152CD6296A2DA300A14E43 /* FancyPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CD5296A2DA300A14E43 /* FancyPicker.swift */; };
 		531B38FC29674EC400E74013 /* Title.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531B38FB29674EC400E74013 /* Title.swift */; };
 		53218D4824B7F6EB0088ABE9 /* DLPrototype.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */; };
 		53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4924B7F6EB0088ABE9 /* Home.swift */; };
@@ -82,6 +84,8 @@
 		53152CCB2969453000A14E43 /* DateHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHelper.swift; sourceTree = "<group>"; };
 		53152CCD2969E69700A14E43 /* JobPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobPicker.swift; sourceTree = "<group>"; };
 		53152CCF296A245200A14E43 /* ClipboardHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardHelper.swift; sourceTree = "<group>"; };
+		53152CD3296A296A00A14E43 /* FancyButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyButton.swift; sourceTree = "<group>"; };
+		53152CD5296A2DA300A14E43 /* FancyPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyPicker.swift; sourceTree = "<group>"; };
 		531B38FB29674EC400E74013 /* Title.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Title.swift; sourceTree = "<group>"; };
 		53218D4424B7F6EB0088ABE9 /* DLPrototype.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DLPrototype.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DLPrototype.swift; sourceTree = "<group>"; };
@@ -344,6 +348,8 @@
 				53FEF577296603D9000B94FC /* LogTextField.swift */,
 				531B38FB29674EC400E74013 /* Title.swift */,
 				53152CCD2969E69700A14E43 /* JobPicker.swift */,
+				53152CD3296A296A00A14E43 /* FancyButton.swift */,
+				53152CD5296A2DA300A14E43 /* FancyPicker.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -509,6 +515,7 @@
 				53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */,
 				53EFCE7929637F35004E45EC /* GeneralSettings.swift in Sources */,
 				537628A02966518B00DE8ECF /* ToolbarTabs.swift in Sources */,
+				53152CD6296A2DA300A14E43 /* FancyPicker.swift in Sources */,
 				5309EE3D25619A6D00B3BC06 /* Backup.swift in Sources */,
 				537368CD24B93D6A00193E88 /* Search.swift in Sources */,
 				53EFCE7629637CC6004E45EC /* Color.swift in Sources */,
@@ -541,6 +548,7 @@
 				53759E0F2968AB5700DCDC4B /* SyncMonitor.swift in Sources */,
 				537AEB9F29627DCC00385787 /* LogTable.swift in Sources */,
 				537AEBA329629DE400385787 /* LogRowActions.swift in Sources */,
+				53152CD4296A296A00A14E43 /* FancyButton.swift in Sources */,
 				53DCA3422803BBBF0032FD60 /* CalendarView.swift in Sources */,
 				5367FAF0296772730060D2AA /* ExperimentalToday.swift in Sources */,
 				53EFCE7B29637F49004E45EC /* Settings.swift in Sources */,
@@ -718,7 +726,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 40;
+				CURRENT_PROJECT_VERSION = 41;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -745,7 +753,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 40;
+				CURRENT_PROJECT_VERSION = 41;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;

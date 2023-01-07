@@ -23,7 +23,7 @@ struct NotesHome: View {
                 NoteView(note: $0)
                     .navigationTitle("Editing: \($0.title!)")
             }
-            Divider()
+            
             VStack {
                 HStack {
                     Spacer()
