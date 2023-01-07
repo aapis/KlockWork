@@ -12,18 +12,21 @@ import SwiftUI
 struct DetailGroup: View {
     public var name: String
     public var children: [Statistic]
+    public var subTitle: String?
     
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 1) {
-                ZStack(alignment: .leading) {
-                    Theme.toolbarColour
+            VStack(spacing: 0) {
+                HStack(spacing: 1) {
+                    Text(name).padding(10)
                     
-                    Text(name)
-                        .padding(10)
+                    Spacer()
+                    if subTitle != nil {
+                        Text(subTitle!).padding(10)
+                    }
                 }
+                .background(Theme.toolbarColour)
             }
-            .frame(height: 52)
             
             Divider()
                 .frame(height: 1)
@@ -41,9 +44,12 @@ struct DetailGroup: View {
 struct DetailGroupPreview: PreviewProvider {
     static var previews: some View {
         let statistics: [Statistic] = [
-            Statistic(key: "Name", value: "Ryan Priebe", colour: Color.red, group: .today)
+            Statistic(key: "Name", value: "Ryan Priebe", colour: Theme.rowColour, group: .today)
         ]
         
-        DetailGroup(name: "Naughty List", children: statistics)
+        VStack {
+            DetailGroup(name: "Naughty List", children: statistics, subTitle: DateHelper.todayShort())
+            DetailGroup(name: "Good List", children: statistics)
+        }
     }
 }

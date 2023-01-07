@@ -34,8 +34,7 @@ struct LogTableDetails: View {
                     .font(font)
                 
                 ScrollView {
-                    rows
-                        .font(font)
+                    rows.font(font)
                 }
             }
         }
@@ -57,16 +56,20 @@ struct LogTableDetails: View {
     var rows: some View {
         GridRow {
             VStack(spacing: 1) {
-                if statistics.count > 0 {
+                if statistics.count > 0 && today.count > 0 {
                     ForEach(groups) { group in
                         let children = statistics.filter({ $0.group == group.enumKey})
                         
                         if children.count > 0 {
-                            DetailGroup(name: group.title, children: children)
+                            if group.enumKey == .today {
+                                DetailGroup(name: group.title, children: children, subTitle: DateHelper.dateFromRecord(today.first!))
+                            } else {
+                                DetailGroup(name: group.title, children: children)
+                            }
                         }
                     }
                 } else {
-                    LogRowEmpty(message: "No entries found for today", index: 0, colour: Theme.rowColour)
+                    LogRowEmpty(message: "Stats are loading", index: 0, colour: Theme.rowColour)
                 }
             }
         }.onAppear(perform: update)
@@ -79,7 +82,9 @@ struct LogTableDetails: View {
             if record.job != nil {
                 let colour = Color.fromStored(record.job?.colour ?? Theme.rowColourAsDouble)
                 
-                statistics.append(Statistic(key: record.job?.jid.string ?? "No ID", value: "\(colour)", colour: colour, group: .colourReference))
+                if !statistics.contains(where: {$0.value == "\(colour)"}) {
+                    statistics.append(Statistic(key: record.job?.jid.string ?? "No ID", value: "\(colour)", colour: colour, group: .colourReference))
+                }
             }
         }
         
@@ -105,7 +110,7 @@ struct LogTableDetails: View {
 
 //struct LogTableDetailsPreview: PreviewProvider {
 //    static var previews: some View {
-//        LogTableDetails(records: Records(), colours: ["11": Color.red])
+//        LogTableDetails(colours: ["11": Color.red])
 //            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 //    }
 //}

@@ -36,4 +36,26 @@ final public class DateHelper {
 
         return Calendar.current.startOfDay(for: date) as CVarArg
     }
+    
+    static public func todayShort(_ date: Date? = Date()) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.timeZone = TimeZone(abbreviation: "MST")
+        formatter.locale = NSLocale.current
+        
+        return formatter.string(from: date!)
+    }
+    
+    static public func shortDate(_ date: String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.timeZone = TimeZone(abbreviation: "MST")
+        formatter.locale = NSLocale.current
+        
+        return formatter.date(from: date)
+    }
+    
+    static public func dateFromRecord(_ record: LogRecord) -> String {
+        return DateHelper.todayShort(record.timestamp!)
+    }
 }

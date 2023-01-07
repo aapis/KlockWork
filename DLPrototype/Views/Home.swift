@@ -17,12 +17,11 @@ struct Category: Identifiable {
 struct Home: View {
     @ObservedObject public var records: Records
     
-    @Environment(\.managedObjectContext) var managedObjectContext
+    @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var recordsModel: LogRecords
     
     @State private var selected: String?
     @State public var appVersion: String?
-    
-//    private let sm: SyncMonitor = SyncMonitor()
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     
@@ -30,8 +29,9 @@ struct Home: View {
         NavigationSplitView {
             List(selection: $selected) {
                 NavigationLink {
-                    ExperimentalToday(category: Category(title: "Daily"), records: records)
+                    ExperimentalToday()
                         .navigationTitle("[Experimental] Today")
+                        .environmentObject(recordsModel)
                 } label: {
                     Image(systemName: "command")
                         .padding(.trailing, 10)
@@ -39,16 +39,13 @@ struct Home: View {
                 }
                 
                 NavigationLink {
-                    Today(category: Category(title: "Daily"))
+                    Today()
                         .navigationTitle("Today")
+                        .environmentObject(recordsModel)
                 } label: {
-                    HStack {
-                        Image(systemName: "doc.append.fill")
-                            .padding(.trailing, 10)
-                        Text("Today")
-//                        Spacer()
-//                        ProgressView()
-                    }
+                    Image(systemName: "doc.append.fill")
+                        .padding(.trailing, 10)
+                    Text("Today")
                 }
                 
                 NavigationLink {
@@ -101,23 +98,18 @@ struct Home: View {
         }
         .navigationTitle("DailyLogger b.\(appVersion ?? "0")")
         .onAppear(perform: updateName)
-//        .onReceive(sm.pub) { x in
-//            print(x)
-//            received()
-//        }
+        .environmentObject(recordsModel)
     }
     
     private func updateName() -> Void {
         appVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
     }
-    
-//    private func received() -> Void {
-//        print("SM: [Home] Received")
-//    }
 }
 
-struct HomePreview: PreviewProvider {
-    static var previews: some View {
-        Home(records: Records())
-    }
-}
+//struct HomePreview: PreviewProvider {
+//    static var previews: some View {
+//        Home(records: Records(), recordsModel: LogRecords(moc: PersistenceController.preview.container.viewContext))
+//            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+//            .environmentObject(LogRecords(moc: PersistenceController.preview.container.viewContext))
+//    }
+//}

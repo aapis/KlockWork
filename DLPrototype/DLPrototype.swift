@@ -13,16 +13,18 @@ import SwiftUI
 struct DLPrototype: App {
     @StateObject public var records: Records = Records()
     private let persistenceController = PersistenceController.shared
+    @StateObject public var recordsModel: LogRecords = LogRecords(moc: PersistenceController.shared.container.viewContext)
     
     @Environment(\.scenePhase) var scenePhase
     
     var body: some Scene {
         WindowGroup {
             Home(records: records)
-                .onAppear(perform: {
-                    records.reload()
-                })
+//                .onAppear(perform: {
+//                    records.reload()
+//                })
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(recordsModel)
                 .onChange(of: scenePhase) { _ in
                     persistenceController.save()
                 }

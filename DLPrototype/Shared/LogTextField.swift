@@ -68,13 +68,13 @@ struct LogTextField: View {
 }
 
 struct LogTextFieldPreview: PreviewProvider {
+    @State static private var text: String = "Test text"
+    
     static var previews: some View {
-        let pView = Today(category: Category(title: "Daily"))
-        
         VStack {
-            LogTextField(placeholder: "Small one", lineLimit: 1, onSubmit: {}, text: pView.$text)
-            LogTextField(placeholder: "Medium one", lineLimit: 9, onSubmit: {}, text: pView.$text)
-            LogTextField(placeholder: "Big one", lineLimit: 100, onSubmit: {}, text: pView.$text)
+            LogTextField(placeholder: "Small one", lineLimit: 1, onSubmit: {}, text: $text)
+            LogTextField(placeholder: "Medium one", lineLimit: 9, onSubmit: {}, text: $text)
+            LogTextField(placeholder: "Big one", lineLimit: 100, onSubmit: {}, text: $text)
         }
     }
 }
