@@ -69,7 +69,7 @@ struct LogTextField: View {
 
 struct LogTextFieldPreview: PreviewProvider {
     static var previews: some View {
-        let pView = Today(category: Category(title: "Daily"))
+        let pView = Today()
         
         VStack {
             LogTextField(placeholder: "Small one", lineLimit: 1, onSubmit: {}, text: pView.$text)

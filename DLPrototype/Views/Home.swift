@@ -30,7 +30,7 @@ struct Home: View {
         NavigationSplitView {
             List(selection: $selected) {
                 NavigationLink {
-                    ExperimentalToday(category: Category(title: "Daily"), records: records)
+                    ExperimentalToday()
                         .navigationTitle("[Experimental] Today")
                 } label: {
                     Image(systemName: "command")
@@ -39,7 +39,7 @@ struct Home: View {
                 }
                 
                 NavigationLink {
-                    Today(category: Category(title: "Daily"))
+                    Today()
                         .navigationTitle("Today")
                 } label: {
                     HStack {

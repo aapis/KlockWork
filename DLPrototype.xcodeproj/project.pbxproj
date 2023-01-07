@@ -320,6 +320,9 @@
 		53C6D0922965047A00EA6129 /* RowTypes */ = {
 			isa = PBXGroup;
 			children = (
+				53EDDFA12963502A008D34C7 /* LogRowEmpty.swift */,
+				537AEBA229629DE400385787 /* LogRowActions.swift */,
+				537AEBA0296287B900385787 /* LogRow.swift */,
 				53C6D0932965048500EA6129 /* DetailsRow.swift */,
 				53C6D09729654F4C00EA6129 /* DetailGroup.swift */,
 				5376289A2966467100DE8ECF /* SearchBar.swift */,
@@ -354,9 +357,6 @@
 				53C6D0922965047A00EA6129 /* RowTypes */,
 				53C6D08B2964E22700EA6129 /* ColumnTypes */,
 				537AEB9E29627DCC00385787 /* LogTable.swift */,
-				537AEBA0296287B900385787 /* LogRow.swift */,
-				537AEBA229629DE400385787 /* LogRowActions.swift */,
-				53EDDFA12963502A008D34C7 /* LogRowEmpty.swift */,
 				53EFCE7C2963D309004E45EC /* LogTableDetails.swift */,
 				5376289F2966518B00DE8ECF /* ToolbarTabs.swift */,
 				537628A12966525500DE8ECF /* ToolbarButtons.swift */,
@@ -710,7 +710,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 39;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -737,7 +737,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 39;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;

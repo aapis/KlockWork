@@ -172,7 +172,7 @@ struct LogTable: View, Identifiable {
                         )
                     }
                 } else {
-                    LogRowEmpty(message: "No CoreData entries found for today", index: 0, colour: Theme.rowColour)
+                    LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
                 }
             } else if selectedTab == 1 { // grouped tab
                 if today.count > 0 {
@@ -186,7 +186,7 @@ struct LogTable: View, Identifiable {
                         )
                     }
                 } else {
-                    LogRowEmpty(message: "No entries found for today", index: 0, colour: Theme.rowColour)
+                    LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
                 }
             } else if selectedTab == 2 { // search tab
                 if today.count > 0 {
@@ -197,7 +197,7 @@ struct LogTable: View, Identifiable {
                         LogRow(entry: entry, index: searchResults.firstIndex(of: entry), colour: entry.colour)
                     }
                 } else {
-                    LogRowEmpty(message: "No entries found for today", index: 0, colour: Theme.rowColour)
+                    LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
                 }
             }
         }

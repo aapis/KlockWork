@@ -51,8 +51,7 @@ struct LogRow: View, Identifiable {
                     Button(action: {copy(entry.timestamp)}, label: {
                         Text("Copy \"\(entry.timestamp)\"")
                     })
-                }
-                
+                }                
                 
                 EditableColumn(
                     type: "job",

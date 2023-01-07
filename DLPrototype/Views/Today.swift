@@ -8,19 +8,19 @@
 import Foundation
 import SwiftUI
 
-struct Today : View, Identifiable, Hashable {
-    var category: Category
-    
+struct Today : View, Identifiable {
     @State public var text: String = ""
     @State public var id = UUID()
-    
     @State private var jobId: String = ""
-    @State private var taskUrl: String = "" // only treated as a string, no need to be URL-type
-    @State private var statusMessage: String = ""
+    // only treated as a string, no need to be URL-type
+    @State private var taskUrl: String = ""
     @State private var recentJobs: [CustomPickerItem] = [CustomPickerItem(title: "Recent jobs", tag: 0)]
     @State private var jobPickerSelection = 0
+    @State private var workspaceReady: Bool = false
     // LogTableDetail object id.  We change this on submit and it triggers this view to re-render, showing the new content
     @State private var ltd: UUID = UUID()
+    // Table object UUID
+    @State private var tableUuid: UUID = UUID()
     
     @FetchRequest(
         sortDescriptors: [
@@ -32,15 +32,38 @@ struct Today : View, Identifiable, Hashable {
         sortDescriptors: [
             SortDescriptor(\.timestamp, order: .reverse)
         ],
-        predicate: NSPredicate(format: "timestamp > %@ && timestamp <= %@", DateHelper.thisAm(), DateHelper.tomorrow())
+//        predicate: NSPredicate(format: "timestamp > %@ && timestamp <= %@", DateHelper.daysPast(5), DateHelper.tomorrow())
+        predicate: NSPredicate(format: "timestamp > %@", DateHelper.yesterday()) // TODO: predicate is ONLY FOR TESTING
     ) public var today: FetchedResults<LogRecord>
     
     @Environment(\.managedObjectContext) var moc
     
+    // MARK: body view
     var body: some View {
         VStack(alignment: .leading) {
             Title(text: "Record an entry", image: "doc.append.fill")
-
+            
+            if today.count == 0 {
+                loading
+            } else {
+                if workspaceReady {
+                    editor
+                    table
+                } else {
+                    loading
+                }
+            }
+        }
+            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+            .padding()
+            .defaultAppStorage(.standard)
+            .background(Theme.toolbarColour)
+            
+    }
+    
+    // MARK: Editor view
+    var editor: some View {
+        VStack(alignment: .leading) {
             HStack {
                 // TODO: not ready for primetime
                 LogTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, text: $jobId)
@@ -58,10 +81,10 @@ struct Today : View, Identifiable, Hashable {
                             .font(Theme.font)
                     }
                 }
-                .onChange(of: ltd, perform: { e in
+                .onChange(of: ltd, perform: { _ in
                     updateRecentJobs()
                 })
-                .onAppear(perform: updateRecentJobs)
+                .onAppear(perform: reloadUi)
                 .labelsHidden()
                 .frame(width: 200)
                 .font(Theme.font)
@@ -80,33 +103,51 @@ struct Today : View, Identifiable, Hashable {
                     text: $text
                 )
             }
-            
-            LogTable(today: today, ltd: $ltd)
+        }
+    }
+    
+    // MARK: Table view
+    var table: some View {
+        LogTable(today: today, ltd: $ltd)
+            .id(tableUuid)
+    }
+    
+    // MARK: loading view
+    var loading: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Spacer()
             
             HStack {
-                Text(statusMessage)
+                Spacer()
+                ProgressView("Loading Workspace")
+                Spacer()
             }
+            
+            Spacer()
         }
-            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-            .padding()
-            .defaultAppStorage(.standard)
-            .background(Theme.toolbarColour)
+        .onDisappear(perform: reloadUi)
     }
-    
-    static func == (lhs: Today, rhs: Today) -> Bool {
-        return lhs.id == rhs.id
-    }
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
-    private func reloadRecords() -> Void {
-        ltd = UUID()
+
+    private func reloadUi() -> Void {
+        func reload() {
+            ltd = UUID()
+            tableUuid = UUID()
+            updateRecentJobs()
+            workspaceReady = true
+        }
+
+        // if we have records reload the after 1s
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { timer in
+            reload()
+        }
     }
     
     private func updateRecentJobs() -> Void {
         var jobs: [String] = []
+
+        // reset the recent jobs picker items
+        recentJobs = []
+        recentJobs.append(CustomPickerItem(title: "Recent jobs", tag: 0))
         
         if today.count > 0 {
             for record in today {
@@ -118,6 +159,7 @@ struct Today : View, Identifiable, Hashable {
             let unique = Array(Set(jobs))
             
             for jid in unique {
+//                print("Today::recentJobs \(jid)")
                 recentJobs.append(CustomPickerItem(title: jid, tag: Int(jid) ?? 1))
             }
         }
@@ -173,7 +215,8 @@ struct Today : View, Identifiable, Hashable {
 
 struct AddPreview: PreviewProvider {
     static var previews: some View {
-        Today(category: Category(title: "Daily"))
+        Today()
+//            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
             .frame(width: 800, height: 800)
     }
 }

@@ -10,16 +10,13 @@ import Foundation
 import SwiftUI
 
 struct ExperimentalToday: View {
-    public var category: Category
-    public var records: Records
-    
     @FetchRequest(sortDescriptors: [SortDescriptor(\.postedDate, order: .reverse)]) public var notes: FetchedResults<Note>
     
     @Environment(\.managedObjectContext) var managedObjectContext
 
     var body: some View {
         HSplitView {
-            Today(category: category)
+            Today()
             NotesHome()
         }
     }
@@ -27,6 +24,6 @@ struct ExperimentalToday: View {
 
 struct ExperimentalTodayPreview: PreviewProvider {
     static var previews: some View {
-        ExperimentalToday(category: Category(title: "Daily"), records: Records()).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        ExperimentalToday().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }

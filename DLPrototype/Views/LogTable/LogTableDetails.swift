@@ -34,8 +34,7 @@ struct LogTableDetails: View {
                     .font(font)
                 
                 ScrollView {
-                    rows
-                        .font(font)
+                    rows.font(font)
                 }
             }
         }
@@ -105,7 +104,7 @@ struct LogTableDetails: View {
 
 //struct LogTableDetailsPreview: PreviewProvider {
 //    static var previews: some View {
-//        LogTableDetails(records: Records(), colours: ["11": Color.red])
+//        LogTableDetails(colours: ["11": Color.red])
 //            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 //    }
 //}
