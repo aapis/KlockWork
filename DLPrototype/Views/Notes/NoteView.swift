@@ -32,16 +32,38 @@ struct NoteView: View {
                         Spacer()
                         
                         HStack {
-                            FancyButton(text: "Update", action: update)
-                            FancyButton(text: "Cancel", action: cancel)
-                            Spacer()
+                            NavigationLink {
+                                NoteDashboard()
+                                    .navigationTitle("Note dashboard")
+                            } label: {
+                                HStack {
+                                    Image(systemName: "arrow.left")
+                                    Text("Dashboard")
+                                }
+                            }
+                            .buttonStyle(.borderless)
+                            .foregroundColor(Color.white)
+                            
+                            .font(.title3)
+                            .padding()
+                            .background(Color.black.opacity(0.2))
+                            .onHover { inside in
+                                if inside {
+                                    NSCursor.pointingHand.push()
+                                } else {
+                                    NSCursor.pop()
+                                }
+                            }
+                            
                             FancyButton(text: "Delete", action: delete)
+                            Spacer()
+                            FancyButton(text: "Update", action: update)
                         }
                     }.padding()
                 }
                 .background(Theme.toolbarColour)
             } else {
-                Text("Please select a note, or create a new one")
+                NoteDashboard() // TODO: not a great idea, I think
             }
         }
         .onAppear(perform: {createBindings(note: note)})

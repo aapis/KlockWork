@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+// TODO: maybe remove entirely?
 struct Backup: View {
     @State private var lastBackupDate: String = ""
     

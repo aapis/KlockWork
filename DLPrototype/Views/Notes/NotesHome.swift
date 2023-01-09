@@ -23,34 +23,12 @@ struct NotesHome: View {
                 NoteView(note: $0)
                     .navigationTitle("Editing: \($0.title!)")
             }
-            
-            VStack {
-                HStack {
-                    Spacer()
-                    NavigationLink {
-                        NoteCreate()
-                            .navigationTitle("Create a note")
-                    } label: {
-                        Image(systemName: "plus")
-                    }.buttonStyle(.borderless)
-                }
-            }
         } detail: {
-            Text("Please select a note, or create a new one")
+            NoteDashboard()
+                .navigationTitle("Note Dashboard")
+            
         }
         .navigationSplitViewStyle(.prominentDetail)
-                
-                // main body
-//                VStack {
-//                    Text("derping main body")
-//                    Button("clicky") {
-//                        var note = Note(context: managedObjectContext)
-//                        note.title = "The first"
-//                        note.body = "Something"
-//
-//                        PersistenceController.shared.save()
-//                    }
-//                }
     }
     
     private func deleteNote(_ note: Note) -> Void {
