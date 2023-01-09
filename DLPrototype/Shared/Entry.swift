@@ -54,19 +54,4 @@ public struct Entry: Identifiable, Equatable {
     mutating private func setJobFromUrl() -> Void {
         job = String(url.suffix(5))
     }
-    
-    // TODO: this is INCOMPLETE and unused, finish implementation
-    static public func listFrom(_ records: [String]) -> [Entry] {
-//        let entry = Entry(timestamp: DateHelper.todayShort(), job: "11", message: "message")
-//        
-        var list: [Entry] = []
-//        
-//        for (i, rec) in records {
-//            list.append(Entry(title: rec, tag: i))
-//        }
-//        
-//        return list
-//        return [entry]
-        return list
-    }
 }

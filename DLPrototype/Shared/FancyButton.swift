@@ -13,6 +13,7 @@ struct FancyButton: View {
     public var text: String
     public var action: () -> Void
     public var icon: String? = "checkmark.circle"
+    public var altIcon: String? = "checkmark.circle"
     public var transparent: Bool? = false
     public var showLabel: Bool? = true
     
@@ -27,7 +28,7 @@ struct FancyButton: View {
                 }
                 .foregroundColor(Color.white)
                 .font(.title3)
-                .padding()
+                .padding(5)
                 .help(text)
                 .onHover { inside in
                     if inside {

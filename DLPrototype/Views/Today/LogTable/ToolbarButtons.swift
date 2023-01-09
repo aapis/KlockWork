@@ -77,7 +77,7 @@ struct ToolbarButtons: View {
         }.padding(8)
     }
     
-    private func change(selected: Int) -> Void {
+    private func change(selected: Int, sender: String?) -> Void {
         let item = datePickerItems[selected].title
         
         pickerSelection = selected

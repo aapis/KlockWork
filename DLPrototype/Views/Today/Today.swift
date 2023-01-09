@@ -78,15 +78,16 @@ struct Today : View, Identifiable {
         HStack {
             Title(text: "Record an entry", image: "doc.append.fill")
 
-            if showExperimentalFeatures {
-                Spacer()
-                
-                Button(action: startLoading, label: {
-                    Image(systemName: "arrow.triangle.2.circlepath")
-                })
-                .buttonStyle(.borderless)
-                .font(.title)
-            }
+            // TODO: moved to app toolbar, hiding for testing
+//            if showExperimentalFeatures {
+//                Spacer()
+//
+//                Button(action: startLoading, label: {
+//                    Image(systemName: "arrow.triangle.2.circlepath")
+//                })
+//                .buttonStyle(.borderless)
+//                .font(.title)
+//            }
         }
     }
     
@@ -142,7 +143,7 @@ struct Today : View, Identifiable {
         .onDisappear(perform: reloadUi)
     }
     
-    private func pickerChange(selected: Int) -> Void {
+    private func pickerChange(selected: Int, sender: String?) -> Void {
         jobId = String(selected)
     }
     
@@ -155,28 +156,28 @@ struct Today : View, Identifiable {
 //    }
     
     private func checkDate() -> Void {
-        print("Today::checkDate [init] \(DateHelper.todayShort(currentDate))")
+//        print("Today::checkDate [init] \(DateHelper.todayShort(currentDate))")
         dateAtLastCheck = currentDate
         // TODO: temp commented out
-//        Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { timer in
-//            let shortCurrentDate = DateHelper.shortDate(
-//                DateHelper.todayShort(currentDate)
-//            )
-//            let shortLastCheckDate = DateHelper.shortDate(
-//                DateHelper.todayShort(dateAtLastCheck)
-//            )
-//
+        Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { timer in
+            let shortCurrentDate = DateHelper.shortDate(
+                DateHelper.todayShort(currentDate)
+            )
+            let shortLastCheckDate = DateHelper.shortDate(
+                DateHelper.todayShort(dateAtLastCheck)
+            )
+
 //            print("Today::checkDate [timer] \(shortCurrentDate) > \(shortLastCheckDate) \(currentDate)")
-//
-//            if shortCurrentDate != nil && shortLastCheckDate != nil {
-//                if shortCurrentDate! > shortLastCheckDate! {
-//                    print("Today::checkDate [timer.dateChanged]")
-//                    dateHasChanged = true
-//                }
-//            }
-//
+
+            if shortCurrentDate != nil && shortLastCheckDate != nil {
+                if shortCurrentDate! > shortLastCheckDate! {
+                    print("Today::checkDate [timer.dateChanged]")
+                    dateHasChanged = true
+                }
+            }
+
 //            currentDate = Date() + 86400 // TODO: this is just for testing
-//        }
+        }
     }
 
     private func reloadUi() -> Void {

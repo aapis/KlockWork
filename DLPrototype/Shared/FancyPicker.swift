@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 struct FancyPicker: View {
-    public var onChange: (Int) -> Void
+    public var onChange: (Int, String?) -> Void
     public var items: [CustomPickerItem] = []
     public var transparent: Bool? = false
     public var labelText: String?
@@ -19,6 +19,14 @@ struct FancyPicker: View {
     @State private var selection: Int = 0
     
     var body: some View {
+        if showLabel! {
+            showWithLabel
+        } else {
+            showNoLabel
+        }
+    }
+    
+    var showNoLabel: some View {
         VStack {
             Picker(labelText ?? "Picker", selection: $selection) {
                 ForEach(items) { item in
@@ -40,7 +48,33 @@ struct FancyPicker: View {
             .frame(width: 200)
             .font(Theme.font)
             .onChange(of: selection) { _ in
-                onChange(selection)
+                onChange(selection, labelText)
+            }
+        }
+    }
+    
+    var showWithLabel: some View {
+        VStack {
+            Picker(labelText ?? "Picker", selection: $selection) {
+                ForEach(items) { item in
+                    Text(item.title)
+                        .tag(item.tag)
+                        .disabled(item.disabled)
+                        .font(Theme.font)
+                }
+            }
+            .background(transparent! ? Color.clear : Theme.toolbarColour)
+            .onHover { inside in
+                if inside {
+                    NSCursor.pointingHand.push()
+                } else {
+                    NSCursor.pop()
+                }
+            }
+            .frame(width: 200)
+            .font(Theme.font)
+            .onChange(of: selection) { _ in
+                onChange(selection, labelText)
             }
         }
     }
@@ -51,7 +85,7 @@ struct FancyPickerPreview: PreviewProvider {
         FancyPicker(onChange: change, items: [])
     }
     
-    static private func change(num: Int) -> Void {
+    static private func change(num: Int, sender: String?) -> Void {
         
     }
 }

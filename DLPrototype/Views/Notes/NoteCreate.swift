@@ -26,7 +26,33 @@ struct NoteCreate: View {
                 
                 Spacer()
                 
-                FancyButton(text: "Create", action: save)
+                HStack {
+                    NavigationLink {
+                        NoteDashboard()
+                            .navigationTitle("Note dashboard")
+                    } label: {
+                        HStack {
+                            Image(systemName: "arrow.left")
+                            Text("Dashboard")
+                        }
+                    }
+                    .buttonStyle(.borderless)
+                    .foregroundColor(Color.white)
+                    
+                    .font(.title3)
+                    .padding()
+                    .background(Color.black.opacity(0.2))
+                    .onHover { inside in
+                        if inside {
+                            NSCursor.pointingHand.push()
+                        } else {
+                            NSCursor.pop()
+                        }
+                    }
+                    
+                    Spacer()
+                    FancyButton(text: "Create", action: save)
+                }
             }.padding()
         }
         .background(Theme.toolbarColour)
@@ -46,6 +72,7 @@ struct NoteCreate: View {
 struct NoteCreatePreview: PreviewProvider {
     static var previews: some View {
         NoteCreate()
+            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
             .frame(width: 800, height: 800)
     }
 }

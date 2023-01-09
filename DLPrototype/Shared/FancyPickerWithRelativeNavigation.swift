@@ -11,7 +11,7 @@ import SwiftUI
 
 // TODO: do I need this anymore?
 struct FancyPickerWithRelativeNavigation: View {
-    public var onChange: (Int) -> Void
+    public var onChange: (Int, String?) -> Void
     public var items: [CustomPickerItem] = []
     public var transparent: Bool? = false
     public var labelText: String?
