@@ -27,15 +27,19 @@ struct Today : View, Identifiable {
     // Flag to determine whether the date has changed and thus the UI needs a reload
     @State private var dateHasChanged: Bool = false
     // Flag for whether we are currently loading
-    @State private var isLoading: Bool = true
+    @State private var isLoading: Bool = false//true // TODO: only commented out for testing, remove
     // Number of records synced from CD, for the loading view
     @State private var numSyncedRecords: Float = 0.0
     // LogTableDetail object id.  We change this on submit and it triggers this view to re-render, showing the new content
     @State private var ltd: UUID = UUID()
     // Table object UUID
     @State private var tableUuid: UUID = UUID()
+    // For date filtering of the LogTable
+    @State private var selectedDate: Date = Date()
     
-    private let sm: SyncMonitor = SyncMonitor()
+//    private let sm: SyncMonitor = SyncMonitor()
+    
+    @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     
     @FetchRequest(
         sortDescriptors: [
@@ -62,10 +66,10 @@ struct Today : View, Identifiable {
             .padding()
             .defaultAppStorage(.standard)
             .background(Theme.toolbarColour)
-            .onReceive(sm.publisher) { _ in
-                // this currently does the data/status updating
-                received()
-            }
+//            .onReceive(sm.publisher) { _ in
+//                // this currently does the data/status updating
+//                received()
+//            }
             
     }
     
@@ -74,12 +78,15 @@ struct Today : View, Identifiable {
         HStack {
             Title(text: "Record an entry", image: "doc.append.fill")
 
-            Spacer()
-            Button(action: startLoading, label: {
-                Image(systemName: "arrow.triangle.2.circlepath")
-            })
-            .buttonStyle(.borderless)
-            .font(.title)
+            if showExperimentalFeatures {
+                Spacer()
+                
+                Button(action: startLoading, label: {
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                })
+                .buttonStyle(.borderless)
+                .font(.title)
+            }
         }
     }
     
@@ -88,12 +95,12 @@ struct Today : View, Identifiable {
         VStack(alignment: .leading) {
             HStack {
                 // TODO: not ready for primetime
-                LogTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, text: $jobId)
+                FancyTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, text: $jobId)
                     .frame(width: 200, height: 40)
                 
                 Text("Or").font(Theme.font)
                 
-                LogTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
+                FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
 
                 FancyPicker(onChange: pickerChange, items: recentJobs)
                     .onAppear(perform: reloadUi)
@@ -103,7 +110,7 @@ struct Today : View, Identifiable {
             }
             
             VStack {
-                LogTextField(
+                FancyTextField(
                     placeholder: "Type and hit enter to save...",
                     lineLimit: 6,
                     onSubmit: submitAction,
@@ -115,7 +122,7 @@ struct Today : View, Identifiable {
     
     // MARK: Table view
     var table: some View {
-        LogTable(today: today, ltd: $ltd)
+        LogTable(ltd: $ltd)
             .id(tableUuid)
     }
     
@@ -132,50 +139,48 @@ struct Today : View, Identifiable {
             
             Spacer()
         }
-//        .onDisappear(perform: reloadUi)
+        .onDisappear(perform: reloadUi)
     }
     
     private func pickerChange(selected: Int) -> Void {
         jobId = String(selected)
     }
     
-    private func received() -> Void {
-        print("SM: [Today] Received \(sm.ready)")
-        
-        if sm.ready {
-            isLoading = false
-        }
-    }
+//    private func received() -> Void {
+//        print("SM: [Today] Received \(sm.ready)")
+//        
+//        if sm.ready {
+//            isLoading = false
+//        }
+//    }
     
     private func checkDate() -> Void {
         print("Today::checkDate [init] \(DateHelper.todayShort(currentDate))")
         dateAtLastCheck = currentDate
-        Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { timer in
-            let shortCurrentDate = DateHelper.shortDate(
-                DateHelper.todayShort(currentDate)
-            )
-            let shortLastCheckDate = DateHelper.shortDate(
-                DateHelper.todayShort(dateAtLastCheck)
-            )
-            
-            print("Today::checkDate [timer] \(shortCurrentDate) > \(shortLastCheckDate) \(currentDate)")
-            
-            if shortCurrentDate != nil && shortLastCheckDate != nil {
-                if shortCurrentDate! > shortLastCheckDate! {
-                    print("Today::checkDate [timer.dateChanged]")
-                    dateHasChanged = true
-                }
-            }
-            
-            currentDate = Date() + 86400 // TODO: this is just for testing
-        }
+        // TODO: temp commented out
+//        Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { timer in
+//            let shortCurrentDate = DateHelper.shortDate(
+//                DateHelper.todayShort(currentDate)
+//            )
+//            let shortLastCheckDate = DateHelper.shortDate(
+//                DateHelper.todayShort(dateAtLastCheck)
+//            )
+//
+//            print("Today::checkDate [timer] \(shortCurrentDate) > \(shortLastCheckDate) \(currentDate)")
+//
+//            if shortCurrentDate != nil && shortLastCheckDate != nil {
+//                if shortCurrentDate! > shortLastCheckDate! {
+//                    print("Today::checkDate [timer.dateChanged]")
+//                    dateHasChanged = true
+//                }
+//            }
+//
+//            currentDate = Date() + 86400 // TODO: this is just for testing
+//        }
     }
 
     private func reloadUi() -> Void {
-//        isLoading = true
-        
         func reload() {
-            ltd = UUID()
             tableUuid = UUID()
             updateRecentJobs()
             workspaceReady = true
@@ -225,9 +230,9 @@ struct Today : View, Identifiable {
             record.message = text
             record.id = UUID()
             
-            let matchingJob = recordsModel.jobMatchWithSet(jid, today)
+            let (success, matchedJob) = recordsModel.jobMatchWithSet(jid, today)
             
-            if !matchingJob.0 {
+            if !success {
                 let job = Job(context: moc)
                 job.jid = jid
                 job.id = UUID()
@@ -239,8 +244,9 @@ struct Today : View, Identifiable {
                 }
                 
                 record.job = job
+                print("INCOMING JOB: \(job)")
             } else {
-                record.job = matchingJob.1
+                record.job = matchedJob
             }
             
             // clear text box

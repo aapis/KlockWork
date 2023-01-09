@@ -67,24 +67,21 @@ class LogRecords: ObservableObject, Identifiable, Equatable {
         }
     }
     
-//    public func today() -> [Entry]? {
-//        if let results = fromToday() {
-//            return asEntries(results)
-//        }
-//
-//        return nil
-//    }
-    
-    public func asEntries(_ records: [LogRecord]) -> [Entry] {
-        var entries: [Entry] = []
+    public func forDate(_ date: Date) -> [LogRecord] {
+        var results: [LogRecord] = []
         
-        for record in records {
-            let timestamp = LogRecords.timestampToString(record.timestamp!)
-            let job = String(record.job?.jid.string ?? "No ID")
-            
-            entries.append(Entry(timestamp: timestamp, job: job, message: record.message!))
+        let (before, after) = DateHelper.startAndEndOf(date)
+        
+        let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)]
+        fetch.predicate = NSPredicate(format: "timestamp > %@ && timestamp <= %@", before as CVarArg, after as CVarArg)
+
+        do {
+            results = try moc!.fetch(fetch)
+        } catch {
+            print("Unable to find records for today")
         }
         
-        return entries
+        return results
     }
 }

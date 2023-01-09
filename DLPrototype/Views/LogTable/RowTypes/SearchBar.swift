@@ -11,10 +11,25 @@ import SwiftUI
 
 struct SearchBar: View {
     @Binding public var text: String
+    public var disabled: Bool
     
     var body: some View {
         GridRow {
-            LogTextField(placeholder: "Search...", lineLimit: 1, onSubmit: {}, text: $text)
+            HStack {
+                ZStack(alignment: .trailing) {
+                    FancyTextField(placeholder: "Search...", lineLimit: 1, onSubmit: {}, disabled: disabled, text: $text)
+                    
+                    Spacer()
+                    
+                    if text.count > 0 {
+                        FancyButton(text: "Reset", action: reset, icon: "xmark", showLabel: false)
+                    }
+                }
+            }
         }
+    }
+    
+    private func reset() -> Void {
+        text = ""
     }
 }

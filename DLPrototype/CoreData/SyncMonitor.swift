@@ -8,13 +8,13 @@
 import Combine
 import CoreData
 
-class SyncMonitor {
+class SyncMonitor: ObservableObject {
     /// Where we store Combine cancellables for publishers we're listening to, e.g. NSPersistentCloudKitContainer's notifications.
     fileprivate var disposables = Set<AnyCancellable>()
     
     public var publisher = NotificationCenter.default.publisher(for: NSPersistentCloudKitContainer.eventChangedNotification)
-    public var event: NSPersistentCloudKitContainer.EventType
-    public var ready: Bool = false
+    @Published public var event: NSPersistentCloudKitContainer.EventType
+    @Published public var ready: Bool = false
 
     init() {
         self.event = NSPersistentCloudKitContainer.EventType.import // default import?
@@ -48,7 +48,10 @@ class SyncMonitor {
 
                         if cloudEvent.succeeded {
                             if setupEventComplete {
+                                // TODO: this is cursed
+                                // MARK: cursed
                                 self.ready = true
+                                // MARK: end cursed
                             }
                             print("SM: And it succeeded!")
                         } else {

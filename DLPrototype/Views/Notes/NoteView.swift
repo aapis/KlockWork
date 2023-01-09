@@ -25,9 +25,9 @@ struct NoteView: View {
                     VStack(alignment: .leading, spacing: 22) {
                         Title(text: "Editing", image: "pencil")
                         
-                        LogTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
+                        FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
                         
-                        LogTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
+                        FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
                         
                         Spacer()
                         

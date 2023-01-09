@@ -12,11 +12,9 @@ import SwiftUI
 struct LogTable: View, Identifiable {
     public var id = UUID()
     
-//    @ObservedObject public var records: Records
-    public var today: FetchedResults<LogRecord>
-    
+    @State private var records: [LogRecord] = []
     @State private var wordCount: Int = 0
-    @State private var showSidebar: Bool = true // TODO: TMP
+    @State private var showSidebar: Bool = true
     @State private var isReversed: Bool = false
     @State public var colourMap: [String: Color] = [
         "11": Theme.rowColour
@@ -27,8 +25,10 @@ struct LogTable: View, Identifiable {
     @State private var searchText: String = ""
     @State private var fetched: [Entry] = []
     @State private var refreshing: Bool = false
+    @State private var resetSearchButtonHit: Bool = false
     
     @Binding public var ltd: UUID
+    @State private var selectedDate: Date = Date()
     
     private let font: Font = .system(.body, design: .monospaced)
     
@@ -36,8 +36,6 @@ struct LogTable: View, Identifiable {
     @AppStorage("showExperiment.actions") private var showExperimentActions = false
     
     @Environment(\.managedObjectContext) var moc
-    
-    public var didSave = NotificationCenter.default.publisher(for: .NSManagedObjectContextDidSave)
     
     // MARK: body view
     var body: some View {
@@ -52,6 +50,19 @@ struct LogTable: View, Identifiable {
                 }
             }
         }
+        .onChange(of: selectedDate) { _ in
+            loadRecordsBySelectedDate()
+        }
+        .onChange(of: searchText) { _ in
+            if resetSearchButtonHit || searchText.count == 0 {
+                loadRecordsBySelectedDate()
+            } else {
+                records = records.filter({
+                    findMatches($0.message!)
+                })
+            }
+        }
+        .onAppear(perform: loadRecordsBySelectedDate)
     }
     
     // MARK: table view
@@ -80,7 +91,9 @@ struct LogTable: View, Identifiable {
                             selectedTab: $selectedTab,
                             isShowingAlert: $isShowingAlert,
                             showSidebar: $showSidebar,
-                            searchText: $searchText
+                            searchText: $searchText,
+                            selectedDate: $selectedDate,
+                            records: $records
                         )
                     }
                 }
@@ -146,99 +159,69 @@ struct LogTable: View, Identifiable {
     // MARK: rows view
     var rows: some View {
         VStack(spacing: 1) {
-            if selectedTab == 0 { // all tab
-                if today.count > 0 {
-                    ForEach(today, id: \LogRecord.id) { record in
-                        let entry = Entry(
-                            timestamp: LogRecords.timestampToString(record.timestamp!),
-                            job: String(record.job?.jid ?? 0),
-                            message: record.message!
-                        )
-                        
-                        LogRow(
-                            entry: entry,
-                            index: today.firstIndex(of: record),
-                            colour: Color.fromStored((record.job?.colour) ?? Theme.rowColourAsDouble)
-                        )
-                    }
-                } else {
-                    LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
-                }
-            } else if selectedTab == 1 { // grouped tab
-                if today.count > 0 {
-                    let groupedResults = grouped()
+            SearchBar(text: $searchText, disabled: (records.count == 0))
+            
+            if records.count > 0 {
+                ForEach(records) { record in
+                    let entry = Entry(
+                        timestamp: LogRecords.timestampToString(record.timestamp!),
+                        job: String(record.job?.jid ?? 0),
+                        message: record.message!
+                    )
                     
-                    ForEach(groupedResults) { entry in
-                        LogRow(
-                            entry: entry,
-                            index: groupedResults.firstIndex(of: entry),
-                            colour: entry.colour
-                        )
-                    }
-                } else {
-                    LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
-                }
-            } else if selectedTab == 2 { // search tab
-                if today.count > 0 {
-                    SearchBar(text: $searchText)
-                    let searchResults = search()
-                    
-                    ForEach(searchResults) { entry in
-                        LogRow(entry: entry, index: searchResults.firstIndex(of: entry), colour: entry.colour)
-                    }
-                } else {
-                    LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
-                }
+                    LogRow(
+                        entry: entry,
+                        index: records.firstIndex(of: record),
+                        colour: Color.fromStored((record.job?.colour) ?? Theme.rowColourAsDouble)
+                    )
+                }.onAppear(perform: changeSort)
+            } else {
+                LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
             }
         }
+        .onChange(of: selectedTab, perform: { _ in
+            changeSort()
+        })
     }
     
     var tableDetails: some View {
-        LogTableDetails(colours: colourMap, today: today)
-            .id(ltd)
+        LogTableDetails(colours: colourMap, records: $records)
     }
     
-    private func search() -> [Entry] {
-        var filtered: [Entry] = []
-        let term = searchText
-        
-        for record in today {
-            let entry = Entry(
-                timestamp: LogRecords.timestampToString(record.timestamp!),
-                job: String(record.job?.jid ?? 0),
-                message: record.message!,
-                colour: Color.fromStored(record.job?.colour ?? Theme.rowColourAsDouble)
-            )
-            
-            do {
-                let caseInsensitiveTerm = try Regex("\(term)").ignoresCase()
-
-                if entry.message.contains(caseInsensitiveTerm) {
-                    filtered.append(entry)
-                }
-            } catch {
-                print("LogTable::search(term: String) - Unable to process string \(term)")
-            }
+    private func changeSort() -> Void {
+        if selectedTab == 0 {
+            records = ungrouped()
+        } else if selectedTab == 1 {
+            records = grouped()
         }
-
-        return filtered
     }
     
-    private func grouped() -> [Entry] {
-        var grouped: [Entry] = []
-        
-        for record in today {
-            let entry = Entry(
-                timestamp: LogRecords.timestampToString(record.timestamp!),
-                job: String(record.job?.jid ?? 0),
-                message: record.message!,
-                colour: Color.fromStored(record.job?.colour ?? Theme.rowColourAsDouble)
-            )
-            
-            grouped.append(entry)
-        }
+    private func loadRecordsBySelectedDate() -> Void {
+        records = LogRecords(moc: moc).forDate(selectedDate)
+    }
+    
+    private func findMatches(_ message: String) -> Bool {
+        do {
+            let caseInsensitiveTerm = try Regex("\(searchText)").ignoresCase()
 
-        return grouped.sorted(by: { $0.job > $1.job })
+            return message.contains(caseInsensitiveTerm)
+        } catch {
+            print("LogTable::search(term: String) - Unable to process string \(searchText)")
+        }
+        
+        return false
+    }
+    
+    private func grouped() -> [LogRecord] {
+        return records.sorted(by: { $0.job!.jid > $1.job!.jid }).filter({
+            findMatches($0.message!)
+        })
+    }
+    
+    private func ungrouped() -> [LogRecord] {
+        return records.sorted(by: { $0.timestamp! > $1.timestamp! }).filter({
+            findMatches($0.message!)
+        })
     }
     
     private func setIsReversed() -> Void {
@@ -246,11 +229,11 @@ struct LogTable: View, Identifiable {
     }
 
     private func sort() -> Void {
-        withAnimation(.easeInOut) {
+//        withAnimation(.easeInOut) {
             // just always reverse the records
             // TODO: fix this
-//            today.reversed()
-        }
+//            records.reversed()
+//        }
     }
 }
 

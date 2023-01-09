@@ -23,39 +23,47 @@ struct Home: View {
     @State private var selected: String?
     @State public var appVersion: String?
     
+//    @ObservedObject public var sm: SyncMonitor = SyncMonitor()
+    
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     
     var body: some View {
         NavigationSplitView {
             List(selection: $selected) {
-                NavigationLink {
-                    ExperimentalToday()
-                        .navigationTitle("[Experimental] Today")
-                        .environmentObject(recordsModel)
-                } label: {
-                    Image(systemName: "command")
-                        .padding(.trailing, 10)
-                    Text("[Experimental] Today")
+                if showExperimentalFeatures {
+                    NavigationLink {
+                        ExperimentalToday()
+                            .navigationTitle("[Experimental] Today")
+                            .environmentObject(recordsModel)
+                        //                        .environmentObject(sm)
+                    } label: {
+                        Image(systemName: "command")
+                            .padding(.trailing, 10)
+                        Text("[Experimental] Today")
+                    }
                 }
                 
                 NavigationLink {
                     Today()
                         .navigationTitle("Today")
                         .environmentObject(recordsModel)
+//                        .environmentObject(sm)
                 } label: {
                     Image(systemName: "doc.append.fill")
                         .padding(.trailing, 10)
                     Text("Today")
                 }
                 
-                NavigationLink {
-                    Search(category: Category(title: "Daily"), records: records)
-                        .navigationTitle("Search")
-                } label: {
-                    Image(systemName: "magnifyingglass.circle.fill")
-                        .padding(.trailing, 10)
-                    Text("Search")
-                }
+                // TODO: remove in a later version
+//                NavigationLink {
+//                    Search(category: Category(title: "Daily"), records: records)
+//                        .navigationTitle("Search")
+////                        .environmentObject(sm)
+//                } label: {
+//                    Image(systemName: "magnifyingglass.circle.fill")
+//                        .padding(.trailing, 10)
+//                    Text("Search")
+//                }
                 
                 NavigationLink {
                     NotesHome()
@@ -66,35 +74,40 @@ struct Home: View {
                     Text("Notes")
                 }
 
-                NavigationLink {
-                    CalendarView(category: Category(title: "Daily"), records: records)
-                        .navigationTitle("Calendar")
-                } label: {
-                    Image(systemName: "calendar")
-                        .padding(.trailing, 10)
-                    Text("Calendar")
+                if showExperimentalFeatures {
+                    NavigationLink {
+                        CalendarView(category: Category(title: "Daily"), records: records)
+                            .navigationTitle("Calendar")
+                    } label: {
+                        Image(systemName: "calendar")
+                            .padding(.trailing, 10)
+                        Text("Calendar")
+                    }
                 }
 
-                NavigationLink {
-                    Backup(category: Category(title: "Daily"))
-                        .navigationTitle("Backup")
-                } label: {
-                    Image(systemName: "cloud.fill")
-                        .padding(.trailing, 10)
-                    Text("Backup")
-                }
+                // TODO: remove in a later version
+//                NavigationLink {
+//                    Backup(category: Category(title: "Daily"))
+//                        .navigationTitle("Backup")
+//                } label: {
+//                    Image(systemName: "cloud.fill")
+//                        .padding(.trailing, 10)
+//                    Text("Backup")
+//                }
                 
-                NavigationLink {
-                    Import()
-                        .navigationTitle("Import")
-                } label: {
-                    Image(systemName: "square.and.arrow.up.fill")
-                        .padding(.trailing, 10)
-                    Text("Import")
+                if showExperimentalFeatures {
+                    NavigationLink {
+                        Import()
+                            .navigationTitle("Import")
+                    } label: {
+                        Image(systemName: "square.and.arrow.up.fill")
+                            .padding(.trailing, 10)
+                        Text("Import")
+                    }
                 }
             }
         } detail: {
-            Text("Hello, world")
+            Text("This dashboard is great, isn't it")
         }
         .navigationTitle("DailyLogger b.\(appVersion ?? "0")")
         .onAppear(perform: updateName)

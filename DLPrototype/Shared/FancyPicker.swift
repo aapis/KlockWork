@@ -28,7 +28,7 @@ struct FancyPicker: View {
                         .font(Theme.font)
                 }
             }
-            .background(Theme.toolbarColour)
+            .background(transparent! ? Color.clear : Theme.toolbarColour)
             .onHover { inside in
                 if inside {
                     NSCursor.pointingHand.push()

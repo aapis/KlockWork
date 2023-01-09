@@ -21,6 +21,7 @@ struct DLPrototype: App {
         WindowGroup {
             Home(records: records)
 //                .onAppear(perform: {
+                    // TODO: Legacy api, remove!
 //                    records.reload()
 //                })
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)

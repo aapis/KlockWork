@@ -8,73 +8,140 @@
 
 import SwiftUI
 
+// TODO: remove this entire class
 struct Search: View {
     var category: Category
     @ObservedObject public var records: Records
+    
+    private let numDatesInPast: Int = 20
     
     @State private var searchByDate: String = ""
     @State private var searchText: String = ""
     @State private var searchResults: String = ""
     @State private var dateList: [CustomPickerItem] = [CustomPickerItem(title: "Default", tag: 0)]
     @State private var selection = 0
+    // TODO: refactor LogTable so this isn't always required
+    @State private var ltd: UUID = UUID()
+    // Flag for whether we are currently loading
+    @State private var isLoading: Bool = false
+    // Store which date we are currently showing data for
+    @State private var currentDate: Date = Date()
+    // Maybe also for storing the date? we'll see who wins
+    @State private var selectedDate: Date = Date()
+    // Store them so we can determine the selected date and filter LogTable accordingly
+    @State private var items: [CustomPickerItem] = []
+    
+//    private let sm: SyncMonitor = SyncMonitor()
+//    @EnvironmentObject public var sm: SyncMonitor
+    
+    @FetchRequest(
+        sortDescriptors: [
+            SortDescriptor(\.timestamp, order: .reverse)
+        ],
+        predicate: NSPredicate(format: "timestamp > %@ && timestamp <= %@", DateHelper.thisAm(), DateHelper.tomorrow())
+    ) public var today: FetchedResults<LogRecord>
     
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
-                Text(Image(systemName: "magnifyingglass.circle.fill"))
-                    .font(.title)
-                Text("Find records")
-                    .font(.title)
-                
-                Spacer()
-                
-                Button(action: findAndCopy, label: {
-                    Image(systemName: "doc.on.doc")
-                })
-                    .background(Color.accentColor)
-                    .help("Search and copy results")
+            if isLoading {
+                loading
+            } else {
+                header
+                filters
+                calendar
+                table
             }
-            
-            Divider()
-            
-            HStack {
-                Picker("Date", selection: $selection) {
-                    ForEach(dateList) { item in
-                        Text(item.title)
-                            .tag(item.tag)
-                            .font(Font.system(size: 16, design: .default))
-                    }
-                }
-                    .frame(width: 200)
-                    .font(Font.system(size: 16, design: .default))
-                    .onAppear(perform: setDateList)
-                    .onChange(of: selection) { _ in findAction() }
-
-                TextField("Search terms", text: $searchText)
-                    .font(Font.system(size: 16, design: .default))
-
-                
-            }
-            
-            Divider()
-            
-//            CalendarThisWeek(data: searchResults)
-            CalendarThisWeek(records: records)
-            
-            Table(getDatesForTable()) {
-                TableColumn("Timestamp", value: \.timestamp)
-                    .width(120)
-                TableColumn("Job ID", value: \.job)
-                    .width(60)
-                TableColumn("Message", value: \.message)
-            }
-            
-            // TODO: does not support search yet
-//            LogTable(records: records)
         }
-            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-            .padding()
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+        .padding()
+        .defaultAppStorage(.standard)
+        .background(Theme.toolbarColour)
+        .onAppear(perform: setDate)
+//        .onReceive(sm.publisher) { _ in
+//            // this currently does the data/status updating
+//            received()
+//        }
     }
+    
+    var header: some View {
+        HStack {
+            Title(text: "Find records", image: "magnifyingglass.circle.fill")
+            Spacer()
+            FancyButton(text: "Find and copy", action: findAndCopy, icon: "doc.on.doc", showLabel: false)
+        }
+    }
+    var filters: some View {
+        HStack {
+            FancyTextField(placeholder: "Search terms", lineLimit: 1, onSubmit: {}, text: $searchText)
+            FancyPicker(onChange: change, items: items)
+                .onAppear(perform: {
+                    items = CustomPickerItem.listFrom(DateHelper.datesBeforeToday(numDays: numDatesInPast))
+                })
+        }
+    }
+    
+    // MARK: calendar view
+    var calendar: some View {
+        CalendarThisWeek(records: records)
+    }
+    
+    // MARK: Table view
+    var table: some View {
+        LogTable(ltd: $ltd)
+//            .id(tableUuid)
+    }
+    
+    // MARK: loading view
+    var loading: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Spacer()
+            
+            HStack {
+                Spacer()
+                ProgressView("Loading Workspace...")
+                Spacer()
+            }
+            
+            Spacer()
+        }
+    }
+    
+    private func setDate() -> Void {
+        currentDate = Date()
+    }
+    
+    private func received() -> Void {
+//        print("SM: [Search] Received \(sm.ready)")
+        
+//        if sm.ready {
+//            isLoading = sm.ready
+//        }
+    }
+    
+    private func change(selected: Int) -> Void {
+        let item = items[selected].title
+        
+        selectedDate = DateHelper.date(item) ?? Date()
+    }
+    
+//    private func reloadUi() -> Void {
+////        isLoading = true
+//
+//        func reload() {
+////            ltd = UUID()
+////            tableUuid = UUID()
+////            workspaceReady = true
+////            dateHasChanged = false
+//            isLoading = false
+//        }
+//
+//        // if we have records reload the after 1s
+//        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { timer in
+//            reload()
+//        }
+//    }
+    
+    // MARK: the following methods MAY be forsaken
     
     private func setDateList() -> Void {
         self.dateList = self.generateDateList()
