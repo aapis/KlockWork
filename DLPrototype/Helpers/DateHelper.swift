@@ -55,7 +55,54 @@ final public class DateHelper {
         return formatter.date(from: date)
     }
     
+    static public func date(_ date: String, fmt: String? = "yyyy-MM-dd") -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = fmt
+        formatter.timeZone = TimeZone(abbreviation: "MST")
+        formatter.locale = NSLocale.current
+        
+        return formatter.date(from: date)
+    }
+    
     static public func dateFromRecord(_ record: LogRecord) -> String {
         return DateHelper.todayShort(record.timestamp!)
+    }
+    
+    static public func datesBeforeToday(numDays: Int, dateFormat: String? = "yyyy-MM-dd") -> [String] {
+        var dates: [String] = []
+        
+        for i in 0...numDays {
+            var components = DateComponents()
+            components.day = -(1*i)
+            let computedDay = Calendar.current.date(byAdding: components, to: Date())
+            
+            if computedDay != nil {
+                let fmt = DateFormatter()
+                fmt.dateFormat = "yyyy-MM-dd"
+                fmt.timeZone = TimeZone(abbreviation: "MST")
+                fmt.locale = NSLocale.current
+                
+                let fmtComputedDay = fmt.string(from: computedDay!)
+                
+                dates.append(fmtComputedDay)
+            }
+            
+        }
+        
+        return dates
+    }
+    
+    static public func datesAround(_ date: Date) -> (Date, Date) {
+        let before = date - 86400
+        let after = date + 86400
+        
+        return (before, after)
+    }
+    
+    static public func startAndEndOf(_ date: Date) -> (Date, Date) {
+        let start = Calendar.current.startOfDay(for: date)
+        let fin = date + 86399
+        
+        return (start, fin)
     }
 }

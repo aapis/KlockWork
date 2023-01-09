@@ -25,6 +25,13 @@ struct ToolbarTabs: View {
             .foregroundColor(Color.white)
             .help("View all of today's records")
             .frame(width: 50)
+            .onHover { inside in
+                if inside {
+                    NSCursor.pointingHand.push()
+                } else {
+                    NSCursor.pop()
+                }
+            }
             
             Button(action: {setActive(1)}, label: {
                 ZStack {
@@ -36,17 +43,31 @@ struct ToolbarTabs: View {
             .foregroundColor(Color.white)
             .help("Today's records grouped by JOB ID")
             .frame(width: 50)
-            
-            Button(action: {setActive(2)}, label: {
-                ZStack {
-                    (selectedTab == 2 ? Theme.tabActiveColour : Theme.tabColour)
-                    Image(systemName: "magnifyingglass")
+            .onHover { inside in
+                if inside {
+                    NSCursor.pointingHand.push()
+                } else {
+                    NSCursor.pop()
                 }
-            })
-            .buttonStyle(.borderless)
-            .foregroundColor(Color.white)
-            .help("Search today's records")
-            .frame(width: 50)
+            }
+            
+//            Button(action: {setActive(2)}, label: {
+//                ZStack {
+//                    (selectedTab == 2 ? Theme.tabActiveColour : Theme.tabColour)
+//                    Image(systemName: "magnifyingglass")
+//                }
+//            })
+//            .buttonStyle(.borderless)
+//            .foregroundColor(Color.white)
+//            .help("Search today's records")
+//            .frame(width: 50)
+//            .onHover { inside in
+//                if inside {
+//                    NSCursor.pointingHand.push()
+//                } else {
+//                    NSCursor.pop()
+//                }
+//            }
         }
     }
     

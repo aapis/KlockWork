@@ -23,6 +23,7 @@ struct Import: View {
     @State private var importRun: Bool = false
     @State private var importCount: Int = 0
     @State private var linesProcessed: Int = 0
+    @State private var exportText: String = ""
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -38,11 +39,19 @@ struct Import: View {
                 }
                 
                 VStack {
-                    LogTextField(placeholder: "Some text...", lineLimit: 100, onSubmit: {}, transparent: true, text: $importText)
+                    FancyTextField(placeholder: "Some text...", lineLimit: 100, onSubmit: {}, transparent: true, text: $importText)
                         
                     FancyButton(text: "Import", action: importFromString)
                 }.tabItem {
                     Text("From String")
+                }
+                
+                VStack {
+                    FancyTextField(placeholder: "Export data", lineLimit: 100, onSubmit: {}, transparent: true, text: $exportText)
+                        
+                    FancyButton(text: "Export", action: exportToString)
+                }.tabItem {
+                    Text("Export")
                 }
             }
             
@@ -61,6 +70,12 @@ struct Import: View {
         }
         .padding()
         .background(Theme.toolbarColour)
+    }
+    
+    private func exportToString() -> Void {
+        for record in records {
+            exportText += "\(record.timestamp!) - \(record.job?.jid.string ?? "0") - \(record.message!)\n"
+        }
     }
     
     private func importFromFile() -> Void {

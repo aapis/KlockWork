@@ -14,6 +14,7 @@
 		53152CD0296A245200A14E43 /* ClipboardHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CCF296A245200A14E43 /* ClipboardHelper.swift */; };
 		53152CD4296A296A00A14E43 /* FancyButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CD3296A296A00A14E43 /* FancyButton.swift */; };
 		53152CD6296A2DA300A14E43 /* FancyPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CD5296A2DA300A14E43 /* FancyPicker.swift */; };
+		53152CDA296B849200A14E43 /* FancyPickerWithRelativeNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CD9296B849200A14E43 /* FancyPickerWithRelativeNavigation.swift */; };
 		531B38FC29674EC400E74013 /* Title.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531B38FB29674EC400E74013 /* Title.swift */; };
 		53218D4824B7F6EB0088ABE9 /* DLPrototype.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */; };
 		53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4924B7F6EB0088ABE9 /* Home.swift */; };
@@ -58,7 +59,7 @@
 		53EFCE7929637F35004E45EC /* GeneralSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EFCE7829637F35004E45EC /* GeneralSettings.swift */; };
 		53EFCE7B29637F49004E45EC /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EFCE7A29637F49004E45EC /* Settings.swift */; };
 		53EFCE7D2963D309004E45EC /* LogTableDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EFCE7C2963D309004E45EC /* LogTableDetails.swift */; };
-		53FEF578296603D9000B94FC /* LogTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FEF577296603D9000B94FC /* LogTextField.swift */; };
+		53FEF578296603D9000B94FC /* FancyTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FEF577296603D9000B94FC /* FancyTextField.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +87,7 @@
 		53152CCF296A245200A14E43 /* ClipboardHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardHelper.swift; sourceTree = "<group>"; };
 		53152CD3296A296A00A14E43 /* FancyButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyButton.swift; sourceTree = "<group>"; };
 		53152CD5296A2DA300A14E43 /* FancyPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyPicker.swift; sourceTree = "<group>"; };
+		53152CD9296B849200A14E43 /* FancyPickerWithRelativeNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyPickerWithRelativeNavigation.swift; sourceTree = "<group>"; };
 		531B38FB29674EC400E74013 /* Title.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Title.swift; sourceTree = "<group>"; };
 		53218D4424B7F6EB0088ABE9 /* DLPrototype.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DLPrototype.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DLPrototype.swift; sourceTree = "<group>"; };
@@ -138,7 +140,7 @@
 		53EFCE7829637F35004E45EC /* GeneralSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettings.swift; sourceTree = "<group>"; };
 		53EFCE7A29637F49004E45EC /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		53EFCE7C2963D309004E45EC /* LogTableDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTableDetails.swift; sourceTree = "<group>"; };
-		53FEF577296603D9000B94FC /* LogTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTextField.swift; sourceTree = "<group>"; };
+		53FEF577296603D9000B94FC /* FancyTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyTextField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -345,11 +347,12 @@
 				53EDDF9D29634852008D34C7 /* Entry.swift */,
 				53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */,
 				5376289D29664F8C00DE8ECF /* Theme.swift */,
-				53FEF577296603D9000B94FC /* LogTextField.swift */,
+				53FEF577296603D9000B94FC /* FancyTextField.swift */,
 				531B38FB29674EC400E74013 /* Title.swift */,
 				53152CCD2969E69700A14E43 /* JobPicker.swift */,
 				53152CD3296A296A00A14E43 /* FancyButton.swift */,
 				53152CD5296A2DA300A14E43 /* FancyPicker.swift */,
+				53152CD9296B849200A14E43 /* FancyPickerWithRelativeNavigation.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -508,7 +511,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				53FEF578296603D9000B94FC /* LogTextField.swift in Sources */,
+				53FEF578296603D9000B94FC /* FancyTextField.swift in Sources */,
 				537628B429665F4E00DE8ECF /* Data.xcdatamodeld in Sources */,
 				53EDDF9E29634852008D34C7 /* Entry.swift in Sources */,
 				53C6D0912965044C00EA6129 /* DetailsColumn.swift in Sources */,
@@ -551,6 +554,7 @@
 				53152CD4296A296A00A14E43 /* FancyButton.swift in Sources */,
 				53DCA3422803BBBF0032FD60 /* CalendarView.swift in Sources */,
 				5367FAF0296772730060D2AA /* ExperimentalToday.swift in Sources */,
+				53152CDA296B849200A14E43 /* FancyPickerWithRelativeNavigation.swift in Sources */,
 				53EFCE7B29637F49004E45EC /* Settings.swift in Sources */,
 				537628A8296659DC00DE8ECF /* PersistenceController.swift in Sources */,
 				53152CCE2969E69700A14E43 /* JobPicker.swift in Sources */,

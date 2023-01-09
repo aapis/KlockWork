@@ -9,13 +9,13 @@
 import Foundation
 import SwiftUI
 
-struct Entry: Identifiable, Equatable {
-    let timestamp: String
-    var job: String = ""
-    let message: String
-    var url: String = ""
-    var colour: Color //= Color.gray.opacity(0.2)
-    let id = UUID()
+public struct Entry: Identifiable, Equatable {
+    public let timestamp: String
+    public var job: String = ""
+    public let message: String
+    public var url: String = ""
+    public var colour: Color //= Color.gray.opacity(0.2)
+    public let id = UUID()
     
     init(timestamp: String, job: String, message: String) {
         self.timestamp = timestamp
@@ -53,5 +53,20 @@ struct Entry: Identifiable, Equatable {
     
     mutating private func setJobFromUrl() -> Void {
         job = String(url.suffix(5))
+    }
+    
+    // TODO: this is INCOMPLETE and unused, finish implementation
+    static public func listFrom(_ records: [String]) -> [Entry] {
+//        let entry = Entry(timestamp: DateHelper.todayShort(), job: "11", message: "message")
+//        
+        var list: [Entry] = []
+//        
+//        for (i, rec) in records {
+//            list.append(Entry(title: rec, tag: i))
+//        }
+//        
+//        return list
+//        return [entry]
+        return list
     }
 }
