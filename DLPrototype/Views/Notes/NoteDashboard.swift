@@ -12,6 +12,32 @@ import SwiftUI
 struct NoteDashboard: View {
     @Environment(\.managedObjectContext) var managedObjectContext
     
+    @FetchRequest public var recent: FetchedResults<Note>
+    @FetchRequest public var starred: FetchedResults<Note>
+    
+    @State private var noteListId: UUID = UUID()
+    
+    public init() {
+        let request: NSFetchRequest<Note> = Note.fetchRequest()
+        request.fetchLimit = 5
+        request.predicate = NSPredicate(format: "postedDate > %@", DateHelper.daysPast(7))
+        request.sortDescriptors = [
+            NSSortDescriptor(keyPath: \Note.lastUpdate, ascending: false),
+            NSSortDescriptor(keyPath: \Note.postedDate, ascending: false)
+        ]
+        
+        _recent = FetchRequest(fetchRequest: request, animation: .easeInOut)
+        
+        let starReq: NSFetchRequest<Note> = Note.fetchRequest()
+        starReq.fetchLimit = 5
+        starReq.predicate = NSPredicate(format: "starred = true")
+        starReq.sortDescriptors = [
+            NSSortDescriptor(keyPath: \Note.lastUpdate, ascending: false)
+        ]
+        
+        _starred = FetchRequest(fetchRequest: starReq, animation: .easeInOut)
+    }
+    
     var body: some View {
         VStack(alignment: .leading) {
             VStack {
@@ -44,7 +70,74 @@ struct NoteDashboard: View {
                     }
                 }
                 
-                Spacer()
+                VStack(alignment: .leading) {
+                    Divider()
+                        .frame(height: 20)
+                        .foregroundColor(.clear)
+
+                    HStack {
+                        if starred.count > 0 {
+                            VStack(alignment: .leading) {
+                                Text("Favourites")
+                                    .font(.title2)
+                                
+                                List(starred) { note in
+                                    NavigationLink {
+                                        NoteView(note: note)
+                                            .navigationTitle("Editing note \(note.title!)")
+                                    } label: {
+                                        HStack {
+                                            Image(systemName: "note")
+                                            Text(note.title!)
+                                            Spacer()
+                                            
+                                            if note.lastUpdate != nil {
+                                                Image(systemName: "arrow.triangle.2.circlepath")
+                                                    .help("Updated \(DateHelper.shortDateWithTime(note.lastUpdate!))")
+                                            } else {
+                                                Image(systemName: "note.text.badge.plus")
+                                                    .help("Created \(DateHelper.shortDateWithTime(note.postedDate!))")
+                                            }
+                                            
+//                                            FancyButton(text: "Star", action: {}, icon: "star.fill", altIcon: "star", transparent: true, showLabel: false)
+                                        }
+                                    }
+                                }
+                                .listStyle(.inset(alternatesRowBackgrounds: true))
+                            }
+                        }
+                        
+                        VStack(alignment: .leading) {
+                            Text("Recent Notes")
+                                .font(.title2)
+                            
+                            List(recent) { note in
+                                NavigationLink {
+                                    NoteView(note: note)
+                                        .navigationTitle("Editing note \(note.title!)")
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "note")
+                                        Text(note.title!)
+                                        Spacer()
+                                        
+                                        if note.lastUpdate != nil {
+                                            Image(systemName: "arrow.triangle.2.circlepath")
+                                                .help("Updated \(DateHelper.shortDateWithTime(note.lastUpdate!))")
+                                        } else {
+                                            Image(systemName: "pencil")
+                                                .help("Created \(DateHelper.shortDateWithTime(note.postedDate!))")
+                                        }
+                                        
+//                                        FancyButton(text: "Delete", action: {}, icon: "xmark", transparent: true, showLabel: false)
+//                                        FancyButton(text: "Star", action: {}, icon: "star", altIcon: "star.fill", transparent: true, showLabel: false)
+                                    }
+                                }
+                            }
+                            .listStyle(.inset(alternatesRowBackgrounds: true))
+                        }
+                    }
+                }
             }.padding()
         }
         .background(Theme.toolbarColour)
