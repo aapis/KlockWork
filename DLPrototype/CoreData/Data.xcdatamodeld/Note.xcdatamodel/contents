@@ -16,7 +16,9 @@
     <entity name="Note" representedClassName="Note" syncable="YES" codeGenerationType="class">
         <attribute name="body" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="postedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="starred" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="title" optional="YES" attributeType="String"/>
     </entity>
     <configuration name="Cloud" usedWithCloudKit="YES">

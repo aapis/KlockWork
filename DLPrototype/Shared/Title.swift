@@ -12,13 +12,17 @@ import SwiftUI
 struct Title: View {
     public var text: String
     public var image: String
+    public var showLabel: Bool? = true
     
     var body: some View {
         HStack(alignment: .firstTextBaseline) {
             Text(Image(systemName: image))
                 .font(Theme.fontTitle)
-            Text(text)
-                .font(Theme.fontTitle)
+            
+            if showLabel! {
+                Text(text)
+                    .font(Theme.fontTitle)
+            }
         }
     }
 }

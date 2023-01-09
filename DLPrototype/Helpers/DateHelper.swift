@@ -55,6 +55,15 @@ final public class DateHelper {
         return formatter.date(from: date)
     }
     
+    static public func shortDateWithTime(_ date: Date? = Date()) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm a"
+        formatter.timeZone = TimeZone(abbreviation: "MST")
+        formatter.locale = NSLocale.current
+        
+        return formatter.string(from: date!)
+    }
+    
     static public func date(_ date: String, fmt: String? = "yyyy-MM-dd") -> Date? {
         let formatter = DateFormatter()
         formatter.dateFormat = fmt

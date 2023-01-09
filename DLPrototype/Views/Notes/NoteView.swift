@@ -14,6 +14,8 @@ struct NoteView: View {
     
     @State private var title: String = ""
     @State private var content: String = ""
+    @State private var lastUpdate: Date?
+    @State private var star: Bool? = false
     @State private var isShowingEditor: Bool = true
     
     @Environment(\.managedObjectContext) var managedObjectContext
@@ -23,7 +25,18 @@ struct NoteView: View {
             if isShowingEditor {
                 VStack(alignment: .leading) {
                     VStack(alignment: .leading, spacing: 22) {
-                        Title(text: "Editing", image: "pencil")
+                        HStack {
+                            Title(text: "Editing", image: "pencil")
+                            
+                            Spacer()
+                            
+                            if note.starred {
+                                FancyButton(text: "Un-favourite", action: starred, icon: "star.fill", showLabel: false)
+                                    .keyboardShortcut("+")
+                            } else {
+                                FancyButton(text: "Favourite", action: starred, icon: "star", showLabel: false)
+                            }
+                        }
                         
                         FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
                         
@@ -57,7 +70,16 @@ struct NoteView: View {
                             
                             FancyButton(text: "Delete", action: delete)
                             Spacer()
+                            
+                            if lastUpdate != nil {
+                                Text("Last update: \(DateHelper.shortDateWithTime(lastUpdate))")
+                                
+                                Image(systemName: "pencil")
+                                    .help("Created: \(DateHelper.shortDateWithTime(lastUpdate))")
+                            }
+                            
                             FancyButton(text: "Update", action: update)
+                                .keyboardShortcut("s")
                         }
                     }.padding()
                 }
@@ -70,6 +92,12 @@ struct NoteView: View {
         .onChange(of: note, perform: createBindings)
     }
     
+    private func starred() -> Void {
+        note.starred.toggle()
+        
+        update()
+    }
+    
     private func cancel() -> Void {
         isShowingEditor = false
     }
@@ -77,6 +105,8 @@ struct NoteView: View {
     private func update() -> Void {
         note.title = title
         note.body = content
+        note.lastUpdate = Date()
+        lastUpdate = note.lastUpdate
 
         PersistenceController.shared.save()
     }
@@ -93,6 +123,7 @@ struct NoteView: View {
     private func createBindings(note: Note) -> Void {
         title = note.title!
         content = note.body!
+        lastUpdate = note.lastUpdate ?? nil
         isShowingEditor = true
     }
 }

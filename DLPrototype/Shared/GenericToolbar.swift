@@ -25,6 +25,7 @@ struct GenericToolbar: View {
         GridRow {
             Group {
                 HStack {
+                    Title(text: "Multitasking", image: "square.split.2x1", showLabel: false)
                     FancyPicker(onChange: change, items: leftPickerItems, transparent: true, labelText: "Left")
                     FancyPicker(onChange: change, items: rightPickerItems, transparent: true, labelText: "Right")
                     Spacer()
@@ -35,7 +36,7 @@ struct GenericToolbar: View {
                 .onAppear(perform: setupPickers)
             }
         }
-        .frame(height: 50)
+        .frame(height: 57)
     }
     
     private func setupPickers() -> Void {

@@ -23,6 +23,7 @@ struct SearchBar: View {
                     
                     if text.count > 0 {
                         FancyButton(text: "Reset", action: reset, icon: "xmark", showLabel: false)
+                            .padding()
                     }
                 }
             }
