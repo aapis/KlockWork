@@ -24,15 +24,25 @@ struct TaskListView: View {
                     Spacer()
                 }
                 
-                VStack(alignment: .leading) {
-                    Text("No tasks associated with this list yet")
-                    
+                VStack(alignment: .leading, spacing: 1) {
                     FancyTextField(placeholder: "What's on your mind?", lineLimit: 1, onSubmit: createTask, text: $entryText)
                     
-                    if job.tasks!.count > 0 {
-                        
-                        ForEach(job.tasks!.allObjects as! [LogTask], id: \LogTask.id) { task in
-                            Text("Task created: \(task.created!)")
+                    Divider()
+                        .foregroundColor(.clear)
+                        .frame(height: 10)
+                        .overlay(.clear)
+                    
+                    if job.tasks!.count == 0 {
+                        Text("No tasks associated with this list yet")
+                    } else {
+                        Grid(alignment: .top, horizontalSpacing: 1, verticalSpacing: 1) {
+                            header.font(Theme.font)
+                            
+                            ScrollView {
+                                ForEach(job.tasks!.allObjects as! [LogTask], id: \LogTask.id) { task in
+                                    TaskView(task: task)
+                                }
+                            }
                         }
                     }
                 }
@@ -42,6 +52,31 @@ struct TaskListView: View {
             .padding()
         }
         .background(Theme.toolbarColour)
+    }
+    
+    @ViewBuilder
+    var header: some View {
+        GridRow {
+            Group {
+                ZStack(alignment: .leading) {
+                    Theme.headerColour
+                    Text("-")
+                }
+            }
+            Group {
+                ZStack(alignment: .leading) {
+                    Theme.headerColour
+                    Text("Created")
+                }
+            }
+            Group {
+                ZStack(alignment: .leading) {
+                    Theme.headerColour
+                    Text("Body")
+                }
+            }
+        }
+        .frame(height: 40)
     }
     
     private func createTask() -> Void {
