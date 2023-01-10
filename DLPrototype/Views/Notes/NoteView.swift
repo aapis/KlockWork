@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+//import Markdown
 
 struct NoteView: View {
     public var note: Note

@@ -57,7 +57,7 @@ final public class DateHelper {
     
     static public func shortDateWithTime(_ date: Date? = Date()) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm a"
+        formatter.dateFormat = "yyyy-MM-dd h:mm a"
         formatter.timeZone = TimeZone(abbreviation: "MST")
         formatter.locale = NSLocale.current
         
@@ -87,7 +87,7 @@ final public class DateHelper {
             
             if computedDay != nil {
                 let fmt = DateFormatter()
-                fmt.dateFormat = "yyyy-MM-dd"
+                fmt.dateFormat = dateFormat
                 fmt.timeZone = TimeZone(abbreviation: "MST")
                 fmt.locale = NSLocale.current
                 

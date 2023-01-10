@@ -29,7 +29,7 @@ struct ToolbarButtons: View {
 //                .frame(maxHeight: 20)
             FancyPicker(onChange: change, items: datePickerItems)
                 .onAppear(perform: {
-                    datePickerItems = CustomPickerItem.listFrom(DateHelper.datesBeforeToday(numDays: numDatesInPast))
+                    datePickerItems = CustomPickerItem.listFrom(DateHelper.datesBeforeToday(numDays: numDatesInPast)) // TODO: add dateFormat: "EEEEEE - yyyy-MM-dd" 
                 })
             // TODO: coming back soon
 //            FancyButton(text: "Next day", action: next, icon: "chevron.right", transparent: true, showLabel: false)

@@ -27,7 +27,6 @@ struct LogTable: View, Identifiable {
     @State private var refreshing: Bool = false
     @State private var resetSearchButtonHit: Bool = false
     
-    @Binding public var ltd: UUID
     @State private var selectedDate: Date = Date()
     
     private let font: Font = .system(.body, design: .monospaced)

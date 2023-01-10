@@ -105,9 +105,8 @@ struct Home: View {
                                 .font(.title)
                             }
                         }
-                    //                        .environmentObject(sm)
                 } label: {
-                    Image(systemName: "command")
+                    Image(systemName: "rectangle.split.2x1")
                         .padding(.trailing, 10)
                     Text("Split")
                 }
@@ -115,6 +114,7 @@ struct Home: View {
                 NavigationLink {
                     Import()
                         .navigationTitle("Import")
+                        .environmentObject(recordsModel)
                         .toolbar {
                             if showExperimentalFeatures {
                                 Button(action: {}, label: {
@@ -132,6 +132,25 @@ struct Home: View {
                 
                 if showExperimentalFeatures {
                     Divider()
+                    
+                    NavigationLink {
+                        Manage()
+                            .navigationTitle("Manage")
+                            .navigationSplitViewColumnWidth(ideal: 300)
+                            .toolbar {
+                                if showExperimentalFeatures {
+                                    Button(action: {}, label: {
+                                        Image(systemName: "arrow.triangle.2.circlepath")
+                                    })
+                                    .buttonStyle(.borderless)
+                                    .font(.title)
+                                }
+                            }
+                    } label: {
+                        Image(systemName: "books.vertical")
+                            .padding(.trailing, 10)
+                        Text("Manage")
+                    }
                 
                     NavigationLink {
                         CalendarView(category: Category(title: "Daily"), records: records)
