@@ -36,10 +36,6 @@ struct NoteView: View {
                             } else {
                                 FancyButton(text: "Favourite", action: starred, icon: "star", showLabel: false)
                             }
-                            
-                            VStack {
-                                Text("hi")
-                            }
                         }
                         
                         FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
