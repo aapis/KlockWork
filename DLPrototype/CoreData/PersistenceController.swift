@@ -38,13 +38,13 @@ struct PersistenceController {
             record.id = UUID()
         }
         
-//        // preview jobs
-//        for i in 0..<10 {
-//            let job = Job(context: controller.container.viewContext)
-//            job.colour = Theme.rowColourAsDouble
-//            job.jid = Double(i)
-//            job.id = UUID()
-//        }
+        // preview jobs
+        for i in 0..<10 {
+            let job = Job(context: controller.container.viewContext)
+            job.colour = Theme.rowColourAsDouble
+            job.jid = Double(i)
+            job.id = UUID()
+        }
 
         return controller
     }()
@@ -58,31 +58,8 @@ struct PersistenceController {
             container.persistentStoreDescriptions.first?.url = URL(fileURLWithPath: "/dev/null")
         }
         
-        // https://developer.apple.com/documentation/coredata/mirroring_a_core_data_store_with_cloudkit/setting_up_core_data_with_cloudkit
-        // Create a store description for a local store
-        let address = Bundle.main.path(forResource: "DLPrototype", ofType: ".momd")
-        let localStoreLocation = URL(fileURLWithPath: "\(address!)/Default.sqlite")
-        let localStoreDescription = NSPersistentStoreDescription(url: localStoreLocation)
-        localStoreDescription.configuration = "Default"
-//        print("STORE LOCATION local: \(localStoreLocation)")
-//
-        // Create a store description for a CloudKit-backed local store
-        let cloudStoreLocation = URL(fileURLWithPath: "\(address!)/Cloud.sqlite")
-        let cloudStoreDescription = NSPersistentStoreDescription(url: cloudStoreLocation)
-        cloudStoreDescription.configuration = "Cloud"
-        print("CLOUD LOC: \(cloudStoreLocation)")
-        
         container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         container.viewContext.automaticallyMergesChangesFromParent = true
-        
-        // Set the container options on the cloud store
-        cloudStoreDescription.cloudKitContainerOptions = NSPersistentCloudKitContainerOptions(containerIdentifier: "iCloud.DLPrototype.data")
-        
-        // Update the container's list of store descriptions
-        container.persistentStoreDescriptions = [
-            cloudStoreDescription,
-            localStoreDescription
-        ]
 
         container.loadPersistentStores { description, error in
             if let error = error {

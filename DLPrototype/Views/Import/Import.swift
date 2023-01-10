@@ -10,14 +10,15 @@ import Foundation
 import SwiftUI
 
 struct Import: View {
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.timestamp, order: .reverse)]) public var records: FetchedResults<LogRecord>
-    @FetchRequest(
-        sortDescriptors: [
-            SortDescriptor(\.jid)
-        ]
-    ) public var jobs: FetchedResults<Job>
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.timestamp)]) public var records: FetchedResults<LogRecord>
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.postedDate)]) public var notes: FetchedResults<Note>
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.jid)]) public var jobs: FetchedResults<Job>
+    
+//    @State private var isDeleteConfirmationPresented: Bool = false
     
     @Environment(\.managedObjectContext) var moc
+    
+    @EnvironmentObject public var recordsModel: LogRecords
     
     @State private var importText: String = "4/14/2020 - joining weekly team meeting\n4/14/2020 - weekly meeting done\n2018-12-09 12:44 - 11 - lunch done\n2018-12-09 12:45 - 44829 - back on this\n2018-12-09 14:10 - 13 - some things (1hr)\n=========================\n2018-12-12 09:45\n=========================\n2018-12-12 09:45 - 12 - met with people to discuss training session #3 slide deck and document content.  I have several TODOs for this\n2023-01-05 12:05 - 11 - lunching\n2023-01-05 13:05 - 11 - back"
     @State private var importRun: Bool = false
@@ -57,10 +58,28 @@ struct Import: View {
             
             // MARK: status
             VStack {
-                // MARK: danger button(s)
-                HStack {
-                    FancyButton(text: "Truncate \(records.count) records", action: burnItAllDown)
-                }
+//                // MARK: danger button(s)
+//                HStack {
+//                    FancyButton(text: "Truncate \(records.count) Records + Jobs", action: showDelete)
+//                    .confirmationDialog("Did you backup first?", isPresented: $isDeleteConfirmationPresented) {
+//                        Button("Yes", role: .destructive) {
+//                            burnRecordsAndJobs()
+//                        }
+//                        Button("Cancel", role: .cancel) {
+//                            hideDelete()
+//                        }
+//                    }
+//
+//                    FancyButton(text: "Truncate \(notes.count) Notes", action: showDelete)
+//                    .confirmationDialog("Did you backup first?", isPresented: $isDeleteConfirmationPresented) {
+//                        Button("Yes", role: .destructive) {
+//                            burnNotes()
+//                        }
+//                        Button("Cancel", role: .cancel) {
+//                            hideDelete()
+//                        }
+//                    }
+//                }
                 
                 if importRun {
                     Text("Processed \(linesProcessed) lines")
@@ -109,11 +128,13 @@ struct Import: View {
                 do {
                     let jid = job // copy-pasted this bit
                     let record = LogRecord(context: moc)
-                    record.timestamp = try dateFor(String(parts[0])) // pain point
+                    record.timestamp = try dateFor(String(parts[0]))
                     record.id = UUID()
                     record.message = String(parts[2])
                     
-                    if !jobs.contains(where: { $0.jid == jid }) {
+                    let (success, matchedJob) = recordsModel.jobMatchWithSet(jid, records)
+                    
+                    if !success {
                         let job = Job(context: moc)
                         job.jid = jid
                         job.id = UUID()
@@ -121,6 +142,8 @@ struct Import: View {
                         job.colour = Color.randomStorable()
                         
                         record.job = job
+                    } else {
+                        record.job = matchedJob
                     }
                     
                     PersistenceController.shared.save()
@@ -134,21 +157,52 @@ struct Import: View {
         importCount = records.count
     }
     
-    private func burnItAllDown() -> Void {
-        for record in records {
-            moc.delete(record)
-            
-            PersistenceController.shared.save()
-        }
-    }
+//    private func burnRecordsAndJobs() -> Void {
+//        for record in records {
+//            moc.delete(record)
+//            
+//            PersistenceController.shared.save()
+//        }
+//        
+//        for job in jobs {
+//            moc.delete(job)
+//            
+//            PersistenceController.shared.save()
+//        }
+//    }
+//    
+//    private func burnNotes() -> Void {
+//        for note in notes {
+//            moc.delete(note)
+//            
+//            PersistenceController.shared.save()
+//        }
+//    }
     
-    // THIS IS WRONG
     private func dateFor(_ timestamp: String) throws -> Date {
         let inputDateFormatter = DateFormatter()
         inputDateFormatter.timeZone = TimeZone(abbreviation: "MST")
         inputDateFormatter.locale = NSLocale.current
-        inputDateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+        inputDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         let dateObj = inputDateFormatter.date(from: timestamp)
+        
+        if dateObj == nil {
+            inputDateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+            let noSeconds = inputDateFormatter.date(from: timestamp)
+            
+            if noSeconds == nil {
+                inputDateFormatter.dateFormat = "yyyy/MM/dd"
+                let legacyDate = inputDateFormatter.date(from: timestamp)
+                
+                if legacyDate == nil {
+                    print("Import::error Date could not be processed \(timestamp)")
+                }
+                
+                return legacyDate!
+            }
+            
+            return noSeconds!
+        }
         
         return dateObj!
     }
@@ -158,6 +212,14 @@ struct Import: View {
 
         return paths[0]
     }
+    
+//    private func showDelete() -> Void {
+//        isDeleteConfirmationPresented = true
+//    }
+//    
+//    private func hideDelete() -> Void {
+//        isDeleteConfirmationPresented = false
+//    }
 }
 
 struct ImportPreview: PreviewProvider {

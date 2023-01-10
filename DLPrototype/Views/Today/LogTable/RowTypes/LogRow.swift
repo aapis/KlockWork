@@ -108,6 +108,9 @@ struct LogRow: View, Identifiable {
         }
         .defaultAppStorage(.standard)
         .onAppear(perform: setEditableValues)
+        .onChange(of: timestamp) { _ in
+            setEditableValues()
+        }
 //        .onHover(perform: onHover)
     }
 
