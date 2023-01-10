@@ -180,7 +180,7 @@ struct Today : View, Identifiable {
             record.message = text
             record.id = UUID()
             
-            let (success, matchedJob) = recordsModel.jobMatchWithSet(jid, today)
+            let (success, matchedJob) = recordsModel.jobMatch(jid)
             
             if !success {
                 let job = Job(context: moc)
