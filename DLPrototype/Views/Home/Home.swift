@@ -15,8 +15,6 @@ struct Category: Identifiable {
 }
 
 struct Home: View {
-    @ObservedObject public var records: Records
-    
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var recordsModel: LogRecords
     
@@ -50,17 +48,6 @@ struct Home: View {
                         .padding(.trailing, 10)
                     Text("Today")
                 }
-                
-                // TODO: remove in a later version
-//                NavigationLink {
-//                    Search(category: Category(title: "Daily"), records: records)
-//                        .navigationTitle("Search")
-////                        .environmentObject(sm)
-//                } label: {
-//                    Image(systemName: "magnifyingglass.circle.fill")
-//                        .padding(.trailing, 10)
-//                    Text("Search")
-//                }
                 
                 NavigationLink {
                     NotesHome()
@@ -153,7 +140,7 @@ struct Home: View {
                     }
                 
                     NavigationLink {
-                        CalendarView(category: Category(title: "Daily"), records: records)
+                        CalendarView()
                             .navigationTitle("Calendar")
                     } label: {
                         Image(systemName: "calendar")
@@ -192,7 +179,7 @@ struct Home: View {
 
 //struct HomePreview: PreviewProvider {
 //    static var previews: some View {
-//        Home(records: Records(), recordsModel: LogRecords(moc: PersistenceController.preview.container.viewContext))
+//        Home(recordsModel: LogRecords(moc: PersistenceController.preview.container.viewContext))
 //            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
 //            .environmentObject(LogRecords(moc: PersistenceController.preview.container.viewContext))
 //    }

@@ -11,7 +11,6 @@ import SwiftUI
 
 @main
 struct DLPrototype: App {
-    @StateObject public var records: Records = Records()
     private let persistenceController = PersistenceController.shared
     @StateObject public var recordsModel: LogRecords = LogRecords(moc: PersistenceController.shared.container.viewContext)
     
@@ -19,11 +18,7 @@ struct DLPrototype: App {
     
     var body: some Scene {
         WindowGroup {
-            Home(records: records)
-//                .onAppear(perform: {
-                    // TODO: Legacy api, remove!
-//                    records.reload()
-//                })
+            Home()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(recordsModel)
                 .onChange(of: scenePhase) { _ in

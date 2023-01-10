@@ -22,14 +22,14 @@ struct DetailGroup: View {
             VStack(spacing: 0) {
                 HStack(spacing: 1) {
                     Text(name).padding(10)
-                    
-                    
+
                     Spacer()
                     
                     if subTitle != nil {
                         Text(subTitle!).padding(10)
                     } else {
                         FancyButton(text: "Minimize", action: minimize, icon: minimizeIcon, transparent: true, showLabel: false)
+                            .padding(10)
                     }
                 }
                 .background(Theme.toolbarColour)
@@ -41,7 +41,7 @@ struct DetailGroup: View {
             
             if children.count > 0 && showChildren {
                 ForEach(children) { stat in
-                    DetailsRow(key: stat.key, value: stat.value, colour: stat.colour)
+                    DetailsRow(key: stat.key, value: stat.value, colour: stat.colour, linkAble: stat.linkAble, linkTarget: stat.linkTarget)
                 }
             }
         }

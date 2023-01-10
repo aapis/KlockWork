@@ -8,7 +8,6 @@
 
 import Foundation
 import SwiftUI
-//import Markdown
 
 struct NoteView: View {
     public var note: Note
@@ -36,6 +35,10 @@ struct NoteView: View {
                                     .keyboardShortcut("+")
                             } else {
                                 FancyButton(text: "Favourite", action: starred, icon: "star", showLabel: false)
+                            }
+                            
+                            VStack {
+                                Text("hi")
                             }
                         }
                         
@@ -82,7 +85,8 @@ struct NoteView: View {
                             FancyButton(text: "Update", action: update)
                                 .keyboardShortcut("s")
                         }
-                    }.padding()
+                    }
+                    .padding()
                 }
                 .background(Theme.toolbarColour)
             } else {
@@ -129,11 +133,11 @@ struct NoteView: View {
     }
 }
 
-struct NoteViewPreview: PreviewProvider {
-    static var previews: some View {
-        let note = Note()
-        
-        NoteView(note: note).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-            .frame(width: 800, height: 800)
-    }
-}
+//struct NoteViewPreview: PreviewProvider {
+//    static var previews: some View {
+//        let note = Note()
+//
+//        NoteView(note: note).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+//            .frame(width: 800, height: 800)
+//    }
+//}
