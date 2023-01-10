@@ -11,35 +11,14 @@ import SwiftUI
 
 // TODO: THIS CLASS IS NO LONGER USED, REMOVE
 
-struct Statistic: Identifiable {
-    public let key: String
-    public var value: String
-    public var colour: Color
-    public let group: StatisticPeriod
-    public let id = UUID()
-}
-
-struct StatisticGroup: Identifiable {
-    public let title: String
-    public let enumKey: StatisticPeriod
-    public let id = UUID()
-}
-
-public enum StatisticPeriod: String, CaseIterable {
-    case today = "Today"
-    case yesterday = "Yesterday"
-    case overall = "Overall"
-    case colourReference = "Colour Reference"
-}
-
 class Records: ObservableObject, Identifiable {
     public var records: [String] = []
     public var statistics: [Statistic] = []
     public var groups: [StatisticGroup] = [ // TODO: I tried to pull these from the enum but it was so FUCKING FRUSTRATING that I almost yeeted the codebase into the sun
-        StatisticGroup(title: "Today", enumKey: .today),
-        StatisticGroup(title: "Yesterday", enumKey: .yesterday),
-        StatisticGroup(title: "Overall", enumKey: .overall),
-        StatisticGroup(title: "Colour Reference", enumKey: .colourReference),
+//        StatisticGroup(title: "Today", enumKey: .today),
+//        StatisticGroup(title: "Yesterday", enumKey: .yesterday),
+//        StatisticGroup(title: "Overall", enumKey: .overall),
+//        StatisticGroup(title: "Colour Reference", enumKey: .colourReference),
     ]
     public var id = UUID()
     
@@ -461,3 +440,4 @@ class Records: ObservableObject, Identifiable {
         return paths[0]
     }
 }
+

@@ -98,8 +98,7 @@ struct Import: View {
     }
     
     private func importFromFile() -> Void {
-        let records = Records()
-        let rows = records.readFile("allLogs.log")
+        let rows = FileHelper.readFile("allLogs.log")
         
         importRecords(rows.joined(separator: "\n"))
     }

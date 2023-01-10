@@ -20,10 +20,6 @@ struct DayViewData: Identifiable, Hashable {
 }
 
 struct CalendarThisWeek: View {
-//    public var data: String = ""
-    
-    @ObservedObject public var records: Records
-    
     @State private var thisWeek: [DayViewData] = []
     
 //    private let model: Records
@@ -71,7 +67,7 @@ struct CalendarThisWeek: View {
         let dayFormatter = DateFormatter()
         dayFormatter.dateFormat = "d"
         
-        let rows = records.rowsStartsWith(term: formatted)
+        let rows = ["test"] //records.rowsStartsWith(term: formatted)
         
         let viewData = DayViewData(
             dayOfWeek: dayOfWeek,
@@ -167,6 +163,6 @@ struct CalendarThisWeek_Previews: PreviewProvider {
 //        let data: String = "hi"
         
 //        CalendarThisWeek(data: data)
-        CalendarThisWeek(records: Records())
+        CalendarThisWeek()
     }
 }

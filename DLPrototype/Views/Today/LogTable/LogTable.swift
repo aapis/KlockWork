@@ -184,7 +184,7 @@ struct LogTable: View, Identifiable {
     }
     
     var tableDetails: some View {
-        LogTableDetails(colours: colourMap, records: $records)
+        LogTableDetails(records: $records, selectedDate: $selectedDate)
     }
     
     private func changeSort() -> Void {

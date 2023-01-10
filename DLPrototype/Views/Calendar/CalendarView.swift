@@ -9,16 +9,13 @@
 import SwiftUI
 
 struct CalendarView: View {
-    public var category: Category
-    @ObservedObject public var records: Records
-    
     var body: some View {
         VStack {
             Text("EXPERIMENTAL - NON-FUNCTIONAL")
-            CalendarThisWeek(records: records)
-            CalendarThisWeek(records: records)
-            CalendarThisWeek(records: records)
-            CalendarThisWeek(records: records)
+            CalendarThisWeek()
+            CalendarThisWeek()
+            CalendarThisWeek()
+            CalendarThisWeek()
         }
         .padding()
     }
@@ -26,6 +23,6 @@ struct CalendarView: View {
 
 struct CalendarView_Previews: PreviewProvider {
     static var previews: some View {
-        CalendarView(category: Category(title: "Calendar"), records: Records())
+        CalendarView()
     }
 }
