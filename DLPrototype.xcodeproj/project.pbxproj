@@ -27,6 +27,11 @@
 		53218D6C24B7F6EC0088ABE9 /* DLPrototypeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D6B24B7F6EC0088ABE9 /* DLPrototypeUITests.swift */; };
 		53218D8224B8195D0088ABE9 /* Screenshots in Resources */ = {isa = PBXBuildFile; fileRef = 53218D8124B8195D0088ABE9 /* Screenshots */; };
 		5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5AD296CFF83000051B1 /* FileHelper.swift */; };
+		5335A5B1296D1660000051B1 /* Tasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B0296D1660000051B1 /* Tasks.swift */; };
+		5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B2296D17EB000051B1 /* TaskDashboard.swift */; };
+		5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B4296D1FA7000051B1 /* TaskView.swift */; };
+		5335A5B7296D2089000051B1 /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B6296D2089000051B1 /* TaskListView.swift */; };
+		5335A5B9296D2490000051B1 /* CoreDataTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B8296D2490000051B1 /* CoreDataTasks.swift */; };
 		533AB3EE296C9B3800E91A9F /* ManageDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533AB3ED296C9B3800E91A9F /* ManageDashboard.swift */; };
 		533AB3F0296C9ED100E91A9F /* ManageNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533AB3EF296C9ED100E91A9F /* ManageNotes.swift */; };
 		533AB3F2296CA34600E91A9F /* ManageRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533AB3F1296CA34600E91A9F /* ManageRecords.swift */; };
@@ -114,6 +119,11 @@
 		53218D8024B8094C0088ABE9 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		53218D8124B8195D0088ABE9 /* Screenshots */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Screenshots; sourceTree = "<group>"; };
 		5335A5AD296CFF83000051B1 /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
+		5335A5B0296D1660000051B1 /* Tasks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tasks.swift; sourceTree = "<group>"; };
+		5335A5B2296D17EB000051B1 /* TaskDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDashboard.swift; sourceTree = "<group>"; };
+		5335A5B4296D1FA7000051B1 /* TaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskView.swift; sourceTree = "<group>"; };
+		5335A5B6296D2089000051B1 /* TaskListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListView.swift; sourceTree = "<group>"; };
+		5335A5B8296D2490000051B1 /* CoreDataTasks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataTasks.swift; sourceTree = "<group>"; };
 		533AB3EA296C9A1900E91A9F /* Manage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Manage.swift; sourceTree = "<group>"; };
 		533AB3ED296C9B3800E91A9F /* ManageDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageDashboard.swift; sourceTree = "<group>"; };
 		533AB3EF296C9ED100E91A9F /* ManageNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageNotes.swift; sourceTree = "<group>"; };
@@ -301,6 +311,17 @@
 			path = DLPrototypeUITests;
 			sourceTree = "<group>";
 		};
+		5335A5AF296D164F000051B1 /* Tasks */ = {
+			isa = PBXGroup;
+			children = (
+				5335A5B0296D1660000051B1 /* Tasks.swift */,
+				5335A5B2296D17EB000051B1 /* TaskDashboard.swift */,
+				5335A5B4296D1FA7000051B1 /* TaskView.swift */,
+				5335A5B6296D2089000051B1 /* TaskListView.swift */,
+			);
+			path = Tasks;
+			sourceTree = "<group>";
+		};
 		533AB3EC296C9A1D00E91A9F /* Manage */ = {
 			isa = PBXGroup;
 			children = (
@@ -316,6 +337,7 @@
 		537368D224B93DF700193E88 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				5335A5AF296D164F000051B1 /* Tasks */,
 				533AB3EC296C9A1D00E91A9F /* Manage */,
 				53152CE2296BC76E00A14E43 /* Calendar */,
 				53152CE1296BC76700A14E43 /* Home */,
@@ -341,6 +363,7 @@
 			isa = PBXGroup;
 			children = (
 				53759E0C2967ECAE00DCDC4B /* LogRecords.swift */,
+				5335A5B8296D2490000051B1 /* CoreDataTasks.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -586,7 +609,10 @@
 				53C6D0912965044C00EA6129 /* DetailsColumn.swift in Sources */,
 				53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */,
 				53EFCE7929637F35004E45EC /* GeneralSettings.swift in Sources */,
+				5335A5B1296D1660000051B1 /* Tasks.swift in Sources */,
+				5335A5B7296D2089000051B1 /* TaskListView.swift in Sources */,
 				533AB3F0296C9ED100E91A9F /* ManageNotes.swift in Sources */,
+				5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */,
 				537628A02966518B00DE8ECF /* ToolbarTabs.swift in Sources */,
 				53152CD6296A2DA300A14E43 /* FancyPicker.swift in Sources */,
 				53152CE4296BC8A100A14E43 /* NoteDashboard.swift in Sources */,
@@ -612,7 +638,9 @@
 				53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */,
 				53C6D08F2964E25F00EA6129 /* Column.swift in Sources */,
 				53759E0829678DC700DCDC4B /* Import.swift in Sources */,
+				5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */,
 				53C6D0942965048500EA6129 /* DetailsRow.swift in Sources */,
+				5335A5B9296D2490000051B1 /* CoreDataTasks.swift in Sources */,
 				53218D4824B7F6EB0088ABE9 /* DLPrototype.swift in Sources */,
 				531B38FC29674EC400E74013 /* Title.swift in Sources */,
 				539C0E75296CC34600023370 /* Manage.swift in Sources */,
@@ -804,7 +832,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 46;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -831,7 +859,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 45;
+				CURRENT_PROJECT_VERSION = 46;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;

@@ -13,7 +13,7 @@ struct NoteCreate: View {
     @State private var title: String = ""
     @State private var content: String = ""
     
-    @Environment(\.managedObjectContext) var managedObjectContext
+    @Environment(\.managedObjectContext) var moc
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -59,7 +59,7 @@ struct NoteCreate: View {
     }
     
     private func save() -> Void {
-        let note = Note(context: managedObjectContext)
+        let note = Note(context: moc)
         note.title = title
         note.body = content
         note.postedDate = Date()

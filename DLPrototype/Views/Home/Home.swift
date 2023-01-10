@@ -138,6 +138,25 @@ struct Home: View {
                             .padding(.trailing, 10)
                         Text("Manage")
                     }
+                    
+                    NavigationLink {
+                        Tasks()
+                            .navigationTitle("Tasks")
+                            .environmentObject(recordsModel)
+                            .toolbar {
+                                if showExperimentalFeatures {
+                                    Button(action: {}, label: {
+                                        Image(systemName: "arrow.triangle.2.circlepath")
+                                    })
+                                    .buttonStyle(.borderless)
+                                    .font(.title)
+                                }
+                            }
+                    } label: {
+                        Image(systemName: "list.number")
+                            .padding(.trailing, 10)
+                        Text("Tasks")
+                    }
                 
                     NavigationLink {
                         CalendarView()
