@@ -33,4 +33,18 @@ public class CoreDataJob {
         
         return nil
     }
+    
+    public func all() -> [Job] {
+        var all: [Job] = []
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.jid, ascending: false)]
+        
+        do {
+            all = try moc!.fetch(fetch)
+        } catch {
+            print("Couldn't retrieve all jobs")
+        }
+        
+        return all
+    }
 }

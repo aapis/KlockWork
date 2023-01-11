@@ -5,6 +5,7 @@
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="jid" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="uri" optional="YES" attributeType="URI"/>
+        <relationship name="notes" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Note" inverseName="job" inverseEntity="Note"/>
         <relationship name="records" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LogRecord" inverseName="job" inverseEntity="LogRecord"/>
         <relationship name="tasks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LogTask" inverseName="owner" inverseEntity="LogTask"/>
     </entity>
@@ -28,6 +29,7 @@
         <attribute name="postedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="starred" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="job" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="notes" inverseEntity="Job"/>
     </entity>
     <configuration name="Cloud" usedWithCloudKit="YES">
         <memberEntity name="LogRecord"/>

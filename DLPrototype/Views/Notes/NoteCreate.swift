@@ -12,14 +12,30 @@ import SwiftUI
 struct NoteCreate: View {
     @State private var title: String = ""
     @State private var content: String = ""
+    @State private var selectedJob: Job?
     
     @Environment(\.managedObjectContext) var moc
+    
+    private var jobs: [Job] {
+        CoreDataJob(moc: moc).all()
+    }
+    
+    private var pickerItems: [CustomPickerItem] {
+        var items: [CustomPickerItem] = [CustomPickerItem(title: "Choose a job", tag: 0)]
+        
+        for job in jobs {
+            items.append(CustomPickerItem(title: job.jid.string, tag: Int(job.jid)))
+        }
+        
+        return items
+    }
     
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 22) {
                 Title(text: "Create a note", image: "note.text.badge.plus")
                 
+                FancyPicker(onChange: pickerChange, items: pickerItems, transparent: true, labelText: "Job: \(selectedJob?.jid.string ?? "N/A")", showLabel: true)
                 FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
                 
                 FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
@@ -58,14 +74,21 @@ struct NoteCreate: View {
         .background(Theme.toolbarColour)
     }
     
+    // TODO: should not be part of this view
+    private func pickerChange(selected: Int, sender: String?) -> Void {
+        selectedJob = jobs[selected]
+    }
+    
     private func save() -> Void {
         let note = Note(context: moc)
         note.title = title
         note.body = content
         note.postedDate = Date()
         note.id = UUID()
+        note.job = selectedJob
+        print(note.job?.jid)
 
-        PersistenceController.shared.save()
+//        PersistenceController.shared.save()
     }
 }
 
