@@ -55,6 +55,28 @@ class LogRecords: ObservableObject, Identifiable, Equatable {
         return (false, nil)
     }
     
+    public func jobMatch(_ job: Double) -> (Bool, Job?) {
+        var jobs: [Job] = []
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.jid, ascending: true)]
+        
+        do {
+            jobs = try moc!.fetch(fetch)
+        } catch {
+            print("Unable to find records for today")
+            
+            return (false, nil)
+        }
+        
+        for j in jobs {
+            if j.jid == job {
+                return (true, j)
+            }
+        }
+        
+        return (false, nil)
+    }
+    
     public func fromToday() -> Void {
         let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: true)]
