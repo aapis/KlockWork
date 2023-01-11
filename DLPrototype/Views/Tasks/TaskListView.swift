@@ -13,8 +13,27 @@ struct TaskListView: View {
     public var job: Job
     
     @State private var entryText: String = ""
+    @State private var taskTableUUID: UUID = UUID()
     
     @Environment(\.managedObjectContext) var moc
+    
+    private var tasks: [LogTask] {
+        let list = job.tasks!.allObjects as! [LogTask]
+        
+        func deprioritizeCompleted(_ first: LogTask,_  second: LogTask) throws -> Bool {
+            if first.completedDate != nil && second.completedDate != nil {
+                return first.completedDate! < second.completedDate!
+            }
+            
+            return first.completedDate == nil
+        }
+        
+        do {
+            return try list.sorted(by: deprioritizeCompleted)
+        } catch {
+            return list
+        }
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -24,8 +43,8 @@ struct TaskListView: View {
                     Spacer()
                 }
                 
-                VStack(alignment: .leading, spacing: 1) {
-                    FancyTextField(placeholder: "What's on your mind?", lineLimit: 1, onSubmit: createTask, text: $entryText)
+                VStack(alignment: .leading, spacing: 0) {
+                    FancyTextField(placeholder: "Add a task to \(job.jid.string)", lineLimit: 1, onSubmit: createTask, text: $entryText)
                     
                     Divider()
                         .foregroundColor(.clear)
@@ -39,11 +58,14 @@ struct TaskListView: View {
                             header.font(Theme.font)
                             
                             ScrollView {
-                                ForEach(job.tasks!.allObjects as! [LogTask], id: \LogTask.id) { task in
-                                    TaskView(task: task)
+                                VStack(spacing: 1) {
+                                    ForEach(tasks, id: \LogTask.id) { task in
+                                        TaskView(task: task, ref: $taskTableUUID)
+                                    }
                                 }
                             }
                         }
+                        .id(taskTableUUID)
                     }
                 }
                 
@@ -58,21 +80,17 @@ struct TaskListView: View {
     var header: some View {
         GridRow {
             Group {
-                ZStack(alignment: .leading) {
+                ZStack {
                     Theme.headerColour
-                    Text("-")
                 }
             }
+            .frame(width: 50)
+
             Group {
                 ZStack(alignment: .leading) {
                     Theme.headerColour
-                    Text("Created")
-                }
-            }
-            Group {
-                ZStack(alignment: .leading) {
-                    Theme.headerColour
-                    Text("Body")
+                    Text("Tasks for \(job.jid.string)")
+                        .padding(5)
                 }
             }
         }
@@ -85,6 +103,9 @@ struct TaskListView: View {
         task.id = UUID()
         task.content = entryText
         task.owner = job
+        
+        taskTableUUID = task.id!
+        entryText = ""
         
         PersistenceController.shared.save()
     }

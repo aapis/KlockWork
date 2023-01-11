@@ -15,6 +15,7 @@ struct GeneralSettings: View {
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures: Bool = false
     @AppStorage("showExperiment.actions") private var showExperimentActions: Bool = false
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
+    @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
 
     var body: some View {
         Form {
@@ -26,6 +27,7 @@ struct GeneralSettings: View {
                 
                 if showExperimentalFeatures {
                     Toggle("Show row actions", isOn: $showExperimentActions)
+                    Toggle("Auto-fix records with bad jobs", isOn: $autoFixJobs)
                 }
             }
             

@@ -45,7 +45,7 @@ class LogRecords: ObservableObject, Identifiable, Equatable {
         return df.string(from: timestamp)
     }
     
-    public func jobMatchWithSet(_ job: Double, _ set: FetchedResults<LogRecord>) -> (Bool, Job?) {
+    public func jobMatchWithSet(_ job: Double, _ set: [LogRecord]) -> (Bool, Job?) {
         for rec in set {
             if rec.job?.jid == job {
                 return (true, rec.job)

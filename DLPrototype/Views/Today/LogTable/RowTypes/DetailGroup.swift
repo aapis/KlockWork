@@ -11,7 +11,7 @@ import SwiftUI
 
 struct DetailGroup: View {
     public var name: String
-    public var children: [Statistic]
+    public var children: [any Statistics]
     public var subTitle: String?
     
     @State private var showChildren: Bool = true
@@ -40,8 +40,12 @@ struct DetailGroup: View {
                 .background(Color.clear)
             
             if children.count > 0 && showChildren {
-                ForEach(children) { stat in
-                    DetailsRow(key: stat.key, value: stat.value, colour: stat.colour, linkAble: stat.linkAble, linkTarget: stat.linkTarget)
+                ForEach(children, id: \Statistics.id) { stat in
+                    if stat.view != nil {
+                        stat.view
+                    } else {
+                        DetailsRow(key: stat.key, value: stat.value, colour: stat.colour, linkAble: stat.linkAble, linkTarget: stat.linkTarget)
+                    }
                 }
             }
         }

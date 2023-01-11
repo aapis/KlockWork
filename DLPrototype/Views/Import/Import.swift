@@ -131,7 +131,8 @@ struct Import: View {
                     record.id = UUID()
                     record.message = String(parts[2])
                     
-                    let (success, matchedJob) = recordsModel.jobMatchWithSet(jid, records)
+                    let recordsArray = records.map {$0}
+                    let (success, matchedJob) = recordsModel.jobMatchWithSet(jid, recordsArray)
                     
                     if !success {
                         let job = Job(context: moc)

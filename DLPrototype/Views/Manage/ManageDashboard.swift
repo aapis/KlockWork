@@ -13,6 +13,7 @@ struct ManageDashboard: View {
     @FetchRequest(sortDescriptors: [SortDescriptor(\.timestamp)]) public var records: FetchedResults<LogRecord>
     @FetchRequest(sortDescriptors: [SortDescriptor(\.postedDate)]) public var notes: FetchedResults<Note>
     @FetchRequest(sortDescriptors: [SortDescriptor(\.jid)]) public var jobs: FetchedResults<Job>
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.created)]) public var tasks: FetchedResults<LogTask>
     
     @State private var isDeleteConfirmationPresented: Bool = false
     
@@ -46,6 +47,16 @@ struct ManageDashboard: View {
                         }
                     }
                     
+                    FancyButton(text: "Truncate \(tasks.count) Tasks", action: showDelete)
+                    .confirmationDialog("Did you backup first?", isPresented: $isDeleteConfirmationPresented) {
+                        Button("Yes", role: .destructive) {
+                            burnTasks()
+                        }
+                        Button("Cancel", role: .cancel) {
+                            hideDelete()
+                        }
+                    }
+                    
                     Spacer()
                 }
                 
@@ -73,6 +84,14 @@ struct ManageDashboard: View {
     private func burnNotes() -> Void {
         for note in notes {
             moc.delete(note)
+            
+            PersistenceController.shared.save()
+        }
+    }
+    
+    private func burnTasks() -> Void {
+        for task in tasks {
+            moc.delete(task)
             
             PersistenceController.shared.save()
         }

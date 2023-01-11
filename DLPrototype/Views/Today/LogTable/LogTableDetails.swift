@@ -9,15 +9,37 @@
 import Foundation
 import SwiftUI
 
+protocol Statistics: Identifiable {
+    var key: String {get set}
+    var value: String {get set}
+    var colour: Color {get set}
+    var group: StatisticPeriod {get set}
+    var view: AnyView? {get set}
+    var linkAble: Bool? {get set}
+    var linkTarget: Note? {get set}
+    var id: UUID {get set}
+}
 
-struct Statistic: Identifiable {
-    public let key: String
+struct Statistic: Statistics {
+    public var key: String
     public var value: String
     public var colour: Color
-    public let group: StatisticPeriod
+    public var group: StatisticPeriod
+    public var view: AnyView?
     public var linkAble: Bool? = false
     public var linkTarget: Note?
-    public let id = UUID()
+    public var id = UUID()
+}
+
+struct StatisticWithView: Statistics {
+    public var key: String
+    public var value: String
+    public var colour: Color
+    public var group: StatisticPeriod
+    public var view: AnyView?
+    public var linkAble: Bool? = false
+    public var linkTarget: Note?
+    public var id = UUID()
 }
 
 struct StatisticGroup: Identifiable {
@@ -31,25 +53,55 @@ public enum StatisticPeriod: String, CaseIterable {
     case notes = "Notes"
     case overall = "Overall"
     case jobs = "Jobs"
+    case tasks = "Tasks"
 }
 
 struct LogTableDetails: View {
     @Binding public var records: [LogRecord]
     @Binding public var selectedDate: Date
     
-    @State private var statistics: [Statistic] = []
+    @State private var statistics: [any Statistics] = []
     
     static public var groups: [StatisticGroup] = [ // TODO: I tried to pull these from the enum but it was so FUCKING FRUSTRATING that I almost yeeted the codebase into the sun
         StatisticGroup(title: "Viewing", enumKey: .today),
         StatisticGroup(title: "Overall", enumKey: .overall),
         StatisticGroup(title: "Notes", enumKey: .notes),
+        StatisticGroup(title: "Tasks", enumKey: .tasks),
         StatisticGroup(title: "Jobs", enumKey: .jobs),
     ]
+    
+    @State private var ref: UUID = UUID() // TODO: REMOVE THIS, JUST FOR TESTING
 
     @Environment(\.managedObjectContext) var moc
     
+    @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
+    
     private var notes: [Note] {
         LogRecords(moc: moc).notesForDate(selectedDate)
+    }
+    
+    private var tasks: [LogTask] {
+        var jobsForToday: [Int] = []
+        
+        for rec in records {
+            if rec.job != nil {
+                if !jobsForToday.contains(where: {$0 == Int(rec.job!.jid)}) {
+                    jobsForToday.append(Int(String(format: "%1.f", rec.job!.jid)) ?? 0)
+                }
+            } else {
+                if autoFixJobs {
+                    // TODO: this is probably not a great thing to have long term
+                    let (success, match) = LogRecords(moc: moc).jobMatchWithSet(11.0, records)
+                    
+                    if success {
+                        rec.job = match
+                        PersistenceController.shared.save()
+                    }
+                }
+            }
+        }
+        
+        return CoreDataTasks(moc: moc).forDate(selectedDate, include: jobsForToday)
     }
     
     var body: some View {
@@ -124,8 +176,26 @@ struct LogTableDetails: View {
             statistics.append(Statistic(key: "Word count", value: String(wordCount()), colour: Theme.rowColour, group: .overall))
             
             // Note list and count
-            for note in notes {
-                statistics.append(Statistic(key: note.title!, value: "", colour: Theme.rowColour, group: .notes, linkAble: true, linkTarget: note))
+            if notes.count > 0 {
+                for note in notes {
+                    statistics.append(Statistic(key: note.title!, value: "", colour: Theme.rowColour, group: .notes, linkAble: true, linkTarget: note))
+                }
+            }
+            
+            // Task list anc count
+            if tasks.count > 0 {
+                for task in tasks {
+//                    statistics.append(Statistic(key: task.owner?.jid.string ?? "No owner", value: task.content ?? "No content", colour: Theme.rowColour, group: .tasks))
+                    statistics.append(
+                        StatisticWithView(
+                            key: task.owner?.jid.string ?? "No owner",
+                            value: task.content ?? "No content",
+                            colour: Color.fromStored(task.owner?.colour ?? Theme.rowColourAsDouble),
+                            group: .tasks,
+                            view: AnyView(TaskView(task: task, ref: $ref))
+                        )
+                    )
+                }
             }
         }
     }
@@ -155,9 +225,12 @@ struct LogTableDetails: View {
     }
 }
 
-//struct LogTableDetailsPreview: PreviewProvider {
-//    static var previews: some View {
-//        LogTableDetails(colours: ["11": Color.red])
-//            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-//    }
-//}
+struct LogTableDetailsPreview: PreviewProvider {
+    @State static private var selectedDate: Date = Date()
+    @State static private var records: [LogRecord] = []
+    
+    static var previews: some View {
+        LogTableDetails(records: $records, selectedDate: $selectedDate)
+            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+    }
+}

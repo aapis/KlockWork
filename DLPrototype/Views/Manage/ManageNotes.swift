@@ -25,7 +25,7 @@ struct ManageNotes: View {
                     List(data, id: \.id) { note in
                         HStack {
 //                            Text("\(DateHelper.shortDateWithTime(note.postedDate!))")
-                            Text(note.title!)
+                            Text(note.title ?? "Invalid title")
                             Spacer()
                             
 //                            FancyButton(text: "Delete", action: showDelete, icon: "xmark", transparent: true, showLabel: false)

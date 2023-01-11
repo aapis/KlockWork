@@ -17,7 +17,7 @@ struct NotesHome: View {
     var body: some View {
         NavigationSplitView {
             List(notes) { note in
-                NavigationLink(note.title!, value: note)
+                NavigationLink(note.title ?? "Invalid title", value: note)
             }
             .navigationDestination(for: Note.self) {
                 NoteView(note: $0)
