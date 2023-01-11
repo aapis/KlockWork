@@ -17,8 +17,23 @@ struct NoteView: View {
     @State private var lastUpdate: Date?
     @State private var star: Bool? = false
     @State private var isShowingEditor: Bool = true
+    @State private var selectedJob: Job?
     
-    @Environment(\.managedObjectContext) var managedObjectContext
+    @Environment(\.managedObjectContext) var moc
+    
+    private var jobs: [Job] {
+        CoreDataJob(moc: moc).all()
+    }
+    
+    private var pickerItems: [CustomPickerItem] {
+        var items: [CustomPickerItem] = [CustomPickerItem(title: "Change associated job", tag: 0)]
+        
+        for job in jobs {
+            items.append(CustomPickerItem(title: job.jid.string, tag: Int(job.jid)))
+        }
+        
+        return items
+    }
     
     var body: some View {
         VStack {
@@ -37,9 +52,9 @@ struct NoteView: View {
                                 FancyButton(text: "Favourite", action: starred, icon: "star", showLabel: false)
                             }
                         }
-                        
+
+                        FancyPicker(onChange: pickerChange, items: pickerItems, transparent: true, labelText: "Job: \(selectedJob?.jid.string ?? "N/A")", showLabel: true)
                         FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
-                        
                         FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
                         
                         Spacer()
@@ -74,7 +89,7 @@ struct NoteView: View {
                                 Text("Last update: \(DateHelper.shortDateWithTime(lastUpdate))")
                                 
                                 Image(systemName: "pencil")
-                                    .help("Created: \(DateHelper.shortDateWithTime(lastUpdate))")
+                                    .help("Created: \(DateHelper.shortDateWithTime(note.postedDate))")
                             }
                             
                             FancyButton(text: "Update", action: update)
@@ -92,6 +107,15 @@ struct NoteView: View {
         .onChange(of: note, perform: createBindings)
     }
     
+    // TODO: should not be part of this view
+    private func pickerChange(selected: Int, sender: String?) -> Void {
+        let matchedJob = jobs.filter({$0.jid == Double(selected)})
+        
+        if matchedJob.count == 1 {
+            selectedJob = matchedJob[0]
+        }
+    }
+    
     private func starred() -> Void {
         note.starred.toggle()
         
@@ -107,12 +131,13 @@ struct NoteView: View {
         note.body = content
         note.lastUpdate = Date()
         lastUpdate = note.lastUpdate
+        note.job = selectedJob
 
         PersistenceController.shared.save()
     }
     
     private func delete() -> Void {
-        managedObjectContext.delete(note)
+        moc.delete(note)
         isShowingEditor = false
         title = ""
         content = ""
@@ -123,6 +148,7 @@ struct NoteView: View {
     private func createBindings(note: Note) -> Void {
         title = note.title!
         content = note.body!
+        selectedJob = note.job ?? nil
         lastUpdate = note.lastUpdate ?? nil
         isShowingEditor = true
     }
