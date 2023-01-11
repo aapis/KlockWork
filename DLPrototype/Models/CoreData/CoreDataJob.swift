@@ -17,5 +17,20 @@ public class CoreDataJob {
         self.moc = moc
     }
     
-//    public func 
+    public func byId(_ id: Double) -> Job? {
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.jid, ascending: false)]
+        fetch.predicate = NSPredicate(format: "ANY jid = %d", Int(id))
+        fetch.fetchLimit = 1
+        
+        do {
+            let results = try moc!.fetch(fetch)
+            
+            return results.first
+        } catch {
+            print("General Error: Unable to find task with ID \(id)")
+        }
+        
+        return nil
+    }
 }

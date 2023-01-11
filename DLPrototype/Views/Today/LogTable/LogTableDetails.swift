@@ -88,16 +88,6 @@ struct LogTableDetails: View {
                 if !jobsForToday.contains(where: {$0 == Int(rec.job!.jid)}) {
                     jobsForToday.append(Int(String(format: "%1.f", rec.job!.jid)) ?? 0)
                 }
-            } else {
-                if autoFixJobs {
-                    // TODO: this is probably not a great thing to have long term
-                    let (success, match) = LogRecords(moc: moc).jobMatchWithSet(11.0, records)
-                    
-                    if success {
-                        rec.job = match
-                        PersistenceController.shared.save()
-                    }
-                }
             }
         }
         
@@ -153,6 +143,9 @@ struct LogTableDetails: View {
                 update()
             }
             .onChange(of: tasks) { _ in
+                update()
+            }
+            .onChange(of: notes) { _ in
                 update()
             }
         }

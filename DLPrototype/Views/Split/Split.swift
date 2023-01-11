@@ -13,7 +13,8 @@ struct Split: View {
     static public var modules: [CustomPickerItem] = [
         CustomPickerItem(title: "Today", tag: 1),
         CustomPickerItem(title: "Notes", tag: 2),
-        CustomPickerItem(title: "Import", tag: 3)
+        CustomPickerItem(title: "Tasks", tag: 3),
+        CustomPickerItem(title: "Import", tag: 4)
     ]
     
     @FetchRequest(sortDescriptors: [SortDescriptor(\.postedDate, order: .reverse)]) public var notes: FetchedResults<Note>
@@ -56,26 +57,33 @@ struct Split: View {
         } else if left == 2 {
             NotesHome()
         } else if left == 3 {
+            Tasks()
+        } else if left == 4 {
             Import()
         } else {
             EmptyView()
         }
         
-        if middle == 1 {
-            Today().environmentObject(recordsModel)
-        } else if middle == 2 {
-            NotesHome()
-        } else if middle == 3 {
-            Import()
-        } else {
-            EmptyView()
-        }
+        // TODO: support 3 columns
+//        if middle == 1 {
+//            Today().environmentObject(recordsModel)
+//        } else if middle == 2 {
+//            NotesHome()
+//        } else if middle == 3 {
+//            Tasks()
+//        } else if middle == 4 {
+//            Import()
+//        } else {
+//            EmptyView()
+//        }
         
         if right == 1 {
             Today().environmentObject(recordsModel)
         } else if right == 2 {
             NotesHome()
         } else if right == 3 {
+            Tasks()
+        } else if right == 4 {
             Import()
         } else {
             EmptyView()

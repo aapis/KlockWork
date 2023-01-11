@@ -1,16 +1,16 @@
 //
-//  ManageJobs.swift
+//  ManageTasks.swift
 //  DLPrototype
 //
-//  Created by Ryan Priebe on 2023-01-09.
+//  Created by Ryan Priebe on 2023-01-11.
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
 import Foundation
 import SwiftUI
 
-struct ManageJobs: View {
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.jid, order: .reverse)]) public var jobs: FetchedResults<Job>
+struct ManageTasks: View {
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.created, order: .reverse)]) public var data: FetchedResults<LogTask>
     
     @Environment(\.managedObjectContext) var moc
     
@@ -20,27 +20,32 @@ struct ManageJobs: View {
         VStack(alignment: .leading) {
             HStack {
                 VStack(alignment: .leading) {
-                    Title(text: "Jobs", image: "square.grid.3x1.fill.below.line.grid.1x2")
+                    Title(text: "Notes", image: "note.text")
                     
-                    List(jobs, id: \.id) { job in
-                        let colour = Color.fromStored(job.colour ?? Theme.rowColourAsDouble)
+                    List(data, id: \.id) { task in
                         HStack {
-                            Text("\(format(job.jid)) (\(job.records?.count ?? 0) records, \(job.tasks?.count ?? 0) tasks)")
-                                .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                            Text("\(DateHelper.shortDateWithTime(task.created))")
+                                .foregroundColor(Color.fromStored(task.owner!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white)
+                            Text(task.content ?? "Invalid title")
+                                .foregroundColor(Color.fromStored(task.owner!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white)
                             Spacer()
+                            Text(task.owner!.jid.string)
+                                .foregroundColor(Color.fromStored(task.owner!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white)
+                            
                             
 //                            FancyButton(text: "Delete", action: showDelete, icon: "xmark", transparent: true, showLabel: false)
 //                            .confirmationDialog("Are you sure you want to delete?", isPresented: $isDeleteConfirmationPresented) {
 //                                Button("Yes", role: .destructive) {
-////                                        delete(record)
-//                                    print("JOB: \(job.id) \(format(job.jid))")
+//                                    print("NOTE: \(note.title!)")
+//                                    print("NOTE: \(note.postedDate!)")
+////                                        delete(note)
 //                                }
 //                                Button("Cancel", role: .cancel) {
 //                                    hideDelete()
 //                                }
 //                            }
                         }
-                        .background(colour)
+                        .background(Color.fromStored(task.owner!.colour ?? Theme.rowColourAsDouble))
                     }
                     .listStyle(.inset(alternatesRowBackgrounds: true))
                 }
@@ -50,8 +55,8 @@ struct ManageJobs: View {
         .background(Theme.toolbarColour)
     }
     
-    private func delete(_ record: Job) -> Void {
-        moc.delete(record)
+    private func delete(_ note: Note) -> Void {
+        moc.delete(note)
         
         PersistenceController.shared.save()
     }
@@ -62,9 +67,5 @@ struct ManageJobs: View {
     
     private func hideDelete() -> Void {
         isDeleteConfirmationPresented = false
-    }
-    
-    private func format(_ jid: Double) -> String{
-        return String(format: "%1.f", jid)
     }
 }

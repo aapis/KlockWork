@@ -180,10 +180,9 @@ struct Today : View, Identifiable {
             record.message = text
             record.id = UUID()
             
-            let todayAsArray = today.map {$0}
-            let (success, matchedJob) = recordsModel.jobMatchWithSet(jid, todayAsArray)
+            let match = CoreDataJob(moc: moc).byId(jid)
             
-            if !success {
+            if match == nil {
                 let job = Job(context: moc)
                 job.jid = jid
                 job.id = UUID()
@@ -195,9 +194,8 @@ struct Today : View, Identifiable {
                 }
                 
                 record.job = job
-                print("INCOMING JOB: \(job)")
             } else {
-                record.job = matchedJob
+                record.job = match
             }
             
             // clear text box
