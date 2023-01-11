@@ -30,6 +30,39 @@ struct Home: View {
         NavigationSplitView {
             List(selection: $selected) {
                 NavigationLink {
+                    Split(direction: $splitDirection)
+                        .navigationTitle("Multitasking")
+                        .environmentObject(recordsModel)
+                        .navigationSplitViewColumnWidth(ideal: 300)
+                        .toolbar {
+                            Button(action: setSplitViewDirection, label: {
+                                if !splitDirection {
+                                    Image(systemName: "rectangle.split.1x2")
+                                } else {
+                                    Image(systemName: "rectangle.split.2x1")
+                                }
+                            })
+                            .buttonStyle(.borderless)
+                            .font(.title)
+                            
+                            if showExperimentalFeatures {
+                                Button(action: {}, label: {
+                                    Image(systemName: "arrow.triangle.2.circlepath")
+                                })
+                                .buttonStyle(.borderless)
+                                .font(.title)
+                            }
+                        }
+                } label: {
+                    Image(systemName: "rectangle.split.2x1")
+                        .padding(.trailing, 10)
+                    Text("Multitasking")
+                }
+                
+                Divider()
+                    .foregroundColor(.clear)
+                
+                NavigationLink {
                     Today()
                         .navigationTitle("Today")
                         .environmentObject(recordsModel)
@@ -69,21 +102,10 @@ struct Home: View {
                 }
                 
                 NavigationLink {
-                    Split(direction: $splitDirection)
-                        .navigationTitle("Split")
+                    Tasks()
+                        .navigationTitle("Tasks")
                         .environmentObject(recordsModel)
-                        .navigationSplitViewColumnWidth(ideal: 300)
                         .toolbar {
-                            Button(action: setSplitViewDirection, label: {
-                                if !splitDirection {
-                                    Image(systemName: "rectangle.split.1x2")
-                                } else {
-                                    Image(systemName: "rectangle.split.2x1")
-                                }
-                            })
-                            .buttonStyle(.borderless)
-                            .font(.title)
-                            
                             if showExperimentalFeatures {
                                 Button(action: {}, label: {
                                     Image(systemName: "arrow.triangle.2.circlepath")
@@ -93,9 +115,9 @@ struct Home: View {
                             }
                         }
                 } label: {
-                    Image(systemName: "rectangle.split.2x1")
+                    Image(systemName: "list.number")
                         .padding(.trailing, 10)
-                    Text("Split")
+                    Text("Tasks")
                 }
                 
                 NavigationLink {

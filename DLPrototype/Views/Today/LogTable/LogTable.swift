@@ -16,9 +16,6 @@ struct LogTable: View, Identifiable {
     @State private var wordCount: Int = 0
     @State private var showSidebar: Bool = true
     @State private var isReversed: Bool = false
-    @State public var colourMap: [String: Color] = [
-        "11": Theme.rowColour
-    ]
     @State private var colours: [Color] = []
     @State private var isShowingAlert: Bool = false
     @State private var selectedTab: Int = 0
@@ -26,10 +23,7 @@ struct LogTable: View, Identifiable {
     @State private var fetched: [Entry] = []
     @State private var refreshing: Bool = false
     @State private var resetSearchButtonHit: Bool = false
-    
     @State private var selectedDate: Date = Date()
-    
-    private let font: Font = .system(.body, design: .monospaced)
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("showExperiment.actions") private var showExperimentActions = false
@@ -39,7 +33,7 @@ struct LogTable: View, Identifiable {
     // MARK: body view
     var body: some View {
         VStack(spacing: 1) {
-            toolbar.font(font)
+            toolbar.font(Theme.font)
             
             HStack(spacing: 1) {
                 table
@@ -68,10 +62,10 @@ struct LogTable: View, Identifiable {
     var table: some View {
         VStack(spacing: 1) {
             Grid(alignment: .top, horizontalSpacing: 1, verticalSpacing: 1) {
-                headers.font(font)
+                headers.font(Theme.font)
                 
                 ScrollView {
-                    rows.font(font)
+                    rows.font(Theme.font)
                 }
             }
         }
@@ -236,9 +230,10 @@ struct LogTable: View, Identifiable {
     }
 }
 
-//struct LogTablePreview: PreviewProvider {
-//    static var previews: some View {
-//        LogTable(records: Records(), today: )
-//            .frame(height: 700)
-//    }
-//}
+struct LogTablePreview: PreviewProvider {
+    static var previews: some View {
+        LogTable()
+            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+            .frame(width: 700)
+    }
+}

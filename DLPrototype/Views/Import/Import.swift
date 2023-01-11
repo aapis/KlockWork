@@ -131,9 +131,9 @@ struct Import: View {
                     record.id = UUID()
                     record.message = String(parts[2])
                     
-                    let (success, matchedJob) = recordsModel.jobMatchWithSet(jid, records)
+                    let match = CoreDataJob(moc: moc).byId(jid)
                     
-                    if !success {
+                    if match == nil {
                         let job = Job(context: moc)
                         job.jid = jid
                         job.id = UUID()
@@ -142,7 +142,7 @@ struct Import: View {
                         
                         record.job = job
                     } else {
-                        record.job = matchedJob
+                        record.job = match
                     }
                     
                     PersistenceController.shared.save()
