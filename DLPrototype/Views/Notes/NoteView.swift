@@ -56,7 +56,6 @@ struct NoteView: View {
                             }
                             .buttonStyle(.borderless)
                             .foregroundColor(Color.white)
-                            
                             .font(.title3)
                             .padding()
                             .background(Color.black.opacity(0.2))

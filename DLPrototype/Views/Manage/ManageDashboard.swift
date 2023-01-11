@@ -15,7 +15,9 @@ struct ManageDashboard: View {
     @FetchRequest(sortDescriptors: [SortDescriptor(\.jid)]) public var jobs: FetchedResults<Job>
     @FetchRequest(sortDescriptors: [SortDescriptor(\.created)]) public var tasks: FetchedResults<LogTask>
     
-    @State private var isDeleteConfirmationPresented: Bool = false
+    @State private var isDeleteRecordsConfirmationPresented: Bool = false
+    @State private var isDeleteNotesConfirmationPresented: Bool = false
+    @State private var isDeleteTasksConfirmationPresented: Bool = false
     
     @Environment(\.managedObjectContext) var managedObjectContext
     @Environment(\.managedObjectContext) var moc
@@ -27,33 +29,33 @@ struct ManageDashboard: View {
                 
                 // MARK: danger button(s)
                 HStack(alignment: .top) {
-                    FancyButton(text: "Truncate \(records.count) Records + Jobs", action: showDelete)
-                    .confirmationDialog("Did you backup first?", isPresented: $isDeleteConfirmationPresented) {
+                    FancyButton(text: "Truncate \(records.count) Records + Jobs", action: {showDelete(&isDeleteRecordsConfirmationPresented)})
+                    .confirmationDialog("Did you backup records first?", isPresented: $isDeleteRecordsConfirmationPresented) {
                         Button("Yes", role: .destructive) {
                             burnRecordsAndJobs()
                         }
                         Button("Cancel", role: .cancel) {
-                            hideDelete()
+                            hideDelete(&isDeleteRecordsConfirmationPresented)
                         }
                     }
                     
-                    FancyButton(text: "Truncate \(notes.count) Notes", action: showDelete)
-                    .confirmationDialog("Did you backup first?", isPresented: $isDeleteConfirmationPresented) {
+                    FancyButton(text: "Truncate \(notes.count) Notes", action: {showDelete(&isDeleteNotesConfirmationPresented)})
+                    .confirmationDialog("Did you backup notes first?", isPresented: $isDeleteNotesConfirmationPresented) {
                         Button("Yes", role: .destructive) {
                             burnNotes()
                         }
                         Button("Cancel", role: .cancel) {
-                            hideDelete()
+                            hideDelete(&isDeleteNotesConfirmationPresented)
                         }
                     }
                     
-                    FancyButton(text: "Truncate \(tasks.count) Tasks", action: showDelete)
-                    .confirmationDialog("Did you backup first?", isPresented: $isDeleteConfirmationPresented) {
+                    FancyButton(text: "Truncate \(tasks.count) Tasks", action: {showDelete(&isDeleteTasksConfirmationPresented)})
+                    .confirmationDialog("Did you backup tasks first?", isPresented: $isDeleteTasksConfirmationPresented) {
                         Button("Yes", role: .destructive) {
                             burnTasks()
                         }
                         Button("Cancel", role: .cancel) {
-                            hideDelete()
+                            hideDelete(&isDeleteTasksConfirmationPresented)
                         }
                     }
                     
@@ -97,12 +99,13 @@ struct ManageDashboard: View {
         }
     }
     
-    private func showDelete() -> Void {
-        isDeleteConfirmationPresented = true
+    // https://medium.com/@sajalgupta4me/cannot-assign-to-value-is-a-let-constant-swift-1a55d829f5b2
+    private func showDelete(_ dialog: inout Bool) -> Void {
+        dialog = true
     }
     
-    private func hideDelete() -> Void {
-        isDeleteConfirmationPresented = false
+    private func hideDelete(_ dialog: inout Bool) -> Void {
+        dialog = false
     }
 }
 

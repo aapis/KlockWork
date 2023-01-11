@@ -18,7 +18,7 @@ struct DetailGroup: View {
     @State private var minimizeIcon: String = "arrowtriangle.up"
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(alignment: .leading, spacing: 0) {
             VStack(spacing: 0) {
                 HStack(spacing: 1) {
                     Text(name).padding(10)
@@ -46,7 +46,7 @@ struct DetailGroup: View {
                             .background(stat.colour)
                             .foregroundColor(stat.colour.isBright() ? Color.black : Color.white)
                     } else {
-                        DetailsRow(key: stat.key, value: stat.value, colour: stat.colour, linkAble: stat.linkAble, linkTarget: stat.linkTarget)
+                        DetailsRow(key: stat.key, value: stat.value, colour: stat.colour)
                     }
                 }
             }

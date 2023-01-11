@@ -182,13 +182,40 @@ struct LogTableDetails: View {
             if notes.count > 0 {
                 for note in notes {
                     statistics.append(
-                        Statistic(
+                        StatisticWithView(
                             key: note.title!,
-                            value: "",
+                            value: note.id!.debugDescription,
                             colour: Theme.rowColour,
                             group: .notes,
-                            linkAble: true,
-                            linkTarget: note
+                            view: AnyView(
+                                NavigationLink {
+                                    NoteView(note: note)
+                                        .navigationTitle("Viewing \(note.title!)")
+                                } label: {
+                                    VStack(alignment: .leading) {
+                                        ZStack(alignment: .leading) {
+                                            Color.clear
+                                            HStack(alignment: .top, spacing: 0) {
+                                                Image(systemName: "link")
+                                                    .padding([.leading], 5)
+                                                Text(note.title!)
+                                                    .padding([.leading], 5)
+                                            }
+                                        }
+                                        .frame(height: 30)
+                                    }
+                                }
+                                .help(note.title!)
+                                .buttonStyle(.borderless)
+                                .padding(5)
+                                .onHover { inside in
+                                    if inside {
+                                        NSCursor.pointingHand.push()
+                                    } else {
+                                        NSCursor.pop()
+                                    }
+                                }
+                            )
                         )
                     )
                 }
