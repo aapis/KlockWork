@@ -44,6 +44,7 @@ struct FancyTextField: View {
             .lineLimit(1)
             .disabled(disabled ?? false)
             .foregroundColor(disabled ?? false ? Color.gray : Color.white)
+            .textSelection(.enabled)
     }
     
     private var oneBigLine: some View {
@@ -57,6 +58,7 @@ struct FancyTextField: View {
             .lineLimit(lineLimit...)
             .disabled(disabled ?? false)
             .foregroundColor(disabled ?? false ? Color.gray : Color.white)
+            .textSelection(.enabled)
     }
     
     private var multiLine: some View {
@@ -71,6 +73,7 @@ struct FancyTextField: View {
             .lineLimit(lineLimit...)
             .disabled(disabled ?? false)
             .foregroundColor(disabled ?? false ? Color.gray : Color.white)
+            .textSelection(.enabled)
     }
 }
 
