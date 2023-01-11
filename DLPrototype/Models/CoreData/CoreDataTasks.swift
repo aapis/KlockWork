@@ -44,7 +44,6 @@ public class CoreDataTasks {
         
         do {
             results = try moc!.fetch(fetch)
-            print("JOBS: res \(results)")
         } catch {
             print("General Error: Unable to find tasks for date \(date.debugDescription)")
         }

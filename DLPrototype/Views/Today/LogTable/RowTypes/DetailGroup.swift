@@ -43,6 +43,8 @@ struct DetailGroup: View {
                 ForEach(children, id: \Statistics.id) { stat in
                     if stat.view != nil {
                         stat.view
+                            .background(stat.colour)
+                            .foregroundColor(stat.colour.isBright() ? Color.black : Color.white)
                     } else {
                         DetailsRow(key: stat.key, value: stat.value, colour: stat.colour, linkAble: stat.linkAble, linkTarget: stat.linkTarget)
                     }

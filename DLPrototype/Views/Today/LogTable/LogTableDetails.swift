@@ -152,6 +152,9 @@ struct LogTableDetails: View {
             .onChange(of: records) { _ in
                 update()
             }
+            .onChange(of: tasks) { _ in
+                update()
+            }
         }
         .onAppear(perform: update)
     }
@@ -165,7 +168,14 @@ struct LogTableDetails: View {
                     let colour = Color.fromStored(record.job?.colour ?? Theme.rowColourAsDouble)
                     
                     if !statistics.contains(where: {$0.value == "\(colour)"}) {
-                        statistics.append(Statistic(key: record.job?.jid.string ?? "No ID", value: "\(colour)", colour: colour, group: .jobs))
+                        statistics.append(
+                            Statistic(
+                                key: record.job?.jid.string ?? "No ID",
+                                value: "\(colour)",
+                                colour: colour,
+                                group: .jobs
+                            )
+                        )
                     }
                 }
             }
@@ -178,14 +188,22 @@ struct LogTableDetails: View {
             // Note list and count
             if notes.count > 0 {
                 for note in notes {
-                    statistics.append(Statistic(key: note.title!, value: "", colour: Theme.rowColour, group: .notes, linkAble: true, linkTarget: note))
+                    statistics.append(
+                        Statistic(
+                            key: note.title!,
+                            value: "",
+                            colour: Theme.rowColour,
+                            group: .notes,
+                            linkAble: true,
+                            linkTarget: note
+                        )
+                    )
                 }
             }
             
-            // Task list anc count
+            // Task list and count
             if tasks.count > 0 {
                 for task in tasks {
-//                    statistics.append(Statistic(key: task.owner?.jid.string ?? "No owner", value: task.content ?? "No content", colour: Theme.rowColour, group: .tasks))
                     statistics.append(
                         StatisticWithView(
                             key: task.owner?.jid.string ?? "No owner",
