@@ -39,7 +39,7 @@ struct LogTable: View, Identifiable {
                 table
                 
                 if showSidebar {
-                    tableDetails.frame(maxWidth: 500)
+                    tableDetails.frame(minWidth: 300, maxWidth: 400)
                 }
             }
         }
