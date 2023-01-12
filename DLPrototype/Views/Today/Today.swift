@@ -26,13 +26,31 @@ struct Today : View, Identifiable {
     @State private var logTableId: UUID = UUID()
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
+    @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
     
     @FetchRequest(
         sortDescriptors: [
             SortDescriptor(\.timestamp, order: .reverse)
         ],
         predicate: NSPredicate(format: "timestamp > %@ && timestamp <= %@", DateHelper.thisAm(), DateHelper.tomorrow())
-    ) public var today: FetchedResults<LogRecord>
+    ) public var rawToday: FetchedResults<LogRecord>
+    
+    private var today: FetchedResults<LogRecord> {
+        if showExperimentalFeatures {
+            if autoFixJobs {
+                let defaultJob = CoreDataJob(moc: moc).byId(11.0)
+                for rec in rawToday {
+                    if rec.job == nil {
+                        rec.job = defaultJob
+                        
+                        PersistenceController.shared.save()
+                    }
+                }
+            }
+        }
+        
+        return rawToday
+    }
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var recordsModel: LogRecords
