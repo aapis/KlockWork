@@ -18,6 +18,9 @@ struct NoteView: View {
     @State private var star: Bool? = false
     @State private var isShowingEditor: Bool = true
     @State private var selectedJob: Job?
+    @State private var currentVersion: Int = 0
+    @State private var disableNextButton: Bool = false
+    @State private var disablePreviousButton: Bool = false
     
     @Environment(\.managedObjectContext) var moc
     
@@ -35,6 +38,14 @@ struct NoteView: View {
         return items
     }
     
+    private var versions: [NoteVersion] {
+        CoreDataNoteVersions(moc: moc).by(id: note.id!)
+    }
+    
+//    private var currentVersion: NoteVersion {
+//        versions.last!
+//    }
+    
     var body: some View {
         VStack {
             if isShowingEditor {
@@ -44,6 +55,23 @@ struct NoteView: View {
                             Title(text: "Editing", image: "pencil")
                             
                             Spacer()
+                            
+                            if lastUpdate != nil {
+                                FancyButton(text: "Back", action: previousVersion, icon: "arrowtriangle.left", showLabel: false)
+                                    .disabled(disablePreviousButton)
+                                Text("v\(currentVersion)/\(versions.count).\(DateHelper.shortDateWithTime(lastUpdate))")
+                                    .padding(8)
+                                    .background(Theme.toolbarColour)
+                                    .font(Theme.font)
+                                FancyButton(text: "Next", action: nextVersion, icon: "arrowtriangle.right", showLabel: false)
+                                    .disabled(disableNextButton)
+                                
+                                Image(systemName: "pencil")
+                                    .help("Created: \(DateHelper.shortDateWithTime(note.postedDate))")
+                                    .padding(8)
+                                    .background(Theme.toolbarColour)
+                                
+                            }
                             
                             if note.starred {
                                 FancyButton(text: "Un-favourite", action: starred, icon: "star.fill", showLabel: false)
@@ -84,14 +112,6 @@ struct NoteView: View {
                             
                             FancyButton(text: "Delete", action: delete)
                             Spacer()
-                            
-                            if lastUpdate != nil {
-                                Text("Last update: \(DateHelper.shortDateWithTime(lastUpdate))")
-                                
-                                Image(systemName: "pencil")
-                                    .help("Created: \(DateHelper.shortDateWithTime(note.postedDate))")
-                            }
-                            
                             FancyButton(text: "Update", action: update)
                                 .keyboardShortcut("s")
                         }
@@ -105,6 +125,44 @@ struct NoteView: View {
         }
         .onAppear(perform: {createBindings(note: note)})
         .onChange(of: note, perform: createBindings)
+    }
+    
+    private func previousVersion() -> Void {
+        let all = CoreDataNoteVersions(moc: moc).by(id: note.id!)
+        
+        if currentVersion > 0 {
+            disableNextButton = false
+            // change text fields
+            let prev = all[currentVersion - 1]
+            title = prev.title!
+            content = prev.content!
+            lastUpdate = prev.created!
+            
+            if currentVersion == versions.count {
+                CoreDataNoteVersions(moc: moc).from(note)
+            }
+            
+            currentVersion -= 1
+        } else {
+            disablePreviousButton = true
+        }
+    }
+    
+    private func nextVersion() -> Void {
+        let all = CoreDataNoteVersions(moc: moc).by(id: note.id!)
+        
+        if currentVersion < versions.count {
+            disablePreviousButton = false
+            
+            let next = all[currentVersion + 1]
+            title = next.title!
+            content = next.content!
+            lastUpdate = next.created!
+            
+            currentVersion += 1
+        } else {
+            disableNextButton = true
+        }
     }
     
     // TODO: should not be part of this view
@@ -127,20 +185,32 @@ struct NoteView: View {
     }
     
     private func update() -> Void {
-        note.title = title
-        note.body = content
+        note.title = title // TODO: REMOVE
+        note.body = content // TODO: REMOVE
         note.lastUpdate = Date()
         lastUpdate = note.lastUpdate
-        note.job = selectedJob
+        note.job = selectedJob // TODO: REMOVE
+        note.alive = true
+        
+        CoreDataNoteVersions(moc: moc).from(note)
+        
+        currentVersion += 1
 
         PersistenceController.shared.save()
     }
     
     private func delete() -> Void {
-        moc.delete(note)
         isShowingEditor = false
         title = ""
         content = ""
+        note.alive = false
+        
+        PersistenceController.shared.save()
+    }
+    
+    private func hardDelete() -> Void {
+        delete() // soft delete
+        moc.delete(note)
         
         PersistenceController.shared.save()
     }
@@ -151,6 +221,8 @@ struct NoteView: View {
         selectedJob = note.job ?? nil
         lastUpdate = note.lastUpdate ?? nil
         isShowingEditor = true
+        currentVersion = versions.count
+        print("PREVIOUS cv \(currentVersion)")
     }
 }
 

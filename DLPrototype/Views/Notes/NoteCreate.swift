@@ -32,57 +32,56 @@ struct NoteCreate: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading) {
-            VStack(alignment: .leading, spacing: 22) {
-                if showForm {
-                    form
-                } else {
-                    // TODO: probably a bad idea to just.. show it here
-                    NoteDashboard()
-                }
-            }.padding()
+        if showForm {
+            form
+        } else {
+            // TODO: probably a bad idea to just.. show it here
+            NoteDashboard()
         }
-        .background(Theme.toolbarColour)
     }
     
     @ViewBuilder
     var form: some View {
-        Title(text: "Create a note", image: "note.text.badge.plus")
-        
-        FancyPicker(onChange: pickerChange, items: pickerItems, transparent: true, labelText: "Job: \(selectedJob?.jid.string ?? "N/A")", showLabel: true)
-        FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
-        
-        FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
-        
-        Spacer()
-        
-        HStack {
-            NavigationLink {
-                NoteDashboard()
-                    .navigationTitle("Note dashboard")
-            } label: {
+        VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 22) {
+                Title(text: "Create a note", image: "note.text.badge.plus")
+                
+                FancyPicker(onChange: pickerChange, items: pickerItems, transparent: true, labelText: "Job: \(selectedJob?.jid.string ?? "N/A")", showLabel: true)
+                FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
+                
+                FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
+                
+                Spacer()
+                
                 HStack {
-                    Image(systemName: "arrow.left")
-                    Text("Dashboard")
+                    NavigationLink {
+                        NoteDashboard()
+                            .navigationTitle("Note dashboard")
+                    } label: {
+                        HStack {
+                            Image(systemName: "arrow.left")
+                            Text("Dashboard")
+                        }
+                    }
+                    .buttonStyle(.borderless)
+                    .foregroundColor(Color.white)
+                    .font(.title3)
+                    .padding()
+                    .background(Color.black.opacity(0.2))
+                    .onHover { inside in
+                        if inside {
+                            NSCursor.pointingHand.push()
+                        } else {
+                            NSCursor.pop()
+                        }
+                    }
+                    
+                    Spacer()
+                    FancyButton(text: "Create", action: save)
                 }
-            }
-            .buttonStyle(.borderless)
-            .foregroundColor(Color.white)
-            
-            .font(.title3)
-            .padding()
-            .background(Color.black.opacity(0.2))
-            .onHover { inside in
-                if inside {
-                    NSCursor.pointingHand.push()
-                } else {
-                    NSCursor.pop()
-                }
-            }
-            
-            Spacer()
-            FancyButton(text: "Create", action: save)
+            }.padding()
         }
+        .background(Theme.toolbarColour)
     }
     
     // TODO: should not be part of this view
@@ -97,6 +96,14 @@ struct NoteCreate: View {
         note.postedDate = Date()
         note.id = UUID()
         note.job = selectedJob
+        note.alive = true
+        
+        let version = NoteVersion(context: moc)
+        version.id = UUID()
+        version.title = title
+        version.content = content
+        version.starred = false
+        version.created = note.postedDate
 
         PersistenceController.shared.save()
         
