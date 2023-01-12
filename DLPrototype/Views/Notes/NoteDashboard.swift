@@ -20,7 +20,7 @@ struct NoteDashboard: View {
     public init() {
         let request: NSFetchRequest<Note> = Note.fetchRequest()
         request.fetchLimit = 5
-        request.predicate = NSPredicate(format: "postedDate > %@", DateHelper.daysPast(7))
+        request.predicate = NSPredicate(format: "postedDate > %@ && alive = true", DateHelper.daysPast(7))
         request.sortDescriptors = [
             NSSortDescriptor(keyPath: \Note.lastUpdate, ascending: false),
             NSSortDescriptor(keyPath: \Note.postedDate, ascending: false)
@@ -30,7 +30,7 @@ struct NoteDashboard: View {
         
         let starReq: NSFetchRequest<Note> = Note.fetchRequest()
         starReq.fetchLimit = 5
-        starReq.predicate = NSPredicate(format: "starred = true")
+        starReq.predicate = NSPredicate(format: "starred = true && alive = true")
         starReq.sortDescriptors = [
             NSSortDescriptor(keyPath: \Note.lastUpdate, ascending: false)
         ]
@@ -117,7 +117,6 @@ struct NoteDashboard: View {
                                         .navigationTitle("Editing note \(note.title!)")
                                 } label: {
                                     HStack {
-                                        Image(systemName: "note")
                                         Text(note.title!)
                                         Spacer()
                                         Text("v\(note.versions?.count ?? 0)")
