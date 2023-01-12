@@ -21,6 +21,7 @@ struct NoteView: View {
     @State private var currentVersion: Int = 0
     @State private var disableNextButton: Bool = false
     @State private var disablePreviousButton: Bool = false
+    @State private var noteVersions: [NoteVersion] = []
     
     @Environment(\.managedObjectContext) var moc
     
@@ -59,7 +60,7 @@ struct NoteView: View {
                             if lastUpdate != nil {
                                 FancyButton(text: "Back", action: previousVersion, icon: "arrowtriangle.left", showLabel: false)
                                     .disabled(disablePreviousButton)
-                                Text("v\(currentVersion)/\(versions.count).\(DateHelper.shortDateWithTime(lastUpdate))")
+                                Text("v\(currentVersion)/\(noteVersions.count).\(DateHelper.shortDateWithTime(lastUpdate))")
                                     .padding(8)
                                     .background(Theme.toolbarColour)
                                     .font(Theme.font)
@@ -82,8 +83,8 @@ struct NoteView: View {
                         }
 
                         FancyPicker(onChange: pickerChange, items: pickerItems, transparent: true, labelText: "Job: \(selectedJob?.jid.string ?? "N/A")", showLabel: true)
-                        FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
-                        FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
+                        FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, disabled: revisionNotLatest(), text: $title)
+                        FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, disabled: revisionNotLatest(), text: $content)
                         
                         Spacer()
                         
@@ -112,8 +113,14 @@ struct NoteView: View {
                             
                             FancyButton(text: "Delete", action: delete)
                             Spacer()
-                            FancyButton(text: "Update", action: update)
-                                .keyboardShortcut("s")
+                            
+                            if revisionNotLatest() {
+                                FancyButton(text: "Restore", action: update)
+                                    .keyboardShortcut("s")
+                            } else {
+                                FancyButton(text: "Update", action: update)
+                                    .keyboardShortcut("s")
+                            }
                         }
                     }
                     .padding()
@@ -138,7 +145,7 @@ struct NoteView: View {
             content = prev.content!
             lastUpdate = prev.created!
             
-            if currentVersion == versions.count {
+            if currentVersion == noteVersions.count {
                 CoreDataNoteVersions(moc: moc).from(note)
             }
             
@@ -151,7 +158,7 @@ struct NoteView: View {
     private func nextVersion() -> Void {
         let all = CoreDataNoteVersions(moc: moc).by(id: note.id!)
         
-        if currentVersion < versions.count {
+        if currentVersion < noteVersions.count {
             disablePreviousButton = false
             
             let next = all[currentVersion + 1]
@@ -194,7 +201,8 @@ struct NoteView: View {
         
         CoreDataNoteVersions(moc: moc).from(note)
         
-        currentVersion += 1
+        noteVersions = CoreDataNoteVersions(moc: moc).by(id: note.id!)
+        currentVersion = noteVersions.count
 
         PersistenceController.shared.save()
     }
@@ -221,8 +229,12 @@ struct NoteView: View {
         selectedJob = note.job ?? nil
         lastUpdate = note.lastUpdate ?? nil
         isShowingEditor = true
-        currentVersion = versions.count
-        print("PREVIOUS cv \(currentVersion)")
+        noteVersions = CoreDataNoteVersions(moc: moc).by(id: note.id!)
+        currentVersion = noteVersions.count
+    }
+    
+    private func revisionNotLatest() -> Bool {
+        return currentVersion < noteVersions.count
     }
 }
 

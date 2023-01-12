@@ -15,7 +15,7 @@ struct NotesHome: View {
     @Environment(\.managedObjectContext) var managedObjectContext
 
     var body: some View {
-        NavigationSplitView {
+        NavigationSplitView {            
             List(notes) { note in
                 NavigationLink(note.title ?? "Invalid title", value: note)
             }
