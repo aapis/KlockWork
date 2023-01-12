@@ -12,6 +12,7 @@ import SwiftUI
 struct NoteCreate: View {
     @State private var title: String = ""
     @State private var content: String = ""
+    @State private var showForm: Bool = true
     @State private var selectedJob: Job?
     
     @Environment(\.managedObjectContext) var moc
@@ -33,50 +34,60 @@ struct NoteCreate: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 22) {
-                Title(text: "Create a note", image: "note.text.badge.plus")
-                
-                FancyPicker(onChange: pickerChange, items: pickerItems, transparent: true, labelText: "Job: \(selectedJob?.jid.string ?? "N/A")", showLabel: true)
-                FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
-                
-                FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
-                
-                Spacer()
-                
-                HStack {
-                    NavigationLink {
-                        NoteDashboard()
-                            .navigationTitle("Note dashboard")
-                    } label: {
-                        HStack {
-                            Image(systemName: "arrow.left")
-                            Text("Dashboard")
-                        }
-                    }
-                    .buttonStyle(.borderless)
-                    .foregroundColor(Color.white)
-                    
-                    .font(.title3)
-                    .padding()
-                    .background(Color.black.opacity(0.2))
-                    .onHover { inside in
-                        if inside {
-                            NSCursor.pointingHand.push()
-                        } else {
-                            NSCursor.pop()
-                        }
-                    }
-                    
-                    Spacer()
-                    FancyButton(text: "Create", action: save)
+                if showForm {
+                    form
+                } else {
+                    // TODO: probably a bad idea to just.. show it here
+                    NoteDashboard()
                 }
             }.padding()
         }
         .background(Theme.toolbarColour)
     }
     
+    @ViewBuilder
+    var form: some View {
+        Title(text: "Create a note", image: "note.text.badge.plus")
+        
+        FancyPicker(onChange: pickerChange, items: pickerItems, transparent: true, labelText: "Job: \(selectedJob?.jid.string ?? "N/A")", showLabel: true)
+        FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
+        
+        FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
+        
+        Spacer()
+        
+        HStack {
+            NavigationLink {
+                NoteDashboard()
+                    .navigationTitle("Note dashboard")
+            } label: {
+                HStack {
+                    Image(systemName: "arrow.left")
+                    Text("Dashboard")
+                }
+            }
+            .buttonStyle(.borderless)
+            .foregroundColor(Color.white)
+            
+            .font(.title3)
+            .padding()
+            .background(Color.black.opacity(0.2))
+            .onHover { inside in
+                if inside {
+                    NSCursor.pointingHand.push()
+                } else {
+                    NSCursor.pop()
+                }
+            }
+            
+            Spacer()
+            FancyButton(text: "Create", action: save)
+        }
+    }
+    
     // TODO: should not be part of this view
     private func pickerChange(selected: Int, sender: String?) -> Void {
-        selectedJob = jobs[selected]
+        selectedJob = jobs.filter({ $0.jid == Double(selected)}).first
     }
     
     private func save() -> Void {
@@ -86,9 +97,10 @@ struct NoteCreate: View {
         note.postedDate = Date()
         note.id = UUID()
         note.job = selectedJob
-        print(note.job?.jid)
 
-//        PersistenceController.shared.save()
+        PersistenceController.shared.save()
+        
+        showForm = false
     }
 }
 
