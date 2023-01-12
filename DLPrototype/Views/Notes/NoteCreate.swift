@@ -86,9 +86,8 @@ struct NoteCreate: View {
         note.postedDate = Date()
         note.id = UUID()
         note.job = selectedJob
-        print(note.job?.jid)
 
-//        PersistenceController.shared.save()
+        PersistenceController.shared.save()
     }
 }
 
