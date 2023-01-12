@@ -12,6 +12,7 @@ import SwiftUI
 struct NoteCreate: View {
     @State private var title: String = ""
     @State private var content: String = ""
+    @State private var showForm: Bool = true
     @State private var selectedJob: Job?
     
     @Environment(\.managedObjectContext) var moc
@@ -31,6 +32,16 @@ struct NoteCreate: View {
     }
     
     var body: some View {
+        if showForm {
+            form
+        } else {
+            // TODO: probably a bad idea to just.. show it here
+            NoteDashboard()
+        }
+    }
+    
+    @ViewBuilder
+    var form: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 22) {
                 Title(text: "Create a note", image: "note.text.badge.plus")
@@ -54,7 +65,6 @@ struct NoteCreate: View {
                     }
                     .buttonStyle(.borderless)
                     .foregroundColor(Color.white)
-                    
                     .font(.title3)
                     .padding()
                     .background(Color.black.opacity(0.2))
@@ -76,7 +86,7 @@ struct NoteCreate: View {
     
     // TODO: should not be part of this view
     private func pickerChange(selected: Int, sender: String?) -> Void {
-        selectedJob = jobs[selected]
+        selectedJob = jobs.filter({ $0.jid == Double(selected)}).first
     }
     
     private func save() -> Void {
@@ -86,8 +96,18 @@ struct NoteCreate: View {
         note.postedDate = Date()
         note.id = UUID()
         note.job = selectedJob
+        note.alive = true
+        
+        let version = NoteVersion(context: moc)
+        version.id = UUID()
+        version.title = title
+        version.content = content
+        version.starred = false
+        version.created = note.postedDate
 
         PersistenceController.shared.save()
+        
+        showForm = false
     }
 }
 

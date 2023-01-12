@@ -10,12 +10,12 @@ import Foundation
 import SwiftUI
 
 struct NotesHome: View {
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.postedDate, order: .reverse)]) public var notes: FetchedResults<Note>
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.postedDate, order: .reverse)], predicate: NSPredicate(format: "alive = true")) public var notes: FetchedResults<Note>
     
     @Environment(\.managedObjectContext) var managedObjectContext
 
     var body: some View {
-        NavigationSplitView {
+        NavigationSplitView {            
             List(notes) { note in
                 NavigationLink(note.title ?? "Invalid title", value: note)
             }

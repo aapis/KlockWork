@@ -87,10 +87,10 @@ struct NoteDashboard: View {
                                             .navigationTitle("Editing note \(note.title!)")
                                     } label: {
                                         HStack {
-                                            Image(systemName: "note")
                                             Text(note.title!)
                                             Spacer()
-                                            
+                                            Text("v\(note.versions?.count ?? 0)")
+                                                .help("Current version")
                                             if note.lastUpdate != nil {
                                                 Image(systemName: "arrow.triangle.2.circlepath")
                                                     .help("Updated \(DateHelper.shortDateWithTime(note.lastUpdate!))")
@@ -120,7 +120,8 @@ struct NoteDashboard: View {
                                         Image(systemName: "note")
                                         Text(note.title!)
                                         Spacer()
-                                        
+                                        Text("v\(note.versions?.count ?? 0)")
+                                            .help("Current version")
                                         if note.lastUpdate != nil {
                                             Image(systemName: "arrow.triangle.2.circlepath")
                                                 .help("Updated \(DateHelper.shortDateWithTime(note.lastUpdate!))")

@@ -114,7 +114,7 @@ class LogRecords: ObservableObject, Identifiable, Equatable {
         
         let fetch: NSFetchRequest<Note> = Note.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Note.postedDate, ascending: false)]
-        fetch.predicate = NSPredicate(format: "postedDate > %@ && postedDate <= %@", before as CVarArg, after as CVarArg)
+        fetch.predicate = NSPredicate(format: "postedDate > %@ && postedDate <= %@ && alive = true", before as CVarArg, after as CVarArg)
 
         do {
             results = try moc!.fetch(fetch)
