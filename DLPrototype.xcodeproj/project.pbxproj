@@ -36,6 +36,8 @@
 		533AB3F0296C9ED100E91A9F /* ManageNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533AB3EF296C9ED100E91A9F /* ManageNotes.swift */; };
 		533AB3F2296CA34600E91A9F /* ManageRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533AB3F1296CA34600E91A9F /* ManageRecords.swift */; };
 		533AB3F4296CA58C00E91A9F /* ManageJobs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533AB3F3296CA58C00E91A9F /* ManageJobs.swift */; };
+		533E40652970DA640007785A /* ViewUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533E40642970DA640007785A /* ViewUpdater.swift */; };
+		533E40682970DD170007785A /* AutoFixJobs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533E40672970DD170007785A /* AutoFixJobs.swift */; };
 		53521E54296FBDAE002E7F21 /* CoreDataNoteVersions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53521E53296FBDAE002E7F21 /* CoreDataNoteVersions.swift */; };
 		5367FAF0296772730060D2AA /* Split.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5367FAEF296772730060D2AA /* Split.swift */; };
 		537368D124B93DB600193E88 /* Today.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537368D024B93DB600193E88 /* Today.swift */; };
@@ -132,6 +134,8 @@
 		533AB3EF296C9ED100E91A9F /* ManageNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageNotes.swift; sourceTree = "<group>"; };
 		533AB3F1296CA34600E91A9F /* ManageRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageRecords.swift; sourceTree = "<group>"; };
 		533AB3F3296CA58C00E91A9F /* ManageJobs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageJobs.swift; sourceTree = "<group>"; };
+		533E40642970DA640007785A /* ViewUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewUpdater.swift; sourceTree = "<group>"; };
+		533E40672970DD170007785A /* AutoFixJobs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFixJobs.swift; sourceTree = "<group>"; };
 		53521E53296FBDAE002E7F21 /* CoreDataNoteVersions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataNoteVersions.swift; sourceTree = "<group>"; };
 		5367FAEF296772730060D2AA /* Split.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Split.swift; sourceTree = "<group>"; };
 		537368D024B93DB600193E88 /* Today.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Today.swift; sourceTree = "<group>"; };
@@ -274,6 +278,7 @@
 		53218D4624B7F6EB0088ABE9 /* DLPrototype */ = {
 			isa = PBXGroup;
 			children = (
+				533E40662970DD080007785A /* Utils */,
 				53152CCA2969452100A14E43 /* Helpers */,
 				537628A62966593500DE8ECF /* CoreData */,
 				537368D224B93DF700193E88 /* Views */,
@@ -339,6 +344,14 @@
 				53DFF074296F124E0051DA91 /* ManageTasks.swift */,
 			);
 			path = Manage;
+			sourceTree = "<group>";
+		};
+		533E40662970DD080007785A /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				533E40672970DD170007785A /* AutoFixJobs.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		537368D224B93DF700193E88 /* Views */ = {
@@ -450,6 +463,7 @@
 				53152CD3296A296A00A14E43 /* FancyButton.swift */,
 				53152CD5296A2DA300A14E43 /* FancyPicker.swift */,
 				53152CD9296B849200A14E43 /* FancyPickerWithRelativeNavigation.swift */,
+				533E40642970DA640007785A /* ViewUpdater.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -636,6 +650,7 @@
 				53152CDD296BB0D900A14E43 /* GenericToolbar.swift in Sources */,
 				53C6D08D2964E25400EA6129 /* EditableColumn.swift in Sources */,
 				53DFF075296F124E0051DA91 /* ManageTasks.swift in Sources */,
+				533E40682970DD170007785A /* AutoFixJobs.swift in Sources */,
 				5376289E29664F8C00DE8ECF /* Theme.swift in Sources */,
 				53C6D09829654F4C00EA6129 /* DetailGroup.swift in Sources */,
 				5376289B2966467100DE8ECF /* SearchBar.swift in Sources */,
@@ -646,6 +661,7 @@
 				53999C1F29669C4E00125E65 /* NoteCreate.swift in Sources */,
 				53759E0D2967ECAE00DCDC4B /* LogRecords.swift in Sources */,
 				53F10FE0296E77BE0048D040 /* CoreDataJob.swift in Sources */,
+				533E40652970DA640007785A /* ViewUpdater.swift in Sources */,
 				53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */,
 				53C6D08F2964E25F00EA6129 /* Column.swift in Sources */,
 				53759E0829678DC700DCDC4B /* Import.swift in Sources */,
@@ -844,7 +860,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 56;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -871,7 +887,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 56;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;

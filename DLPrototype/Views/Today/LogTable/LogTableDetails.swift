@@ -62,19 +62,16 @@ struct LogTableDetails: View {
     
     @State private var statistics: [any Statistics] = []
     
-    static public var groups: [StatisticGroup] = [ // TODO: I tried to pull these from the enum but it was so FUCKING FRUSTRATING that I almost yeeted the codebase into the sun
+    static public var groups: [StatisticGroup] = [
         StatisticGroup(title: "Viewing", enumKey: .today),
         StatisticGroup(title: "Overall", enumKey: .overall),
         StatisticGroup(title: "Notes", enumKey: .notes),
         StatisticGroup(title: "Tasks", enumKey: .tasks),
         StatisticGroup(title: "Jobs", enumKey: .jobs),
     ]
-    
-    @State private var ref: UUID = UUID() // TODO: REMOVE THIS, JUST FOR TESTING
 
     @Environment(\.managedObjectContext) var moc
-    
-    @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
+    @EnvironmentObject public var updater: ViewUpdater
     
     private var notes: [Note] {
         LogRecords(moc: moc).notesForDate(selectedDate)
@@ -103,6 +100,7 @@ struct LogTableDetails: View {
                 ScrollView {
                     rows.font(Theme.font)
                 }
+                .id(updater.ids["ltd.rows"])
             }
         }
     }
@@ -230,7 +228,7 @@ struct LogTableDetails: View {
                             value: task.content ?? "No content",
                             colour: Color.fromStored(task.owner?.colour ?? Theme.rowColourAsDouble),
                             group: .tasks,
-                            view: AnyView(TaskView(task: task, ref: $ref))
+                            view: AnyView(TaskView(task: task))
                         )
                     )
                 }

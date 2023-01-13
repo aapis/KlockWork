@@ -20,7 +20,7 @@ public class CoreDataJob {
     public func byId(_ id: Double) -> Job? {
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.jid, ascending: false)]
-        fetch.predicate = NSPredicate(format: "ANY jid = %d", Int(id))
+        fetch.predicate = NSPredicate(format: "jid = %d", Int(id))
         fetch.fetchLimit = 1
         
         do {

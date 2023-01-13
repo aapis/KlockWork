@@ -16,6 +16,7 @@ struct Category: Identifiable {
 
 struct Home: View {
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var recordsModel: LogRecords
     
     @State private var selected: String?
@@ -66,15 +67,14 @@ struct Home: View {
                     Today()
                         .navigationTitle("Today")
                         .environmentObject(recordsModel)
-//                        .environmentObject(sm)
+                        .environmentObject(updater)
                         .toolbar {
-                            if showExperimentalFeatures {
-                                Button(action: {}, label: {
-                                    Image(systemName: "arrow.triangle.2.circlepath")
-                                })
-                                .buttonStyle(.borderless)
-                                .font(.title)
-                            }
+                            Button(action: redraw, label: {
+                                Image(systemName: "arrow.triangle.2.circlepath")
+                            })
+                            .buttonStyle(.borderless)
+                            .font(.title)
+                            .keyboardShortcut("r")
                         }
                 } label: {
                     Image(systemName: "doc.append.fill")
@@ -196,6 +196,10 @@ struct Home: View {
     
     private func setSplitViewDirection() -> Void {
         splitDirection.toggle()
+    }
+    
+    private func redraw() -> Void {
+        updater.update()
     }
 }
 

@@ -60,7 +60,7 @@ struct TaskListView: View {
                             ScrollView {
                                 VStack(spacing: 1) {
                                     ForEach(tasks, id: \LogTask.id) { task in
-                                        TaskView(task: task, ref: $taskTableUUID)
+                                        TaskView(task: task)
                                     }
                                 }
                             }
