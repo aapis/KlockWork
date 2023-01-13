@@ -106,22 +106,4 @@ class LogRecords: ObservableObject, Identifiable, Equatable {
         
         return results
     }
-    
-    public func notesForDate(_ date: Date) -> [Note] {
-        var results: [Note] = []
-        
-        let (before, after) = DateHelper.startAndEndOf(date)
-        
-        let fetch: NSFetchRequest<Note> = Note.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Note.postedDate, ascending: false)]
-        fetch.predicate = NSPredicate(format: "postedDate > %@ && postedDate <= %@ && alive = true", before as CVarArg, after as CVarArg)
-
-        do {
-            results = try moc!.fetch(fetch)
-        } catch {
-            print("Unable to find records for today")
-        }
-        
-        return results
-    }
 }
