@@ -67,6 +67,7 @@
 		53C6D09829654F4C00EA6129 /* DetailGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C6D09729654F4C00EA6129 /* DetailGroup.swift */; };
 		53DCA3422803BBBF0032FD60 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DCA3412803BBBF0032FD60 /* CalendarView.swift */; };
 		53DFF075296F124E0051DA91 /* ManageTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DFF074296F124E0051DA91 /* ManageTasks.swift */; };
+		53ECD0572971F8F400A09AAB /* CoreDataRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */; };
 		53EDDF9E29634852008D34C7 /* Entry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDF9D29634852008D34C7 /* Entry.swift */; };
 		53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */; };
 		53EDDFA22963502A008D34C7 /* LogRowEmpty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDFA12963502A008D34C7 /* LogRowEmpty.swift */; };
@@ -165,6 +166,7 @@
 		53C6D09729654F4C00EA6129 /* DetailGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailGroup.swift; sourceTree = "<group>"; };
 		53DCA3412803BBBF0032FD60 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		53DFF074296F124E0051DA91 /* ManageTasks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageTasks.swift; sourceTree = "<group>"; };
+		53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataRecords.swift; sourceTree = "<group>"; };
 		53EDDF9D29634852008D34C7 /* Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entry.swift; sourceTree = "<group>"; };
 		53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPickerItem.swift; sourceTree = "<group>"; };
 		53EDDFA12963502A008D34C7 /* LogRowEmpty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRowEmpty.swift; sourceTree = "<group>"; };
@@ -389,6 +391,7 @@
 				53F10FDF296E77BE0048D040 /* CoreDataJob.swift */,
 				53521E53296FBDAE002E7F21 /* CoreDataNoteVersions.swift */,
 				5361DDEC2971E1DF00437064 /* CoreDataNotes.swift */,
+				53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -634,6 +637,7 @@
 				53EDDF9E29634852008D34C7 /* Entry.swift in Sources */,
 				53C6D0912965044C00EA6129 /* DetailsColumn.swift in Sources */,
 				53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */,
+				53ECD0572971F8F400A09AAB /* CoreDataRecords.swift in Sources */,
 				53EFCE7929637F35004E45EC /* GeneralSettings.swift in Sources */,
 				5335A5B7296D2089000051B1 /* TaskListView.swift in Sources */,
 				533AB3F0296C9ED100E91A9F /* ManageNotes.swift in Sources */,
@@ -864,7 +868,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 58;
+				CURRENT_PROJECT_VERSION = 59;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -891,7 +895,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 58;
+				CURRENT_PROJECT_VERSION = 59;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
