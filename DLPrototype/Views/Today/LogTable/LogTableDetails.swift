@@ -74,7 +74,7 @@ struct LogTableDetails: View {
     @EnvironmentObject public var updater: ViewUpdater
     
     private var notes: [Note] {
-        LogRecords(moc: moc).notesForDate(selectedDate)
+        CoreDataNotes(moc: moc).forDate(selectedDate)
     }
     
     private var tasks: [LogTask] {

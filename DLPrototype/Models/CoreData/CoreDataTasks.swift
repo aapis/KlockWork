@@ -9,7 +9,6 @@
 import Foundation
 import SwiftUI
 
-
 public class CoreDataTasks {
     public var moc: NSManagedObjectContext?
     
@@ -22,7 +21,13 @@ public class CoreDataTasks {
         let (before, after) = DateHelper.startAndEndOf(date)
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogTask.created, ascending: false)]
-        let datePredicate = NSPredicate(format: "created > %@ && created <= %@", before as CVarArg, after as CVarArg)
+        let datePredicate = NSPredicate(
+            format: "(created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@)",
+            before as CVarArg,
+            after as CVarArg,
+            before as CVarArg,
+            after as CVarArg
+        )
         
         if !include!.isEmpty {
             // TODO: this shouldn't be necessary...

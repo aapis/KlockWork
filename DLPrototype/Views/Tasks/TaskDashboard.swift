@@ -88,7 +88,7 @@ struct TaskDashboard: View {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 1) {
                             ForEach(filter(tasks)) { task in
-                                TaskView(task: task, showJobId: true)
+                                TaskView(task: task, showJobId: true, showDate: true)
                             }
                         }
                     }
