@@ -17,7 +17,7 @@ struct TaskView: View {
     @Environment(\.managedObjectContext) var moc
     
     var body: some View {
-        HStack(spacing: 1) {
+        HStack(spacing: 0) {
             GridRow {
                 Group {
                     ZStack {
@@ -38,11 +38,20 @@ struct TaskView: View {
                     ZStack(alignment: .leading) {
                         (task.completedDate == nil ? Theme.rowColour : Theme.rowStatusGreen)
                         
+                        Text(task.owner?.jid.string ?? "No Job")
+                            .padding(5)
+                    }
+                }
+                .frame(width: 100)
+                
+                Group {
+                    ZStack(alignment: .leading) {
+                        (task.completedDate == nil ? Theme.rowColour : Theme.rowStatusGreen)
+                        
                         Text(task.content ?? "No content")
                             .padding(5)
                     }
                 }
-                
             }
         }
     }

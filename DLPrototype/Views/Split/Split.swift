@@ -57,7 +57,7 @@ struct Split: View {
         } else if left == 2 {
             NotesHome()
         } else if left == 3 {
-            Tasks()
+            TaskDashboard()
         } else if left == 4 {
             Import()
         } else {
@@ -70,7 +70,7 @@ struct Split: View {
 //        } else if middle == 2 {
 //            NotesHome()
 //        } else if middle == 3 {
-//            Tasks()
+//            TaskDashboard()
 //        } else if middle == 4 {
 //            Import()
 //        } else {
@@ -82,7 +82,7 @@ struct Split: View {
         } else if right == 2 {
             NotesHome()
         } else if right == 3 {
-            Tasks()
+            TaskDashboard()
         } else if right == 4 {
             Import()
         } else {

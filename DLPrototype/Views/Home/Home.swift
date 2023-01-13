@@ -102,7 +102,7 @@ struct Home: View {
                 }
                 
                 NavigationLink {
-                    Tasks()
+                    TaskDashboard()
                         .navigationTitle("Tasks")
                         .environmentObject(recordsModel)
                         .toolbar {

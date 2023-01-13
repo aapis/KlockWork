@@ -10,24 +10,130 @@ import Foundation
 import SwiftUI
 
 struct TaskDashboard: View {
+    @State private var searchText: String = ""
+    @State private var selectedJob: Int = 0
+    @State private var job: Job?
+    
+    @Environment(\.managedObjectContext) var moc
+    
     @FetchRequest(sortDescriptors: [SortDescriptor(\.jid, order: .reverse)]) public var jobs: FetchedResults<Job>
     @FetchRequest(sortDescriptors: [SortDescriptor(\LogTask.id)]) public var tasks: FetchedResults<LogTask>
     
+    private var pickerItems: [CustomPickerItem] {
+        var items: [CustomPickerItem] = []
+        
+        for job in jobs {
+            items.append(CustomPickerItem(title: job.jid.string, tag: Int(job.jid)))
+        }
+        
+        return items
+    }
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            VStack {
+        VStack(alignment: .leading) {
+            VStack(alignment: .leading) {
                 HStack {
-                    Title(text: "Tasks", image: "list.number")
+                    Title(text: "Search tasks", image: "magnifyingglass")
                     Spacer()
                 }
-                
-                Text("You have \(tasks.count) tasks across \(jobs.count) projects")
-                    .font(.title3)
-                
+
+                search
+                create
+
                 Spacer()
             }
             .padding()
         }
         .background(Theme.toolbarColour)
+    }
+    
+    @ViewBuilder
+    var create: some View {
+        if searchText == "" {
+            Divider()
+                .frame(height: 20)
+                .overlay(.clear)
+                .foregroundColor(.clear)
+
+            HStack {
+                Title(text: "Manage tasks", image: "pencil")
+            }
+            
+            FancyPicker(onChange: change, items: pickerItems)
+                .onAppear(perform: setJob)
+                .onChange(of: selectedJob) { _ in
+                    setJob()
+                }
+            
+            if selectedJob > 0 {
+                TaskListView(job: job!)
+            }
+        }
+    }
+    
+    @ViewBuilder
+    var search: some View {
+        SearchBar(
+            text: $searchText,
+            disabled: false,
+            placeholder: "Search \(tasks.count) tasks across \(jobs.count) projects"
+        )
+        
+        if searchText != "" {
+            Grid(horizontalSpacing: 1, verticalSpacing: 1) {
+                HStack(spacing: 0) {
+                    GridRow {
+                        Group {
+                            ZStack(alignment: .leading) {
+                                Theme.headerColour
+                            }
+                        }
+                        .frame(width: 50)
+                        Group {
+                            ZStack(alignment: .leading) {
+                                Theme.headerColour
+                                Text("Job ID")
+                                    .padding(5)
+                            }
+                        }
+                        .frame(width: 100)
+                        Group {
+                            ZStack(alignment: .leading) {
+                                Theme.headerColour
+                                Text("Content")
+                                    .padding(5)
+                            }
+                        }
+                    }
+                }
+                .frame(height: 40)
+                
+                GridRow {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 1) {
+                            ForEach(filter(tasks)) { task in
+                                TaskView(task: task)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private func setJob() -> Void {
+        if selectedJob > 0 {
+            job = CoreDataJob(moc: moc).byId(Double(selectedJob))
+        }
+    }
+    
+    private func change(selected: Int, sender: String?) -> Void {
+        selectedJob = selected
+        
+        setJob()
+    }
+    
+    private func filter(_ tasks: FetchedResults<LogTask>) -> [LogTask] {
+        return SearchHelper(bucket: tasks).exec($searchText)
     }
 }
