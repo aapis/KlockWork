@@ -12,8 +12,6 @@ import SwiftUI
 struct TaskView: View {
     public var task: LogTask
     
-    @Binding public var ref: UUID
-    
     @State private var completed: Bool = false
     
     @Environment(\.managedObjectContext) var moc
@@ -53,6 +51,5 @@ struct TaskView: View {
         CoreDataTasks(moc: moc).complete(task)
         // update viewable status indicators
         completed = true
-        ref = UUID()
     }
 }

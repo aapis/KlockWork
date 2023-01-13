@@ -16,17 +16,13 @@ struct Today : View, Identifiable {
     @State private var taskUrl: String = ""
     @State private var recentJobs: [CustomPickerItem] = [CustomPickerItem(title: "Recent jobs", tag: 0)]
     @State private var jobPickerSelection = 0
-    // Current date
-    @State private var currentDate: Date = Date()
-    // Date value the last time we checked
-    @State private var dateAtLastCheck: Date = Date()
-    // Flag to determine whether the date has changed and thus the UI needs a reload
-    @State private var dateHasChanged: Bool = false
-    // Change this value to redraw the LogTable
-    @State private var logTableId: UUID = UUID()
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
+    
+    @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var updater: ViewUpdater
+    @EnvironmentObject public var recordsModel: LogRecords
     
     @FetchRequest(
         sortDescriptors: [
@@ -38,28 +34,18 @@ struct Today : View, Identifiable {
     private var today: FetchedResults<LogRecord> {
         if showExperimentalFeatures {
             if autoFixJobs {
-                let defaultJob = CoreDataJob(moc: moc).byId(11.0)
-                for rec in rawToday {
-                    if rec.job == nil {
-                        rec.job = defaultJob
-                        
-                        PersistenceController.shared.save()
-                    }
-                }
+                AutoFixJobs.run(records: rawToday, context: moc)
             }
         }
         
         return rawToday
     }
     
-    @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var recordsModel: LogRecords
-    
     // MARK: body view
     var body: some View {
         VStack(alignment: .leading) {
             header
-            editor.onAppear(perform: checkDate)
+            editor
             table
         }
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
@@ -88,6 +74,7 @@ struct Today : View, Identifiable {
                 FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
 
                 FancyPicker(onChange: pickerChange, items: recentJobs)
+                    .id(updater.ids["today.picker"])
                     .onAppear(perform: reloadUi)
             }
             
@@ -105,7 +92,7 @@ struct Today : View, Identifiable {
     // MARK: Table view
     var table: some View {
         LogTable()
-            .id(logTableId)
+            .id(updater.ids["today.table"])
     }
     
     // MARK: loading view
@@ -127,43 +114,10 @@ struct Today : View, Identifiable {
     private func pickerChange(selected: Int, sender: String?) -> Void {
         jobId = String(selected)
     }
-    
-    private func checkDate() -> Void {
-//        print("Today::checkDate [init] \(DateHelper.todayShort(currentDate))")
-        dateAtLastCheck = currentDate
-        // TODO: temp commented out
-        Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { timer in
-            let shortCurrentDate = DateHelper.shortDate(
-                DateHelper.todayShort(currentDate)
-            )
-            let shortLastCheckDate = DateHelper.shortDate(
-                DateHelper.todayShort(dateAtLastCheck)
-            )
 
-//            print("Today::checkDate [timer] \(shortCurrentDate) > \(shortLastCheckDate) \(currentDate)")
-
-            if shortCurrentDate != nil && shortLastCheckDate != nil {
-                if shortCurrentDate! > shortLastCheckDate! {
-                    print("Today::checkDate [timer.dateChanged]")
-                    dateHasChanged = true
-                }
-            }
-
-//            currentDate = Date() + 86400 // TODO: this is just for testing
-        }
-    }
-
-    private func reloadUi() -> Void {
-        func reload() {
-            updateRecentJobs()
-            dateHasChanged = false
-            logTableId = UUID()
-        }
-
-        // if we have records reload the after 1s
-        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { timer in
-            reload()
-        }
+    public func reloadUi() -> Void {
+        updateRecentJobs()
+        updater.update()
     }
     
     private func updateRecentJobs() -> Void {
