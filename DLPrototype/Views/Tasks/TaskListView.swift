@@ -13,9 +13,9 @@ struct TaskListView: View {
     public var job: Job
     
     @State private var entryText: String = ""
-    @State private var taskTableUUID: UUID = UUID()
     
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var updater: ViewUpdater
     
     private var tasks: [LogTask] {
         let list = job.tasks!.allObjects as! [LogTask]
@@ -48,7 +48,7 @@ struct TaskListView: View {
                     
                     Divider()
                         .foregroundColor(.clear)
-                        .frame(height: 10)
+                        .frame(height: 20)
                         .overlay(.clear)
                     
                     if job.tasks!.count == 0 {
@@ -65,7 +65,7 @@ struct TaskListView: View {
                                 }
                             }
                         }
-                        .id(taskTableUUID)
+                        .id(updater.ids["tlv.table"])
                     }
                 }
                 
@@ -103,9 +103,9 @@ struct TaskListView: View {
         task.id = UUID()
         task.content = entryText
         task.owner = job
-        
-        taskTableUUID = task.id!
+
         entryText = ""
+        updater.update()
         
         PersistenceController.shared.save()
     }

@@ -93,6 +93,7 @@ struct Today : View, Identifiable {
     var table: some View {
         LogTable()
             .id(updater.ids["today.table"])
+            .environmentObject(updater)
     }
     
     // MARK: loading view

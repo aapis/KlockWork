@@ -12,7 +12,10 @@ public class ViewUpdater: ObservableObject {
     @Published public var ids: [String: UUID] = [
         "today.table": UUID(),
         "today.picker": UUID(),
-        "ltd.rows": UUID()
+        "ltd.rows": UUID(),
+        "dg.hasView": UUID(),
+        "dg.hasNoView": UUID(),
+        "tlv.table": UUID()
     ]
     
     public func update() -> Void {

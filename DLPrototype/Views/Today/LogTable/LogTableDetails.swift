@@ -128,8 +128,10 @@ struct LogTableDetails: View {
                         if children.count > 0 {
                             if group.enumKey == .today {
                                 DetailGroup(name: group.title, children: children, subTitle: DateHelper.dateFromRecord(records.first!))
+                                    .environmentObject(updater)
                             } else {
                                 DetailGroup(name: group.title, children: children)
+                                    .environmentObject(updater)
                             }
                         }
                     }

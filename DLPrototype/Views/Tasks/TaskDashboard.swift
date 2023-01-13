@@ -20,7 +20,7 @@ struct TaskDashboard: View {
     @FetchRequest(sortDescriptors: [SortDescriptor(\LogTask.id)]) public var tasks: FetchedResults<LogTask>
     
     private var pickerItems: [CustomPickerItem] {
-        var items: [CustomPickerItem] = []
+        var items: [CustomPickerItem] = [CustomPickerItem(title: "Tasks by Job ID", tag: 0)]
         
         for job in jobs {
             items.append(CustomPickerItem(title: job.jid.string, tag: Int(job.jid)))
@@ -45,30 +45,6 @@ struct TaskDashboard: View {
             .padding()
         }
         .background(Theme.toolbarColour)
-    }
-    
-    @ViewBuilder
-    var create: some View {
-        if searchText == "" {
-            Divider()
-                .frame(height: 20)
-                .overlay(.clear)
-                .foregroundColor(.clear)
-
-            HStack {
-                Title(text: "Manage tasks", image: "pencil")
-            }
-            
-            FancyPicker(onChange: change, items: pickerItems)
-                .onAppear(perform: setJob)
-                .onChange(of: selectedJob) { _ in
-                    setJob()
-                }
-            
-            if selectedJob > 0 {
-                TaskListView(job: job!)
-            }
-        }
     }
     
     @ViewBuilder
@@ -112,11 +88,35 @@ struct TaskDashboard: View {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 1) {
                             ForEach(filter(tasks)) { task in
-                                TaskView(task: task)
+                                TaskView(task: task, showJobId: true)
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    var create: some View {
+        if searchText == "" {
+            Divider()
+                .frame(height: 20)
+                .overlay(.clear)
+                .foregroundColor(.clear)
+
+            HStack {
+                Title(text: "Manage tasks", image: "pencil")
+            }
+            
+            FancyPicker(onChange: change, items: pickerItems)
+                .onAppear(perform: setJob)
+                .onChange(of: selectedJob) { _ in
+                    setJob()
+                }
+            
+            if selectedJob > 0 {
+                TaskListView(job: job!)
             }
         }
     }

@@ -105,6 +105,7 @@ struct Home: View {
                     TaskDashboard()
                         .navigationTitle("Tasks")
                         .environmentObject(recordsModel)
+                        .environmentObject(updater)
                         .toolbar {
                             if showExperimentalFeatures {
                                 Button(action: {}, label: {

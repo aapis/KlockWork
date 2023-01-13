@@ -29,6 +29,7 @@ struct LogTable: View, Identifiable {
     @AppStorage("showExperiment.actions") private var showExperimentActions = false
     
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var updater: ViewUpdater
     
     // MARK: body view
     var body: some View {
@@ -179,6 +180,7 @@ struct LogTable: View, Identifiable {
     
     var tableDetails: some View {
         LogTableDetails(records: $records, selectedDate: $selectedDate)
+            .environmentObject(updater)
     }
     
     private func changeSort() -> Void {

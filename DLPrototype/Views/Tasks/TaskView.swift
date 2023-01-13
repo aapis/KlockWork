@@ -11,6 +11,7 @@ import SwiftUI
 
 struct TaskView: View {
     public var task: LogTask
+    public var showJobId: Bool? = false
     
     @State private var completed: Bool = false
     
@@ -34,15 +35,17 @@ struct TaskView: View {
                 }
                 .frame(width: 50)
                 
-                Group {
-                    ZStack(alignment: .leading) {
-                        (task.completedDate == nil ? Theme.rowColour : Theme.rowStatusGreen)
-                        
-                        Text(task.owner?.jid.string ?? "No Job")
-                            .padding(5)
+                if showJobId == true {
+                    Group {
+                        ZStack(alignment: .leading) {
+                            (task.completedDate == nil ? Theme.rowColour : Theme.rowStatusGreen)
+                            
+                            Text(task.owner?.jid.string ?? "No Job")
+                                .padding(5)
+                        }
                     }
+                    .frame(width: 100)
                 }
-                .frame(width: 100)
                 
                 Group {
                     ZStack(alignment: .leading) {
