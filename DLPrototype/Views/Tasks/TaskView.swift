@@ -132,8 +132,18 @@ struct TaskView: View {
     
     private func complete() -> Void {
         CoreDataTasks(moc: moc).complete(task)
-        // update viewable status indicators
+        
+        task.lastUpdate = Date()
+        CoreDataRecords(moc: moc).createWithJob(
+            job: task.owner!,
+            date: task.lastUpdate!,
+            text: "Completed task: \(task.content ?? "Invalid task")"
+        )
+        
+        PersistenceController.shared.save()
+        
         withAnimation(.easeInOut(duration: 0.2)) {
+            // update viewable status indicators
             completed = true
             updater.update()
         }
