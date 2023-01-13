@@ -11,13 +11,14 @@ import SwiftUI
 
 struct TaskView: View {
     public var task: LogTask
+    public var showJobId: Bool? = false
     
     @State private var completed: Bool = false
     
     @Environment(\.managedObjectContext) var moc
     
     var body: some View {
-        HStack(spacing: 1) {
+        HStack(spacing: 0) {
             GridRow {
                 Group {
                     ZStack {
@@ -34,6 +35,18 @@ struct TaskView: View {
                 }
                 .frame(width: 50)
                 
+                if showJobId == true {
+                    Group {
+                        ZStack(alignment: .leading) {
+                            (task.completedDate == nil ? Theme.rowColour : Theme.rowStatusGreen)
+                            
+                            Text(task.owner?.jid.string ?? "No Job")
+                                .padding(5)
+                        }
+                    }
+                    .frame(width: 100)
+                }
+                
                 Group {
                     ZStack(alignment: .leading) {
                         (task.completedDate == nil ? Theme.rowColour : Theme.rowStatusGreen)
@@ -42,7 +55,6 @@ struct TaskView: View {
                             .padding(5)
                     }
                 }
-                
             }
         }
     }

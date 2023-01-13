@@ -17,6 +17,8 @@ struct DetailGroup: View {
     @State private var showChildren: Bool = true
     @State private var minimizeIcon: String = "arrowtriangle.up"
     
+    @EnvironmentObject public var updater: ViewUpdater
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(spacing: 0) {
@@ -45,8 +47,10 @@ struct DetailGroup: View {
                         stat.view
                             .background(stat.colour)
                             .foregroundColor(stat.colour.isBright() ? Color.black : Color.white)
+                            .id(updater.ids["dg.hasView"])
                     } else {
                         DetailsRow(key: stat.key, value: stat.value, colour: stat.colour)
+                            .id(updater.ids["dg.hasNoView"])
                     }
                 }
             }

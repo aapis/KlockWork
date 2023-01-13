@@ -102,9 +102,10 @@ struct Home: View {
                 }
                 
                 NavigationLink {
-                    Tasks()
+                    TaskDashboard()
                         .navigationTitle("Tasks")
                         .environmentObject(recordsModel)
+                        .environmentObject(updater)
                         .toolbar {
                             if showExperimentalFeatures {
                                 Button(action: {}, label: {
