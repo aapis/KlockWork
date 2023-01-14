@@ -72,8 +72,8 @@ struct Today : View, Identifiable {
                 Text("Or").font(Theme.font)
                 
                 FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
-
-                FancyPicker(onChange: pickerChange, items: recentJobs)
+                
+                JobPicker(onChange: pickerChange)
                     .id(updater.ids["today.picker"])
                     .onAppear(perform: reloadUi)
             }

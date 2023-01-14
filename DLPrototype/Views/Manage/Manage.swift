@@ -19,6 +19,7 @@ struct Manage: View {
                 NavigationLink("Records", destination: ManageRecords().navigationTitle("Manage Records"))
                 NavigationLink("Jobs", destination: ManageJobs().navigationTitle("Manage Jobs"))
                 NavigationLink("Tasks", destination: ManageTasks().navigationTitle("Manage Tasks"))
+                NavigationLink("Projects", destination: ManageProjects().navigationTitle("Manage Projects"))
             }
         } detail: {
             ManageDashboard()

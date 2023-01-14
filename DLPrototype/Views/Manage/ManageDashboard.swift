@@ -14,6 +14,7 @@ struct ManageDashboard: View {
     @FetchRequest(sortDescriptors: [SortDescriptor(\.postedDate)]) public var notes: FetchedResults<Note>
     @FetchRequest(sortDescriptors: [SortDescriptor(\.jid)]) public var jobs: FetchedResults<Job>
     @FetchRequest(sortDescriptors: [SortDescriptor(\.created)]) public var tasks: FetchedResults<LogTask>
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.created)]) public var projects: FetchedResults<Project>
     
     @State private var isDeleteRecordsConfirmationPresented: Bool = false
     @State private var isDeleteNotesConfirmationPresented: Bool = false
@@ -27,40 +28,46 @@ struct ManageDashboard: View {
             VStack(alignment: .leading) {
                 Title(text: "Manage your data", image: "books.vertical")
                 
-                // MARK: danger button(s)
-                HStack(alignment: .top) {
-                    FancyButton(text: "Truncate \(records.count) Records + Jobs", action: {showDelete(&isDeleteRecordsConfirmationPresented)})
-                    .confirmationDialog("Did you backup records first?", isPresented: $isDeleteRecordsConfirmationPresented) {
-                        Button("Yes", role: .destructive) {
-                            burnRecordsAndJobs()
-                        }
-                        Button("Cancel", role: .cancel) {
-                            hideDelete(&isDeleteRecordsConfirmationPresented)
-                        }
-                    }
-                    
-                    FancyButton(text: "Truncate \(notes.count) Notes", action: {showDelete(&isDeleteNotesConfirmationPresented)})
-                    .confirmationDialog("Did you backup notes first?", isPresented: $isDeleteNotesConfirmationPresented) {
-                        Button("Yes", role: .destructive) {
-                            burnNotes()
-                        }
-                        Button("Cancel", role: .cancel) {
-                            hideDelete(&isDeleteNotesConfirmationPresented)
-                        }
-                    }
-                    
-                    FancyButton(text: "Truncate \(tasks.count) Tasks", action: {showDelete(&isDeleteTasksConfirmationPresented)})
-                    .confirmationDialog("Did you backup tasks first?", isPresented: $isDeleteTasksConfirmationPresented) {
-                        Button("Yes", role: .destructive) {
-                            burnTasks()
-                        }
-                        Button("Cancel", role: .cancel) {
-                            hideDelete(&isDeleteTasksConfirmationPresented)
-                        }
-                    }
-                    
+                HStack {
+                    Text("\(records.count) records, \(jobs.count) jobs, \(tasks.count) tasks, \(notes.count) notes, \(projects.count) projects")
                     Spacer()
                 }
+                    .font(Theme.font)
+                
+                // MARK: danger button(s)
+//                HStack(alignment: .top) {
+//                    FancyButton(text: "Truncate \(records.count) Records + Jobs", action: {showDelete(&isDeleteRecordsConfirmationPresented)})
+//                    .confirmationDialog("Did you backup records first?", isPresented: $isDeleteRecordsConfirmationPresented) {
+//                        Button("Yes", role: .destructive) {
+//                            burnRecordsAndJobs()
+//                        }
+//                        Button("Cancel", role: .cancel) {
+//                            hideDelete(&isDeleteRecordsConfirmationPresented)
+//                        }
+//                    }
+//
+//                    FancyButton(text: "Truncate \(notes.count) Notes", action: {showDelete(&isDeleteNotesConfirmationPresented)})
+//                    .confirmationDialog("Did you backup notes first?", isPresented: $isDeleteNotesConfirmationPresented) {
+//                        Button("Yes", role: .destructive) {
+//                            burnNotes()
+//                        }
+//                        Button("Cancel", role: .cancel) {
+//                            hideDelete(&isDeleteNotesConfirmationPresented)
+//                        }
+//                    }
+//
+//                    FancyButton(text: "Truncate \(tasks.count) Tasks", action: {showDelete(&isDeleteTasksConfirmationPresented)})
+//                    .confirmationDialog("Did you backup tasks first?", isPresented: $isDeleteTasksConfirmationPresented) {
+//                        Button("Yes", role: .destructive) {
+//                            burnTasks()
+//                        }
+//                        Button("Cancel", role: .cancel) {
+//                            hideDelete(&isDeleteTasksConfirmationPresented)
+//                        }
+//                    }
+//
+//                    Spacer()
+//                }
                 
                 Spacer()
             }

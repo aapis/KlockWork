@@ -54,6 +54,7 @@ struct NoteCreate: View {
                 Spacer()
                 
                 HStack {
+                    // TODO: FancyLink()
                     NavigationLink {
                         NoteDashboard()
                             .navigationTitle("Note dashboard")
