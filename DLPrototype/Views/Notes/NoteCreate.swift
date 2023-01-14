@@ -21,16 +21,6 @@ struct NoteCreate: View {
         CoreDataJob(moc: moc).all()
     }
     
-    private var pickerItems: [CustomPickerItem] {
-        var items: [CustomPickerItem] = [CustomPickerItem(title: "Choose a job", tag: 0)]
-        
-        for job in jobs {
-            items.append(CustomPickerItem(title: job.jid.string, tag: Int(job.jid)))
-        }
-        
-        return items
-    }
-    
     var body: some View {
         if showForm {
             form
@@ -45,8 +35,7 @@ struct NoteCreate: View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 22) {
                 Title(text: "Create a note", image: "note.text.badge.plus")
-                
-                FancyPicker(onChange: pickerChange, items: pickerItems, transparent: true, labelText: "Job: \(selectedJob?.jid.string ?? "N/A")", showLabel: true)
+                JobPicker(onChange: pickerChange)
                 FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
                 
                 FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
