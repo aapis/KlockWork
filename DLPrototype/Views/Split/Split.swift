@@ -14,7 +14,8 @@ struct Split: View {
         CustomPickerItem(title: "Today", tag: 1),
         CustomPickerItem(title: "Notes", tag: 2),
         CustomPickerItem(title: "Tasks", tag: 3),
-        CustomPickerItem(title: "Import", tag: 4)
+        CustomPickerItem(title: "Projects", tag: 4),
+        CustomPickerItem(title: "Import", tag: 5)
     ]
     
     @FetchRequest(sortDescriptors: [SortDescriptor(\.postedDate, order: .reverse)]) public var notes: FetchedResults<Note>
@@ -55,10 +56,12 @@ struct Split: View {
         if left == 1 {
             Today().environmentObject(recordsModel)
         } else if left == 2 {
-            NotesHome()
+            NoteDashboard()
         } else if left == 3 {
             TaskDashboard()
         } else if left == 4 {
+            ProjectsDashboard()
+        } else if left == 5 {
             Import()
         } else {
             EmptyView()
@@ -68,10 +71,12 @@ struct Split: View {
 //        if middle == 1 {
 //            Today().environmentObject(recordsModel)
 //        } else if middle == 2 {
-//            NotesHome()
+//            NoteDashboard()
 //        } else if middle == 3 {
 //            TaskDashboard()
-//        } else if middle == 4 {
+//        } else if left == 4 {
+//          ProjectsDashboard()
+//        } else if middle == 5 {
 //            Import()
 //        } else {
 //            EmptyView()
@@ -80,10 +85,12 @@ struct Split: View {
         if right == 1 {
             Today().environmentObject(recordsModel)
         } else if right == 2 {
-            NotesHome()
+            NoteDashboard()
         } else if right == 3 {
             TaskDashboard()
-        } else if right == 4 {
+        } else if left == 4 {
+            ProjectsDashboard()
+        } else if right == 5 {
             Import()
         } else {
             EmptyView()

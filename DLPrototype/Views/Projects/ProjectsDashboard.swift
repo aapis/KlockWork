@@ -20,16 +20,6 @@ struct ProjectsDashboard: View {
     @FetchRequest(sortDescriptors: [SortDescriptor(\.jid, order: .reverse)]) public var jobs: FetchedResults<Job>
     @FetchRequest(sortDescriptors: [SortDescriptor(\.created, order: .reverse)]) public var projects: FetchedResults<Project>
     
-    private var pickerItems: [CustomPickerItem] {
-        var items: [CustomPickerItem] = [CustomPickerItem(title: "Your projects", tag: 0)]
-        
-        for project in projects {
-            items.append(CustomPickerItem(title: project.name!, tag: Int(project.pid)))
-        }
-        
-        return items
-    }
-    
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {

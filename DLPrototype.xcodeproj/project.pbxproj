@@ -48,7 +48,6 @@
 		537628A02966518B00DE8ECF /* ToolbarTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376289F2966518B00DE8ECF /* ToolbarTabs.swift */; };
 		537628A22966525500DE8ECF /* ToolbarButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537628A12966525500DE8ECF /* ToolbarButtons.swift */; };
 		537628A8296659DC00DE8ECF /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537628A7296659DC00DE8ECF /* PersistenceController.swift */; };
-		537628AA29665B2600DE8ECF /* NotesHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537628A929665B2600DE8ECF /* NotesHome.swift */; };
 		537628AC29665B4E00DE8ECF /* NoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537628AB29665B4E00DE8ECF /* NoteView.swift */; };
 		537628B429665F4E00DE8ECF /* Data.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 537628B229665F4E00DE8ECF /* Data.xcdatamodeld */; };
 		537AEB9F29627DCC00385787 /* LogTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEB9E29627DCC00385787 /* LogTable.swift */; };
@@ -156,7 +155,6 @@
 		5376289F2966518B00DE8ECF /* ToolbarTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarTabs.swift; sourceTree = "<group>"; };
 		537628A12966525500DE8ECF /* ToolbarButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarButtons.swift; sourceTree = "<group>"; };
 		537628A7296659DC00DE8ECF /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
-		537628A929665B2600DE8ECF /* NotesHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesHome.swift; sourceTree = "<group>"; };
 		537628AB29665B4E00DE8ECF /* NoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteView.swift; sourceTree = "<group>"; };
 		537628B329665F4E00DE8ECF /* Note.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Note.xcdatamodel; sourceTree = "<group>"; };
 		537AEB9E29627DCC00385787 /* LogTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTable.swift; sourceTree = "<group>"; };
@@ -428,7 +426,6 @@
 		537628AD29665B7B00DE8ECF /* Notes */ = {
 			isa = PBXGroup;
 			children = (
-				537628A929665B2600DE8ECF /* NotesHome.swift */,
 				537628AB29665B4E00DE8ECF /* NoteView.swift */,
 				53999C1E29669C4E00125E65 /* NoteCreate.swift */,
 				53152CE3296BC8A100A14E43 /* NoteDashboard.swift */,
@@ -727,7 +724,6 @@
 				539C0E75296CC34600023370 /* Manage.swift in Sources */,
 				53152CD0296A245200A14E43 /* ClipboardHelper.swift in Sources */,
 				53B0BE90297333C3007CB663 /* ManageProjects.swift in Sources */,
-				537628AA29665B2600DE8ECF /* NotesHome.swift in Sources */,
 				53B0BE8129725B52007CB663 /* CoreDataProjects.swift in Sources */,
 				53152CCC2969453000A14E43 /* DateHelper.swift in Sources */,
 				539C96EA27EE7AFF007DA058 /* CalendarThisWeek.swift in Sources */,

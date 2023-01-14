@@ -10,135 +10,153 @@ import Foundation
 import SwiftUI
 
 struct NoteDashboard: View {
-    @Environment(\.managedObjectContext) var managedObjectContext
+    @State private var searchText: String = ""
+    @State private var selected: Int = 0
+    @State private var note: Note?
     
-    @FetchRequest public var recent: FetchedResults<Note>
-    @FetchRequest public var starred: FetchedResults<Note>
+    @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var updater: ViewUpdater
+    
+    @FetchRequest public var notes: FetchedResults<Note>
     
     public init() {
         let request: NSFetchRequest<Note> = Note.fetchRequest()
-        request.fetchLimit = 5
         request.predicate = NSPredicate(format: "postedDate > %@ && alive = true", DateHelper.daysPast(7))
         request.sortDescriptors = [
-            NSSortDescriptor(keyPath: \Note.lastUpdate, ascending: false),
-            NSSortDescriptor(keyPath: \Note.postedDate, ascending: false)
+            NSSortDescriptor(keyPath: \Note.starred, ascending: false),
+            NSSortDescriptor(keyPath: \Note.lastUpdate, ascending: false)            
         ]
         
-        _recent = FetchRequest(fetchRequest: request, animation: .easeInOut)
-        
-        let starReq: NSFetchRequest<Note> = Note.fetchRequest()
-        starReq.fetchLimit = 5
-        starReq.predicate = NSPredicate(format: "starred = true && alive = true")
-        starReq.sortDescriptors = [
-            NSSortDescriptor(keyPath: \Note.lastUpdate, ascending: false)
-        ]
-        
-        _starred = FetchRequest(fetchRequest: starReq, animation: .easeInOut)
+        _notes = FetchRequest(fetchRequest: request, animation: .easeInOut)
     }
     
     var body: some View {
         VStack(alignment: .leading) {
-            VStack {
-                HStack {
-                    Title(text: "Long-form", image: "note.text")
-                    Spacer()
-                }
-            }.padding()
-            
             VStack(alignment: .leading) {
-                Text("Please select a note, or create a new one")
-                
-                NavigationLink {
-                    NoteCreate()
-                        .navigationTitle("Create a note")
-                } label: {
-                    Image(systemName: "note.text.badge.plus")
-                    
-                }
-                .buttonStyle(.borderless)
-                .foregroundColor(Color.white)
-                .font(.title3)
-                .padding()
-                .background(Color.black.opacity(0.2))
-                .onHover { inside in
-                    if inside {
-                        NSCursor.pointingHand.push()
-                    } else {
-                        NSCursor.pop()
-                    }
-                }
-                
-                VStack(alignment: .leading) {
-                    Divider()
-                        .frame(height: 20)
-                        .foregroundColor(.clear)
+                create
+                search
 
-                    HStack {
-                        if starred.count > 0 {
-                            VStack(alignment: .leading) {
-                                Text("Favourites")
-                                    .font(.title2)
-                                
-                                List(starred) { note in
-                                    NavigationLink {
-                                        NoteView(note: note)
-                                            .navigationTitle("Editing note \(note.title!)")
-                                    } label: {
-                                        HStack {
-                                            Text(note.title!)
-                                            Spacer()
-                                            Text("v\(note.versions?.count ?? 0)")
-                                                .help("Current version")
-                                            if note.lastUpdate != nil {
-                                                Image(systemName: "arrow.triangle.2.circlepath")
-                                                    .help("Updated \(DateHelper.shortDateWithTime(note.lastUpdate!))")
-                                            } else {
-                                                Image(systemName: "note.text.badge.plus")
-                                                    .help("Created \(DateHelper.shortDateWithTime(note.postedDate!))")
-                                            }
-                                            
-//                                            FancyButton(text: "Star", action: {}, icon: "star.fill", altIcon: "star", transparent: true, showLabel: false)
-                                        }
-                                    }
-                                }
-                                .listStyle(.inset(alternatesRowBackgrounds: true))
-                            }
-                        }
-                        
-                        VStack(alignment: .leading) {
-                            Text("Recent Notes")
-                                .font(.title2)
-                            
-                            List(recent) { note in
-                                NavigationLink {
-                                    NoteView(note: note)
-                                        .navigationTitle("Editing note \(note.title!)")
-                                } label: {
-                                    HStack {
-                                        Text(note.title!)
-                                        Spacer()
-                                        Text("v\(note.versions?.count ?? 0)")
-                                            .help("Current version")
-                                        if note.lastUpdate != nil {
-                                            Image(systemName: "arrow.triangle.2.circlepath")
-                                                .help("Updated \(DateHelper.shortDateWithTime(note.lastUpdate!))")
-                                        } else {
-                                            Image(systemName: "pencil")
-                                                .help("Created \(DateHelper.shortDateWithTime(note.postedDate!))")
-                                        }
-                                        
-//                                        FancyButton(text: "Delete", action: {}, icon: "xmark", transparent: true, showLabel: false)
-//                                        FancyButton(text: "Star", action: {}, icon: "star", altIcon: "star.fill", transparent: true, showLabel: false)
-                                    }
-                                }
-                            }
-                            .listStyle(.inset(alternatesRowBackgrounds: true))
-                        }
-                    }
-                }
-            }.padding()
+                Spacer()
+            }
+            .padding()
         }
         .background(Theme.toolbarColour)
+    }
+    
+    @ViewBuilder
+    var create: some View {
+        HStack {
+            Title(text: "Create", image: "pencil")
+        }
+        
+        FancyLink(icon: "note.text.badge.plus", destination: AnyView(NoteCreate()))
+        FancyDivider()
+    }
+    
+    @ViewBuilder
+    var search: some View {
+        HStack {
+            Title(text: "Search", image: "note.text")
+            Spacer()
+        }
+        
+        SearchBar(
+            text: $searchText,
+            disabled: false,
+            placeholder: "Search \(notes.count) notes"
+        )
+        
+        if notes.count < 100 {
+            Grid(horizontalSpacing: 1, verticalSpacing: 1) {
+                HStack(spacing: 0) {
+                    GridRow {
+                        Group {
+                            ZStack(alignment: .leading) {
+                                Theme.headerColour
+                                Text("Name")
+                                    .padding()
+                            }
+                        }
+                        Group {
+                            ZStack {
+                                Theme.headerColour
+                                Text("Star")
+                                    .padding()
+                            }
+                        }
+                        .frame(width: 100)
+                        Group {
+                            ZStack {
+                                Theme.headerColour
+                                Text("Versions")
+                                    .padding()
+                            }
+                        }
+                        .frame(width: 100)
+                        
+                        Group {
+                            ZStack {
+                                Theme.headerColour
+                                Text("Alive")
+                                    .padding()
+                            }
+                        }
+                        .frame(width: 100)
+                    }
+                }
+                .frame(height: 40)
+                
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 1) {
+                        ForEach(filter(notes)) { note in
+                            GridRow {
+                                HStack(spacing: 1) {
+                                    Group {
+                                        ZStack(alignment: .leading) {
+                                            Theme.rowColour
+                                            FancyTextLink(text: note.title!, destination: AnyView(NoteView(note: note)))
+                                        }
+                                    }
+                                    
+                                    Group {
+                                        ZStack {
+                                            Theme.rowColour
+                                            
+                                            if note.starred {
+                                                Image(systemName: "star.fill")
+                                                    .padding()
+                                            }
+                                        }
+                                    }
+                                    .frame(width: 100)
+                                    
+                                    Group {
+                                        ZStack {
+                                            Theme.rowColour
+                                            Text("\(note.versions!.count)")
+                                                .padding()
+                                        }
+                                    }
+                                    .frame(width: 100)
+                                    
+                                    Group {
+                                        ZStack {
+                                            (note.alive ? Theme.rowStatusGreen : Color.red.opacity(0.2))
+                                        }
+                                    }
+                                    .frame(width: 100)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .font(Theme.font)
+        }
+    }
+    
+    private func filter(_ notes: FetchedResults<Note>) -> [Note] {
+        return SearchHelper(bucket: notes).findInNotes($searchText)
     }
 }
 

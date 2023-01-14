@@ -83,7 +83,7 @@ struct Home: View {
                 }
                 
                 NavigationLink {
-                    NotesHome()
+                    NoteDashboard()
                         .navigationTitle("Notes")
                         .navigationSplitViewColumnWidth(ideal: 300)
                         .toolbar {
