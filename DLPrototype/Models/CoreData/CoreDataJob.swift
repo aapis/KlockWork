@@ -34,15 +34,49 @@ public class CoreDataJob {
         return nil
     }
     
-    public func all() -> [Job] {
+    public func all(_ stillAlive: Bool? = true) -> [Job] {
         var all: [Job] = []
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.jid, ascending: false)]
+        
+        if stillAlive! {
+            fetch.predicate = NSPredicate(format: "alive = true")
+        }
         
         do {
             all = try moc!.fetch(fetch)
         } catch {
             print("Couldn't retrieve all jobs")
+        }
+        
+        return all
+    }
+    
+    public func owned() -> [Job] {
+        var all: [Job] = []
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.jid, ascending: false)]
+        fetch.predicate = NSPredicate(format: "project != nil")
+        
+        do {
+            all = try moc!.fetch(fetch)
+        } catch {
+            print("Couldn't retrieve all owned jobs")
+        }
+        
+        return all
+    }
+    
+    public func unowned() -> [Job] {
+        var all: [Job] = []
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.jid, ascending: false)]
+        fetch.predicate = NSPredicate(format: "project = nil")
+        
+        do {
+            all = try moc!.fetch(fetch)
+        } catch {
+            print("Couldn't retrieve all unowned jobs")
         }
         
         return all

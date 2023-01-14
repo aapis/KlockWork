@@ -15,8 +15,6 @@ struct NoteDashboard: View {
     @FetchRequest public var recent: FetchedResults<Note>
     @FetchRequest public var starred: FetchedResults<Note>
     
-    @State private var noteListId: UUID = UUID()
-    
     public init() {
         let request: NSFetchRequest<Note> = Note.fetchRequest()
         request.fetchLimit = 5

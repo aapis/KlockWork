@@ -161,6 +161,26 @@ struct Home: View {
                             .padding(.trailing, 10)
                         Text("Manage")
                     }
+                    
+                    NavigationLink {
+                        ProjectsDashboard()
+                            .navigationTitle("Projects")
+                            .environmentObject(recordsModel)
+                            .environmentObject(updater)
+                            .toolbar {
+                                if showExperimentalFeatures {
+                                    Button(action: {}, label: {
+                                        Image(systemName: "arrow.triangle.2.circlepath")
+                                    })
+                                    .buttonStyle(.borderless)
+                                    .font(.title)
+                                }
+                            }
+                    } label: {
+                        Image(systemName: "folder")
+                            .padding(.trailing, 10)
+                        Text("Projects")
+                    }
                 
                     NavigationLink {
                         CalendarView()
@@ -172,7 +192,6 @@ struct Home: View {
                     }
                 
 
-                    // TODO: remove in a later version
                     NavigationLink {
                         Backup(category: Category(title: "Daily"))
                             .navigationTitle("Backup")

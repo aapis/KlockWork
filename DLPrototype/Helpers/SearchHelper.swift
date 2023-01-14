@@ -11,16 +11,27 @@ import SwiftUI
 
 public final class SearchHelper {
     public var bucket: [LogTask] = [] // TODO: make this class+prop generic
+    public var projectBucket: [Project] = []
     public var fields: [String] = []
     
     public init(bucket: FetchedResults<LogTask>) {
         self.bucket = Array(bucket)
     }
     
+    public init(bucket: FetchedResults<Project>) {
+        self.projectBucket = Array(bucket)
+    }
+    
     public func exec(_ searchText: Binding<String>) -> [LogTask] {
         return bucket.filter({
             matches(searchText, fields: [$0.content ?? "", $0.owner!.jid.string])
         })
+    }
+    
+    public func findInProjects(_ searchText: Binding<String>) -> [Project] {
+        return projectBucket.filter {
+            matches(searchText, fields: [$0.name!, $0.pid.string])
+        }
     }
     
     private func matches(_ searchText: Binding<String>, fields: [String]) -> Bool {

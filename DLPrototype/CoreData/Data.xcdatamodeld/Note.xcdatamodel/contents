@@ -7,6 +7,7 @@
         <attribute name="jid" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="uri" optional="YES" attributeType="URI"/>
         <relationship name="notes" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Note" inverseName="job" inverseEntity="Note"/>
+        <relationship name="project" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="jobs" inverseEntity="Project"/>
         <relationship name="records" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LogRecord" inverseName="job" inverseEntity="LogRecord"/>
         <relationship name="tasks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LogTask" inverseName="owner" inverseEntity="LogTask"/>
     </entity>
@@ -43,11 +44,20 @@
         <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="note" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Note" inverseName="versions" inverseEntity="Note"/>
     </entity>
+    <entity name="Project" representedClassName="Project" syncable="YES" codeGenerationType="class">
+        <attribute name="alive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="pid" optional="YES" attributeType="Integer 64" defaultValueString="0.0" usesScalarValueType="YES" customClassName="Int"/>
+        <relationship name="jobs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Job" inverseName="project" inverseEntity="Job"/>
+    </entity>
     <configuration name="Cloud" usedWithCloudKit="YES">
         <memberEntity name="LogRecord"/>
         <memberEntity name="Note"/>
         <memberEntity name="Job"/>
         <memberEntity name="LogTask"/>
         <memberEntity name="NoteVersion"/>
+        <memberEntity name="Project"/>
     </configuration>
 </model>
