@@ -33,13 +33,8 @@ struct ProjectsDashboard: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
-                HStack {
-                    Title(text: "Search", image: "folder")
-                    Spacer()
-                }
-
-                search
                 create
+                search
 
                 Spacer()
             }
@@ -49,88 +44,90 @@ struct ProjectsDashboard: View {
     }
     
     @ViewBuilder
+    var create: some View {
+        HStack {
+            Title(text: "Create", image: "pencil")
+        }
+        
+        FancyLink(icon: "folder.badge.plus", destination: AnyView(ProjectCreate()))
+        FancyDivider()
+    }
+    
+    @ViewBuilder
     var search: some View {
+        HStack {
+            Title(text: "Search", image: "folder")
+            Spacer()
+        }
+        
         SearchBar(
             text: $searchText,
             disabled: false,
             placeholder: "Search \(projects.count) projects"
         )
         
-        if searchText != "" {
+        if projects.count < 100 {
             Grid(horizontalSpacing: 1, verticalSpacing: 1) {
                 HStack(spacing: 0) {
                     GridRow {
                         Group {
                             ZStack(alignment: .leading) {
                                 Theme.headerColour
-                            }
-                        }
-                        .frame(width: 50)
-                        Group {
-                            ZStack(alignment: .leading) {
-                                Theme.headerColour
                                 Text("Name")
-                                    .padding(5)
+                                    .padding()
                             }
                         }
-                        .frame(width: 100)
                         Group {
                             ZStack(alignment: .leading) {
                                 Theme.headerColour
                                 Text("Owned Jobs")
-                                    .padding(5)
+                                    .padding()
+                            }
+                        }
+                        Group {
+                            ZStack(alignment: .leading) {
+                                Theme.headerColour
+                                Text("Alive")
+                                    .padding()
                             }
                         }
                     }
                 }
                 .frame(height: 40)
                 
-                GridRow {
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 1) {
-                            ForEach(filter(projects)) { task in
-                                ProjectCreate()
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 1) {
+                        ForEach(filter(projects)) { project in
+                            GridRow {
+                                HStack(spacing: 1) {
+                                    Group {
+                                        ZStack(alignment: .leading) {
+                                            Theme.rowColour
+                                            FancyTextLink(text: project.name!, destination: AnyView(ProjectView(project: project)))
+                                        }
+                                    }
+                                    
+                                    Group {
+                                        ZStack(alignment: .leading) {
+                                            Theme.rowColour
+                                            Text("\(project.jobs!.count)")
+                                                .padding()
+                                        }
+                                    }
+                                    
+                                    Group {
+                                        ZStack(alignment: .leading) {
+                                            (project.alive ? Theme.rowStatusGreen : Color.red.opacity(0.2))
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
+            .font(Theme.font)
         }
-    }
-    
-    @ViewBuilder
-    var create: some View {
-        if searchText == "" {
-            FancyDivider()
-
-            HStack {
-                Title(text: "Manage", image: "pencil")
-            }
-            
-            FancyLink(destination: AnyView(ProjectCreate()))
-            FancyDivider()
-            FancyPicker(onChange: change, items: pickerItems)
-                .onAppear(perform: setProject)
-                .onChange(of: selected) { _ in
-                    setProject()
-                }
-            
-            if selected > 0 {
-//                TaskListView(job: job!)
-            }
-        }
-    }
-    
-    private func setProject() -> Void {
-        if selected > 0 {
-            project = CoreDataProjects(moc: moc).byId(selected)
-        }
-    }
-    
-    private func change(select: Int, sender: String?) -> Void {
-        selected = select
-        
-        setProject()
     }
     
     private func filter(_ projects: FetchedResults<Project>) -> [Project] {

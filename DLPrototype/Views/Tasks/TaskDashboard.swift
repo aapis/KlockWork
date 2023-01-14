@@ -20,10 +20,21 @@ struct TaskDashboard: View {
     @FetchRequest(sortDescriptors: [SortDescriptor(\LogTask.id)]) public var tasks: FetchedResults<LogTask>
     
     private var pickerItems: [CustomPickerItem] {
-        var items: [CustomPickerItem] = [CustomPickerItem(title: "Tasks by Job ID", tag: 0)]
+        var items: [CustomPickerItem] = [CustomPickerItem(title: "Choose a job", tag: 0)]
+        let projects = CoreDataProjects(moc: moc).all()
         
-        for job in jobs {
-            items.append(CustomPickerItem(title: job.jid.string, tag: Int(job.jid)))
+        for project in projects {
+            if project.jobs!.count > 0 {
+                items.append(CustomPickerItem(title: "Project: \(project.name!)", tag: Int(-1)))
+                
+                if project.jobs != nil {
+                    let jobs = project.jobs!.allObjects as! [Job]
+                    
+                    for job in jobs {
+                        items.append(CustomPickerItem(title: " - \(job.jid.string)", tag: Int(job.jid)))
+                    }
+                }
+            }
         }
         
         return items
@@ -109,7 +120,7 @@ struct TaskDashboard: View {
                 Title(text: "Manage tasks", image: "pencil")
             }
             
-            FancyPicker(onChange: change, items: pickerItems)
+            JobPicker(onChange: change)
                 .onAppear(perform: setJob)
                 .onChange(of: selectedJob) { _ in
                     setJob()

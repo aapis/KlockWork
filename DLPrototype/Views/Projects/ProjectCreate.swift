@@ -161,11 +161,6 @@ struct ProjectCreate: View {
         allUnOwned = CoreDataJob(moc: moc).unowned()
     }
     
-    // TODO: should not be part of this view
-    private func pickerChange(selected: Int, sender: String?) -> Void {
-        selectedJob = unownedJobs.filter({ $0.jid == Double(selected)}).first
-    }
-    
     private func selectJob(_ job: Job) -> Void {
         selectedJobs.append(job)
         allUnOwned.removeAll(where: ({$0 == job}))

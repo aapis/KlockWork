@@ -122,6 +122,26 @@ struct Home: View {
                 }
                 
                 NavigationLink {
+                    ProjectsDashboard()
+                        .navigationTitle("Projects")
+                        .environmentObject(recordsModel)
+                        .environmentObject(updater)
+                        .toolbar {
+                            if showExperimentalFeatures {
+                                Button(action: {}, label: {
+                                    Image(systemName: "arrow.triangle.2.circlepath")
+                                })
+                                .buttonStyle(.borderless)
+                                .font(.title)
+                            }
+                        }
+                } label: {
+                    Image(systemName: "folder")
+                        .padding(.trailing, 10)
+                    Text("Projects")
+                }
+                
+                NavigationLink {
                     Import()
                         .navigationTitle("Import")
                         .environmentObject(recordsModel)
@@ -160,26 +180,6 @@ struct Home: View {
                         Image(systemName: "books.vertical")
                             .padding(.trailing, 10)
                         Text("Manage")
-                    }
-                    
-                    NavigationLink {
-                        ProjectsDashboard()
-                            .navigationTitle("Projects")
-                            .environmentObject(recordsModel)
-                            .environmentObject(updater)
-                            .toolbar {
-                                if showExperimentalFeatures {
-                                    Button(action: {}, label: {
-                                        Image(systemName: "arrow.triangle.2.circlepath")
-                                    })
-                                    .buttonStyle(.borderless)
-                                    .font(.title)
-                                }
-                            }
-                    } label: {
-                        Image(systemName: "folder")
-                            .padding(.trailing, 10)
-                        Text("Projects")
                     }
                 
                     NavigationLink {

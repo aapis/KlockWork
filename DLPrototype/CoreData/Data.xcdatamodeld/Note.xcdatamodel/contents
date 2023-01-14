@@ -48,6 +48,7 @@
         <attribute name="alive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="pid" optional="YES" attributeType="Integer 64" defaultValueString="0.0" usesScalarValueType="YES" customClassName="Int"/>
         <relationship name="jobs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Job" inverseName="project" inverseEntity="Job"/>

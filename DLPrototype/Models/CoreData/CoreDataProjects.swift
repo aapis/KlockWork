@@ -31,9 +31,40 @@ public class CoreDataProjects {
             
             return results.first
         } catch {
-            print("Unable to find records for today")
+            print("Unable to find project with ID \(id)")
         }
         
         return nil
+    }
+    
+    public func all() -> [Project] {
+        var results: [Project] = []
+        let fetch: NSFetchRequest<Project> = Project.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Project.created, ascending: false)]
+
+        do {
+            results = try moc!.fetch(fetch)
+        } catch {
+            print("Unable to find all projects")
+        }
+        
+        return results
+    }
+    
+    public func alive() -> [Project] {
+        var results: [Project] = []
+        let fetch: NSFetchRequest<Project> = Project.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Project.created, ascending: false)]
+        fetch.predicate = NSPredicate(
+            format: "alive = true"
+        )
+
+        do {
+            results = try moc!.fetch(fetch)
+        } catch {
+            print("Unable to find all alive projects")
+        }
+        
+        return results
     }
 }

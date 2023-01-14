@@ -63,6 +63,10 @@
 		53B0BE86297261A3007CB663 /* ProjectCreate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE85297261A3007CB663 /* ProjectCreate.swift */; };
 		53B0BE8829726400007CB663 /* GenericToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8729726400007CB663 /* GenericToolbar.swift */; };
 		53B0BE8A2972711A007CB663 /* FancyDivider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE892972711A007CB663 /* FancyDivider.swift */; };
+		53B0BE8C297318A6007CB663 /* ProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8B297318A6007CB663 /* ProjectView.swift */; };
+		53B0BE8E29731D41007CB663 /* FancyTextLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8D29731D41007CB663 /* FancyTextLink.swift */; };
+		53B0BE90297333C3007CB663 /* ManageProjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8F297333C3007CB663 /* ManageProjects.swift */; };
+		53B0BE9229733A86007CB663 /* JobPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE9129733A86007CB663 /* JobPicker.swift */; };
 		53B940D92800A9F10024AA5F /* Records.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B940D82800A9F10024AA5F /* Records.swift */; };
 		53C6D08D2964E25400EA6129 /* EditableColumn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C6D08C2964E25400EA6129 /* EditableColumn.swift */; };
 		53C6D08F2964E25F00EA6129 /* Column.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C6D08E2964E25F00EA6129 /* Column.swift */; };
@@ -166,6 +170,10 @@
 		53B0BE85297261A3007CB663 /* ProjectCreate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectCreate.swift; sourceTree = "<group>"; };
 		53B0BE8729726400007CB663 /* GenericToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericToolbar.swift; sourceTree = "<group>"; };
 		53B0BE892972711A007CB663 /* FancyDivider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyDivider.swift; sourceTree = "<group>"; };
+		53B0BE8B297318A6007CB663 /* ProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectView.swift; sourceTree = "<group>"; };
+		53B0BE8D29731D41007CB663 /* FancyTextLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyTextLink.swift; sourceTree = "<group>"; };
+		53B0BE8F297333C3007CB663 /* ManageProjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageProjects.swift; sourceTree = "<group>"; };
+		53B0BE9129733A86007CB663 /* JobPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobPicker.swift; sourceTree = "<group>"; };
 		53B940D82800A9F10024AA5F /* Records.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Records.swift; sourceTree = "<group>"; };
 		53C6D08C2964E25400EA6129 /* EditableColumn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableColumn.swift; sourceTree = "<group>"; };
 		53C6D08E2964E25F00EA6129 /* Column.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Column.swift; sourceTree = "<group>"; };
@@ -352,6 +360,7 @@
 				533AB3F1296CA34600E91A9F /* ManageRecords.swift */,
 				533AB3F3296CA58C00E91A9F /* ManageJobs.swift */,
 				53DFF074296F124E0051DA91 /* ManageTasks.swift */,
+				53B0BE8F297333C3007CB663 /* ManageProjects.swift */,
 			);
 			path = Manage;
 			sourceTree = "<group>";
@@ -432,6 +441,7 @@
 			children = (
 				53B0BE7E2972542A007CB663 /* ProjectsDashboard.swift */,
 				53B0BE85297261A3007CB663 /* ProjectCreate.swift */,
+				53B0BE8B297318A6007CB663 /* ProjectView.swift */,
 			);
 			path = Projects;
 			sourceTree = "<group>";
@@ -445,6 +455,7 @@
 				53B0BE8329726118007CB663 /* FancyLink.swift */,
 				53FEF577296603D9000B94FC /* FancyTextField.swift */,
 				53B0BE892972711A007CB663 /* FancyDivider.swift */,
+				53B0BE8D29731D41007CB663 /* FancyTextLink.swift */,
 			);
 			path = Fancy;
 			sourceTree = "<group>";
@@ -498,6 +509,7 @@
 				531B38FB29674EC400E74013 /* Title.swift */,
 				5376289A2966467100DE8ECF /* SearchBar.swift */,
 				53B0BE8729726400007CB663 /* GenericToolbar.swift */,
+				53B0BE9129733A86007CB663 /* JobPicker.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -675,6 +687,7 @@
 				53152CE4296BC8A100A14E43 /* NoteDashboard.swift in Sources */,
 				53B0BE86297261A3007CB663 /* ProjectCreate.swift in Sources */,
 				533AB3F4296CA58C00E91A9F /* ManageJobs.swift in Sources */,
+				53B0BE8C297318A6007CB663 /* ProjectView.swift in Sources */,
 				5361DDED2971E1DF00437064 /* CoreDataNotes.swift in Sources */,
 				5309EE3D25619A6D00B3BC06 /* Backup.swift in Sources */,
 				53B0BE8429726118007CB663 /* FancyLink.swift in Sources */,
@@ -702,6 +715,7 @@
 				53F10FE0296E77BE0048D040 /* CoreDataJob.swift in Sources */,
 				533E40652970DA640007785A /* ViewUpdater.swift in Sources */,
 				53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */,
+				53B0BE9229733A86007CB663 /* JobPicker.swift in Sources */,
 				53C6D08F2964E25F00EA6129 /* Column.swift in Sources */,
 				53759E0829678DC700DCDC4B /* Import.swift in Sources */,
 				5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */,
@@ -712,6 +726,7 @@
 				53B0BE7F2972542A007CB663 /* ProjectsDashboard.swift in Sources */,
 				539C0E75296CC34600023370 /* Manage.swift in Sources */,
 				53152CD0296A245200A14E43 /* ClipboardHelper.swift in Sources */,
+				53B0BE90297333C3007CB663 /* ManageProjects.swift in Sources */,
 				537628AA29665B2600DE8ECF /* NotesHome.swift in Sources */,
 				53B0BE8129725B52007CB663 /* CoreDataProjects.swift in Sources */,
 				53152CCC2969453000A14E43 /* DateHelper.swift in Sources */,
@@ -721,6 +736,7 @@
 				537AEB9F29627DCC00385787 /* LogTable.swift in Sources */,
 				537AEBA329629DE400385787 /* LogRowActions.swift in Sources */,
 				5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */,
+				53B0BE8E29731D41007CB663 /* FancyTextLink.swift in Sources */,
 				53152CD4296A296A00A14E43 /* FancyButton.swift in Sources */,
 				53DCA3422803BBBF0032FD60 /* CalendarView.swift in Sources */,
 				5367FAF0296772730060D2AA /* Split.swift in Sources */,
@@ -900,7 +916,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 59;
+				CURRENT_PROJECT_VERSION = 60;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -927,7 +943,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 59;
+				CURRENT_PROJECT_VERSION = 60;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
