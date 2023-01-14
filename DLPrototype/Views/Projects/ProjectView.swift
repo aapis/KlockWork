@@ -48,10 +48,13 @@ struct ProjectView: View {
                 
                 HStack {
                     Toggle("Project is active", isOn: $alive)
-                        .onAppear(perform: {alive = project.alive})
-                        .onChange(of: alive) { _ in
-                            project.alive.toggle()
-                        }
+                        .onAppear(perform: {
+                            if project.alive {
+                                alive = true
+                            } else {
+                                alive = false
+                            }
+                        })
                 }
                 
                 form
