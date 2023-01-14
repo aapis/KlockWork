@@ -74,7 +74,7 @@ struct Split: View {
 //            NoteDashboard()
 //        } else if middle == 3 {
 //            TaskDashboard()
-//        } else if left == 4 {
+//        } else if middle == 4 {
 //          ProjectsDashboard()
 //        } else if middle == 5 {
 //            Import()
@@ -88,7 +88,7 @@ struct Split: View {
             NoteDashboard()
         } else if right == 3 {
             TaskDashboard()
-        } else if left == 4 {
+        } else if right == 4 {
             ProjectsDashboard()
         } else if right == 5 {
             Import()

@@ -67,6 +67,7 @@ struct ProjectsDashboard: View {
                                     .padding()
                             }
                         }
+                        
                         Group {
                             ZStack(alignment: .leading) {
                                 Theme.headerColour
@@ -74,6 +75,7 @@ struct ProjectsDashboard: View {
                                     .padding()
                             }
                         }
+                        
                         Group {
                             ZStack(alignment: .leading) {
                                 Theme.headerColour
