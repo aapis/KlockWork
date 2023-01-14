@@ -119,7 +119,11 @@ struct ToolbarButtons: View {
     private func copyAll() -> Void {        
         var pasteboardContents = ""
         for record in records {
-            pasteboardContents += "\(record.timestamp!) - \(record.job?.jid.string ?? "No ID") - \(record.message!)"
+            if record.job != nil {
+                if record.job!.jid != 11.0 {
+                    pasteboardContents += "\(record.timestamp!) - \(record.job!.jid.string) - \(record.message!)\n"
+                }
+            }
         }
         
         ClipboardHelper.copy(pasteboardContents)
