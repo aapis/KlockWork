@@ -21,6 +21,10 @@ struct ProjectView: View {
     @State private var allUnOwned: [Job] = []
     @State private var selectAllToggleAssociated: Bool = false
     @State private var selectAllToggleUnassociated: Bool = false
+    // for Toolbar
+    @State private var selectedTab: Int = 0
+    @State private var isShowingAlert: Bool = false
+    @State private var buttons: [ToolbarButton] = []
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
@@ -33,6 +37,7 @@ struct ProjectView: View {
         CoreDataJob(moc: moc).unowned()
     }
     
+    // MARK: body view
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
@@ -87,17 +92,32 @@ struct ProjectView: View {
         }
     }
     
+    // MARK: form view
     @ViewBuilder
     var form: some View {
+        FancyTextField(placeholder: "Project name", lineLimit: 1, onSubmit: {}, text: $name)
+        FancyDivider()
+        
+        toolbar
+    }
+    
+    // MARK: jobAssignment view, job tab view
+    @ViewBuilder
+    var jobAssignment: some View {
         associatedJobs
         unOwnedJobs
     }
     
+    // MARK: toolbar view
+    @ViewBuilder
+    var toolbar: some View {
+        FancyGenericToolbar(buttons: buttons)
+            .onAppear(perform: createToolbar)
+    }
+    
+    // MARK: associated jobs view
     @ViewBuilder
     var associatedJobs: some View {
-        FancyTextField(placeholder: "Project name", lineLimit: 1, onSubmit: {}, text: $name)
-        FancyDivider()
-        
         HStack {
             Text("Jobs associated to this project")
                 .font(Theme.font)
@@ -169,6 +189,7 @@ struct ProjectView: View {
         }
     }
     
+    // MARK: unowned jobs view
     @ViewBuilder
     var unOwnedJobs: some View {
         HStack {
@@ -242,13 +263,20 @@ struct ProjectView: View {
         }
     }
     
+    private func createToolbar() -> Void {
+        // TODO: apply this pattern to Today view
+        buttons = [
+            ToolbarButton(id: 0, helpText: "Assign jobs to the project", label: AnyView(Image(systemName: "square.grid.3x1.fill.below.line.grid.1x2")), contents: AnyView(jobAssignment)),
+            ToolbarButton(id: 1, helpText: "Create/assign configurations to the project", label: AnyView(Image(systemName: "circles.hexagongrid.fill")))
+        ]
+    }
+    
     private func update() -> Void {
         project.name = name
         project.jobs = []
         project.alive = alive
         project.lastUpdate = Date()
         lastUpdate = project.lastUpdate!
-        
         
         for job in selectedJobs {
             project.addToJobs(job)
