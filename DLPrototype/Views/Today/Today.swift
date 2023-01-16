@@ -15,7 +15,7 @@ struct Today : View, Identifiable {
     // only treated as a string, no need to be URL-type
     @State private var taskUrl: String = ""
     @State private var recentJobs: [CustomPickerItem] = [CustomPickerItem(title: "Recent jobs", tag: 0)]
-    @State private var jobPickerSelection = 0
+    @State private var jobIdFieldColour: Color = Theme.toolbarColour
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
@@ -114,35 +114,13 @@ struct Today : View, Identifiable {
     
     private func pickerChange(selected: Int, sender: String?) -> Void {
         jobId = String(selected)
+//        let foundJob = today.jobs!.first(where: ({$0.jid.string == jobId}))
+//        
+//        jobIdFieldColour = foundJob.colour
     }
 
     public func reloadUi() -> Void {
-        updateRecentJobs()
         updater.update()
-    }
-    
-    private func updateRecentJobs() -> Void {
-        var jobs: [String] = []
-
-        // reset the recent jobs picker items
-        recentJobs = []
-        recentJobs.append(CustomPickerItem(title: "Recent jobs", tag: 0))
-        
-        if today.count > 0 {
-            for record in today {
-                if record.job?.jid.string != nil {
-                    jobs.append((record.job?.jid.string)!)
-                }
-            }
-            
-            let unique = Array(Set(jobs))
-            
-            for jid in unique {
-                let correctedJid = String(jid.dropLast(2))
-                
-                recentJobs.append(CustomPickerItem(title: correctedJid, tag: Int(correctedJid) ?? 1))
-            }
-        }
     }
     
     private func submitAction() -> Void {

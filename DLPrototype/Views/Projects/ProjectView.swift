@@ -22,7 +22,7 @@ struct ProjectView: View {
     @State private var selectAllToggleAssociated: Bool = false
     @State private var selectAllToggleUnassociated: Bool = false
     // for Toolbar
-    @State private var selectedTab: Int = 0
+//    @State private var selectedTab: Int = 0
     @State private var isShowingAlert: Bool = false
     @State private var buttons: [ToolbarButton] = []
     
@@ -159,9 +159,8 @@ struct ProjectView: View {
                         Group {
                             ZStack {
                                 Theme.rowColour
-                                Button(action: {deSelectJob(job)}) {
-                                    Text("Remove")
-                                }
+                                
+                                FancyButton(text: "Remove job", action: {deSelectJob(job)}, icon: "multiply", transparent: true, showLabel: false)
                             }
                         }
                         .frame(width: 80)
@@ -233,9 +232,8 @@ struct ProjectView: View {
                         Group {
                             ZStack {
                                 Theme.rowColour
-                                Button(action: {selectJob(job)}) {
-                                    Text("Add")
-                                }
+                                
+                                FancyButton(text: "Remove job", action: {deSelectJob(job)}, icon: "plus", transparent: true, showLabel: false)
                             }
                         }
                         .frame(width: 80)
@@ -266,8 +264,18 @@ struct ProjectView: View {
     private func createToolbar() -> Void {
         // TODO: apply this pattern to Today view
         buttons = [
-            ToolbarButton(id: 0, helpText: "Assign jobs to the project", label: AnyView(Image(systemName: "square.grid.3x1.fill.below.line.grid.1x2")), contents: AnyView(jobAssignment)),
-            ToolbarButton(id: 1, helpText: "Create/assign configurations to the project", label: AnyView(Image(systemName: "circles.hexagongrid.fill")))
+            ToolbarButton(
+                id: 0,
+                helpText: "Assign jobs to the project",
+                label: AnyView(Image(systemName: "square.grid.3x1.fill.below.line.grid.1x2")),
+                contents: AnyView(jobAssignment)
+            ),
+            ToolbarButton(
+                id: 1,
+                helpText: "Create/assign configurations to the project",
+                label: AnyView(Image(systemName: "circles.hexagongrid.fill")),
+                contents: AnyView(ProjectConfig(project: project))
+            )
         ]
     }
     

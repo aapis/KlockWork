@@ -53,6 +53,9 @@
 		537AEBA1296287B900385787 /* LogRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA0296287B900385787 /* LogRow.swift */; };
 		537AEBA329629DE400385787 /* LogRowActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA229629DE400385787 /* LogRowActions.swift */; };
 		53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A19297377A7007A2549 /* FancyGenericToolbar.swift */; };
+		53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1C2973897F007A2549 /* ProjectConfig.swift */; };
+		53959A1F29738AAA007A2549 /* FancySubTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1E29738AAA007A2549 /* FancySubTitle.swift */; };
+		53959A212973D3E5007A2549 /* CoreDataProjectConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A202973D3E5007A2549 /* CoreDataProjectConfiguration.swift */; };
 		53999C1F29669C4E00125E65 /* NoteCreate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53999C1E29669C4E00125E65 /* NoteCreate.swift */; };
 		539C0E75296CC34600023370 /* Manage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533AB3EA296C9A1900E91A9F /* Manage.swift */; };
 		539C96EA27EE7AFF007DA058 /* CalendarThisWeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539C96E927EE7AFF007DA058 /* CalendarThisWeek.swift */; };
@@ -159,6 +162,9 @@
 		537AEBA0296287B900385787 /* LogRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRow.swift; sourceTree = "<group>"; };
 		537AEBA229629DE400385787 /* LogRowActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRowActions.swift; sourceTree = "<group>"; };
 		53959A19297377A7007A2549 /* FancyGenericToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyGenericToolbar.swift; sourceTree = "<group>"; };
+		53959A1C2973897F007A2549 /* ProjectConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfig.swift; sourceTree = "<group>"; };
+		53959A1E29738AAA007A2549 /* FancySubTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancySubTitle.swift; sourceTree = "<group>"; };
+		53959A202973D3E5007A2549 /* CoreDataProjectConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataProjectConfiguration.swift; sourceTree = "<group>"; };
 		53999C1E29669C4E00125E65 /* NoteCreate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteCreate.swift; sourceTree = "<group>"; };
 		539C96E927EE7AFF007DA058 /* CalendarThisWeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarThisWeek.swift; sourceTree = "<group>"; };
 		53B0BE7E2972542A007CB663 /* ProjectsDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsDashboard.swift; sourceTree = "<group>"; };
@@ -405,6 +411,7 @@
 				5361DDEC2971E1DF00437064 /* CoreDataNotes.swift */,
 				53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */,
 				53B0BE8029725B52007CB663 /* CoreDataProjects.swift */,
+				53959A202973D3E5007A2549 /* CoreDataProjectConfiguration.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -435,6 +442,7 @@
 				53B0BE7E2972542A007CB663 /* ProjectsDashboard.swift */,
 				53B0BE85297261A3007CB663 /* ProjectCreate.swift */,
 				53B0BE8B297318A6007CB663 /* ProjectView.swift */,
+				53959A1C2973897F007A2549 /* ProjectConfig.swift */,
 			);
 			path = Projects;
 			sourceTree = "<group>";
@@ -450,6 +458,7 @@
 				53B0BE892972711A007CB663 /* FancyDivider.swift */,
 				53B0BE8D29731D41007CB663 /* FancyTextLink.swift */,
 				53959A19297377A7007A2549 /* FancyGenericToolbar.swift */,
+				53959A1E29738AAA007A2549 /* FancySubTitle.swift */,
 			);
 			path = Fancy;
 			sourceTree = "<group>";
@@ -658,6 +667,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				53FEF578296603D9000B94FC /* FancyTextField.swift in Sources */,
+				53959A1F29738AAA007A2549 /* FancySubTitle.swift in Sources */,
 				537628B429665F4E00DE8ECF /* Data.xcdatamodeld in Sources */,
 				53EDDF9E29634852008D34C7 /* Entry.swift in Sources */,
 				53C6D0912965044C00EA6129 /* DetailsColumn.swift in Sources */,
@@ -685,6 +695,7 @@
 				53C6D08D2964E25400EA6129 /* EditableColumn.swift in Sources */,
 				53DFF075296F124E0051DA91 /* ManageTasks.swift in Sources */,
 				533E40682970DD170007785A /* AutoFixJobs.swift in Sources */,
+				53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */,
 				5376289E29664F8C00DE8ECF /* Theme.swift in Sources */,
 				53C6D09829654F4C00EA6129 /* DetailGroup.swift in Sources */,
 				533E406A2970F5610007785A /* SearchHelper.swift in Sources */,
@@ -696,6 +707,7 @@
 				53B0BE8829726400007CB663 /* GenericToolbar.swift in Sources */,
 				53999C1F29669C4E00125E65 /* NoteCreate.swift in Sources */,
 				53759E0D2967ECAE00DCDC4B /* LogRecords.swift in Sources */,
+				53959A212973D3E5007A2549 /* CoreDataProjectConfiguration.swift in Sources */,
 				53F10FE0296E77BE0048D040 /* CoreDataJob.swift in Sources */,
 				533E40652970DA640007785A /* ViewUpdater.swift in Sources */,
 				53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */,

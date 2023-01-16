@@ -9,6 +9,7 @@
 import Foundation
 import SwiftUI
 
+// TODO: replace this entire class with "CONTAINS[c]" predicates
 public final class SearchHelper {
     public var bucket: [LogTask] = [] // TODO: make this class+prop generic
     public var projectBucket: [Project] = []

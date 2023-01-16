@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22C65" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="BannedWords" representedClassName="BannedWords" syncable="YES" codeGenerationType="class">
+    <entity name="BannedWord" representedClassName="BannedWord" syncable="YES" codeGenerationType="class">
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="word" optional="YES" attributeType="String"/>
         <relationship name="configurations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ProjectConfiguration" inverseName="bannedWords" inverseEntity="ProjectConfiguration"/>
@@ -63,7 +64,7 @@
     <entity name="ProjectConfiguration" representedClassName="ProjectConfiguration" syncable="YES" codeGenerationType="class">
         <attribute name="exportFormat" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <relationship name="bannedWords" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BannedWords" inverseName="configurations" inverseEntity="BannedWords"/>
+        <relationship name="bannedWords" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="BannedWord" inverseName="configurations" inverseEntity="BannedWord"/>
         <relationship name="exportIgnoresJobs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Job" inverseName="ignoredByConfiguration" inverseEntity="Job"/>
         <relationship name="projects" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Project" inverseName="configuration" inverseEntity="Project"/>
     </entity>
@@ -74,7 +75,7 @@
         <memberEntity name="LogTask"/>
         <memberEntity name="NoteVersion"/>
         <memberEntity name="Project"/>
-        <memberEntity name="BannedWords"/>
+        <memberEntity name="BannedWord"/>
         <memberEntity name="ProjectConfiguration"/>
     </configuration>
 </model>
