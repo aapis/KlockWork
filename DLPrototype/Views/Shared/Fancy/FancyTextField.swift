@@ -15,6 +15,8 @@ struct FancyTextField: View {
     public var onSubmit: () -> Void
     public var transparent: Bool? = false
     public var disabled: Bool? = false
+    public var fgColour: Color? = Color.white
+    public var bgColour: Color? = Color.black.opacity(0.1)
     
     @Binding public var text: String
     
@@ -39,11 +41,11 @@ struct FancyTextField: View {
             .disableAutocorrection(enableAutoCorrection)
             .padding()
             .onSubmit(onSubmit)
-            .background(transparent! ? Color.clear : Theme.toolbarColour)
+            .background(transparent! ? Color.clear : bgColour)
             .frame(height: 45)
             .lineLimit(1)
             .disabled(disabled ?? false)
-            .foregroundColor(disabled ?? false ? Color.gray : Color.white)
+            .foregroundColor(disabled ?? false ? Color.gray : fgColour)
             .textSelection(.enabled)
     }
     
@@ -54,10 +56,10 @@ struct FancyTextField: View {
             .disableAutocorrection(enableAutoCorrection)
             .padding()
             .onSubmit(onSubmit)
-            .background(transparent! ? Color.clear : Theme.toolbarColour)
+            .background(transparent! ? Color.clear : bgColour)
             .lineLimit(lineLimit...)
             .disabled(disabled ?? false)
-            .foregroundColor(disabled ?? false ? Color.gray : Color.white)
+            .foregroundColor(disabled ?? false ? Color.gray : fgColour)
             .textSelection(.enabled)
     }
     
@@ -68,11 +70,11 @@ struct FancyTextField: View {
             .disableAutocorrection(enableAutoCorrection)
             .padding()
             .onSubmit(onSubmit)
-            .background(transparent! ? Color.black.opacity(0.1) : Theme.toolbarColour)
+            .background(transparent! ? Color.black.opacity(0.1) : bgColour)
             .scrollContentBackground(.hidden)
             .lineLimit(lineLimit...)
             .disabled(disabled ?? false)
-            .foregroundColor(disabled ?? false ? Color.gray : Color.white)
+            .foregroundColor(disabled ?? false ? Color.gray : fgColour)
             .textSelection(.enabled)
     }
 }

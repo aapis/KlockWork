@@ -15,7 +15,8 @@ struct Today : View, Identifiable {
     // only treated as a string, no need to be URL-type
     @State private var taskUrl: String = ""
     @State private var recentJobs: [CustomPickerItem] = [CustomPickerItem(title: "Recent jobs", tag: 0)]
-    @State private var jobIdFieldColour: Color = Theme.toolbarColour
+    @State private var jobIdFieldColour: Color = Color.clear
+    @State private var jobIdFieldTextColour: Color = Color.black
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
@@ -23,6 +24,7 @@ struct Today : View, Identifiable {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var recordsModel: LogRecords
+    @EnvironmentObject public var jobModel: CoreDataJob
     
     @FetchRequest(
         sortDescriptors: [
@@ -66,16 +68,32 @@ struct Today : View, Identifiable {
     var editor: some View {
         VStack(alignment: .leading) {
             HStack {
-                FancyTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, text: $jobId)
-                    .frame(width: 200, height: 40)
+                ZStack {
+                    FancyTextField(
+                        placeholder: "Job ID",
+                        lineLimit: 1,
+                        onSubmit: {},
+                        fgColour: jobIdFieldTextColour,
+                        bgColour: jobIdFieldColour,
+                        text: $jobId
+                    )
+                    .border(.black.opacity(0.1), width: 2)
+                    .onChange(of: jobId) { _ in
+                        if jobId != "" {
+                            if let iJid = Int(jobId) {
+                                pickerChange(selected: iJid, sender: nil)
+                            }
+                        }
+                    }
+                    
+                    JobPicker(onChange: pickerChange)
+                        .padding([.leading], 80)
+                }
+                .frame(width: 350, height: 40)
                 
                 Text("Or").font(Theme.font)
                 
                 FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
-                
-                JobPicker(onChange: pickerChange)
-                    .id(updater.ids["today.picker"])
-                    .onAppear(perform: reloadUi)
             }
             
             VStack {
@@ -114,9 +132,11 @@ struct Today : View, Identifiable {
     
     private func pickerChange(selected: Int, sender: String?) -> Void {
         jobId = String(selected)
-//        let foundJob = today.jobs!.first(where: ({$0.jid.string == jobId}))
-//        
-//        jobIdFieldColour = foundJob.colour
+        
+        if let selectedJob = jobModel.byId(Double(jobId)!) {
+            jobIdFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
+            jobIdFieldTextColour = jobIdFieldColour.isBright() ? Color.black : Color.white
+        }
     }
 
     public func reloadUi() -> Void {

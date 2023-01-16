@@ -18,6 +18,7 @@ struct Home: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var recordsModel: LogRecords
+    @EnvironmentObject public var jobModel: CoreDataJob
     
     @State private var selected: String?
     @State public var appVersion: String?
@@ -67,6 +68,7 @@ struct Home: View {
                     Today()
                         .navigationTitle("Today")
                         .environmentObject(recordsModel)
+                        .environmentObject(jobModel)
                         .environmentObject(updater)
                         .toolbar {
                             Button(action: redraw, label: {

@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 
-public class CoreDataJob {
+public class CoreDataJob: ObservableObject {
     public var moc: NSManagedObjectContext?
     
     public init(moc: NSManagedObjectContext?) {

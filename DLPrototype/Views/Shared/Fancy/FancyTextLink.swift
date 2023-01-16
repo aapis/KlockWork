@@ -14,6 +14,8 @@ struct FancyTextLink: View {
     public var transparent: Bool? = true
     public var showIcon: Bool? = false
     public var destination: AnyView?
+    public var fgColour: Color? = Color.white
+    public var bgColour: Color? = Color.black.opacity(0.2)
     
     var body: some View {
         VStack {
@@ -28,10 +30,10 @@ struct FancyTextLink: View {
                     .font(Theme.font)
             }
             .buttonStyle(.borderless)
-            .foregroundColor(Color.white)
+            .foregroundColor(fgColour)
             .font(.title3)
             .padding()
-            .background(transparent! ? Color.clear : Color.black.opacity(0.2))
+            .background(transparent! ? Color.clear : bgColour)
             .onHover { inside in
                 if inside {
                     NSCursor.pointingHand.push()
