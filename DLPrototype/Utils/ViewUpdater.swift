@@ -15,7 +15,9 @@ public class ViewUpdater: ObservableObject {
         "ltd.rows": UUID(),
         "dg.hasView": UUID(),
         "dg.hasNoView": UUID(),
-        "tlv.table": UUID()
+        "tlv.table": UUID(),
+        "pv.form": UUID(),
+        "pc.form": UUID()
     ]
     
     public func update() -> Void {

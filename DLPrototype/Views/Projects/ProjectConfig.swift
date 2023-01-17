@@ -14,8 +14,11 @@ struct ProjectConfig: View {
     
     @State private var bannedWords: [BannedWord] = []
     @State private var bannedWord: String = ""
-    @State private var ignoredJobs: [Job] = []
-    @State private var savedJobs: [Job] = []
+    
+    static private var exportFormatPickerItems: [CustomPickerItem] = [
+        CustomPickerItem(title: "Choose an export format", tag: 0),
+        CustomPickerItem(title: "Standard", tag: 1)
+    ]
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
@@ -41,152 +44,13 @@ struct ProjectConfig: View {
             }
             
             FancyDivider()
+            FancySubTitle(text: "Export format", image: "arrow.down.to.line")
+            FancyPicker(onChange: change, items: ProjectConfig.exportFormatPickerItems)
             
-            HStack(spacing: 5) {
-                Grid(alignment: .leading, horizontalSpacing: 1, verticalSpacing: 1) {
-                    GridRow {
-                        FancySubTitle(text: "Ignored Jobs", image: "nosign")
-                    }
-                    
-                    ignoredJobsView
-                }
-                
-                Grid(alignment: .leading, horizontalSpacing: 1, verticalSpacing: 1) {
-                    GridRow {
-                        FancySubTitle(text: "Ignore-able jobs", image: "plus")
-                    }
-                    
-                    currentlyAssignedJobsView
-                }
-            }
+            Spacer()
         }
         .onAppear(perform: onAppear)
-    }
-    
-    // MARK: ignoredJobsView
-    @ViewBuilder var ignoredJobsView: some View {
-        GridRow {
-            Group {
-                ZStack {
-                    Theme.headerColour
-                }
-
-            }
-            .frame(width: 80)
-
-            Group {
-                ZStack(alignment: .leading) {
-                    Theme.headerColour
-                    Text("JID")
-                        .padding(5)
-                }
-            }
-            Group {
-                ZStack {
-                    Theme.headerColour
-                    Text("Colour")
-                        .padding(5)
-                }
-            }
-        }
-        .frame(height: 40)
-        
-        ScrollView {
-            ForEach(ignoredJobs, id: \.jid) { job in
-                HStack(spacing: 1) {
-                    GridRow {
-                        Group {
-                            ZStack {
-                                Theme.rowColour
-                                FancyButton(text: "Remove job from ignore list", action: {deSelectJob(job)}, icon: "multiply", transparent: true, showLabel: false)
-                            }
-                        }
-                        .frame(width: 80)
-                        
-                        Group {
-                            ZStack(alignment: .leading) {
-                                Theme.rowColour
-                                Text(job.jid.string)
-                                    .padding(5)
-                            }
-                        }
-                        
-                        Group {
-                            ZStack {
-                                let colour = Color.fromStored(job.colour ?? Theme.rowColourAsDouble)
-                                colour
-                                Text(colour.description.debugDescription)
-                                    .padding(5)
-                                    .foregroundColor(colour.isBright() ? Color.black : Color.white)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    // MARK: currentlyAssignedJobsView
-    @ViewBuilder var currentlyAssignedJobsView: some View {
-        GridRow {
-            Group {
-                ZStack {
-                    Theme.headerColour
-                }
-
-            }
-            .frame(width: 80)
-
-            Group {
-                ZStack(alignment: .leading) {
-                    Theme.headerColour
-                    Text("JID")
-                        .padding(5)
-                }
-            }
-            Group {
-                ZStack {
-                    Theme.headerColour
-                    Text("Colour")
-                        .padding(5)
-                }
-            }
-        }
-        .frame(height: 40)
-        
-        ScrollView {
-            ForEach(savedJobs, id: \.jid) { job in
-                HStack(spacing: 1) {
-                    GridRow {
-                        Group {
-                            ZStack {
-                                Theme.rowColour
-                                FancyButton(text: "Ignore job", action: {selectJob(job)}, icon: "nosign", transparent: true, showLabel: false)
-                            }
-                        }
-                        .frame(width: 80)
-                        
-                        Group {
-                            ZStack(alignment: .leading) {
-                                Theme.rowColour
-                                Text(job.jid.string)
-                                    .padding(5)
-                            }
-                        }
-                        
-                        Group {
-                            ZStack {
-                                let colour = Color.fromStored(job.colour ?? Theme.rowColourAsDouble)
-                                colour
-                                Text(colour.description.debugDescription)
-                                    .padding(5)
-                                    .foregroundColor(colour.isBright() ? Color.black : Color.white)
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        .id(updater.ids["pc.form"])
     }
     
     private func onAppear() -> Void {
@@ -194,14 +58,23 @@ struct ProjectConfig: View {
             let savedBws = bw.allObjects as! [BannedWord]
             bannedWords = savedBws
         }
+    }
+    
+    private func change(selected: Int, sender: String?) -> Void {
         
-        if let savedJerbs = project.jobs {
-            savedJobs = savedJerbs.allObjects as! [Job]
-        }
     }
     
     private func removeFromBannedWordList(_ word: BannedWord) -> Void {
         bannedWords.removeAll(where: ({$0 == word}))
+        
+        for word in bannedWords {
+            project.configuration?.addToBannedWords(word)
+        }
+        
+        project.lastUpdate = Date()
+        
+        PersistenceController.shared.save()
+        updater.update()
     }
     
     private func createBannedWord() -> Void {
@@ -226,18 +99,10 @@ struct ProjectConfig: View {
             project.configuration?.addToBannedWords(word)
         }
         
+        project.lastUpdate = Date()
+        
         bannedWord = ""
         
         PersistenceController.shared.save()
-    }
-    
-    private func selectJob(_ job: Job) -> Void {
-        ignoredJobs.append(job)
-        savedJobs.removeAll(where: ({$0 == job}))
-    }
-    
-    private func deSelectJob(_ job: Job) -> Void {
-        ignoredJobs.removeAll(where: ({$0 == job}))
-        savedJobs.append(job)
     }
 }

@@ -127,6 +127,7 @@ struct Home: View {
                     ProjectsDashboard()
                         .navigationTitle("Projects")
                         .environmentObject(recordsModel)
+                        .environmentObject(jobModel)
                         .environmentObject(updater)
                         .toolbar {
                             if showExperimentalFeatures {

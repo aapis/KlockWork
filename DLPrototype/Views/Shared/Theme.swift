@@ -21,4 +21,5 @@ struct Theme {
     static public let font: Font = .system(.body, design: .monospaced)
     static public let fontTitle: Font = .system(.title, design: .monospaced)
     static public let fontSubTitle: Font = .system(.title3, design: .monospaced)
+    static public let fontCaption: Font = .system(.caption, design: .monospaced)
 }

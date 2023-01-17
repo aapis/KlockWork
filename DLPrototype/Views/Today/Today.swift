@@ -16,7 +16,7 @@ struct Today : View, Identifiable {
     @State private var taskUrl: String = ""
     @State private var recentJobs: [CustomPickerItem] = [CustomPickerItem(title: "Recent jobs", tag: 0)]
     @State private var jobIdFieldColour: Color = Color.clear
-    @State private var jobIdFieldTextColour: Color = Color.black
+    @State private var jobIdFieldTextColour: Color = Color.white
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
@@ -77,7 +77,7 @@ struct Today : View, Identifiable {
                         bgColour: jobIdFieldColour,
                         text: $jobId
                     )
-                    .border(.black.opacity(0.1), width: 2)
+                    .border(jobIdFieldColour == Color.clear ? Color.black.opacity(0.1) : Color.clear, width: 2)
                     .onChange(of: jobId) { _ in
                         if jobId != "" {
                             if let iJid = Int(jobId) {
@@ -87,7 +87,7 @@ struct Today : View, Identifiable {
                     }
                     
                     JobPicker(onChange: pickerChange)
-                        .padding([.leading], 80)
+                        .padding([.leading], 100)
                 }
                 .frame(width: 350, height: 40)
                 
@@ -136,6 +136,9 @@ struct Today : View, Identifiable {
         if let selectedJob = jobModel.byId(Double(jobId)!) {
             jobIdFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
             jobIdFieldTextColour = jobIdFieldColour.isBright() ? Color.black : Color.white
+        } else {
+            jobIdFieldColour = Color.clear
+            jobIdFieldTextColour = Color.white
         }
     }
 

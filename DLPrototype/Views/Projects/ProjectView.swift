@@ -16,25 +16,24 @@ struct ProjectView: View {
     @State private var created: Date?
     @State private var lastUpdate: Date?
     @State private var alive: Bool = true
-    @State private var selectedJob: Job?
     @State private var selectedJobs: [Job] = []
     @State private var allUnOwned: [Job] = []
     @State private var selectAllToggleAssociated: Bool = false
     @State private var selectAllToggleUnassociated: Bool = false
     // for Toolbar
-//    @State private var selectedTab: Int = 0
     @State private var isShowingAlert: Bool = false
     @State private var buttons: [ToolbarButton] = []
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
+    @EnvironmentObject public var jobModel: CoreDataJob
     
     private var all: [Job] {
-        CoreDataJob(moc: moc).all()
+        jobModel.all()
     }
     
     private var unownedJobs: [Job] {
-        CoreDataJob(moc: moc).unowned()
+        jobModel.unowned()
     }
     
     // MARK: body view
@@ -48,6 +47,9 @@ struct ProjectView: View {
                     if lastUpdate != nil {
                         Text("Last updated: \(DateHelper.shortDateWithTime(lastUpdate!))")
                             .font(Theme.font)
+                            .onChange(of: project.lastUpdate) { _ in
+                                lastUpdate = project.lastUpdate
+                            }
                     }
                 }
                 
@@ -62,7 +64,7 @@ struct ProjectView: View {
                         })
                 }
                 
-                form
+                form.id(updater.ids["pv.form"])
 
                 HStack {
                     Spacer()
@@ -95,7 +97,7 @@ struct ProjectView: View {
     // MARK: form view
     @ViewBuilder
     var form: some View {
-        FancyTextField(placeholder: "Project name", lineLimit: 1, onSubmit: {}, text: $name)
+        FancyTextField(placeholder: "Project name", lineLimit: 1, onSubmit: update, text: $name)
         FancyDivider()
         
         toolbar
@@ -104,8 +106,45 @@ struct ProjectView: View {
     // MARK: jobAssignment view, job tab view
     @ViewBuilder
     var jobAssignment: some View {
-        associatedJobs
-        unOwnedJobs
+        HStack(spacing: 5) {
+            VStack(alignment: .leading, spacing: 1) {
+                VStack(alignment: .leading, spacing: 1) {
+                    FancySubTitle(text: "Associated jobs", image: "checkmark")
+                    HStack(spacing: 1) {
+                        Text("\(selectedJobs.count)/\(all.count) selected")
+                            .font(Theme.fontCaption)
+                        Spacer()
+                        Toggle("All", isOn: $selectAllToggleAssociated)
+                            .font(Theme.fontCaption)
+                    }
+                }
+                
+                if selectedJobs.count > 0 {
+                    associatedJobs
+                }
+                
+                Spacer()
+            }
+        
+            VStack(alignment: .leading, spacing: 1) {
+                VStack(alignment: .leading, spacing: 1) {
+                    FancySubTitle(text: "Unowned jobs", image: "questionmark")
+                    HStack(spacing: 1) {
+                        Text("\(allUnOwned.count)/\(all.count) selected")
+                            .font(Theme.fontCaption)
+                        Spacer()
+                        Toggle("All", isOn: $selectAllToggleUnassociated)
+                            .font(Theme.fontCaption)
+                    }
+                }
+                
+                if allUnOwned.count > 0 {
+                    unOwnedJobs
+                }
+                
+                Spacer()
+            }
+        }
     }
     
     // MARK: toolbar view
@@ -118,68 +157,74 @@ struct ProjectView: View {
     // MARK: associated jobs view
     @ViewBuilder
     var associatedJobs: some View {
-        HStack {
-            Text("Jobs associated to this project")
-                .font(Theme.font)
-            Spacer()
-            Text("\(selectedJobs.count)/\(all.count) selected")
-            Toggle("All?", isOn: $selectAllToggleAssociated)
-        }
-        
-        ScrollView {
-            Grid(alignment: .leading, horizontalSpacing: 1, verticalSpacing: 1) {
-                GridRow {
-                    Group {
-                        ZStack {
-                            Theme.headerColour
-                        }
-                        
+        Grid(alignment: .leading, horizontalSpacing: 1, verticalSpacing: 1) {
+            GridRow {
+                Group {
+                    ZStack {
+                        Theme.headerColour
                     }
-                    .frame(width: 80)
                     
-                    Group {
-                        ZStack(alignment: .leading) {
-                            Theme.headerColour
-                            Text("JID")
-                                .padding(5)
-                        }
-                    }
-                    Group {
-                        ZStack {
-                            Theme.headerColour
-                            Text("Colour")
-                                .padding(5)
-                        }
+                }
+                .frame(width: 30)
+                
+                Group {
+                    ZStack(alignment: .leading) {
+                        Theme.headerColour
+                        Text("Job ID")
+                            .padding(5)
                     }
                 }
-                .frame(height: 40)
+                Group {
+                    ZStack {
+                        Theme.headerColour
+                        Text("Colour")
+                            .padding(5)
+                    }
+                }
+            }
+            .frame(height: 40)
             
-                ForEach(selectedJobs, id: \.jid) { job in
-                    GridRow {
-                        Group {
-                            ZStack {
-                                Theme.rowColour
+            ScrollView {
+                VStack(alignment: .leading, spacing: 1) {
+                    ForEach(selectedJobs, id: \.jid) { job in
+                        HStack(alignment: .top, spacing: 1) {
+                            GridRow {
+                                Group {
+                                    ZStack {
+                                        Theme.rowColour
+                                        
+                                        FancyButton(text: "Remove job", action: {deSelectJob(job)}, icon: "multiply", transparent: true, showLabel: false)
+                                    }
+                                }
+                                .frame(width: 30)
                                 
-                                FancyButton(text: "Remove job", action: {deSelectJob(job)}, icon: "multiply", transparent: true, showLabel: false)
-                            }
-                        }
-                        .frame(width: 80)
-                        
-                        Group {
-                            ZStack(alignment: .leading) {
-                                Theme.rowColour
-                                Text(job.jid.string)
-                                    .padding(5)
-                            }
-                        }
-                        
-                        Group {
-                            ZStack {
-                                let colour = Color.fromStored(job.colour ?? Theme.rowColourAsDouble)
-                                colour
-                                Text(colour.description.debugDescription)
-                                    .padding(5)
-                                    .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                                Group {
+                                    ZStack(alignment: .leading) {
+                                        Theme.rowColour
+                                        HStack {
+                                            Text(job.jid.string)
+                                                .padding(5)
+                                            Spacer()
+                                            
+                                            if project.configuration!.ignoredJobs!.contains(job.jid.string) {
+                                                FancyButton(text: "Hide from exports", action: {disableExport(job.jid.string)}, icon: "eye.slash", transparent: true, showLabel: false)
+                                                    .opacity(0.3)
+                                            } else {
+                                                FancyButton(text: "Included in exports", action: {enableExport(job.jid.string)}, icon: "eye", transparent: true, showLabel: false)
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                Group {
+                                    ZStack {
+                                        let colour = Color.fromStored(job.colour ?? Theme.rowColourAsDouble)
+                                        colour
+                                        Text(colour.description.debugDescription)
+                                            .padding(5)
+                                            .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                                    }
+                                }
                             }
                         }
                     }
@@ -191,68 +236,65 @@ struct ProjectView: View {
     // MARK: unowned jobs view
     @ViewBuilder
     var unOwnedJobs: some View {
-        HStack {
-            Text("Unowned jobs (no project association)")
-                .font(Theme.font)
-            Spacer()
-            Text("\(allUnOwned.count)/\(all.count) selected")
-            Toggle("All?", isOn: $selectAllToggleUnassociated)
-        }
-        
-        ScrollView {
-            Grid(alignment: .leading, horizontalSpacing: 1, verticalSpacing: 1) {
-                GridRow {
-                    Group {
-                        ZStack {
-                            Theme.headerColour
-                        }
-                        
+        Grid(alignment: .leading, horizontalSpacing: 1, verticalSpacing: 1) {
+            GridRow {
+                Group {
+                    ZStack {
+                        Theme.headerColour
                     }
-                    .frame(width: 80)
                     
-                    Group {
-                        ZStack(alignment: .leading) {
-                            Theme.headerColour
-                            Text("JID")
-                                .padding(5)
-                        }
-                    }
-                    Group {
-                        ZStack {
-                            Theme.headerColour
-                            Text("Colour")
-                                .padding(5)
-                        }
+                }
+                .frame(width: 30)
+                
+                Group {
+                    ZStack(alignment: .leading) {
+                        Theme.headerColour
+                        Text("Job ID")
+                            .padding(5)
                     }
                 }
-                .frame(height: 40)
-            
-                ForEach(allUnOwned, id: \.jid) { job in
-                    GridRow {
-                        Group {
-                            ZStack {
-                                Theme.rowColour
+                Group {
+                    ZStack {
+                        Theme.headerColour
+                        Text("Colour")
+                            .padding(5)
+                    }
+                }
+            }
+            .frame(height: 40)
+        
+            ScrollView {
+                VStack(alignment: .leading, spacing: 1) {
+                    ForEach(allUnOwned, id: \.jid) { job in
+                        HStack(alignment: .top, spacing: 1) {
+                            GridRow {
+                                Group {
+                                    ZStack {
+                                        Theme.rowColour
+                                        
+                                        FancyButton(text: "Add job", action: {selectJob(job)}, icon: "plus", transparent: true, showLabel: false)
+                                    }
+                                }
+                                .frame(width: 30)
                                 
-                                FancyButton(text: "Remove job", action: {deSelectJob(job)}, icon: "plus", transparent: true, showLabel: false)
-                            }
-                        }
-                        .frame(width: 80)
-                        
-                        Group {
-                            ZStack(alignment: .leading) {
-                                Theme.rowColour
-                                Text(job.jid.string)
-                                    .padding(5)
-                            }
-                        }
-                        
-                        Group {
-                            ZStack {
-                                let colour = Color.fromStored(job.colour ?? Theme.rowColourAsDouble)
-                                colour
-                                Text(colour.description.debugDescription)
-                                    .padding(5)
-                                    .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                                Group {
+                                    ZStack(alignment: .leading) {
+                                        Theme.rowColour
+                                        Text(job.jid.string)
+                                            .padding(5)
+                                        
+                                    }
+                                }
+                                
+                                Group {
+                                    ZStack {
+                                        let colour = Color.fromStored(job.colour ?? Theme.rowColourAsDouble)
+                                        colour
+                                        Text(colour.description.debugDescription)
+                                            .padding(5)
+                                            .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                                    }
+                                }
                             }
                         }
                     }
@@ -286,15 +328,106 @@ struct ProjectView: View {
         project.lastUpdate = Date()
         lastUpdate = project.lastUpdate!
         
-        for job in selectedJobs {
-            project.addToJobs(job)
+        saveSelectedJobs()
+        
+        PersistenceController.shared.save()
+    }
+    
+    private func isJobOnIgnoreList(_ jid: String) -> Bool {
+        if let ignoredJobs = project.configuration!.ignoredJobs {
+            do {
+                let dec = JSONDecoder()
+                let data = ignoredJobs.data(using: .utf8)
+                let decodedIgnoredJobs = try dec.decode([String].self, from: data!)
+                
+                return decodedIgnoredJobs.contains(jid)
+            } catch {
+                print("Couldn't decode ignored")
+            }
+        }
+        
+        return false
+    }
+    
+    private func enableExport(_ jid: String) -> Void {
+        if let ignoredJobs = project.configuration!.ignoredJobs {
+            do {
+                let dec = JSONDecoder()
+                let data = ignoredJobs.data(using: .utf8)
+                var decodedIgnoredJobs = try dec.decode([String].self, from: data!)
+                
+                if !decodedIgnoredJobs.contains(jid) {
+                    decodedIgnoredJobs.append(jid)
+                }
+                
+                let enc = JSONEncoder()
+                let json = try enc.encode(decodedIgnoredJobs)
+                
+                project.configuration!.ignoredJobs = String(data: json, encoding: .utf8)!
+                updater.update()
+                print("SHOULD HAVE SAVED enable \(decodedIgnoredJobs)")
+            } catch {
+                print("Couldn't encode ignoredJobs")
+            }
+        }
+        
+        PersistenceController.shared.save()
+    }
+    
+    private func disableExport(_ jid: String) -> Void {
+        return updateIgnoredJobs(jid, action: { list in
+            var jobs = list
+            let withoutIncomingJid = jobs.removeAll(where: ({$0 == jid}))
+            
+            return withoutIncomingJid
+        })
+        
+        if let ignoredJobs = project.configuration!.ignoredJobs {
+            do {
+                let dec = JSONDecoder()
+                let data = ignoredJobs.data(using: .utf8)
+                var decodedIgnoredJobs = try dec.decode([String].self, from: data!)
+                
+                decodedIgnoredJobs.removeAll(where: ({$0 == jid}))
+                
+                let enc = JSONEncoder()
+                let json = try enc.encode(decodedIgnoredJobs)
+                
+                project.configuration!.ignoredJobs = String(data: json, encoding: .utf8)!
+                updater.update()
+            } catch {
+                print("Couldn't parse ignoredJobs")
+            }
+        }
+        
+        PersistenceController.shared.save()
+    }
+    
+    private func updateIgnoredJobs(_ jid: String, action: ([String]) -> [String]) -> Void {
+        if let ignoredJobs = project.configuration!.ignoredJobs {
+            do {
+                let dec = JSONDecoder()
+                let data = ignoredJobs.data(using: .utf8)
+                var decodedIgnoredJobs = try dec.decode([String].self, from: data!)
+                
+//                decodedIgnoredJobs.removeAll(where: ({$0 == jid}))
+                decodedIgnoredJobs = action(decodedIgnoredJobs)
+                
+                let enc = JSONEncoder()
+                let json = try enc.encode(decodedIgnoredJobs)
+                
+                project.configuration!.ignoredJobs = String(data: json, encoding: .utf8)!
+                updater.update()
+            } catch {
+                print("Couldn't parse ignoredJobs")
+            }
         }
         
         PersistenceController.shared.save()
     }
     
     public func onAppear() -> Void {
-        allUnOwned = CoreDataJob(moc: moc).unowned()
+        allUnOwned = jobModel.unowned()
         name = project.name!
         created = project.created!
         
@@ -311,11 +444,17 @@ struct ProjectView: View {
     private func selectJob(_ job: Job) -> Void {
         selectedJobs.append(job)
         allUnOwned.removeAll(where: ({$0 == job}))
+        
+        saveSelectedJobs()
+        updater.update()
     }
     
     private func deSelectJob(_ job: Job) -> Void {
         selectedJobs.removeAll(where: ({$0 == job}))
         allUnOwned.append(job)
+        
+        saveSelectedJobs()
+        updater.update()
     }
     
     private func selectAll() -> Void {
@@ -323,10 +462,27 @@ struct ProjectView: View {
             selectedJobs.append(job)
             allUnOwned.removeAll(where: ({$0 == job}))
         }
+        
+        saveSelectedJobs()
     }
     
     private func deselectAll() -> Void {
         allUnOwned = unownedJobs
         selectedJobs = []
+        
+        saveSelectedJobs()
+    }
+    
+    private func saveSelectedJobs() -> Void {
+        let existingJobs = project.jobs?.allObjects as! [Job]
+        for job in existingJobs {
+            project.removeFromJobs(job)
+        }
+        
+        for job in selectedJobs {
+            project.addToJobs(job)
+        }
+        
+        PersistenceController.shared.save()
     }
 }
