@@ -65,16 +65,12 @@ struct ProjectConfig: View {
     }
     
     private func removeFromBannedWordList(_ word: BannedWord) -> Void {
-        bannedWords.removeAll(where: ({$0 == word}))
+        bannedWords.removeAll {$0 == word}
         
-        for word in bannedWords {
-            project.configuration?.addToBannedWords(word)
-        }
-        
+        project.configuration!.bannedWords = NSSet(array: bannedWords)
         project.lastUpdate = Date()
         
         PersistenceController.shared.save()
-        updater.update()
     }
     
     private func createBannedWord() -> Void {
