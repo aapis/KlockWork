@@ -27,7 +27,8 @@ struct JobPicker: View {
                 
                 if project.jobs != nil {
                     let unsorted = project.jobs!.allObjects as! [Job]
-                    let jobs = unsorted.sorted(by: ({$0.jid > $1.jid}))
+                    var jobs = unsorted.sorted(by: ({$0.jid > $1.jid}))
+                    jobs.removeAll(where: {($0.project?.configuration?.ignoredJobs!.contains($0.jid.string))!})                    
                     
                     for job in jobs {
                         items.append(CustomPickerItem(title: " - \(job.jid.string)", tag: Int(job.jid)))
