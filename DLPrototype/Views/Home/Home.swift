@@ -17,13 +17,13 @@ struct Category: Identifiable {
 struct Home: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
-    @EnvironmentObject public var recordsModel: LogRecords
+    
+    @StateObject public var recordsModel: LogRecords = LogRecords(moc: PersistenceController.shared.container.viewContext)
+    @StateObject public var jobModel: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     
     @State private var selected: String?
     @State public var appVersion: String?
     @State public var splitDirection: Bool = false // false == horizontal, true == vertical
-    
-//    @ObservedObject public var sm: SyncMonitor = SyncMonitor()
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     
@@ -67,6 +67,7 @@ struct Home: View {
                     Today()
                         .navigationTitle("Today")
                         .environmentObject(recordsModel)
+                        .environmentObject(jobModel)
                         .environmentObject(updater)
                         .toolbar {
                             Button(action: redraw, label: {
@@ -125,6 +126,7 @@ struct Home: View {
                     ProjectsDashboard()
                         .navigationTitle("Projects")
                         .environmentObject(recordsModel)
+                        .environmentObject(jobModel)
                         .environmentObject(updater)
                         .toolbar {
                             if showExperimentalFeatures {

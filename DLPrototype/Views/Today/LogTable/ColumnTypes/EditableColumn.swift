@@ -11,14 +11,13 @@ import SwiftUI
 
 struct EditableColumn: View {
     public var type: String
-    public var entry: Entry
     public var colour: Color
     public var textColour: Color
     public var index: Array<Entry>.Index?
     
     @Binding public var isEditing: Bool
     @Binding public var isDeleting: Bool
-    @Binding public var text: String    
+    @Binding public var text: String
     
     @AppStorage("tigerStriped") private var tigerStriped = false
     

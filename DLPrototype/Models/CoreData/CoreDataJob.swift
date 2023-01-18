@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 
-public class CoreDataJob {
+public class CoreDataJob: ObservableObject {
     public var moc: NSManagedObjectContext?
     
     public init(moc: NSManagedObjectContext?) {
@@ -32,6 +32,22 @@ public class CoreDataJob {
         }
         
         return nil
+    }
+    
+    public func byProject(_ projectId: UUID) -> [Job] {
+        var all: [Job] = []
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.jid, ascending: false)]
+        fetch.predicate = NSPredicate(format: "project.id = %@ && alive = true", projectId.uuidString)
+        
+        
+        do {
+            all = try moc!.fetch(fetch)
+        } catch {
+            print("Couldn't retrieve all jobs")
+        }
+        
+        return all
     }
     
     public func all(_ stillAlive: Bool? = true) -> [Job] {

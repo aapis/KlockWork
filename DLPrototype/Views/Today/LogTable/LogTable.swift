@@ -16,12 +16,9 @@ struct LogTable: View, Identifiable {
     @State private var wordCount: Int = 0
     @State private var showSidebar: Bool = true
     @State private var isReversed: Bool = false
-    @State private var colours: [Color] = []
     @State private var isShowingAlert: Bool = false
     @State private var selectedTab: Int = 0
     @State private var searchText: String = ""
-    @State private var fetched: [Entry] = []
-    @State private var refreshing: Bool = false
     @State private var resetSearchButtonHit: Bool = false
     @State private var selectedDate: Date = Date()
     

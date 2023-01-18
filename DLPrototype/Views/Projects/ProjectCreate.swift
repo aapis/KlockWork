@@ -21,9 +21,10 @@ struct ProjectCreate: View {
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
+    @EnvironmentObject public var jobModel: CoreDataJob
     
     private var unownedJobs: [Job] {
-        CoreDataJob(moc: moc).unowned()
+        jobModel.unowned()
     }
     
     var body: some View {
@@ -138,6 +139,10 @@ struct ProjectCreate: View {
         }
     }
     
+    public func onAppear() -> Void {
+        allUnOwned = jobModel.unowned()
+    }
+    
     private func create() -> Void {
         let project = Project(context: moc)
         project.pid = Int64.random(in: 1..<1000000000000001)
@@ -150,15 +155,18 @@ struct ProjectCreate: View {
             project.addToJobs(job)
         }
         
+        let configuration = ProjectConfiguration(context: moc)
+        configuration.ignoredJobs = ""
+        configuration.bannedWords = nil
+        configuration.id = UUID()
+        configuration.projects = NSSet(array: [project])
+        configuration.exportFormat = UUID() // TODO: for future use
+        
         PersistenceController.shared.save()
         
         name = ""
         showForm = false
         selectedJobs = []
-    }
-    
-    public func onAppear() -> Void {
-        allUnOwned = CoreDataJob(moc: moc).unowned()
     }
     
     private func selectJob(_ job: Job) -> Void {

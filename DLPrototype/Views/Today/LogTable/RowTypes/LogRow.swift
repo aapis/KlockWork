@@ -38,7 +38,6 @@ struct LogRow: View, Identifiable {
                 
                 EditableColumn(
                     type: "timestamp",
-                    entry: entry,
                     colour: applyColour(),
                     textColour: rowTextColour(),
                     index: index,
@@ -55,7 +54,6 @@ struct LogRow: View, Identifiable {
                 
                 EditableColumn(
                     type: "job",
-                    entry: entry,
                     colour: applyColour(),
                     textColour: rowTextColour(),
                     index: index,
@@ -72,7 +70,6 @@ struct LogRow: View, Identifiable {
                 
                 EditableColumn(
                     type: "message",
-                    entry: entry,
                     colour: applyColour(),
                     textColour: rowTextColour(),
                     index: index,

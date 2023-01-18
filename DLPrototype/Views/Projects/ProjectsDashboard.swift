@@ -16,6 +16,7 @@ struct ProjectsDashboard: View {
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
+    @EnvironmentObject public var jobModel: CoreDataJob
     
     @FetchRequest(sortDescriptors: [SortDescriptor(\.jid, order: .reverse)]) public var jobs: FetchedResults<Job>
     @FetchRequest(sortDescriptors: [SortDescriptor(\.created, order: .reverse)]) public var projects: FetchedResults<Project>

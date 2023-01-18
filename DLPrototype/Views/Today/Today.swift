@@ -7,6 +7,7 @@
 //
 import Foundation
 import SwiftUI
+import Combine
 
 struct Today : View, Identifiable {
     @State public var text: String = ""
@@ -15,7 +16,8 @@ struct Today : View, Identifiable {
     // only treated as a string, no need to be URL-type
     @State private var taskUrl: String = ""
     @State private var recentJobs: [CustomPickerItem] = [CustomPickerItem(title: "Recent jobs", tag: 0)]
-    @State private var jobPickerSelection = 0
+    @State private var jobIdFieldColour: Color = Color.clear
+    @State private var jobIdFieldTextColour: Color = Color.white
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
@@ -23,6 +25,7 @@ struct Today : View, Identifiable {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var recordsModel: LogRecords
+    @EnvironmentObject public var jobModel: CoreDataJob
     
     @FetchRequest(
         sortDescriptors: [
@@ -44,7 +47,6 @@ struct Today : View, Identifiable {
     // MARK: body view
     var body: some View {
         VStack(alignment: .leading) {
-            header
             editor
             table
         }
@@ -52,30 +54,44 @@ struct Today : View, Identifiable {
         .padding()
         .defaultAppStorage(.standard)
         .background(Theme.toolbarColour)
-            
-    }
-    
-    // MARK: title/header
-    var header: some View {
-        HStack {
-            Title(text: "Record an entry", image: "doc.append.fill")
-        }
     }
     
     // MARK: Editor view
     var editor: some View {
         VStack(alignment: .leading) {
             HStack {
-                FancyTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, text: $jobId)
-                    .frame(width: 200, height: 40)
+                ZStack {
+                    FancyTextField(
+                        placeholder: "Job ID",
+                        lineLimit: 1,
+                        onSubmit: {},
+                        fgColour: jobIdFieldTextColour,
+                        bgColour: jobIdFieldColour,
+                        text: $jobId
+                    )
+                    .border(jobIdFieldColour == Color.clear ? Color.black.opacity(0.1) : Color.clear, width: 2)
+                    .onChange(of: jobId) { _ in
+                        if jobId != "" {
+                            if let iJid = Int(jobId) {
+                                pickerChange(selected: iJid, sender: nil)
+                            }
+                        }
+                    }
+                    
+                    JobPicker(onChange: pickerChange)
+                        .padding([.leading], 100)
+                }
+                .frame(width: 350, height: 40)
                 
                 Text("Or").font(Theme.font)
                 
                 FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
-                
-                JobPicker(onChange: pickerChange)
-                    .id(updater.ids["today.picker"])
-                    .onAppear(perform: reloadUi)
+                    .onReceive(Just(jobId)) { input in
+                        let filtered = input.filter { "0123456789".contains($0) }
+                        if filtered != input {
+                            jobId = filtered
+                        }
+                    }
             }
             
             VStack {
@@ -114,35 +130,18 @@ struct Today : View, Identifiable {
     
     private func pickerChange(selected: Int, sender: String?) -> Void {
         jobId = String(selected)
+        
+        if let selectedJob = jobModel.byId(Double(jobId)!) {
+            jobIdFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
+            jobIdFieldTextColour = jobIdFieldColour.isBright() ? Color.black : Color.white
+        } else {
+            jobIdFieldColour = Color.clear
+            jobIdFieldTextColour = Color.white
+        }
     }
 
     public func reloadUi() -> Void {
-        updateRecentJobs()
         updater.update()
-    }
-    
-    private func updateRecentJobs() -> Void {
-        var jobs: [String] = []
-
-        // reset the recent jobs picker items
-        recentJobs = []
-        recentJobs.append(CustomPickerItem(title: "Recent jobs", tag: 0))
-        
-        if today.count > 0 {
-            for record in today {
-                if record.job?.jid.string != nil {
-                    jobs.append((record.job?.jid.string)!)
-                }
-            }
-            
-            let unique = Array(Set(jobs))
-            
-            for jid in unique {
-                let correctedJid = String(jid.dropLast(2))
-                
-                recentJobs.append(CustomPickerItem(title: correctedJid, tag: Int(correctedJid) ?? 1))
-            }
-        }
     }
     
     private func submitAction() -> Void {
