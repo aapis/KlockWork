@@ -61,7 +61,7 @@ struct ProjectConfig: View {
     }
     
     private func change(selected: Int, sender: String?) -> Void {
-        
+        // TODO: add some functionality
     }
     
     private func removeFromBannedWordList(_ word: BannedWord) -> Void {

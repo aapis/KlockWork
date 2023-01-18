@@ -12,9 +12,9 @@ import SwiftUI
 public struct Entry: Identifiable, Equatable {
     public let timestamp: String
     public var job: String = ""
-    public let message: String
+    public var message: String
     public var url: String = ""
-    public var colour: Color //= Color.gray.opacity(0.2)
+    public var colour: Color
     public let id = UUID()
     
     init(timestamp: String, job: String, message: String) {

@@ -12,8 +12,6 @@ import SwiftUI
 @main
 struct DLPrototype: App {
     private let persistenceController = PersistenceController.shared
-    @StateObject public var recordsModel: LogRecords = LogRecords(moc: PersistenceController.shared.container.viewContext)
-    @StateObject public var jobModel: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var updater: ViewUpdater = ViewUpdater()
     
     @Environment(\.scenePhase) var scenePhase
@@ -22,8 +20,6 @@ struct DLPrototype: App {
         WindowGroup {
             Home()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                .environmentObject(recordsModel)
-                .environmentObject(jobModel)
                 .environmentObject(updater)
                 .onChange(of: scenePhase) { _ in
                     persistenceController.save()

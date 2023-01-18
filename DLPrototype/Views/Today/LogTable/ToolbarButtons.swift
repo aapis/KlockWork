@@ -22,6 +22,8 @@ struct ToolbarButtons: View {
     
     private let numDatesInPast: Int = 20
     
+    @Environment(\.managedObjectContext) var moc
+    
     var body: some View {
         HStack {
             // TODO: coming back soon
@@ -44,12 +46,12 @@ struct ToolbarButtons: View {
 //            .buttonStyle(.borderless)
 //            .foregroundColor(Color.white)
             
-            Button(action: copyAll, label: {
-                Image(systemName: "doc.on.doc")
+            Button(action: export, label: {
+                Image(systemName: "arrow.down.to.line")
             })
             .buttonStyle(.borderless)
             .keyboardShortcut("c")
-            .help("Copy all rows")
+            .help("Export this view")
             .foregroundColor(Color.white)
             .onHover { inside in
                 if inside {
@@ -115,13 +117,18 @@ struct ToolbarButtons: View {
         }
     }
     
-    
-    private func copyAll() -> Void {        
+    private func export() -> Void {
         var pasteboardContents = ""
+        
         for record in records {
             if record.job != nil {
-                if record.job!.jid != 11.0 {
-                    pasteboardContents += "\(record.timestamp!) - \(record.job!.jid.string) - \(record.message!)\n"
+                let ignoredJobs = record.job!.project?.configuration?.ignoredJobs
+                let cleaned = CoreDataProjectConfiguration.applyBannedWordsTo(record)
+                
+                if ignoredJobs != nil {
+                    if !ignoredJobs!.contains(record.job!.jid.string) {
+                        pasteboardContents += "\(record.timestamp!) - \(record.job!.jid.string) - \(cleaned.message!)\n"
+                    }
                 }
             }
         }

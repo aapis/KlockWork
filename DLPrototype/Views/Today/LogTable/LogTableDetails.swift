@@ -78,17 +78,39 @@ struct LogTableDetails: View {
     }
     
     private var tasks: [LogTask] {
-        var jobsForToday: [Int] = []
-        
+        var tasksToday: [LogTask] = []
+
         for rec in records {
             if rec.job != nil {
-                if !jobsForToday.contains(where: {$0 == Int(rec.job!.jid)}) {
-                    jobsForToday.append(Int(String(format: "%1.f", rec.job!.jid)) ?? 0)
+                let (before, after) = DateHelper.startAndEndOf(selectedDate)
+                let tasks = rec.job?.tasks
+                
+                if tasks != nil {
+                    // Date filtering
+                    var filtered = tasks!.filtered(
+                        using: NSPredicate(
+                            format: "(created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@)",
+                            before as CVarArg,
+                            after as CVarArg,
+                            before as CVarArg,
+                            after as CVarArg
+                        )
+                    )
+                    // Ignore completed items
+                    filtered = tasks!.filtered(using: NSPredicate(format: "completedDate == null"))
+                    
+                    for obj in filtered {
+                        let task = obj as! LogTask
+                        
+                        if !tasksToday.contains(where: ({$0.id == task.id})) {
+                            tasksToday.append(task)
+                        }
+                    }
                 }
             }
         }
         
-        return CoreDataTasks(moc: moc).forDate(selectedDate, include: jobsForToday)
+        return tasksToday
     }
     
     var body: some View {

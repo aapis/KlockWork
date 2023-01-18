@@ -31,16 +31,17 @@ public class CoreDataTasks {
         
         if !include!.isEmpty {
             // TODO: this shouldn't be necessary...
-            var predicateString: String = ""
-            for i in 1...include!.count {
-                predicateString += "ANY owner.jid.integerValue = %@"
-                
-                if i < include!.count {
-                    predicateString += " OR "
-                }
-            }
+//            var predicateString: String = ""
+//            for i in 1...include!.count {
+//                predicateString += "ANY owner.jid.integerValue = %@"
+//
+//                if i < include!.count {
+//                    predicateString += " OR "
+//                }
+//            }
 
-            let jobPredicate = NSPredicate(format: predicateString, argumentArray: include!)
+//            let jobPredicate = NSPredicate(format: predicateString, argumentArray: include!)
+            let jobPredicate = NSPredicate(format: "owner.jid.integerValue IN %@")
             let completedPredicate = NSPredicate(format: "completedDate == null")
             fetch.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [datePredicate, completedPredicate, jobPredicate])
         } else {

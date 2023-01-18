@@ -7,6 +7,7 @@
 //
 import Foundation
 import SwiftUI
+import Combine
 
 struct Today : View, Identifiable {
     @State public var text: String = ""
@@ -46,7 +47,6 @@ struct Today : View, Identifiable {
     // MARK: body view
     var body: some View {
         VStack(alignment: .leading) {
-            header
             editor
             table
         }
@@ -54,14 +54,6 @@ struct Today : View, Identifiable {
         .padding()
         .defaultAppStorage(.standard)
         .background(Theme.toolbarColour)
-            
-    }
-    
-    // MARK: title/header
-    var header: some View {
-        HStack {
-            Title(text: "Record an entry", image: "doc.append.fill")
-        }
     }
     
     // MARK: Editor view
@@ -94,6 +86,12 @@ struct Today : View, Identifiable {
                 Text("Or").font(Theme.font)
                 
                 FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
+                    .onReceive(Just(jobId)) { input in
+                        let filtered = input.filter { "0123456789".contains($0) }
+                        if filtered != input {
+                            jobId = filtered
+                        }
+                    }
             }
             
             VStack {

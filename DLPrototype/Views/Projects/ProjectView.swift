@@ -253,6 +253,7 @@ struct ProjectView: View {
                             .padding(5)
                     }
                 }
+                
                 Group {
                     ZStack {
                         Theme.headerColour
@@ -364,8 +365,8 @@ struct ProjectView: View {
                 let json = try enc.encode(decodedIgnoredJobs)
                 
                 project.configuration!.ignoredJobs = String(data: json, encoding: .utf8)!
+                
                 updater.update()
-                print("SHOULD HAVE SAVED enable \(decodedIgnoredJobs)")
             } catch {
                 print("Couldn't encode ignoredJobs")
             }
@@ -375,13 +376,6 @@ struct ProjectView: View {
     }
     
     private func disableExport(_ jid: String) -> Void {
-        return updateIgnoredJobs(jid, action: { list in
-            var jobs = list
-            let withoutIncomingJid = jobs.removeAll(where: ({$0 == jid}))
-            
-            return withoutIncomingJid
-        })
-        
         if let ignoredJobs = project.configuration!.ignoredJobs {
             do {
                 let dec = JSONDecoder()
@@ -394,29 +388,7 @@ struct ProjectView: View {
                 let json = try enc.encode(decodedIgnoredJobs)
                 
                 project.configuration!.ignoredJobs = String(data: json, encoding: .utf8)!
-                updater.update()
-            } catch {
-                print("Couldn't parse ignoredJobs")
-            }
-        }
-        
-        PersistenceController.shared.save()
-    }
-    
-    private func updateIgnoredJobs(_ jid: String, action: ([String]) -> [String]) -> Void {
-        if let ignoredJobs = project.configuration!.ignoredJobs {
-            do {
-                let dec = JSONDecoder()
-                let data = ignoredJobs.data(using: .utf8)
-                var decodedIgnoredJobs = try dec.decode([String].self, from: data!)
                 
-//                decodedIgnoredJobs.removeAll(where: ({$0 == jid}))
-                decodedIgnoredJobs = action(decodedIgnoredJobs)
-                
-                let enc = JSONEncoder()
-                let json = try enc.encode(decodedIgnoredJobs)
-                
-                project.configuration!.ignoredJobs = String(data: json, encoding: .utf8)!
                 updater.update()
             } catch {
                 print("Couldn't parse ignoredJobs")

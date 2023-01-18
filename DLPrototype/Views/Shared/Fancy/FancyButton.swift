@@ -39,7 +39,7 @@ struct FancyButton: View {
                 }
             })
             .buttonStyle(.borderless)
-            .background(transparent! ? Color.clear : Theme.toolbarColour)
+            .background(transparent! ? Color.clear : Color.black.opacity(0.2))
         }
     }
 }
