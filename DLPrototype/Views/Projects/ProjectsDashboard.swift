@@ -96,7 +96,7 @@ struct ProjectsDashboard: View {
                                     Group {
                                         ZStack(alignment: .leading) {
                                             Theme.rowColour
-                                            FancyTextLink(text: project.name!, destination: AnyView(ProjectView(project: project)))
+                                            FancyTextLink(text: project.name!, destination: AnyView(ProjectView(project: project).environmentObject(jobModel)))
                                         }
                                     }
                                     
