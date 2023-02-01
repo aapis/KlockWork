@@ -21,10 +21,11 @@ struct NoteDashboard: View {
     
     public init() {
         let request: NSFetchRequest<Note> = Note.fetchRequest()
-        request.predicate = NSPredicate(format: "postedDate > %@ && alive = true", DateHelper.daysPast(7))
+        request.predicate = NSPredicate(format: "alive = true")
         request.sortDescriptors = [
             NSSortDescriptor(keyPath: \Note.starred, ascending: false),
-            NSSortDescriptor(keyPath: \Note.lastUpdate, ascending: false)            
+            NSSortDescriptor(keyPath: \Note.lastUpdate, ascending: false),
+            NSSortDescriptor(keyPath: \Note.postedDate, ascending: false)
         ]
         
         _notes = FetchRequest(fetchRequest: request, animation: .easeInOut)
