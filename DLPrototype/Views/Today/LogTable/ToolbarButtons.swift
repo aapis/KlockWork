@@ -127,7 +127,13 @@ struct ToolbarButtons: View {
                 
                 if ignoredJobs != nil {
                     if !ignoredJobs!.contains(record.job!.jid.string) {
-                        pasteboardContents += "\(record.timestamp!) - \(record.job!.jid.string) - \(cleaned.message!)\n"
+                        let url = record.job!.uri
+                        
+                        if url != nil {
+                            pasteboardContents += "\(record.timestamp!) - \(record.job!.uri!.absoluteString) - \(cleaned.message!)\n"
+                        } else {
+                            pasteboardContents += "\(record.timestamp!) - \(record.job!.jid.string) - \(cleaned.message!)\n"
+                        }
                     }
                 }
             }
