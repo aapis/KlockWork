@@ -95,9 +95,11 @@ struct LogRowActions: View, Identifiable {
 }
 
 struct LogTableRowActionsPreview: PreviewProvider {
+    @State static public var sj: String = "11.0"
+    
     static var previews: some View {
         let entry = Entry(timestamp: "2023-01-01 19:48", job: "88888", message: "Hello, world")
-        let pView = LogRow(entry: entry, index: 0, colour: Color.red)
+        let pView = LogRow(entry: entry, index: 0, colour: Color.red, selectedJob: $sj)
         
         LogRowActions(entry: entry, colour: Color.red, index: pView.index, isEditing: pView.$isEditing, isDeleting: pView.$isDeleting)
         LogRowActions(entry: entry, colour: Color.red, index: pView.index, isEditing: pView.$isEditing, isDeleting: pView.$isDeleting)

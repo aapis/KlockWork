@@ -11,6 +11,7 @@ import SwiftUI
 
 struct LogTable: View, Identifiable {
     public var id = UUID()
+    @Binding public var selectedJob: String
     
     @State private var records: [LogRecord] = []
     @State private var wordCount: Int = 0
@@ -164,7 +165,8 @@ struct LogTable: View, Identifiable {
                         LogRow(
                             entry: entry,
                             index: records.firstIndex(of: record),
-                            colour: Color.fromStored((record.job?.colour) ?? Theme.rowColourAsDouble)
+                            colour: Color.fromStored((record.job?.colour) ?? Theme.rowColourAsDouble),
+                            selectedJob: $selectedJob
                         )
                     }
                 }.onAppear(perform: changeSort)
@@ -178,7 +180,7 @@ struct LogTable: View, Identifiable {
     }
     
     var tableDetails: some View {
-        LogTableDetails(records: $records, selectedDate: $selectedDate)
+        LogTableDetails(records: $records, selectedDate: $selectedDate, open: $showSidebar)
             .environmentObject(updater)
     }
     
@@ -232,8 +234,10 @@ struct LogTable: View, Identifiable {
 }
 
 struct LogTablePreview: PreviewProvider {
+    @State static public var sj: String = "11.0"
+    
     static var previews: some View {
-        LogTable()
+        LogTable(selectedJob: $sj)
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
             .frame(width: 700)
     }
