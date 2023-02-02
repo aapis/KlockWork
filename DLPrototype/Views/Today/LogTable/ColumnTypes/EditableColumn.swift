@@ -19,6 +19,9 @@ struct EditableColumn: View {
     @Binding public var isDeleting: Bool
     @Binding public var text: String
     
+    public var shouldUnderline: Bool = false
+    public var url: URL?
+    
     @AppStorage("tigerStriped") private var tigerStriped = false
     
     var body: some View {
@@ -36,9 +39,29 @@ struct EditableColumn: View {
                             .padding(10)
                             .foregroundColor(textColour)
                     } else {
-                        Text(text)
-                            .padding(10)
-                            .foregroundColor(textColour)
+                        if type == "job" {
+                            if shouldUnderline {
+                                Link(text, destination: url!)
+                                    .padding(10)
+                                    .foregroundColor(textColour)
+                                    .underline()
+                                    .onHover { inside in
+                                        if inside {
+                                            NSCursor.pointingHand.push()
+                                        } else {
+                                            NSCursor.pop()
+                                        }
+                                    }
+                            } else {
+                                Text(text)
+                                    .padding(10)
+                                    .foregroundColor(textColour)
+                            }
+                        } else {
+                            Text(text)
+                                .padding(10)
+                                .foregroundColor(textColour)
+                        }
                     }
                         
                 }

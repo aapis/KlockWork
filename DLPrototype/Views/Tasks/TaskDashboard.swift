@@ -17,7 +17,8 @@ struct TaskDashboard: View {
     @Environment(\.managedObjectContext) var moc
     
     @FetchRequest(sortDescriptors: [SortDescriptor(\.jid, order: .reverse)]) public var jobs: FetchedResults<Job>
-    @FetchRequest(sortDescriptors: [SortDescriptor(\LogTask.id)]) public var tasks: FetchedResults<LogTask>
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.id)]) public var tasks: FetchedResults<LogTask>
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.pid)]) public var projects: FetchedResults<Project>
     
     private var pickerItems: [CustomPickerItem] {
         var items: [CustomPickerItem] = [CustomPickerItem(title: "Choose a job", tag: 0)]
@@ -63,7 +64,7 @@ struct TaskDashboard: View {
         SearchBar(
             text: $searchText,
             disabled: false,
-            placeholder: "Search \(tasks.count) tasks across \(jobs.count) projects"
+            placeholder: "Search \(tasks.count) tasks across \(jobs.count) jobs in \(projects.count) projects"
         )
         
         if searchText != "" {

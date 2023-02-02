@@ -15,9 +15,10 @@ public struct Entry: Identifiable, Equatable {
     public var message: String
     public var url: String = ""
     public var colour: Color
+    public var jobObject: Job? = nil
     public let id = UUID()
     
-    init(timestamp: String, job: String, message: String) {
+    public init(timestamp: String, job: String, message: String) {
         self.timestamp = timestamp
         self.job = job
         self.message = message
@@ -25,7 +26,7 @@ public struct Entry: Identifiable, Equatable {
         self.colour = Color.gray.opacity(0.2)
     }
     
-    init(timestamp: String, job: String, message: String, colour: Color) {
+    public init(timestamp: String, job: String, message: String, colour: Color) {
         self.timestamp = timestamp
         self.job = job
         self.message = message
@@ -33,7 +34,7 @@ public struct Entry: Identifiable, Equatable {
         self.colour = colour
     }
     
-    init(timestamp: String, url: String, message: String) {
+    public init(timestamp: String, url: String, message: String) {
         self.timestamp = timestamp
         self.url = url
         self.job = ""
@@ -41,6 +42,15 @@ public struct Entry: Identifiable, Equatable {
         self.colour = Color.gray.opacity(0.2)
         
         setJobFromUrl()
+    }
+    
+    public init(timestamp: String, job: Job, message: String) {
+        self.timestamp = timestamp
+        self.url = ""
+        self.job = job.jid.string
+        self.message = message
+        self.colour = Color.gray.opacity(0.2)
+        self.jobObject = job
     }
     
     mutating public func setColour(_ colour: Color) -> Void {
