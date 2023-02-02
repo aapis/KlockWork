@@ -31,39 +31,6 @@ struct Home: View {
         NavigationSplitView {
             List(selection: $selected) {
                 NavigationLink {
-                    Split(direction: $splitDirection)
-                        .navigationTitle("Multitasking")
-                        .environmentObject(recordsModel)
-                        .navigationSplitViewColumnWidth(ideal: 300)
-                        .toolbar {
-                            Button(action: setSplitViewDirection, label: {
-                                if !splitDirection {
-                                    Image(systemName: "rectangle.split.1x2")
-                                } else {
-                                    Image(systemName: "rectangle.split.2x1")
-                                }
-                            })
-                            .buttonStyle(.borderless)
-                            .font(.title)
-                            
-                            if showExperimentalFeatures {
-                                Button(action: {}, label: {
-                                    Image(systemName: "arrow.triangle.2.circlepath")
-                                })
-                                .buttonStyle(.borderless)
-                                .font(.title)
-                            }
-                        }
-                } label: {
-                    Image(systemName: "rectangle.split.2x1")
-                        .padding(.trailing, 10)
-                    Text("Multitasking")
-                }
-                
-                Divider()
-                    .foregroundColor(.clear)
-                
-                NavigationLink {
                     Today()
                         .navigationTitle("Today")
                         .environmentObject(recordsModel)
@@ -80,13 +47,12 @@ struct Home: View {
                 } label: {
                     Image(systemName: "doc.append.fill")
                         .padding(.trailing, 10)
-                    Text("Today")
+                        .font(.title)
                 }
                 
                 NavigationLink {
                     NoteDashboard()
                         .navigationTitle("Notes")
-                        .navigationSplitViewColumnWidth(ideal: 300)
                         .toolbar {
                             if showExperimentalFeatures {
                                 Button(action: {}, label: {
@@ -99,7 +65,7 @@ struct Home: View {
                 } label: {
                     Image(systemName: "note.text")
                         .padding(.trailing, 10)
-                    Text("Notes")
+                        .font(.title)
                 }
                 
                 NavigationLink {
@@ -119,7 +85,7 @@ struct Home: View {
                 } label: {
                     Image(systemName: "list.number")
                         .padding(.trailing, 10)
-                    Text("Tasks")
+                        .font(.title)
                 }
                 
                 NavigationLink {
@@ -140,7 +106,7 @@ struct Home: View {
                 } label: {
                     Image(systemName: "folder")
                         .padding(.trailing, 10)
-                    Text("Projects")
+                        .font(.title)
                 }
                 
                 NavigationLink {
@@ -159,16 +125,44 @@ struct Home: View {
                 } label: {
                     Image(systemName: "square.and.arrow.up.fill")
                         .padding(.trailing, 10)
-                    Text("Import")
+                        .font(.title)
                 }
                 
                 if showExperimentalFeatures {
                     Divider()
                     
                     NavigationLink {
+                        Split(direction: $splitDirection)
+                            .navigationTitle("Multitasking")
+                            .environmentObject(recordsModel)
+                            .toolbar {
+                                Button(action: setSplitViewDirection, label: {
+                                    if !splitDirection {
+                                        Image(systemName: "rectangle.split.1x2")
+                                    } else {
+                                        Image(systemName: "rectangle.split.2x1")
+                                    }
+                                })
+                                .buttonStyle(.borderless)
+                                .font(.title)
+                                
+                                if showExperimentalFeatures {
+                                    Button(action: {}, label: {
+                                        Image(systemName: "arrow.triangle.2.circlepath")
+                                    })
+                                    .buttonStyle(.borderless)
+                                    .font(.title)
+                                }
+                            }
+                    } label: {
+                        Image(systemName: "rectangle.split.2x1")
+                            .padding(.trailing, 10)
+                            .font(.title)
+                    }
+                    
+                    NavigationLink {
                         Manage()
                             .navigationTitle("Manage")
-                            .navigationSplitViewColumnWidth(ideal: 300)
                             .toolbar {
                                 if showExperimentalFeatures {
                                     Button(action: {}, label: {
@@ -181,7 +175,7 @@ struct Home: View {
                     } label: {
                         Image(systemName: "books.vertical")
                             .padding(.trailing, 10)
-                        Text("Manage")
+                            .font(.title)
                     }
                 
                     NavigationLink {
@@ -190,7 +184,7 @@ struct Home: View {
                     } label: {
                         Image(systemName: "calendar")
                             .padding(.trailing, 10)
-                        Text("Calendar")
+                            .font(.title)
                     }
                 
 
@@ -200,12 +194,13 @@ struct Home: View {
                     } label: {
                         Image(systemName: "cloud.fill")
                             .padding(.trailing, 10)
-                        Text("Backup")
+                            .font(.title)
                     }
                 }
             }
         } detail: {
             Text("This dashboard is great, isn't it")
+                
         }
         .navigationTitle("DailyLogger b.\(appVersion ?? "0")")
         .onAppear(perform: updateName)

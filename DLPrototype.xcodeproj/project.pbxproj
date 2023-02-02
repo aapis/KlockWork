@@ -23,6 +23,7 @@
 		53218D6124B7F6EC0088ABE9 /* DLPrototypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D6024B7F6EC0088ABE9 /* DLPrototypeTests.swift */; };
 		53218D6C24B7F6EC0088ABE9 /* DLPrototypeUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D6B24B7F6EC0088ABE9 /* DLPrototypeUITests.swift */; };
 		53218D8224B8195D0088ABE9 /* Screenshots in Resources */ = {isa = PBXBuildFile; fileRef = 53218D8124B8195D0088ABE9 /* Screenshots */; };
+		5330EEB7298B6418004FC38A /* JobRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5330EEB6298B6418004FC38A /* JobRow.swift */; };
 		5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5AD296CFF83000051B1 /* FileHelper.swift */; };
 		5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B2296D17EB000051B1 /* TaskDashboard.swift */; };
 		5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B4296D1FA7000051B1 /* TaskView.swift */; };
@@ -131,6 +132,7 @@
 		53218D6D24B7F6EC0088ABE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		53218D8024B8094C0088ABE9 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		53218D8124B8195D0088ABE9 /* Screenshots */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Screenshots; sourceTree = "<group>"; };
+		5330EEB6298B6418004FC38A /* JobRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobRow.swift; sourceTree = "<group>"; };
 		5335A5AD296CFF83000051B1 /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		5335A5B2296D17EB000051B1 /* TaskDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDashboard.swift; sourceTree = "<group>"; };
 		5335A5B4296D1FA7000051B1 /* TaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskView.swift; sourceTree = "<group>"; };
@@ -490,6 +492,7 @@
 				537AEBA0296287B900385787 /* LogRow.swift */,
 				53C6D0932965048500EA6129 /* DetailsRow.swift */,
 				53C6D09729654F4C00EA6129 /* DetailGroup.swift */,
+				5330EEB6298B6418004FC38A /* JobRow.swift */,
 			);
 			path = RowTypes;
 			sourceTree = "<group>";
@@ -708,6 +711,7 @@
 				53999C1F29669C4E00125E65 /* NoteCreate.swift in Sources */,
 				53759E0D2967ECAE00DCDC4B /* LogRecords.swift in Sources */,
 				53959A212973D3E5007A2549 /* CoreDataProjectConfiguration.swift in Sources */,
+				5330EEB7298B6418004FC38A /* JobRow.swift in Sources */,
 				53F10FE0296E77BE0048D040 /* CoreDataJob.swift in Sources */,
 				533E40652970DA640007785A /* ViewUpdater.swift in Sources */,
 				53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */,
@@ -901,7 +905,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 67;
+				CURRENT_PROJECT_VERSION = 68;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -932,7 +936,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 67;
+				CURRENT_PROJECT_VERSION = 68;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;

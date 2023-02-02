@@ -154,17 +154,19 @@ struct LogTable: View, Identifiable {
             
             if records.count > 0 {
                 ForEach(records) { record in
-                    let entry = Entry(
-                        timestamp: LogRecords.timestampToString(record.timestamp!),
-                        job: String(record.job?.jid ?? 0),
-                        message: record.message!
-                    )
-                    
-                    LogRow(
-                        entry: entry,
-                        index: records.firstIndex(of: record),
-                        colour: Color.fromStored((record.job?.colour) ?? Theme.rowColourAsDouble)
-                    )
+                    if record.job != nil {
+                        let entry = Entry(
+                            timestamp: LogRecords.timestampToString(record.timestamp!),
+                            job: record.job!,
+                            message: record.message!
+                        )
+                        
+                        LogRow(
+                            entry: entry,
+                            index: records.firstIndex(of: record),
+                            colour: Color.fromStored((record.job?.colour) ?? Theme.rowColourAsDouble)
+                        )
+                    }
                 }.onAppear(perform: changeSort)
             } else {
                 LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)

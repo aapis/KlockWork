@@ -184,11 +184,12 @@ struct LogTableDetails: View {
                     
                     if !statistics.contains(where: {$0.value == "\(colour)"}) {
                         statistics.append(
-                            Statistic(
+                            StatisticWithView(
                                 key: record.job?.jid.string ?? "No ID",
                                 value: "\(colour)",
                                 colour: colour,
-                                group: .jobs
+                                group: .jobs,
+                                view: AnyView(JobRow(job: record.job!, colour: colour))
                             )
                         )
                     }

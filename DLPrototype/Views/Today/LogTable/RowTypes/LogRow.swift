@@ -59,13 +59,17 @@ struct LogRow: View, Identifiable {
                     index: index,
                     isEditing: $isEditing,
                     isDeleting: $isDeleting,
-                    text: $job
+                    text: $job,
+                    shouldUnderline: (entry.jobObject != nil && entry.jobObject!.uri != nil ? true : false),
+                    url: (entry.jobObject != nil && entry.jobObject!.uri != nil ? entry.jobObject!.uri : nil)
                 )
                 .frame(maxWidth: 100)
                 .contextMenu {
-                    Button(action: {ClipboardHelper.copy(entry.job)}, label: {
-                        Text("Copy \"\(entry.job)\"")
-                    })
+                    if entry.jobObject != nil && entry.jobObject!.uri != nil {
+                        Button(action: {ClipboardHelper.copy(entry.jobObject!.uri!.absoluteString)}, label: {
+                            Text("Copy \"\(entry.jobObject!.uri!.absoluteString)\"")
+                        })
+                    }
                 }
                 
                 EditableColumn(
