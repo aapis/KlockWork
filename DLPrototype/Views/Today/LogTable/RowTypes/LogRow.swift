@@ -15,6 +15,8 @@ struct LogRow: View, Identifiable {
     public var colour: Color
     public var id = UUID()
     
+    @Binding public var selectedJob: String
+    
     @State public var isEditing: Bool = false
     @State public var isDeleting: Bool = false
     @State public var message: String = ""
@@ -48,7 +50,7 @@ struct LogRow: View, Identifiable {
                 .frame(maxWidth: 101)
                 .contextMenu {
                     Button(action: {ClipboardHelper.copy(entry.timestamp)}, label: {
-                        Text("Copy \"\(entry.timestamp)\"")
+                        Text("Copy timestamp")
                     })
                 }                
                 
@@ -65,9 +67,27 @@ struct LogRow: View, Identifiable {
                 )
                 .frame(maxWidth: 100)
                 .contextMenu {
-                    if entry.jobObject != nil && entry.jobObject!.uri != nil {
-                        Button(action: {ClipboardHelper.copy(entry.jobObject!.uri!.absoluteString)}, label: {
-                            Text("Copy \"\(entry.jobObject!.uri!.absoluteString)\"")
+                    if entry.jobObject != nil {
+                        if entry.jobObject!.uri != nil {
+                            Button(action: {ClipboardHelper.copy(entry.jobObject!.uri!.absoluteString)}, label: {
+                                Text("Copy job URL")
+                            })
+                        }
+                        
+                        Button(action: {ClipboardHelper.copy(entry.jobObject!.jid.string)}, label: {
+                            Text("Copy job ID")
+                        })
+                    }
+                    
+                    Button(action: {ClipboardHelper.copy(colour.description.debugDescription)}, label: {
+                        Text("Copy colour code")
+                    })
+                    
+                    Divider()
+                    
+                    if entry.jobObject != nil {
+                        Button(action: {setJob(entry.jobObject!.jid.string)}, label: {
+                            Text("Set job")
                         })
                     }
                 }
@@ -83,7 +103,7 @@ struct LogRow: View, Identifiable {
                 )
                 .contextMenu {
                     Button(action: {ClipboardHelper.copy(entry.message)}, label: {
-                        Text("Copy \"\(entry.message)\"")
+                        Text("Copy message")
                     })
                 }
                 
@@ -113,6 +133,14 @@ struct LogRow: View, Identifiable {
             setEditableValues()
         }
 //        .onHover(perform: onHover)
+    }
+    
+    private func setJob(_ job: String) -> Void {
+        let dotIndex = (job.range(of: ".")?.lowerBound)
+        
+        if dotIndex != nil {
+            selectedJob = String(job.prefix(upTo: dotIndex!))
+        }
     }
 
     private func setEditableValues() -> Void {
@@ -169,10 +197,12 @@ struct LogRow: View, Identifiable {
 }
 
 struct LogTableRowPreview: PreviewProvider {
+    @State static public var sj: String = "11.0"
+    
     static var previews: some View {
         VStack {
-            LogRow(entry: Entry(timestamp: "2023-01-01 19:48", job: "88888", message: "Hello, world"), index: 0, colour: Theme.rowColour)
-            LogRow(entry: Entry(timestamp: "2023-01-01 19:49", job: "11", message: "Hello, world"), index: 1, colour: Theme.rowColour)
+            LogRow(entry: Entry(timestamp: "2023-01-01 19:48", job: "88888", message: "Hello, world"), index: 0, colour: Theme.rowColour, selectedJob: $sj)
+            LogRow(entry: Entry(timestamp: "2023-01-01 19:49", job: "11", message: "Hello, world"), index: 1, colour: Theme.rowColour, selectedJob: $sj)
         }
     }
 }

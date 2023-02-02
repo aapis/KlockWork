@@ -59,6 +59,7 @@ public enum StatisticPeriod: String, CaseIterable {
 struct LogTableDetails: View {
     @Binding public var records: [LogRecord]
     @Binding public var selectedDate: Date
+    @Binding public var open: Bool
     
     @State private var statistics: [any Statistics] = []
     
@@ -175,7 +176,7 @@ struct LogTableDetails: View {
     }
     
     private func update() -> Void {
-        if records.count > 0 {
+        if records.count > 0 && open {
             statistics = []
             
             for record in records {
@@ -228,16 +229,16 @@ struct LogTableDetails: View {
                                         .frame(height: 30)
                                     }
                                 }
-                                .help(note.title!)
-                                .buttonStyle(.borderless)
-                                .padding(5)
-                                .onHover { inside in
-                                    if inside {
-                                        NSCursor.pointingHand.push()
-                                    } else {
-                                        NSCursor.pop()
+                                    .help(note.title!)
+                                    .buttonStyle(.borderless)
+                                    .padding(5)
+                                    .onHover { inside in
+                                        if inside {
+                                            NSCursor.pointingHand.push()
+                                        } else {
+                                            NSCursor.pop()
+                                        }
                                     }
-                                }
                             )
                         )
                     )
@@ -289,9 +290,10 @@ struct LogTableDetails: View {
 struct LogTableDetailsPreview: PreviewProvider {
     @State static private var selectedDate: Date = Date()
     @State static private var records: [LogRecord] = []
+    @State static private var open: Bool = true
     
     static var previews: some View {
-        LogTableDetails(records: $records, selectedDate: $selectedDate)
+        LogTableDetails(records: $records, selectedDate: $selectedDate, open: $open)
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }

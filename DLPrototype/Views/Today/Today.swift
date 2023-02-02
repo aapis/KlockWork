@@ -107,7 +107,7 @@ struct Today : View, Identifiable {
     
     // MARK: Table view
     var table: some View {
-        LogTable()
+        LogTable(selectedJob: $jobId)
             .id(updater.ids["today.table"])
             .environmentObject(updater)
     }
