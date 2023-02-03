@@ -16,11 +16,13 @@ struct GeneralSettings: View {
     @AppStorage("showExperiment.actions") private var showExperimentActions: Bool = false
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
+    @AppStorage("showSidebar") public var showSidebar: Bool = true
 
     var body: some View {
         Form {
             Toggle("Tiger stripe table rows", isOn: $tigerStriped)
             Toggle("Auto-correct text in text boxes", isOn: $enableAutoCorrection)
+            Toggle("Show sidebar", isOn: $showSidebar)
             
             Group {
                 Toggle("Experimental features (may tank performance)", isOn: $showExperimentalFeatures)
@@ -37,7 +39,6 @@ struct GeneralSettings: View {
             }
         }
         .padding(20)
-        .frame(width: 350, height: 100)
     }
 }
 

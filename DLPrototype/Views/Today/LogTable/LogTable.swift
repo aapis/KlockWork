@@ -15,7 +15,6 @@ struct LogTable: View, Identifiable {
     
     @State private var records: [LogRecord] = []
     @State private var wordCount: Int = 0
-    @State private var showSidebar: Bool = true
     @State private var isReversed: Bool = false
     @State private var isShowingAlert: Bool = false
     @State private var selectedTab: Int = 0
@@ -25,6 +24,7 @@ struct LogTable: View, Identifiable {
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("showExperiment.actions") private var showExperimentActions = false
+    @AppStorage("showSidebar") public var showSidebar: Bool = true
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
