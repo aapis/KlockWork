@@ -18,8 +18,8 @@ struct Home: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
     
-    @StateObject public var recordsModel: LogRecords = LogRecords(moc: PersistenceController.shared.container.viewContext)
-    @StateObject public var jobModel: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
+    @StateObject public var rm: LogRecords = LogRecords(moc: PersistenceController.shared.container.viewContext)
+    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     
     @State private var selected: String?
     @State public var appVersion: String?
@@ -28,13 +28,187 @@ struct Home: View {
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     
     var body: some View {
+        NavigationStack {
+            NavigationLink {
+                Today()
+                    .navigationTitle("Today")
+                    .environmentObject(rm)
+                    .environmentObject(jm)
+                    .environmentObject(updater)
+                    .toolbar {
+                        Button(action: redraw, label: {
+                            Image(systemName: "arrow.triangle.2.circlepath")
+                        })
+                        .buttonStyle(.borderless)
+                        .font(.title)
+                        .keyboardShortcut("r")
+                    }
+            } label: {
+                Image(systemName: "doc.append.fill")
+                    .padding(.trailing, 10)
+                    .font(.title)
+                    .buttonStyle(.borderless)
+            }
+            
+            NavigationLink {
+                NoteDashboard()
+                    .navigationTitle("Notes")
+                    .toolbar {
+                        if showExperimentalFeatures {
+                            Button(action: {}, label: {
+                                Image(systemName: "arrow.triangle.2.circlepath")
+                            })
+                            .buttonStyle(.borderless)
+                            .font(.title)
+                        }
+                    }
+            } label: {
+                Image(systemName: "note.text")
+                    .padding(.trailing, 10)
+                    .font(.title)
+            }
+            
+            NavigationLink {
+                TaskDashboard()
+                    .navigationTitle("Tasks")
+                    .environmentObject(rm)
+                    .environmentObject(updater)
+                    .toolbar {
+                        if showExperimentalFeatures {
+                            Button(action: {}, label: {
+                                Image(systemName: "arrow.triangle.2.circlepath")
+                            })
+                            .buttonStyle(.borderless)
+                            .font(.title)
+                        }
+                    }
+            } label: {
+                Image(systemName: "list.number")
+                    .padding(.trailing, 10)
+                    .font(.title)
+            }
+            
+            NavigationLink {
+                ProjectsDashboard()
+                    .navigationTitle("Projects")
+                    .environmentObject(rm)
+                    .environmentObject(jm)
+                    .environmentObject(updater)
+                    .toolbar {
+                        if showExperimentalFeatures {
+                            Button(action: {}, label: {
+                                Image(systemName: "arrow.triangle.2.circlepath")
+                            })
+                            .buttonStyle(.borderless)
+                            .font(.title)
+                        }
+                    }
+            } label: {
+                Image(systemName: "folder")
+                    .padding(.trailing, 10)
+                    .font(.title)
+            }
+            
+            NavigationLink {
+                Import()
+                    .navigationTitle("Import")
+                    .environmentObject(rm)
+                    .toolbar {
+                        if showExperimentalFeatures {
+                            Button(action: {}, label: {
+                                Image(systemName: "arrow.triangle.2.circlepath")
+                            })
+                            .buttonStyle(.borderless)
+                            .font(.title)
+                        }
+                    }
+            } label: {
+                Image(systemName: "square.and.arrow.up.fill")
+                    .padding(.trailing, 10)
+                    .font(.title)
+            }
+            
+            if showExperimentalFeatures {
+                Divider()
+                
+                NavigationLink {
+                    Split(direction: $splitDirection)
+                        .navigationTitle("Multitasking")
+                        .environmentObject(rm)
+                        .toolbar {
+                            Button(action: setSplitViewDirection, label: {
+                                if !splitDirection {
+                                    Image(systemName: "rectangle.split.1x2")
+                                } else {
+                                    Image(systemName: "rectangle.split.2x1")
+                                }
+                            })
+                            .buttonStyle(.borderless)
+                            .font(.title)
+                            
+                            if showExperimentalFeatures {
+                                Button(action: {}, label: {
+                                    Image(systemName: "arrow.triangle.2.circlepath")
+                                })
+                                .buttonStyle(.borderless)
+                                .font(.title)
+                            }
+                        }
+                } label: {
+                    Image(systemName: "rectangle.split.2x1")
+                        .padding(.trailing, 10)
+                        .font(.title)
+                }
+                
+                NavigationLink {
+                    Manage()
+                        .navigationTitle("Manage")
+                        .toolbar {
+                            if showExperimentalFeatures {
+                                Button(action: {}, label: {
+                                    Image(systemName: "arrow.triangle.2.circlepath")
+                                })
+                                .buttonStyle(.borderless)
+                                .font(.title)
+                            }
+                        }
+                } label: {
+                    Image(systemName: "books.vertical")
+                        .padding(.trailing, 10)
+                        .font(.title)
+                }
+            
+                NavigationLink {
+                    CalendarView()
+                        .navigationTitle("Calendar")
+                } label: {
+                    Image(systemName: "calendar")
+                        .padding(.trailing, 10)
+                        .font(.title)
+                }
+            
+
+                NavigationLink {
+                    Backup(category: Category(title: "Daily"))
+                        .navigationTitle("Backup")
+                } label: {
+                    Image(systemName: "cloud.fill")
+                        .padding(.trailing, 10)
+                        .font(.title)
+                }
+            }
+        }
+        .background(Theme.toolbarColour)
+    }
+    
+    var bodyOld: some View {
         NavigationSplitView {
             List(selection: $selected) {
                 NavigationLink {
                     Today()
                         .navigationTitle("Today")
-                        .environmentObject(recordsModel)
-                        .environmentObject(jobModel)
+                        .environmentObject(rm)
+                        .environmentObject(jm)
                         .environmentObject(updater)
                         .toolbar {
                             Button(action: redraw, label: {
@@ -71,7 +245,7 @@ struct Home: View {
                 NavigationLink {
                     TaskDashboard()
                         .navigationTitle("Tasks")
-                        .environmentObject(recordsModel)
+                        .environmentObject(rm)
                         .environmentObject(updater)
                         .toolbar {
                             if showExperimentalFeatures {
@@ -91,8 +265,8 @@ struct Home: View {
                 NavigationLink {
                     ProjectsDashboard()
                         .navigationTitle("Projects")
-                        .environmentObject(recordsModel)
-                        .environmentObject(jobModel)
+                        .environmentObject(rm)
+                        .environmentObject(jm)
                         .environmentObject(updater)
                         .toolbar {
                             if showExperimentalFeatures {
@@ -112,7 +286,7 @@ struct Home: View {
                 NavigationLink {
                     Import()
                         .navigationTitle("Import")
-                        .environmentObject(recordsModel)
+                        .environmentObject(rm)
                         .toolbar {
                             if showExperimentalFeatures {
                                 Button(action: {}, label: {
@@ -134,7 +308,7 @@ struct Home: View {
                     NavigationLink {
                         Split(direction: $splitDirection)
                             .navigationTitle("Multitasking")
-                            .environmentObject(recordsModel)
+                            .environmentObject(rm)
                             .toolbar {
                                 Button(action: setSplitViewDirection, label: {
                                     if !splitDirection {
@@ -204,7 +378,7 @@ struct Home: View {
         }
         .navigationTitle("DailyLogger b.\(appVersion ?? "0")")
         .onAppear(perform: updateName)
-        .environmentObject(recordsModel)
+        .environmentObject(rm)
     }
     
     private func updateName() -> Void {

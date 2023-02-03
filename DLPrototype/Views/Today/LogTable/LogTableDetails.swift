@@ -165,9 +165,9 @@ struct LogTableDetails: View {
             .onChange(of: records) { _ in
                 update()
             }
-            .onChange(of: tasks) { _ in
-                update()
-            }
+//            .onChange(of: tasks) { _ in
+//                update()
+//            }
             .onChange(of: notes) { _ in
                 update()
             }

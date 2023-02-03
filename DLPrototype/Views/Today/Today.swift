@@ -50,9 +50,8 @@ struct Today : View, Identifiable {
             editor
             table
         }
-        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-        .padding()
-        .defaultAppStorage(.standard)
+//        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+        .padding(10)
         .background(Theme.toolbarColour)
     }
     

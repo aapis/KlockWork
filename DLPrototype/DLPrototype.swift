@@ -13,17 +13,50 @@ import SwiftUI
 struct DLPrototype: App {
     private let persistenceController = PersistenceController.shared
     @StateObject public var updater: ViewUpdater = ViewUpdater()
+    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
+    @StateObject public var rm: LogRecords = LogRecords(moc: PersistenceController.shared.container.viewContext)
+    @State public var selected: Int = 0
     
     @Environment(\.scenePhase) var scenePhase
     
     var body: some Scene {
         WindowGroup {
-            Home()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                .environmentObject(updater)
-                .onChange(of: scenePhase) { _ in
-                    persistenceController.save()
+            NavigationSplitView {
+                VStack(spacing: 0) {
+                    Navigation(selected: $selected)
+                        .environmentObject(rm)
+                        .environmentObject(jm)
+                        .environmentObject(updater)
                 }
+                .environmentObject(rm)
+                .environmentObject(jm)
+                .environmentObject(updater)
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            } detail: {
+                Text("what")
+                //                    Today()
+                //                        .navigationTitle("Today")
+                //                    //                .toolbar {
+                //                    //                    Button(action: redraw, label: {
+                //                    //                        Image(systemName: "arrow.triangle.2.circlepath")
+                //                    //                    })
+                //                    //                    .buttonStyle(.borderless)
+                //                    //                    .font(.title)
+                //                    //                    .keyboardShortcut("r")
+                //                    //                }
+                //                        .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                //                        .environmentObject(updater)
+                //                        .environmentObject(rm)
+                //                        .environmentObject(jm)
+//                                        .defaultAppStorage(.standard)
+//                                        .onChange(of: scenePhase) { _ in
+//                                            persistenceController.save()
+//                                        }
+            }
+            .defaultAppStorage(.standard)
+            .onChange(of: scenePhase) { _ in
+                persistenceController.save()
+            }
         }
         
         #if os(macOS)
