@@ -252,9 +252,9 @@ struct LogTableDetails: View {
                         StatisticWithView(
                             key: task.owner?.jid.string ?? "No owner",
                             value: task.content ?? "No content",
-                            colour: Color.fromStored(task.owner?.colour ?? Theme.rowColourAsDouble),
+                            colour: Color.clear,
                             group: .tasks,
-                            view: AnyView(TaskView(task: task))
+                            view: AnyView(TaskView(task: task, colourizeRow: true))
                         )
                     )
                 }

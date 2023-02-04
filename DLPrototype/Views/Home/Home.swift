@@ -47,7 +47,7 @@ struct Home: View {
                 } label: {
                     Image(systemName: "doc.append.fill")
                         .padding(.trailing, 10)
-                        .font(.title)
+                    Text("Today")
                 }
                 
                 NavigationLink {
@@ -65,7 +65,7 @@ struct Home: View {
                 } label: {
                     Image(systemName: "note.text")
                         .padding(.trailing, 10)
-                        .font(.title)
+                    Text("Notes")
                 }
                 
                 NavigationLink {
@@ -85,7 +85,7 @@ struct Home: View {
                 } label: {
                     Image(systemName: "list.number")
                         .padding(.trailing, 10)
-                        .font(.title)
+                    Text("Tasks")
                 }
                 
                 NavigationLink {
@@ -106,7 +106,7 @@ struct Home: View {
                 } label: {
                     Image(systemName: "folder")
                         .padding(.trailing, 10)
-                        .font(.title)
+                    Text("Projects")
                 }
                 
                 NavigationLink {
@@ -125,7 +125,7 @@ struct Home: View {
                 } label: {
                     Image(systemName: "square.and.arrow.up.fill")
                         .padding(.trailing, 10)
-                        .font(.title)
+                    Text("In + Out")
                 }
                 
                 if showExperimentalFeatures {
@@ -157,7 +157,7 @@ struct Home: View {
                     } label: {
                         Image(systemName: "rectangle.split.2x1")
                             .padding(.trailing, 10)
-                            .font(.title)
+                        Text("Multitasking")
                     }
                     
                     NavigationLink {
@@ -175,7 +175,7 @@ struct Home: View {
                     } label: {
                         Image(systemName: "books.vertical")
                             .padding(.trailing, 10)
-                            .font(.title)
+                        Text("Manage")
                     }
                 
                     NavigationLink {
@@ -184,7 +184,7 @@ struct Home: View {
                     } label: {
                         Image(systemName: "calendar")
                             .padding(.trailing, 10)
-                            .font(.title)
+                        Text("Calendar")
                     }
                 
 
@@ -194,7 +194,7 @@ struct Home: View {
                     } label: {
                         Image(systemName: "cloud.fill")
                             .padding(.trailing, 10)
-                            .font(.title)
+                        Text("Backup")
                     }
                 }
             }

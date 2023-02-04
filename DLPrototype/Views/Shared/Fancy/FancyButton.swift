@@ -16,12 +16,14 @@ struct FancyButton: View {
     public var altIcon: String? = "checkmark.circle"
     public var transparent: Bool? = false
     public var showLabel: Bool? = true
+    public var fgColour: Color?
     
     var body: some View {
         VStack {
             Button(action: action, label: {
                 HStack {
                     Image(systemName: icon!)
+                        .foregroundColor(fgColour != nil ? fgColour : .white)
                     if showLabel! {
                         Text(text)
                     }

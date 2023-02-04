@@ -18,21 +18,13 @@ struct TaskListView: View {
     @EnvironmentObject public var updater: ViewUpdater
     
     private var tasks: [LogTask] {
-        let list = job.tasks!.allObjects as! [LogTask]
+        let ordered = job.tasks!.sortedArray(using: [
+                NSSortDescriptor(key: "completedDate", ascending: true),
+                NSSortDescriptor(key: "created", ascending: false)
+            ]
+        )
         
-        func deprioritizeCompleted(_ first: LogTask,_  second: LogTask) throws -> Bool {
-            if first.completedDate != nil && second.completedDate != nil {
-                return first.completedDate! < second.completedDate!
-            }
-            
-            return first.completedDate == nil
-        }
-        
-        do {
-            return try list.sorted(by: deprioritizeCompleted)
-        } catch {
-            return list
-        }
+        return ordered as! [LogTask]
     }
     
     var body: some View {
@@ -60,7 +52,7 @@ struct TaskListView: View {
                             ScrollView {
                                 VStack(spacing: 1) {
                                     ForEach(tasks, id: \LogTask.id) { task in
-                                        TaskView(task: task)
+                                        TaskView(task: task, showCreated: true, showUpdated: true)
                                     }
                                 }
                             }
@@ -81,16 +73,17 @@ struct TaskListView: View {
         GridRow {
             Group {
                 ZStack {
-                    Theme.headerColour
+                    Color.fromStored(job.colour!)
                 }
             }
             .frame(width: 50)
 
             Group {
                 ZStack(alignment: .leading) {
-                    Theme.headerColour
+                    Color.fromStored(job.colour!)
                     Text("Tasks for \(job.jid.string)")
                         .padding(5)
+                        .foregroundColor(Color.fromStored(job.colour!).isBright() ? Color.black : Color.white)
                 }
             }
         }

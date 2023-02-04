@@ -12,7 +12,10 @@ import SwiftUI
 struct TaskView: View {
     @ObservedObject public var task: LogTask
     public var showJobId: Bool? = false
-    public var showDate: Bool? = false
+    public var showCreated: Bool? = false
+    public var showUpdated: Bool? = false
+    public var showCompleted: Bool? = false
+    public var colourizeRow: Bool? = false
     
     @State private var completed: Bool = false
     @State private var editModeEnabled: Bool = false
@@ -26,13 +29,13 @@ struct TaskView: View {
             GridRow {
                 Group {
                     ZStack {
-                        (task.completedDate == nil ? Theme.rowColour : Theme.rowStatusGreen)
+                        colourize()
                         
                         if task.completedDate == nil {
-                            FancyButton(text: "Complete", action: complete, icon: "circle", transparent: true, showLabel: false)
+                            FancyButton(text: "Complete", action: complete, icon: "circle", transparent: true, showLabel: false, fgColour: colourizeText())
                                 .padding(5)
                         } else {
-                            FancyButton(text: "Complete", action: complete, icon: "largecircle.fill.circle", transparent: true, showLabel: false)
+                            FancyButton(text: "Complete", action: complete, icon: "largecircle.fill.circle", transparent: true, showLabel: false, fgColour: colourizeText())
                                 .padding(5)
                         }
                     }
@@ -42,10 +45,11 @@ struct TaskView: View {
                 if showJobId == true {
                     Group {
                         ZStack(alignment: .leading) {
-                            (task.completedDate == nil ? Theme.rowColour : Theme.rowStatusGreen)
+                            colourize()
                             
                             Text(task.owner?.jid.string ?? "No Job")
                                 .padding(5)
+                                .foregroundColor(colourizeText())
                         }
                     }
                     .frame(width: 100)
@@ -53,7 +57,7 @@ struct TaskView: View {
                 
                 Group {
                     ZStack(alignment: .leading) {
-                        (task.completedDate == nil ? Theme.rowColour : Theme.rowStatusGreen)
+                        colourize()
                         
                         if editModeEnabled {
                             FancyTextField(placeholder: task.content!, lineLimit: 1, onSubmit: edit, text: $rowContent)
@@ -61,54 +65,70 @@ struct TaskView: View {
                         } else {
                             Text(task.content ?? "No content")
                                 .padding(5)
+                                .foregroundColor(colourizeText())
                         }
                     }
-                }
-                
-                if showDate == true {
-                    Group {
-                        ZStack(alignment: .leading) {
-                            (task.completedDate == nil ? Theme.rowColour : Theme.rowStatusGreen)
-                            
-                            if task.completedDate != nil {
-//                                Image(systemName: "pencil")
-                                Text("C: \(DateHelper.shortDateWithTime(task.completedDate!))")
-                                    .padding(5)
-                            }
-                        }
-                        
-                        
-                    }
-                    .frame(width: 150)
-                    
-                    Group {
-                        ZStack(alignment: .leading) {
-                            (task.completedDate == nil ? Theme.rowColour : Theme.rowStatusGreen)
-                            
-                            if task.lastUpdate != nil {
-//                                Image(systemName: "arrow.triangle.2.circlepath")
-                                Text("U: \(DateHelper.shortDateWithTime(task.lastUpdate!))")
-                                    .padding(5)
-                            }
-                        }
-                        
-                        
-                    }
-                    .frame(width: 150)
                 }
                 
                 Group {
-                    ZStack(alignment: .leading) {
-                        (task.completedDate == nil ? Theme.rowColour : Theme.rowStatusGreen)
-
-                        FancyButton(text: "Edit", action: beginEdit, icon: "pencil", showLabel: false)
+                    ZStack(alignment: .trailing) {
+                        colourize()
+                        
+                        HStack {
+                            if showCreated == true {
+                                Image(systemName: "clock.fill")
+                                    .help(DateHelper.shortDateWithTime(task.created!))
+                                    .help("Created \(DateHelper.shortDateWithTime(task.created!))")
+                                    .padding(5)
+                                    .foregroundColor(colourizeText())
+                            }
+                            
+                            if showUpdated == true {
+                                if task.lastUpdate != nil {
+                                    Image(systemName: "rectangle.and.pencil.and.ellipsis")
+                                        .help("Edited at \(DateHelper.shortDateWithTime(task.lastUpdate!))")
+                                        .padding(5)
+                                        .foregroundColor(colourizeText())
+                                }
+                            }
+                            
+                            if showCompleted == true {
+                                if task.completedDate != nil {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .help("Completed at \(DateHelper.shortDateWithTime(task.completedDate!))")
+                                        .padding(5)
+                                        .foregroundColor(colourizeText())
+                                }
+                            }
+                            
+                            FancyButton(text: "Edit", action: beginEdit, icon: "pencil", showLabel: false, fgColour: colourizeText())
+                                .padding(.trailing, 5)
+                        }
                     }
-                    
-                    
                 }
-                .frame(width: 30)
+                .frame(width: 150)
             }
         }
+    }
+    
+    private func colourize() -> Color {
+        if colourizeRow == false {
+            return (task.completedDate == nil ? Theme.rowColour : Theme.rowStatusGreen)
+        }
+        
+        return (task.completedDate == nil ? Color.fromStored(task.owner!.colour!) : Theme.rowStatusGreen)
+    }
+    
+    private func colourizeText() -> Color {
+        if task.completedDate == nil {
+            if colourizeRow == false {
+                return Color.white
+            }
+        
+            return (Color.fromStored(task.owner!.colour!).isBright() ? Color.black : Color.white)
+        }
+        
+        return Color.white
     }
     
     private func beginEdit() -> Void {

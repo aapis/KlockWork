@@ -20,27 +20,6 @@ struct TaskDashboard: View {
     @FetchRequest(sortDescriptors: [SortDescriptor(\.id)]) public var tasks: FetchedResults<LogTask>
     @FetchRequest(sortDescriptors: [SortDescriptor(\.pid)]) public var projects: FetchedResults<Project>
     
-    private var pickerItems: [CustomPickerItem] {
-        var items: [CustomPickerItem] = [CustomPickerItem(title: "Choose a job", tag: 0)]
-        let projects = CoreDataProjects(moc: moc).all()
-        
-        for project in projects {
-            if project.jobs!.count > 0 {
-                items.append(CustomPickerItem(title: "Project: \(project.name!)", tag: Int(-1)))
-                
-                if project.jobs != nil {
-                    let jobs = project.jobs!.allObjects as! [Job]
-                    
-                    for job in jobs {
-                        items.append(CustomPickerItem(title: " - \(job.jid.string)", tag: Int(job.jid)))
-                    }
-                }
-            }
-        }
-        
-        return items
-    }
-    
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
@@ -49,7 +28,7 @@ struct TaskDashboard: View {
                     Spacer()
                 }
 
-                search
+                search.font(Theme.font)
                 create
 
                 Spacer()
@@ -69,7 +48,7 @@ struct TaskDashboard: View {
         
         if searchText != "" {
             Grid(horizontalSpacing: 1, verticalSpacing: 1) {
-                HStack(spacing: 0) {
+                HStack(spacing: 1) {
                     GridRow {
                         Group {
                             ZStack(alignment: .leading) {
@@ -100,7 +79,7 @@ struct TaskDashboard: View {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 1) {
                             ForEach(filter(tasks)) { task in
-                                TaskView(task: task, showJobId: true, showDate: true)
+                                TaskView(task: task, showJobId: true, showCreated: true, showUpdated: true, showCompleted: true, colourizeRow: true)
                             }
                         }
                     }
