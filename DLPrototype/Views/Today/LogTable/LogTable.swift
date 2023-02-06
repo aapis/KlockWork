@@ -157,7 +157,7 @@ struct LogTable: View, Identifiable {
                 ForEach(records) { record in
                     if record.job != nil {
                         let entry = Entry(
-                            timestamp: LogRecords.timestampToString(record.timestamp!),
+                            timestamp: DateHelper.longDate(record.timestamp!),
                             job: record.job!,
                             message: record.message!
                         )

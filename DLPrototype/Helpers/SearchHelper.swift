@@ -14,6 +14,7 @@ public final class SearchHelper {
     public var bucket: [LogTask] = [] // TODO: make this class+prop generic
     public var projectBucket: [Project] = []
     public var noteBucket: [Note] = []
+    public var recordBucket: [LogRecord] = []
     public var fields: [String] = []
     
     public init(bucket: FetchedResults<LogTask>) {
@@ -26,6 +27,10 @@ public final class SearchHelper {
     
     public init(bucket: FetchedResults<Note>) {
         self.noteBucket = Array(bucket)
+    }
+    
+    public init(bucket: FetchedResults<LogRecord>) {
+        self.recordBucket = Array(bucket)
     }
     
     public func exec(_ searchText: Binding<String>) -> [LogTask] {
@@ -43,6 +48,12 @@ public final class SearchHelper {
     public func findInNotes(_ searchText: Binding<String>) -> [Note] {
         return noteBucket.filter {
             matches(searchText, fields: [$0.title!, $0.body!])
+        }
+    }
+    
+    public func findInRecords(_ searchText: Binding<String>) -> [LogRecord] {
+        return recordBucket.filter {
+            matches(searchText, fields: [$0.message!])
         }
     }
     
