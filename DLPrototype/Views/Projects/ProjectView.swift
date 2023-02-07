@@ -13,6 +13,7 @@ struct ProjectView: View {
     public var project: Project
     
     @State private var name: String = ""
+    @State private var colour: String = ""
     @State private var created: Date?
     @State private var lastUpdate: Date?
     @State private var alive: Bool = true
@@ -61,6 +62,10 @@ struct ProjectView: View {
                             } else {
                                 alive = false
                             }
+                            
+                            project.alive = alive
+                            
+                            PersistenceController.shared.save()
                         })
                 }
                 
@@ -98,6 +103,32 @@ struct ProjectView: View {
     @ViewBuilder
     var form: some View {
         FancyTextField(placeholder: "Project name", lineLimit: 1, onSubmit: update, text: $name)
+        FancyDivider()
+        
+        HStack(spacing: 0) {
+            Rectangle()
+                .frame(width: 15)
+                .background(Color.fromStored(project.colour!))
+                .foregroundColor(.clear)
+            
+            FancyTextField(
+                placeholder: "Colour",
+                lineLimit: 1,
+                onSubmit: {},
+                disabled: true,
+                bgColour: Color.clear,
+                text: $colour
+            )
+            .border(Color.black.opacity(0.1), width: 2)
+            .frame(width: 200)
+            .onAppear(perform: {
+                colour = Color.fromStored(project.colour!).description.debugDescription
+            })
+            
+            FancyButton(text: "Regenerate colour", action: regenerateColour, icon: "arrow.counterclockwise", showLabel: false)
+                .padding(.leading)
+        }.frame(height: 40)
+        
         FancyDivider()
         
         toolbar
@@ -304,6 +335,15 @@ struct ProjectView: View {
         }
     }
     
+    private func regenerateColour() -> Void {
+        let rndColour = Color.randomStorable()
+        colour = Color.fromStored(rndColour).description.debugDescription
+        project.colour = rndColour
+        
+        PersistenceController.shared.save()
+        updater.update()
+    }
+    
     private func createToolbar() -> Void {
         // TODO: apply this pattern to Today view
         buttons = [
@@ -327,6 +367,7 @@ struct ProjectView: View {
         project.jobs = []
         project.alive = alive
         project.lastUpdate = Date()
+        project.colour = Color.randomStorable()
         lastUpdate = project.lastUpdate!
         
         saveSelectedJobs()
@@ -450,6 +491,7 @@ struct ProjectView: View {
         for job in existingJobs {
             project.removeFromJobs(job)
         }
+        lastUpdate = project.lastUpdate ?? Date()
         
         for job in selectedJobs {
             project.addToJobs(job)

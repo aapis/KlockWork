@@ -26,6 +26,7 @@ struct Column: View {
                 Text(text)
                     .padding(10)
                     .foregroundColor(textColour)
+                    .help(text)
             }
         }
     }

@@ -72,10 +72,11 @@ struct ProjectsDashboard: View {
                         Group {
                             ZStack(alignment: .leading) {
                                 Theme.headerColour
-                                Text("Owned Jobs")
+                                Text("# Jobs")
                                     .padding()
                             }
                         }
+                        .frame(width: 100)
                         
                         Group {
                             ZStack(alignment: .leading) {
@@ -84,44 +85,75 @@ struct ProjectsDashboard: View {
                                     .padding()
                             }
                         }
+                        .frame(width: 100)
                     }
                 }
-                .frame(height: 40)
+                .frame(height: 46)
                 
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 1) {
-                        ForEach(filter(projects)) { project in
-                            GridRow {
-                                HStack(spacing: 1) {
-                                    Group {
-                                        ZStack(alignment: .leading) {
-                                            Theme.rowColour
-                                            FancyTextLink(text: project.name!, destination: AnyView(ProjectView(project: project).environmentObject(jobModel)))
-                                        }
-                                    }
-                                    
-                                    Group {
-                                        ZStack(alignment: .leading) {
-                                            Theme.rowColour
-                                            Text("\(project.jobs!.count)")
-                                                .padding()
-                                        }
-                                    }
-                                    
-                                    Group {
-                                        ZStack(alignment: .leading) {
-                                            (project.alive ? Theme.rowStatusGreen : Color.red.opacity(0.2))
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                projectsView
             }
             .font(Theme.font)
         }
     }
+    
+    @ViewBuilder
+    var projectsView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 1) {
+                ForEach(filter(projects)) { project in
+                    GridRow {
+                        HStack(spacing: 1) {
+                            pColour(project)
+                            pLink(project)
+                            pJob(project)
+                            pAlive(project)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // swift compiler is fucking dogshit and "can't typecheck this expression",
+    // so here are some columns defined as functions because you can't pass args to a property
+    @ViewBuilder private func pColour(_ project: Project) -> some View {
+       Group {
+            ZStack(alignment: .leading) {
+                Color.fromStored(project.colour ?? Theme.rowColourAsDouble)
+            }
+        }
+        .frame(width: 5)
+    }
+    
+    @ViewBuilder private func pLink(_ project: Project) -> some View {
+        Group {
+            ZStack(alignment: .leading) {
+                Theme.rowColour
+                FancyTextLink(text: project.name!, destination: AnyView(ProjectView(project: project).environmentObject(jobModel)))
+            }
+        }
+    }
+    
+    @ViewBuilder private func pJob(_ project: Project) -> some View {
+        Group {
+            ZStack {
+                Theme.rowColour
+                Text("\(project.jobs!.count)")
+                    .padding()
+            }
+        }
+        .frame(width: 100)
+    }
+    
+    @ViewBuilder private func pAlive(_ project: Project) -> some View {
+        Group {
+            ZStack(alignment: .leading) {
+                (project.alive ? Theme.rowStatusGreen : Color.red.opacity(0.2))
+            }
+        }
+        .frame(width: 100)
+    }
+    
     
     private func filter(_ projects: FetchedResults<Project>) -> [Project] {
         return SearchHelper(bucket: projects).findInProjects($searchText)

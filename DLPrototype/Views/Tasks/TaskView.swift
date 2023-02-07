@@ -26,6 +26,7 @@ struct TaskView: View {
     
     var body: some View {
         HStack(spacing: 0) {
+            tProject()
             GridRow {
                 Group {
                     ZStack {
@@ -109,6 +110,23 @@ struct TaskView: View {
                 .frame(width: 150)
             }
         }
+    }
+    
+    @ViewBuilder private func tProject() -> some View {
+        Group {
+            HStack(spacing: 0) {
+                ZStack(alignment: .leading) {
+                    if task.owner != nil {
+                        Color.fromStored(task.owner!.project!.colour ?? Theme.rowColourAsDouble)
+                    } else {
+                        Theme.rowColour
+                    }
+                }
+                Divider()
+                    .foregroundColor(Theme.toolbarColour)
+            }
+        }
+        .frame(width: 5)
     }
     
     private func colourize() -> Color {
