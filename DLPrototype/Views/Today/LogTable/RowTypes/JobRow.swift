@@ -15,6 +15,8 @@ struct JobRow: View {
     
     var body: some View {
         HStack(spacing: 1) {
+            project
+            
             ZStack(alignment: .leading) {
                 colour
 
@@ -56,6 +58,21 @@ struct JobRow: View {
                     }
             }
         }
+    }
+    
+    @ViewBuilder var project: some View {
+        Group {
+            HStack(spacing: 0) {
+                ZStack(alignment: .leading) {
+                    if job.project != nil {
+                        Color.fromStored(job.project!.colour ?? Theme.rowColourAsDouble)
+                    } else {
+                        Theme.rowColour
+                    }
+                }
+            }
+        }
+        .frame(width: 5)
     }
 }
 
