@@ -24,6 +24,7 @@ struct LogRow: View, Identifiable {
     @State public var timestamp: String = ""
     @State public var aIndex: String = "0"
     @State public var activeColour: Color = Theme.rowColour
+    @State public var projectColHelpText: String = ""
     
     @AppStorage("tigerStriped") private var tigerStriped = false
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
@@ -32,6 +33,13 @@ struct LogRow: View, Identifiable {
     var body: some View {
         HStack(spacing: 1) {
             GridRow {
+                Column(
+                    colour: (entry.jobObject != nil ? Color.fromStored(entry.jobObject!.project!.colour ?? Theme.rowColourAsDouble) : applyColour()),
+                    textColour: rowTextColour(),
+                    text: $projectColHelpText
+                )
+                .frame(width: 5)
+                
                 Column(
                     colour: applyColour(),
                     textColour: rowTextColour(),
