@@ -101,95 +101,13 @@ struct NoteDashboard: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 1) {
                         ForEach(filter(notes)) { note in
-                            GridRow {
-                                HStack(spacing: 1) {
-                                    nProject(note)
-                                    nNote(note)
-                                    nStar(note)
-                                    nVersions(note)
-                                    nAlive(note)
-                                }
-                            }
+                            NoteRow(note: note)
                         }
                     }
                 }
             }
             .font(Theme.font)
         }
-    }
-    
-    @ViewBuilder private func nProject(_ note: Note) -> some View {
-        Group {
-            HStack(spacing: 0) {
-                ZStack(alignment: .leading) {
-                    if note.job != nil {
-                        Color.fromStored(note.job!.project!.colour ?? Theme.rowColourAsDouble)
-                    } else {
-                        Theme.rowColour
-                    }
-                }
-            }
-        }
-        .frame(width: 5)
-    }
-    
-    @ViewBuilder private func nNote(_ note: Note) -> some View {
-        Group {
-            ZStack(alignment: .leading) {
-                if note.job != nil {
-                    Color.fromStored(note.job!.colour ?? Theme.rowColourAsDouble)
-                } else {
-                    Theme.rowColour
-                }
-                
-                FancyTextLink(text: note.title!, destination: AnyView(NoteView(note: note)), fgColour: (note.job != nil ? (Color.fromStored(note.job!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white)  : Color.white))
-            }
-        }
-    }
-    
-    @ViewBuilder private func nStar(_ note: Note) -> some View {
-        Group {
-            ZStack {
-                if note.job != nil {
-                    Color.fromStored(note.job!.colour ?? Theme.rowColourAsDouble)
-                } else {
-                    Theme.rowColour
-                }
-
-                if note.starred {
-                    Image(systemName: "star.fill")
-                        .padding()
-                        .foregroundColor(note.job != nil ? (Color.fromStored(note.job!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white)  : Color.white)
-                }
-            }
-        }
-        .frame(width: 100)
-    }
-    
-    @ViewBuilder private func nVersions(_ note: Note) -> some View {
-        Group {
-            ZStack {
-                if note.job != nil {
-                    Color.fromStored(note.job!.colour ?? Theme.rowColourAsDouble)
-                } else {
-                    Theme.rowColour
-                }
-                
-                Text("\(note.versions!.count)")
-                    .padding()
-                    .foregroundColor(note.job != nil ? (Color.fromStored(note.job!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white)  : Color.white)
-            }
-        }
-        .frame(width: 100)
-    }
-    
-    @ViewBuilder private func nAlive(_ note: Note) -> some View {
-        Group {
-            ZStack {
-                (note.alive ? Theme.rowStatusGreen : Color.red.opacity(0.2))
-            }
-        }
-        .frame(width: 5)
     }
     
     private func filter(_ notes: FetchedResults<Note>) -> [Note] {

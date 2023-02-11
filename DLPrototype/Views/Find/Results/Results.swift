@@ -18,26 +18,28 @@ struct Results: View {
     @FetchRequest private var tasks: FetchedResults<LogTask>
     @FetchRequest private var projects: FetchedResults<Project>
     
+    @EnvironmentObject public var jm: CoreDataJob
+    
     var body: some View {
         VStack(spacing: 0) {
-            RecordResult(bucket: records, text: $text, isLoading: $isLoading)
-            //        Result<FetchedResults<LogRecord>>(bucket: records, text: $text)
-            //        Result<FetchedResults<Note>>(bucket: notes, text: $text)
-            //        Result<FetchedResults<LogTask>>(bucket: tasks, text: $text)
-            //        Result<FetchedResults<Project>>(bucket: projects, text: $text)
+            if records.count > 0 {
+                RecordResult(bucket: records, text: $text, isLoading: $isLoading)
+            }
+            
+            if notes.count > 0 {
+                NoteResult(bucket: notes, text: $text, isLoading: $isLoading)
+            }
+            
+            if tasks.count > 0 {
+                TaskResult(bucket: tasks, text: $text, isLoading: $isLoading)
+            }
+            
+            if projects.count > 0 {
+                ProjectResult(bucket: projects, text: $text, isLoading: $isLoading)
+                    .environmentObject(jm)
+            }
         }
     }
-    
-//    @ViewBuilder
-//    var loading: some View {
-//        VStack(alignment: .leading, spacing: 0) {
-//            HStack {
-//                Spacer()
-//                ProgressView("Searching...")
-//                Spacer()
-//            }
-//        }
-//    }
     
     public init(text: Binding<String>) {
         self._text = text

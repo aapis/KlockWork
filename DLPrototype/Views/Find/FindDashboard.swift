@@ -13,6 +13,8 @@ struct FindDashboard: View {
     @State private var searchText: String = ""
 //    @State private var isLoading: Bool = false
     
+    @EnvironmentObject public var jm: CoreDataJob
+    
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
@@ -32,7 +34,7 @@ struct FindDashboard: View {
             Spacer()
         }
         
-        Grid(horizontalSpacing: 0, verticalSpacing: 0) {            
+        Grid(horizontalSpacing: 0, verticalSpacing: 0) {
             GridRow {
                 SearchBar(
                     text: $searchText,
@@ -41,7 +43,10 @@ struct FindDashboard: View {
                 )
             }
             
+            FancyDivider()
+            
             Results(text: $searchText)
+                .environmentObject(jm)
         }
     }
 }

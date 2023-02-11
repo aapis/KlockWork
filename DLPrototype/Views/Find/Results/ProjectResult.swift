@@ -1,16 +1,16 @@
 //
-//  RecordResult.swift
+//  ProjectResult.swift
 //  DLPrototype
 //
-//  Created by Ryan Priebe on 2023-02-05.
+//  Created by Ryan Priebe on 2023-02-11.
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
 import Foundation
 import SwiftUI
 
-struct RecordResult: View {
-    public var bucket: FetchedResults<LogRecord>
+struct ProjectResult: View {
+    public var bucket: FetchedResults<Project>
     @Binding public var text: String
     @Binding public var isLoading: Bool
     
@@ -22,13 +22,15 @@ struct RecordResult: View {
     @State private var showChildren: Bool = false
     @State private var minimizeIcon: String = "arrowtriangle.down"
     
+    @EnvironmentObject public var jm: CoreDataJob
+    
     var body: some View {
         GridRow {
             ZStack(alignment: .leading) {
                 Theme.subHeaderColour
                 
                 HStack {
-                    Text("\(bucket.count) Records")
+                    Text("\(bucket.count) Projects")
                         
                     Spacer()
                     FancyButton(text: "Open", action: minimize, icon: minimizeIcon, transparent: true, showLabel: false)
@@ -59,21 +61,12 @@ struct RecordResult: View {
                     
                     ScrollView {
                         VStack(spacing: 1) {
-                            ForEach(0..<maxPerPage) { i in
+                            ForEach(0..<bucket.count) { i in
                                 if i <= bucket.count {
                                     let item = bucket[i + offset]
-                                    let entry = Entry(
-                                        timestamp: item.timestamp!,
-                                        job: item.job!,
-                                        message: item.message!
-                                    )
                                     
-                                    LogRow(
-                                        entry: entry,
-                                        index: bucket.firstIndex(of: item),
-                                        colour: Color.fromStored(item.job!.colour ?? Theme.rowColourAsDouble),
-                                        selectedJob: $text
-                                    )
+                                    ProjectRow(project: item)
+                                        .environmentObject(jm)
                                 }
                             }
                         }
@@ -149,7 +142,6 @@ struct RecordResult: View {
     
     private func showPage(_ index: Int) -> Void {
         page = (index + 1)
-//        offset = (bucket.count > maxPerPage ? index * maxPerPage : page)
         offset = index * maxPerPage
     }
 }
