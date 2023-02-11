@@ -30,7 +30,11 @@ struct ProjectResult: View {
                 Theme.subHeaderColour
                 
                 HStack {
-                    Text("\(bucket.count) Projects")
+                    if bucket.count > 1 {
+                        Text("\(bucket.count) Projects")
+                    } else {
+                        Text("1 Project")
+                    }
                         
                     Spacer()
                     FancyButton(text: "Open", action: minimize, icon: minimizeIcon, transparent: true, showLabel: false)
@@ -62,7 +66,7 @@ struct ProjectResult: View {
                     ScrollView {
                         VStack(spacing: 1) {
                             ForEach(0..<bucket.count) { i in
-                                if i <= bucket.count {
+                                if i < bucket.count {
                                     let item = bucket[i + offset]
                                     
                                     ProjectRow(project: item)

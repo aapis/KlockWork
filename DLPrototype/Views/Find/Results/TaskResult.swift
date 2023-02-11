@@ -28,7 +28,11 @@ struct TaskResult: View {
                 Theme.subHeaderColour
                 
                 HStack {
-                    Text("\(bucket.count) Tasks")
+                    if bucket.count > 1 {
+                        Text("\(bucket.count) Tasks")
+                    } else {
+                        Text("1 Task")
+                    }
                         
                     Spacer()
                     FancyButton(text: "Open", action: minimize, icon: minimizeIcon, transparent: true, showLabel: false)
@@ -60,7 +64,7 @@ struct TaskResult: View {
                     ScrollView {
                         VStack(spacing: 1) {
                             ForEach(0..<bucket.count) { i in
-                                if i <= bucket.count {
+                                if i < bucket.count {
                                     let item = bucket[i + offset]
                                     
                                     TaskView(task: item, showJobId: true, showCreated: true, showUpdated: true, showCompleted: true, colourizeRow: true)
