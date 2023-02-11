@@ -94,6 +94,7 @@
 		53F5896229983EEB00843B32 /* TaskResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F5896129983EEB00843B32 /* TaskResult.swift */; };
 		53F5896429983FA300843B32 /* ProjectResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F5896329983FA300843B32 /* ProjectResult.swift */; };
 		53F5896629983FD100843B32 /* ProjectRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F5896529983FD100843B32 /* ProjectRow.swift */; };
+		53F589682998437D00843B32 /* JobResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F589672998437D00843B32 /* JobResult.swift */; };
 		53FEF578296603D9000B94FC /* FancyTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FEF577296603D9000B94FC /* FancyTextField.swift */; };
 /* End PBXBuildFile section */
 
@@ -211,6 +212,7 @@
 		53F5896129983EEB00843B32 /* TaskResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskResult.swift; sourceTree = "<group>"; };
 		53F5896329983FA300843B32 /* ProjectResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectResult.swift; sourceTree = "<group>"; };
 		53F5896529983FD100843B32 /* ProjectRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectRow.swift; sourceTree = "<group>"; };
+		53F589672998437D00843B32 /* JobResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobResult.swift; sourceTree = "<group>"; };
 		53FEF577296603D9000B94FC /* FancyTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyTextField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -377,6 +379,7 @@
 				53F5895D2998330000843B32 /* NoteResult.swift */,
 				53F5896129983EEB00843B32 /* TaskResult.swift */,
 				53F5896329983FA300843B32 /* ProjectResult.swift */,
+				53F589672998437D00843B32 /* JobResult.swift */,
 			);
 			path = Results;
 			sourceTree = "<group>";
@@ -757,6 +760,7 @@
 				5330EEB7298B6418004FC38A /* JobRow.swift in Sources */,
 				53F10FE0296E77BE0048D040 /* CoreDataJob.swift in Sources */,
 				533E40652970DA640007785A /* ViewUpdater.swift in Sources */,
+				53F589682998437D00843B32 /* JobResult.swift in Sources */,
 				53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */,
 				53B0BE9229733A86007CB663 /* JobPicker.swift in Sources */,
 				53C6D08F2964E25F00EA6129 /* Column.swift in Sources */,

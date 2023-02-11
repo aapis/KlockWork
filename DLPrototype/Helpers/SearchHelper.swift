@@ -57,6 +57,10 @@ public final class SearchHelper {
         }
     }
     
+//    static public func highlight(phrase: String, bucket: [String]) -> [String] {
+//        
+//    }
+    
     private func matches(_ searchText: Binding<String>, fields: [String]) -> Bool {
         do {
             let caseInsensitiveTerm = try Regex(searchText.wrappedValue).ignoresCase()

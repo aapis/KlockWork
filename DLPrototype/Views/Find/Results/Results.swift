@@ -11,37 +11,48 @@ import SwiftUI
 
 struct Results: View {
     @Binding public var text: String
+    @Binding private var showRecords: Bool
+    @Binding private var showNotes: Bool
+    @Binding private var showTasks: Bool
+    @Binding private var showProjects: Bool
+    @Binding private var showJobs: Bool
+    
     @State private var isLoading: Bool = false
     
     @FetchRequest private var records: FetchedResults<LogRecord>
     @FetchRequest private var notes: FetchedResults<Note>
     @FetchRequest private var tasks: FetchedResults<LogTask>
     @FetchRequest private var projects: FetchedResults<Project>
+    @FetchRequest private var jobs: FetchedResults<Job>
     
     @EnvironmentObject public var jm: CoreDataJob
     
     var body: some View {
         VStack(spacing: 0) {
-            if records.count > 0 {
+            if records.count > 0 && showRecords {
                 RecordResult(bucket: records, text: $text, isLoading: $isLoading)
             }
             
-            if notes.count > 0 {
+            if notes.count > 0 && showNotes {
                 NoteResult(bucket: notes, text: $text, isLoading: $isLoading)
             }
             
-            if tasks.count > 0 {
+            if tasks.count > 0 && showTasks {
                 TaskResult(bucket: tasks, text: $text, isLoading: $isLoading)
             }
             
-            if projects.count > 0 {
+            if projects.count > 0 && showProjects {
                 ProjectResult(bucket: projects, text: $text, isLoading: $isLoading)
                     .environmentObject(jm)
+            }
+            
+            if jobs.count > 0 && showJobs {
+                JobResult(bucket: jobs, text: $text, isLoading: $isLoading)
             }
         }
     }
     
-    public init(text: Binding<String>) {
+    public init(text: Binding<String>, showRecords: Binding<Bool>, showNotes: Binding<Bool>, showTasks: Binding<Bool>, showProjects: Binding<Bool>, showJobs: Binding<Bool>) {
         self._text = text
         
         // all attempts to refactor this failed
@@ -76,5 +87,20 @@ struct Results: View {
             NSSortDescriptor(keyPath: \Project.created, ascending: false)
         ]
         self._projects = FetchRequest(fetchRequest: pr, animation: .easeInOut)
+        
+        // fetch all jobs where the URI matches $text
+        let jr: NSFetchRequest<Job> = Job.fetchRequest()
+        jr.predicate = NSPredicate(format: "uri CONTAINS[c] %@", text.wrappedValue)
+        jr.sortDescriptors = [
+            NSSortDescriptor(keyPath: \Job.jid, ascending: false)
+        ]
+        self._jobs = FetchRequest(fetchRequest: jr, animation: .easeInOut)
+        
+        // show/hide values
+        self._showRecords = showRecords
+        self._showNotes = showNotes
+        self._showTasks = showTasks
+        self._showProjects = showProjects
+        self._showJobs = showJobs
     }
 }
