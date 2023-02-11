@@ -28,7 +28,11 @@ struct RecordResult: View {
                 Theme.subHeaderColour
                 
                 HStack {
-                    Text("\(bucket.count) Records")
+                    if bucket.count > 1 {
+                        Text("\(bucket.count) Records")
+                    } else {
+                        Text("1 Record")
+                    }
                         
                     Spacer()
                     FancyButton(text: "Open", action: minimize, icon: minimizeIcon, transparent: true, showLabel: false)
@@ -60,7 +64,7 @@ struct RecordResult: View {
                     ScrollView {
                         VStack(spacing: 1) {
                             ForEach(0..<maxPerPage) { i in
-                                if i <= bucket.count {
+                                if i < bucket.count {
                                     let item = bucket[i + offset]
                                     let entry = Entry(
                                         timestamp: item.timestamp!,
@@ -149,7 +153,6 @@ struct RecordResult: View {
     
     private func showPage(_ index: Int) -> Void {
         page = (index + 1)
-//        offset = (bucket.count > maxPerPage ? index * maxPerPage : page)
         offset = index * maxPerPage
     }
 }

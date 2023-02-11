@@ -28,7 +28,11 @@ struct NoteResult: View {
                 Theme.subHeaderColour
                 
                 HStack {
-                    Text("\(bucket.count) Notes")
+                    if bucket.count > 1 {
+                        Text("\(bucket.count) Notes")
+                    } else {
+                        Text("1 Note")
+                    }
                         
                     Spacer()
                     FancyButton(text: "Open", action: minimize, icon: minimizeIcon, transparent: true, showLabel: false)
@@ -60,7 +64,7 @@ struct NoteResult: View {
                     ScrollView {
                         VStack(spacing: 1) {
                             ForEach(0..<bucket.count) { i in
-                                if i <= bucket.count {
+                                if i < bucket.count {
                                     let item = bucket[i + offset]
                                     
                                     NoteRow(note: item)

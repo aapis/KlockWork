@@ -90,7 +90,7 @@ struct Results: View {
         
         // fetch all jobs where the URI matches $text
         let jr: NSFetchRequest<Job> = Job.fetchRequest()
-        jr.predicate = NSPredicate(format: "uri CONTAINS[c] %@", text.wrappedValue)
+        jr.predicate = NSPredicate(format: "uri CONTAINS[c] %@ OR jid.string CONTAINS[c] %@", text.wrappedValue, text.wrappedValue)
         jr.sortDescriptors = [
             NSSortDescriptor(keyPath: \Job.jid, ascending: false)
         ]
