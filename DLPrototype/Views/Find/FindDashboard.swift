@@ -32,27 +32,7 @@ struct FindDashboard: View {
             Spacer()
         }
         
-        Grid(horizontalSpacing: 0, verticalSpacing: 0) {
-            GridRow {
-                HStack(spacing: 0) {
-                    Group {
-                        ZStack {
-                            Theme.headerColour
-                        }
-                    }
-                    
-                    Group {
-                        ZStack {
-                            Theme.headerColour
-                            
-                            Text("jo")
-                        }
-                    }
-                    
-                }
-                .frame(height: 40)
-            }
-            
+        Grid(horizontalSpacing: 0, verticalSpacing: 0) {            
             GridRow {
                 SearchBar(
                     text: $searchText,

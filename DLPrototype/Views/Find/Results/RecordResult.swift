@@ -17,8 +17,9 @@ struct RecordResult: View {
     
     public let maxPerPage: Int = 100
     
-    @State private var page: Int = 0
+    @State private var page: Int = 1
     @State private var numPages: Int = 1
+    @State private var offset: Int = 1
     @State private var showChildren: Bool = false
     @State private var minimizeIcon: String = "arrowtriangle.down"
     
@@ -37,7 +38,6 @@ struct RecordResult: View {
             }
         }
         .frame(height: 40)
-        .onAppear(perform: setNumPages)
         .onChange(of: text) { _ in
             isLoading = true
             showChildren = false
@@ -47,7 +47,6 @@ struct RecordResult: View {
                 if bucket.count > 0 {
                     isLoading = false
                     showChildren = true
-                    setNumPages()
                 } else {
                     minimize()
                 }
@@ -60,21 +59,25 @@ struct RecordResult: View {
                     Theme.rowColour
                     
                     ScrollView {
-                        ForEach(0..<maxPerPage) { i in
-                            let offset = (page > 0 ? maxPerPage * page : 0)
-                            let item = bucket[i]
-                            let entry = Entry(
-                                timestamp: DateHelper.longDate(item.timestamp!),
-                                job: item.job!,
-                                message: item.message!
-                            )
-                            
-                            LogRow(
-                                entry: entry,
-                                index: bucket.firstIndex(of: item),
-                                colour: Color.clear,
-                                selectedJob: $text
-                            )
+                        VStack(spacing: 1) {
+                            ForEach(0..<maxPerPage) { i in
+//                                offset = (page > 0 ? maxPerPage * page : 0)
+                                
+//                                let currentPage = (i )
+                                let item = bucket[i + offset]
+                                let entry = Entry(
+                                    timestamp: item.timestamp!,
+                                    job: item.job!,
+                                    message: item.message!
+                                )
+                                
+                                LogRow(
+                                    entry: entry,
+                                    index: bucket.firstIndex(of: item),
+                                    colour: Color.fromStored(item.job!.colour ?? Theme.rowColourAsDouble),
+                                    selectedJob: $text
+                                )
+                            }
                         }
                     }
                 }
@@ -96,8 +99,8 @@ struct RecordResult: View {
                 if bucket.count > 0 && numPages > 1 {
                     HStack(spacing: 1) {
                         ForEach(0..<numPages) { i in
-                            FancyButton(text: String(i + 1), action: {}, transparent: true, showIcon: false)
-                                .background(Theme.darkBtnColour)
+                            FancyButton(text: String(i + 1), action: {showPage(i)}, transparent: true, showIcon: false)
+                                .background(page == (i + 1) ? Theme.headerColour : Theme.darkBtnColour)
                         }
                     }
                     .padding([.leading, .trailing], 10)
@@ -116,7 +119,7 @@ struct RecordResult: View {
                 Spacer()
             }
             .padding([.top, .bottom], 20)
-        }
+        }.onDisappear(perform: setNumPages)
     }
     
     private func minimize() -> Void {
@@ -132,7 +135,20 @@ struct RecordResult: View {
     }
     
     private func setNumPages() -> Void {
-        numPages = bucket.count/maxPerPage
-        print("NPAGES: rr \(numPages)")
+        numPages = 1
+        page = 1
+        
+        if bucket.count > 1 {
+            let newNumPages = bucket.count/maxPerPage
+            
+            if newNumPages > numPages {
+                numPages = newNumPages
+            }
+        }
+    }
+    
+    private func showPage(_ index: Int) -> Void {
+        page = (index + 1)
+        offset = index * maxPerPage
     }
 }

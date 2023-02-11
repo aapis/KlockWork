@@ -94,15 +94,6 @@ struct NoteDashboard: View {
                             }
                         }
                         .frame(width: 100)
-                        
-                        Group {
-                            ZStack {
-                                Theme.headerColour
-                                Text("Alive")
-                                    .padding()
-                            }
-                        }
-                        .frame(width: 100)
                     }
                 }
                 .frame(height: 46)
