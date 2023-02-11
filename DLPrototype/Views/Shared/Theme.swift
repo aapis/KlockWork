@@ -12,7 +12,9 @@ import SwiftUI
 struct Theme {
     static public var rowColour: Color = Color.gray.opacity(0.2)
     static public var rowColourAsDouble: [Double] = [0.5, 0.5, 0.5, 0.2]
+    static public var darkBtnColour: Color = Color.black.opacity(0.2)
     static public var headerColour: Color = Color.blue
+    static public var subHeaderColour: Color = headerColour.opacity(0.2)
     static public var footerColour: Color = Color.gray.opacity(0.5)
     static public var toolbarColour: Color = Color.indigo.opacity(0.2)
     static public var tabColour: Color = Color.white.opacity(0.2)

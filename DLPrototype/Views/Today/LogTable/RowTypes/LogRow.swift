@@ -60,7 +60,8 @@ struct LogRow: View, Identifiable {
                     Button(action: {ClipboardHelper.copy(entry.timestamp)}, label: {
                         Text("Copy timestamp")
                     })
-                }                
+                }
+                .help(entry.timestamp)
                 
                 EditableColumn(
                     type: "job",

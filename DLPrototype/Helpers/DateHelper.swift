@@ -64,6 +64,15 @@ final public class DateHelper {
         return formatter.string(from: date!)
     }
     
+    static public func longDate(_ timestamp: Date) -> String {
+        let df = DateFormatter()
+        df.timeZone = TimeZone(abbreviation: "MST")
+        df.locale = NSLocale.current
+        df.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        
+        return df.string(from: timestamp)
+    }
+    
     static public func date(_ date: String, fmt: String? = "yyyy-MM-dd") -> Date? {
         let formatter = DateFormatter()
         formatter.dateFormat = fmt

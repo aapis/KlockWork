@@ -16,6 +16,7 @@ public struct Entry: Identifiable, Equatable {
     public var url: String = ""
     public var colour: Color
     public var jobObject: Job? = nil
+    public var dateObject: Date? = nil
     public let id = UUID()
     
     public init(timestamp: String, job: String, message: String) {
@@ -46,6 +47,16 @@ public struct Entry: Identifiable, Equatable {
     
     public init(timestamp: String, job: Job, message: String) {
         self.timestamp = timestamp
+        self.url = ""
+        self.job = job.jid.string
+        self.message = message
+        self.colour = Color.gray.opacity(0.2)
+        self.jobObject = job
+    }
+    
+    public init(timestamp: Date, job: Job, message: String) {
+        self.dateObject = timestamp
+        self.timestamp = DateHelper.longDate(dateObject!)
         self.url = ""
         self.job = job.jid.string
         self.message = message

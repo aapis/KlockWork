@@ -54,6 +54,7 @@ struct Today : View, Identifiable {
         .padding()
         .defaultAppStorage(.standard)
         .background(Theme.toolbarColour)
+        .onAppear(perform: onAppear)
     }
     
     // MARK: Editor view
@@ -128,6 +129,19 @@ struct Today : View, Identifiable {
         .onDisappear(perform: reloadUi)
     }
     
+    private func onAppear() -> Void {
+        setDefaultJob()
+    }
+    
+    private func setDefaultJob() -> Void {
+        let record = today.first
+        
+        if record != nil {
+            let rounded = record!.job!.jid.rounded(.toNearestOrEven)
+            jobId = String(Int(exactly: rounded) ?? 0)
+        }
+    }
+    
     private func pickerChange(selected: Int, sender: String?) -> Void {
         jobId = String(selected)
         
@@ -146,7 +160,7 @@ struct Today : View, Identifiable {
     
     private func submitAction() -> Void {
         if !text.isEmpty && (!jobId.isEmpty || !taskUrl.isEmpty) {
-            let jid = Double(getJobId())!
+            let jid = getJobIdFromUrl()
             let record = LogRecord(context: moc)
             record.timestamp = Date()
             record.message = text
@@ -181,16 +195,16 @@ struct Today : View, Identifiable {
         }
     }
     
-    private func getJobId() -> String {
+    private func getJobIdFromUrl() -> Double {
         if !taskUrl.isEmpty {
             jobId = String(taskUrl.suffix(5))
         }
 
-        return jobId
+        return Double(jobId) ?? 0.0
     }
 }
 
-struct AddPreview: PreviewProvider {
+struct TodayPreview: PreviewProvider {
     static var previews: some View {
         Today()
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
