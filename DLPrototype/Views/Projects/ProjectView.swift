@@ -14,6 +14,7 @@ struct ProjectView: View {
     
     @State private var name: String = ""
     @State private var colour: String = ""
+    @State private var colourChanged: Bool = false
     @State private var created: Date?
     @State private var lastUpdate: Date?
     @State private var alive: Bool = true
@@ -339,6 +340,7 @@ struct ProjectView: View {
         let rndColour = Color.randomStorable()
         colour = Color.fromStored(rndColour).description.debugDescription
         project.colour = rndColour
+        colourChanged = true
         
         PersistenceController.shared.save()
         updater.update()
@@ -367,7 +369,11 @@ struct ProjectView: View {
         project.jobs = []
         project.alive = alive
         project.lastUpdate = Date()
-        project.colour = Color.randomStorable()
+        
+        if colourChanged {
+            project.colour = Color.randomStorable()
+        }
+        
         lastUpdate = project.lastUpdate!
         
         saveSelectedJobs()

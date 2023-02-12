@@ -60,6 +60,6 @@ struct ProjectRow: View {
                 (project.alive ? Theme.rowStatusGreen : Color.red.opacity(0.2))
             }
         }
-        .frame(width: 100)
+        .frame(width: 5)
     }
 }

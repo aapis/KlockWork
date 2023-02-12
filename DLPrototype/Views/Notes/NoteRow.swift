@@ -28,8 +28,8 @@ struct NoteRow: View {
         Group {
             HStack(spacing: 0) {
                 ZStack(alignment: .leading) {
-                    if note.job != nil {
-                        Color.fromStored(note.job!.project!.colour ?? Theme.rowColourAsDouble)
+                    if note.mJob != nil {
+                        Color.fromStored(note.mJob!.project!.colour ?? Theme.rowColourAsDouble)
                     } else {
                         Theme.rowColour
                     }
@@ -42,13 +42,13 @@ struct NoteRow: View {
     @ViewBuilder private func nNote(_ note: Note) -> some View {
         Group {
             ZStack(alignment: .leading) {
-                if note.job != nil {
-                    Color.fromStored(note.job!.colour ?? Theme.rowColourAsDouble)
+                if note.mJob != nil {
+                    Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble)
                 } else {
                     Theme.rowColour
                 }
                 
-                FancyTextLink(text: note.title!, destination: AnyView(NoteView(note: note)), fgColour: (note.job != nil ? (Color.fromStored(note.job!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white)  : Color.white))
+                FancyTextLink(text: note.title!, destination: AnyView(NoteView(note: note)), fgColour: (note.mJob != nil ? (Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white)  : Color.white))
             }
         }
     }
@@ -56,8 +56,8 @@ struct NoteRow: View {
     @ViewBuilder private func nStar(_ note: Note) -> some View {
         Group {
             ZStack {
-                if note.job != nil {
-                    Color.fromStored(note.job!.colour ?? Theme.rowColourAsDouble)
+                if note.mJob != nil {
+                    Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble)
                 } else {
                     Theme.rowColour
                 }
@@ -65,7 +65,7 @@ struct NoteRow: View {
                 if note.starred {
                     Image(systemName: "star.fill")
                         .padding()
-                        .foregroundColor(note.job != nil ? (Color.fromStored(note.job!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white)  : Color.white)
+                        .foregroundColor(note.mJob != nil ? (Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white)  : Color.white)
                 }
             }
         }
@@ -75,15 +75,15 @@ struct NoteRow: View {
     @ViewBuilder private func nVersions(_ note: Note) -> some View {
         Group {
             ZStack {
-                if note.job != nil {
-                    Color.fromStored(note.job!.colour ?? Theme.rowColourAsDouble)
+                if note.mJob != nil {
+                    Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble)
                 } else {
                     Theme.rowColour
                 }
                 
                 Text("\(note.versions!.count)")
                     .padding()
-                    .foregroundColor(note.job != nil ? (Color.fromStored(note.job!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white)  : Color.white)
+                    .foregroundColor(note.mJob != nil ? (Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white)  : Color.white)
             }
         }
         .frame(width: 100)

@@ -209,7 +209,7 @@ struct LogTableDetails: View {
                         StatisticWithView(
                             key: note.title!,
                             value: note.id!.debugDescription,
-                            colour: Color.fromStored(note.job?.colour ?? Theme.rowColourAsDouble),
+                            colour: Color.fromStored(note.mJob?.colour ?? Theme.rowColourAsDouble),
                             group: .notes,
                             view: AnyView(
                                 NavigationLink {
