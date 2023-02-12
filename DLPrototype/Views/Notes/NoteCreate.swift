@@ -85,7 +85,8 @@ struct NoteCreate: View {
         note.body = content
         note.postedDate = Date()
         note.id = UUID()
-        note.job = selectedJob
+        note.job = selectedJob // TODO: DEPRECATED
+        note.mJob = selectedJob
         note.alive = true
         
         let version = NoteVersion(context: moc)

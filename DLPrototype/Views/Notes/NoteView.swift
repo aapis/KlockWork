@@ -43,10 +43,6 @@ struct NoteView: View {
         CoreDataNoteVersions(moc: moc).by(id: note.id!)
     }
     
-//    private var currentVersion: NoteVersion {
-//        versions.last!
-//    }
-    
     var body: some View {
         VStack {
             if isShowingEditor {
@@ -197,6 +193,7 @@ struct NoteView: View {
         note.lastUpdate = Date()
         lastUpdate = note.lastUpdate
         note.job = selectedJob // TODO: REMOVE
+        note.mJob = selectedJob
         note.alive = true
         
         CoreDataNoteVersions(moc: moc).from(note)
@@ -226,7 +223,7 @@ struct NoteView: View {
     private func createBindings(note: Note) -> Void {
         title = note.title!
         content = note.body!
-        selectedJob = note.job ?? nil
+        selectedJob = note.mJob ?? nil
         lastUpdate = note.lastUpdate ?? nil
         isShowingEditor = true
         noteVersions = CoreDataNoteVersions(moc: moc).by(id: note.id!)
