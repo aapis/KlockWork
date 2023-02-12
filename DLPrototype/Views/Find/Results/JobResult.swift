@@ -15,14 +15,17 @@ struct JobResult: View {
     @Binding public var isLoading: Bool
     
     public let maxPerPage: Int = 100
+    public let pType: String = "Jobs"
+    public let sType: String = "Job"
     
     @State private var page: Int = 1
     @State private var numPages: Int = 1
     @State private var offset: Int = 0
-    @State private var showChildren: Bool = false
+    @State private var showChildren: Bool = true
     @State private var minimizeIcon: String = "arrowtriangle.down"
     
     @EnvironmentObject public var jm: CoreDataJob
+    @EnvironmentObject public var updater: ViewUpdater
     
     var body: some View {
         GridRow {
@@ -31,12 +34,13 @@ struct JobResult: View {
                 
                 HStack {
                     if bucket.count > 1 {
-                        Text("\(bucket.count) Jobs")
+                        Text("\(bucket.count) \(pType)")
                     } else {
-                        Text("1 Job")
+                        Text("1 \(sType)")
                     }
                         
                     Spacer()
+                    FancyButton(text: "Download \(bucket.count) \(pType)", action: export, icon: "arrow.down.to.line", transparent: true, showLabel: false)
                     FancyButton(text: "Open", action: minimize, icon: minimizeIcon, transparent: true, showLabel: false)
                 }
                 .padding([.leading, .trailing], 10)
@@ -74,6 +78,7 @@ struct JobResult: View {
                             }
                         }
                     }
+                    .id(updater.ids["find.jr"])
                 }
             }
             .frame(maxHeight: 300)
@@ -146,5 +151,22 @@ struct JobResult: View {
     private func showPage(_ index: Int) -> Void {
         page = (index + 1)
         offset = index * maxPerPage
+        updater.update("find.jr")
+    }
+    
+    private func export() -> Void {
+        var pasteboardContents = ""
+
+        for item in bucket {            
+            let url = item.uri
+            
+            if url != nil {
+                pasteboardContents += "\(item.jid.string) - \(item.id!) - \(item.uri!.absoluteString) - \(item.colour != nil ? Color.fromStored(item.colour!) : Color.clear)\n"
+            } else {
+                pasteboardContents += "\(item.jid.string) - \(item.id!) - \(item.colour != nil ? Color.fromStored(item.colour!) : Color.clear)\n"
+            }
+        }
+
+        ClipboardHelper.copy(pasteboardContents)
     }
 }

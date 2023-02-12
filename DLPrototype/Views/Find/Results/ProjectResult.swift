@@ -15,14 +15,17 @@ struct ProjectResult: View {
     @Binding public var isLoading: Bool
     
     public let maxPerPage: Int = 100
+    public let pType: String = "Projects"
+    public let sType: String = "Project"
     
     @State private var page: Int = 1
     @State private var numPages: Int = 1
     @State private var offset: Int = 0
-    @State private var showChildren: Bool = false
+    @State private var showChildren: Bool = true
     @State private var minimizeIcon: String = "arrowtriangle.down"
     
     @EnvironmentObject public var jm: CoreDataJob
+    @EnvironmentObject public var updater: ViewUpdater
     
     var body: some View {
         GridRow {
@@ -31,12 +34,13 @@ struct ProjectResult: View {
                 
                 HStack {
                     if bucket.count > 1 {
-                        Text("\(bucket.count) Projects")
+                        Text("\(bucket.count) \(pType)")
                     } else {
-                        Text("1 Project")
+                        Text("1 \(sType)")
                     }
                         
                     Spacer()
+                    FancyButton(text: "Download \(bucket.count) \(pType)", action: export, icon: "arrow.down.to.line", transparent: true, showLabel: false)
                     FancyButton(text: "Open", action: minimize, icon: minimizeIcon, transparent: true, showLabel: false)
                 }
                 .padding([.leading, .trailing], 10)
@@ -75,6 +79,7 @@ struct ProjectResult: View {
                             }
                         }
                     }
+                    .id(updater.ids["find.pr"])
                 }
             }
             .frame(maxHeight: 300)
@@ -147,5 +152,16 @@ struct ProjectResult: View {
     private func showPage(_ index: Int) -> Void {
         page = (index + 1)
         offset = index * maxPerPage
+        updater.update("find.pr")
+    }
+    
+    private func export() -> Void {
+        var pasteboardContents = ""
+
+        for item in bucket {
+            pasteboardContents += "\(item.name!) - \(item.created!) - \(item.pid) - \(item.lastUpdate != nil ? item.lastUpdate!.description : "Not updated")\n"
+        }
+
+        ClipboardHelper.copy(pasteboardContents)
     }
 }
