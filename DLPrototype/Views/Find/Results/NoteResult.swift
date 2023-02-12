@@ -15,12 +15,16 @@ struct NoteResult: View {
     @Binding public var isLoading: Bool
     
     public let maxPerPage: Int = 100
+    public let pType: String = "Notes"
+    public let sType: String = "Note"
     
     @State private var page: Int = 1
     @State private var numPages: Int = 1
     @State private var offset: Int = 0
-    @State private var showChildren: Bool = false
+    @State private var showChildren: Bool = true
     @State private var minimizeIcon: String = "arrowtriangle.down"
+    
+    @EnvironmentObject public var updater: ViewUpdater
     
     var body: some View {
         GridRow {
@@ -29,12 +33,13 @@ struct NoteResult: View {
                 
                 HStack {
                     if bucket.count > 1 {
-                        Text("\(bucket.count) Notes")
+                        Text("\(bucket.count) \(pType)")
                     } else {
-                        Text("1 Note")
+                        Text("1 \(sType)")
                     }
                         
                     Spacer()
+                    FancyButton(text: "Download \(bucket.count) \(pType)", action: export, icon: "arrow.down.to.line", transparent: true, showLabel: false)
                     FancyButton(text: "Open", action: minimize, icon: minimizeIcon, transparent: true, showLabel: false)
                 }
                 .padding([.leading, .trailing], 10)
@@ -72,6 +77,7 @@ struct NoteResult: View {
                             }
                         }
                     }
+                    .id(updater.ids["find.nr"])
                 }
             }
             .frame(maxHeight: 300)
@@ -144,5 +150,25 @@ struct NoteResult: View {
     private func showPage(_ index: Int) -> Void {
         page = (index + 1)
         offset = index * maxPerPage
+        updater.update("find.nr")
+    }
+    
+    private func export() -> Void {
+        var pasteboardContents = ""
+
+        for item in bucket {
+            if item.job != nil {
+                let ignoredJobs = item.job!.project?.configuration?.ignoredJobs
+                let cleaned = CoreDataProjectConfiguration.applyBannedWordsTo(item)
+                
+                if ignoredJobs != nil {
+                    if !ignoredJobs!.contains(item.job!.jid.string) {
+                        pasteboardContents += "\(item.title!) - \(cleaned.body!) - \(item.postedDate!) - \(item.lastUpdate != nil ? item.lastUpdate!.description : "Not updated")\n"
+                    }
+                }
+            }
+        }
+
+        ClipboardHelper.copy(pasteboardContents)
     }
 }

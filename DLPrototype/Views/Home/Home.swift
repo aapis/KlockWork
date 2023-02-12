@@ -223,8 +223,19 @@ struct Home: View {
                 }
             }
         } detail: {
-            Text("This dashboard is great, isn't it")
-                
+            FindDashboard()
+                .navigationTitle("Find")
+                .environmentObject(rm)
+                .environmentObject(jm)
+                .environmentObject(updater)
+                .toolbar {
+                    Button(action: redraw, label: {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                    })
+                    .buttonStyle(.borderless)
+                    .font(.title)
+                    .keyboardShortcut("r")
+                }
         }
         .navigationTitle("DailyLogger b.\(appVersion ?? "0")")
         .onAppear(perform: updateName)

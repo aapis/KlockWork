@@ -17,12 +17,24 @@ public class ViewUpdater: ObservableObject {
         "dg.hasNoView": UUID(),
         "tlv.table": UUID(),
         "pv.form": UUID(),
-        "pc.form": UUID()
+        "pc.form": UUID(),
+        "find.rr": UUID(),
+        "find.nr": UUID(),
+        "find.tr": UUID(),
+        "find.pr": UUID(),
+        "find.jr": UUID(),
     ]
     
-    public func update() -> Void {
+    public func update(_ key: String? = "") -> Void {
         for (k, _) in ids {
-            ids[k] = UUID()
+            
+            if key != nil {
+                if key == k {
+                    ids[k] = UUID()
+                }
+            } else {
+                ids[k] = UUID()
+            }
         }
     }
     
