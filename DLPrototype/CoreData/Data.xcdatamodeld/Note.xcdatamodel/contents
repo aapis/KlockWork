@@ -19,14 +19,12 @@
         <relationship name="tasks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LogTask" inverseName="owner" inverseEntity="LogTask"/>
     </entity>
     <entity name="LogRecord" representedClassName="LogRecord" syncable="YES" codeGenerationType="class">
-        <attribute name="alive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="message" optional="YES" attributeType="String"/>
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" customClassName="Date"/>
         <relationship name="job" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="records" inverseEntity="Job"/>
     </entity>
     <entity name="LogTask" representedClassName="LogTask" syncable="YES" codeGenerationType="class">
-        <attribute name="alive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="completedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="content" optional="YES" attributeType="String"/>
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

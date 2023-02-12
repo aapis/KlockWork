@@ -63,7 +63,7 @@ struct Results: View {
         // all attempts to refactor this failed
         // fetch all records matching $text
         let rr: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
-        rr.predicate = NSPredicate(format: "message CONTAINS[c] %@ AND alive = true", text.wrappedValue)
+        rr.predicate = NSPredicate(format: "message CONTAINS[c] %@", text.wrappedValue)
         rr.sortDescriptors = [
             NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)
         ]
@@ -79,7 +79,7 @@ struct Results: View {
         
         // fetch all tasks matching $text
         let tr: NSFetchRequest<LogTask> = LogTask.fetchRequest()
-        tr.predicate = NSPredicate(format: "content CONTAINS[c] %@ AND alive = true", text.wrappedValue)
+        tr.predicate = NSPredicate(format: "content CONTAINS[c] %@", text.wrappedValue)
         tr.sortDescriptors = [
             NSSortDescriptor(keyPath: \LogTask.created, ascending: false)
         ]
