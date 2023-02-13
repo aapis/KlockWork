@@ -71,10 +71,10 @@ struct LogRow: View, Identifiable {
                     isEditing: $isEditing,
                     isDeleting: $isDeleting,
                     text: $job,
-                    shouldUnderline: (entry.jobObject != nil && entry.jobObject!.uri != nil ? true : false),
-                    url: (entry.jobObject != nil && entry.jobObject!.uri != nil ? entry.jobObject!.uri : nil)
+                    url: (entry.jobObject != nil && entry.jobObject!.uri != nil ? entry.jobObject!.uri : nil),
+                    job: entry.jobObject
                 )
-                .frame(maxWidth: 100)
+                .frame(maxWidth: 120)
                 .contextMenu {
                     if entry.jobObject != nil {
                         if entry.jobObject!.uri != nil {

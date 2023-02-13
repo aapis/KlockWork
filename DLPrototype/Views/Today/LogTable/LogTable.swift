@@ -95,7 +95,7 @@ struct LogTable: View, Identifiable {
     
     // MARK: header view
     var headers: some View {
-        GridRow {            
+        GridRow {
             Group {
                 ZStack {
                     Theme.headerColour
@@ -123,7 +123,7 @@ struct LogTable: View, Identifiable {
                         .padding(10)
                 }
             }
-                .frame(width: 100)
+                .frame(width: 120)
             Group {
                 ZStack(alignment: .leading) {
                     Theme.headerColour
