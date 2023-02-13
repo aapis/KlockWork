@@ -17,6 +17,7 @@ struct GeneralSettings: View {
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
     @AppStorage("showSidebar") public var showSidebar: Bool = true
+    @AppStorage("defaultHome") public var defaultHome: Int = 0
 
     var body: some View {
         Form {
@@ -36,6 +37,15 @@ struct GeneralSettings: View {
             Picker("Default table sort direction:", selection: $defaultTableSortOrder) {
                 Text("DESC").tag("DESC")
                 Text("ASC").tag("ASC")
+            }
+            
+            Picker("Default home screen:", selection: $defaultHome) {
+                Text("Find").tag(0)
+                Text("Today").tag(1)
+                Text("Notes").tag(2)
+                Text("Tasks").tag(3)
+                Text("Projects").tag(4)
+                Text("Job").tag(5)
             }
         }
         .padding(20)

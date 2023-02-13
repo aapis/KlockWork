@@ -19,8 +19,8 @@ struct EditableColumn: View {
     @Binding public var isDeleting: Bool
     @Binding public var text: String
     
-    public var shouldUnderline: Bool = false
     public var url: URL?
+    public var job: Job?
     
     @AppStorage("tigerStriped") private var tigerStriped = false
     
@@ -40,22 +40,41 @@ struct EditableColumn: View {
                             .foregroundColor(textColour)
                     } else {
                         if type == "job" {
-                            if shouldUnderline {
-                                Link(text, destination: url!)
-                                    .padding(10)
-                                    .foregroundColor(textColour)
-                                    .underline()
-                                    .onHover { inside in
-                                        if inside {
-                                            NSCursor.pointingHand.push()
-                                        } else {
-                                            NSCursor.pop()
-                                        }
+                            HStack {
+                                if job != nil {
+                                    NavigationLink {
+                                        JobDashboard(defaultSelectedJob: job!.jid)
+                                    } label: {
+                                        Text(text)
+                                            .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                                            .padding([.leading, .trailing], 10)
+                                            .onHover { inside in
+                                                if inside {
+                                                    NSCursor.pointingHand.push()
+                                                } else {
+                                                    NSCursor.pop()
+                                                }
+                                            }
+                                            .help("Edit job")
                                     }
-                            } else {
-                                Text(text)
-                                    .padding(10)
-                                    .foregroundColor(textColour)
+                                    .buttonStyle(.borderless)
+                                    .underline()
+                                }
+                                
+                                if url != nil {
+                                    Link(destination: url!, label: {
+                                        Image(systemName: "link")
+                                            .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                                            .onHover { inside in
+                                                if inside {
+                                                    NSCursor.pointingHand.push()
+                                                } else {
+                                                    NSCursor.pop()
+                                                }
+                                            }
+                                            .help("Visit job URL on the web")
+                                    })
+                                }
                             }
                         } else {
                             Text(text)

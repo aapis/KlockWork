@@ -133,6 +133,27 @@ struct Home: View {
                     }
                     
                     NavigationLink {
+                        JobDashboard()
+                            .navigationTitle("Jobs")
+                            .environmentObject(rm)
+                            .environmentObject(jm)
+                            .environmentObject(updater)
+                            .toolbar {
+                                if showExperimentalFeatures {
+                                    Button(action: {}, label: {
+                                        Image(systemName: "arrow.triangle.2.circlepath")
+                                    })
+                                    .buttonStyle(.borderless)
+                                    .font(.title)
+                                }
+                            }
+                    } label: {
+                        Image(systemName: "hammer")
+                            .padding(.trailing, 10)
+                        Text("Jobs")
+                    }
+                    
+                    NavigationLink {
                         Import()
                             .navigationTitle("Import")
                             .environmentObject(rm)
