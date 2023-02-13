@@ -22,8 +22,6 @@ struct EditableColumn: View {
     public var url: URL?
     public var job: Job?
     
-    @State private var unnecessaryJobBind: Job?
-    
     @AppStorage("tigerStriped") private var tigerStriped = false
     
     var body: some View {
@@ -59,7 +57,6 @@ struct EditableColumn: View {
                                             }
                                             .help("Edit job")
                                     }
-                                    .onAppear(perform: bindJob)
                                     .buttonStyle(.borderless)
                                     .underline()
                                 }
@@ -108,9 +105,5 @@ struct EditableColumn: View {
         dateFormatter.dateFormat = "h:mm a"
         
         return dateFormatter.string(from: inputDate!)
-    }
-    
-    private func bindJob() -> Void {
-        unnecessaryJobBind = job
     }
 }

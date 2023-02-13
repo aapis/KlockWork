@@ -19,29 +19,40 @@ struct JobRow: View {
             
             ZStack(alignment: .leading) {
                 colour
-
-                if job.uri != nil {
-                    Link(job.jid.string, destination: job.uri!.absoluteURL)
-                        .padding(10)
-                        .foregroundColor(colour.isBright() ? Color.black : Color.white)
-                        .help("Open \(job.uri!.absoluteString)")
-                        .underline()
-                        .contextMenu {
-                            Button(action: {ClipboardHelper.copy(job.uri!.absoluteString)}, label: {
-                                Text("Copy link")
-                            })
-                        }
-                        .onHover { inside in
-                            if inside {
-                                NSCursor.pointingHand.push()
-                            } else {
-                                NSCursor.pop()
+                
+                HStack {
+                    NavigationLink {
+                        JobDashboard(defaultSelectedJob: job.jid)
+                    } label: {
+                        Text(job.jid.string)
+                            .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                            .padding([.leading, .trailing], 10)
+                            .onHover { inside in
+                                if inside {
+                                    NSCursor.pointingHand.push()
+                                } else {
+                                    NSCursor.pop()
+                                }
                             }
-                        }
-                } else {
-                    Text(job.jid.string)
-                        .padding(10)
-                        .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                            .help("Edit job")
+                    }
+                    .buttonStyle(.borderless)
+                    .underline()
+                    
+                    if job.uri != nil {
+                        Link(destination: job.uri!, label: {
+                            Image(systemName: "link")
+                                .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                                .onHover { inside in
+                                    if inside {
+                                        NSCursor.pointingHand.push()
+                                    } else {
+                                        NSCursor.pop()
+                                    }
+                                }
+                                .help("Visit job URL on the web")
+                        })
+                    }
                 }
             }.frame(width: 200)
             
