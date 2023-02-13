@@ -151,7 +151,7 @@ struct JobResult: View {
     private func showPage(_ index: Int) -> Void {
         page = (index + 1)
         offset = index * maxPerPage
-        updater.update("find.jr")
+        updater.updateOne("find.jr")
     }
     
     private func export() -> Void {

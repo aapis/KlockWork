@@ -27,15 +27,12 @@ public class ViewUpdater: ObservableObject {
     
     public func update(_ key: String? = "") -> Void {
         for (k, _) in ids {
-            
-            if key != nil {
-                if key == k {
-                    ids[k] = UUID()
-                }
-            } else {
-                ids[k] = UUID()
-            }
+            ids[k] = UUID()
         }
+    }
+    
+    public func updateOne(_ key: String = "") -> Void {
+        ids[key] = UUID()
     }
     
     public func set(_ uuids: [String: UUID]) -> Void {
