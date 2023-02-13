@@ -160,7 +160,7 @@ struct RecordResult: View {
     private func showPage(_ index: Int) -> Void {
         page = (index + 1)
         offset = index * maxPerPage
-        updater.update("find.rr")
+        updater.updateOne("find.rr")
     }
     
     private func export() -> Void {

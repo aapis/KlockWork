@@ -150,7 +150,7 @@ struct TaskResult: View {
     private func showPage(_ index: Int) -> Void {
         page = (index + 1)
         offset = index * maxPerPage
-        updater.update("find.tr")
+        updater.updateOne("find.tr")
     }
     
     private func export() -> Void {

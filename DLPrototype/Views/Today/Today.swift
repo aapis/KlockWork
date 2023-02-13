@@ -155,7 +155,8 @@ struct Today : View, Identifiable {
     }
 
     public func reloadUi() -> Void {
-        updater.update()
+        updater.updateOne("today.table")
+        updater.updateOne("today.picker")
     }
     
     private func submitAction() -> Void {

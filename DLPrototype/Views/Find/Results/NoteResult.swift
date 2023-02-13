@@ -150,7 +150,7 @@ struct NoteResult: View {
     private func showPage(_ index: Int) -> Void {
         page = (index + 1)
         offset = index * maxPerPage
-        updater.update("find.nr")
+        updater.updateOne("find.nr")
     }
     
     private func export() -> Void {
