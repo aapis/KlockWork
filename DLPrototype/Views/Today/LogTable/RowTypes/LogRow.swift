@@ -34,7 +34,7 @@ struct LogRow: View, Identifiable {
         HStack(spacing: 1) {
             GridRow {
                 Column(
-                    colour: (entry.jobObject != nil ? Color.fromStored(entry.jobObject!.project!.colour ?? Theme.rowColourAsDouble) : applyColour()),
+                    colour: (entry.jobObject != nil  && entry.jobObject!.project != nil ? Color.fromStored(entry.jobObject!.project!.colour ?? Theme.rowColourAsDouble) : applyColour()),
                     textColour: rowTextColour(),
                     text: $projectColHelpText
                 )
