@@ -18,6 +18,7 @@ struct ProjectCreate: View {
     @State private var selectedJobs: [Job] = []
     @State private var allUnOwned: [Job] = []
     @State private var selectAllToggle: Bool = false
+    @State private var colour: Color = Color.clear
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
@@ -150,6 +151,7 @@ struct ProjectCreate: View {
         project.alive = true
         project.created = Date()
         project.id = UUID()
+        project.colour = Color.randomStorable()
 
         for job in selectedJobs {
             project.addToJobs(job)

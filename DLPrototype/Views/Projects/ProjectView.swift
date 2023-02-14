@@ -109,7 +109,7 @@ struct ProjectView: View {
         HStack(spacing: 0) {
             Rectangle()
                 .frame(width: 15)
-                .background(Color.fromStored(project.colour!))
+                .background(Color.fromStored(project.colour ?? Theme.rowColourAsDouble))
                 .foregroundColor(.clear)
             
             FancyTextField(
@@ -123,7 +123,7 @@ struct ProjectView: View {
             .border(Color.black.opacity(0.1), width: 2)
             .frame(width: 200)
             .onAppear(perform: {
-                colour = Color.fromStored(project.colour!).description.debugDescription
+                colour = Color.fromStored(project.colour ?? Theme.rowColourAsDouble).description.debugDescription
             })
             
             FancyButton(text: "Regenerate colour", action: regenerateColour, icon: "arrow.counterclockwise", showLabel: false)
