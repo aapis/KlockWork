@@ -74,7 +74,6 @@ struct Home: View {
                         LinkDashboard()
                             .navigationTitle("Links")
                             .environmentObject(rm)
-                            .environmentObject(jm)
                             .environmentObject(updater)
                             .toolbar {
                                 Button(action: redraw, label: {

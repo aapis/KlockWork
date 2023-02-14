@@ -9,8 +9,56 @@ import Foundation
 import SwiftUI
 
 struct LinkDashboard: View {
+    @State private var searchText: String = ""
+    
+    @EnvironmentObject public var rm: LogRecords
+    @EnvironmentObject public var updater: ViewUpdater
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack(alignment: .leading) {
+            VStack(alignment: .leading) {
+                search
+
+                Spacer()
+            }
+            .font(Theme.font)
+            .padding()
+        }
+        .background(Theme.toolbarColour)
+    }
+    
+    @ViewBuilder
+    var search: some View {
+        HStack {
+            Title(text: "Links", image: "link")
+            Spacer()
+        }
+        
+        Grid(horizontalSpacing: 0, verticalSpacing: 1) {
+            GridRow {
+                SearchBar(
+                    text: $searchText,
+                    disabled: false,
+                    placeholder: "Search"
+                )
+            }
+            
+            GridRow {
+                ZStack(alignment: .leading) {
+                    Theme.subHeaderColour
+                    
+                    HStack {
+                        
+                    }
+                    .padding([.leading, .trailing], 10)
+                }
+            }
+            .frame(height: 40)
+            
+            FancyDivider()
+            
+            
+        }
     }
 }
 
