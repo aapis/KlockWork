@@ -47,7 +47,6 @@ struct EditableColumn: View {
                                     } label: {
                                         Text(text)
                                             .foregroundColor(colour.isBright() ? Color.black : Color.white)
-                                            .padding([.leading, .trailing], 10)
                                             .onHover { inside in
                                                 if inside {
                                                     NSCursor.pointingHand.push()
@@ -62,6 +61,7 @@ struct EditableColumn: View {
                                 }
                                 
                                 if url != nil {
+                                    Spacer()
                                     Link(destination: url!, label: {
                                         Image(systemName: "link")
                                             .foregroundColor(colour.isBright() ? Color.black : Color.white)
@@ -76,6 +76,7 @@ struct EditableColumn: View {
                                     })
                                 }
                             }
+                            .padding([.leading, .trailing], 10)
                         } else {
                             Text(text)
                                 .padding(10)

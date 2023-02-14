@@ -9,13 +9,10 @@ import Foundation
 import SwiftUI
 import Combine
 
-struct Today : View, Identifiable {
-    @State public var text: String = ""
-    @State public var id = UUID()
+struct Today: View {
+    @State private var text: String = ""
     @State private var jobId: String = ""
-    // only treated as a string, no need to be URL-type
-    @State private var taskUrl: String = ""
-    @State private var recentJobs: [CustomPickerItem] = [CustomPickerItem(title: "Recent jobs", tag: 0)]
+    @State private var taskUrl: String = "" // only treated as a string, no need to be URL-type
     @State private var jobIdFieldColour: Color = Color.clear
     @State private var jobIdFieldTextColour: Color = Color.white
     
@@ -78,9 +75,13 @@ struct Today : View, Identifiable {
                             }
                         }
                     }
-                    
-                    JobPicker(onChange: pickerChange)
-                        .padding([.leading], 100)
+                    HStack {
+                        if !jobId.isEmpty {
+                            FancyButton(text: "Reset", action: resetJobUi, icon: "xmark", showLabel: false)
+                        }
+                        JobPicker(onChange: pickerChange)
+                    }
+                    .padding([.leading], 100)
                 }
                 .frame(width: 350, height: 40)
                 
@@ -202,6 +203,12 @@ struct Today : View, Identifiable {
         }
 
         return Double(jobId) ?? 0.0
+    }
+    
+    private func resetJobUi() -> Void {
+        jobId = ""
+        jobIdFieldColour = Color.clear
+        jobIdFieldTextColour = Color.white
     }
 }
 
