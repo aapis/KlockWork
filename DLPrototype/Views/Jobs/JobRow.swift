@@ -40,6 +40,7 @@ struct JobRow: View {
                     .underline()
                     
                     if job.uri != nil {
+                        Spacer()
                         Link(destination: job.uri!, label: {
                             Image(systemName: "link")
                                 .foregroundColor(colour.isBright() ? Color.black : Color.white)
