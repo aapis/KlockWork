@@ -77,6 +77,10 @@ struct FancyTextField: View {
             .foregroundColor(disabled ?? false ? Color.gray : fgColour)
             .textSelection(.enabled)
     }
+    
+    private func reset() -> Void {
+        text = ""
+    }
 }
 
 struct FancyTextFieldPreview: PreviewProvider {
