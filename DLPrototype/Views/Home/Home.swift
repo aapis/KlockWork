@@ -112,7 +112,7 @@ struct Home: View {
                     NavigationLink {
                         TaskDashboard()
                             .navigationTitle("Tasks")
-                            .environmentObject(rm)
+                            .environmentObject(jm)
                             .environmentObject(updater)
                             .toolbar {
                                 if showExperimentalFeatures {

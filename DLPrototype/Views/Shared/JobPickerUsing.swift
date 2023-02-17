@@ -1,22 +1,22 @@
 //
-//  JobPicker.swift
+//  JobPickerUsing.swift
 //  DLPrototype
 //
-//  Created by Ryan Priebe on 2023-01-14.
+//  Created by Ryan Priebe on 2023-02-16.
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
-import Foundation
+import SwiftUI
 import SwiftUI
 import Combine
 
-struct JobPicker: View {
+struct JobPickerUsing: View {
     public var onChange: (Int, String?) -> Void
     public var transparent: Bool? = false
     public var labelText: String?
     public var showLabel: Bool? = false
     
-    @State private var jobId: String = ""
+    @Binding public var jobId: String
     @State private var jobIdFieldColour: Color = Color.clear
     @State private var jobIdFieldTextColour: Color = Color.white
     
@@ -34,7 +34,7 @@ struct JobPicker: View {
                 if project.jobs != nil {
                     let unsorted = project.jobs!.allObjects as! [Job]
                     var jobs = unsorted.sorted(by: ({$0.jid > $1.jid}))
-                    jobs.removeAll(where: {($0.project?.configuration?.ignoredJobs!.contains($0.jid.string))!})                    
+                    jobs.removeAll(where: {($0.project?.configuration?.ignoredJobs!.contains($0.jid.string))!})
                     
                     for job in jobs {
                         items.append(CustomPickerItem(title: " - \(job.jid.string)", tag: Int(job.jid)))
@@ -80,7 +80,6 @@ struct JobPicker: View {
     private func pickerChange(selected: Int, sender: String?) -> Void {
         jobId = String(selected)
         
-        
         if let selectedJob = jm.byId(Double(jobId)!) {
             jobIdFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
             jobIdFieldTextColour = jobIdFieldColour.isBright() ? Color.black : Color.white
@@ -88,8 +87,6 @@ struct JobPicker: View {
             jobIdFieldColour = Color.clear
             jobIdFieldTextColour = Color.white
         }
-        
-        onChange(selected, sender)
     }
     
     private func resetJobUi() -> Void {

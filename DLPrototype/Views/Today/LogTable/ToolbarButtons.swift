@@ -13,6 +13,7 @@ struct ToolbarButtons: View {
     @Binding public var selectedTab: Int
     @Binding public var isShowingAlert: Bool
     @Binding public var showSidebar: Bool
+    @Binding public var showSearch: Bool
     @Binding public var searchText: String
     @Binding public var selectedDate: Date
     @Binding public var records: [LogRecord]
@@ -63,6 +64,20 @@ struct ToolbarButtons: View {
             
             Spacer()
             
+            Button(action: toggleSearch, label: {
+                Image(systemName: "magnifyingglass")
+            })
+            .help("Toggle search")
+            .buttonStyle(.borderless)
+            .foregroundColor(Color.white)
+            .onHover { inside in
+                if inside {
+                    NSCursor.pointingHand.push()
+                } else {
+                    NSCursor.pop()
+                }
+            }
+            
             Button(action: toggleSidebar, label: {
                 Image(systemName: "sidebar.right")
             })
@@ -89,6 +104,12 @@ struct ToolbarButtons: View {
     private func toggleSidebar() -> Void {
         withAnimation(.easeInOut) {
             showSidebar.toggle()
+        }
+    }
+    
+    private func toggleSearch() -> Void {
+        withAnimation(.easeInOut) {
+            showSearch.toggle()
         }
     }
     

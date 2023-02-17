@@ -15,6 +15,7 @@ struct TaskDashboard: View {
     @State private var job: Job?
     
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var jm: CoreDataJob
     
     @FetchRequest(sortDescriptors: [SortDescriptor(\.jid, order: .reverse)]) public var jobs: FetchedResults<Job>
     @FetchRequest(sortDescriptors: [SortDescriptor(\.id)]) public var tasks: FetchedResults<LogTask>
@@ -105,6 +106,7 @@ struct TaskDashboard: View {
                 .onChange(of: selectedJob) { _ in
                     setJob()
                 }
+                .environmentObject(jm)
             
             if selectedJob > 0 {
                 TaskListView(job: job!)

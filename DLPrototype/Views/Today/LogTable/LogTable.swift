@@ -25,6 +25,7 @@ struct LogTable: View, Identifiable {
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("showExperiment.actions") private var showExperimentActions = false
     @AppStorage("showSidebar") public var showSidebar: Bool = true
+    @AppStorage("showTodaySearch") public var showSearch: Bool = true
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
@@ -74,19 +75,27 @@ struct LogTable: View, Identifiable {
     var toolbar: some View {
         GridRow {
             Group {
-                ZStack(alignment: .leading) {
-                    Theme.toolbarColour
+                HStack(spacing: 0) {
+                    ZStack {
+                        Color.clear
+                    }
+                    .frame(width: 6)
                     
-                    HStack {
-                        ToolbarTabs(selectedTab: $selectedTab)
-                        ToolbarButtons(
-                            selectedTab: $selectedTab,
-                            isShowingAlert: $isShowingAlert,
-                            showSidebar: $showSidebar,
-                            searchText: $searchText,
-                            selectedDate: $selectedDate,
-                            records: $records
-                        )
+                    ZStack(alignment: .leading) {
+                        Theme.toolbarColour
+                        
+                        HStack {
+                            ToolbarTabs(selectedTab: $selectedTab)
+                            ToolbarButtons(
+                                selectedTab: $selectedTab,
+                                isShowingAlert: $isShowingAlert,
+                                showSidebar: $showSidebar,
+                                showSearch: $showSearch,
+                                searchText: $searchText,
+                                selectedDate: $selectedDate,
+                                records: $records
+                            )
+                        }
                     }
                 }
             }
@@ -96,6 +105,12 @@ struct LogTable: View, Identifiable {
     // MARK: header view
     var headers: some View {
         GridRow {
+            Group {
+                ZStack {
+                    Theme.headerColour
+                }
+            }
+                .frame(width: 5)
             Group {
                 ZStack {
                     Theme.headerColour
@@ -151,7 +166,9 @@ struct LogTable: View, Identifiable {
     // MARK: rows view
     var rows: some View {
         VStack(spacing: 1) {
-            SearchBar(text: $searchText, disabled: (records.count == 0))
+            if showSearch {
+                SearchBar(text: $searchText, disabled: (records.count == 0))
+            }
             
             if records.count > 0 {
                 ForEach(records) { record in
