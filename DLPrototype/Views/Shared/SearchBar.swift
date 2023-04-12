@@ -14,12 +14,13 @@ struct SearchBar: View {
     
     public var disabled: Bool
     public var placeholder: String? = "Search..."
+    public var onSubmit: (() -> Void)? = nil
     
     var body: some View {
         GridRow {
             HStack {
                 ZStack(alignment: .trailing) {
-                    FancyTextField(placeholder: placeholder!, lineLimit: 1, onSubmit: {}, disabled: disabled, text: $text)
+                    FancyTextField(placeholder: placeholder!, lineLimit: 1, onSubmit: onSubmit, disabled: disabled, text: $text)
                     
                     Spacer()
                     

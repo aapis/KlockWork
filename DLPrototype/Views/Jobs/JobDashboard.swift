@@ -14,6 +14,7 @@ struct JobDashboard: View {
     
     @State private var selectedJob: Int = 0
     @State private var job: Job?
+    @State private var jobId: String = ""
     
     @Environment(\.managedObjectContext) var moc
     
@@ -38,11 +39,21 @@ struct JobDashboard: View {
             Spacer()
         }
         
-        JobPicker(onChange: change)
-            .onAppear(perform: setJob)
-            .onChange(of: selectedJob) { _ in
-                setJob()
-            }
+        VStack {
+//            if job != nil {
+//                JobPickerUsing(onChange: change, jobId: $jobId)
+//                    .onAppear(perform: setJob)
+//                    .onChange(of: selectedJob) { _ in
+//                        setJob()
+//                    }
+//            } else {
+                JobPicker(onChange: change)
+                    .onAppear(perform: setJob)
+                    .onChange(of: selectedJob) { _ in
+                        setJob()
+                    }
+//            }
+        }
         
         if selectedJob > 0 || defaultSelectedJob! > 0.0 {
             JobView(job: $job)
@@ -57,10 +68,16 @@ struct JobDashboard: View {
         if selectedJob > 0 {
             job = CoreDataJob(moc: moc).byId(Double(selectedJob))
         }
+        
+        if job != nil {
+            jobId = job!.jid.string
+            print("JID sj \(jobId)")
+        }
     }
     
     private func change(selected: Int, sender: String?) -> Void {
         selectedJob = selected
+        print("JID ch \(selected)")
         
         setJob()
     }

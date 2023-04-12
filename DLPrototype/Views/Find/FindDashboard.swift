@@ -16,6 +16,7 @@ struct RecentSearch: Identifiable {
 
 struct FindDashboard: View {
     @State private var searchText: String = ""
+    @State private var activeSearchText: String = ""
     @State private var showRecords: Bool = true
     @State private var showNotes: Bool = true
     @State private var showTasks: Bool = true
@@ -48,10 +49,14 @@ struct FindDashboard: View {
         Grid(horizontalSpacing: 0, verticalSpacing: 1) {
             GridRow {
                 SearchBar(
-                    text: $searchText,
+                    text: $activeSearchText,
                     disabled: false,
-                    placeholder: "Search"
+                    placeholder: "Hit enter to search",
+                    onSubmit: onSubmit
                 )
+                .onChange(of: searchText) { _ in
+                    onSubmit()
+                }
             }
             
             GridRow {
@@ -84,7 +89,23 @@ struct FindDashboard: View {
                 showJobs: $showJobs,
                 allowAlive: $allowAlive
             )
-                .environmentObject(jm)
+            .environmentObject(jm)
         }
+    }
+    
+    @ViewBuilder
+    var loading: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Spacer()
+                ProgressView("Searching...")
+                Spacer()
+            }
+            .padding([.top, .bottom], 20)
+        }
+    }
+    
+    private func onSubmit() -> Void {
+        searchText = activeSearchText
     }
 }

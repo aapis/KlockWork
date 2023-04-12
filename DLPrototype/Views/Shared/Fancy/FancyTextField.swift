@@ -12,7 +12,8 @@ import SwiftUI
 struct FancyTextField: View {
     public var placeholder: String
     public var lineLimit: Int
-    public var onSubmit: () -> Void
+//    public var onSubmit: () -> Void
+    public var onSubmit: (() -> Void)? = nil
     public var transparent: Bool? = false
     public var disabled: Bool? = false
     public var fgColour: Color? = Color.white
@@ -40,7 +41,7 @@ struct FancyTextField: View {
             .textFieldStyle(.plain)
             .disableAutocorrection(enableAutoCorrection)
             .padding()
-            .onSubmit(onSubmit)
+            .onSubmit(onSubmit ?? {})
             .background(transparent! ? Color.clear : bgColour)
             .frame(height: 45)
             .lineLimit(1)
@@ -55,7 +56,7 @@ struct FancyTextField: View {
             .textFieldStyle(.plain)
             .disableAutocorrection(enableAutoCorrection)
             .padding()
-            .onSubmit(onSubmit)
+            .onSubmit(onSubmit ?? {})
             .background(transparent! ? Color.clear : bgColour)
             .lineLimit(lineLimit...)
             .disabled(disabled ?? false)
@@ -69,7 +70,7 @@ struct FancyTextField: View {
             .textFieldStyle(.plain)
             .disableAutocorrection(enableAutoCorrection)
             .padding()
-            .onSubmit(onSubmit)
+            .onSubmit(onSubmit ?? {})
             .background(transparent! ? Color.black.opacity(0.1) : bgColour)
             .scrollContentBackground(.hidden)
             .lineLimit(lineLimit...)
