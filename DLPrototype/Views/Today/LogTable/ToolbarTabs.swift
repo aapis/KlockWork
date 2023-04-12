@@ -13,7 +13,7 @@ struct ToolbarTabs: View {
     @Binding public var selectedTab: Int
     
     var body: some View {
-        HStack(spacing: 1) {
+        HStack(spacing: 1) {            
             // TODO: convert these button/styles to custom button views and styles
             Button(action: {setActive(0)}, label: {
                 ZStack {
@@ -69,6 +69,7 @@ struct ToolbarTabs: View {
 //                }
 //            }
         }
+//        .background(Theme.rowColour)
     }
     
     private func setActive(_ index: Int) -> Void {

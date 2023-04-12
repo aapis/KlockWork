@@ -57,33 +57,8 @@ struct Today: View {
     // MARK: Editor view
     var editor: some View {
         VStack(alignment: .leading) {
-            HStack {
-                ZStack {
-                    FancyTextField(
-                        placeholder: "Job ID",
-                        lineLimit: 1,
-                        onSubmit: {},
-                        fgColour: jobIdFieldTextColour,
-                        bgColour: jobIdFieldColour,
-                        text: $jobId
-                    )
-                    .border(jobIdFieldColour == Color.clear ? Color.black.opacity(0.1) : Color.clear, width: 2)
-                    .onChange(of: jobId) { _ in
-                        if jobId != "" {
-                            if let iJid = Int(jobId) {
-                                pickerChange(selected: iJid, sender: nil)
-                            }
-                        }
-                    }
-                    HStack {
-                        if !jobId.isEmpty {
-                            FancyButton(text: "Reset", action: resetJobUi, icon: "xmark", showLabel: false)
-                        }
-                        JobPicker(onChange: pickerChange)
-                    }
-                    .padding([.leading], 100)
-                }
-                .frame(width: 350, height: 40)
+            HStack {                
+                JobPickerUsing(onChange: pickerChange, jobId: $jobId)
                 
                 Text("Or").font(Theme.font)
                 
@@ -198,11 +173,35 @@ struct Today: View {
     }
     
     private func getJobIdFromUrl() -> Double {
+        
         if !taskUrl.isEmpty {
-            jobId = String(taskUrl.suffix(5))
+            if isAsanaLink() {
+                let id = asanaJobId()
+                if id != nil {
+                    jobId = String(id!.suffix(6))
+                }
+            } else {
+                jobId = String(taskUrl.suffix(6))
+            }
         }
 
         return Double(jobId) ?? 0.0
+    }
+    
+    private func asanaJobId() -> String? {
+        let pattern = /https:\/\/app.asana.com\/0\/0\/(\d+)\/f/
+        
+        if let match = taskUrl.firstMatch(of: pattern) {
+            return String(match.1)
+        }
+        
+        return nil
+    }
+    
+    private func isAsanaLink() -> Bool {
+        let pattern = /^https:\/\/app.asana.com/
+        
+        return taskUrl.contains(pattern)
     }
     
     private func resetJobUi() -> Void {

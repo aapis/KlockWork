@@ -17,6 +17,7 @@ struct GeneralSettings: View {
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
     @AppStorage("showSidebar") public var showSidebar: Bool = true
+    @AppStorage("showTodaySearch") public var showSearch: Bool = true
     @AppStorage("defaultHome") public var defaultHome: Int = 0
 
     var body: some View {
@@ -24,6 +25,7 @@ struct GeneralSettings: View {
             Toggle("Tiger stripe table rows", isOn: $tigerStriped)
             Toggle("Auto-correct text in text boxes", isOn: $enableAutoCorrection)
             Toggle("Show sidebar", isOn: $showSidebar)
+            Toggle("Show search on Today", isOn: $showSearch)
             
             Group {
                 Toggle("Experimental features (may tank performance)", isOn: $showExperimentalFeatures)
