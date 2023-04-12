@@ -69,25 +69,6 @@ struct Home: View {
                             .padding(.trailing, 10)
                         Text("Find")
                     }
-                    
-                    NavigationLink {
-                        LinkDashboard()
-                            .navigationTitle("Links")
-                            .environmentObject(rm)
-                            .environmentObject(updater)
-                            .toolbar {
-                                Button(action: redraw, label: {
-                                    Image(systemName: "arrow.triangle.2.circlepath")
-                                })
-                                .buttonStyle(.borderless)
-                                .font(.title)
-                                .keyboardShortcut("r")
-                            }
-                    } label: {
-                        Image(systemName: "link")
-                            .padding(.trailing, 10)
-                        Text("Links")
-                    }
                 }
                 
                 Section(header: Text("Entities")) {

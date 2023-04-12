@@ -40,19 +40,11 @@ struct JobDashboard: View {
         }
         
         VStack {
-//            if job != nil {
-//                JobPickerUsing(onChange: change, jobId: $jobId)
-//                    .onAppear(perform: setJob)
-//                    .onChange(of: selectedJob) { _ in
-//                        setJob()
-//                    }
-//            } else {
-                JobPicker(onChange: change)
-                    .onAppear(perform: setJob)
-                    .onChange(of: selectedJob) { _ in
-                        setJob()
-                    }
-//            }
+            JobPicker(onChange: change)
+                .onAppear(perform: setJob)
+                .onChange(of: selectedJob) { _ in
+                    setJob()
+                }
         }
         
         if selectedJob > 0 || defaultSelectedJob! > 0.0 {
@@ -77,7 +69,6 @@ struct JobDashboard: View {
     
     private func change(selected: Int, sender: String?) -> Void {
         selectedJob = selected
-        print("JID ch \(selected)")
         
         setJob()
     }
