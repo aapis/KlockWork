@@ -173,11 +173,35 @@ struct Today: View {
     }
     
     private func getJobIdFromUrl() -> Double {
+        
         if !taskUrl.isEmpty {
-            jobId = String(taskUrl.suffix(5))
+            if isAsanaLink() {
+                let id = asanaJobId()
+                if id != nil {
+                    jobId = String(id!.suffix(6))
+                }
+            } else {
+                jobId = String(taskUrl.suffix(6))
+            }
         }
 
         return Double(jobId) ?? 0.0
+    }
+    
+    private func asanaJobId() -> String? {
+        let pattern = /https:\/\/app.asana.com\/0\/0\/(\d+)\/f/
+        
+        if let match = taskUrl.firstMatch(of: pattern) {
+            return String(match.1)
+        }
+        
+        return nil
+    }
+    
+    private func isAsanaLink() -> Bool {
+        let pattern = /^https:\/\/app.asana.com/
+        
+        return taskUrl.contains(pattern)
     }
     
     private func resetJobUi() -> Void {
