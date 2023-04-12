@@ -42,7 +42,7 @@ struct DetailGroup: View {
                 .background(Color.clear)
             
             if children.count > 0 && showChildren {
-                ForEach(children, id: \Statistics.id) { stat in
+                ForEach(children, id: \(any Statistics).id) { stat in
                     if stat.view != nil {
                         stat.view
                             .background(stat.colour)
