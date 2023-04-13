@@ -163,7 +163,7 @@ struct Today: View {
             
             // clear text box
             text = ""
-            // redraw the views that need to be updated now
+            // redraw the views that need to be updated
             reloadUi()
             
             PersistenceController.shared.save()
