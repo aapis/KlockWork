@@ -38,7 +38,7 @@ class LogRecords: ObservableObject, Identifiable, Equatable {
     
     static public func timestampToString(_ timestamp: Date) -> String {
         let df = DateFormatter()
-        df.timeZone = TimeZone(abbreviation: "MST")
+        df.timeZone = TimeZone.autoupdatingCurrent
         df.locale = NSLocale.current
         df.dateFormat = "yyyy-MM-dd HH:mm:ss"
         

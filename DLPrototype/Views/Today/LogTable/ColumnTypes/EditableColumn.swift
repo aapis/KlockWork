@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 struct EditableColumn: View {
-    public var type: String
+    public var type: String // TODO: convert to enum
     public var colour: Color
     public var textColour: Color
     public var index: Array<Entry>.Index?
@@ -91,7 +91,7 @@ struct EditableColumn: View {
     
     private func formatted() -> String {
         let inputDateFormatter = DateFormatter()
-        inputDateFormatter.timeZone = TimeZone(abbreviation: "MST")
+        inputDateFormatter.timeZone = TimeZone.autoupdatingCurrent
         inputDateFormatter.locale = NSLocale.current
         inputDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         let inputDate = inputDateFormatter.date(from: text)
@@ -101,7 +101,7 @@ struct EditableColumn: View {
         }
         
         let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = TimeZone(abbreviation: "MST")
+        dateFormatter.timeZone = inputDateFormatter.timeZone
         dateFormatter.locale = NSLocale.current
         dateFormatter.dateFormat = "h:mm a"
         
