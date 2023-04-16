@@ -72,7 +72,7 @@ struct LogRowActions: View, Identifiable {
         print("saving")
         isEditing = false
         
-        print(entry.message)
+        print("saving \(entry.message)")
     }
     
     private func copy() -> Void {
