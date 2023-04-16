@@ -11,6 +11,9 @@ import SwiftUI
 
 struct TodaySettings: View {
     @AppStorage("today.numPastDates") public var numPastDates: Int = 20
+    @AppStorage("today.viewMode") public var viewMode: Int = 0
+    @AppStorage("showSidebar") public var showSidebar: Bool = true
+    @AppStorage("showTodaySearch") public var showSearch: Bool = true
 
     var body: some View {
         Form {
@@ -21,6 +24,14 @@ struct TodaySettings: View {
                 Text("30").tag(30)
                 Text("40").tag(40)
             }
+            
+            Picker("Default view mode", selection: $viewMode) {
+                Text("Full").tag(1)
+                Text("Plain").tag(2)
+            }
+            
+            Toggle("Show sidebar", isOn: $showSidebar)
+            Toggle("Show search on Today", isOn: $showSearch)
         }
         .padding(20)
     }

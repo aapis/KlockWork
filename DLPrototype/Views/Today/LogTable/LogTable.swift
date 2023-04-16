@@ -14,6 +14,7 @@ struct LogTable: View, Identifiable {
     @Binding public var selectedJob: String
     
     @State private var records: [LogRecord] = []
+    @State private var recordsAsString: String = ""
     @State private var wordCount: Int = 0
     @State private var isReversed: Bool = false
     @State private var isShowingAlert: Bool = false
@@ -21,6 +22,7 @@ struct LogTable: View, Identifiable {
     @State private var searchText: String = ""
     @State private var resetSearchButtonHit: Bool = false
     @State private var selectedDate: Date = Date()
+    @State private var viewMode: ViewMode = .full
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("showExperiment.actions") private var showExperimentActions = false
@@ -36,7 +38,11 @@ struct LogTable: View, Identifiable {
             toolbar.font(Theme.font)
             
             HStack(spacing: 1) {
-                table
+                if viewMode == .full {
+                    viewModeFull
+                } else if viewMode == .plain {
+                    viewModePlain
+                }
                 
                 if showSidebar {
                     tableDetails.frame(minWidth: 300, maxWidth: 400)
@@ -59,13 +65,26 @@ struct LogTable: View, Identifiable {
     }
     
     // MARK: table view
-    var table: some View {
+    var viewModeFull: some View {
         VStack(spacing: 1) {
             Grid(alignment: .top, horizontalSpacing: 1, verticalSpacing: 1) {
                 headers.font(Theme.font)
                 
                 ScrollView {
                     rows.font(Theme.font)
+                }
+            }
+        }
+    }
+    
+    // MARK: plain view
+    var viewModePlain: some View {
+        VStack(spacing: 1) {
+            Grid(alignment: .top, horizontalSpacing: 1, verticalSpacing: 1) {
+                headers.font(Theme.font)
+                
+                ScrollView {
+                    plainRows.font(Theme.font)
                 }
             }
         }
@@ -93,7 +112,8 @@ struct LogTable: View, Identifiable {
                                 showSearch: $showSearch,
                                 searchText: $searchText,
                                 selectedDate: $selectedDate,
-                                records: $records
+                                records: $records,
+                                viewMode: $viewMode
                             )
                                 .id(updater.ids["today.dayList"])
                         }
@@ -197,6 +217,20 @@ struct LogTable: View, Identifiable {
         })
     }
     
+    var plainRows: some View {
+        VStack(spacing: 1) {
+            if showSearch {
+                SearchBar(text: $searchText, disabled: (records.count == 0))
+            }
+            
+            if records.count > 0 && recordsAsString.count > 0 {
+                FancyTextField(placeholder: "Records...", lineLimit: 10, text: $recordsAsString)
+            } else {
+                LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
+            }
+        }
+    }
+    
     var tableDetails: some View {
         LogTableDetails(records: $records, selectedDate: $selectedDate, open: $showSidebar)
             .environmentObject(updater)
@@ -212,6 +246,29 @@ struct LogTable: View, Identifiable {
     
     private func loadRecordsBySelectedDate() -> Void {
         records = LogRecords(moc: moc).forDate(selectedDate)
+        
+        if records.count > 0 {
+            recordsAsString = ""
+            
+            for item in records {
+                if item.job != nil {
+                    let ignoredJobs = item.job!.project?.configuration?.ignoredJobs
+                    let cleaned = CoreDataProjectConfiguration.applyBannedWordsTo(item)
+                    
+                    if ignoredJobs != nil {
+                        if !ignoredJobs!.contains(item.job!.jid.string) {
+                            let url = item.job!.uri
+                            
+                            if url != nil {
+                                recordsAsString += "\(item.timestamp!) - \(item.job!.uri!.absoluteString) - \(cleaned.message!)\n"
+                            } else {
+                                recordsAsString += "\(item.timestamp!) - \(item.job!.jid.string) - \(cleaned.message!)\n"
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     
     private func findMatches(_ message: String) -> Bool {

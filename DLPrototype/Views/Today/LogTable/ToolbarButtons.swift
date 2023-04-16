@@ -17,6 +17,7 @@ struct ToolbarButtons: View {
     @Binding public var searchText: String
     @Binding public var selectedDate: Date
     @Binding public var records: [LogRecord]
+    @Binding public var viewMode: ViewMode
     
     @State private var datePickerItems: [CustomPickerItem] = []
     @State private var pickerSelection: Int = 0
@@ -39,6 +40,8 @@ struct ToolbarButtons: View {
             // TODO: coming back soon
 //            FancyButton(text: "Next day", action: next, icon: "chevron.right", transparent: true, showLabel: false)
 //                .frame(maxHeight: 20)
+            
+            ViewModeSelector(mode: $viewMode)
             
             Button(action: export, label: {
                 Image(systemName: "arrow.down.to.line")
@@ -158,6 +161,10 @@ struct ToolbarButtons: View {
         }
         
         ClipboardHelper.copy(pasteboardContents)
+    }
+    
+    private func viewAsPlain() -> Void {
+        viewMode = .plain
     }
     
     private func toStringList(_ items: [Entry]) -> String {
