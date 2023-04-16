@@ -21,7 +21,6 @@ struct JobPickerUsing: View {
     @State private var jobIdFieldTextColour: Color = Color.white
     
     @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var jm: CoreDataJob
     
     private var pickerItems: [CustomPickerItem] {
         var items: [CustomPickerItem] = [CustomPickerItem(title: "Choose a job", tag: 0)]
@@ -75,10 +74,12 @@ struct JobPickerUsing: View {
             }
         }
         .frame(width: 350, height: 40)
+        .onAppear(perform: onAppear)
     }
     
     private func pickerChange(selected: Int, sender: String?) -> Void {
         jobId = String(selected)
+        let jm = CoreDataJob(moc: moc)
         
         if let selectedJob = jm.byId(Double(jobId)!) {
             jobIdFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
@@ -86,6 +87,16 @@ struct JobPickerUsing: View {
         } else {
             jobIdFieldColour = Color.clear
             jobIdFieldTextColour = Color.white
+        }
+        
+        onChange(selected, "")
+    }
+    
+    private func onAppear() -> Void {
+        if !jobId.isEmpty {
+            let iJid = (jobId as NSString).integerValue
+            
+            pickerChange(selected: iJid, sender: "")
         }
     }
     

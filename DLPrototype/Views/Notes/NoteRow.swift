@@ -12,6 +12,9 @@ import SwiftUI
 struct NoteRow: View {
     public var note: Note
     
+    @EnvironmentObject public var jm: CoreDataJob
+    @EnvironmentObject public var updater: ViewUpdater
+    
     var body: some View {
         GridRow {
             HStack(spacing: 1) {
@@ -48,7 +51,7 @@ struct NoteRow: View {
                     Theme.rowColour
                 }
                 
-                FancyTextLink(text: note.title!, destination: AnyView(NoteView(note: note)), fgColour: (note.mJob != nil ? (Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white)  : Color.white))
+                FancyTextLink(text: note.title!, destination: AnyView(NoteView(note: note).environmentObject(jm).environmentObject(updater)), fgColour: (note.mJob != nil ? (Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white)  : Color.white))
             }
         }
     }

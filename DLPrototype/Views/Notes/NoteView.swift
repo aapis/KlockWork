@@ -18,12 +18,15 @@ struct NoteView: View {
     @State private var star: Bool? = false
     @State private var isShowingEditor: Bool = true
     @State private var selectedJob: Job?
+    @State private var autoSelectedJobId: String = ""
     @State private var currentVersion: Int = 0
     @State private var disableNextButton: Bool = false
     @State private var disablePreviousButton: Bool = false
     @State private var noteVersions: [NoteVersion] = []
     
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var jm: CoreDataJob
+    @EnvironmentObject public var updater: ViewUpdater
     
     private var jobs: [Job] {
         CoreDataJob(moc: moc).all()
@@ -78,7 +81,7 @@ struct NoteView: View {
                             }
                         }
 
-                        JobPicker(onChange: pickerChange, transparent: true, labelText: "Job: \(selectedJob?.jid.string ?? "N/A")", showLabel: true)
+                        JobPickerUsing(onChange: pickerChange, jobId: $autoSelectedJobId)
                         FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, disabled: revisionNotLatest(), text: $title)
                         FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, disabled: revisionNotLatest(), text: $content)
                         
@@ -88,6 +91,8 @@ struct NoteView: View {
                             NavigationLink {
                                 NoteDashboard()
                                     .navigationTitle("Note dashboard")
+                                    .environmentObject(jm)
+                                    .environmentObject(updater)
                             } label: {
                                 HStack {
                                     Image(systemName: "arrow.left")
@@ -228,6 +233,7 @@ struct NoteView: View {
         isShowingEditor = true
         noteVersions = CoreDataNoteVersions(moc: moc).by(id: note.id!)
         currentVersion = noteVersions.count
+        autoSelectedJobId = selectedJob?.jid.string ?? ""
     }
     
     private func revisionNotLatest() -> Bool {

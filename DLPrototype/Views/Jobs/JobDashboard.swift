@@ -23,7 +23,7 @@ struct JobDashboard: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
-                create
+                create.onAppear(perform: setJob)
 
                 Spacer()
             }
@@ -40,14 +40,14 @@ struct JobDashboard: View {
         }
         
         VStack {
-            JobPicker(onChange: change)
+            JobPickerUsing(onChange: change, jobId: $jobId)
                 .onAppear(perform: setJob)
                 .onChange(of: selectedJob) { _ in
                     setJob()
                 }
         }
         
-        if selectedJob > 0 || defaultSelectedJob! > 0.0 {
+        if selectedJob > 0 || defaultSelectedJob! > 0.0 || !jobId.isEmpty {
             JobView(job: $job)
         }
     }
@@ -55,15 +55,12 @@ struct JobDashboard: View {
     private func setJob() -> Void {
         if defaultSelectedJob! > 0.0 {
             job = CoreDataJob(moc: moc).byId(defaultSelectedJob!)
-        }
-        
-        if selectedJob > 0 {
+        } else if selectedJob > 0 {
             job = CoreDataJob(moc: moc).byId(Double(selectedJob))
         }
         
         if job != nil {
             jobId = job!.jid.string
-            print("JID sj \(jobId)")
         }
     }
     

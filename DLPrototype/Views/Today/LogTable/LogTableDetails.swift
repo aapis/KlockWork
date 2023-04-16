@@ -73,6 +73,7 @@ struct LogTableDetails: View {
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
+    @EnvironmentObject public var jm: CoreDataJob
     
     private var notes: [Note] {
         CoreDataNotes(moc: moc).forDate(selectedDate)
@@ -215,6 +216,8 @@ struct LogTableDetails: View {
                                 NavigationLink {
                                     NoteView(note: note)
                                         .navigationTitle("Viewing \(note.title!)")
+                                        .environmentObject(jm)
+                                        .environmentObject(updater)
                                 } label: {
                                     VStack(alignment: .leading) {
                                         ZStack(alignment: .leading) {

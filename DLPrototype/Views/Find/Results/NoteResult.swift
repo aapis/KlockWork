@@ -24,6 +24,7 @@ struct NoteResult: View {
     @State private var showChildren: Bool = true
     @State private var minimizeIcon: String = "arrowtriangle.down"
     
+    @EnvironmentObject public var jm: CoreDataJob
     @EnvironmentObject public var updater: ViewUpdater
     
     var body: some View {
@@ -73,6 +74,8 @@ struct NoteResult: View {
                                     let item = bucket[i + offset]
                                     
                                     NoteRow(note: item)
+                                        .environmentObject(jm)
+                                        .environmentObject(updater)
                                 }
                             }
                         }

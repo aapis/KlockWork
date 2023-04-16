@@ -73,7 +73,6 @@
 		53B0BE8C297318A6007CB663 /* ProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8B297318A6007CB663 /* ProjectView.swift */; };
 		53B0BE8E29731D41007CB663 /* FancyTextLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8D29731D41007CB663 /* FancyTextLink.swift */; };
 		53B0BE90297333C3007CB663 /* ManageProjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8F297333C3007CB663 /* ManageProjects.swift */; };
-		53B0BE9229733A86007CB663 /* JobPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE9129733A86007CB663 /* JobPicker.swift */; };
 		53C3418C299960310071B855 /* JobDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418B299960310071B855 /* JobDashboard.swift */; };
 		53C3418E299968160071B855 /* JobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418D299968160071B855 /* JobView.swift */; };
 		53C3419029996C070071B855 /* FancyRandomJobColourPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418F29996C070071B855 /* FancyRandomJobColourPicker.swift */; };
@@ -195,7 +194,6 @@
 		53B0BE8B297318A6007CB663 /* ProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectView.swift; sourceTree = "<group>"; };
 		53B0BE8D29731D41007CB663 /* FancyTextLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyTextLink.swift; sourceTree = "<group>"; };
 		53B0BE8F297333C3007CB663 /* ManageProjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageProjects.swift; sourceTree = "<group>"; };
-		53B0BE9129733A86007CB663 /* JobPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobPicker.swift; sourceTree = "<group>"; };
 		53C3418B299960310071B855 /* JobDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDashboard.swift; sourceTree = "<group>"; };
 		53C3418D299968160071B855 /* JobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobView.swift; sourceTree = "<group>"; };
 		53C3418F29996C070071B855 /* FancyRandomJobColourPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyRandomJobColourPicker.swift; sourceTree = "<group>"; };
@@ -569,7 +567,6 @@
 				531B38FB29674EC400E74013 /* Title.swift */,
 				5376289A2966467100DE8ECF /* SearchBar.swift */,
 				53B0BE8729726400007CB663 /* GenericToolbar.swift */,
-				53B0BE9129733A86007CB663 /* JobPicker.swift */,
 				53529A06299F38C0000D2FCB /* JobPickerUsing.swift */,
 			);
 			path = Shared;
@@ -785,7 +782,6 @@
 				533E40652970DA640007785A /* ViewUpdater.swift in Sources */,
 				53F589682998437D00843B32 /* JobResult.swift in Sources */,
 				53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */,
-				53B0BE9229733A86007CB663 /* JobPicker.swift in Sources */,
 				53C6D08F2964E25F00EA6129 /* Column.swift in Sources */,
 				532A7228298EE9E80038C18B /* FindDashboard.swift in Sources */,
 				53759E0829678DC700DCDC4B /* Import.swift in Sources */,

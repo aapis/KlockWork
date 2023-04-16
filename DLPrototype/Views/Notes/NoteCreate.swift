@@ -14,9 +14,11 @@ struct NoteCreate: View {
     @State private var content: String = ""
     @State private var showForm: Bool = true
     @State private var selectedJob: Job?
+    @State private var jobId: String = ""
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var jm: CoreDataJob
+    @EnvironmentObject public var updater: ViewUpdater
     
     private var jobs: [Job] {
         CoreDataJob(moc: moc).all()
@@ -28,6 +30,8 @@ struct NoteCreate: View {
         } else {
             // TODO: probably a bad idea to just.. show it here
             NoteDashboard()
+                .environmentObject(jm)
+                .environmentObject(updater)
         }
     }
     
@@ -36,7 +40,7 @@ struct NoteCreate: View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 22) {
                 Title(text: "Create a note", image: "note.text.badge.plus")
-                JobPicker(onChange: pickerChange).environmentObject(jm)
+                JobPickerUsing(onChange: pickerChange, jobId: $jobId)
                 FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
                 
                 FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
@@ -48,6 +52,8 @@ struct NoteCreate: View {
                     NavigationLink {
                         NoteDashboard()
                             .navigationTitle("Note dashboard")
+                            .environmentObject(jm)
+                            .environmentObject(updater)
                     } label: {
                         HStack {
                             Image(systemName: "arrow.left")
@@ -78,6 +84,10 @@ struct NoteCreate: View {
     // TODO: should not be part of this view
     private func pickerChange(selected: Int, sender: String?) -> Void {
         selectedJob = jobs.filter({ $0.jid == Double(selected)}).first
+        
+        if selectedJob != nil {
+            jobId = selectedJob!.jid.string
+        }
     }
     
     private func save() -> Void {

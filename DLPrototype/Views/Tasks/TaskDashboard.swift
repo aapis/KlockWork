@@ -11,7 +11,7 @@ import SwiftUI
 
 struct TaskDashboard: View {
     @State private var searchText: String = ""
-    @State private var selectedJob: Int = 0
+    @State private var selectedJob: String = ""
     @State private var job: Job?
     
     @Environment(\.managedObjectContext) var moc
@@ -101,27 +101,27 @@ struct TaskDashboard: View {
                 Title(text: "Manage tasks", image: "pencil")
             }
             
-            JobPicker(onChange: change)
+            JobPickerUsing(onChange: change, jobId: $selectedJob)
                 .onAppear(perform: setJob)
                 .onChange(of: selectedJob) { _ in
                     setJob()
                 }
                 .environmentObject(jm)
             
-            if selectedJob > 0 {
+            if Int(selectedJob) ?? 0 > 0 {
                 TaskListView(job: job!)
             }
         }
     }
     
     private func setJob() -> Void {
-        if selectedJob > 0 {
-            job = CoreDataJob(moc: moc).byId(Double(selectedJob))
+        if Int(selectedJob) ?? 0 > 0 {
+            job = CoreDataJob(moc: moc).byId(Double(selectedJob)!)
         }
     }
     
     private func change(selected: Int, sender: String?) -> Void {
-        selectedJob = selected
+        selectedJob = String(selected)
         
         setJob()
     }
