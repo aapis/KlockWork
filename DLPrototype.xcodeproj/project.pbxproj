@@ -61,6 +61,7 @@
 		53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1C2973897F007A2549 /* ProjectConfig.swift */; };
 		53959A1F29738AAA007A2549 /* FancySubTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1E29738AAA007A2549 /* FancySubTitle.swift */; };
 		53959A212973D3E5007A2549 /* CoreDataProjectConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A202973D3E5007A2549 /* CoreDataProjectConfiguration.swift */; };
+		53967D8429EC6D14006616A0 /* TodaySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53967D8329EC6D14006616A0 /* TodaySettings.swift */; };
 		53999C1F29669C4E00125E65 /* NoteCreate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53999C1E29669C4E00125E65 /* NoteCreate.swift */; };
 		539C0E75296CC34600023370 /* Manage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533AB3EA296C9A1900E91A9F /* Manage.swift */; };
 		539C96EA27EE7AFF007DA058 /* CalendarThisWeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539C96E927EE7AFF007DA058 /* CalendarThisWeek.swift */; };
@@ -183,6 +184,7 @@
 		53959A1C2973897F007A2549 /* ProjectConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfig.swift; sourceTree = "<group>"; };
 		53959A1E29738AAA007A2549 /* FancySubTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancySubTitle.swift; sourceTree = "<group>"; };
 		53959A202973D3E5007A2549 /* CoreDataProjectConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataProjectConfiguration.swift; sourceTree = "<group>"; };
+		53967D8329EC6D14006616A0 /* TodaySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaySettings.swift; sourceTree = "<group>"; };
 		53999C1E29669C4E00125E65 /* NoteCreate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteCreate.swift; sourceTree = "<group>"; };
 		539C96E927EE7AFF007DA058 /* CalendarThisWeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarThisWeek.swift; sourceTree = "<group>"; };
 		53B0BE7E2972542A007CB663 /* ProjectsDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsDashboard.swift; sourceTree = "<group>"; };
@@ -280,6 +282,7 @@
 			children = (
 				53EFCE7A29637F49004E45EC /* Settings.swift */,
 				53EFCE7829637F35004E45EC /* GeneralSettings.swift */,
+				53967D8329EC6D14006616A0 /* TodaySettings.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -801,6 +804,7 @@
 				539C96EA27EE7AFF007DA058 /* CalendarThisWeek.swift in Sources */,
 				53F5896229983EEB00843B32 /* TaskResult.swift in Sources */,
 				53521E54296FBDAE002E7F21 /* CoreDataNoteVersions.swift in Sources */,
+				53967D8429EC6D14006616A0 /* TodaySettings.swift in Sources */,
 				53759E0F2968AB5700DCDC4B /* SyncMonitor.swift in Sources */,
 				537AEB9F29627DCC00385787 /* LogTable.swift in Sources */,
 				537AEBA329629DE400385787 /* LogRowActions.swift in Sources */,
