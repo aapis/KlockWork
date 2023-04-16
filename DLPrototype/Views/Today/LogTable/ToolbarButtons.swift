@@ -17,13 +17,15 @@ struct ToolbarButtons: View {
     @Binding public var searchText: String
     @Binding public var selectedDate: Date
     @Binding public var records: [LogRecord]
+    @Binding public var viewMode: ViewMode
     
     @State private var datePickerItems: [CustomPickerItem] = []
     @State private var pickerSelection: Int = 0
     
-    private let numDatesInPast: Int = 20
+    @AppStorage("today.numPastDates") public var numPastDates: Int = 20
     
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var updater: ViewUpdater
     
     var body: some View {
         HStack {
@@ -31,21 +33,15 @@ struct ToolbarButtons: View {
 //            FancyButton(text: "Previous day", action: previous, icon: "chevron.left", transparent: true, showLabel: false)
 //                .frame(maxHeight: 20)
             FancyPicker(onChange: change, items: datePickerItems)
-                .onAppear(perform: {
-                    datePickerItems = CustomPickerItem.listFrom(DateHelper.datesBeforeToday(numDays: numDatesInPast)) // TODO: add dateFormat: "EEEEEE - yyyy-MM-dd" 
-                })
+                .onAppear(perform: {createListOfDays(changeDetected: false)})
+                .onChange(of: numPastDates) { _ in
+                    createListOfDays(changeDetected: true)
+                }
             // TODO: coming back soon
 //            FancyButton(text: "Next day", action: next, icon: "chevron.right", transparent: true, showLabel: false)
 //                .frame(maxHeight: 20)
             
-            // TODO: this one is coming back
-//            Button(action: reload, label: {
-//                Image(systemName: "arrow.counterclockwise")
-//            })
-//            .help("Reload data")
-//            .keyboardShortcut("r")
-//            .buttonStyle(.borderless)
-//            .foregroundColor(Color.white)
+            ViewModeSelector(mode: $viewMode)
             
             Button(action: export, label: {
                 Image(systemName: "arrow.down.to.line")
@@ -94,6 +90,14 @@ struct ToolbarButtons: View {
         }.padding(8)
     }
     
+    private func createListOfDays(changeDetected: Bool = false) -> Void {
+        datePickerItems = CustomPickerItem.listFrom(DateHelper.datesBeforeToday(numDays: numPastDates)) // TODO: add dateFormat: "EEEEEE - yyyy-MM-dd"
+        
+        if changeDetected {
+            updater.updateOne("today.dayList")
+        }
+    }
+    
     private func change(selected: Int, sender: String?) -> Void {
         let item = datePickerItems[selected].title
         
@@ -113,12 +117,8 @@ struct ToolbarButtons: View {
         }
     }
     
-    private func reload() -> Void {
-        //
-    }
-    
     private func previous() -> Void {
-        if pickerSelection <= numDatesInPast {
+        if pickerSelection <= numPastDates {
             pickerSelection += 1
             
             let item = datePickerItems[pickerSelection].title
@@ -161,6 +161,10 @@ struct ToolbarButtons: View {
         }
         
         ClipboardHelper.copy(pasteboardContents)
+    }
+    
+    private func viewAsPlain() -> Void {
+        viewMode = .plain
     }
     
     private func toStringList(_ items: [Entry]) -> String {

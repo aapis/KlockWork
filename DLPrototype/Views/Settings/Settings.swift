@@ -11,7 +11,7 @@ import SwiftUI
 
 struct SettingsView: View {
     private enum Tabs: Hashable {
-        case general, advanced
+        case general, today, advanced
     }
     var body: some View {
         TabView {
@@ -20,9 +20,14 @@ struct SettingsView: View {
                     Label("General", systemImage: "gear")
                 }
                 .tag(Tabs.general)
+            
+            TodaySettings()
+                .tabItem {
+                    Label("Today", systemImage: "doc.append.fill")
+                }
+                .tag(Tabs.today)
         }
         .padding(20)
-        .frame(width: 375, height: 150)
     }
 }
 
