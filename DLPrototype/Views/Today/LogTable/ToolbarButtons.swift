@@ -38,15 +38,6 @@ struct ToolbarButtons: View {
 //            FancyButton(text: "Next day", action: next, icon: "chevron.right", transparent: true, showLabel: false)
 //                .frame(maxHeight: 20)
             
-            // TODO: this one is coming back
-//            Button(action: reload, label: {
-//                Image(systemName: "arrow.counterclockwise")
-//            })
-//            .help("Reload data")
-//            .keyboardShortcut("r")
-//            .buttonStyle(.borderless)
-//            .foregroundColor(Color.white)
-            
             Button(action: export, label: {
                 Image(systemName: "arrow.down.to.line")
             })
@@ -111,10 +102,6 @@ struct ToolbarButtons: View {
         withAnimation(.easeInOut) {
             showSearch.toggle()
         }
-    }
-    
-    private func reload() -> Void {
-        //
     }
     
     private func previous() -> Void {
