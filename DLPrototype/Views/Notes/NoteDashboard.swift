@@ -16,6 +16,7 @@ struct NoteDashboard: View {
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
+    @EnvironmentObject public var jm: CoreDataJob
     
     @FetchRequest public var notes: FetchedResults<Note>
     
@@ -50,7 +51,7 @@ struct NoteDashboard: View {
             Title(text: "Create", image: "pencil")
         }
         
-        FancyLink(icon: "note.text.badge.plus", destination: AnyView(NoteCreate()))
+        FancyLink(icon: "note.text.badge.plus", destination: AnyView(NoteCreate().environmentObject(jm)))
         FancyDivider()
     }
     

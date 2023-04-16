@@ -16,6 +16,7 @@ struct NoteCreate: View {
     @State private var selectedJob: Job?
     
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var jm: CoreDataJob
     
     private var jobs: [Job] {
         CoreDataJob(moc: moc).all()
@@ -35,7 +36,7 @@ struct NoteCreate: View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 22) {
                 Title(text: "Create a note", image: "note.text.badge.plus")
-                JobPicker(onChange: pickerChange)
+                JobPicker(onChange: pickerChange).environmentObject(jm)
                 FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
                 
                 FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)

@@ -80,7 +80,6 @@ struct JobPicker: View {
     private func pickerChange(selected: Int, sender: String?) -> Void {
         jobId = String(selected)
         
-        
         if let selectedJob = jm.byId(Double(jobId)!) {
             jobIdFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
             jobIdFieldTextColour = jobIdFieldColour.isBright() ? Color.black : Color.white

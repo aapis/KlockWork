@@ -74,6 +74,8 @@ struct Home: View {
                 Section(header: Text("Entities")) {
                     NavigationLink {
                         NoteDashboard()
+                            .environmentObject(jm)
+                            .environmentObject(updater)
                             .navigationTitle("Notes")
                             .toolbar {
                                 if showExperimentalFeatures {
