@@ -40,7 +40,7 @@ final public class DateHelper {
     static public func todayShort(_ date: Date? = Date()) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
-        formatter.timeZone = TimeZone(abbreviation: "MST")
+        formatter.timeZone = TimeZone.autoupdatingCurrent
         formatter.locale = NSLocale.current
         
         return formatter.string(from: date!)
@@ -49,7 +49,7 @@ final public class DateHelper {
     static public func shortDate(_ date: String) -> Date? {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
-        formatter.timeZone = TimeZone(abbreviation: "MST")
+        formatter.timeZone = TimeZone.autoupdatingCurrent
         formatter.locale = NSLocale.current
         
         return formatter.date(from: date)
@@ -58,7 +58,7 @@ final public class DateHelper {
     static public func shortDateWithTime(_ date: Date? = Date()) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd h:mm a"
-        formatter.timeZone = TimeZone(abbreviation: "MST")
+        formatter.timeZone = TimeZone.autoupdatingCurrent
         formatter.locale = NSLocale.current
         
         return formatter.string(from: date!)
@@ -66,7 +66,7 @@ final public class DateHelper {
     
     static public func longDate(_ timestamp: Date) -> String {
         let df = DateFormatter()
-        df.timeZone = TimeZone(abbreviation: "MST")
+        df.timeZone = TimeZone.autoupdatingCurrent
         df.locale = NSLocale.current
         df.dateFormat = "yyyy-MM-dd HH:mm:ss"
         
@@ -76,7 +76,7 @@ final public class DateHelper {
     static public func date(_ date: String, fmt: String? = "yyyy-MM-dd") -> Date? {
         let formatter = DateFormatter()
         formatter.dateFormat = fmt
-        formatter.timeZone = TimeZone(abbreviation: "MST")
+        formatter.timeZone = TimeZone.autoupdatingCurrent
         formatter.locale = NSLocale.current
         
         return formatter.date(from: date)
@@ -97,7 +97,7 @@ final public class DateHelper {
             if computedDay != nil {
                 let fmt = DateFormatter()
                 fmt.dateFormat = dateFormat
-                fmt.timeZone = TimeZone(abbreviation: "MST")
+                fmt.timeZone = TimeZone.autoupdatingCurrent
                 fmt.locale = NSLocale.current
                 
                 let fmtComputedDay = fmt.string(from: computedDay!)

@@ -180,7 +180,7 @@ struct Import: View {
     
     private func dateFor(_ timestamp: String) throws -> Date {
         let inputDateFormatter = DateFormatter()
-        inputDateFormatter.timeZone = TimeZone(abbreviation: "MST")
+        inputDateFormatter.timeZone = TimeZone.autoupdatingCurrent
         inputDateFormatter.locale = NSLocale.current
         inputDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         let dateObj = inputDateFormatter.date(from: timestamp)
