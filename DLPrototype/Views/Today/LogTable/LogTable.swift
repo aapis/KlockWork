@@ -95,6 +95,7 @@ struct LogTable: View, Identifiable {
                                 selectedDate: $selectedDate,
                                 records: $records
                             )
+                                .id(updater.ids["today.dayList"])
                         }
                     }
                 }

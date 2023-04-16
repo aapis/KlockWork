@@ -12,6 +12,7 @@ public class ViewUpdater: ObservableObject {
     @Published public var ids: [String: UUID] = [
         "today.table": UUID(),
         "today.picker": UUID(),
+        "today.dayList": UUID(),
         "ltd.rows": UUID(),
         "dg.hasView": UUID(),
         "dg.hasNoView": UUID(),
