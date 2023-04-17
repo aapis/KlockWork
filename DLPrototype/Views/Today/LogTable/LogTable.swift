@@ -229,6 +229,9 @@ struct LogTable: View, Identifiable {
                 LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
             }
         }
+        .onChange(of: selectedTab, perform: { _ in
+            changeSort()
+        })
     }
     
     var tableDetails: some View {
@@ -242,11 +245,18 @@ struct LogTable: View, Identifiable {
         } else if selectedTab == 1 {
             records = grouped()
         }
+        
+        createPlaintextRecords()
     }
     
     private func loadRecordsBySelectedDate() -> Void {
         records = LogRecords(moc: moc).forDate(selectedDate)
         
+        // TODO: move this func to LogRecords model
+        createPlaintextRecords()
+    }
+    
+    private func createPlaintextRecords() -> Void {
         if records.count > 0 {
             recordsAsString = ""
             
