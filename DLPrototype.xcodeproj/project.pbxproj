@@ -41,6 +41,7 @@
 		533E406A2970F5610007785A /* SearchHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533E40692970F5610007785A /* SearchHelper.swift */; };
 		53521E54296FBDAE002E7F21 /* CoreDataNoteVersions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53521E53296FBDAE002E7F21 /* CoreDataNoteVersions.swift */; };
 		53529A07299F38C0000D2FCB /* JobPickerUsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53529A06299F38C0000D2FCB /* JobPickerUsing.swift */; };
+		53561F8529F1FC7900D828AD /* ProjectPickerUsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53561F8429F1FC7900D828AD /* ProjectPickerUsing.swift */; };
 		5361DDED2971E1DF00437064 /* CoreDataNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5361DDEC2971E1DF00437064 /* CoreDataNotes.swift */; };
 		5367FAF0296772730060D2AA /* Split.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5367FAEF296772730060D2AA /* Split.swift */; };
 		537368D124B93DB600193E88 /* Today.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537368D024B93DB600193E88 /* Today.swift */; };
@@ -165,6 +166,7 @@
 		533E40692970F5610007785A /* SearchHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchHelper.swift; sourceTree = "<group>"; };
 		53521E53296FBDAE002E7F21 /* CoreDataNoteVersions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataNoteVersions.swift; sourceTree = "<group>"; };
 		53529A06299F38C0000D2FCB /* JobPickerUsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobPickerUsing.swift; sourceTree = "<group>"; };
+		53561F8429F1FC7900D828AD /* ProjectPickerUsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPickerUsing.swift; sourceTree = "<group>"; };
 		5361DDEC2971E1DF00437064 /* CoreDataNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataNotes.swift; sourceTree = "<group>"; };
 		5367FAEF296772730060D2AA /* Split.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Split.swift; sourceTree = "<group>"; };
 		537368D024B93DB600193E88 /* Today.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Today.swift; sourceTree = "<group>"; };
@@ -573,6 +575,7 @@
 				5376289A2966467100DE8ECF /* SearchBar.swift */,
 				53B0BE8729726400007CB663 /* GenericToolbar.swift */,
 				53529A06299F38C0000D2FCB /* JobPickerUsing.swift */,
+				53561F8429F1FC7900D828AD /* ProjectPickerUsing.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -747,6 +750,7 @@
 				53EFCE7929637F35004E45EC /* GeneralSettings.swift in Sources */,
 				5335A5B7296D2089000051B1 /* TaskListView.swift in Sources */,
 				533AB3F0296C9ED100E91A9F /* ManageNotes.swift in Sources */,
+				53561F8529F1FC7900D828AD /* ProjectPickerUsing.swift in Sources */,
 				5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */,
 				537628A02966518B00DE8ECF /* ToolbarTabs.swift in Sources */,
 				53152CD6296A2DA300A14E43 /* FancyPicker.swift in Sources */,

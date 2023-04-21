@@ -13,6 +13,8 @@ struct JobView: View {
     @Binding public var job: Job?
     
     @State private var id: String = ""
+    @State private var pName: String = ""
+    @State private var pId: String = ""
     @State private var url: String = ""
     @State private var colour: String = ""
     @State private var alive: Bool = true
@@ -20,7 +22,9 @@ struct JobView: View {
     @EnvironmentObject public var updater: ViewUpdater
     
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
+            FancyDivider()
+            ProjectPickerUsing(onChange: {_,_ in }, id: $pId, displayName: $pName)
             FancyDivider()
             
             HStack {
@@ -39,8 +43,8 @@ struct JobView: View {
                 Spacer()
             }
             
-            FancyTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, text: $id)
-            FancyTextField(placeholder: "URL", lineLimit: 1, onSubmit: {}, text: $url)
+            FancyTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, showLabel: true, text: $id)
+            FancyTextField(placeholder: "URL", lineLimit: 1, onSubmit: {}, showLabel: true, text: $url)
             
             if job != nil {
                 HStack {
@@ -64,6 +68,10 @@ struct JobView: View {
     private func setEditableValues() -> Void {
         if job != nil {
             id = job!.jid.string
+            if job!.project != nil {
+                pName = job!.project!.name!
+                pId = String(job!.project!.pid)
+            }
             
             if job!.uri != nil {
                 url = job!.uri!.description
@@ -76,13 +84,11 @@ struct JobView: View {
     private func update() -> Void {
         if job != nil {
             if !url.isEmpty {
-                job?.uri = URL(string: url)!
-            } else {
-                job?.uri = nil
+                job!.uri = URL(string: url)!
             }
             
             if !id.isEmpty {
-                job?.jid = Double(id)!
+                job!.jid = Double(id)!
             }
             
             job?.alive = alive

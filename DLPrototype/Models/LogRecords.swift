@@ -106,4 +106,32 @@ class LogRecords: ObservableObject, Identifiable, Equatable {
         
         return results
     }
+    
+    public func recent(_ numWeeks: Double = 6) -> [LogRecord] {
+        let cutoff = DateHelper.daysPast(numWeeks * 7)
+        print("DATER \(cutoff)")
+        
+        let predicate = NSPredicate(
+            format: "timestamp > %@",
+            cutoff
+        )
+        
+        return query(predicate)
+    }
+    
+    private func query(_ predicate: NSPredicate) -> [LogRecord] {
+        var results: [LogRecord] = []
+        let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: true)]
+        fetch.predicate = predicate
+        fetch.returnsDistinctResults = true
+        
+        do {
+            results = try moc!.fetch(fetch)
+        } catch {
+            print("[error] CoreDataRecords.query Unable to find records for predicate \(predicate.predicateFormat)")
+        }
+        
+        return results
+    }
 }

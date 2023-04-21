@@ -13,16 +13,12 @@ struct Today: View {
     @State private var text: String = ""
     @State private var jobId: String = ""
     @State private var taskUrl: String = "" // only treated as a string, no need to be URL-type
-    @State private var jobIdFieldColour: Color = Color.clear
-    @State private var jobIdFieldTextColour: Color = Color.white
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
-    @EnvironmentObject public var recordsModel: LogRecords
-    @EnvironmentObject public var jobModel: CoreDataJob
     
     @FetchRequest(
         sortDescriptors: [
@@ -119,15 +115,7 @@ struct Today: View {
     }
     
     private func pickerChange(selected: Int, sender: String?) -> Void {
-        jobId = String(selected)
-        
-        if let selectedJob = jobModel.byId(Double(jobId)!) {
-            jobIdFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
-            jobIdFieldTextColour = jobIdFieldColour.isBright() ? Color.black : Color.white
-        } else {
-            jobIdFieldColour = Color.clear
-            jobIdFieldTextColour = Color.white
-        }
+//        jobId = String(selected)
     }
 
     public func reloadUi() -> Void {
@@ -161,8 +149,9 @@ struct Today: View {
                 record.job = match
             }
             
-            // clear text box
+            // clear input fields
             text = ""
+            taskUrl = ""
             // redraw the views that need to be updated
             reloadUi()
             
@@ -203,12 +192,6 @@ struct Today: View {
         let pattern = /^https:\/\/app.asana.com/
         
         return taskUrl.contains(pattern)
-    }
-    
-    private func resetJobUi() -> Void {
-        jobId = ""
-        jobIdFieldColour = Color.clear
-        jobIdFieldTextColour = Color.white
     }
 }
 

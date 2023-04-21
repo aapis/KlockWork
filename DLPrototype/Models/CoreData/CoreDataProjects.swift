@@ -17,52 +17,68 @@ public class CoreDataProjects {
     }
     
     public func byId(_ id: Int) -> Project? {
-        let fetch: NSFetchRequest<Project> = Project.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Project.created, ascending: false)]
-        fetch.predicate = NSPredicate(
+        let predicate = NSPredicate(
             format: "pid = %d",
             id as CVarArg
         )
-        fetch.fetchLimit = 1
-
-        do {
-            var results: [Project] = []
-            results = try moc!.fetch(fetch)
-            
-            return results.first
-        } catch {
-            print("Unable to find project with ID \(id)")
+        
+        let results = query(predicate)
+        
+        if results.isEmpty {
+            return nil
         }
         
-        return nil
+        return results.first
     }
     
     public func all() -> [Project] {
+        return query()
+    }
+    
+    public func alive() -> [Project] {
+        let predicate = NSPredicate(
+            format: "alive = true"
+        )
+        
+        return query(predicate)
+    }
+    
+    public func recent() -> [Project] {
         var results: [Project] = []
-        let fetch: NSFetchRequest<Project> = Project.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Project.created, ascending: false)]
 
-        do {
-            results = try moc!.fetch(fetch)
-        } catch {
-            print("Unable to find all projects")
+        let records = LogRecords(moc: moc!).recent(5)
+        print("DATER count \(records.count)")
+        
+        for rec in records {
+            if rec.job != nil {
+                if let project = rec.job!.project {
+                    if !results.contains(where: {($0.id == project.id)}) {
+                        results.append(project)
+                    }
+                }
+            }
         }
         
         return results
     }
     
-    public func alive() -> [Project] {
+    private func query(_ predicate: NSPredicate? = nil) -> [Project] {
         var results: [Project] = []
         let fetch: NSFetchRequest<Project> = Project.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Project.created, ascending: false)]
-        fetch.predicate = NSPredicate(
-            format: "alive = true"
-        )
+        
+        if predicate != nil {
+            fetch.predicate = predicate
+        }
 
         do {
             results = try moc!.fetch(fetch)
         } catch {
-            print("Unable to find all alive projects")
+            if predicate != nil {
+                print("[error] CoreDataProjects.query Unable to find records for predicate \(predicate!.predicateFormat)")
+            } else {
+                print("[error] CoreDataProjects.query Unable to find records for query")
+            }
         }
         
         return results

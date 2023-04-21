@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import SwiftUI
 import Combine
 
 struct JobPickerUsing: View {
@@ -15,6 +14,7 @@ struct JobPickerUsing: View {
     public var transparent: Bool? = false
     public var labelText: String?
     public var showLabel: Bool? = false
+    public var allowRelativePopulation: Bool? = false
     
     @Binding public var jobId: String
     @State private var jobIdFieldColour: Color = Color.clear
@@ -24,7 +24,13 @@ struct JobPickerUsing: View {
     
     private var pickerItems: [CustomPickerItem] {
         var items: [CustomPickerItem] = [CustomPickerItem(title: "Choose a job", tag: 0)]
-        let projects = CoreDataProjects(moc: moc).alive()
+        var projects: [Project]
+        
+        if allowRelativePopulation! {
+            projects = CoreDataProjects(moc: moc).recent()
+        } else {
+            projects = CoreDataProjects(moc: moc).alive()
+        }
         
         for project in projects {
             if project.jobs!.count > 0 {

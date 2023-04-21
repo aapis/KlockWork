@@ -18,13 +18,20 @@ struct FancyTextField: View {
     public var disabled: Bool? = false
     public var fgColour: Color? = Color.white
     public var bgColour: Color? = Color.black.opacity(0.1)
+    public var showLabel: Bool = false
     
     @Binding public var text: String
     
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
     
     var body: some View {
-        ZStack(alignment: .top) {
+        HStack {
+            if showLabel {
+                Text(placeholder)
+                    .font(Theme.font)
+                    .frame(width: 100)
+            }
+            
             if lineLimit == 1 {
                 oneLine
             } else if lineLimit < 9 {

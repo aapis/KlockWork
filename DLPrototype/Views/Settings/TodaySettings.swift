@@ -12,6 +12,7 @@ import SwiftUI
 struct TodaySettings: View {
     @AppStorage("today.numPastDates") public var numPastDates: Int = 20
     @AppStorage("today.viewMode") public var viewMode: Int = 0
+    @AppStorage("today.numWeeks") public var numWeeks: Int = 2
     @AppStorage("showSidebar") public var showSidebar: Bool = true
     @AppStorage("showTodaySearch") public var showSearch: Bool = true
 
@@ -28,6 +29,15 @@ struct TodaySettings: View {
             Picker("Default view mode", selection: $viewMode) {
                 Text("Full").tag(1)
                 Text("Plain").tag(2)
+            }
+            
+            Picker("How many weeks do you want to go back to populate job pickers?", selection: $numWeeks) {
+                Text("1").tag(1)
+                Text("2").tag(2)
+                Text("3").tag(3)
+                Text("4").tag(4)
+                Text("6").tag(6)
+                Text("8").tag(8)
             }
             
             Toggle("Show sidebar", isOn: $showSidebar)
