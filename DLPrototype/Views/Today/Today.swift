@@ -54,7 +54,7 @@ struct Today: View {
     var editor: some View {
         VStack(alignment: .leading) {
             HStack {                
-                JobPickerUsing(onChange: pickerChange, jobId: $jobId)
+                JobPickerUsing(onChange: pickerChange, supportsDynamicPicker: true, jobId: $jobId)
                 
                 Text("Or").font(Theme.font)
                 
