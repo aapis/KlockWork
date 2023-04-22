@@ -24,6 +24,7 @@ struct FancySubTitle: View {
             if showLabel! {
                 Text(text)
                     .font(Theme.fontSubTitle)
+                    .foregroundStyle(.secondary)
             }
         }
     }

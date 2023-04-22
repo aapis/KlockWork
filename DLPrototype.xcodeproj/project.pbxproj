@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -42,6 +42,13 @@
 		53521E54296FBDAE002E7F21 /* CoreDataNoteVersions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53521E53296FBDAE002E7F21 /* CoreDataNoteVersions.swift */; };
 		53529A07299F38C0000D2FCB /* JobPickerUsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53529A06299F38C0000D2FCB /* JobPickerUsing.swift */; };
 		53561F8529F1FC7900D828AD /* ProjectPickerUsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53561F8429F1FC7900D828AD /* ProjectPickerUsing.swift */; };
+		535C1AE129F48EF700CD95FD /* Dashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535C1AE029F48EF700CD95FD /* Dashboard.swift */; };
+		535C1AE329F48F6800CD95FD /* Widgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535C1AE229F48F6800CD95FD /* Widgets.swift */; };
+		535C1AE629F48FD500CD95FD /* ThisWeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535C1AE529F48FD500CD95FD /* ThisWeek.swift */; };
+		535C1AE829F4912800CD95FD /* ThisMonth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535C1AE729F4912800CD95FD /* ThisMonth.swift */; };
+		535C1AEA29F4913900CD95FD /* ThisYear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535C1AE929F4913900CD95FD /* ThisYear.swift */; };
+		535C1AEC29F4914900CD95FD /* Favourites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535C1AEB29F4914900CD95FD /* Favourites.swift */; };
+		535C1AEE29F49AAD00CD95FD /* StatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535C1AED29F49AAD00CD95FD /* StatsWidget.swift */; };
 		5361DDED2971E1DF00437064 /* CoreDataNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5361DDEC2971E1DF00437064 /* CoreDataNotes.swift */; };
 		5367FAF0296772730060D2AA /* Split.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5367FAEF296772730060D2AA /* Split.swift */; };
 		537368D124B93DB600193E88 /* Today.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537368D024B93DB600193E88 /* Today.swift */; };
@@ -167,6 +174,13 @@
 		53521E53296FBDAE002E7F21 /* CoreDataNoteVersions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataNoteVersions.swift; sourceTree = "<group>"; };
 		53529A06299F38C0000D2FCB /* JobPickerUsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobPickerUsing.swift; sourceTree = "<group>"; };
 		53561F8429F1FC7900D828AD /* ProjectPickerUsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectPickerUsing.swift; sourceTree = "<group>"; };
+		535C1AE029F48EF700CD95FD /* Dashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dashboard.swift; sourceTree = "<group>"; };
+		535C1AE229F48F6800CD95FD /* Widgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Widgets.swift; sourceTree = "<group>"; };
+		535C1AE529F48FD500CD95FD /* ThisWeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThisWeek.swift; sourceTree = "<group>"; };
+		535C1AE729F4912800CD95FD /* ThisMonth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThisMonth.swift; sourceTree = "<group>"; };
+		535C1AE929F4913900CD95FD /* ThisYear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThisYear.swift; sourceTree = "<group>"; };
+		535C1AEB29F4914900CD95FD /* Favourites.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Favourites.swift; sourceTree = "<group>"; };
+		535C1AED29F49AAD00CD95FD /* StatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsWidget.swift; sourceTree = "<group>"; };
 		5361DDEC2971E1DF00437064 /* CoreDataNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataNotes.swift; sourceTree = "<group>"; };
 		5367FAEF296772730060D2AA /* Split.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Split.swift; sourceTree = "<group>"; };
 		537368D024B93DB600193E88 /* Today.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Today.swift; sourceTree = "<group>"; };
@@ -430,9 +444,40 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
+		535C1ADF29F48EE600CD95FD /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				535C1AE429F48FBD00CD95FD /* Widgets */,
+				535C1AE029F48EF700CD95FD /* Dashboard.swift */,
+				535C1AE229F48F6800CD95FD /* Widgets.swift */,
+			);
+			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		535C1AE429F48FBD00CD95FD /* Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				535C1AEF29F49AB100CD95FD /* Types */,
+				535C1AE529F48FD500CD95FD /* ThisWeek.swift */,
+				535C1AE729F4912800CD95FD /* ThisMonth.swift */,
+				535C1AE929F4913900CD95FD /* ThisYear.swift */,
+				535C1AEB29F4914900CD95FD /* Favourites.swift */,
+			);
+			path = Widgets;
+			sourceTree = "<group>";
+		};
+		535C1AEF29F49AB100CD95FD /* Types */ = {
+			isa = PBXGroup;
+			children = (
+				535C1AED29F49AAD00CD95FD /* StatsWidget.swift */,
+			);
+			path = Types;
+			sourceTree = "<group>";
+		};
 		537368D224B93DF700193E88 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				535C1ADF29F48EE600CD95FD /* Dashboard */,
 				53C3418A299960080071B855 /* Jobs */,
 				532A7226298EE9DA0038C18B /* Find */,
 				53EDDF9C29634840008D34C7 /* Shared */,
@@ -667,8 +712,9 @@
 		53218D3C24B7F6EB0088ABE9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1150;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1430;
 				ORGANIZATIONNAME = YegCollective;
 				TargetAttributes = {
 					53218D4324B7F6EB0088ABE9 = {
@@ -740,12 +786,14 @@
 			files = (
 				53FEF578296603D9000B94FC /* FancyTextField.swift in Sources */,
 				53F5895E2998330000843B32 /* NoteResult.swift in Sources */,
+				535C1AEE29F49AAD00CD95FD /* StatsWidget.swift in Sources */,
 				53959A1F29738AAA007A2549 /* FancySubTitle.swift in Sources */,
 				537628B429665F4E00DE8ECF /* Data.xcdatamodeld in Sources */,
 				53F5896429983FA300843B32 /* ProjectResult.swift in Sources */,
 				53EDDF9E29634852008D34C7 /* Entry.swift in Sources */,
 				53C6D0912965044C00EA6129 /* DetailsColumn.swift in Sources */,
 				53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */,
+				535C1AE629F48FD500CD95FD /* ThisWeek.swift in Sources */,
 				53ECD0572971F8F400A09AAB /* CoreDataRecords.swift in Sources */,
 				53EFCE7929637F35004E45EC /* GeneralSettings.swift in Sources */,
 				5335A5B7296D2089000051B1 /* TaskListView.swift in Sources */,
@@ -756,6 +804,7 @@
 				53152CD6296A2DA300A14E43 /* FancyPicker.swift in Sources */,
 				53152CE4296BC8A100A14E43 /* NoteDashboard.swift in Sources */,
 				53B0BE86297261A3007CB663 /* ProjectCreate.swift in Sources */,
+				535C1AEC29F4914900CD95FD /* Favourites.swift in Sources */,
 				533AB3F4296CA58C00E91A9F /* ManageJobs.swift in Sources */,
 				53B0BE8C297318A6007CB663 /* ProjectView.swift in Sources */,
 				5361DDED2971E1DF00437064 /* CoreDataNotes.swift in Sources */,
@@ -764,6 +813,7 @@
 				53EFCE7629637CC6004E45EC /* Color.swift in Sources */,
 				53F5896629983FD100843B32 /* ProjectRow.swift in Sources */,
 				53C3418E299968160071B855 /* JobView.swift in Sources */,
+				535C1AEA29F4913900CD95FD /* ThisYear.swift in Sources */,
 				53152CC929690E7300A14E43 /* LosslessStringConvertible.swift in Sources */,
 				53B0BE8A2972711A007CB663 /* FancyDivider.swift in Sources */,
 				53EDDFA22963502A008D34C7 /* LogRowEmpty.swift in Sources */,
@@ -778,6 +828,7 @@
 				533E406A2970F5610007785A /* SearchHelper.swift in Sources */,
 				53529A07299F38C0000D2FCB /* JobPickerUsing.swift in Sources */,
 				5376289B2966467100DE8ECF /* SearchBar.swift in Sources */,
+				535C1AE129F48EF700CD95FD /* Dashboard.swift in Sources */,
 				537628A22966525500DE8ECF /* ToolbarButtons.swift in Sources */,
 				537AEBA1296287B900385787 /* LogRow.swift in Sources */,
 				53C3419029996C070071B855 /* FancyRandomJobColourPicker.swift in Sources */,
@@ -792,9 +843,11 @@
 				533E40652970DA640007785A /* ViewUpdater.swift in Sources */,
 				53F589682998437D00843B32 /* JobResult.swift in Sources */,
 				53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */,
+				535C1AE329F48F6800CD95FD /* Widgets.swift in Sources */,
 				53C6D08F2964E25F00EA6129 /* Column.swift in Sources */,
 				532A7228298EE9E80038C18B /* FindDashboard.swift in Sources */,
 				53759E0829678DC700DCDC4B /* Import.swift in Sources */,
+				535C1AE829F4912800CD95FD /* ThisMonth.swift in Sources */,
 				53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */,
 				5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */,
 				53C6D0942965048500EA6129 /* DetailsRow.swift in Sources */,

@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-public class CoreDataRecords {
+public class CoreDataRecords: ObservableObject {
     public var moc: NSManagedObjectContext?
     
     public init(moc: NSManagedObjectContext?) {
@@ -39,6 +39,32 @@ public class CoreDataRecords {
         )
         
         return query(predicate)
+    }
+    
+    public func countWordsIn(_ records: [LogRecord]) -> Int {
+        var words: [String] = []
+        for rec in records {
+            if rec.message != nil {
+                words.append(rec.message!)
+            }
+        }
+        
+        let wordSet: Set = Set(words.joined(separator: " ").split(separator: " "))
+        
+        return wordSet.count
+    }
+    
+    public func countJobsIn(_ records: [LogRecord]) -> Int {
+        var jobs: [Double] = []
+        for rec in records {
+            if rec.job != nil {
+                jobs.append(rec.job!.jid)
+            }
+        }
+        
+        let jobSet: Set = Set(jobs)
+        
+        return jobSet.count
     }
     
     private func query(_ predicate: NSPredicate) -> [LogRecord] {
