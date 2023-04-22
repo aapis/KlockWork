@@ -19,7 +19,7 @@ struct ProjectsDashboard: View {
     @EnvironmentObject public var jobModel: CoreDataJob
     
     @FetchRequest(sortDescriptors: [SortDescriptor(\.jid, order: .reverse)]) public var jobs: FetchedResults<Job>
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.created, order: .reverse)]) public var projects: FetchedResults<Project>
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.name, order: .reverse)]) public var projects: FetchedResults<Project>
     
     var body: some View {
         VStack(alignment: .leading) {

@@ -20,7 +20,9 @@ struct NoteRow: View {
             HStack(spacing: 1) {
                 nProject(note)
                 nNote(note)
-                nStar(note)
+                if note.starred {
+                    nStar(note)
+                }
                 nVersions(note)
                 nAlive(note)
             }
