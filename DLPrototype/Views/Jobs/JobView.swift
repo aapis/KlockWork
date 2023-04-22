@@ -25,6 +25,8 @@ struct JobView: View {
     var body: some View {
         VStack(alignment: .leading) {
             FancyDivider()
+            Divider()
+            FancyDivider()
             
             if job != nil {
                 if job!.project != nil {
@@ -32,6 +34,7 @@ struct JobView: View {
                         icon: "folder",
                         label: "Project: \(job!.project!.name!)",
                         showLabel: true,
+                        colour: Color.fromStored(job!.project!.colour ?? Theme.rowColourAsDouble),
                         destination: AnyView(
                             ProjectView(project: job!.project!)
                                 .environmentObject(jm)

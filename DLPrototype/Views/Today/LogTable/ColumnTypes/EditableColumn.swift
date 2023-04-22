@@ -22,6 +22,8 @@ struct EditableColumn: View {
     public var url: URL?
     public var job: Job?
     
+    @EnvironmentObject public var jm: CoreDataJob
+    
     @AppStorage("tigerStriped") private var tigerStriped = false
     
     var body: some View {
@@ -44,6 +46,7 @@ struct EditableColumn: View {
                                 if job != nil {
                                     NavigationLink {
                                         JobDashboard(defaultSelectedJob: job!.jid)
+                                            .environmentObject(jm)
                                     } label: {
                                         Text(text)
                                             .foregroundColor(colour.isBright() ? Color.black : Color.white)
