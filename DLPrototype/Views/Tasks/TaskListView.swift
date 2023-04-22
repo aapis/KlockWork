@@ -20,6 +20,7 @@ struct TaskListView: View {
     private var tasks: [LogTask] {
         let ordered = job.tasks!.sortedArray(using: [
                 NSSortDescriptor(key: "completedDate", ascending: true),
+                NSSortDescriptor(key: "cancelledDate", ascending: true),
                 NSSortDescriptor(key: "created", ascending: false)
             ]
         )
@@ -52,7 +53,7 @@ struct TaskListView: View {
                             ScrollView {
                                 VStack(spacing: 1) {
                                     ForEach(tasks, id: \LogTask.id) { task in
-                                        TaskView(task: task, showCreated: true, showUpdated: true)
+                                        TaskView(task: task, showCreated: true, showUpdated: true, showCancelled: true)
                                     }
                                 }
                             }

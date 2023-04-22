@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import SwiftUI
 import Combine
 
 struct JobPickerUsing: View {
@@ -15,6 +14,7 @@ struct JobPickerUsing: View {
     public var transparent: Bool? = false
     public var labelText: String?
     public var showLabel: Bool? = false
+    public var supportsDynamicPicker: Bool? = false
     
     @Binding public var jobId: String
     @State private var jobIdFieldColour: Color = Color.clear
@@ -22,18 +22,42 @@ struct JobPickerUsing: View {
     
     @Environment(\.managedObjectContext) var moc
     
+    @AppStorage("today.relativeJobList") public var allowRelativeJobList: Bool = false
+    @AppStorage("today.numWeeks") public var numWeeks: Int = 2
+    
     private var pickerItems: [CustomPickerItem] {
         var items: [CustomPickerItem] = [CustomPickerItem(title: "Choose a job", tag: 0)]
-        let projects = CoreDataProjects(moc: moc).alive()
+        var projects: [Project]
+        
+        if allowRelativeJobList && supportsDynamicPicker! {
+            projects = CoreDataProjects(moc: moc).recent(Double(numWeeks))
+        } else {
+            projects = CoreDataProjects(moc: moc).alive()
+        }
         
         for project in projects {
             if project.jobs!.count > 0 {
-                items.append(CustomPickerItem(title: "Project: \(project.name!)", tag: Int(-1)))
-                
                 if project.jobs != nil {
                     let unsorted = project.jobs!.allObjects as! [Job]
                     var jobs = unsorted.sorted(by: ({$0.jid > $1.jid}))
+                    
+                    // remove ignored jobs
                     jobs.removeAll(where: {($0.project?.configuration?.ignoredJobs!.contains($0.jid.string))!})
+                    
+                    // remove jobs that haven't been used within the selected time window, if dynamic pickers is enabled
+                    if allowRelativeJobList && supportsDynamicPicker! {
+                        jobs.removeAll(where: {
+                            let date = DateHelper.daysPast(Double(numWeeks * 7))
+                            let predicate = NSPredicate(format: "timestamp >= %@", date)
+                            let records = $0.records!.filtered(using: predicate)
+                            
+                            return records.count == 0
+                        })
+                    }
+                    
+                    if jobs.count > 0 {
+                        items.append(CustomPickerItem(title: "Project: \(project.name!)", tag: Int(-1)))
+                    }
                     
                     for job in jobs {
                         items.append(CustomPickerItem(title: " - \(job.jid.string)", tag: Int(job.jid)))

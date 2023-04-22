@@ -15,9 +15,11 @@ struct TaskView: View {
     public var showCreated: Bool? = false
     public var showUpdated: Bool? = false
     public var showCompleted: Bool? = false
+    public var showCancelled: Bool? = false
     public var colourizeRow: Bool? = false
     
     @State private var completed: Bool = false
+    @State private var cancelled: Bool = false
     @State private var editModeEnabled: Bool = false
     @State private var rowContent: String = ""
     
@@ -84,30 +86,37 @@ struct TaskView: View {
                                     .foregroundColor(colourizeText())
                             }
                             
-                            if showUpdated == true {
-                                if task.lastUpdate != nil {
-                                    Image(systemName: "rectangle.and.pencil.and.ellipsis")
-                                        .help("Edited at \(DateHelper.shortDateWithTime(task.lastUpdate!))")
-                                        .padding(5)
-                                        .foregroundColor(colourizeText())
-                                }
+                            if showUpdated == true && task.lastUpdate != nil {
+                                Image(systemName: "rectangle.and.pencil.and.ellipsis")
+                                    .help("Edited at \(DateHelper.shortDateWithTime(task.lastUpdate!))")
+                                    .padding(5)
+                                    .foregroundColor(colourizeText())
                             }
                             
-                            if showCompleted == true {
-                                if task.completedDate != nil {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .help("Completed at \(DateHelper.shortDateWithTime(task.completedDate!))")
-                                        .padding(5)
-                                        .foregroundColor(colourizeText())
-                                }
+                            if showCompleted == true && task.completedDate != nil {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .help("Completed at \(DateHelper.shortDateWithTime(task.completedDate!))")
+                                    .padding(5)
+                                    .foregroundColor(colourizeText())
                             }
                             
-                            FancyButton(text: "Edit", action: beginEdit, icon: "pencil", showLabel: false, fgColour: colourizeText())
-                                .padding(.trailing, 5)
+                            if showCancelled == true && task.cancelledDate != nil {
+                                Image(systemName: "xmark.app.fill")
+                                    .help("Cancelled at \(DateHelper.shortDateWithTime(task.cancelledDate!))")
+                                    .padding(5)
+                                    .foregroundColor(colourizeText())
+                                
+                            }
+                            
+                            if task.cancelledDate == nil && task.completedDate == nil {
+                                FancyButton(text: "Cancel", action: cancel, icon: "xmark", showLabel: false, fgColour: colourizeText())
+                                FancyButton(text: "Edit", action: beginEdit, icon: "pencil", showLabel: false, fgColour: colourizeText())
+                            }
                         }
+                        .padding(.trailing, 5)
                     }
                 }
-                .frame(width: 150)
+                .frame(width: 200)
             }
         }
     }
@@ -130,11 +139,19 @@ struct TaskView: View {
     }
     
     private func colourize() -> Color {
-        if colourizeRow == false {
-            return (task.completedDate == nil ? Theme.rowColour : Theme.rowStatusGreen)
+        var colour = Theme.rowColour
+        
+        if task.completedDate != nil {
+            colour = Theme.rowStatusGreen
+        } else if task.cancelledDate != nil {
+            colour = Theme.rowStatusRed
         }
         
-        return (task.completedDate == nil ? Color.fromStored(task.owner!.colour!) : Theme.rowStatusGreen)
+        if colourizeRow == false {
+            return colour
+        } else {
+            return Color.fromStored(task.owner!.colour!)
+        }
     }
     
     private func colourizeText() -> Color {
@@ -170,19 +187,30 @@ struct TaskView: View {
     
     private func complete() -> Void {
         CoreDataTasks(moc: moc).complete(task)
-        
-        task.lastUpdate = Date()
         CoreDataRecords(moc: moc).createWithJob(
             job: task.owner!,
             date: task.lastUpdate!,
             text: "Completed task: \(task.content ?? "Invalid task")"
         )
         
-        PersistenceController.shared.save()
-        
         withAnimation(.easeInOut(duration: 0.2)) {
             // update viewable status indicators
             completed = true
+            updater.update()
+        }
+    }
+    
+    private func cancel() -> Void {
+        CoreDataTasks(moc: moc).cancel(task)
+        CoreDataRecords(moc: moc).createWithJob(
+            job: task.owner!,
+            date: task.lastUpdate!,
+            text: "Cancelled task: \(task.content ?? "Invalid task")"
+        )
+        
+        withAnimation(.easeInOut(duration: 0.2)) {
+            // update viewable status indicators
+            cancelled = true
             updater.update()
         }
     }
