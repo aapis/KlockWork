@@ -43,11 +43,9 @@ public class CoreDataProjects {
         return query(predicate)
     }
     
-    public func recent() -> [Project] {
+    public func recent(_ numWeeks: Double? = 2) -> [Project] {
         var results: [Project] = []
-
-        let records = LogRecords(moc: moc!).recent(5)
-        print("DATER count \(records.count)")
+        let records = CoreDataRecords(moc: moc!).recent(numWeeks!)
         
         for rec in records {
             if rec.job != nil {
