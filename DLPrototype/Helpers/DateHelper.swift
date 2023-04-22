@@ -23,15 +23,15 @@ final public class DateHelper {
         return Calendar.current.startOfDay(for: date) as CVarArg
     }
     
-    static public func yesterday() -> CVarArg{
+    static public func yesterday() -> CVarArg {
         return DateHelper.daysPast(1)
     }
     
-    static public func twoDays() -> CVarArg{
+    static public func twoDays() -> CVarArg {
         return DateHelper.daysPast(2)
     }
     
-    static public func daysPast(_ numDays: Double) -> CVarArg{
+    static public func daysPast(_ numDays: Double) -> CVarArg {
         let date = Date() - (86400 * numDays)
 
         return Calendar.current.startOfDay(for: date) as CVarArg
