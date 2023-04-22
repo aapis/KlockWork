@@ -98,8 +98,8 @@ struct LogTableDetails: View {
                             after as CVarArg
                         )
                     )
-                    // Ignore completed items
-                    filtered = tasks!.filtered(using: NSPredicate(format: "completedDate == null"))
+                    // Ignore completed and cancelled items
+                    filtered = tasks!.filtered(using: NSPredicate(format: "completedDate == null && cancelledDate == null"))
                     
                     for obj in filtered {
                         let task = obj as! LogTask

@@ -26,7 +26,7 @@ public class CoreDataRecords {
         do {
             try moc!.save()
         } catch {
-            print("[error] CoreDataRecords.createWithJob :: Save failed")
+            PersistenceController.shared.save()
         }
     }
     

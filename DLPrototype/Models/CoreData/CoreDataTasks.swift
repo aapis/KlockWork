@@ -18,7 +18,23 @@ public class CoreDataTasks {
     
     public func complete(_ task: LogTask) -> Void {
         task.completedDate = Date()
+        task.lastUpdate = Date()
         
-        PersistenceController.shared.save()
+        do {
+            try moc!.save()
+        } catch {
+            PersistenceController.shared.save()
+        }
+    }
+    
+    public func cancel(_ task: LogTask) -> Void {
+        task.cancelledDate = Date()
+        task.lastUpdate = Date()
+        
+        do {
+            try moc!.save()
+        } catch {
+            PersistenceController.shared.save()
+        }
     }
 }
