@@ -20,11 +20,26 @@ struct JobView: View {
     @State private var alive: Bool = true
     
     @EnvironmentObject public var updater: ViewUpdater
+    @EnvironmentObject public var jm: CoreDataJob
     
     var body: some View {
         VStack(alignment: .leading) {
             FancyDivider()
-            ProjectPickerUsing(onChange: {_,_ in }, id: $pId, displayName: $pName)
+            
+            if job != nil {
+                if job!.project != nil {
+                    FancyLink(
+                        icon: "folder",
+                        label: "Project: \(job!.project!.name!)",
+                        showLabel: true,
+                        destination: AnyView(
+                            ProjectView(project: job!.project!)
+                                .environmentObject(jm)
+                        )
+                    )
+                }
+            }
+
             FancyDivider()
             
             HStack {
