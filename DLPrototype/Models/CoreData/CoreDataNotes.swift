@@ -39,4 +39,41 @@ public class CoreDataNotes {
         
         return results
     }
+    
+    public func starred(limit: Int? = 0) -> [Note] {
+        var results: [Note] = []
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Note.mJob?.project?.id, ascending: false),
+            NSSortDescriptor(keyPath: \Note.mJob?.id, ascending: false),
+            NSSortDescriptor(keyPath: \Note.title, ascending: true)
+        ]
+        
+        let fetch: NSFetchRequest<Note> = Note.fetchRequest()
+        fetch.predicate = NSPredicate(format: "alive = true && starred = true")
+        fetch.sortDescriptors = descriptors
+        fetch.fetchLimit = limit!
+        
+        do {
+            results = try moc!.fetch(fetch)
+        } catch {
+            print("[error] CoreDataNotes.starred Unable to find starred notes")
+        }
+        
+        return results
+    }
+    
+    static public func starredFetchRequest(limit: Int? = 0) -> FetchRequest<Note> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Note.mJob?.project?.id, ascending: false),
+            NSSortDescriptor(keyPath: \Note.mJob?.id, ascending: false),
+            NSSortDescriptor(keyPath: \Note.title, ascending: true)
+        ]
+        
+        let fetch: NSFetchRequest<Note> = Note.fetchRequest()
+        fetch.predicate = NSPredicate(format: "alive = true && starred = true")
+        fetch.sortDescriptors = descriptors
+        fetch.fetchLimit = limit!
+        
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
 }

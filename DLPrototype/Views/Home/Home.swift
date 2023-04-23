@@ -19,8 +19,9 @@ struct Home: View {
     
     @StateObject public var rm: LogRecords = LogRecords(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
+    @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
     
-    @State private var selected: String?
+    @State public var selected: UUID = Dashboard.id
     @State public var appVersion: String?
     @State public var splitDirection: Bool = false // false == horizontal, true == vertical
     
@@ -30,6 +31,27 @@ struct Home: View {
         NavigationSplitView {
             List(selection: $selected) {
                 Section {
+                    NavigationLink {
+                        Dashboard()
+                            .navigationTitle("Dashboard")
+                            .environmentObject(rm)
+                            .environmentObject(jm)
+                            .environmentObject(crm)
+                            .environmentObject(updater)
+                            .toolbar {
+                                Button(action: redraw, label: {
+                                    Image(systemName: "arrow.triangle.2.circlepath")
+                                })
+                                .buttonStyle(.borderless)
+                                .font(.title)
+                                .keyboardShortcut("r")
+                            }
+                    } label: {
+                        Image(systemName: "house")
+                            .padding(.trailing, 5)
+                        Text("Dashboard")
+                    }
+                    
                     NavigationLink {
                         Today()
                             .navigationTitle("Today")
@@ -48,26 +70,6 @@ struct Home: View {
                         Image(systemName: "doc.append.fill")
                             .padding(.trailing, 10)
                         Text("Today")
-                    }
-                    
-                    NavigationLink {
-                        FindDashboard()
-                            .navigationTitle("Find")
-                            .environmentObject(rm)
-                            .environmentObject(jm)
-                            .environmentObject(updater)
-                            .toolbar {
-                                Button(action: redraw, label: {
-                                    Image(systemName: "arrow.triangle.2.circlepath")
-                                })
-                                .buttonStyle(.borderless)
-                                .font(.title)
-                                .keyboardShortcut("r")
-                            }
-                    } label: {
-                        Image(systemName: "magnifyingglass")
-                            .padding(.trailing, 10)
-                        Text("Find")
                     }
                 }
                 
@@ -245,10 +247,11 @@ struct Home: View {
                 }
             }
         } detail: {
-            FindDashboard()
-                .navigationTitle("Find")
+            Dashboard()
+                .navigationTitle("Dashboard")
                 .environmentObject(rm)
                 .environmentObject(jm)
+                .environmentObject(crm)
                 .environmentObject(updater)
                 .toolbar {
                     Button(action: redraw, label: {

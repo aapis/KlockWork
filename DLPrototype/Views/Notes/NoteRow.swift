@@ -11,6 +11,9 @@ import SwiftUI
 
 struct NoteRow: View {
     public var note: Note
+    public var showStarred: Bool = true
+    public var showRevisionCount: Bool = true
+    public var showActive: Bool = true
     
     @EnvironmentObject public var jm: CoreDataJob
     @EnvironmentObject public var updater: ViewUpdater
@@ -20,11 +23,18 @@ struct NoteRow: View {
             HStack(spacing: 1) {
                 nProject(note)
                 nNote(note)
-                if note.starred {
+                
+                if note.starred && showStarred {
                     nStar(note)
                 }
-                nVersions(note)
-                nAlive(note)
+                
+                if showRevisionCount {
+                    nVersions(note)
+                }
+                
+                if showActive {
+                    nAlive(note)
+                }
             }
         }
     }
