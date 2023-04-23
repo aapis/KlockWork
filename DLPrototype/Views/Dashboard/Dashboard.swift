@@ -10,6 +10,8 @@ import Foundation
 import SwiftUI
 
 struct Dashboard: View {
+    static public let id: UUID = UUID()
+    
     @EnvironmentObject public var crm: CoreDataRecords
     
     var body: some View {

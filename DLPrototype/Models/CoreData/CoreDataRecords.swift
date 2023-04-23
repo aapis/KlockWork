@@ -12,6 +12,8 @@ import SwiftUI
 public class CoreDataRecords: ObservableObject {
     public var moc: NSManagedObjectContext?
     
+    private let lock = NSLock()
+    
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
     }
@@ -72,7 +74,6 @@ public class CoreDataRecords: ObservableObject {
     }
     
     private func query(_ predicate: NSPredicate) -> [LogRecord] {
-        let lock = NSLock()
         lock.lock()
         
         var results: [LogRecord] = []
