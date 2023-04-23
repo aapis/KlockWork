@@ -30,6 +30,10 @@ public class CoreDataRecords: ObservableObject {
         }
     }
     
+    public func waitForRecent(numWeeks: Double = 6) async -> [LogRecord] {
+        return recent(numWeeks)
+    }
+    
     public func recent(_ numWeeks: Double = 6) -> [LogRecord] {
         let cutoff = DateHelper.daysPast(numWeeks * 7)
         
@@ -68,6 +72,9 @@ public class CoreDataRecords: ObservableObject {
     }
     
     private func query(_ predicate: NSPredicate) -> [LogRecord] {
+        let lock = NSLock()
+        lock.lock()
+        
         var results: [LogRecord] = []
         let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: true)]
@@ -79,6 +86,8 @@ public class CoreDataRecords: ObservableObject {
         } catch {
             print("[error] CoreDataRecords.query Unable to find records for predicate \(predicate.predicateFormat)")
         }
+        
+        lock.unlock()
         
         return results
     }

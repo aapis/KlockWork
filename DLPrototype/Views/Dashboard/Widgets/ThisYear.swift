@@ -16,6 +16,7 @@ struct ThisYear: View {
     @State private var jobCount: Int = 0
     @State private var recordCount: Int = 0
     
+    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var crm: CoreDataRecords
     
     var body: some View {
@@ -32,14 +33,20 @@ struct ThisYear: View {
     }
     
     private func onAppear() -> Void {
-        Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { _ in
-            let recordsInPeriod = crm.recent(52)
-            let wc = crm.countWordsIn(recordsInPeriod)
-            let jc = crm.countJobsIn(recordsInPeriod)
-            
-            wordCount = wc
-            jobCount = jc
-            recordCount = recordsInPeriod.count
+        Task {
+            (wordCount, jobCount, recordCount) = await calculateStats()
         }
+    }
+    
+    private func calculateStats() async -> (Int, Int, Int) {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let currentWeek = calendar.component(.weekOfYear, from: today)
+        
+        let recordsInPeriod = await crm.waitForRecent(numWeeks: Double(currentWeek))
+        let wc = crm.countWordsIn(recordsInPeriod)
+        let jc = crm.countJobsIn(recordsInPeriod)
+        
+        return (wc, jc, recordsInPeriod.count)
     }
 }
