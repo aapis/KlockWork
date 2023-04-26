@@ -12,7 +12,7 @@ import SwiftUI
 struct LogTable: View, Identifiable {
     public var id = UUID()
     @Binding public var job: String
-    public var date: Date
+    public var defaultSelectedDate: Date?
     
     @State private var records: [LogRecord] = []
     @State private var recordsAsString: String = ""
@@ -251,7 +251,10 @@ struct LogTable: View, Identifiable {
     }
     
     private func loadRecordsBySelectedDate() -> Void {
-        selectedDate = date
+        if defaultSelectedDate != nil {
+            selectedDate = defaultSelectedDate!
+        }
+        
         records = LogRecords(moc: moc).forDate(selectedDate)
         
         // TODO: move this func to LogRecords model
@@ -325,7 +328,7 @@ struct LogTablePreview: PreviewProvider {
     @State static public var d: Date = Date()
     
     static var previews: some View {
-        LogTable(job: $sj, date: d)
+        LogTable(job: $sj, defaultSelectedDate: d)
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
             .frame(width: 700)
     }

@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 
 struct Today: View {
-    public var defaultSelectedDate: Date? = Date()
+    public var defaultSelectedDate: Date?
     
     @State private var text: String = ""
     @State private var jobId: String = ""
@@ -82,7 +82,7 @@ struct Today: View {
     
     // MARK: Table view
     var table: some View {
-        LogTable(job: $jobId, date: defaultSelectedDate!)
+        LogTable(job: $jobId, defaultSelectedDate: defaultSelectedDate)
             .id(updater.ids["today.table"])
             .environmentObject(updater)
     }

@@ -18,7 +18,7 @@ struct FancyButton: View {
     public var showLabel: Bool? = true
     public var showIcon: Bool? = true
     public var fgColour: Color?
-    public var size: ButtonSize = .large
+    public var size: ButtonSize = .medium
     
     @State private var padding: CGFloat = 10
     
