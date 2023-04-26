@@ -69,7 +69,7 @@ public final class SearchHelper {
                 $0.contains(caseInsensitiveTerm)
             }).count > 0
         } catch {
-            print("Searching LogTable::search(term: String) - Unable to process string \(error.localizedDescription)")
+            print("[error] Searching LogTable::search(term: String) - Unable to process string \(error.localizedDescription)")
         }
         
         return false

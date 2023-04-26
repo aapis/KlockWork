@@ -11,6 +11,8 @@ import SwiftUI
 
 struct Widgets: View {
     @EnvironmentObject public var crm: CoreDataRecords
+    @EnvironmentObject public var updater: ViewUpdater
+    @EnvironmentObject public var jm: CoreDataJob
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -24,13 +26,14 @@ struct Widgets: View {
                 
                 Grid(alignment: .top, horizontalSpacing: 5, verticalSpacing: 5) {
                     GridRow {
+                        ThisDay().environmentObject(crm)
                         ThisWeek().environmentObject(crm)
                         ThisMonth().environmentObject(crm)
-                        ThisYear().environmentObject(crm)
                     }
                     .frame(maxHeight: 250)
                     
                     GridRow(alignment: .top) {
+                        ThisYear().environmentObject(crm)
                         Favourites()
                     }
                     .frame(maxHeight: 250)

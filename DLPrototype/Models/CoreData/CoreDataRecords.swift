@@ -32,8 +32,12 @@ public class CoreDataRecords: ObservableObject {
         }
     }
     
-    public func waitForRecent(numWeeks: Double = 6) async -> [LogRecord] {
+    public func waitForRecent(_ numWeeks: Double = 6) async -> [LogRecord] {
         return recent(numWeeks)
+    }
+    
+    public func waitForRecent(_ start: CVarArg, _ end: CVarArg) async -> [LogRecord] {
+        return recent(start, end)
     }
     
     public func recent(_ numWeeks: Double = 6) -> [LogRecord] {
@@ -42,6 +46,16 @@ public class CoreDataRecords: ObservableObject {
         let predicate = NSPredicate(
             format: "timestamp > %@",
             cutoff
+        )
+        
+        return query(predicate)
+    }
+    
+    public func recent(_ start: CVarArg, _ end: CVarArg) -> [LogRecord] {
+        let predicate = NSPredicate(
+            format: "timestamp > %@ && timestamp <= %@",
+            start,
+            end
         )
         
         return query(predicate)
@@ -73,9 +87,35 @@ public class CoreDataRecords: ObservableObject {
         return jobSet.count
     }
     
+    public func forDate(_ date: Date) -> [LogRecord] {
+        let endDate = date - 86400
+        let predicate = NSPredicate(
+            format: "timestamp > %@ && timestamp < %@",
+            date as CVarArg,
+            endDate as CVarArg
+        )
+        
+        return query(predicate)
+    }
+    
+    public func countForDate(_ date: Date? = nil) -> Int {
+        if date == nil {
+            return 0
+        }
+        
+        let endDate = (date ?? Date()) + 86400
+        let predicate = NSPredicate(
+            format: "timestamp > %@ && timestamp < %@",
+            date! as CVarArg,
+            endDate as CVarArg
+        )
+        
+        return count(predicate)
+    }
+    
     private func query(_ predicate: NSPredicate) -> [LogRecord] {
         lock.lock()
-        
+
         var results: [LogRecord] = []
         let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: true)]
@@ -91,5 +131,25 @@ public class CoreDataRecords: ObservableObject {
         lock.unlock()
         
         return results
+    }
+    
+    private func count(_ predicate: NSPredicate) -> Int {
+        lock.lock()
+        
+        var count = 0
+        let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: true)]
+        fetch.predicate = predicate
+        fetch.returnsDistinctResults = true
+        
+        do {
+            count = try moc!.fetch(fetch).count
+        } catch {
+            print("[error] CoreDataRecords.query Unable to find records for predicate \(predicate.predicateFormat)")
+        }
+        
+        lock.unlock()
+        
+        return count
     }
 }

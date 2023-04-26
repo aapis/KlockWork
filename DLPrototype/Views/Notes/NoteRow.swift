@@ -63,7 +63,14 @@ struct NoteRow: View {
                     Theme.rowColour
                 }
                 
-                FancyTextLink(text: note.title!, destination: AnyView(NoteView(note: note).environmentObject(jm).environmentObject(updater)), fgColour: (note.mJob != nil ? (Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white)  : Color.white))
+                FancyTextLink(
+                    text: note.title!,
+                    destination: AnyView(NoteView(note: note)
+                        .environmentObject(jm)
+                        .environmentObject(updater)
+                    ),
+                    fgColour: (note.mJob != nil ? (Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white) : Color.white)
+                )
             }
         }
     }
