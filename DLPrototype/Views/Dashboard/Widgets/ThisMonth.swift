@@ -39,7 +39,16 @@ struct ThisMonth: View {
     }
     
     private func calculateStats() async -> (Int, Int, Int) {
-        let recordsInPeriod = await crm.waitForRecent(numWeeks: 4)
+        let (start, end) = DateHelper.dayAtStartAndEndOfMonth() ?? (nil, nil)
+        var recordsInPeriod: [LogRecord] = []
+        
+        if start != nil && end != nil {
+            recordsInPeriod = await crm.waitForRecent(start!, end!)
+        } else {
+            // if start and end periods could not be determined, default to -4 weeks
+            recordsInPeriod = await crm.waitForRecent(4)
+        }
+        
         let wc = crm.countWordsIn(recordsInPeriod)
         let jc = crm.countJobsIn(recordsInPeriod)
         

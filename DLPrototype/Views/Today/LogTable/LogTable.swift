@@ -11,7 +11,8 @@ import SwiftUI
 
 struct LogTable: View, Identifiable {
     public var id = UUID()
-    @Binding public var selectedJob: String
+    @Binding public var job: String
+    public var date: Date
     
     @State private var records: [LogRecord] = []
     @State private var recordsAsString: String = ""
@@ -204,7 +205,7 @@ struct LogTable: View, Identifiable {
                             entry: entry,
                             index: records.firstIndex(of: record),
                             colour: Color.fromStored((record.job?.colour) ?? Theme.rowColourAsDouble),
-                            selectedJob: $selectedJob
+                            selectedJob: $job
                         )
                     }
                 }.onAppear(perform: changeSort)
@@ -250,6 +251,7 @@ struct LogTable: View, Identifiable {
     }
     
     private func loadRecordsBySelectedDate() -> Void {
+        selectedDate = date
         records = LogRecords(moc: moc).forDate(selectedDate)
         
         // TODO: move this func to LogRecords model
@@ -320,9 +322,10 @@ struct LogTable: View, Identifiable {
 
 struct LogTablePreview: PreviewProvider {
     @State static public var sj: String = "11.0"
+    @State static public var d: Date = Date()
     
     static var previews: some View {
-        LogTable(selectedJob: $sj)
+        LogTable(job: $sj, date: d)
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
             .frame(width: 700)
     }

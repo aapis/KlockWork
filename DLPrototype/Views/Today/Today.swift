@@ -10,6 +10,8 @@ import SwiftUI
 import Combine
 
 struct Today: View {
+    public var defaultSelectedDate: Date? = Date()
+    
     @State private var text: String = ""
     @State private var jobId: String = ""
     @State private var taskUrl: String = "" // only treated as a string, no need to be URL-type
@@ -54,7 +56,7 @@ struct Today: View {
     var editor: some View {
         VStack(alignment: .leading) {
             HStack {                
-                JobPickerUsing(onChange: pickerChange, supportsDynamicPicker: true, jobId: $jobId)
+                JobPickerUsing(onChange: {_,_ in }, supportsDynamicPicker: true, jobId: $jobId)
                 
                 Text("Or").font(Theme.font)
                 
@@ -80,7 +82,7 @@ struct Today: View {
     
     // MARK: Table view
     var table: some View {
-        LogTable(selectedJob: $jobId)
+        LogTable(job: $jobId, date: defaultSelectedDate!)
             .id(updater.ids["today.table"])
             .environmentObject(updater)
     }
@@ -112,10 +114,6 @@ struct Today: View {
             let rounded = record!.job!.jid.rounded(.toNearestOrEven)
             jobId = String(Int(exactly: rounded) ?? 0)
         }
-    }
-    
-    private func pickerChange(selected: Int, sender: String?) -> Void {
-//        jobId = String(selected)
     }
 
     public func reloadUi() -> Void {

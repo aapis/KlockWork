@@ -66,7 +66,7 @@ final public class DateHelper {
     
     static public func longDate(_ timestamp: Date) -> String {
         let df = DateFormatter()
-        df.timeZone = TimeZone.autoupdatingCurrent
+        df.timeZone = TimeZone.autoupdatingCurrent 
         df.locale = NSLocale.current
         df.dateFormat = "yyyy-MM-dd HH:mm:ss"
         
@@ -122,5 +122,25 @@ final public class DateHelper {
         let fin = date + 86399
         
         return (start, fin)
+    }
+    
+    static public func dayAtStartAndEndOfMonth() -> (CVarArg, CVarArg)? {
+        let calendar = Calendar.current
+        let today = Date()
+        let components = calendar.dateComponents([.year, .month], from: today)
+        let startOfMonth = calendar.date(from: components)
+        
+        if startOfMonth != nil {
+            let endOfMonth = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: startOfMonth!)
+            
+            if endOfMonth != nil {
+                return (
+                    startOfMonth! as CVarArg,
+                    endOfMonth! as CVarArg
+                )
+            }
+        }
+        
+        return nil
     }
 }

@@ -26,6 +26,12 @@ struct SettingsView: View {
                     Label("Today", systemImage: "doc.append.fill")
                 }
                 .tag(Tabs.today)
+            
+            DashboardSettings()
+                .tabItem {
+                    Label("Dashboard", systemImage: "house")
+                }
+                .tag(Tabs.today)
         }
         .padding(20)
     }

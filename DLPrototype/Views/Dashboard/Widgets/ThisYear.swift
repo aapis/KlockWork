@@ -39,11 +39,8 @@ struct ThisYear: View {
     }
     
     private func calculateStats() async -> (Int, Int, Int) {
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        let currentWeek = calendar.component(.weekOfYear, from: today)
-        
-        let recordsInPeriod = await crm.waitForRecent(numWeeks: Double(currentWeek))
+        let currentWeek = Calendar.current.component(.weekOfYear, from: Date())
+        let recordsInPeriod = await crm.waitForRecent(Double(currentWeek))
         let wc = crm.countWordsIn(recordsInPeriod)
         let jc = crm.countJobsIn(recordsInPeriod)
         

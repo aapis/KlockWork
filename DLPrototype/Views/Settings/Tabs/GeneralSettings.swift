@@ -17,6 +17,7 @@ struct GeneralSettings: View {
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
     @AppStorage("defaultHome") public var defaultHome: Int = 0
+    @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
 
     var body: some View {
         Form {

@@ -18,6 +18,9 @@ struct FancyButton: View {
     public var showLabel: Bool? = true
     public var showIcon: Bool? = true
     public var fgColour: Color?
+    public var size: ButtonSize = .large
+    
+    @State private var padding: CGFloat = 10
     
     var body: some View {
         VStack {
@@ -34,7 +37,7 @@ struct FancyButton: View {
                 }
                 .foregroundColor(Color.white)
                 .font(.title3)
-                .padding(5)
+                .padding(padding)
                 .help(text)
                 .onHover { inside in
                     if inside {
@@ -46,6 +49,18 @@ struct FancyButton: View {
             })
             .buttonStyle(.borderless)
             .background(transparent! ? Color.clear : Color.black.opacity(0.2))
+            .onAppear(perform: onAppear)
+        }
+    }
+    
+    private func onAppear() -> Void {
+        switch size {
+        case .small:
+            padding = 0
+        case .medium:
+            padding = 5
+        case .large:
+            padding = 10
         }
     }
 }

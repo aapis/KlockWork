@@ -1,0 +1,14 @@
+[
+    {
+        "tokens": ["AirPods", "are", "a", "fantastic", "Apple", "product", "."],
+        "labels": ["PROD", "NONE", "NONE", "NONE", "ORG", "NONE", "NONE"]
+    },
+    {
+        "tokens": ["The", "iPhone", "takes", "stunning", "photos", "."],
+        "labels": ["NONE", "PROD", "NONE", "NONE", "NONE", "NONE"]
+    },
+    {
+        "tokens": ["Start", "building", "a", "native", "Mac", "app", "from", "your", "current", "iPad", "app", "using", "Mac", "Catalyst", "."],
+        "labels": ["NONE", "NONE", "NONE", "NONE", "PROD", "NONE", "NONE", "NONE", "NONE", "PROD", "NONE", "NONE", "PROD", "PROD", "NONE"]
+    }
+]
