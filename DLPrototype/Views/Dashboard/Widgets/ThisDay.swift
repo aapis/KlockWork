@@ -68,7 +68,7 @@ struct ThisDay: View {
                                 text: "\(selectedDate)",
                                 transparent: true,
                                 destination: AnyView(
-                                    Today()
+                                    Today(defaultSelectedDate: currentDate)
                                         .environmentObject(crm)
                                         .environmentObject(jm)
                                         .environmentObject(updater)
