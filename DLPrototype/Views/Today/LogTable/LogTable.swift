@@ -19,7 +19,6 @@ struct LogTable: View, Identifiable {
     @State private var wordCount: Int = 0
     @State private var isReversed: Bool = false
     @State private var isShowingAlert: Bool = false
-    @State private var selectedTab: Int = 0
     @State private var searchText: String = ""
     @State private var resetSearchButtonHit: Bool = false
     @State private var selectedDate: Date = Date()
@@ -29,6 +28,7 @@ struct LogTable: View, Identifiable {
     @AppStorage("showExperiment.actions") private var showExperimentActions = false
     @AppStorage("showSidebar") public var showSidebar: Bool = true
     @AppStorage("showTodaySearch") public var showSearch: Bool = true
+    @AppStorage("today.recordGrouping") public var recordGrouping: Int = 0
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
@@ -50,8 +50,8 @@ struct LogTable: View, Identifiable {
                 }
             }
         }
-        .onChange(of: selectedDate) { _ in
-            loadRecordsBySelectedDate()
+        .onChange(of: selectedDate) { date in
+            loadFor(date)
         }
         .onChange(of: searchText) { _ in
             if resetSearchButtonHit || searchText.count == 0 {
@@ -105,9 +105,9 @@ struct LogTable: View, Identifiable {
                         Theme.toolbarColour
                         
                         HStack {
-                            ToolbarTabs(selectedTab: $selectedTab)
+                            ToolbarTabs(selectedTab: $recordGrouping)
                             ToolbarButtons(
-                                selectedTab: $selectedTab,
+                                selectedTab: $recordGrouping,
                                 isShowingAlert: $isShowingAlert,
                                 showSidebar: $showSidebar,
                                 showSearch: $showSearch,
@@ -213,7 +213,7 @@ struct LogTable: View, Identifiable {
                 LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
             }
         }
-        .onChange(of: selectedTab, perform: { _ in
+        .onChange(of: recordGrouping, perform: { _ in
             changeSort()
         })
     }
@@ -230,7 +230,7 @@ struct LogTable: View, Identifiable {
                 LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
             }
         }
-        .onChange(of: selectedTab, perform: { _ in
+        .onChange(of: recordGrouping, perform: { _ in
             changeSort()
         })
     }
@@ -240,10 +240,11 @@ struct LogTable: View, Identifiable {
             .environmentObject(updater)
     }
     
+    // TODO: move this func to CoreDataRecords model
     private func changeSort() -> Void {
-        if selectedTab == 0 {
+        if recordGrouping == 0 {
             records = ungrouped()
-        } else if selectedTab == 1 {
+        } else if recordGrouping == 1 {
             records = grouped()
         }
         
@@ -255,12 +256,17 @@ struct LogTable: View, Identifiable {
             selectedDate = defaultSelectedDate!
         }
         
-        records = LogRecords(moc: moc).forDate(selectedDate)
-        
-        // TODO: move this func to LogRecords model
-        createPlaintextRecords()
+        loadFor(selectedDate)
     }
     
+    private func loadFor(_ date: Date) -> Void {
+        records = LogRecords(moc: moc).forDate(selectedDate)
+        
+        createPlaintextRecords()
+        changeSort()
+    }
+    
+    // TODO: move this func to CoreDataRecords model
     private func createPlaintextRecords() -> Void {
         if records.count > 0 {
             recordsAsString = ""
