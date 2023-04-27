@@ -13,6 +13,7 @@ struct TodaySettings: View {
     @AppStorage("today.numPastDates") public var numPastDates: Int = 20
     @AppStorage("today.viewMode") public var viewMode: Int = 0
     @AppStorage("today.numWeeks") public var numWeeks: Int = 2
+    @AppStorage("today.recordGrouping") public var recordGrouping: Int = 0
     @AppStorage("today.relativeJobList") public var allowRelativeJobList: Bool = false
     @AppStorage("showSidebar") public var showSidebar: Bool = true
     @AppStorage("showTodaySearch") public var showSearch: Bool = true
@@ -49,6 +50,13 @@ struct TodaySettings: View {
             
             Toggle("Show sidebar", isOn: $showSidebar)
             Toggle("Show search on Today", isOn: $showSearch)
+            
+            Group {
+                Picker("Records grouped by", selection: $recordGrouping) {
+                    Text("Sequential").tag(0)
+                    Text("Job ID").tag(1)
+                }
+            }
         }
         .padding(20)
     }
