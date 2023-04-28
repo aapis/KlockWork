@@ -10,8 +10,11 @@ import Foundation
 import SwiftUI
 
 struct TaskDashboard: View {
+    public var defaultSelectedJob: Job?
+    
     @State private var searchText: String = ""
-    @State private var selectedJob: String = ""
+    @State private var selectedJob: Int = 0
+    @State private var jobId: String = ""
     @State private var job: Job?
     
     @Environment(\.managedObjectContext) var moc
@@ -37,6 +40,7 @@ struct TaskDashboard: View {
             .padding()
         }
         .background(Theme.toolbarColour)
+        .onAppear(perform: setJob)
     }
     
     @ViewBuilder
@@ -101,28 +105,35 @@ struct TaskDashboard: View {
                 Title(text: "Manage tasks", image: "pencil")
             }
             
-            JobPickerUsing(onChange: change, jobId: $selectedJob)
+            JobPickerUsing(onChange: change, jobId: $jobId)
                 .onAppear(perform: setJob)
                 .onChange(of: selectedJob) { _ in
                     setJob()
                 }
-                .environmentObject(jm)
             
-            if Int(selectedJob) ?? 0 > 0 {
+            if job != nil {
                 TaskListView(job: job!)
             }
         }
     }
     
     private func setJob() -> Void {
-        if Int(selectedJob) ?? 0 > 0 {
-            job = CoreDataJob(moc: moc).byId(Double(selectedJob)!)
+        if defaultSelectedJob != nil {
+//            if selectedJob == 0 {
+                job = defaultSelectedJob
+//            }
+        } else if selectedJob > 0 {
+            job = jm.byId(Double(selectedJob))
+        }
+        
+        if job != nil {
+            jobId = job!.jid.string
         }
     }
     
     private func change(selected: Int, sender: String?) -> Void {
-        selectedJob = String(selected)
-        
+        selectedJob = selected
+
         setJob()
     }
     

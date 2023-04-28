@@ -10,6 +10,8 @@ import Foundation
 import SwiftUI
 
 struct NoteDashboard: View {
+    public var defaultSelectedJob: Job? = nil
+    
     @State private var searchText: String = ""
     @State private var selected: Int = 0
     @State private var note: Note?
@@ -21,7 +23,9 @@ struct NoteDashboard: View {
     @FetchRequest public var notes: FetchedResults<Note>
     @FetchRequest public var notesStarred: FetchedResults<Note>
     
-    public init() {
+    public init(defaultSelectedJob: Job? = nil) {
+        self.defaultSelectedJob = defaultSelectedJob
+        
         let sharedDescriptors = [
             NSSortDescriptor(keyPath: \Note.mJob?.project?.id, ascending: false),
             NSSortDescriptor(keyPath: \Note.mJob?.id, ascending: false),
@@ -29,14 +33,31 @@ struct NoteDashboard: View {
         ]
         
         let request: NSFetchRequest<Note> = Note.fetchRequest()
-        request.predicate = NSPredicate(format: "alive = true && (starred = false || starred = nil)")
+        let aliveNotStarredPredicate = NSPredicate(format: "alive = true && (starred = false || starred = nil)")
+        
         request.sortDescriptors = sharedDescriptors
+        
+        if self.defaultSelectedJob != nil {
+            let byJobPredicate = NSPredicate(format: "ANY mJob.jid = %f", self.defaultSelectedJob!.jid)
+            let predicates = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: [aliveNotStarredPredicate, byJobPredicate])
+            request.predicate = predicates
+        } else {
+            request.predicate = aliveNotStarredPredicate
+        }
         
         _notes = FetchRequest(fetchRequest: request, animation: .easeInOut)
         
         let starredReq: NSFetchRequest<Note> = Note.fetchRequest()
-        starredReq.predicate = NSPredicate(format: "alive = true && starred = true")
+        let aliveStarredPredicate = NSPredicate(format: "alive = true && starred = true")
         starredReq.sortDescriptors = sharedDescriptors
+        
+        if self.defaultSelectedJob != nil {
+            let byJobPredicate = NSPredicate(format: "ANY mJob.jid = %f", self.defaultSelectedJob!.jid)
+            let predicates = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: [aliveStarredPredicate, byJobPredicate])
+            starredReq.predicate = predicates
+        } else {
+            starredReq.predicate = aliveStarredPredicate
+        }
         
         _notesStarred = FetchRequest(fetchRequest: starredReq, animation: .easeInOut)
     }
@@ -56,14 +77,9 @@ struct NoteDashboard: View {
                     disabled: false,
                     placeholder: "Search \(notes.count) notes"
                 )
-                
-                if notesStarred.count > 0 {
-                    starredTable
-                }
-                
-                if notes.count > 0 {
-                    allTable
-                }
+
+                starredTable
+                allTable
 
                 Spacer()
             }
@@ -152,10 +168,14 @@ struct NoteDashboard: View {
     @ViewBuilder
     var allRows: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 1) {
-                ForEach(filter(notes)) { note in
-                    NoteRow(note: note)
+            if notes.count > 0 {
+                VStack(alignment: .leading, spacing: 1) {
+                    ForEach(filter(notes)) { note in
+                        NoteRow(note: note)
+                    }
                 }
+            } else {
+                Text("No notes for this query")
             }
         }
     }
@@ -163,10 +183,14 @@ struct NoteDashboard: View {
     @ViewBuilder
     var starredRows: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 1) {
-                ForEach(filter(notesStarred)) { note in
-                    NoteRow(note: note)
+            if notesStarred.count > 0 {
+                VStack(alignment: .leading, spacing: 1) {
+                    ForEach(filter(notesStarred)) { note in
+                        NoteRow(note: note)
+                    }
                 }
+            } else {
+                Text("No favourite notes for this query")
             }
         }
     }

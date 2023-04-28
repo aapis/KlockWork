@@ -74,6 +74,7 @@ struct JobResult: View {
                                     let item = bucket[i + offset]
                                     
                                     JobRow(job: item, colour: Color.fromStored(item.colour ?? Theme.rowColourAsDouble))
+                                        .environmentObject(jm)
                                 }
                             }
                         }

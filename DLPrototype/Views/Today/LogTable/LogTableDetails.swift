@@ -191,7 +191,7 @@ struct LogTableDetails: View {
                                 value: "\(colour)",
                                 colour: colour,
                                 group: .jobs,
-                                view: AnyView(JobRow(job: record.job!, colour: colour))
+                                view: AnyView(JobRow(job: record.job!, colour: colour).environmentObject(jm))
                             )
                         )
                     }
