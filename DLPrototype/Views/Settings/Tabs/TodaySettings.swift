@@ -17,6 +17,7 @@ struct TodaySettings: View {
     @AppStorage("today.relativeJobList") public var allowRelativeJobList: Bool = false
     @AppStorage("showSidebar") public var showSidebar: Bool = true
     @AppStorage("showTodaySearch") public var showSearch: Bool = true
+    @AppStorage("today.ltd.tasks.all") public var showAllJobsInDetailsPane: Bool = false
 
     var body: some View {
         Form {
@@ -50,11 +51,13 @@ struct TodaySettings: View {
             
             Toggle("Show sidebar", isOn: $showSidebar)
             Toggle("Show search on Today", isOn: $showSearch)
+            Toggle("Include all incomplete tasks in details pane", isOn: $showAllJobsInDetailsPane)
             
             Group {
                 Picker("Records grouped by", selection: $recordGrouping) {
-                    Text("Sequential").tag(0)
-                    Text("Job ID").tag(1)
+                    Text("Chronologic").tag(0)
+                    Text("Grouped").tag(1)
+                    Text("Summarized").tag(2)
                 }
             }
         }

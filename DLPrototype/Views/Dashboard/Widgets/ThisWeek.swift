@@ -44,7 +44,7 @@ struct ThisWeek: View {
         let wc = crm.countWordsIn(recordsInPeriod)
         let jc = crm.countJobsIn(recordsInPeriod)
         
-//        randomMlShit()
+        randomMlShit()
         
         return (wc, jc, recordsInPeriod.count)
     }

@@ -50,9 +50,14 @@ struct JobPickerUsing: View {
                         jobs.removeAll(where: {
                             let date = DateHelper.daysPast(Double(numWeeks * 7))
                             let predicate = NSPredicate(format: "timestamp >= %@", date)
-                            let records = $0.records!.filtered(using: predicate)
                             
-                            return records.count == 0
+                            if $0.records != nil {
+                                let records = $0.records!.filtered(using: predicate)
+                                
+                                return records.count == 0
+                            }
+                            
+                            return false
                         })
                     }
                     

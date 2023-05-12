@@ -46,4 +46,8 @@ class Keywords {
             print("[error] \(error)")
         }
     }
+    
+    public init() {
+//        let conf = MLModelMetadata(
+    }
 }
