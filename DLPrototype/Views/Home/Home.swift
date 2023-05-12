@@ -21,7 +21,6 @@ struct Home: View {
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
     
-    @State public var selected: UUID = Dashboard.id
     @State public var appVersion: String?
     @State public var splitDirection: Bool = false // false == horizontal, true == vertical
     
@@ -29,7 +28,7 @@ struct Home: View {
     
     var body: some View {
         NavigationSplitView {
-            List(selection: $selected) {
+            List {
                 Section {
                     NavigationLink {
                         Dashboard()

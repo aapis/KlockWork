@@ -17,6 +17,7 @@ struct JobDashboard: View {
     @State private var jobId: String = ""
     
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var jm: CoreDataJob
     
     @FetchRequest(sortDescriptors: [SortDescriptor(\.jid, order: .reverse)]) public var jobs: FetchedResults<Job>
     
@@ -48,15 +49,15 @@ struct JobDashboard: View {
         }
         
         if selectedJob > 0 || defaultSelectedJob! > 0.0 || !jobId.isEmpty {
-            JobView(job: $job)
+            JobView(job: $job).environmentObject(jm)
         }
     }
     
     private func setJob() -> Void {
         if defaultSelectedJob! > 0.0 {
-            job = CoreDataJob(moc: moc).byId(defaultSelectedJob!)
+            job = jm.byId(defaultSelectedJob!)
         } else if selectedJob > 0 {
-            job = CoreDataJob(moc: moc).byId(Double(selectedJob))
+            job = jm.byId(Double(selectedJob))
         }
         
         if job != nil {

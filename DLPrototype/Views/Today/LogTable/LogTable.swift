@@ -23,6 +23,7 @@ struct LogTable: View, Identifiable {
     @State private var resetSearchButtonHit: Bool = false
     @State private var selectedDate: Date = Date()
     @State private var viewMode: ViewMode = .full
+    @State private var selectedTab: Tab = .chronologic
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("showExperiment.actions") private var showExperimentActions = false
@@ -35,7 +36,7 @@ struct LogTable: View, Identifiable {
     
     // MARK: body view
     var body: some View {
-        VStack(spacing: 1) {
+        VStack(alignment: .leading, spacing: 1) {
             toolbar.font(Theme.font)
             
             HStack(spacing: 1) {
@@ -49,6 +50,20 @@ struct LogTable: View, Identifiable {
                     tableDetails.frame(minWidth: 300, maxWidth: 400)
                 }
             }
+        }
+        .onChange(of: recordGrouping) { group in
+            for tab in Tab.allCases {
+                if group == tab.id {
+                    selectedTab = tab
+                }
+            }
+            
+            if group != 2 {
+                records = defaultGrouping()
+            }
+            
+            updater.updateOne("ltd.rows")
+            changeSort()
         }
         .onChange(of: selectedDate) { date in
             loadFor(date)
@@ -142,6 +157,13 @@ struct LogTable: View, Identifiable {
                     .buttonStyle(BorderlessButtonStyle())
                     .foregroundColor(Color.white)
                     .onChange(of: isReversed) { _ in sort() }
+                    .onHover { inside in
+                        if inside {
+                            NSCursor.pointingHand.push()
+                        } else {
+                            NSCursor.pop()
+                        }
+                    }
                 }
             }
                 .frame(width: 50)
@@ -236,16 +258,18 @@ struct LogTable: View, Identifiable {
     }
     
     var tableDetails: some View {
-        LogTableDetails(records: $records, selectedDate: $selectedDate, open: $showSidebar)
+        LogTableDetails(records: $records, selectedDate: $selectedDate, open: $showSidebar, selectedTab: $selectedTab)
             .environmentObject(updater)
     }
     
     // TODO: move this func to CoreDataRecords model
     private func changeSort() -> Void {
-        if recordGrouping == 0 {
+        if selectedTab == .chronologic {
             records = ungrouped()
-        } else if recordGrouping == 1 {
+        } else if selectedTab == .grouped {
             records = grouped()
+        } else if selectedTab == .summarized {
+            records = summarized()
         }
         
         createPlaintextRecords()
@@ -256,13 +280,14 @@ struct LogTable: View, Identifiable {
             selectedDate = defaultSelectedDate!
         }
         
+        recordGrouping = selectedTab.id
+        
         loadFor(selectedDate)
     }
     
     private func loadFor(_ date: Date) -> Void {
-        records = LogRecords(moc: moc).forDate(selectedDate)
+        records = recordsNoFilter()
         
-        createPlaintextRecords()
         changeSort()
     }
     
@@ -304,15 +329,33 @@ struct LogTable: View, Identifiable {
         return false
     }
     
+    private func recordsNoFilter() -> [LogRecord] {
+        return LogRecords(moc: moc).forDate(selectedDate)
+    }
+    
+    private func defaultGrouping() -> [LogRecord] {
+        return recordsNoFilter().sorted(by: { $0.timestamp! > $1.timestamp! }).filter({
+            findMatches($0.message!)
+        })
+    }
+
     private func grouped() -> [LogRecord] {
         return records.sorted(by: { $0.job!.jid > $1.job!.jid }).filter({
             findMatches($0.message!)
         })
     }
-    
+
     private func ungrouped() -> [LogRecord] {
         return records.sorted(by: { $0.timestamp! > $1.timestamp! }).filter({
             findMatches($0.message!)
+        })
+    }
+
+    // TODO: do some kind of ML/AI summarization here. Initially it will just ignore records that are likely too short to be useful
+    // TODO: i.e. ignore records whose ML tokens are LUNCH|MEETING|HEALTH (and similar)
+    private func summarized() -> [LogRecord] {
+        return records.filter({
+            $0.message!.count > 50 && findMatches($0.message!)
         })
     }
     
@@ -321,21 +364,8 @@ struct LogTable: View, Identifiable {
     }
 
     private func sort() -> Void {
-//        withAnimation(.easeInOut) {
-            // just always reverse the records
-            // TODO: fix this
-//            records.reversed()
-//        }
-    }
-}
-
-struct LogTablePreview: PreviewProvider {
-    @State static public var sj: String = "11.0"
-    @State static public var d: Date = Date()
-    
-    static var previews: some View {
-        LogTable(job: $sj, defaultSelectedDate: d)
-            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-            .frame(width: 700)
+        withAnimation(.easeInOut) {
+            records = records.reversed()
+        }
     }
 }

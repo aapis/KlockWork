@@ -26,6 +26,8 @@ struct LogRow: View, Identifiable {
     @State public var activeColour: Color = Theme.rowColour
     @State public var projectColHelpText: String = ""
     
+    @EnvironmentObject public var jm: CoreDataJob
+    
     @AppStorage("tigerStriped") private var tigerStriped = false
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("showExperiment.actions") private var showExperimentActions = false
@@ -44,7 +46,8 @@ struct LogRow: View, Identifiable {
                     colour: applyColour(),
                     textColour: rowTextColour(),
                     text: $aIndex
-                ).frame(maxWidth: 50)
+                )
+                .frame(maxWidth: 50)
                 
                 EditableColumn(
                     type: "timestamp",
@@ -56,11 +59,6 @@ struct LogRow: View, Identifiable {
                     text: $timestamp
                 )
                 .frame(maxWidth: 101)
-                .contextMenu {
-                    Button(action: {ClipboardHelper.copy(entry.timestamp)}, label: {
-                        Text("Copy timestamp")
-                    })
-                }
                 .help(entry.timestamp)
                 
                 EditableColumn(
@@ -75,31 +73,6 @@ struct LogRow: View, Identifiable {
                     job: entry.jobObject
                 )
                 .frame(maxWidth: 120)
-                .contextMenu {
-                    if entry.jobObject != nil {
-                        if entry.jobObject!.uri != nil {
-                            Button(action: {ClipboardHelper.copy(entry.jobObject!.uri!.absoluteString)}, label: {
-                                Text("Copy job URL")
-                            })
-                        }
-                        
-                        Button(action: {ClipboardHelper.copy(entry.jobObject!.jid.string)}, label: {
-                            Text("Copy job ID")
-                        })
-                    }
-                    
-                    Button(action: {ClipboardHelper.copy(colour.description.debugDescription)}, label: {
-                        Text("Copy colour code")
-                    })
-                    
-                    Divider()
-                    
-                    if entry.jobObject != nil {
-                        Button(action: {setJob(entry.jobObject!.jid.string)}, label: {
-                            Text("Set job")
-                        })
-                    }
-                }
                 
                 EditableColumn(
                     type: "message",
@@ -110,11 +83,6 @@ struct LogRow: View, Identifiable {
                     isDeleting: $isDeleting,
                     text: $message
                 )
-                .contextMenu {
-                    Button(action: {ClipboardHelper.copy(entry.message)}, label: {
-                        Text("Copy message")
-                    })
-                }
                 
                 if showExperimentalFeatures {
                     if showExperimentActions {
@@ -135,6 +103,7 @@ struct LogRow: View, Identifiable {
                     }
                 }
             }
+            .contextMenu { contextMenu }
         }
         .defaultAppStorage(.standard)
         .onAppear(perform: setEditableValues)
@@ -142,6 +111,60 @@ struct LogRow: View, Identifiable {
             setEditableValues()
         }
 //        .onHover(perform: onHover)
+    }
+    
+    @ViewBuilder private var contextMenu: some View {
+        if entry.jobObject != nil {
+            Menu("Copy") {
+                if entry.jobObject!.uri != nil {
+                    Button(action: {ClipboardHelper.copy(entry.jobObject!.uri!.absoluteString)}, label: {
+                        Text("Job URL")
+                    })
+                }
+                
+                Button(action: {ClipboardHelper.copy(entry.jobObject!.jid.string)}, label: {
+                    Text("Job ID")
+                })
+                
+                Button(action: {ClipboardHelper.copy(colour.description.debugDescription)}, label: {
+                    Text("Job colour code")
+                })
+                
+                Button(action: {ClipboardHelper.copy(entry.message)}, label: {
+                    Text("Message")
+                })
+            }
+            
+            Menu("Go to"){
+                NavigationLink(destination: NoteDashboard(defaultSelectedJob: entry.jobObject).environmentObject(jm)) {
+                    Text("Notes")
+                }
+//                .keyboardShortcut("n")
+                
+                NavigationLink(destination: TaskDashboard(defaultSelectedJob: entry.jobObject!).environmentObject(jm)) {
+                    Text("Tasks")
+                }
+//                .keyboardShortcut("t")
+                
+                if entry.jobObject!.project != nil {
+                    NavigationLink(destination: ProjectView(project: entry.jobObject!.project!).environmentObject(jm)) {
+                        Text("Project")
+                    }
+//                    .keyboardShortcut("p")
+                }
+                
+                NavigationLink(destination: JobDashboard(defaultSelectedJob: entry.jobObject!.jid).environmentObject(jm)) {
+                    Text("Job")
+                }
+                //            .keyboardShortcut("j")
+            }
+            
+            Divider()
+            
+            Button(action: {setJob(entry.jobObject!.jid.string)}, label: {
+                Text("Set job")
+            })
+        }
     }
     
     private func setJob(_ job: String) -> Void {

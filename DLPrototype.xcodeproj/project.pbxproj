@@ -27,6 +27,7 @@
 		532A722B298F1CB70038C18B /* Results.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532A722A298F1CB70038C18B /* Results.swift */; };
 		532A722F299037AC0038C18B /* RecordResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532A722E299037AC0038C18B /* RecordResult.swift */; };
 		5330EEB7298B6418004FC38A /* JobRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5330EEB6298B6418004FC38A /* JobRow.swift */; };
+		5333E7A12A0ECE0D00EE4A36 /* FancyTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5333E7A02A0ECE0D00EE4A36 /* FancyTab.swift */; };
 		5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5AD296CFF83000051B1 /* FileHelper.swift */; };
 		5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B2296D17EB000051B1 /* TaskDashboard.swift */; };
 		5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B4296D1FA7000051B1 /* TaskView.swift */; };
@@ -84,7 +85,6 @@
 		53B0BE8C297318A6007CB663 /* ProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8B297318A6007CB663 /* ProjectView.swift */; };
 		53B0BE8E29731D41007CB663 /* FancyTextLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8D29731D41007CB663 /* FancyTextLink.swift */; };
 		53B0BE90297333C3007CB663 /* ManageProjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8F297333C3007CB663 /* ManageProjects.swift */; };
-		53C036E629F73E5000539C3C /* job_ids.json in Resources */ = {isa = PBXBuildFile; fileRef = 53C036E529F73E5000539C3C /* job_ids.json */; };
 		53C036EC29F884E600539C3C /* ThisDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C036EB29F884E600539C3C /* ThisDay.swift */; };
 		53C036EF29F8A59900539C3C /* DashboardSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C036EE29F8A59900539C3C /* DashboardSettings.swift */; };
 		53C3418C299960310071B855 /* JobDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418B299960310071B855 /* JobDashboard.swift */; };
@@ -162,6 +162,7 @@
 		532A722A298F1CB70038C18B /* Results.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Results.swift; sourceTree = "<group>"; };
 		532A722E299037AC0038C18B /* RecordResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordResult.swift; sourceTree = "<group>"; };
 		5330EEB6298B6418004FC38A /* JobRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobRow.swift; sourceTree = "<group>"; };
+		5333E7A02A0ECE0D00EE4A36 /* FancyTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyTab.swift; sourceTree = "<group>"; };
 		5335A5AD296CFF83000051B1 /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		5335A5B2296D17EB000051B1 /* TaskDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDashboard.swift; sourceTree = "<group>"; };
 		5335A5B4296D1FA7000051B1 /* TaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskView.swift; sourceTree = "<group>"; };
@@ -219,7 +220,6 @@
 		53B0BE8B297318A6007CB663 /* ProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectView.swift; sourceTree = "<group>"; };
 		53B0BE8D29731D41007CB663 /* FancyTextLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyTextLink.swift; sourceTree = "<group>"; };
 		53B0BE8F297333C3007CB663 /* ManageProjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageProjects.swift; sourceTree = "<group>"; };
-		53C036E529F73E5000539C3C /* job_ids.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = job_ids.json; sourceTree = "<group>"; };
 		53C036EB29F884E600539C3C /* ThisDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThisDay.swift; sourceTree = "<group>"; };
 		53C036EE29F8A59900539C3C /* DashboardSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardSettings.swift; sourceTree = "<group>"; };
 		53C3418B299960310071B855 /* JobDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDashboard.swift; sourceTree = "<group>"; };
@@ -582,6 +582,7 @@
 				53959A19297377A7007A2549 /* FancyGenericToolbar.swift */,
 				53959A1E29738AAA007A2549 /* FancySubTitle.swift */,
 				53C3418F29996C070071B855 /* FancyRandomJobColourPicker.swift */,
+				5333E7A02A0ECE0D00EE4A36 /* FancyTab.swift */,
 			);
 			path = Fancy;
 			sourceTree = "<group>";
@@ -598,7 +599,6 @@
 		53C036E429F73E2700539C3C /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				53C036E529F73E5000539C3C /* job_ids.json */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -794,7 +794,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				53218D5224B7F6EC0088ABE9 /* Preview Assets.xcassets in Resources */,
-				53C036E629F73E5000539C3C /* job_ids.json in Resources */,
 				53218D8224B8195D0088ABE9 /* Screenshots in Resources */,
 				53218D4F24B7F6EC0088ABE9 /* Assets.xcassets in Resources */,
 			);
@@ -918,6 +917,7 @@
 				5367FAF0296772730060D2AA /* Split.swift in Sources */,
 				533AB3EE296C9B3800E91A9F /* ManageDashboard.swift in Sources */,
 				532A722B298F1CB70038C18B /* Results.swift in Sources */,
+				5333E7A12A0ECE0D00EE4A36 /* FancyTab.swift in Sources */,
 				53152CDA296B849200A14E43 /* FancyPickerWithRelativeNavigation.swift in Sources */,
 				53EFCE7B29637F49004E45EC /* Settings.swift in Sources */,
 				537628A8296659DC00DE8ECF /* PersistenceController.swift in Sources */,
@@ -1082,13 +1082,14 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 92;
+				CURRENT_PROJECT_VERSION = 94;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = DLPrototype/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ClockWork;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1113,13 +1114,14 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 92;
+				CURRENT_PROJECT_VERSION = 94;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = DLPrototype/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ClockWork;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

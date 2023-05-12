@@ -87,22 +87,6 @@ struct Today: View {
             .environmentObject(updater)
     }
     
-    // MARK: loading view
-    var loading: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Spacer()
-            
-            HStack {
-                Spacer()
-                ProgressView("Loading Workspace...")
-                Spacer()
-            }
-            
-            Spacer()
-        }
-        .onDisappear(perform: reloadUi)
-    }
-    
     private func onAppear() -> Void {
         setDefaultJob()
     }

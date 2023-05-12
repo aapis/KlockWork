@@ -9,70 +9,62 @@
 import Foundation
 import SwiftUI
 
+public enum Tab: CaseIterable {
+    case chronologic, grouped, summarized
+    
+    var icon: String {
+        switch self {
+        case .chronologic:
+            return "tray.2.fill"
+        case .grouped:
+            return "square.grid.3x1.fill.below.line.grid.1x2"
+        case .summarized:
+            return "star.circle.fill"
+        }
+    }
+    
+    var id: Int {
+        switch self {
+        case .chronologic:
+            return 0
+        case .grouped:
+            return 1
+        case .summarized:
+            return 2
+        }
+    }
+    
+    var help: String {
+        switch self {
+        case .chronologic:
+            return "Chronologic"
+        case .grouped:
+            return "Grouped by job ID"
+        case .summarized:
+            return "Summarized"
+        }
+    }
+    
+    var description: String {
+        switch self {
+        case .chronologic:
+            return "Shows records in chronological order, sorted by timestamp"
+        case .grouped:
+            return "Groups records by job ID, sorted by timestamp"
+        case .summarized:
+            return "Shows only relevant records, sorted by timestamp"
+        }
+    }
+}
+
 struct ToolbarTabs: View {
     @Binding public var selectedTab: Int
     
     var body: some View {
-        HStack(spacing: 1) {            
-            // TODO: convert these button/styles to custom button views and styles
-            Button(action: {setActive(0)}, label: {
-                ZStack {
-                    (selectedTab == 0 ? Theme.tabActiveColour : Theme.tabColour)
-                    Image(systemName: "tray.2.fill")
-                }
-            })
-            .buttonStyle(.borderless)
-            .foregroundColor(Color.white)
-            .help("View all of today's records")
-            .frame(width: 50)
-            .onHover { inside in
-                if inside {
-                    NSCursor.pointingHand.push()
-                } else {
-                    NSCursor.pop()
-                }
+        HStack(spacing: 1) {
+            ForEach(Tab.allCases, id: \.self) { tab in
+                FancyTab(tab: tab, selected: $selectedTab)
             }
-            
-            Button(action: {setActive(1)}, label: {
-                ZStack {
-                    (selectedTab == 1 ? Theme.tabActiveColour : Theme.tabColour)
-                    Image(systemName: "square.grid.3x1.fill.below.line.grid.1x2")
-                }
-            })
-            .buttonStyle(.borderless)
-            .foregroundColor(Color.white)
-            .help("Today's records grouped by JOB ID")
-            .frame(width: 50)
-            .onHover { inside in
-                if inside {
-                    NSCursor.pointingHand.push()
-                } else {
-                    NSCursor.pop()
-                }
-            }
-            
-//            Button(action: {setActive(2)}, label: {
-//                ZStack {
-//                    (selectedTab == 2 ? Theme.tabActiveColour : Theme.tabColour)
-//                    Image(systemName: "magnifyingglass")
-//                }
-//            })
-//            .buttonStyle(.borderless)
-//            .foregroundColor(Color.white)
-//            .help("Search today's records")
-//            .frame(width: 50)
-//            .onHover { inside in
-//                if inside {
-//                    NSCursor.pointingHand.push()
-//                } else {
-//                    NSCursor.pop()
-//                }
-//            }
         }
-//        .background(Theme.rowColour)
-    }
-    
-    private func setActive(_ index: Int) -> Void {
-        selectedTab = index
     }
 }

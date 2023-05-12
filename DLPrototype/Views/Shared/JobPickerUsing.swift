@@ -21,6 +21,7 @@ struct JobPickerUsing: View {
     @State private var jobIdFieldTextColour: Color = Color.white
     
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var jm: CoreDataJob
     
     @AppStorage("today.relativeJobList") public var allowRelativeJobList: Bool = false
     @AppStorage("today.numWeeks") public var numWeeks: Int = 2
@@ -49,9 +50,14 @@ struct JobPickerUsing: View {
                         jobs.removeAll(where: {
                             let date = DateHelper.daysPast(Double(numWeeks * 7))
                             let predicate = NSPredicate(format: "timestamp >= %@", date)
-                            let records = $0.records!.filtered(using: predicate)
                             
-                            return records.count == 0
+                            if $0.records != nil {
+                                let records = $0.records!.filtered(using: predicate)
+                                
+                                return records.count == 0
+                            }
+                            
+                            return false
                         })
                     }
                     
@@ -88,6 +94,7 @@ struct JobPickerUsing: View {
                         }
                     }
                 }
+                
                 HStack {
                     if !jobId.isEmpty {
                         FancyButton(text: "Reset", action: resetJobUi, icon: "xmark", showLabel: false)
@@ -103,15 +110,8 @@ struct JobPickerUsing: View {
     
     private func pickerChange(selected: Int, sender: String?) -> Void {
         jobId = String(selected)
-        let jm = CoreDataJob(moc: moc)
         
-        if let selectedJob = jm.byId(Double(jobId)!) {
-            jobIdFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
-            jobIdFieldTextColour = jobIdFieldColour.isBright() ? Color.black : Color.white
-        } else {
-            jobIdFieldColour = Color.clear
-            jobIdFieldTextColour = Color.white
-        }
+        applyStyle()
         
         onChange(selected, "")
     }
@@ -122,11 +122,22 @@ struct JobPickerUsing: View {
             
             pickerChange(selected: iJid, sender: "")
         }
+        print("DERPO colour \(jobIdFieldColour) jobId \(jobId)")
     }
     
     private func resetJobUi() -> Void {
         jobId = ""
         jobIdFieldColour = Color.clear
         jobIdFieldTextColour = Color.white
+    }
+    
+    private func applyStyle() -> Void {
+        if let selectedJob = jm.byId(Double(jobId)!) {
+            jobIdFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
+            jobIdFieldTextColour = jobIdFieldColour.isBright() ? Color.black : Color.white
+        } else {
+            jobIdFieldColour = Color.clear
+            jobIdFieldTextColour = Color.white
+        }
     }
 }

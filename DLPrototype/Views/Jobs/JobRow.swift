@@ -13,6 +13,8 @@ struct JobRow: View {
     public var job: Job
     public var colour: Color
     
+    @EnvironmentObject public var jm: CoreDataJob
+    
     var body: some View {
         HStack(spacing: 1) {
             project
@@ -23,6 +25,7 @@ struct JobRow: View {
                 HStack {
                     NavigationLink {
                         JobDashboard(defaultSelectedJob: job.jid)
+                            .environmentObject(jm)
                     } label: {
                         Text(job.jid.string)
                             .foregroundColor(colour.isBright() ? Color.black : Color.white)

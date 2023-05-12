@@ -60,6 +60,7 @@ struct LogTableDetails: View {
     @Binding public var records: [LogRecord]
     @Binding public var selectedDate: Date
     @Binding public var open: Bool
+    @Binding public var selectedTab: Tab
     
     @State private var statistics: [any Statistics] = []
     
@@ -80,39 +81,7 @@ struct LogTableDetails: View {
     }
     
     private var tasks: [LogTask] {
-        var tasksToday: [LogTask] = []
-
-        for rec in records {
-            if rec.job != nil {
-                let (before, after) = DateHelper.startAndEndOf(selectedDate)
-                let tasks = rec.job?.tasks
-                
-                if tasks != nil {
-                    // Date filtering
-                    var filtered = tasks!.filtered(
-                        using: NSPredicate(
-                            format: "(created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@)",
-                            before as CVarArg,
-                            after as CVarArg,
-                            before as CVarArg,
-                            after as CVarArg
-                        )
-                    )
-                    // Ignore completed and cancelled items
-                    filtered = tasks!.filtered(using: NSPredicate(format: "completedDate == null && cancelledDate == null"))
-                    
-                    for obj in filtered {
-                        let task = obj as! LogTask
-                        
-                        if !tasksToday.contains(where: ({$0.id == task.id})) {
-                            tasksToday.append(task)
-                        }
-                    }
-                }
-            }
-        }
-        
-        return tasksToday
+        CoreDataTasks(moc: moc).forDate(selectedDate, from: records)
     }
     
     var body: some View {
@@ -191,7 +160,7 @@ struct LogTableDetails: View {
                                 value: "\(colour)",
                                 colour: colour,
                                 group: .jobs,
-                                view: AnyView(JobRow(job: record.job!, colour: colour))
+                                view: AnyView(JobRow(job: record.job!, colour: colour).environmentObject(jm))
                             )
                         )
                     }
@@ -200,6 +169,7 @@ struct LogTableDetails: View {
             
             // Number of records in the set
             statistics.append(Statistic(key: "Records in set", value: String(records.count), colour: Theme.rowColour, group: .today))
+            statistics.append(Statistic(key: "View description", value: selectedTab.description, colour: Theme.rowColour, group: .today))
             // Word count in the current set
             statistics.append(Statistic(key: "Word count", value: String(wordCount()), colour: Theme.rowColour, group: .overall))
             
@@ -294,9 +264,10 @@ struct LogTableDetailsPreview: PreviewProvider {
     @State static private var selectedDate: Date = Date()
     @State static private var records: [LogRecord] = []
     @State static private var open: Bool = true
+    @State static private var selectedTab: Tab = .chronologic
     
     static var previews: some View {
-        LogTableDetails(records: $records, selectedDate: $selectedDate, open: $open)
+        LogTableDetails(records: $records, selectedDate: $selectedDate, open: $open, selectedTab: $selectedTab)
             .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }
