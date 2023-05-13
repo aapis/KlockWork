@@ -120,7 +120,6 @@ struct JobPickerUsing: View {
             
             pickerChange(selected: iJid, sender: "")
         }
-        print("DERPO colour \(jobIdFieldColour) jobId \(jobId)")
     }
     
     private func resetJobUi() -> Void {

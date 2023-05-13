@@ -264,15 +264,17 @@ struct LogTable: View, Identifiable {
     
     // TODO: move this func to CoreDataRecords model
     private func changeSort() -> Void {
-        if selectedTab == .chronologic {
-            records = ungrouped()
-        } else if selectedTab == .grouped {
-            records = grouped()
-        } else if selectedTab == .summarized {
-            records = summarized()
+        if records.count > 0 {
+            if selectedTab == .chronologic {
+                records = ungrouped()
+            } else if selectedTab == .grouped {
+                records = grouped()
+            } else if selectedTab == .summarized {
+                records = summarized()
+            }
+            
+            createPlaintextRecords()
         }
-        
-        createPlaintextRecords()
     }
     
     private func loadRecordsBySelectedDate() -> Void {
