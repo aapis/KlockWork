@@ -9,6 +9,20 @@
 import Foundation
 import SwiftUI
 
+struct WidgetLoading: View {
+    var body: some View {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                ProgressView()
+                Spacer()
+            }
+            Spacer()
+        }
+    }
+}
+
 struct Widgets: View {
     @EnvironmentObject public var crm: CoreDataRecords
     @EnvironmentObject public var updater: ViewUpdater
@@ -38,6 +52,8 @@ struct Widgets: View {
                     }
                     .frame(maxHeight: 250)
                 }
+                
+                Spacer()
             }
             .font(Theme.font)
             .padding()

@@ -18,68 +18,101 @@ struct JobView: View {
     @State private var url: String = ""
     @State private var colour: String = ""
     @State private var alive: Bool = true
+    @State private var shredable: Bool = false
     
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var jm: CoreDataJob
     
     var body: some View {
         VStack(alignment: .leading) {
-            FancyDivider()
-            Divider()
-            FancyDivider()
-            
             if job != nil {
-                if job!.project != nil {
-                    FancyLink(
-                        icon: "folder",
-                        label: "Project: \(job!.project!.name!)",
-                        showLabel: true,
-                        colour: Color.fromStored(job!.project!.colour ?? Theme.rowColourAsDouble),
-                        destination: AnyView(
-                            ProjectView(project: job!.project!)
-                                .environmentObject(jm)
-                        )
-                    )
-                }
-            }
+                topSpace
 
-            FancyDivider()
-            
-            HStack {
-                Toggle("Job is active", isOn: $alive)
-                    .onAppear(perform: {
-                        if job != nil {
-                            if job!.alive {
-                                alive = true
-                            } else {
-                                alive = false
-                            }
-                            
-                            update()
-                        }
-                    })
-                Spacer()
-            }
-            
-            FancyTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, showLabel: true, text: $id)
-            FancyTextField(placeholder: "URL", lineLimit: 1, onSubmit: {}, showLabel: true, text: $url)
-            
-            if job != nil {
+                fieldProjectLink
+                fieldIsOn
+                fieldIsShredable
+                
+                FancyTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, showLabel: true, text: $id)
+                FancyTextField(placeholder: "URL", lineLimit: 1, onSubmit: {}, showLabel: true, text: $url)
+                
                 HStack {
                     FancyRandomJobColourPicker(job: job!, colour: $colour)
                     Spacer()
                 }
-            }
-            
-            HStack {
-                Spacer()
-                FancyButton(text: "Update", action: update)
-                    .keyboardShortcut("s")
+                
+                buttonSubmit
             }
         }
         .onAppear(perform: setEditableValues)
         .onChange(of: job) { _ in
             setEditableValues()
+        }
+    }
+    
+    @ViewBuilder private var topSpace: some View {
+        FancyDivider()
+        Divider()
+        FancyDivider()
+    }
+    
+    @ViewBuilder private var fieldProjectLink: some View {
+        if let project = job!.project {
+            FancyLink(
+                icon: "folder",
+                label: "Project: \(project.name!)",
+                showLabel: true,
+                colour: Color.fromStored(job!.project!.colour ?? Theme.rowColourAsDouble),
+                destination: AnyView(
+                    ProjectView(project: project)
+                        .environmentObject(jm)
+                )
+            )
+        }
+    }
+    
+    @ViewBuilder private var fieldIsOn: some View {
+        FancyDivider()
+        
+        HStack {
+            Toggle("Job is active", isOn: $alive)
+                .onAppear(perform: {
+                    if job != nil {
+                        if job!.alive {
+                            alive = true
+                        } else {
+                            alive = false
+                        }
+                        
+                        update()
+                    }
+                })
+            Spacer()
+        }
+    }
+    
+    @ViewBuilder private var fieldIsShredable: some View {
+        HStack {
+            Toggle("Eligible for SR&ED", isOn: $shredable)
+                .onAppear(perform: {
+                    if job != nil {
+                        if job!.shredable {
+                            shredable = true
+                        } else {
+                            shredable = false
+                        }
+                        
+                        update()
+                    }
+                })
+            Spacer()
+        }
+    }
+    
+    @ViewBuilder private var buttonSubmit: some View {
+        HStack {
+            Spacer()
+            FancyButton(text: "Update", action: update)
+                .keyboardShortcut("s")
         }
     }
     
@@ -96,6 +129,8 @@ struct JobView: View {
             } else {
                 url = ""
             }
+        } else {
+            print("[error] Attempting to edit NIL job")
         }
     }
     
@@ -110,6 +145,7 @@ struct JobView: View {
             }
             
             job?.alive = alive
+            job?.shredable = shredable
             
             PersistenceController.shared.save()
             updater.update()

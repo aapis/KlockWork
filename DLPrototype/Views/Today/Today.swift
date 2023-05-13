@@ -15,6 +15,7 @@ struct Today: View {
     @State private var text: String = ""
     @State private var jobId: String = ""
     @State private var taskUrl: String = "" // only treated as a string, no need to be URL-type
+    @State private var isUrl: Bool = true
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
@@ -57,16 +58,29 @@ struct Today: View {
         VStack(alignment: .leading) {
             HStack {                
                 JobPickerUsing(onChange: {_,_ in }, supportsDynamicPicker: true, jobId: $jobId)
-                
-                Text("Or").font(Theme.font)
-                
-                FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
                     .onReceive(Just(jobId)) { input in
                         let filtered = input.filter { "0123456789".contains($0) }
                         if filtered != input {
                             jobId = filtered
                         }
                     }
+                
+                Text("Or").font(Theme.font)
+                
+                // TODO: background colours stack here, fix that
+                FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
+                    .onChange(of: taskUrl) { url in
+                        if !url.isEmpty {
+                            if url.starts(with: "https:") {
+                                isUrl = true
+                            } else {
+                                isUrl = false
+                            }
+                        } else {
+                            isUrl = true
+                        }
+                    }
+                    .background(isUrl ? Color.clear : Theme.rowStatusRed)
             }
             
             VStack {
@@ -122,7 +136,8 @@ struct Today: View {
                 job.records = NSSet(array: [record])
                 job.colour = Color.randomStorable()
                 
-                if !taskUrl.isEmpty {
+                if !taskUrl.isEmpty && isUrl {
+                    // TODO: add some kind of popup or something here and make them send again
                     job.uri = URL(string: taskUrl)
                 }
                 

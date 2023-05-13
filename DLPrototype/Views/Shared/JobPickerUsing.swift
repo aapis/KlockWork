@@ -42,26 +42,24 @@ struct JobPickerUsing: View {
                     let unsorted = project.jobs!.allObjects as! [Job]
                     var jobs = unsorted.sorted(by: ({$0.jid > $1.jid}))
                     
-                    // remove ignored jobs
-                    jobs.removeAll(where: {($0.project?.configuration?.ignoredJobs!.contains($0.jid.string))!})
-                    
-                    // remove jobs that haven't been used within the selected time window, if dynamic pickers is enabled
-                    if allowRelativeJobList && supportsDynamicPicker! {
-                        jobs.removeAll(where: {
-                            let date = DateHelper.daysPast(Double(numWeeks * 7))
-                            let predicate = NSPredicate(format: "timestamp >= %@", date)
-                            
-                            if $0.records != nil {
-                                let records = $0.records!.filtered(using: predicate)
-                                
-                                return records.count == 0
-                            }
-                            
-                            return false
-                        })
-                    }
-                    
                     if jobs.count > 0 {
+                        // remove ignored jobs
+                        jobs.removeAll(where: {($0.project?.configuration?.ignoredJobs!.contains($0.jid.string))!})
+                        
+                        // remove jobs that haven't been used within the selected time window, if dynamic pickers is enabled
+                        if allowRelativeJobList && supportsDynamicPicker!   {
+                            jobs.removeAll(where: {
+                                let date = DateHelper.daysPast(Double(numWeeks * 7))
+                                let predicate = NSPredicate(format: "timestamp >= %@", date)
+                                
+                                if let records = $0.records {
+                                    return records.filtered(using: predicate).count == 0
+                                }
+                                
+                                return false
+                            })
+                        }
+                    
                         items.append(CustomPickerItem(title: "Project: \(project.name!)", tag: Int(-1)))
                     }
                     
@@ -122,7 +120,6 @@ struct JobPickerUsing: View {
             
             pickerChange(selected: iJid, sender: "")
         }
-        print("DERPO colour \(jobIdFieldColour) jobId \(jobId)")
     }
     
     private func resetJobUi() -> Void {

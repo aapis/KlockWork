@@ -50,7 +50,9 @@ struct Home: View {
                             .padding(.trailing, 5)
                         Text("Dashboard")
                     }
-                    
+                }
+                
+                Section(header: Text("Views")) {
                     NavigationLink {
                         Today()
                             .navigationTitle("Today")
@@ -69,6 +71,26 @@ struct Home: View {
                         Image(systemName: "doc.append.fill")
                             .padding(.trailing, 10)
                         Text("Today")
+                    }
+                    
+                    NavigationLink {
+                        FindDashboard()
+                            .navigationTitle("Find")
+                            .environmentObject(rm)
+                            .environmentObject(jm)
+                            .environmentObject(updater)
+                            .toolbar {
+                                Button(action: redraw, label: {
+                                    Image(systemName: "arrow.triangle.2.circlepath")
+                                })
+                                .buttonStyle(.borderless)
+                                .font(.title)
+                                .keyboardShortcut("r")
+                            }
+                    } label: {
+                        Image(systemName: "magnifyingglass")
+                            .padding(.trailing, 10)
+                        Text("Find")
                     }
                 }
                 

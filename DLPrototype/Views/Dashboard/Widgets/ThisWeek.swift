@@ -25,7 +25,12 @@ struct ThisWeek: View {
             FancySubTitle(text: "\(title)")
             Divider()
             
-            StatsWidget(wordCount: $wordCount, jobCount: $jobCount, recordCount: $recordCount)
+            if recordCount == 0 {
+                WidgetLoading()
+            } else {
+                StatsWidget(wordCount: $wordCount, jobCount: $jobCount, recordCount: $recordCount)
+            }
+            
             Spacer()
         }
         .padding()
@@ -35,25 +40,16 @@ struct ThisWeek: View {
     
     private func onAppear() -> Void {
         Task {
-            (wordCount, jobCount, recordCount) = await calculateStats()
+            (wordCount, jobCount, recordCount) = await crm.weeklyStats {
+//                randomMlShit()
+            }
         }
-    }
-    
-    private func calculateStats() async -> (Int, Int, Int) {
-        let recordsInPeriod = await crm.waitForRecent(1)
-        let wc = crm.countWordsIn(recordsInPeriod)
-        let jc = crm.countJobsIn(recordsInPeriod)
-        
-        randomMlShit()
-        
-        return (wc, jc, recordsInPeriod.count)
     }
     
     private func randomMlShit() -> Void {
 //        let complexDict: [String: Array<String>] = [
 //            "411150.0": [
 //                "ok we were mainly just proofing the functionality. all is good, we have a full checklist of post-launch items now",
-//                "unclear what this meeting is about, we are editing code locally and watching?",
 //                "in related meeting: OnPoint Search - Dry run",
 //                "pausing to prepare for a project-related meeting",
 //                "working on this task: Date selector"
@@ -78,7 +74,6 @@ struct ThisWeek: View {
 //        let toklab: [String: MLDataValueConvertible] = [
 //            "tokens": [
 //                "ok we were mainly just proofing the functionality. all is good, we have a full checklist of post-launch items now",
-//                "unclear what this meeting is about, we are editing code locally and watching?",
 //                "in related meeting: OnPoint Search - Dry run",
 //                "pausing to prepare for a project-related meeting",
 //                "working on this task: Date selector"

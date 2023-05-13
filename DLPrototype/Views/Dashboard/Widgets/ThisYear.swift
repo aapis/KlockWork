@@ -24,7 +24,12 @@ struct ThisYear: View {
             FancySubTitle(text: "\(title)")
             Divider()
             
-            StatsWidget(wordCount: $wordCount, jobCount: $jobCount, recordCount: $recordCount)
+            if recordCount == 0 {
+                WidgetLoading()
+            } else {
+                StatsWidget(wordCount: $wordCount, jobCount: $jobCount, recordCount: $recordCount)
+            }
+
             Spacer()
         }
         .padding()
@@ -34,7 +39,7 @@ struct ThisYear: View {
     
     private func onAppear() -> Void {
         Task {
-            (wordCount, jobCount, recordCount) = await calculateStats()
+            (wordCount, jobCount, recordCount) = await calculateStats() // TODO: figure out why crm.yearlyStats crashes app
         }
     }
     

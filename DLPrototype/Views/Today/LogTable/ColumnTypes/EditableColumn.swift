@@ -63,20 +63,29 @@ struct EditableColumn: View {
                                     .underline()
                                 }
                                 
-                                if url != nil {
+                                if job!.shredable || url != nil {
                                     Spacer()
-                                    Link(destination: url!, label: {
-                                        Image(systemName: "link")
+                                    
+                                    if job!.shredable {
+                                        Image(systemName: "dollarsign.circle")
                                             .foregroundColor(colour.isBright() ? Color.black : Color.white)
-                                            .onHover { inside in
-                                                if inside {
-                                                    NSCursor.pointingHand.push()
-                                                } else {
-                                                    NSCursor.pop()
+                                            .help("Eligible for SR&ED")
+                                    }
+                                    
+                                    if url != nil {
+                                        Link(destination: url!, label: {
+                                            Image(systemName: "link")
+                                                .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                                                .onHover { inside in
+                                                    if inside {
+                                                        NSCursor.pointingHand.push()
+                                                    } else {
+                                                        NSCursor.pop()
+                                                    }
                                                 }
-                                            }
-                                            .help("Visit job URL on the web")
-                                    })
+                                                .help("Visit job URL on the web")
+                                        })
+                                    }
                                 }
                             }
                             .padding([.leading, .trailing], 10)

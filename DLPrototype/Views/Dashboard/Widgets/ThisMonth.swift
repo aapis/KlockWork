@@ -24,7 +24,12 @@ struct ThisMonth: View {
             FancySubTitle(text: "\(title)")
             Divider()
             
-            StatsWidget(wordCount: $wordCount, jobCount: $jobCount, recordCount: $recordCount)
+            if recordCount == 0 {
+                WidgetLoading()
+            } else {
+                StatsWidget(wordCount: $wordCount, jobCount: $jobCount, recordCount: $recordCount)
+            }
+            
             Spacer()
         }
         .padding()
@@ -34,24 +39,7 @@ struct ThisMonth: View {
     
     private func onAppear() -> Void {
         Task {
-            (wordCount, jobCount, recordCount) = await calculateStats()
+            (wordCount, jobCount, recordCount) = await crm.monthlyStats()
         }
-    }
-    
-    private func calculateStats() async -> (Int, Int, Int) {
-        let (start, end) = DateHelper.dayAtStartAndEndOfMonth() ?? (nil, nil)
-        var recordsInPeriod: [LogRecord] = []
-        
-        if start != nil && end != nil {
-            recordsInPeriod = await crm.waitForRecent(start!, end!)
-        } else {
-            // if start and end periods could not be determined, default to -4 weeks
-            recordsInPeriod = await crm.waitForRecent(4)
-        }
-        
-        let wc = crm.countWordsIn(recordsInPeriod)
-        let jc = crm.countJobsIn(recordsInPeriod)
-        
-        return (wc, jc, recordsInPeriod.count)
     }
 }

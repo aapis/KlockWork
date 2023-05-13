@@ -63,6 +63,7 @@ public class CoreDataRecords: ObservableObject {
     
     public func countWordsIn(_ records: [LogRecord]) -> Int {
         var words: [String] = []
+        
         for rec in records {
             if rec.message != nil {
                 words.append(rec.message!)
@@ -76,6 +77,7 @@ public class CoreDataRecords: ObservableObject {
     
     public func countJobsIn(_ records: [LogRecord]) -> Int {
         var jobs: [Double] = []
+        
         for rec in records {
             if rec.job != nil {
                 jobs.append(rec.job!.jid)
@@ -111,6 +113,58 @@ public class CoreDataRecords: ObservableObject {
         )
         
         return count(predicate)
+    }
+    
+    public func weeklyStats(after: (() -> Void)? = nil) async -> (Int, Int, Int) {
+        let recordsInPeriod = await waitForRecent(1)
+        let wc = countWordsIn(recordsInPeriod)
+        let jc = countJobsIn(recordsInPeriod)
+        
+        defer {
+            if let callback = after {
+                callback()
+            }
+        }
+
+        return (wc, jc, recordsInPeriod.count)
+    }
+    
+    public func monthlyStats(after: (() -> Void)? = nil) async -> (Int, Int, Int) {
+        let (start, end) = DateHelper.dayAtStartAndEndOfMonth() ?? (nil, nil)
+        var recordsInPeriod: [LogRecord] = []
+        
+        if start != nil && end != nil {
+            recordsInPeriod = await waitForRecent(start!, end!)
+        } else {
+            // if start and end periods could not be determined, default to -4 weeks
+            recordsInPeriod = await waitForRecent(4)
+        }
+        
+        let wc = countWordsIn(recordsInPeriod)
+        let jc = countJobsIn(recordsInPeriod)
+        
+        defer {
+            if let callback = after {
+                callback()
+            }
+        }
+        
+        return (wc, jc, recordsInPeriod.count)
+    }
+    
+    public func yearlyStats(after: (() -> Void)? = nil) async -> (Int, Int, Int) {
+        let currentWeek = Calendar.current.component(.weekOfYear, from: Date())
+        let recordsInPeriod = await waitForRecent(Double(currentWeek))
+        let wc = countWordsIn(recordsInPeriod)
+        let jc = countJobsIn(recordsInPeriod)
+        
+        defer {
+            if let callback = after {
+                callback()
+            }
+        }
+        
+        return (wc, jc, recordsInPeriod.count)
     }
     
     private func query(_ predicate: NSPredicate) -> [LogRecord] {

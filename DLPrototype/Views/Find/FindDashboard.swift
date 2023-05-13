@@ -78,18 +78,20 @@ struct FindDashboard: View {
             }
             .frame(height: 40)
             
-            FancyDivider()
-            
-            Results(
-                text: $searchText,
-                showRecords: $showRecords,
-                showNotes: $showNotes,
-                showTasks: $showTasks,
-                showProjects: $showProjects,
-                showJobs: $showJobs,
-                allowAlive: $allowAlive
-            )
-            .environmentObject(jm)
+            if !activeSearchText.isEmpty {
+                FancyDivider()
+                
+                Results(
+                    text: $searchText,
+                    showRecords: $showRecords,
+                    showNotes: $showNotes,
+                    showTasks: $showTasks,
+                    showProjects: $showProjects,
+                    showJobs: $showJobs,
+                    allowAlive: $allowAlive
+                )
+                .environmentObject(jm)
+            }
         }
     }
     
