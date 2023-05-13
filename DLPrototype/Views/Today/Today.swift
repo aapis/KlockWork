@@ -57,14 +57,20 @@ struct Today: View {
         VStack(alignment: .leading) {
             HStack {                
                 JobPickerUsing(onChange: {_,_ in }, supportsDynamicPicker: true, jobId: $jobId)
-                
-                Text("Or").font(Theme.font)
-                
-                FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
                     .onReceive(Just(jobId)) { input in
                         let filtered = input.filter { "0123456789".contains($0) }
                         if filtered != input {
                             jobId = filtered
+                        }
+                    }
+                
+                Text("Or").font(Theme.font)
+                
+                FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
+                    .onChange(of: taskUrl) { url in
+                        
+                        if url.starts(with: "http[s]?:") {
+                            print("DERPO \(url)")
                         }
                     }
             }

@@ -63,6 +63,7 @@ public class CoreDataRecords: ObservableObject {
     
     public func countWordsIn(_ records: [LogRecord]) -> Int {
         var words: [String] = []
+        
         for rec in records {
             if rec.message != nil {
                 words.append(rec.message!)
@@ -77,7 +78,7 @@ public class CoreDataRecords: ObservableObject {
     public func countJobsIn(_ records: [LogRecord]) -> Int {
         var jobs: [Double] = []
         for rec in records {
-            if rec != nil && rec.job != nil {
+            if rec.job != nil {
                 jobs.append(rec.job!.jid)
             }
         }
