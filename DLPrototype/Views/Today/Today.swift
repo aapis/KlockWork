@@ -15,6 +15,7 @@ struct Today: View {
     @State private var text: String = ""
     @State private var jobId: String = ""
     @State private var taskUrl: String = "" // only treated as a string, no need to be URL-type
+    @State private var isUrl: Bool = true
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
@@ -66,13 +67,20 @@ struct Today: View {
                 
                 Text("Or").font(Theme.font)
                 
+                // TODO: background colours stack here, fix that
                 FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
                     .onChange(of: taskUrl) { url in
-                        
-                        if url.starts(with: "http[s]?:") {
-                            print("DERPO \(url)")
+                        if !url.isEmpty {
+                            if url.starts(with: "https:") {
+                                isUrl = true
+                            } else {
+                                isUrl = false
+                            }
+                        } else {
+                            isUrl = true
                         }
                     }
+                    .background(isUrl ? Color.clear : Theme.rowStatusRed)
             }
             
             VStack {
@@ -128,7 +136,8 @@ struct Today: View {
                 job.records = NSSet(array: [record])
                 job.colour = Color.randomStorable()
                 
-                if !taskUrl.isEmpty {
+                if !taskUrl.isEmpty && isUrl {
+                    // TODO: add some kind of popup or something here and make them send again
                     job.uri = URL(string: taskUrl)
                 }
                 

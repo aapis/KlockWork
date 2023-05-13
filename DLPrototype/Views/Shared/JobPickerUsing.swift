@@ -52,10 +52,8 @@ struct JobPickerUsing: View {
                                 let date = DateHelper.daysPast(Double(numWeeks * 7))
                                 let predicate = NSPredicate(format: "timestamp >= %@", date)
                                 
-                                if $0.records != nil {
-                                    let records = $0.records!.filtered(using: predicate)
-                                    
-                                    return records.count == 0
+                                if let records = $0.records {
+                                    return records.filtered(using: predicate).count == 0
                                 }
                                 
                                 return false

@@ -15,7 +15,6 @@ struct ThisMonth: View {
     @State private var wordCount: Int = 0
     @State private var jobCount: Int = 0
     @State private var recordCount: Int = 0
-    @State private var loaded: Bool = false
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var crm: CoreDataRecords
@@ -25,7 +24,7 @@ struct ThisMonth: View {
             FancySubTitle(text: "\(title)")
             Divider()
             
-            if loaded == false {
+            if recordCount == 0 {
                 WidgetLoading()
             } else {
                 StatsWidget(wordCount: $wordCount, jobCount: $jobCount, recordCount: $recordCount)
@@ -40,9 +39,7 @@ struct ThisMonth: View {
     
     private func onAppear() -> Void {
         Task {
-            (wordCount, jobCount, recordCount) = await crm.monthlyStats {
-                loaded = true
-            }
+            (wordCount, jobCount, recordCount) = await crm.monthlyStats()
         }
     }
 }

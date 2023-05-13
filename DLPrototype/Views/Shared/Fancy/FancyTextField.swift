@@ -17,7 +17,7 @@ struct FancyTextField: View {
     public var transparent: Bool? = false
     public var disabled: Bool? = false
     public var fgColour: Color? = Color.white
-    public var bgColour: Color? = Color.black.opacity(0.1)
+    public var bgColour: Color? = Theme.textBackground
     public var showLabel: Bool = false
     
     @Binding public var text: String
@@ -78,7 +78,7 @@ struct FancyTextField: View {
             .disableAutocorrection(enableAutoCorrection)
             .padding()
             .onSubmit(onSubmit ?? {})
-            .background(transparent! ? Color.black.opacity(0.1) : bgColour)
+            .background(transparent! ? Theme.textBackground : bgColour)
             .scrollContentBackground(.hidden)
             .lineLimit(lineLimit...)
             .disabled(disabled ?? false)

@@ -15,7 +15,6 @@ struct ThisYear: View {
     @State private var wordCount: Int = 0
     @State private var jobCount: Int = 0
     @State private var recordCount: Int = 0
-    @State private var loaded: Bool = false
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var crm: CoreDataRecords
@@ -25,7 +24,7 @@ struct ThisYear: View {
             FancySubTitle(text: "\(title)")
             Divider()
             
-            if loaded == false {
+            if recordCount == 0 {
                 WidgetLoading()
             } else {
                 StatsWidget(wordCount: $wordCount, jobCount: $jobCount, recordCount: $recordCount)
@@ -40,9 +39,16 @@ struct ThisYear: View {
     
     private func onAppear() -> Void {
         Task {
-            (wordCount, jobCount, recordCount) = await crm.yearlyStats {
-                loaded = true
-            }
+            (wordCount, jobCount, recordCount) = await calculateStats() // TODO: figure out why crm.yearlyStats crashes app
         }
+    }
+    
+    private func calculateStats() async -> (Int, Int, Int) {
+        let currentWeek = Calendar.current.component(.weekOfYear, from: Date())
+        let recordsInPeriod = await crm.waitForRecent(Double(currentWeek))
+        let wc = crm.countWordsIn(recordsInPeriod)
+        let jc = crm.countJobsIn(recordsInPeriod)
+        
+        return (wc, jc, recordsInPeriod.count)
     }
 }

@@ -77,6 +77,7 @@ public class CoreDataRecords: ObservableObject {
     
     public func countJobsIn(_ records: [LogRecord]) -> Int {
         var jobs: [Double] = []
+        
         for rec in records {
             if rec.job != nil {
                 jobs.append(rec.job!.jid)
@@ -114,19 +115,21 @@ public class CoreDataRecords: ObservableObject {
         return count(predicate)
     }
     
-    public func weeklyStats(after: () -> Void) async -> (Int, Int, Int) {        
+    public func weeklyStats(after: (() -> Void)? = nil) async -> (Int, Int, Int) {
         let recordsInPeriod = await waitForRecent(1)
         let wc = countWordsIn(recordsInPeriod)
         let jc = countJobsIn(recordsInPeriod)
         
         defer {
-            after()
+            if let callback = after {
+                callback()
+            }
         }
 
         return (wc, jc, recordsInPeriod.count)
     }
     
-    public func monthlyStats(after: () -> Void) async -> (Int, Int, Int) {
+    public func monthlyStats(after: (() -> Void)? = nil) async -> (Int, Int, Int) {
         let (start, end) = DateHelper.dayAtStartAndEndOfMonth() ?? (nil, nil)
         var recordsInPeriod: [LogRecord] = []
         
@@ -141,20 +144,24 @@ public class CoreDataRecords: ObservableObject {
         let jc = countJobsIn(recordsInPeriod)
         
         defer {
-            after()
+            if let callback = after {
+                callback()
+            }
         }
         
         return (wc, jc, recordsInPeriod.count)
     }
     
-    public func yearlyStats(after: () -> Void) async -> (Int, Int, Int) {
+    public func yearlyStats(after: (() -> Void)? = nil) async -> (Int, Int, Int) {
         let currentWeek = Calendar.current.component(.weekOfYear, from: Date())
         let recordsInPeriod = await waitForRecent(Double(currentWeek))
         let wc = countWordsIn(recordsInPeriod)
         let jc = countJobsIn(recordsInPeriod)
         
         defer {
-            after()
+            if let callback = after {
+                callback()
+            }
         }
         
         return (wc, jc, recordsInPeriod.count)
