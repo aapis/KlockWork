@@ -17,9 +17,6 @@ struct Dashboard: View {
     var body: some View {
         VStack(spacing: 0) {
             Widgets().environmentObject(crm)
-            
-            // TODO: do we need to render find here?
-            FindDashboard()
         }
     }
 }

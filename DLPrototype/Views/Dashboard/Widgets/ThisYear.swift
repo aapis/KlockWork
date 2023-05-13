@@ -15,6 +15,7 @@ struct ThisYear: View {
     @State private var wordCount: Int = 0
     @State private var jobCount: Int = 0
     @State private var recordCount: Int = 0
+    @State private var loaded: Bool = false
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var crm: CoreDataRecords
@@ -24,7 +25,12 @@ struct ThisYear: View {
             FancySubTitle(text: "\(title)")
             Divider()
             
-            StatsWidget(wordCount: $wordCount, jobCount: $jobCount, recordCount: $recordCount)
+            if loaded == false {
+                WidgetLoading()
+            } else {
+                StatsWidget(wordCount: $wordCount, jobCount: $jobCount, recordCount: $recordCount)
+            }
+
             Spacer()
         }
         .padding()
@@ -34,16 +40,9 @@ struct ThisYear: View {
     
     private func onAppear() -> Void {
         Task {
-            (wordCount, jobCount, recordCount) = await calculateStats()
+            (wordCount, jobCount, recordCount) = await crm.yearlyStats {
+                loaded = true
+            }
         }
-    }
-    
-    private func calculateStats() async -> (Int, Int, Int) {
-        let currentWeek = Calendar.current.component(.weekOfYear, from: Date())
-        let recordsInPeriod = await crm.waitForRecent(Double(currentWeek))
-        let wc = crm.countWordsIn(recordsInPeriod)
-        let jc = crm.countJobsIn(recordsInPeriod)
-        
-        return (wc, jc, recordsInPeriod.count)
     }
 }
