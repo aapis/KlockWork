@@ -299,19 +299,19 @@ struct LogTable: View, Identifiable {
             recordsAsString = ""
             
             for item in records {
-                if item.job != nil {
-                    let ignoredJobs = item.job!.project?.configuration?.ignoredJobs
+                if let job = item.job {
                     let cleaned = CoreDataProjectConfiguration.applyBannedWordsTo(item)
                     
-                    if ignoredJobs != nil {
-                        if !ignoredJobs!.contains(item.job!.jid.string) {
-                            let url = item.job!.uri
+                    if let ignoredJobs = item.job!.project?.configuration?.ignoredJobs {
+                        if !ignoredJobs.contains(item.job!.jid.string) {
+                            let shredableMsg = item.job!.shredable ? " (eligible for SR&ED)" : ""
+                            var jobSection = item.job!.jid.string + shredableMsg
                             
-                            if url != nil {
-                                recordsAsString += "\(item.timestamp!) - \(item.job!.uri!.absoluteString) - \(cleaned.message!)\n"
-                            } else {
-                                recordsAsString += "\(item.timestamp!) - \(item.job!.jid.string) - \(cleaned.message!)\n"
+                            if let uri = item.job!.uri {
+                                jobSection = uri.absoluteString + shredableMsg
                             }
+                            
+                            recordsAsString += "\(item.timestamp!) - \(jobSection) - \(cleaned.message!)\n"
                         }
                     }
                 }
