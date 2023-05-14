@@ -17,6 +17,14 @@ public class CoreDataJob: ObservableObject {
         self.moc = moc
     }
     
+    public func getDefault() -> Job? {
+        if let job = byId(11.0) {
+            return job
+        }
+        
+        return nil
+    }
+    
     public func byId(_ id: Double) -> Job? {
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.jid, ascending: false)]

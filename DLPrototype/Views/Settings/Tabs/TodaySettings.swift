@@ -18,6 +18,9 @@ struct TodaySettings: View {
     @AppStorage("showSidebar") public var showSidebar: Bool = true
     @AppStorage("showTodaySearch") public var showSearch: Bool = true
     @AppStorage("today.ltd.tasks.all") public var showAllJobsInDetailsPane: Bool = false
+    @AppStorage("today.calendar") public var calendar: Int = 0
+    
+    @State private var calendars: [CustomPickerItem] = []
 
     var body: some View {
         Form {
@@ -60,8 +63,27 @@ struct TodaySettings: View {
                     Text("Summarized").tag(2)
                 }
             }
+            
+            Picker("Active calendar", selection: $calendar) {
+                ForEach(calendars, id: \.self) { item in
+                    Text(item.title).tag(item.tag)
+                }
+            }
         }
         .padding(20)
+        .onAppear(perform: onAppear)
+    }
+    
+    private func onAppear() -> Void {
+        calendars = CalendarService().getCalendarsForPicker()
+        
+//        if knownCalendars.count > 0 {
+//            var id = 0
+//            for calendar in knownCalendars {
+//                calendars.append(PickerSingleCalendar(name: calendar.title, id: id))
+//                id += 1
+//            }
+//        }
     }
 }
 

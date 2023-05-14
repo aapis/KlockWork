@@ -53,6 +53,8 @@
 		535C1AEE29F49AAD00CD95FD /* StatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535C1AED29F49AAD00CD95FD /* StatsWidget.swift */; };
 		5361DDED2971E1DF00437064 /* CoreDataNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5361DDEC2971E1DF00437064 /* CoreDataNotes.swift */; };
 		5367FAF0296772730060D2AA /* Split.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5367FAEF296772730060D2AA /* Split.swift */; };
+		5372C0282A1050E1008CB120 /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5372C0272A1050E1008CB120 /* CalendarService.swift */; };
+		5372C02A2A105AA1008CB120 /* FancyChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5372C0292A105AA1008CB120 /* FancyChip.swift */; };
 		537368D124B93DB600193E88 /* Today.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537368D024B93DB600193E88 /* Today.swift */; };
 		53759E0829678DC700DCDC4B /* Import.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53759E0729678DC700DCDC4B /* Import.swift */; };
 		53759E0D2967ECAE00DCDC4B /* LogRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53759E0C2967ECAE00DCDC4B /* LogRecords.swift */; };
@@ -189,6 +191,8 @@
 		535C1AED29F49AAD00CD95FD /* StatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsWidget.swift; sourceTree = "<group>"; };
 		5361DDEC2971E1DF00437064 /* CoreDataNotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataNotes.swift; sourceTree = "<group>"; };
 		5367FAEF296772730060D2AA /* Split.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Split.swift; sourceTree = "<group>"; };
+		5372C0272A1050E1008CB120 /* CalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarService.swift; sourceTree = "<group>"; };
+		5372C0292A105AA1008CB120 /* FancyChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyChip.swift; sourceTree = "<group>"; };
 		537368D024B93DB600193E88 /* Today.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Today.swift; sourceTree = "<group>"; };
 		53759E0729678DC700DCDC4B /* Import.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Import.swift; sourceTree = "<group>"; };
 		53759E0C2967ECAE00DCDC4B /* LogRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRecords.swift; sourceTree = "<group>"; };
@@ -492,6 +496,14 @@
 			path = Types;
 			sourceTree = "<group>";
 		};
+		5372C0262A1050D1008CB120 /* AppleServices */ = {
+			isa = PBXGroup;
+			children = (
+				5372C0272A1050E1008CB120 /* CalendarService.swift */,
+			);
+			path = AppleServices;
+			sourceTree = "<group>";
+		};
 		537368D224B93DF700193E88 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -583,6 +595,7 @@
 				53959A1E29738AAA007A2549 /* FancySubTitle.swift */,
 				53C3418F29996C070071B855 /* FancyRandomJobColourPicker.swift */,
 				5333E7A02A0ECE0D00EE4A36 /* FancyTab.swift */,
+				5372C0292A105AA1008CB120 /* FancyChip.swift */,
 			);
 			path = Fancy;
 			sourceTree = "<group>";
@@ -590,6 +603,7 @@
 		53B940D72800A9CC0024AA5F /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				5372C0262A1050D1008CB120 /* AppleServices */,
 				53759E0C2967ECAE00DCDC4B /* LogRecords.swift */,
 				53759E0B2967EC9600DCDC4B /* CoreData */,
 			);
@@ -824,6 +838,7 @@
 				53F5895E2998330000843B32 /* NoteResult.swift in Sources */,
 				535C1AEE29F49AAD00CD95FD /* StatsWidget.swift in Sources */,
 				53959A1F29738AAA007A2549 /* FancySubTitle.swift in Sources */,
+				5372C02A2A105AA1008CB120 /* FancyChip.swift in Sources */,
 				537628B429665F4E00DE8ECF /* Data.xcdatamodeld in Sources */,
 				53F5896429983FA300843B32 /* ProjectResult.swift in Sources */,
 				53EDDF9E29634852008D34C7 /* Entry.swift in Sources */,
@@ -917,6 +932,7 @@
 				5367FAF0296772730060D2AA /* Split.swift in Sources */,
 				533AB3EE296C9B3800E91A9F /* ManageDashboard.swift in Sources */,
 				532A722B298F1CB70038C18B /* Results.swift in Sources */,
+				5372C0282A1050E1008CB120 /* CalendarService.swift in Sources */,
 				5333E7A12A0ECE0D00EE4A36 /* FancyTab.swift in Sources */,
 				53152CDA296B849200A14E43 /* FancyPickerWithRelativeNavigation.swift in Sources */,
 				53EFCE7B29637F49004E45EC /* Settings.swift in Sources */,

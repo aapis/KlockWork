@@ -136,7 +136,7 @@ struct LogTable: View, Identifiable {
                     }
                 }
             }
-        }.frame(height: 35)
+        }.frame(height: 36)
     }
     
     // MARK: header view
