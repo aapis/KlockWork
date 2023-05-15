@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		530318472A11DD13009CA90B /* CoreDataCalendarEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530318462A11DD13009CA90B /* CoreDataCalendarEvent.swift */; };
 		5309EE3D25619A6D00B3BC06 /* Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5309EE3C25619A6D00B3BC06 /* Backup.swift */; };
 		53152CC929690E7300A14E43 /* LosslessStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CC829690E7300A14E43 /* LosslessStringConvertible.swift */; };
 		53152CCC2969453000A14E43 /* DateHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CCB2969453000A14E43 /* DateHelper.swift */; };
@@ -135,6 +136,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		530318462A11DD13009CA90B /* CoreDataCalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataCalendarEvent.swift; sourceTree = "<group>"; };
 		5309EE3C25619A6D00B3BC06 /* Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
 		53152CC829690E7300A14E43 /* LosslessStringConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LosslessStringConvertible.swift; sourceTree = "<group>"; };
 		53152CCB2969453000A14E43 /* DateHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHelper.swift; sourceTree = "<group>"; };
@@ -544,6 +546,7 @@
 				53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */,
 				53B0BE8029725B52007CB663 /* CoreDataProjects.swift */,
 				53959A202973D3E5007A2549 /* CoreDataProjectConfiguration.swift */,
+				530318462A11DD13009CA90B /* CoreDataCalendarEvent.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -879,6 +882,7 @@
 				533E406A2970F5610007785A /* SearchHelper.swift in Sources */,
 				53529A07299F38C0000D2FCB /* JobPickerUsing.swift in Sources */,
 				5376289B2966467100DE8ECF /* SearchBar.swift in Sources */,
+				530318472A11DD13009CA90B /* CoreDataCalendarEvent.swift in Sources */,
 				535C1AE129F48EF700CD95FD /* Dashboard.swift in Sources */,
 				537628A22966525500DE8ECF /* ToolbarButtons.swift in Sources */,
 				537AEBA1296287B900385787 /* LogRow.swift in Sources */,

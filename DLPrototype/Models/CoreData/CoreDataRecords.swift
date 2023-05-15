@@ -32,6 +32,22 @@ public class CoreDataRecords: ObservableObject {
         }
     }
     
+    public func createWithJobAndReturn(job: Job, date: Date, text: String) -> LogRecord {
+        let record = LogRecord(context: moc!)
+        record.timestamp = date
+        record.message = text
+        record.id = UUID()
+        record.job = job
+        
+        do {
+            try moc!.save()
+        } catch {
+            PersistenceController.shared.save()
+        }
+        
+        return record
+    }
+    
     public func waitForRecent(_ numWeeks: Double = 6) async -> [LogRecord] {
         return recent(numWeeks)
     }

@@ -20,6 +20,7 @@ struct Home: View {
     @StateObject public var rm: LogRecords = LogRecords(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
+    @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
     
     @State public var appVersion: String?
     @State public var splitDirection: Bool = false // false == horizontal, true == vertical
@@ -58,6 +59,7 @@ struct Home: View {
                             .navigationTitle("Today")
                             .environmentObject(rm)
                             .environmentObject(jm)
+                            .environmentObject(ce)
                             .environmentObject(updater)
                             .toolbar {
                                 Button(action: redraw, label: {

@@ -18,7 +18,7 @@ struct TodaySettings: View {
     @AppStorage("showSidebar") public var showSidebar: Bool = true
     @AppStorage("showTodaySearch") public var showSearch: Bool = true
     @AppStorage("today.ltd.tasks.all") public var showAllJobsInDetailsPane: Bool = false
-    @AppStorage("today.calendar") public var calendar: Int = 0
+    @AppStorage("today.calendar") public var calendar: Int = -1
     
     @State private var calendars: [CustomPickerItem] = []
 
