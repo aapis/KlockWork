@@ -15,6 +15,7 @@ struct CalendarToday: View {
     @State private var upcoming: [EKEvent] = []
     @State private var currentBlock: Int = 0
     @State private var currentDate: String = ""
+    @State private var timer: Timer? = nil
 
     @AppStorage("today.startOfDay") public var startOfDay: Int = 9
     @AppStorage("today.endOfDay") public var endOfDay: Int = 18
@@ -155,10 +156,11 @@ struct CalendarToday: View {
     }
 
     private func createEventChips() -> Void {
+        timer?.invalidate()
         // runs onAppear
         updateChips()
         // runs on interval
-        Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { _ in
             updateChips()
 
             print("[debug.timer] Today().CalendarToday.createEventChips run")

@@ -68,6 +68,7 @@ struct LogTableDetails: View {
     @State private var statistics: [any Statistics] = []
     @State private var inProgressEvents: [EKEvent] = []
     @State private var upcomingEvents: [EKEvent] = []
+    @State private var timer: Timer? = nil
     
     static public var groups: [StatisticGroup] = [
         StatisticGroup(title: "Viewing", enumKey: .today),
@@ -170,16 +171,18 @@ struct LogTableDetails: View {
 
         _setStateEventData()
 
-        Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { _ in
             _setStateEventData()
             updater.update()
+
+            print("[debug.timer] Today().LogTableDetails.setTimers run")
         }
     }
     
     private func update() -> Void {
-        setTimers() // start timers whether sidebar is open or not (may be a really bad idea we will see)
-
         if records.count > 0 && open {
+            setTimers() // start timers whether sidebar is open or not (may be a really bad idea we will see)
+
             statistics = []
             
             for record in records {
@@ -291,6 +294,8 @@ struct LogTableDetails: View {
                     )
                 }
             }
+        } else {
+            timer?.invalidate()
         }
     }
     
