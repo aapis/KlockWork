@@ -14,32 +14,32 @@ struct CalendarToday: View {
     @State private var inProgress: [EKEvent] = []
     @State private var upcoming: [EKEvent] = []
     @State private var currentBlock: Int = 0
-    @State private var calendarStripVisible: Bool = true
     @State private var currentDate: String = ""
 
     @AppStorage("today.startOfDay") public var startOfDay: Int = 9
     @AppStorage("today.endOfDay") public var endOfDay: Int = 18
+    @AppStorage("today.calendarStripVisible") public var calendarStripVisible: Bool = true
 
     @EnvironmentObject public var ce: CoreDataCalendarEvent
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 1) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Text("Events for \(currentDate)")
-                    .font(Theme.fontCaption)
-                    .padding(5)
-
+                    .font(Theme.font)
                 Spacer()
                 FancyButton(text: calendarStripVisible ? "Hide Calendar" : "Show Calendar", action: showHide, icon: calendarStripVisible ? "arrowtriangle.up" : "arrowtriangle.down", showLabel: false)
             }
-            .background(Theme.toolbarColour)
+            .padding(5)
+            .background(Theme.headerColour)
+            .frame(height: 35)
 
             if calendarStripVisible {
                 ScrollView {
                     HStack(spacing: 0) {
                         ForEach(startOfDay..<endOfDay, id: \.self) { time in
                             ZStack {
-                                (currentBlock == time ? Theme.footerColour : Theme.darkBtnColour)
+                                (currentBlock == time ? Theme.footerColour : Color.clear)
 
                                 Grid(alignment: .topLeading, horizontalSpacing: 1, verticalSpacing: 1) {
                                     GridRow {
@@ -134,10 +134,11 @@ struct CalendarToday: View {
                         }
                     }
                 }
-                .frame(minWidth: 0, maxWidth: .infinity, maxHeight: 200)
+                .frame(minWidth: 10, maxWidth: .infinity, minHeight: 10, maxHeight: 200)
             }
         }
         .onAppear(perform: createEventChips)
+        .background(Theme.darkBtnColour)
     }
 
     private func updateChips() -> Void {
