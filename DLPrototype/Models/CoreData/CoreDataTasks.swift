@@ -30,7 +30,9 @@ public class CoreDataTasks {
             // find unique job IDs in the from record set
             var ownerJobs: Set<String> = Set()
             for record in from {
-                ownerJobs.insert(record.job!.jid.string)
+                if let job = record.job {
+                    ownerJobs.insert(job.jid.string)
+                }
             }
             
             // create compound predicate that includes INCOMPLETE and JOBRELEVANT predicates

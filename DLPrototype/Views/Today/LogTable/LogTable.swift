@@ -136,7 +136,7 @@ struct LogTable: View, Identifiable {
                     }
                 }
             }
-        }.frame(height: 35)
+        }.frame(height: 36)
     }
     
     // MARK: header view
@@ -302,12 +302,12 @@ struct LogTable: View, Identifiable {
                 if let job = item.job {
                     let cleaned = CoreDataProjectConfiguration.applyBannedWordsTo(item)
                     
-                    if let ignoredJobs = item.job!.project?.configuration?.ignoredJobs {
-                        if !ignoredJobs.contains(item.job!.jid.string) {
-                            let shredableMsg = item.job!.shredable ? " (eligible for SR&ED)" : ""
-                            var jobSection = item.job!.jid.string + shredableMsg
+                    if let ignoredJobs = job.project?.configuration?.ignoredJobs {
+                        if !ignoredJobs.contains(job.jid.string) {
+                            let shredableMsg = job.shredable ? " (eligible for SR&ED)" : ""
+                            var jobSection = job.jid.string + shredableMsg
                             
-                            if let uri = item.job!.uri {
+                            if let uri = job.uri {
                                 jobSection = uri.absoluteString + shredableMsg
                             }
                             

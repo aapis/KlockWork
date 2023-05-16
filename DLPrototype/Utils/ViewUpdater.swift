@@ -13,6 +13,7 @@ public class ViewUpdater: ObservableObject {
         "today.table": UUID(),
         "today.picker": UUID(),
         "today.dayList": UUID(),
+        "today.calendarStrip": UUID(),
         "ltd.rows": UUID(),
         "dg.hasView": UUID(),
         "dg.hasNoView": UUID(),

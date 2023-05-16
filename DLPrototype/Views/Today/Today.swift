@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import Combine
+import EventKit
 
 struct Today: View {
     public var defaultSelectedDate: Date?
@@ -16,12 +17,13 @@ struct Today: View {
     @State private var jobId: String = ""
     @State private var taskUrl: String = "" // only treated as a string, no need to be URL-type
     @State private var isUrl: Bool = true
-    
+
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
+    @EnvironmentObject public var ce: CoreDataCalendarEvent
     
     @FetchRequest(
         sortDescriptors: [
@@ -44,6 +46,8 @@ struct Today: View {
     var body: some View {
         VStack(alignment: .leading) {
             editor
+//            actions
+            calendarStrip
             table
         }
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
@@ -99,7 +103,47 @@ struct Today: View {
         LogTable(job: $jobId, defaultSelectedDate: defaultSelectedDate)
             .id(updater.ids["today.table"])
             .environmentObject(updater)
+            .environmentObject(ce)
     }
+
+    var calendarStrip: some View {
+        CalendarToday()
+            .id(updater.ids["today.calendarStrip"])
+            .environmentObject(ce)
+    }
+
+    // TODO: convert to current in progress event status update UX/UI
+//    @ViewBuilder private var actions: some View {
+//        HStack {
+//            ForEach(chipsEventsInProgress, id: \.self) { chip in
+//                if let title = chip.title {
+//                    FancyChip(text: title, type: .green, icon: "clock.fill") {
+//                        chipCallback(title: title, type: .inProgress)
+//                    }
+//                }
+//            }
+//        }
+////        .onAppear(perform: CalendarToday.createEventChips)
+//    }
+
+//    private func chipCallback(title: String, type: CalendarEventType) -> Void {
+//        // TODO: allow users to choose the job to assign this record to (requires a bunch of changes)
+//        if let defaultJob = CoreDataJob(moc: moc).getDefault() {
+//            CoreDataRecords(moc: moc).createWithJob(
+//                job: defaultJob,
+//                date: Date(),
+//                text: "Meeting finished: \(title)"
+//            )
+//
+//            if type == .inProgress {
+//                chipsEventsInProgress.removeAll(where: ({$0.title == title}))
+//                let _ = ce.store(events: chipsEventsInProgress, type: .inProgress)
+//
+//            }
+//
+//            reloadUi()
+//        }
+//    }
     
     private func onAppear() -> Void {
         setDefaultJob()
@@ -154,7 +198,7 @@ struct Today: View {
             
             PersistenceController.shared.save()
         } else {
-            print("Message, job ID OR task URL are required to submit")
+            print("[error] Message, job ID OR task URL are required to submit")
         }
     }
     

@@ -20,6 +20,7 @@ struct Theme {
     static public var tabColour: Color = Color.white.opacity(0.2)
     static public var tabActiveColour: Color = headerColour
     static public var rowStatusGreen: Color = Color.green.opacity(0.2)
+    static public var rowStatusYellow: Color = Color.yellow.opacity(0.2)
     static public var rowStatusRed: Color = Color.red.opacity(0.2)
     static public var textBackground: Color = Color.black.opacity(0.1)
     static public let font: Font = .system(.body, design: .monospaced)

@@ -125,8 +125,10 @@ struct TaskView: View {
         Group {
             HStack(spacing: 0) {
                 ZStack(alignment: .leading) {
-                    if task.owner != nil {
-                        Color.fromStored(task.owner!.project!.colour ?? Theme.rowColourAsDouble)
+                    if let owner = task.owner {
+                        if let project = owner.project {
+                            Color.fromStored(project.colour ?? Theme.rowColourAsDouble)
+                        }
                     } else {
                         Theme.rowColour
                     }

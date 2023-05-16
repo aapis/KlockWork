@@ -13,6 +13,9 @@ struct SettingsView: View {
     private enum Tabs: Hashable {
         case general, today, advanced
     }
+
+    @Environment(\.managedObjectContext) var moc
+
     var body: some View {
         TabView {
             GeneralSettings()
