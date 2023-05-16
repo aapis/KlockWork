@@ -36,6 +36,7 @@ struct Home: View {
                             .navigationTitle("Dashboard")
                             .environmentObject(rm)
                             .environmentObject(jm)
+                            .environmentObject(ce)
                             .environmentObject(crm)
                             .environmentObject(updater)
                             .toolbar {
@@ -275,6 +276,7 @@ struct Home: View {
                 .environmentObject(rm)
                 .environmentObject(jm)
                 .environmentObject(crm)
+                .environmentObject(ce)
                 .environmentObject(updater)
                 .toolbar {
                     Button(action: redraw, label: {

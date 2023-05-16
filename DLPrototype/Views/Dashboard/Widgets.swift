@@ -25,6 +25,7 @@ struct WidgetLoading: View {
 
 struct Widgets: View {
     @EnvironmentObject public var crm: CoreDataRecords
+    @EnvironmentObject public var ce: CoreDataCalendarEvent
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var jm: CoreDataJob
     
@@ -40,14 +41,22 @@ struct Widgets: View {
                 
                 Grid(alignment: .top, horizontalSpacing: 5, verticalSpacing: 5) {
                     GridRow {
-                        ThisDay().environmentObject(crm)
-                        ThisWeek().environmentObject(crm)
-                        ThisMonth().environmentObject(crm)
+                        ThisDay()
+                            .environmentObject(crm)
+                            .environmentObject(ce)
+                        ThisWeek()
+                            .environmentObject(crm)
+                            .environmentObject(ce)
+                        ThisMonth()
+                            .environmentObject(crm)
+                            .environmentObject(ce)
                     }
                     .frame(maxHeight: 250)
                     
                     GridRow(alignment: .top) {
-                        ThisYear().environmentObject(crm)
+                        ThisYear()
+                            .environmentObject(crm)
+                            .environmentObject(ce)
                         Favourites()
                     }
                     .frame(maxHeight: 250)

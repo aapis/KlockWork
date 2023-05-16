@@ -10,18 +10,41 @@ import Foundation
 import EventKit
 import SwiftUI
 
+public enum CalendarEventType: String, CaseIterable {
+    case inProgress = "In Progress"
+    case upcoming = "Upcoming"
+}
+
+public enum CalendarEventStatus {
+    case joined, cancelled, ended
+}
 
 public class CoreDataCalendarEvent: ObservableObject {
     public var moc: NSManagedObjectContext?
+    public var store: EKEventStore = EKEventStore()
 
     private let lock = NSLock()
+
+    @AppStorage("today.calendar") public var calendar: Int = -1
     
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
     }
 
+    public func selectedCalendar() -> String? {
+        if calendar > -1 {
+            return getCalendarName(calendar)
+        }
+
+        return nil
+    }
+
     public func all() -> [CalendarEvent] {
         return query(NSPredicate(format: "eid > 0"))
+    }
+
+    public func byType(_ type: CalendarEventType) -> [CalendarEvent] {
+        return query(NSPredicate(format: "type = %@", "\(type)"))
     }
     
     public func store(events: [EKEvent], type: CalendarEventType) -> [CalendarEvent] {
@@ -54,9 +77,183 @@ public class CoreDataCalendarEvent: ObservableObject {
         moc!.delete(event)
     }
 
-    public func truncate() -> Void {
-        for cevent in all() {
-            delete(cevent)
+    public func truncate(_ type: CalendarEventType? = nil) -> Void {
+        if let selectedType = type {
+            for cevent in byType(selectedType) {
+                delete(cevent)
+            }
+        } else {
+            for cevent in all() {
+                delete(cevent)
+            }
+        }
+    }
+
+    public func find(calendar: String, _ callback: (String) -> [EKEvent]) -> [EKEvent] {
+        let status = EKEventStore.authorizationStatus(for: EKEntityType.event)
+        var events: [EKEvent] = []
+
+        switch (status) {
+        case .notDetermined:
+            requestAccess()
+        case .authorized:
+            events = callback(calendar)
+            break
+        case .restricted, .denied: break
+
+        @unknown default:
+            fatalError()
+        }
+
+        return events
+    }
+
+    public func eventsInProgress(_ calendarName: String) -> [EKEvent] {
+        return find(calendar: calendarName) { calendar in
+            let existingEvents = self.byType(.inProgress)
+            var ekEvents = self.inProgress(calendar)
+
+            for (index, ev) in ekEvents.enumerated() {
+                if let title = ev.title {
+                    for existingEv in existingEvents {
+                        if let eTitle = existingEv.title {
+                            if title == eTitle {
+                                ekEvents.remove(at: index)
+                            }
+                        }
+                    }
+                }
+            }
+
+//            let _ = self.store(events: ekEvents, type: .inProgress)
+
+            return ekEvents
+        }
+    }
+
+    public func eventsUpcoming(_ calendarName: String) -> [EKEvent] {
+        return find(calendar: calendarName) { calendar in
+            let existingEvents = self.byType(.upcoming)
+            var ekEvents = self.upcoming(calendar)
+
+            for (index, ev) in ekEvents.enumerated() {
+                if let title = ev.title {
+                    for existingEv in existingEvents {
+                        if let eTitle = existingEv.title {
+                            if title == eTitle {
+                                ekEvents.remove(at: index)
+                            }
+                        }
+                    }
+                }
+            }
+
+//            let _ = self.store(events: ekEvents, type: .upcoming)
+
+            return ekEvents
+        }
+    }
+
+    public func getCalendar(_ calendarName: String) -> EKCalendar? {
+        for calendar in getCalendars() {
+            if calendarName == calendar.title {
+                return calendar
+            }
+        }
+
+        return nil
+    }
+
+    public func getCalendarName(_ id: Int) -> String? {
+        for item in getCalendarsForPicker() {
+            if id == item.tag {
+                return item.title
+            }
+        }
+
+        return nil
+    }
+
+    public func getCalendars() -> [EKCalendar] {
+        return store.calendars(for: .event)
+    }
+
+    public func getCalendarsForPicker() -> [CustomPickerItem] {
+        var pickerItems: [CustomPickerItem] = []
+        var id = 0;
+
+        for calendar in getCalendars() {
+            pickerItems.append(CustomPickerItem(title: calendar.title, tag: id))
+            id += 1
+        }
+
+        return pickerItems
+    }
+
+    private func inProgress(_ calendarName: String) -> [EKEvent] {
+        var eventsInProgress: [EKEvent] = []
+        let now = Date()
+        let (start, end) = DateHelper.startAndEndOf(now)
+        let calendar = getCalendar(calendarName)
+
+        if calendar != nil {
+            let predicate = store.predicateForEvents(withStart: start, end: end, calendars: [calendar!])
+            let events = store.events(matching: predicate)
+            let df = DateFormatter()
+            df.timeZone = TimeZone.autoupdatingCurrent
+            df.locale = NSLocale.current
+            df.dateFormat = "yyyy-MM-dd HH:mm:ss"
+
+            for event in events {
+                if !event.isAllDay {
+                    let sDate = df.string(from: event.startDate!)
+                    let eDate = df.string(from: event.endDate!)
+                    let fmtNow = df.string(from: now)
+
+                    if sDate <= fmtNow && eDate >= fmtNow {
+                        eventsInProgress.append(event)
+                    }
+                }
+            }
+        }
+
+        return eventsInProgress
+    }
+
+    private func upcoming(_ calendarName: String) -> [EKEvent] {
+        var upcomingEvents: [EKEvent] = []
+        let now = Date()
+        let (start, end) = DateHelper.startAndEndOf(now)
+        let calendar = getCalendar(calendarName)
+
+        if calendar != nil {
+            let predicate = store.predicateForEvents(withStart: start, end: end, calendars: [calendar!])
+            let events = store.events(matching: predicate)
+            let df = DateFormatter()
+            df.timeZone = TimeZone.autoupdatingCurrent
+            df.locale = NSLocale.current
+            df.dateFormat = "yyyy-MM-dd HH:mm:ss"
+
+            for event in events {
+                if !event.isAllDay {
+                    let sDate = df.string(from: event.startDate!)
+                    let fmtNow = df.string(from: now)
+
+                    if sDate >= fmtNow {
+                        upcomingEvents.append(event)
+                    }
+                }
+            }
+        }
+
+        return upcomingEvents
+    }
+
+    private func requestAccess() -> Void {
+        store.requestAccess(to: EKEntityType.event) { (accessGranted, error) in
+            if !accessGranted {
+                print("[warning] User denied/ignored calendar permission prompt")
+            }
         }
     }
 

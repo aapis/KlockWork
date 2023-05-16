@@ -43,6 +43,7 @@ struct ThisDay: View {
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var crm: CoreDataRecords
+    @EnvironmentObject public var ce: CoreDataCalendarEvent
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var jm: CoreDataJob
     
@@ -71,6 +72,7 @@ struct ThisDay: View {
                                     Today(defaultSelectedDate: currentDate)
                                         .environmentObject(crm)
                                         .environmentObject(jm)
+                                        .environmentObject(ce)
                                         .environmentObject(updater)
                                 )
                             )
@@ -98,6 +100,7 @@ struct ThisDay: View {
                             Today(defaultSelectedDate: day.date)
                                 .environmentObject(crm)
                                 .environmentObject(jm)
+                                .environmentObject(ce)
                                 .environmentObject(updater)
                         ),
                         size: .small

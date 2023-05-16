@@ -12,18 +12,14 @@ import EventKit
 
 struct Today: View {
     public var defaultSelectedDate: Date?
-    public var cs: CalendarService = CalendarService()
     
     @State private var text: String = ""
     @State private var jobId: String = ""
     @State private var taskUrl: String = "" // only treated as a string, no need to be URL-type
     @State private var isUrl: Bool = true
-    @State private var chipsEventsInProgress: [EKEvent] = []
-    @State private var chipsEventsUpcoming: [EKEvent] = []
-    
+
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
-    @AppStorage("today.calendar") public var calendar: Int = -1
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
@@ -50,7 +46,8 @@ struct Today: View {
     var body: some View {
         VStack(alignment: .leading) {
             editor
-            actions
+//            actions
+            calendarStrip
             table
         }
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
@@ -106,69 +103,47 @@ struct Today: View {
         LogTable(job: $jobId, defaultSelectedDate: defaultSelectedDate)
             .id(updater.ids["today.table"])
             .environmentObject(updater)
-    }
-    
-    @ViewBuilder private var actions: some View {
-        HStack {
-            ForEach(chipsEventsInProgress, id: \.self) { chip in
-                if let title = chip.title {
-                    FancyChip(text: "Event in progress: \(title)", type: .green) {
-                        chipCallback(title: title, type: .inProgress)
-                    }
-                }
-            }
-            
-            ForEach(chipsEventsUpcoming, id: \.self) { chip in
-                if let title = chip.title {
-                    FancyChip(text: "Upcoming event: \(title)") {
-                        chipCallback(title: title, type: .upcoming)
-                    }
-                }
-            }
-        }
-        .onAppear(perform: createEventChips)
-    }
-    
-    private func updateChips() -> Void {
-        if let chosenCalendar = cs.getCalendarName(calendar) {
-            print("DERPO cal \(chosenCalendar)")
-            chipsEventsInProgress = cs.eventsInProgress(chosenCalendar, ce)
-            chipsEventsUpcoming = cs.eventsUpcoming(chosenCalendar, ce)
-        }
-    }
-    
-    private func createEventChips() -> Void {
-        // delete existing chips
-        ce.truncate()
-        // runs onAppear
-        updateChips()
-        // runs on interval
-        Timer.scheduledTimer(withTimeInterval: 120.0, repeats: true) { _ in
-            updateChips()
-        }
+            .environmentObject(ce)
     }
 
-    private func chipCallback(title: String, type: CalendarEventType) -> Void {
-        // TODO: allow users to choose the job to assign this record to (requires a bunch of changes)
-        if let defaultJob = CoreDataJob(moc: moc).getDefault() {
-            CoreDataRecords(moc: moc).createWithJob(
-                job: defaultJob,
-                date: Date(),
-                text: "Meeting finished: \(title)"
-            )
-            
-            if type == .inProgress {
-                chipsEventsInProgress.removeAll(where: ({$0.title == title}))
-                let _ = ce.store(events: chipsEventsInProgress, type: .inProgress)
-
-            } else if type == .upcoming {
-                chipsEventsUpcoming.removeAll(where: ({$0.title == title}))
-                let _ = ce.store(events: chipsEventsUpcoming, type: .upcoming)
-            }
-
-            reloadUi()
-        }
+    var calendarStrip: some View {
+        CalendarToday()
+            .id(updater.ids["today.calendarStrip"])
+            .environmentObject(ce)
     }
+
+    // TODO: convert to current in progress event status update UX/UI
+//    @ViewBuilder private var actions: some View {
+//        HStack {
+//            ForEach(chipsEventsInProgress, id: \.self) { chip in
+//                if let title = chip.title {
+//                    FancyChip(text: title, type: .green, icon: "clock.fill") {
+//                        chipCallback(title: title, type: .inProgress)
+//                    }
+//                }
+//            }
+//        }
+////        .onAppear(perform: CalendarToday.createEventChips)
+//    }
+
+//    private func chipCallback(title: String, type: CalendarEventType) -> Void {
+//        // TODO: allow users to choose the job to assign this record to (requires a bunch of changes)
+//        if let defaultJob = CoreDataJob(moc: moc).getDefault() {
+//            CoreDataRecords(moc: moc).createWithJob(
+//                job: defaultJob,
+//                date: Date(),
+//                text: "Meeting finished: \(title)"
+//            )
+//
+//            if type == .inProgress {
+//                chipsEventsInProgress.removeAll(where: ({$0.title == title}))
+//                let _ = ce.store(events: chipsEventsInProgress, type: .inProgress)
+//
+//            }
+//
+//            reloadUi()
+//        }
+//    }
     
     private func onAppear() -> Void {
         setDefaultJob()
@@ -186,7 +161,6 @@ struct Today: View {
     public func reloadUi() -> Void {
         updater.updateOne("today.table")
         updater.updateOne("today.picker")
-        updateChips()
     }
     
     private func submitAction() -> Void {

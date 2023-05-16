@@ -13,10 +13,13 @@ struct Dashboard: View {
     static public let id: UUID = UUID()
     
     @EnvironmentObject public var crm: CoreDataRecords
+    @EnvironmentObject public var ce: CoreDataCalendarEvent
     
     var body: some View {
         VStack(spacing: 0) {
-            Widgets().environmentObject(crm)
+            Widgets()
+                .environmentObject(crm)
+                .environmentObject(ce)
         }
     }
 }

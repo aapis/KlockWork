@@ -19,8 +19,12 @@ struct TodaySettings: View {
     @AppStorage("showTodaySearch") public var showSearch: Bool = true
     @AppStorage("today.ltd.tasks.all") public var showAllJobsInDetailsPane: Bool = false
     @AppStorage("today.calendar") public var calendar: Int = -1
+    @AppStorage("today.startOfDay") public var startOfDay: Int = 9
+    @AppStorage("today.endOfDay") public var endOfDay: Int = 18
     
     @State private var calendars: [CustomPickerItem] = []
+
+    @Environment(\.managedObjectContext) var moc
 
     var body: some View {
         Form {
@@ -63,10 +67,29 @@ struct TodaySettings: View {
                     Text("Summarized").tag(2)
                 }
             }
-            
-            Picker("Active calendar", selection: $calendar) {
-                ForEach(calendars, id: \.self) { item in
-                    Text(item.title).tag(item.tag)
+
+            Section("Calendar and Date Settings") {
+                Picker("Start of your work day", selection: $startOfDay) {
+                    ForEach(3..<12) { start in
+                        Text("\(start) AM").tag(start)
+                    }
+                }
+
+                Picker("End of your work day", selection: $endOfDay) {
+                    ForEach(12..<24) { start in
+                        if start == 12 {
+                            Text("\(start) PM").tag(start)
+                        } else {
+                            Text("\(start - 12) PM").tag(start)
+                        }
+                    }
+                }
+
+
+                Picker("Active calendar", selection: $calendar) {
+                    ForEach(calendars, id: \.self) { item in
+                        Text(item.title).tag(item.tag)
+                    }
                 }
             }
         }
@@ -75,15 +98,7 @@ struct TodaySettings: View {
     }
     
     private func onAppear() -> Void {
-        calendars = CalendarService().getCalendarsForPicker()
-        
-//        if knownCalendars.count > 0 {
-//            var id = 0
-//            for calendar in knownCalendars {
-//                calendars.append(PickerSingleCalendar(name: calendar.title, id: id))
-//                id += 1
-//            }
-//        }
+        calendars = CoreDataCalendarEvent(moc: moc).getCalendarsForPicker()
     }
 }
 

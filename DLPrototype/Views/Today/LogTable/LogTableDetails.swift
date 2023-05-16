@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import EventKit
 
 protocol Statistics: Identifiable {
     var key: String {get set}
@@ -54,6 +55,8 @@ public enum StatisticPeriod: String, CaseIterable {
     case overall = "Overall"
     case jobs = "Jobs"
     case tasks = "Tasks"
+    case upcomingEvents = "Upcoming Events"
+    case currentEvents = "Events In Progress"
 }
 
 struct LogTableDetails: View {
@@ -63,18 +66,25 @@ struct LogTableDetails: View {
     @Binding public var selectedTab: Tab
     
     @State private var statistics: [any Statistics] = []
+    @State private var inProgressEvents: [EKEvent] = []
+    @State private var upcomingEvents: [EKEvent] = []
     
     static public var groups: [StatisticGroup] = [
         StatisticGroup(title: "Viewing", enumKey: .today),
-        StatisticGroup(title: "Overall", enumKey: .overall),
-        StatisticGroup(title: "Notes", enumKey: .notes),
-        StatisticGroup(title: "Tasks", enumKey: .tasks),
-        StatisticGroup(title: "Jobs", enumKey: .jobs),
+        StatisticGroup(title: StatisticPeriod.overall.rawValue, enumKey: .overall),
+        StatisticGroup(title: StatisticPeriod.currentEvents.rawValue, enumKey: .currentEvents),
+        StatisticGroup(title: StatisticPeriod.upcomingEvents.rawValue, enumKey: .upcomingEvents),
+        StatisticGroup(title: StatisticPeriod.notes.rawValue, enumKey: .notes),
+        StatisticGroup(title: StatisticPeriod.tasks.rawValue, enumKey: .tasks),
+        StatisticGroup(title: StatisticPeriod.jobs.rawValue, enumKey: .jobs)
     ]
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var jm: CoreDataJob
+    @EnvironmentObject public var ce: CoreDataCalendarEvent
+
+    
     
     private var notes: [Note] {
         CoreDataNotes(moc: moc).forDate(selectedDate)
@@ -113,18 +123,20 @@ struct LogTableDetails: View {
     
     var rows: some View {
         GridRow {
-            VStack(spacing: 1) {
+            VStack(alignment: .leading, spacing: 1) {
                 if statistics.count > 0 && records.count > 0 {
                     ForEach(LogTableDetails.groups) { group in
                         let children = statistics.filter({ $0.group == group.enumKey})
                         
                         if children.count > 0 {
-                            if group.enumKey == .today {
-                                DetailGroup(name: group.title, children: children, subTitle: DateHelper.dateFromRecord(records.first!))
-                                    .environmentObject(updater)
-                            } else {
-                                DetailGroup(name: group.title, children: children)
-                                    .environmentObject(updater)
+                            VStack(alignment: .leading) {
+                                if group.enumKey == .today {
+                                    DetailGroup(name: group.title, children: children, subTitle: DateHelper.dateFromRecord(records.first!))
+                                        .environmentObject(updater)
+                                } else {
+                                    DetailGroup(name: group.title, children: children)
+                                        .environmentObject(updater)
+                                }
                             }
                         }
                     }
@@ -143,9 +155,30 @@ struct LogTableDetails: View {
             }
         }
         .onAppear(perform: update)
+        .onAppear(perform: setTimers)
+    }
+
+    private func setTimers() -> Void {
+        func _setStateEventData() -> Void {
+            ce.truncate()
+            
+            if let chosenCalendar = ce.selectedCalendar() {
+                inProgressEvents = ce.eventsInProgress(chosenCalendar)
+                upcomingEvents = ce.eventsUpcoming(chosenCalendar)
+            }
+        }
+
+        _setStateEventData()
+
+        Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { _ in
+            _setStateEventData()
+            updater.update()
+        }
     }
     
     private func update() -> Void {
+        setTimers() // start timers whether sidebar is open or not (may be a really bad idea we will see)
+
         if records.count > 0 && open {
             statistics = []
             
@@ -172,6 +205,32 @@ struct LogTableDetails: View {
             statistics.append(Statistic(key: "View description", value: selectedTab.description, colour: Theme.rowColour, group: .today))
             // Word count in the current set
             statistics.append(Statistic(key: "Word count", value: String(wordCount()), colour: Theme.rowColour, group: .overall))
+
+            // upcoming events
+            for event in upcomingEvents {
+                statistics.append(
+                    StatisticWithView(
+                        key: event.title,
+                        value: event.title,
+                        colour: Theme.rowColour,
+                        group: .upcomingEvents,
+                        view: AnyView (EventRow(event: event))
+                    )
+                )
+            }
+            // in progress events
+            for event in inProgressEvents {
+                statistics.append(
+                    StatisticWithView(
+                        key: event.title,
+                        value: event.title,
+                        colour: Theme.rowStatusGreen,
+                        group: .currentEvents,
+                        view: AnyView (EventRow(event: event))
+                    )
+                )
+            }
+
             
             // Note list and count
             if notes.count > 0 {

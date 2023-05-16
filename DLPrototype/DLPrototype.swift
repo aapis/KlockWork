@@ -29,6 +29,7 @@ struct DLPrototype: App {
         #if os(macOS)
         Settings {
             SettingsView()
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
         
         // TODO: temp commented out, too early to include this

@@ -29,12 +29,13 @@ enum ChipType {
 struct FancyChip: View {
     public var text: String
     public var type: ChipType = .standard
+    public var icon: String = "multiply"
     public var action: () -> Void
     
     var body: some View {
         Button(action: action) {
             HStack {
-                Image(systemName: "multiply")
+                Image(systemName: icon)
                 Text(text)
                     .font(Theme.font)
             }
