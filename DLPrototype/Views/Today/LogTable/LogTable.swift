@@ -33,6 +33,7 @@ struct LogTable: View, Identifiable {
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
+    @EnvironmentObject public var ce: CoreDataCalendarEvent
     
     // MARK: body view
     var body: some View {
@@ -48,6 +49,8 @@ struct LogTable: View, Identifiable {
                     }
                 } else {
                     CalendarToday()
+                        .id(updater.ids["today.calendarStrip"])
+                        .environmentObject(ce)
                 }
                 
                 if showSidebar {

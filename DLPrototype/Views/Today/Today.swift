@@ -47,7 +47,6 @@ struct Today: View {
         VStack(alignment: .leading) {
             editor
 //            actions
-            calendarStrip
             table
         }
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
@@ -103,12 +102,6 @@ struct Today: View {
         LogTable(job: $jobId, defaultSelectedDate: defaultSelectedDate)
             .id(updater.ids["today.table"])
             .environmentObject(updater)
-            .environmentObject(ce)
-    }
-
-    var calendarStrip: some View {
-        CalendarToday()
-            .id(updater.ids["today.calendarStrip"])
             .environmentObject(ce)
     }
 
