@@ -108,6 +108,30 @@ public class CoreDataCalendarEvent: ObservableObject {
         return events
     }
 
+    public func findInCalendar(calendar: String, _ callback: (EKCalendar) -> [EKEvent]) -> [EKEvent] {
+        let status = EKEventStore.authorizationStatus(for: EKEntityType.event)
+        var events: [EKEvent] = []
+        let ekCalendar = getCalendar(calendar)
+
+        if ekCalendar == nil {
+            return []
+        }
+
+        switch (status) {
+        case .notDetermined:
+            requestAccess()
+        case .authorized:
+            events = callback(ekCalendar!)
+            break
+        case .restricted, .denied: break
+
+        @unknown default:
+            fatalError()
+        }
+
+        return events
+    }
+
     public func eventsInProgress(_ calendarName: String) -> [EKEvent] {
         return find(calendar: calendarName) { calendar in
             let existingEvents = self.byType(.inProgress)
@@ -154,6 +178,12 @@ public class CoreDataCalendarEvent: ObservableObject {
         }
     }
 
+    public func events(_ calendarName: String) -> [EKEvent] {
+        return self.findInCalendar(calendar: calendarName) { calendar in
+            return self.eventsForDay(calendar)
+        }
+    }
+
     public func getCalendar(_ calendarName: String) -> EKCalendar? {
         for calendar in getCalendars() {
             if calendarName == calendar.title {
@@ -188,6 +218,15 @@ public class CoreDataCalendarEvent: ObservableObject {
         }
 
         return pickerItems
+    }
+
+    private func eventsForDay(_ calendar: EKCalendar) -> [EKEvent] {
+        let now = Date()
+        let (start, end) = DateHelper.startAndEndOf(now)
+        let predicate = store.predicateForEvents(withStart: start, end: end, calendars: [calendar])
+        let events = store.events(matching: predicate)
+
+        return events
     }
 
     private func inProgress(_ calendarName: String) -> [EKEvent] {

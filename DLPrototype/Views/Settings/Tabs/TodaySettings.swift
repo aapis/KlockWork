@@ -21,7 +21,6 @@ struct TodaySettings: View {
     @AppStorage("today.calendar") public var calendar: Int = -1
     @AppStorage("today.startOfDay") public var startOfDay: Int = 9
     @AppStorage("today.endOfDay") public var endOfDay: Int = 18
-    @AppStorage("today.calendarStripVisible") public var calendarStripVisible: Bool = true
     
     @State private var calendars: [CustomPickerItem] = []
 
@@ -70,7 +69,6 @@ struct TodaySettings: View {
             }
 
             Section("Calendar and Date Settings") {
-                Toggle("Show calendar strip", isOn: $calendarStripVisible)
                 Picker("Start of your work day", selection: $startOfDay) {
                     ForEach(3..<12) { start in
                         Text("\(start) AM").tag(start)

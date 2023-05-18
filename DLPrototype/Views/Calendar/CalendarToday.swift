@@ -19,7 +19,6 @@ struct CalendarToday: View {
 
     @AppStorage("today.startOfDay") public var startOfDay: Int = 9
     @AppStorage("today.endOfDay") public var endOfDay: Int = 18
-    @AppStorage("today.calendarStripVisible") public var calendarStripVisible: Bool = true
 
     @EnvironmentObject public var ce: CoreDataCalendarEvent
     
@@ -28,115 +27,85 @@ struct CalendarToday: View {
             HStack {
                 Text("Events for \(currentDate)")
                     .font(Theme.font)
+                    .padding(5)
                 Spacer()
-                FancyButton(text: calendarStripVisible ? "Hide Calendar" : "Show Calendar", action: showHide, icon: calendarStripVisible ? "arrowtriangle.up" : "arrowtriangle.down", showLabel: false)
             }
-            .padding(5)
+            .frame(height: 40)
             .background(Theme.headerColour)
-            .frame(height: 35)
 
-            if calendarStripVisible {
-                ScrollView {
-                    HStack(spacing: 0) {
-                        ForEach(startOfDay..<endOfDay, id: \.self) { time in
-                            ZStack {
-                                (currentBlock == time ? Theme.footerColour : Color.clear)
+            ScrollView {
+                HStack(spacing: 0) {
+                    ForEach(startOfDay..<endOfDay, id: \.self) { time in
+                        ZStack {
+                            (currentBlock == time ? Theme.footerColour : Color.clear)
 
-                                Grid(alignment: .topLeading, horizontalSpacing: 1, verticalSpacing: 1) {
-                                    GridRow {
-                                        if time > 12 {
-                                            Text(String(time - 12) + " PM")
-                                                .font(Theme.fontCaption)
-                                                .padding(5)
-                                        } else if time == 12 {
-                                            Text(String(time) + " PM")
-                                                .font(Theme.fontCaption)
-                                                .padding(5)
-                                        } else {
-                                            Text(String(time) + " AM")
-                                                .font(Theme.fontCaption)
-                                                .padding(5)
-                                        }
+                            Grid(alignment: .topLeading, horizontalSpacing: 1, verticalSpacing: 1) {
+                                GridRow {
+                                    if time > 12 {
+                                        Text(String(time - 12) + " PM")
+                                            .font(Theme.fontCaption)
+                                            .padding(5)
+                                    } else if time == 12 {
+                                        Text(String(time) + " PM")
+                                            .font(Theme.fontCaption)
+                                            .padding(5)
+                                    } else {
+                                        Text(String(time) + " AM")
+                                            .font(Theme.fontCaption)
+                                            .padding(5)
+                                    }
+                                }
+                                GridRow {
+                                    Divider()
+                                }
+
+                                if inProgress.count > 0 {
+                                    GridRow(alignment: .top) {
+                                        Text("In Progress")
+                                            .font(Theme.fontCaption)
+                                            .padding(5)
                                     }
                                     GridRow {
                                         Divider()
                                     }
 
-                                    if inProgress.count > 0 {
-                                        GridRow(alignment: .top) {
-                                            Text("In Progress")
-                                                .font(Theme.fontCaption)
-                                                .padding(5)
-                                        }
-                                        GridRow {
-                                            Divider()
-                                        }
-
-                                        ForEach(inProgress, id: \.self) { chip in
-                                            if let title = chip.title {
-                                                let sd = chip.startDate.formatted(date: .omitted, time: .shortened)
-                                                let ed = chip.endDate.formatted(date: .omitted, time: .shortened)
-                                                let twelveHrTime = time - 12
-                                                // Aligns events with the appropriate start time column
-                                                if sd.starts(with: "\(time)") || sd.starts(with: "\(twelveHrTime)") {
-                                                    GridRow(alignment: .top) {
-                                                        Text("\(sd)-\(ed)\n\(title)")
-                                                            .padding(5)
-                                                            .background(Theme.rowStatusGreen)
-                                                            .padding([.bottom, .top], 5)
-                                                    }
-                                                    .frame(minWidth: 0, maxWidth: .infinity)
-                                                }
-                                            }
-                                        }
+                                    ForEach(inProgress, id: \.self) { chip in
+                                        CalendarIndividualEvent(event: chip, currentHour: time)
                                     }
-
-                                    if upcoming.count > 0 {
-                                        FancyDivider()
-                                        GridRow(alignment: .top) {
-                                            Text("Upcoming")
-                                                .font(Theme.fontCaption)
-                                                .padding(5)
-                                        }
-                                        GridRow {
-                                            Divider()
-                                        }
-                                        ForEach(upcoming, id: \.self) { chip in
-                                            if let title = chip.title {
-                                                let sd = chip.startDate.formatted(date: .omitted, time: .shortened)
-                                                let ed = chip.endDate.formatted(date: .omitted, time: .shortened)
-                                                let twelveHrTime = time - 12
-                                                // Aligns events with the appropriate start time column
-                                                // TODO: change to loop that iterates over each houly time slot instead of this startswith shit
-                                                if sd.starts(with: "\(time)") || sd.starts(with: "\(twelveHrTime)") {
-                                                    GridRow(alignment: .top) {
-                                                        Text("\(sd)-\(ed)\n\(title)")
-                                                            .padding(5)
-                                                            .background(Theme.rowStatusYellow)
-                                                            .padding([.bottom, .top], 5)
-                                                    }
-                                                    .frame(minWidth: 0, maxWidth: .infinity)
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    if inProgress.count == 0 && upcoming.count == 0 {
-                                        GridRow {
-                                            Text("No events")
-                                                .font(Theme.fontCaption)
-                                                .padding(5)
-                                        }
-                                    }
-
-                                    Spacer()
                                 }
+
+                                if upcoming.count > 0 {
+                                    FancyDivider()
+                                    GridRow(alignment: .top) {
+                                        Text("Upcoming")
+                                            .font(Theme.fontCaption)
+                                            .padding(5)
+                                    }
+                                    GridRow {
+                                        Divider()
+                                    }
+                                    ForEach(upcoming, id: \.self) { chip in
+                                        CalendarIndividualEvent(event: chip, currentHour: time)
+                                    }
+                                }
+
+                                if inProgress.count == 0 && upcoming.count == 0 {
+                                    GridRow {
+                                        Text("No events")
+                                            .font(Theme.fontCaption)
+                                            .padding(5)
+                                    }
+                                }
+
+                                Spacer()
                             }
                         }
                     }
                 }
-                .frame(minWidth: 10, maxWidth: .infinity, minHeight: 10, maxHeight: 200)
             }
+            .frame(minWidth: 10, maxWidth: .infinity, minHeight: 10, maxHeight: 200)
+            
+            Spacer()
         }
         .onAppear(perform: createEventChips)
         .background(Theme.darkBtnColour)
@@ -164,12 +133,6 @@ struct CalendarToday: View {
             updateChips()
 
             print("[debug.timer] Today().CalendarToday.createEventChips run")
-        }
-    }
-
-    private func showHide() -> Void {
-        withAnimation {
-            calendarStripVisible.toggle()
         }
     }
 }

@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 public enum Tab: CaseIterable {
-    case chronologic, grouped, summarized
+    case chronologic, grouped, summarized, calendar
     
     var icon: String {
         switch self {
@@ -20,6 +20,8 @@ public enum Tab: CaseIterable {
             return "square.grid.3x1.fill.below.line.grid.1x2"
         case .summarized:
             return "star.circle.fill"
+        case .calendar:
+            return "calendar"
         }
     }
     
@@ -31,6 +33,8 @@ public enum Tab: CaseIterable {
             return 1
         case .summarized:
             return 2
+        case .calendar:
+            return 3
         }
     }
     
@@ -42,6 +46,8 @@ public enum Tab: CaseIterable {
             return "Grouped by job ID"
         case .summarized:
             return "Summarized"
+        case .calendar:
+            return "Today's events"
         }
     }
     
@@ -53,6 +59,8 @@ public enum Tab: CaseIterable {
             return "Groups records by job ID, sorted by timestamp"
         case .summarized:
             return "Shows only relevant records, sorted by timestamp"
+        case .calendar:
+            return "Events happening today"
         }
     }
 }

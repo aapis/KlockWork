@@ -40,10 +40,14 @@ struct LogTable: View, Identifiable {
             toolbar.font(Theme.font)
             
             HStack(spacing: 1) {
-                if viewMode == .full {
-                    viewModeFull
-                } else if viewMode == .plain {
-                    viewModePlain
+                if selectedTab != .calendar {
+                    if viewMode == .full {
+                        viewModeFull
+                    } else if viewMode == .plain {
+                        viewModePlain
+                    }
+                } else {
+                    CalendarToday()
                 }
                 
                 if showSidebar {
@@ -265,7 +269,7 @@ struct LogTable: View, Identifiable {
     // TODO: move this func to CoreDataRecords model
     private func changeSort() -> Void {
         if records.count > 0 {
-            if selectedTab == .chronologic {
+            if selectedTab == .chronologic || selectedTab == .calendar{
                 records = ungrouped()
             } else if selectedTab == .grouped {
                 records = grouped()
