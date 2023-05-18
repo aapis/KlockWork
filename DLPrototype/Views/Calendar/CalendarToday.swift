@@ -35,7 +35,7 @@ struct CalendarToday: View {
 
             ScrollView {
                 HStack(spacing: 0) {
-                    ForEach(startOfDay..<endOfDay, id: \.self) { time in
+                    ForEach(startOfDay..<(endOfDay - 1), id: \.self) { time in
                         ZStack {
                             (currentBlock == time ? Theme.footerColour : Color.clear)
 
