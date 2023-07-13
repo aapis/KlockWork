@@ -17,6 +17,8 @@ struct GeneralSettings: View {
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
     @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
+    @AppStorage("exportsShowTimestamp") public var exportsShowTimestamp: Bool = true
+    @AppStorage("exportsPreferJobId") public var exportsPreferJobId: Bool = false
 
     var body: some View {
         Form {
@@ -35,6 +37,12 @@ struct GeneralSettings: View {
             Picker("Default table sort direction:", selection: $defaultTableSortOrder) {
                 Text("DESC").tag("DESC")
                 Text("ASC").tag("ASC")
+            }
+
+            Group {
+                Text("Export options")
+                Toggle("Show timestamp under View Mode > Plain and in exports", isOn: $exportsShowTimestamp)
+                Toggle("Prefer job ID to URL (i.e. 11 instead of https://tracker.com/11)", isOn: $exportsPreferJobId)
             }
         }
         .padding(20)
