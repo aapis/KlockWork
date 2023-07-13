@@ -15,7 +15,6 @@ public class CoreDataRecords: ObservableObject {
     private let lock = NSLock()
 
     @AppStorage("exportsShowTimestamp") public var exportsShowTimestamp: Bool = true
-    @AppStorage("exportsPreferJobId") public var exportsPreferJobId: Bool = false
     
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
@@ -196,14 +195,14 @@ public class CoreDataRecords: ObservableObject {
 
                     if let ignoredJobs = job.project?.configuration?.ignoredJobs {
                         if !ignoredJobs.contains(job.jid.string) {
-                            let shredableMsg = job.shredable ? " (eligible for SR&ED)" : ""
-                            var jobSection = String(Int(job.jid)) + shredableMsg
+                            let shredableMsg = job.shredable ? " (SR&ED)" : ""
+                            var jobSection = String(Int(job.jid))
                             var line = ""
 
                             if let uri = job.uri {
-                                if !exportsPreferJobId {
-                                    jobSection = uri.absoluteString + shredableMsg
-                                }
+                                jobSection += " - \(uri.absoluteString)" + shredableMsg
+                            } else {
+                                jobSection += shredableMsg
                             }
 
                             if exportsShowTimestamp {
