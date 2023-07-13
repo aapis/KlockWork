@@ -14,13 +14,13 @@ final public class DateHelper {
     static public func thisAm() -> CVarArg {
         let date = Date()
 
-        return Calendar.current.startOfDay(for: date) as CVarArg
+        return Calendar.autoupdatingCurrent.startOfDay(for: date) as CVarArg
     }
     
     static public func tomorrow() -> CVarArg {
         let date = Date() + 86400
 
-        return Calendar.current.startOfDay(for: date) as CVarArg
+        return Calendar.autoupdatingCurrent.startOfDay(for: date) as CVarArg
     }
     
     static public func yesterday() -> CVarArg {
@@ -34,7 +34,7 @@ final public class DateHelper {
     static public func daysPast(_ numDays: Double) -> CVarArg {
         let date = Date() - (86400 * numDays)
 
-        return Calendar.current.startOfDay(for: date) as CVarArg
+        return Calendar.autoupdatingCurrent.startOfDay(for: date) as CVarArg
     }
     
     static public func todayShort(_ date: Date? = Date()) -> String {
@@ -92,7 +92,7 @@ final public class DateHelper {
         for i in 0...numDays {
             var components = DateComponents()
             components.day = -(1*i)
-            let computedDay = Calendar.current.date(byAdding: components, to: Date())
+            let computedDay = Calendar.autoupdatingCurrent.date(byAdding: components, to: Date())
             
             if computedDay != nil {
                 let fmt = DateFormatter()
@@ -118,7 +118,7 @@ final public class DateHelper {
     }
     
     static public func startAndEndOf(_ date: Date) -> (Date, Date) {
-        let start = Calendar.current.startOfDay(for: date)
+        let start = Calendar.autoupdatingCurrent.startOfDay(for: date)
         var components = DateComponents()
         components.day = 1
         components.second = -1
@@ -130,7 +130,7 @@ final public class DateHelper {
     }
     
     static public func dayAtStartAndEndOfMonth() -> (CVarArg, CVarArg)? {
-        let calendar = Calendar.current
+        let calendar = Calendar.autoupdatingCurrent
         let today = Date()
         let components = calendar.dateComponents([.year, .month], from: today)
         let startOfMonth = calendar.date(from: components)
@@ -147,5 +147,24 @@ final public class DateHelper {
         }
         
         return nil
+    }
+
+    static public func dateForHour(_ hour: Int, _ baseDate: Date? = nil) -> Date? {
+        let calendar = Calendar.autoupdatingCurrent
+        var today = Date()
+
+        if baseDate != nil {
+            today = baseDate!
+        }
+
+        var dc = DateComponents()
+        dc.day = calendar.component(.day, from: today)
+        dc.month = calendar.component(.month, from: today)
+        dc.year = calendar.component(.year, from: today)
+        dc.timeZone = TimeZone.autoupdatingCurrent
+        dc.hour = hour
+        dc.minute = 0
+
+        return calendar.date(from: dc)
     }
 }

@@ -15,7 +15,9 @@ public class CoreDataRecords: ObservableObject {
     private let lock = NSLock()
     
     public init(moc: NSManagedObjectContext?) {
+        lock.lock()
         self.moc = moc
+        lock.unlock()
     }
     
     public func createWithJob(job: Job, date: Date, text: String) -> Void {

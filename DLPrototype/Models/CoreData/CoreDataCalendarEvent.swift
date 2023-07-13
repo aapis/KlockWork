@@ -13,6 +13,18 @@ import SwiftUI
 public enum CalendarEventType: String, CaseIterable {
     case inProgress = "In Progress"
     case upcoming = "Upcoming"
+    case records = "Records"
+
+    var colour: Color {
+        switch (self) {
+        case .inProgress:
+            return Theme.rowStatusGreen
+        case .upcoming:
+            return Theme.rowStatusYellow
+        case .records:
+            return Theme.rowColour
+        }
+    }
 }
 
 public enum CalendarEventStatus {
@@ -132,49 +144,15 @@ public class CoreDataCalendarEvent: ObservableObject {
         return events
     }
 
-    public func eventsInProgress(_ calendarName: String) -> [EKEvent] {
+    public func eventsInProgress(_ calendarName: String, at: Int? = nil) -> [EKEvent] {
         return find(calendar: calendarName) { calendar in
-            let existingEvents = self.byType(.inProgress)
-            var ekEvents = self.inProgress(calendar)
-
-            for (index, ev) in ekEvents.enumerated() {
-                if let title = ev.title {
-                    for existingEv in existingEvents {
-                        if let eTitle = existingEv.title {
-                            if title == eTitle {
-                                ekEvents.remove(at: index)
-                            }
-                        }
-                    }
-                }
-            }
-
-//            let _ = self.store(events: ekEvents, type: .inProgress)
-
-            return ekEvents
+            return  self.inProgress(calendar, block: at)
         }
     }
 
     public func eventsUpcoming(_ calendarName: String) -> [EKEvent] {
         return find(calendar: calendarName) { calendar in
-            let existingEvents = self.byType(.upcoming)
-            var ekEvents = self.upcoming(calendar)
-
-            for (index, ev) in ekEvents.enumerated() {
-                if let title = ev.title {
-                    for existingEv in existingEvents {
-                        if let eTitle = existingEv.title {
-                            if title == eTitle {
-                                ekEvents.remove(at: index)
-                            }
-                        }
-                    }
-                }
-            }
-
-//            let _ = self.store(events: ekEvents, type: .upcoming)
-
-            return ekEvents
+            return self.upcoming(calendar)
         }
     }
 
@@ -182,6 +160,28 @@ public class CoreDataCalendarEvent: ObservableObject {
         return self.findInCalendar(calendar: calendarName) { calendar in
             return self.eventsForDay(calendar)
         }
+    }
+
+    // TODO: move to CoreDataRecord
+    public func plotRecords(_ records: [LogRecord]) -> [EKEvent] {
+        var evRecords: [EKEvent] = []
+
+        for (index, record) in records.enumerated() {
+//            let ev = DLPEKEvent(eventStore: store, colour: Color.fromStored(record.job?.colour ?? Theme.rowColourAsDouble))
+            let ev = EKEvent(eventStore: store)
+            ev.startDate = record.timestamp
+            ev.title = record.job?.jid.string
+            var next: Int = index - 1
+
+            // TODO: a bunch of work needs to happen here to plot records as blocks of time
+
+            ev.endDate = records.indices.contains(next) ? records[next].timestamp : record.timestamp
+
+
+            evRecords.append(ev)
+        }
+        
+        return evRecords
     }
 
     public func getCalendar(_ calendarName: String) -> EKCalendar? {
@@ -229,10 +229,16 @@ public class CoreDataCalendarEvent: ObservableObject {
         return events
     }
 
-    private func inProgress(_ calendarName: String) -> [EKEvent] {
+    private func inProgress(_ calendarName: String, block: Int? = nil) -> [EKEvent] {
         var eventsInProgress: [EKEvent] = []
         let now = Date()
-        let (start, end) = DateHelper.startAndEndOf(now)
+        var (start, end) = DateHelper.startAndEndOf(now)
+
+        if block != nil {
+            start = DateHelper.dateForHour(block!) ?? start
+            end = DateHelper.dateForHour(block! + 1) ?? end
+        }
+
         let calendar = getCalendar(calendarName)
 
         if calendar != nil {

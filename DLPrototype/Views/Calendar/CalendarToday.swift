@@ -11,8 +11,10 @@ import SwiftUI
 import EventKit
 
 struct CalendarToday: View {
-    @State private var inProgress: [EKEvent] = []
-    @State private var upcoming: [EKEvent] = []
+    public var selectedDate: Date
+    public var records: [LogRecord]
+
+    @State private var calendarItems: [EKEvent] = []
     @State private var currentBlock: Int = 0
     @State private var currentDate: String = ""
     @State private var timer: Timer? = nil
@@ -34,76 +36,43 @@ struct CalendarToday: View {
             .background(Theme.headerColour)
 
             ScrollView {
-                HStack(spacing: 0) {
-                    ForEach(startOfDay..<(endOfDay - 1), id: \.self) { time in
+                HStack(spacing: 1) {
+                    ForEach(startOfDay..<(endOfDay - 1), id: \.self) { currentHour in
                         ZStack {
-                            (currentBlock == time ? Theme.footerColour : Color.clear)
+                            (currentBlock == currentHour ? Theme.footerColour : Color.clear)
 
-                            Grid(alignment: .topLeading, horizontalSpacing: 1, verticalSpacing: 1) {
+                            Grid(alignment: .topLeading) {
                                 GridRow {
-                                    if time > 12 {
-                                        Text(String(time - 12) + " PM")
+                                    if currentHour > 12 {
+                                        Text(String(currentHour - 12) + " PM")
                                             .font(Theme.fontCaption)
                                             .padding(5)
-                                    } else if time == 12 {
-                                        Text(String(time) + " PM")
+                                    } else if currentHour == 12 {
+                                        Text(String(currentHour) + " PM")
                                             .font(Theme.fontCaption)
                                             .padding(5)
                                     } else {
-                                        Text(String(time) + " AM")
+                                        Text(String(currentHour) + " AM")
                                             .font(Theme.fontCaption)
                                             .padding(5)
                                     }
                                 }
+
                                 GridRow {
                                     Divider()
                                 }
 
-                                if inProgress.count > 0 {
-                                    GridRow(alignment: .top) {
-                                        Text("In Progress")
-                                            .font(Theme.fontCaption)
-                                            .padding(5)
-                                    }
-                                    GridRow {
-                                        Divider()
-                                    }
-
-                                    ForEach(inProgress, id: \.self) { chip in
-                                        CalendarIndividualEvent(event: chip, currentHour: time)
-                                    }
-                                }
-
-                                if upcoming.count > 0 {
-                                    FancyDivider()
-                                    GridRow(alignment: .top) {
-                                        Text("Upcoming")
-                                            .font(Theme.fontCaption)
-                                            .padding(5)
-                                    }
-                                    GridRow {
-                                        Divider()
-                                    }
-                                    ForEach(upcoming, id: \.self) { chip in
-                                        CalendarIndividualEvent(event: chip, currentHour: time)
-                                    }
-                                }
-
-                                if inProgress.count == 0 && upcoming.count == 0 {
-                                    GridRow {
-                                        Text("No events")
-                                            .font(Theme.fontCaption)
-                                            .padding(5)
-                                    }
+                                ForEach(calendarItems, id: \.self) { chip in
+                                    CalendarIndividualEvent(event: chip, currentHour: currentHour, type: .records)
                                 }
 
                                 Spacer()
                             }
                         }
+//                        .frame(minWidth: 0, maxWidth: .infinity)
                     }
                 }
             }
-            .frame(minWidth: 10, maxWidth: .infinity, minHeight: 10, maxHeight: 200)
             
             Spacer()
         }
@@ -113,15 +82,17 @@ struct CalendarToday: View {
 
     private func updateChips() -> Void {
         ce.truncate()
-        currentBlock = Calendar.current.component(.hour, from: Date())
-        currentDate = Date().formatted(date: .abbreviated, time: .omitted)
-        inProgress = []
-        upcoming = []
+        currentBlock = Calendar.current.component(.hour, from: selectedDate)
+        currentDate = selectedDate.formatted(date: .abbreviated, time: .omitted)
+        calendarItems = []
 
         let chosenCalendar = ce.selectedCalendar()
 
-        inProgress = ce.eventsInProgress(chosenCalendar!)
-        upcoming = ce.eventsUpcoming(chosenCalendar!)
+        calendarItems = (
+            ce.eventsInProgress(chosenCalendar!, at: currentBlock) +
+            ce.eventsUpcoming(chosenCalendar!) +
+            ce.plotRecords(records)
+        )
     }
 
     private func createEventChips() -> Void {
@@ -135,11 +106,29 @@ struct CalendarToday: View {
             print("[debug.timer] Today().CalendarToday.createEventChips run")
         }
     }
+
+    private func eventsThisBlock(event: EKEvent) throws -> Bool {
+        return true
+    }
 }
 
 struct CalendarTodayPreview: PreviewProvider {
+    static public var date: Date = Date()
+    static public var records: [LogRecord] = []
+
+    init(date: Date, records: [LogRecord]) {
+        for _ in 1..<10 {
+            let entity = LogRecord(context: PersistenceController.preview.container.viewContext)
+            entity.message = "testing"
+            entity.timestamp = Date()
+            entity.id = UUID()
+
+            CalendarTodayPreview.records.append(entity)
+        }
+    }
+    
     static var previews: some View {
-        CalendarToday()
+        CalendarToday(selectedDate: date, records: records)
             .environmentObject(CoreDataCalendarEvent(moc: PersistenceController.preview.container.viewContext))
     }
 }

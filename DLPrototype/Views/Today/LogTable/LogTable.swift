@@ -48,7 +48,7 @@ struct LogTable: View, Identifiable {
                         viewModePlain
                     }
                 } else {
-                    CalendarToday()
+                    CalendarToday(selectedDate: selectedDate, records: records)
                         .id(updater.ids["today.calendarStrip"])
                         .environmentObject(ce)
                 }

@@ -90,6 +90,7 @@
 		53B0BE8C297318A6007CB663 /* ProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8B297318A6007CB663 /* ProjectView.swift */; };
 		53B0BE8E29731D41007CB663 /* FancyTextLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8D29731D41007CB663 /* FancyTextLink.swift */; };
 		53B0BE90297333C3007CB663 /* ManageProjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8F297333C3007CB663 /* ManageProjects.swift */; };
+		53BFD6F62A183EE6002CC4E4 /* EKEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BFD6F52A183EE6002CC4E4 /* EKEvent.swift */; };
 		53C036EC29F884E600539C3C /* ThisDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C036EB29F884E600539C3C /* ThisDay.swift */; };
 		53C036EF29F8A59900539C3C /* DashboardSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C036EE29F8A59900539C3C /* DashboardSettings.swift */; };
 		53C3418C299960310071B855 /* JobDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418B299960310071B855 /* JobDashboard.swift */; };
@@ -230,6 +231,7 @@
 		53B0BE8B297318A6007CB663 /* ProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectView.swift; sourceTree = "<group>"; };
 		53B0BE8D29731D41007CB663 /* FancyTextLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyTextLink.swift; sourceTree = "<group>"; };
 		53B0BE8F297333C3007CB663 /* ManageProjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageProjects.swift; sourceTree = "<group>"; };
+		53BFD6F52A183EE6002CC4E4 /* EKEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKEvent.swift; sourceTree = "<group>"; };
 		53C036EB29F884E600539C3C /* ThisDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThisDay.swift; sourceTree = "<group>"; };
 		53C036EE29F8A59900539C3C /* DashboardSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardSettings.swift; sourceTree = "<group>"; };
 		53C3418B299960310071B855 /* JobDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDashboard.swift; sourceTree = "<group>"; };
@@ -681,6 +683,7 @@
 			children = (
 				53EFCE7529637CC6004E45EC /* Color.swift */,
 				53152CC829690E7300A14E43 /* LosslessStringConvertible.swift */,
+				53BFD6F52A183EE6002CC4E4 /* EKEvent.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -903,6 +906,7 @@
 				53C036EF29F8A59900539C3C /* DashboardSettings.swift in Sources */,
 				53759E0829678DC700DCDC4B /* Import.swift in Sources */,
 				532CF0DC2A12A14200710B67 /* EventRow.swift in Sources */,
+				53BFD6F62A183EE6002CC4E4 /* EKEvent.swift in Sources */,
 				535C1AE829F4912800CD95FD /* ThisMonth.swift in Sources */,
 				53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */,
 				5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */,
