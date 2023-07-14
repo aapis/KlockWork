@@ -229,6 +229,12 @@ public class CoreDataRecords: ObservableObject {
                 }
 
                 for record in group.value {
+                    // column.index intentionally not supported in grouped exports
+                    // column.jobId intentionally not supported in group exports
+                    if syncColumns && showColumnTimestamp {
+                        buffer += " - \(record.timestamp!)"
+                    }
+
                     buffer += " - \(record.message!)\n"
                 }
 
