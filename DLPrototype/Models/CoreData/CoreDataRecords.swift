@@ -188,63 +188,98 @@ public class CoreDataRecords: ObservableObject {
         return (wc, jc, recordsInPeriod.count)
     }
 
-    public func createExportableRecordsFrom(_ records: [LogRecord]) -> String {
+    public func createExportableRecordsFrom(_ records: [LogRecord], grouped: Bool? = false) -> String {
+        if grouped! {
+            return exportableGroupedRecords(records)
+        }
+
+        return exportableRecords(records)
+    }
+
+    private func exportableGroupedRecords(_ records: [LogRecord]) -> String {
+        if records.count == 0 {
+            return ""
+        }
+
         var buffer = ""
 
-        // TODO: group items together, don't repeat URLs (save characters)
-        // TODO: Asana has a max 2000 char limit per entry!
-        if records.count > 0 {
-            var i = 0
+        let groupedRecords = Dictionary(grouping: records, by: {$0.job}).sorted(by: {$0.key!.jid > $1.key!.jid})
 
-            for item in records {
-                if let job = item.job {
-                    let cleaned = CoreDataProjectConfiguration.applyBannedWordsTo(item)
+        for group in groupedRecords {
+            if group.key != nil {
+                let jid = String(Int(group.key!.jid))
 
-                    if let ignoredJobs = job.project?.configuration?.ignoredJobs {
-                        if !ignoredJobs.contains(job.jid.string) {
-                            let shredableMsg = job.shredable ? " (SR&ED)" : ""
-                            var jobSection = ""
-                            var line = ""
-
-                            if syncColumns && showColumnIndex {
-                                jobSection += " \(String(Int(job.jid)))"
-                                line += "\(i) - "
-                            } else {
-                                jobSection += String(Int(job.jid))
-                            }
-
-                            if syncColumns && showColumnJobId {
-                                if let uri = job.uri {
-                                    jobSection += " - \(uri.absoluteString)" + shredableMsg
-                                } else {
-                                    jobSection += shredableMsg
-                                }
-                            }
-
-                            if syncColumns && showColumnTimestamp {
-                                    line += "\(item.timestamp!)"
-                                    line += " - \(jobSection)"
-//                                } else {
-//                                    line += jobSection
-//                                }
-                            } else {
-                                line += jobSection
-                            }
-
-                            if line.count > 0 {
-                                line += " - \(cleaned.message!)\n"
-                            } else {
-                                line += "\(cleaned.message!)\n"
-                            }
-
-
-                            buffer += line
-                        }
-                    }
+                if group.key!.uri != nil {
+                    buffer += "\(jid): \(group.key!.uri!.absoluteString)\n"
+                } else {
+                    buffer += "\(jid)\n"
                 }
 
-                i += 1
+                for record in group.value {
+                    buffer += " - \(record.message!)\n"
+                }
+
+                buffer += "\n"
             }
+        }
+
+        return buffer
+    }
+
+    // TODO: Asana has a max 2000 char limit per entry!
+    private func exportableRecords(_ records: [LogRecord]) -> String {
+        if records.count == 0 {
+            return ""
+        }
+
+        var buffer = ""
+        var i = 0
+
+        for item in records {
+            if let job = item.job {
+                let cleaned = CoreDataProjectConfiguration.applyBannedWordsTo(item)
+
+                if let ignoredJobs = job.project?.configuration?.ignoredJobs {
+                    if !ignoredJobs.contains(job.jid.string) {
+                        let shredableMsg = job.shredable ? " (SR&ED)" : ""
+                        var jobSection = ""
+                        var line = ""
+
+                        if syncColumns && showColumnIndex {
+                            jobSection += " \(String(Int(job.jid)))"
+                            line += "\(i) - "
+                        } else {
+                            jobSection += String(Int(job.jid))
+                        }
+
+                        if syncColumns && showColumnJobId {
+                            if let uri = job.uri {
+                                jobSection += " - \(uri.absoluteString)" + shredableMsg
+                            } else {
+                                jobSection += shredableMsg
+                            }
+                        }
+
+                        if syncColumns && showColumnTimestamp {
+                            line += "\(item.timestamp!)"
+                            line += " - \(jobSection)"
+                        } else {
+                            line += jobSection
+                        }
+
+                        if line.count > 0 {
+                            line += " - \(cleaned.message!)\n"
+                        } else {
+                            line += "\(cleaned.message!)\n"
+                        }
+
+
+                        buffer += line
+                    }
+                }
+            }
+
+            i += 1
         }
 
         return buffer

@@ -294,7 +294,7 @@ struct LogTable: View, Identifiable {
                 records = summarized()
             }
             
-            recordsAsString = CoreDataRecords(moc: moc).createExportableRecordsFrom(records)
+            recordsAsString = CoreDataRecords(moc: moc).createExportableRecordsFrom(records, grouped: selectedTab == .grouped)
         }
     }
     
