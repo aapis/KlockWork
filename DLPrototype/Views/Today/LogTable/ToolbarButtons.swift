@@ -139,28 +139,9 @@ struct ToolbarButtons: View {
     }
     
     private func export() -> Void {
-        var pasteboardContents = ""
-        
-        for record in records {
-            if record.job != nil {
-                let ignoredJobs = record.job!.project?.configuration?.ignoredJobs
-                let cleaned = CoreDataProjectConfiguration.applyBannedWordsTo(record)
-                
-                if ignoredJobs != nil {
-                    if !ignoredJobs!.contains(record.job!.jid.string) {
-                        let url = record.job!.uri
-                        
-                        if url != nil {
-                            pasteboardContents += "\(record.timestamp!) - \(record.job!.uri!.absoluteString) - \(cleaned.message!)\n"
-                        } else {
-                            pasteboardContents += "\(record.timestamp!) - \(record.job!.jid.string) - \(cleaned.message!)\n"
-                        }
-                    }
-                }
-            }
-        }
-        
-        ClipboardHelper.copy(pasteboardContents)
+        ClipboardHelper.copy(
+            CoreDataRecords(moc: moc).createExportableRecordsFrom(records)
+        )
     }
     
     private func viewAsPlain() -> Void {

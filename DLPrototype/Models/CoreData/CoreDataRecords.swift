@@ -13,6 +13,8 @@ public class CoreDataRecords: ObservableObject {
     public var moc: NSManagedObjectContext?
     
     private let lock = NSLock()
+
+    @AppStorage("exportsShowTimestamp") public var exportsShowTimestamp: Bool = true
     
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
@@ -181,6 +183,47 @@ public class CoreDataRecords: ObservableObject {
         }
         
         return (wc, jc, recordsInPeriod.count)
+    }
+
+    public func createExportableRecordsFrom(_ records: [LogRecord]) -> String {
+        var buffer = ""
+
+        // TODO: group items together, don't repeat URLs (save characters)
+        // TODO: Asana has a max 2000 char limit per entry!
+        if records.count > 0 {
+            for item in records {
+                if let job = item.job {
+                    let cleaned = CoreDataProjectConfiguration.applyBannedWordsTo(item)
+
+                    if let ignoredJobs = job.project?.configuration?.ignoredJobs {
+                        if !ignoredJobs.contains(job.jid.string) {
+                            let shredableMsg = job.shredable ? " (SR&ED)" : ""
+                            var jobSection = String(Int(job.jid))
+                            var line = ""
+
+                            if let uri = job.uri {
+                                jobSection += " - \(uri.absoluteString)" + shredableMsg
+                            } else {
+                                jobSection += shredableMsg
+                            }
+
+                            if exportsShowTimestamp {
+                                line += "\(item.timestamp!)"
+                                line += " - \(jobSection)"
+                            } else {
+                                line += jobSection
+                            }
+
+                            line += " - \(cleaned.message!)\n"
+
+                            buffer += line
+                        }
+                    }
+                }
+            }
+        }
+
+        return buffer
     }
     
     private func query(_ predicate: NSPredicate) -> [LogRecord] {

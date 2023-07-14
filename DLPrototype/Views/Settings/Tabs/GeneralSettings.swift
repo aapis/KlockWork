@@ -17,6 +17,7 @@ struct GeneralSettings: View {
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
     @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
+    @AppStorage("exportsShowTimestamp") public var exportsShowTimestamp: Bool = true
 
     var body: some View {
         Form {
@@ -35,6 +36,11 @@ struct GeneralSettings: View {
             Picker("Default table sort direction:", selection: $defaultTableSortOrder) {
                 Text("DESC").tag("DESC")
                 Text("ASC").tag("ASC")
+            }
+
+            Group {
+                Text("Export options")
+                Toggle("Show timestamp under View Mode > Plain and in exports", isOn: $exportsShowTimestamp)
             }
         }
         .padding(20)

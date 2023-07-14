@@ -280,7 +280,7 @@ struct LogTable: View, Identifiable {
                 records = summarized()
             }
             
-            createPlaintextRecords()
+            recordsAsString = CoreDataRecords(moc: moc).createExportableRecordsFrom(records)
         }
     }
     
@@ -298,32 +298,6 @@ struct LogTable: View, Identifiable {
         records = recordsNoFilter()
         
         changeSort()
-    }
-    
-    // TODO: move this func to CoreDataRecords model
-    private func createPlaintextRecords() -> Void {
-        if records.count > 0 {
-            recordsAsString = ""
-            
-            for item in records {
-                if let job = item.job {
-                    let cleaned = CoreDataProjectConfiguration.applyBannedWordsTo(item)
-                    
-                    if let ignoredJobs = job.project?.configuration?.ignoredJobs {
-                        if !ignoredJobs.contains(job.jid.string) {
-                            let shredableMsg = job.shredable ? " (eligible for SR&ED)" : ""
-                            var jobSection = job.jid.string + shredableMsg
-                            
-                            if let uri = job.uri {
-                                jobSection = uri.absoluteString + shredableMsg
-                            }
-                            
-                            recordsAsString += "\(item.timestamp!) - \(jobSection) - \(cleaned.message!)\n"
-                        }
-                    }
-                }
-            }
-        }
     }
     
     private func findMatches(_ message: String) -> Bool {
