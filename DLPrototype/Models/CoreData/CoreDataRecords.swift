@@ -190,13 +190,26 @@ public class CoreDataRecords: ObservableObject {
 
     public func createExportableRecordsFrom(_ records: [LogRecord], grouped: Bool? = false) -> String {
         if grouped! {
-            return exportableGroupedRecords(records)
+            return exportableGroupedRecordsAsString(records)
         }
 
         return exportableRecords(records)
     }
 
-    private func exportableGroupedRecords(_ records: [LogRecord]) -> String {
+    public func createExportableGroupedRecordsAsViews(_ records: [LogRecord]) -> [FancyStaticTextField] {
+        var views: [FancyStaticTextField] = []
+
+        let groupedRecords = exportableGroupedRecordsAsString(records).split(separator: "\t\n")
+
+        for group in groupedRecords {
+            let view = FancyStaticTextField(placeholder: "Records...", lineLimit: 10, text: String(group))
+            views.append(view)
+        }
+
+        return views
+    }
+
+    private func exportableGroupedRecordsAsString(_ records: [LogRecord]) -> String {
         if records.count == 0 {
             return ""
         }
@@ -219,7 +232,7 @@ public class CoreDataRecords: ObservableObject {
                     buffer += " - \(record.message!)\n"
                 }
 
-                buffer += "\n"
+                buffer += "\t\n"
             }
         }
 

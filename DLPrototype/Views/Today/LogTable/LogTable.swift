@@ -268,7 +268,15 @@ struct LogTable: View, Identifiable {
             }
             
             if records.count > 0 && recordsAsString.count > 0 {
-                FancyTextField(placeholder: "Records...", lineLimit: 10, text: $recordsAsString)
+                if selectedTab == .grouped {
+                    // custom UI for grouped results
+                    // TODO: shouldn't instantiate CDR here
+                    let groupedByJob = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(records)
+                    ForEach(groupedByJob) { group in group }
+                } else {
+                    // standard UI
+                    FancyTextField(placeholder: "Records...", lineLimit: 10, text: $recordsAsString)
+                }
             } else {
                 LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
             }
@@ -294,7 +302,10 @@ struct LogTable: View, Identifiable {
                 records = summarized()
             }
             
-            recordsAsString = CoreDataRecords(moc: moc).createExportableRecordsFrom(records, grouped: selectedTab == .grouped)
+            recordsAsString = CoreDataRecords(moc: moc).createExportableRecordsFrom(
+                records,
+                grouped: selectedTab == .grouped
+            )
         }
     }
     
