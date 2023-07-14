@@ -27,6 +27,7 @@ public struct FancyStaticTextField: View, Identifiable {
     @State public var backgroundColour: Color = Theme.textBackground
 
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
+    @AppStorage("today.maxCharsPerGroup") public var maxCharsPerGroup: Int = 0
 
     public var body: some View {
         HStack(alignment: .top, spacing: 1) {
@@ -66,7 +67,7 @@ public struct FancyStaticTextField: View, Identifiable {
 
             Spacer()
 
-            if internalText.count > 2000 {
+            if internalText.count > maxCharsPerGroup {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .help("Too many characters, prune or split into multiple time tracker entries")
                     .symbolRenderingMode(.multicolor)
@@ -140,8 +141,7 @@ public struct FancyStaticTextField: View, Identifiable {
             return Theme.rowStatusGreen
         }
 
-        // Asana has a max 2000 char limit per entry!
-        if internalText.count > 2000 {
+        if internalText.count > maxCharsPerGroup {
             return Theme.rowStatusYellow
         }
 
