@@ -187,7 +187,9 @@ public class CoreDataRecords: ObservableObject {
 
     public func createExportableRecordsFrom(_ records: [LogRecord]) -> String {
         var buffer = ""
-        
+
+        // TODO: group items together, don't repeat URLs (save characters)
+        // TODO: Asana has a max 2000 char limit per entry!
         if records.count > 0 {
             for item in records {
                 if let job = item.job {
