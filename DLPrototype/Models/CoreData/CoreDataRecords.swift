@@ -245,7 +245,6 @@ public class CoreDataRecords: ObservableObject {
         return buffer
     }
 
-    // TODO: Asana has a max 2000 char limit per entry!
     private func exportableRecords(_ records: [LogRecord]) -> String {
         if records.count == 0 {
             return ""

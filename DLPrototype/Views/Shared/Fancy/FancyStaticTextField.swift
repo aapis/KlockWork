@@ -66,6 +66,14 @@ public struct FancyStaticTextField: View, Identifiable {
 
             Spacer()
 
+            if internalText.count > 2000 {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .help("Too many characters, prune or split into multiple time tracker entries")
+                    .symbolRenderingMode(.multicolor)
+                    .foregroundColor(Color.yellow)
+                Spacer()
+            }
+
             Image(systemName: "number")
                 .help("\(internalText.count) characters")
 
@@ -130,6 +138,11 @@ public struct FancyStaticTextField: View, Identifiable {
     private func setBackground() -> Color {
         if copied {
             return Theme.rowStatusGreen
+        }
+
+        // Asana has a max 2000 char limit per entry!
+        if internalText.count > 2000 {
+            return Theme.rowStatusYellow
         }
 
         return transparent! ? Color.clear : bgColour!
