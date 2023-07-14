@@ -11,36 +11,32 @@ import SwiftUI
 
 struct GeneralSettings: View {
     @AppStorage("tigerStriped") private var tigerStriped: Bool = false
-    @AppStorage("defaultTableSortOrder") private var defaultTableSortOrder: String = "DESC"
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures: Bool = false
-    @AppStorage("showExperiment.actions") private var showExperimentActions: Bool = false
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
     @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
-    @AppStorage("exportsShowTimestamp") public var exportsShowTimestamp: Bool = true
+    @AppStorage("general.syncColumns") public var syncColumns: Bool = false
 
     var body: some View {
         Form {
-            Toggle("Tiger stripe table rows", isOn: $tigerStriped)
-            Toggle("Auto-correct text in text boxes", isOn: $enableAutoCorrection)
-            
             Group {
-                Toggle("Experimental features (may tank performance)", isOn: $showExperimentalFeatures)
-                
+                Text("Visual appearance")
+                Toggle("Tiger stripe table rows", isOn: $tigerStriped)
+                Toggle("Auto-correct text in text boxes", isOn: $enableAutoCorrection)
+            }
+
+            Group {
+                Toggle("Enable experimental features (EXERCISE CAUTION)", isOn: $showExperimentalFeatures)
+
                 if showExperimentalFeatures {
-                    Toggle("Show row actions", isOn: $showExperimentActions)
                     Toggle("Auto-fix records with bad jobs", isOn: $autoFixJobs)
                 }
-            }
-            
-            Picker("Default table sort direction:", selection: $defaultTableSortOrder) {
-                Text("DESC").tag("DESC")
-                Text("ASC").tag("ASC")
             }
 
             Group {
                 Text("Export options")
-                Toggle("Show timestamp under View Mode > Plain and in exports", isOn: $exportsShowTimestamp)
+                Toggle("Synchronize display and export columns", isOn: $syncColumns)
+                    .help("Both table display and data exports will use the same columns set under 'Today > Display columns'")
             }
         }
         .padding(20)

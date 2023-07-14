@@ -30,6 +30,10 @@ struct LogTable: View, Identifiable {
     @AppStorage("showSidebar") public var showSidebar: Bool = true
     @AppStorage("showTodaySearch") public var showSearch: Bool = true
     @AppStorage("today.recordGrouping") public var recordGrouping: Int = 0
+    @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
+    @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
+    @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
+    @AppStorage("today.showColumnActions") public var showColumnActions: Bool = false
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
@@ -154,42 +158,52 @@ struct LogTable: View, Identifiable {
                     Theme.headerColour
                 }
             }
-                .frame(width: 5)
-            Group {
-                ZStack {
-                    Theme.headerColour
-                    Button(action: setIsReversed) {
-                        Image(systemName: "arrow.up.arrow.down")
-                    }
-                    .buttonStyle(BorderlessButtonStyle())
-                    .foregroundColor(Color.white)
-                    .onChange(of: isReversed) { _ in sort() }
-                    .onHover { inside in
-                        if inside {
-                            NSCursor.pointingHand.push()
-                        } else {
-                            NSCursor.pop()
+            .frame(width: 5)
+
+            if showColumnIndex {
+                Group {
+                    ZStack {
+                        Theme.headerColour
+                        Button(action: setIsReversed) {
+                            Image(systemName: "arrow.up.arrow.down")
+                        }
+                        .buttonStyle(BorderlessButtonStyle())
+                        .foregroundColor(Color.white)
+                        .onChange(of: isReversed) { _ in sort() }
+                        .onHover { inside in
+                            if inside {
+                                NSCursor.pointingHand.push()
+                            } else {
+                                NSCursor.pop()
+                            }
                         }
                     }
                 }
-            }
                 .frame(width: 50)
-            Group {
-                ZStack(alignment: .leading) {
-                    Theme.headerColour
-                    Text("Timestamp")
-                        .padding(10)
-                }
             }
+
+            if showColumnTimestamp {
+                Group {
+                    ZStack(alignment: .leading) {
+                        Theme.headerColour
+                        Text("Timestamp")
+                            .padding(10)
+                    }
+                }
                 .frame(width: 101)
-            Group {
-                ZStack(alignment: .leading) {
-                    Theme.headerColour
-                    Text("Job ID")
-                        .padding(10)
-                }
             }
-                .frame(width: 120)
+
+            if showColumnJobId {
+                Group {
+                    ZStack(alignment: .leading) {
+                        Theme.headerColour
+                        Text("Job ID")
+                            .padding(10)
+                    }
+                }
+                .frame(width: 80)
+            }
+            
             Group {
                 ZStack(alignment: .leading) {
                     Theme.headerColour

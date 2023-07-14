@@ -21,6 +21,12 @@ struct TodaySettings: View {
     @AppStorage("today.calendar") public var calendar: Int = -1
     @AppStorage("today.startOfDay") public var startOfDay: Int = 9
     @AppStorage("today.endOfDay") public var endOfDay: Int = 18
+    @AppStorage("today.defaultTableSortOrder") private var defaultTableSortOrder: String = "DESC"
+    @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
+    @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
+    @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
+    @AppStorage("today.showColumnActions") public var showColumnActions: Bool = false
+    @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures: Bool = false
     
     @State private var calendars: [CustomPickerItem] = []
 
@@ -39,6 +45,11 @@ struct TodaySettings: View {
             Picker("Default view mode", selection: $viewMode) {
                 Text("Full").tag(1)
                 Text("Plain").tag(2)
+            }
+
+            Picker("Default sort direction:", selection: $defaultTableSortOrder) {
+                Text("DESC").tag("DESC")
+                Text("ASC").tag("ASC")
             }
             
             Group {
@@ -66,6 +77,15 @@ struct TodaySettings: View {
                     Text("Grouped").tag(1)
                     Text("Summarized").tag(2)
                 }
+                Divider()
+            }
+
+            Section("Display columns") {
+                Toggle("Index", isOn: $showColumnIndex)
+                Toggle("Timestamp", isOn: $showColumnTimestamp)
+                Toggle("Job ID", isOn: $showColumnJobId)
+                Toggle("Actions (EXPERIMENTAL)", isOn: $showColumnActions).disabled(!showExperimentalFeatures) // TODO: future feature
+                Divider()
             }
 
             Section("Calendar and Date Settings") {
@@ -84,7 +104,6 @@ struct TodaySettings: View {
                         }
                     }
                 }
-
 
                 Picker("Active calendar", selection: $calendar) {
                     ForEach(calendars, id: \.self) { item in

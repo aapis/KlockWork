@@ -21,11 +21,35 @@ struct Home: View {
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
+//    @StateObject public var pr: CoreDataProjects = CoreDataProjects(moc: PersistenceController.shared.container.viewContext)
     
     @State public var appVersion: String?
     @State public var splitDirection: Bool = false // false == horizontal, true == vertical
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
+
+    // TODO: started trying to add "child items" under each nav link but it didn't work as expected so I moved on
+//    private var projects: [Any] {
+//        var links: [Any] = []
+//
+//        let alive = pr.alive()
+//
+//        for p in alive {
+//            let link = NavigationLink {
+//                ProjectsDashboard()
+//                    .navigationTitle("Project 1")
+//                    .environmentObject(rm)
+//                    .environmentObject(jm)
+//                    .environmentObject(updater)
+//            } label: {
+//                Text(p.name ?? "Item")
+//            }
+//
+//            links.append(link)
+//        }
+//
+//        return links
+//    }
     
     var body: some View {
         NavigationSplitView {
@@ -179,28 +203,9 @@ struct Home: View {
                             .padding(.trailing, 10)
                         Text("Jobs")
                     }
-                    
-                    NavigationLink {
-                        Import()
-                            .navigationTitle("Import")
-                            .environmentObject(rm)
-                            .toolbar {
-                                if showExperimentalFeatures {
-                                    Button(action: {}, label: {
-                                        Image(systemName: "arrow.triangle.2.circlepath")
-                                    })
-                                    .buttonStyle(.borderless)
-                                    .font(.title)
-                                }
-                            }
-                    } label: {
-                        Image(systemName: "square.and.arrow.up.fill")
-                            .padding(.trailing, 10)
-                        Text("In + Out")
-                    }
                 }
                 
-                if showExperimentalFeatures {                    
+                if showExperimentalFeatures {
                     Section(header: Text("Experimental")) {
                         NavigationLink {
                             Split(direction: $splitDirection)
@@ -266,6 +271,25 @@ struct Home: View {
                             Image(systemName: "cloud.fill")
                                 .padding(.trailing, 10)
                             Text("Backup")
+                        }
+
+                        NavigationLink {
+                            Import()
+                                .navigationTitle("Import")
+                                .environmentObject(rm)
+                                .toolbar {
+                                    if showExperimentalFeatures {
+                                        Button(action: {}, label: {
+                                            Image(systemName: "arrow.triangle.2.circlepath")
+                                        })
+                                        .buttonStyle(.borderless)
+                                        .font(.title)
+                                    }
+                                }
+                        } label: {
+                            Image(systemName: "square.and.arrow.up.fill")
+                                .padding(.trailing, 10)
+                            Text("In + Out")
                         }
                     }
                 }
