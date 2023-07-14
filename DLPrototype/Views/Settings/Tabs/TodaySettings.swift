@@ -21,6 +21,13 @@ struct TodaySettings: View {
     @AppStorage("today.calendar") public var calendar: Int = -1
     @AppStorage("today.startOfDay") public var startOfDay: Int = 9
     @AppStorage("today.endOfDay") public var endOfDay: Int = 18
+    @AppStorage("today.defaultTableSortOrder") private var defaultTableSortOrder: String = "DESC"
+    @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
+    @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
+    @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
+    @AppStorage("today.showColumnActions") public var showColumnActions: Bool = false
+    @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures: Bool = false
+    @AppStorage("today.maxCharsPerGroup") public var maxCharsPerGroup: Int = 0
     
     @State private var calendars: [CustomPickerItem] = []
 
@@ -28,44 +35,68 @@ struct TodaySettings: View {
 
     var body: some View {
         Form {
-            Picker("Max number of days", selection: $numPastDates) {
-                Text("7").tag(7)
-                Text("10").tag(10)
-                Text("20").tag(20)
-                Text("30").tag(30)
-                Text("40").tag(40)
-            }
-            
-            Picker("Default view mode", selection: $viewMode) {
-                Text("Full").tag(1)
-                Text("Plain").tag(2)
-            }
-            
-            Group {
-                Toggle("Dynamic job pickers", isOn: $allowRelativeJobList)
+            Section("All tabs") {
+                Picker("Max number of days", selection: $numPastDates) {
+                    Text("7").tag(7)
+                    Text("10").tag(10)
+                    Text("20").tag(20)
+                    Text("30").tag(30)
+                    Text("40").tag(40)
+                }
                 
-                if allowRelativeJobList {
-                    Picker("How many weeks", selection: $numWeeks) {
-                        Text("1").tag(1)
-                        Text("2").tag(2)
-                        Text("3").tag(3)
-                        Text("4").tag(4)
-                        Text("6").tag(6)
-                        Text("8").tag(8)
+                Picker("Default view mode", selection: $viewMode) {
+                    Text("Full").tag(1)
+                    Text("Plain").tag(2)
+                }
+                
+                Picker("Default sort direction:", selection: $defaultTableSortOrder) {
+                    Text("DESC").tag("DESC")
+                    Text("ASC").tag("ASC")
+                }
+                
+                Group {
+                    Toggle("Dynamic job pickers", isOn: $allowRelativeJobList)
+                    
+                    if allowRelativeJobList {
+                        Picker("How many weeks", selection: $numWeeks) {
+                            Text("1").tag(1)
+                            Text("2").tag(2)
+                            Text("3").tag(3)
+                            Text("4").tag(4)
+                            Text("6").tag(6)
+                            Text("8").tag(8)
+                        }
                     }
                 }
-            }
-            
-            Toggle("Show sidebar", isOn: $showSidebar)
-            Toggle("Show search on Today", isOn: $showSearch)
-            Toggle("Include all incomplete tasks in details pane", isOn: $showAllJobsInDetailsPane)
-            
-            Group {
-                Picker("Records grouped by", selection: $recordGrouping) {
+                
+                Toggle("Show sidebar", isOn: $showSidebar)
+                Toggle("Show search on Today", isOn: $showSearch)
+                Toggle("Include all incomplete tasks in details pane", isOn: $showAllJobsInDetailsPane)
+
+                Picker("Default tab", selection: $recordGrouping) {
                     Text("Chronologic").tag(0)
                     Text("Grouped").tag(1)
                     Text("Summarized").tag(2)
                 }
+
+                Section("Display columns") {
+                    Toggle("Index", isOn: $showColumnIndex)
+                    Toggle("Timestamp", isOn: $showColumnTimestamp)
+                    Toggle("Job ID", isOn: $showColumnJobId)
+                    Toggle("Actions (EXPERIMENTAL)", isOn: $showColumnActions).disabled(!showExperimentalFeatures) // TODO: future feature
+                    Divider()
+                }
+
+                Section("Grouped tab settings") {
+                    Picker("Maximum number of characters per group", selection: $maxCharsPerGroup) {
+                        Text("100").tag(100)
+                        Text("1000").tag(1000)
+                        Text("2000").tag(2000)
+                        Text("3000").tag(3000)
+                        Text("4000").tag(4000)
+                    }
+                }
+
             }
 
             Section("Calendar and Date Settings") {
@@ -84,7 +115,6 @@ struct TodaySettings: View {
                         }
                     }
                 }
-
 
                 Picker("Active calendar", selection: $calendar) {
                     ForEach(calendars, id: \.self) { item in

@@ -14,7 +14,10 @@ public class CoreDataRecords: ObservableObject {
     
     private let lock = NSLock()
 
-    @AppStorage("exportsShowTimestamp") public var exportsShowTimestamp: Bool = true
+    @AppStorage("general.syncColumns") public var syncColumns: Bool = false
+    @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
+    @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
+    @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
     
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
@@ -185,42 +188,116 @@ public class CoreDataRecords: ObservableObject {
         return (wc, jc, recordsInPeriod.count)
     }
 
-    public func createExportableRecordsFrom(_ records: [LogRecord]) -> String {
+    public func createExportableRecordsFrom(_ records: [LogRecord], grouped: Bool? = false) -> String {
+        if grouped! {
+            return exportableGroupedRecordsAsString(records)
+        }
+
+        return exportableRecords(records)
+    }
+
+    public func createExportableGroupedRecordsAsViews(_ records: [LogRecord]) -> [FancyStaticTextField] {
+        var views: [FancyStaticTextField] = []
+
+        let groupedRecords = exportableGroupedRecordsAsString(records).split(separator: "\t\n")
+
+        for group in groupedRecords {
+            let view = FancyStaticTextField(placeholder: "Records...", lineLimit: 10, text: String(group))
+            views.append(view)
+        }
+
+        return views
+    }
+
+    private func exportableGroupedRecordsAsString(_ records: [LogRecord]) -> String {
+        if records.count == 0 {
+            return ""
+        }
+
         var buffer = ""
 
-        // TODO: group items together, don't repeat URLs (save characters)
-        // TODO: Asana has a max 2000 char limit per entry!
-        if records.count > 0 {
-            for item in records {
-                if let job = item.job {
-                    let cleaned = CoreDataProjectConfiguration.applyBannedWordsTo(item)
+        let groupedRecords = Dictionary(grouping: records, by: {$0.job}).sorted(by: {$0.key!.jid > $1.key!.jid})
 
-                    if let ignoredJobs = job.project?.configuration?.ignoredJobs {
-                        if !ignoredJobs.contains(job.jid.string) {
-                            let shredableMsg = job.shredable ? " (SR&ED)" : ""
-                            var jobSection = String(Int(job.jid))
-                            var line = ""
+        for group in groupedRecords {
+            if group.key != nil {
+                let jid = String(Int(group.key!.jid))
 
+                if group.key!.uri != nil {
+                    buffer += "\(jid): \(group.key!.uri!.absoluteString)\n"
+                } else {
+                    buffer += "\(jid)\n"
+                }
+
+                for record in group.value {
+                    // column.index intentionally not supported in grouped exports
+                    // column.jobId intentionally not supported in group exports
+                    if syncColumns && showColumnTimestamp {
+                        buffer += " - \(record.timestamp!)"
+                    }
+
+                    buffer += " - \(record.message!)\n"
+                }
+
+                buffer += "\t\n"
+            }
+        }
+
+        return buffer
+    }
+
+    private func exportableRecords(_ records: [LogRecord]) -> String {
+        if records.count == 0 {
+            return ""
+        }
+
+        var buffer = ""
+        var i = 0
+
+        for item in records {
+            if let job = item.job {
+                let cleaned = CoreDataProjectConfiguration.applyBannedWordsTo(item)
+
+                if let ignoredJobs = job.project?.configuration?.ignoredJobs {
+                    if !ignoredJobs.contains(job.jid.string) {
+                        let shredableMsg = job.shredable ? " (SR&ED)" : ""
+                        var jobSection = ""
+                        var line = ""
+
+                        if syncColumns && showColumnIndex {
+                            jobSection += " \(String(Int(job.jid)))"
+                            line += "\(i) - "
+                        } else {
+                            jobSection += String(Int(job.jid))
+                        }
+
+                        if syncColumns && showColumnJobId {
                             if let uri = job.uri {
                                 jobSection += " - \(uri.absoluteString)" + shredableMsg
                             } else {
                                 jobSection += shredableMsg
                             }
-
-                            if exportsShowTimestamp {
-                                line += "\(item.timestamp!)"
-                                line += " - \(jobSection)"
-                            } else {
-                                line += jobSection
-                            }
-
-                            line += " - \(cleaned.message!)\n"
-
-                            buffer += line
                         }
+
+                        if syncColumns && showColumnTimestamp {
+                            line += "\(item.timestamp!)"
+                            line += " - \(jobSection)"
+                        } else {
+                            line += jobSection
+                        }
+
+                        if line.count > 0 {
+                            line += " - \(cleaned.message!)\n"
+                        } else {
+                            line += "\(cleaned.message!)\n"
+                        }
+
+
+                        buffer += line
                     }
                 }
             }
+
+            i += 1
         }
 
         return buffer

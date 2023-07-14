@@ -31,6 +31,10 @@ struct LogRow: View, Identifiable {
     @AppStorage("tigerStriped") private var tigerStriped = false
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("showExperiment.actions") private var showExperimentActions = false
+    @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
+    @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
+    @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
+    @AppStorage("today.showColumnActions") public var showColumnActions: Bool = false
     
     var body: some View {
         HStack(spacing: 1) {
@@ -41,38 +45,46 @@ struct LogRow: View, Identifiable {
                     text: $projectColHelpText
                 )
                 .frame(width: 5)
-                
-                Column(
-                    colour: applyColour(),
-                    textColour: rowTextColour(),
-                    text: $aIndex
-                )
-                .frame(maxWidth: 50)
-                
-                EditableColumn(
-                    type: "timestamp",
-                    colour: applyColour(),
-                    textColour: rowTextColour(),
-                    index: index,
-                    isEditing: $isEditing,
-                    isDeleting: $isDeleting,
-                    text: $timestamp
-                )
-                .frame(maxWidth: 101)
-                .help(entry.timestamp)
-                
-                EditableColumn(
-                    type: "job",
-                    colour: applyColour(),
-                    textColour: rowTextColour(),
-                    index: index,
-                    isEditing: $isEditing,
-                    isDeleting: $isDeleting,
-                    text: $job,
-                    url: (entry.jobObject != nil && entry.jobObject!.uri != nil ? entry.jobObject!.uri : nil),
-                    job: entry.jobObject
-                )
-                .frame(maxWidth: 120)
+
+                if showColumnIndex {
+                    Column(
+                        colour: applyColour(),
+                        textColour: rowTextColour(),
+                        text: $aIndex
+                    )
+                    .frame(maxWidth: 50)
+                }
+
+                if showColumnTimestamp {
+                    EditableColumn(
+                        type: "timestamp",
+                        colour: applyColour(),
+                        textColour: rowTextColour(),
+                        index: index,
+                        alignment: .center,
+                        isEditing: $isEditing,
+                        isDeleting: $isDeleting,
+                        text: $timestamp
+                    )
+                    .frame(maxWidth: 101)
+                    .help(entry.timestamp)
+                }
+
+                if showColumnJobId {
+                    EditableColumn(
+                        type: "job",
+                        colour: applyColour(),
+                        textColour: rowTextColour(),
+                        index: index,
+                        alignment: .center,
+                        isEditing: $isEditing,
+                        isDeleting: $isDeleting,
+                        text: $job,
+                        url: (entry.jobObject != nil && entry.jobObject!.uri != nil ? entry.jobObject!.uri : nil),
+                        job: entry.jobObject
+                    )
+                    .frame(maxWidth: 80)
+                }
                 
                 EditableColumn(
                     type: "message",
@@ -85,7 +97,7 @@ struct LogRow: View, Identifiable {
                 )
                 
                 if showExperimentalFeatures {
-                    if showExperimentActions {
+                    if showColumnActions {
                         Group {
                             ZStack {
                                 applyColour()
@@ -115,6 +127,12 @@ struct LogRow: View, Identifiable {
     
     @ViewBuilder private var contextMenu: some View {
         if entry.jobObject != nil {
+            if entry.jobObject!.uri != nil {
+                Link(destination: entry.jobObject!.uri!, label: {
+                    Text("Open job link in browser")
+                })
+            }
+
             Menu("Copy") {
                 if entry.jobObject!.uri != nil {
                     Button(action: {ClipboardHelper.copy(entry.jobObject!.uri!.absoluteString)}, label: {
@@ -157,6 +175,10 @@ struct LogRow: View, Identifiable {
                     Text("Job")
                 }
                 //            .keyboardShortcut("j")
+            }
+
+            Menu("Inspect"){
+                Text("SR&ED Eligible: " + (entry.jobObject!.shredable ? "Yes" : "No"))
             }
             
             Divider()

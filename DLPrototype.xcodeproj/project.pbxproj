@@ -117,6 +117,7 @@
 		53F5896429983FA300843B32 /* ProjectResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F5896329983FA300843B32 /* ProjectResult.swift */; };
 		53F5896629983FD100843B32 /* ProjectRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F5896529983FD100843B32 /* ProjectRow.swift */; };
 		53F589682998437D00843B32 /* JobResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F589672998437D00843B32 /* JobResult.swift */; };
+		53FBCC8E2A61D59B00B88539 /* FancyStaticTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FBCC8D2A61D59B00B88539 /* FancyStaticTextField.swift */; };
 		53FEF578296603D9000B94FC /* FancyTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FEF577296603D9000B94FC /* FancyTextField.swift */; };
 /* End PBXBuildFile section */
 
@@ -257,6 +258,7 @@
 		53F5896329983FA300843B32 /* ProjectResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectResult.swift; sourceTree = "<group>"; };
 		53F5896529983FD100843B32 /* ProjectRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectRow.swift; sourceTree = "<group>"; };
 		53F589672998437D00843B32 /* JobResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobResult.swift; sourceTree = "<group>"; };
+		53FBCC8D2A61D59B00B88539 /* FancyStaticTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyStaticTextField.swift; sourceTree = "<group>"; };
 		53FEF577296603D9000B94FC /* FancyTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyTextField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -597,6 +599,7 @@
 				53C3418F29996C070071B855 /* FancyRandomJobColourPicker.swift */,
 				5333E7A02A0ECE0D00EE4A36 /* FancyTab.swift */,
 				5372C0292A105AA1008CB120 /* FancyChip.swift */,
+				53FBCC8D2A61D59B00B88539 /* FancyStaticTextField.swift */,
 			);
 			path = Fancy;
 			sourceTree = "<group>";
@@ -930,6 +933,7 @@
 				5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */,
 				532A722F299037AC0038C18B /* RecordResult.swift in Sources */,
 				53F589602998335A00843B32 /* NoteRow.swift in Sources */,
+				53FBCC8E2A61D59B00B88539 /* FancyStaticTextField.swift in Sources */,
 				53B0BE8E29731D41007CB663 /* FancyTextLink.swift in Sources */,
 				53152CD4296A296A00A14E43 /* FancyButton.swift in Sources */,
 				53DCA3422803BBBF0032FD60 /* CalendarView.swift in Sources */,
@@ -1102,7 +1106,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 99;
+				CURRENT_PROJECT_VERSION = 100;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -1134,7 +1138,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 99;
+				CURRENT_PROJECT_VERSION = 100;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;

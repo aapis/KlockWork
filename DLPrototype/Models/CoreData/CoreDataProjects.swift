@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-public class CoreDataProjects {
+public class CoreDataProjects: ObservableObject {
     public var moc: NSManagedObjectContext?
     
     public init(moc: NSManagedObjectContext?) {

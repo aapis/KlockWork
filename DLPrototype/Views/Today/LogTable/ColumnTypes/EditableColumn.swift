@@ -14,6 +14,7 @@ struct EditableColumn: View {
     public var colour: Color
     public var textColour: Color
     public var index: Array<Entry>.Index?
+    public var alignment: Alignment = .leading
     
     @Binding public var isEditing: Bool
     @Binding public var isDeleting: Bool
@@ -28,7 +29,7 @@ struct EditableColumn: View {
     
     var body: some View {
         Group {
-            ZStack(alignment: .leading) {
+            ZStack(alignment: alignment) {
                 colour
                 if isEditing {
                     TextField(type, text: $text)
@@ -48,7 +49,7 @@ struct EditableColumn: View {
                                         JobDashboard(defaultSelectedJob: job!.jid)
                                             .environmentObject(jm)
                                     } label: {
-                                        Text(text)
+                                        Text(text.replacingOccurrences(of: ".0", with: ""))
                                             .foregroundColor(colour.isBright() ? Color.black : Color.white)
                                             .onHover { inside in
                                                 if inside {
@@ -62,31 +63,13 @@ struct EditableColumn: View {
                                     .buttonStyle(.borderless)
                                     .underline()
                                 }
-                                
-                                if job!.shredable || url != nil {
-                                    Spacer()
-                                    
-                                    if job!.shredable {
-                                        Image(systemName: "dollarsign.circle")
-                                            .foregroundColor(colour.isBright() ? Color.black : Color.white)
-                                            .help("Eligible for SR&ED")
-                                    }
-                                    
-                                    if url != nil {
-                                        Link(destination: url!, label: {
-                                            Image(systemName: "link")
-                                                .foregroundColor(colour.isBright() ? Color.black : Color.white)
-                                                .onHover { inside in
-                                                    if inside {
-                                                        NSCursor.pointingHand.push()
-                                                    } else {
-                                                        NSCursor.pop()
-                                                    }
-                                                }
-                                                .help("Visit job URL on the web")
-                                        })
-                                    }
-                                }
+
+                                // TODO: move to new statuses column
+//                                if job!.shredable {
+//                                    Image(systemName: "dollarsign.circle")
+//                                        .foregroundColor(colour.isBright() ? Color.black : Color.white)
+//                                        .help("Eligible for SR&ED")
+//                                }
                             }
                             .padding([.leading, .trailing], 10)
                         } else {
