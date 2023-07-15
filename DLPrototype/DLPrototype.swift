@@ -25,6 +25,10 @@ struct DLPrototype: App {
                     persistenceController.save()
                 }
         }
+        // TODO: need to define the commands we want to implement
+        .commands {
+            MainMenu(moc: persistenceController.container.viewContext)
+        }
         
         #if os(macOS)
         Settings {

@@ -311,7 +311,7 @@ struct Home: View {
                     .keyboardShortcut("r")
                 }
         }
-        .navigationTitle("DailyLogger b.\(appVersion ?? "0")")
+        .navigationTitle("ClockWork b.\(appVersion ?? "0")")
         .onAppear(perform: updateName)
         .environmentObject(rm)
     }

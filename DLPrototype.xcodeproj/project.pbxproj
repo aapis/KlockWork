@@ -117,6 +117,7 @@
 		53F5896629983FD100843B32 /* ProjectRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F5896529983FD100843B32 /* ProjectRow.swift */; };
 		53F589682998437D00843B32 /* JobResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F589672998437D00843B32 /* JobResult.swift */; };
 		53FBCC8E2A61D59B00B88539 /* FancyStaticTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FBCC8D2A61D59B00B88539 /* FancyStaticTextField.swift */; };
+		53FBCC902A630CBE00B88539 /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FBCC8F2A630CBE00B88539 /* MainMenu.swift */; };
 		53FEF578296603D9000B94FC /* FancyTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53FEF577296603D9000B94FC /* FancyTextField.swift */; };
 /* End PBXBuildFile section */
 
@@ -256,6 +257,7 @@
 		53F5896529983FD100843B32 /* ProjectRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectRow.swift; sourceTree = "<group>"; };
 		53F589672998437D00843B32 /* JobResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobResult.swift; sourceTree = "<group>"; };
 		53FBCC8D2A61D59B00B88539 /* FancyStaticTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyStaticTextField.swift; sourceTree = "<group>"; };
+		53FBCC8F2A630CBE00B88539 /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		53FEF577296603D9000B94FC /* FancyTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyTextField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -373,6 +375,7 @@
 				53EFCE7429637CB8004E45EC /* Extensions */,
 				53B940D72800A9CC0024AA5F /* Models */,
 				53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */,
+				53FBCC8F2A630CBE00B88539 /* MainMenu.swift */,
 				53218D4E24B7F6EC0088ABE9 /* Assets.xcassets */,
 				53218D5624B7F6EC0088ABE9 /* Info.plist */,
 				53218D5724B7F6EC0088ABE9 /* DLPrototype.entitlements */,
@@ -874,6 +877,7 @@
 				533E40682970DD170007785A /* AutoFixJobs.swift in Sources */,
 				53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */,
 				5376289E29664F8C00DE8ECF /* Theme.swift in Sources */,
+				53FBCC902A630CBE00B88539 /* MainMenu.swift in Sources */,
 				53C6D09829654F4C00EA6129 /* DetailGroup.swift in Sources */,
 				533E406A2970F5610007785A /* SearchHelper.swift in Sources */,
 				53529A07299F38C0000D2FCB /* JobPickerUsing.swift in Sources */,
