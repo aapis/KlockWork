@@ -160,6 +160,8 @@ struct LogTableDetails: View {
     }
 
     private func setTimers() -> Void {
+        timer?.invalidate()
+
         func _setStateEventData() -> Void {
             ce.truncate()
             
@@ -173,7 +175,7 @@ struct LogTableDetails: View {
 
         timer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { _ in
             _setStateEventData()
-            updater.update()
+            updater.updateOne("ltd.rows")
 
             print("[debug.timer] Today().LogTableDetails.setTimers run")
         }
@@ -181,7 +183,7 @@ struct LogTableDetails: View {
     
     private func update() -> Void {
         if records.count > 0 && open {
-            setTimers() // start timers whether sidebar is open or not (may be a really bad idea we will see)
+            setTimers()
 
             statistics = []
             
