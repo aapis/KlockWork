@@ -56,14 +56,50 @@ public struct FancyStaticTextField: View, Identifiable {
         .onChange(of: copied) { colour in
             backgroundColour = setBackground()
         }
+        .onHover { inside in
+            if inside {
+                if copied {
+                    backgroundColour = Color.green.opacity(0.3)
+                } else {
+                    backgroundColour = Color.white.opacity(0.01)
+                }
+            } else {
+                backgroundColour = setBackground()
+            }
+        }
     }
 
     private var actions: some View {
         VStack(alignment: .leading) {
-            Button(action: copy) {
-                Image(systemName: "doc.on.doc")
+            if copied {
+                Button(action: copy) {
+                    Image(systemName: "doc.on.clipboard")
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.white, Color.accentColor)
+                }
+                .buttonStyle(.plain)
+                .help("Copied group to clipboard!")
+                .onHover { inside in
+                    if inside {
+                        NSCursor.pointingHand.push()
+                    } else {
+                        NSCursor.pop()
+                    }
+                }
+            } else {
+                Button(action: copy) {
+                    Image(systemName: "doc.on.clipboard")
+                }
+                .buttonStyle(.plain)
+                .help("Copy this group")
+                .onHover { inside in
+                    if inside {
+                        NSCursor.pointingHand.push()
+                    } else {
+                        NSCursor.pop()
+                    }
+                }
             }
-            .buttonStyle(.plain)
 
             Spacer()
 
