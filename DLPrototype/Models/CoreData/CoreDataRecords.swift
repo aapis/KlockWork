@@ -9,9 +9,23 @@
 import Foundation
 import SwiftUI
 
+// TODO: rename this to something else. Currently meant to represent how many 15 minute periods a task intersected
+// TODO: with, rate is the percent of the total number of sections per day
 public struct Intersection {
-    public var index: Int
-    public var rate: Float
+    public var index: Int = 0
+    public var rate: Float = 0.0
+
+    @AppStorage("today.startOfDay") public var startOfDay: Int = 9
+    @AppStorage("today.endOfDay") public var endOfDay: Int = 18
+
+    public init(start: LogRecord, end: LogRecord) {
+        let billablePeriodsToday = (endOfDay - startOfDay) * 4
+        let dates = [start, end].map { $0!.timestamp! }
+        let intersection = Int((dates.first!.timeIntervalSince1970 - dates.last!.timeIntervalSince1970) / 900)
+
+        index = intersection
+        rate = Float(intersection) / Float(billablePeriodsToday) * 100
+    }
 }
 
 public class CoreDataRecords: ObservableObject {
@@ -23,8 +37,6 @@ public class CoreDataRecords: ObservableObject {
     @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
     @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
     @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
-    @AppStorage("today.startOfDay") public var startOfDay: Int = 9
-    @AppStorage("today.endOfDay") public var endOfDay: Int = 18
     
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
@@ -197,23 +209,11 @@ public class CoreDataRecords: ObservableObject {
 
     public func calculateBillablePeriodIntersections(_ groupedRecords: [Dictionary<Job?, [LogRecord]>.Element]) -> [Intersection] {
         var intersections: [Intersection] = []
-        let billablePeriodsToday = (endOfDay - startOfDay) * 4
 
         for group in groupedRecords {
             if group.key != nil {
-                let records = group.value
-
-                if records.count > 0 {
-                    let range = [records.first, records.last]
-                    let dates = range.map { $0!.timestamp! }
-                    let intersection = Int((dates.first!.timeIntervalSince1970 - dates.last!.timeIntervalSince1970) / 900)
-
-                    intersections.append(
-                        Intersection(
-                            index: intersection,
-                            rate: Float(intersection) / Float(billablePeriodsToday) * 100
-                        )
-                    )
+                if group.value.count > 0 {
+                    intersections.append(Intersection(start: group.value.first!, end: group.value.last!))
                 }
             }
         }
@@ -254,10 +254,6 @@ public class CoreDataRecords: ObservableObject {
     }
 
     private func exportableGroupedRecordsAsString(_ records: [LogRecord]) -> (String, [Intersection]) {
-        if records.count == 0 {
-            return ("", [Intersection(index: 0, rate: 0)])
-        }
-
         var buffer = ""
         let groupedRecords = Dictionary(grouping: records, by: {$0.job}).sorted(by: {$0.key!.jid > $1.key!.jid})
         let intersections = calculateBillablePeriodIntersections(groupedRecords)
