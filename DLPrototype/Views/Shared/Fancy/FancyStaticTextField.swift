@@ -21,7 +21,8 @@ public struct FancyStaticTextField: View, Identifiable {
     public var bgColour: Color? = Theme.textBackground
     public var showLabel: Bool = false
     public var text: String = ""
-    public var intersection: Intersection // TODO: this should be part of the data, not the view
+    public var intersection: Intersection
+    public var project: Project?
     
     @State public var internalText: String = ""
     @State public var copied: Bool = false
@@ -33,6 +34,8 @@ public struct FancyStaticTextField: View, Identifiable {
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top, spacing: 0) {
+                projectIndicator
+
                 if showLabel {
                     Text(placeholder)
                         .font(Theme.font)
@@ -79,6 +82,15 @@ public struct FancyStaticTextField: View, Identifiable {
             } else {
                 backgroundColour = setBackground()
             }
+        }
+    }
+
+    @ViewBuilder private var projectIndicator: some View {
+        if project != nil {
+            ZStack {
+                Color.fromStored(project!.colour ?? Theme.rowColourAsDouble)
+            }
+            .frame(width: 5)
         }
     }
 
