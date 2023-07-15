@@ -9,6 +9,11 @@
 import Foundation
 import SwiftUI
 
+public struct Intersection {
+    public var index: Int
+    public var rate: Float
+}
+
 public class CoreDataRecords: ObservableObject {
     public var moc: NSManagedObjectContext?
     
@@ -18,6 +23,8 @@ public class CoreDataRecords: ObservableObject {
     @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
     @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
     @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
+    @AppStorage("today.startOfDay") public var startOfDay: Int = 9
+    @AppStorage("today.endOfDay") public var endOfDay: Int = 18
     
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
@@ -188,9 +195,34 @@ public class CoreDataRecords: ObservableObject {
         return (wc, jc, recordsInPeriod.count)
     }
 
+    public func calculateBillablePeriodIntersections(_ groupedRecords: [Dictionary<Job?, [LogRecord]>.Element]) -> [Intersection] {
+        var intersections: [Intersection] = []
+        let billablePeriodsToday = (endOfDay - startOfDay) * 4
+
+        for group in groupedRecords {
+            if group.key != nil {
+                let records = group.value
+
+                if records.count > 0 {
+                    let range = [records.first, records.last]
+                    let dates = range.map { $0!.timestamp! }
+                    let intersection = Int((dates.first!.timeIntervalSince1970 - dates.last!.timeIntervalSince1970) / 900)
+
+                    intersections.append(
+                        Intersection(
+                            index: intersection,
+                            rate: Float(intersection) / Float(billablePeriodsToday) * 100
+                        )
+                    )
+                }
+            }
+        }
+        return intersections
+    }
+
     public func createExportableRecordsFrom(_ records: [LogRecord], grouped: Bool? = false) -> String {
         if grouped! {
-            return exportableGroupedRecordsAsString(records)
+            return exportableGroupedRecordsAsString(records).0
         }
 
         return exportableRecords(records)
@@ -199,24 +231,36 @@ public class CoreDataRecords: ObservableObject {
     public func createExportableGroupedRecordsAsViews(_ records: [LogRecord]) -> [FancyStaticTextField] {
         var views: [FancyStaticTextField] = []
 
-        let groupedRecords = exportableGroupedRecordsAsString(records).split(separator: "\t\n")
+        let gr = exportableGroupedRecordsAsString(records)
+        let groupedRecords = gr.0.split(separator: "\t\n")
+        var i = 0
 
         for group in groupedRecords {
-            let view = FancyStaticTextField(placeholder: "Records...", lineLimit: 10, text: String(group))
-            views.append(view)
+            views.append(
+                FancyStaticTextField(
+                    placeholder: "Records...",
+                    lineLimit: 10,
+                    text: String(group),
+                    intersection: gr.1[i]
+                )
+            )
+
+            i += 1
         }
+
+        views = views.sorted(by: ({$0.intersection.index > $1.intersection.index}))
 
         return views
     }
 
-    private func exportableGroupedRecordsAsString(_ records: [LogRecord]) -> String {
+    private func exportableGroupedRecordsAsString(_ records: [LogRecord]) -> (String, [Intersection]) {
         if records.count == 0 {
-            return ""
+            return ("", [Intersection(index: 0, rate: 0)])
         }
 
         var buffer = ""
-
         let groupedRecords = Dictionary(grouping: records, by: {$0.job}).sorted(by: {$0.key!.jid > $1.key!.jid})
+        let intersections = calculateBillablePeriodIntersections(groupedRecords)
 
         for group in groupedRecords {
             if group.key != nil {
@@ -239,11 +283,11 @@ public class CoreDataRecords: ObservableObject {
                     buffer += " - \(record.message!)\n"
                 }
 
-                buffer += "\t\n"
+                buffer += "\t\n" // specifically added to allow split in createExportableGroupedRecordsAsViews
             }
         }
 
-        return buffer
+        return (buffer, intersections)
     }
 
     private func exportableRecords(_ records: [LogRecord]) -> String {

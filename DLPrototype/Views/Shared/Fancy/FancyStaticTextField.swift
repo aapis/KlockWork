@@ -21,7 +21,8 @@ public struct FancyStaticTextField: View, Identifiable {
     public var bgColour: Color? = Theme.textBackground
     public var showLabel: Bool = false
     public var text: String = ""
-
+    public var intersection: Intersection // TODO: this should be part of the data, not the view
+    
     @State public var internalText: String = ""
     @State public var copied: Bool = false
     @State public var backgroundColour: Color = Theme.textBackground
@@ -30,22 +31,32 @@ public struct FancyStaticTextField: View, Identifiable {
     @AppStorage("today.maxCharsPerGroup") public var maxCharsPerGroup: Int = 0
 
     public var body: some View {
-        HStack(alignment: .top, spacing: 1) {
-            if showLabel {
-                Text(placeholder)
-                    .font(Theme.font)
-                    .frame(width: 100)
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .top, spacing: 0) {
+                if showLabel {
+                    Text(placeholder)
+                        .font(Theme.font)
+                        .frame(width: 100)
+                }
+
+                if lineLimit == 1 {
+                    oneLine
+                } else if lineLimit < 9 {
+                    oneBigLine
+                } else {
+                    multiLine
+                }
+
+                actions
             }
 
-            if lineLimit == 1 {
-                oneLine
-            } else if lineLimit < 9 {
-                oneBigLine
-            } else {
-                multiLine
+            Divider()
+            HStack {
+                ProgressView(value: intersection.rate, total: 100)
+                    .disabled(true)
+                Spacer()
             }
-
-            actions
+            .background(Theme.rowColour)
         }
         .background(backgroundColour)
         .onAppear(perform: {
