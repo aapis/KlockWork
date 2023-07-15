@@ -74,6 +74,8 @@ struct Today: View {
                 FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
                     .onChange(of: taskUrl) { url in
                         if !url.isEmpty {
+                            getJobIdFromUrl() // selects the job in the picker if it exists
+
                             if url.starts(with: "https:") {
                                 isUrl = true
                             } else {
