@@ -63,6 +63,12 @@ public struct FancyStaticTextField: View, Identifiable {
                 } else {
                     backgroundColour = Color.white.opacity(0.01)
                 }
+
+                if internalText.count > maxCharsPerGroup {
+                    backgroundColour = Color.yellow.opacity(0.3)
+                } else {
+                    backgroundColour = Color.white.opacity(0.01)
+                }
             } else {
                 backgroundColour = setBackground()
             }
