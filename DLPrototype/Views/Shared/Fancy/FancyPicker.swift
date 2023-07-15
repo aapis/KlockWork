@@ -15,15 +15,21 @@ struct FancyPicker: View {
     public var transparent: Bool? = false
     public var labelText: String?
     public var showLabel: Bool? = false
+    public var defaultSelected: Int = 0
     
     @State private var selection: Int = 0
     
     var body: some View {
-        if showLabel! {
-            showWithLabel
-        } else {
-            showNoLabel
+        Group {
+            if showLabel! {
+                showWithLabel
+            } else {
+                showNoLabel
+            }
         }
+        .onAppear(perform: {
+            selection = defaultSelected
+        })
     }
     
     var showNoLabel: some View {

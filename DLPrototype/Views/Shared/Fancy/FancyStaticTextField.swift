@@ -21,7 +21,9 @@ public struct FancyStaticTextField: View, Identifiable {
     public var bgColour: Color? = Theme.textBackground
     public var showLabel: Bool = false
     public var text: String = ""
-
+    public var intersection: Intersection
+    public var project: Project?
+    
     @State public var internalText: String = ""
     @State public var copied: Bool = false
     @State public var backgroundColour: Color = Theme.textBackground
@@ -30,22 +32,35 @@ public struct FancyStaticTextField: View, Identifiable {
     @AppStorage("today.maxCharsPerGroup") public var maxCharsPerGroup: Int = 0
 
     public var body: some View {
-        HStack(alignment: .top, spacing: 1) {
-            if showLabel {
-                Text(placeholder)
-                    .font(Theme.font)
-                    .frame(width: 100)
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .top, spacing: 0) {
+                projectIndicator
+
+                if showLabel {
+                    Text(placeholder)
+                        .font(Theme.font)
+                        .frame(width: 100)
+                }
+
+                if lineLimit == 1 {
+                    oneLine
+                } else if lineLimit < 9 {
+                    oneBigLine
+                } else {
+                    multiLine
+                }
+
+                actions
             }
 
-            if lineLimit == 1 {
-                oneLine
-            } else if lineLimit < 9 {
-                oneBigLine
-            } else {
-                multiLine
+            Divider()
+            HStack {
+                ProgressView(value: intersection.rate, total: 100)
+                    .padding([.leading], 5)
+                    .disabled(true)
+                Spacer()
             }
-
-            actions
+            .background(Theme.rowColour)
         }
         .background(backgroundColour)
         .onAppear(perform: {
@@ -56,14 +71,60 @@ public struct FancyStaticTextField: View, Identifiable {
         .onChange(of: copied) { colour in
             backgroundColour = setBackground()
         }
+        .onHover { inside in
+            if inside {
+                if copied {
+                    backgroundColour = Color.green.opacity(0.3)
+                } else {
+                    backgroundColour = Color.white.opacity(0.01)
+                }
+
+            } else {
+                backgroundColour = setBackground()
+            }
+        }
+    }
+
+    @ViewBuilder private var projectIndicator: some View {
+        if project != nil {
+            ZStack {
+                Color.fromStored(project!.colour ?? Theme.rowColourAsDouble)
+            }
+            .frame(width: 5)
+        }
     }
 
     private var actions: some View {
         VStack(alignment: .leading) {
-            Button(action: copy) {
-                Image(systemName: "doc.on.doc")
+            if copied {
+                Button(action: copy) {
+                    Image(systemName: "doc.on.clipboard")
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.white, Color.accentColor)
+                }
+                .buttonStyle(.plain)
+                .help("Copied group to clipboard!")
+                .onHover { inside in
+                    if inside {
+                        NSCursor.pointingHand.push()
+                    } else {
+                        NSCursor.pop()
+                    }
+                }
+            } else {
+                Button(action: copy) {
+                    Image(systemName: "doc.on.clipboard")
+                }
+                .buttonStyle(.plain)
+                .help("Copy this group")
+                .onHover { inside in
+                    if inside {
+                        NSCursor.pointingHand.push()
+                    } else {
+                        NSCursor.pop()
+                    }
+                }
             }
-            .buttonStyle(.plain)
 
             Spacer()
 

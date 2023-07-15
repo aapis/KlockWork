@@ -61,7 +61,6 @@
 		537368D124B93DB600193E88 /* Today.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537368D024B93DB600193E88 /* Today.swift */; };
 		53759E0829678DC700DCDC4B /* Import.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53759E0729678DC700DCDC4B /* Import.swift */; };
 		53759E0D2967ECAE00DCDC4B /* LogRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53759E0C2967ECAE00DCDC4B /* LogRecords.swift */; };
-		53759E0F2968AB5700DCDC4B /* SyncMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53759E0E2968AB5700DCDC4B /* SyncMonitor.swift */; };
 		5376289B2966467100DE8ECF /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376289A2966467100DE8ECF /* SearchBar.swift */; };
 		5376289E29664F8C00DE8ECF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376289D29664F8C00DE8ECF /* Theme.swift */; };
 		537628A02966518B00DE8ECF /* ToolbarTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376289F2966518B00DE8ECF /* ToolbarTabs.swift */; };
@@ -151,10 +150,9 @@
 		53196AC82A168E7200FE49FC /* CalendarIndividualEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarIndividualEvent.swift; sourceTree = "<group>"; };
 		531B38FB29674EC400E74013 /* Title.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Title.swift; sourceTree = "<group>"; };
 		531E2F742A140533009CA230 /* CalendarToday.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarToday.swift; sourceTree = "<group>"; };
-		53218D4424B7F6EB0088ABE9 /* DLPrototype.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DLPrototype.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		53218D4424B7F6EB0088ABE9 /* ClockWork.Beta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClockWork.Beta.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DLPrototype.swift; sourceTree = "<group>"; };
 		53218D4924B7F6EB0088ABE9 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
-		53218D4C24B7F6EB0088ABE9 /* DLPrototype.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DLPrototype.xcdatamodel; sourceTree = "<group>"; };
 		53218D4E24B7F6EC0088ABE9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		53218D5124B7F6EC0088ABE9 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		53218D5624B7F6EC0088ABE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -203,7 +201,6 @@
 		537368D024B93DB600193E88 /* Today.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Today.swift; sourceTree = "<group>"; };
 		53759E0729678DC700DCDC4B /* Import.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Import.swift; sourceTree = "<group>"; };
 		53759E0C2967ECAE00DCDC4B /* LogRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRecords.swift; sourceTree = "<group>"; };
-		53759E0E2968AB5700DCDC4B /* SyncMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncMonitor.swift; sourceTree = "<group>"; };
 		5376289A2966467100DE8ECF /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		5376289D29664F8C00DE8ECF /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		5376289F2966518B00DE8ECF /* ToolbarTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarTabs.swift; sourceTree = "<group>"; };
@@ -358,7 +355,7 @@
 		53218D4524B7F6EB0088ABE9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				53218D4424B7F6EB0088ABE9 /* DLPrototype.app */,
+				53218D4424B7F6EB0088ABE9 /* ClockWork.Beta.app */,
 				53218D5C24B7F6EC0088ABE9 /* DLPrototypeTests.xctest */,
 				53218D6724B7F6EC0088ABE9 /* DLPrototypeUITests.xctest */,
 			);
@@ -379,7 +376,6 @@
 				53218D4E24B7F6EC0088ABE9 /* Assets.xcassets */,
 				53218D5624B7F6EC0088ABE9 /* Info.plist */,
 				53218D5724B7F6EC0088ABE9 /* DLPrototype.entitlements */,
-				53218D4B24B7F6EB0088ABE9 /* DLPrototype.xcdatamodeld */,
 				53218D5024B7F6EC0088ABE9 /* Preview Content */,
 			);
 			path = DLPrototype;
@@ -556,7 +552,6 @@
 			children = (
 				537628A7296659DC00DE8ECF /* PersistenceController.swift */,
 				537628B229665F4E00DE8ECF /* Data.xcdatamodeld */,
-				53759E0E2968AB5700DCDC4B /* SyncMonitor.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -721,7 +716,7 @@
 			packageProductDependencies = (
 			);
 			productName = DLPrototype;
-			productReference = 53218D4424B7F6EB0088ABE9 /* DLPrototype.app */;
+			productReference = 53218D4424B7F6EB0088ABE9 /* ClockWork.Beta.app */;
 			productType = "com.apple.product-type.application";
 		};
 		53218D5B24B7F6EC0088ABE9 /* DLPrototypeTests */ = {
@@ -926,7 +921,6 @@
 				53F5896229983EEB00843B32 /* TaskResult.swift in Sources */,
 				53521E54296FBDAE002E7F21 /* CoreDataNoteVersions.swift in Sources */,
 				53967D8429EC6D14006616A0 /* TodaySettings.swift in Sources */,
-				53759E0F2968AB5700DCDC4B /* SyncMonitor.swift in Sources */,
 				531E2F752A140533009CA230 /* CalendarToday.swift in Sources */,
 				537AEB9F29627DCC00385787 /* LogTable.swift in Sources */,
 				537AEBA329629DE400385787 /* LogRowActions.swift in Sources */,
@@ -1100,20 +1094,21 @@
 		53218D7124B7F6EC0088ABE9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = DLPrototype/DLPrototype.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 100;
+				CURRENT_PROJECT_VERSION = 101;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = DLPrototype/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = ClockWork;
+				INFOPLIST_KEY_CFBundleDisplayName = ClockWork.Beta;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1121,7 +1116,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.DLPrototype;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ClockWork.Beta;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1132,13 +1127,14 @@
 		53218D7224B7F6EC0088ABE9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = DLPrototype/DLPrototype.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 100;
+				CURRENT_PROJECT_VERSION = 101;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -1153,7 +1149,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.DLPrototype;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ClockWork;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1291,16 +1287,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		53218D4B24B7F6EB0088ABE9 /* DLPrototype.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				53218D4C24B7F6EB0088ABE9 /* DLPrototype.xcdatamodel */,
-			);
-			currentVersion = 53218D4C24B7F6EB0088ABE9 /* DLPrototype.xcdatamodel */;
-			path = DLPrototype.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
 		537628B229665F4E00DE8ECF /* Data.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (

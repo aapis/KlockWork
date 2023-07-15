@@ -16,7 +16,7 @@ public enum ViewMode: Hashable {
 public struct ViewModeSelector: View {
     @Binding public var mode: ViewMode
     
-    @AppStorage("today.viewMode") public var index: Int = 1
+    @AppStorage("today.viewMode") public var index: Int = 0
     
     private var items: [CustomPickerItem] {
         return [
@@ -27,7 +27,7 @@ public struct ViewModeSelector: View {
     }
     
     public var body: some View {
-        FancyPicker(onChange: change, items: items)
+        FancyPicker(onChange: change, items: items, defaultSelected: index)
             .onAppear(perform: {change(selected: index, sender: "")})
             .onChange(of: index) { _ in
                 change(selected: index, sender: "")

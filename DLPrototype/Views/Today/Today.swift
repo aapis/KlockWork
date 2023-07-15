@@ -59,7 +59,7 @@ struct Today: View {
     // MARK: Editor view
     var editor: some View {
         VStack(alignment: .leading) {
-            HStack {                
+            HStack {
                 JobPickerUsing(onChange: {_,_ in }, supportsDynamicPicker: true, jobId: $jobId)
                     .onReceive(Just(jobId)) { input in
                         let filtered = input.filter { "0123456789".contains($0) }
