@@ -242,7 +242,8 @@ public class CoreDataRecords: ObservableObject {
                     lineLimit: 10,
                     text: String(group),
                     intersection: gr.1[i],
-                    project: gr.2[i]
+                    project: gr.2[i],
+                    job: gr.3[i]
                 )
             )
 
@@ -254,10 +255,11 @@ public class CoreDataRecords: ObservableObject {
         return views
     }
 
-    private func exportableGroupedRecordsAsString(_ records: [LogRecord]) -> (String, [Intersection], [Project]) {
+    private func exportableGroupedRecordsAsString(_ records: [LogRecord]) -> (String, [Intersection], [Project], [Job]) {
         var buffer = ""
         let groupedRecords = Dictionary(grouping: records, by: {$0.job}).sorted(by: {$0.key!.jid > $1.key!.jid})
-        var projectIds: [Project] = []
+        var projects: [Project] = []
+        var jobs: [Job] = []
 
         for group in groupedRecords {
             if group.key != nil {
@@ -282,14 +284,16 @@ public class CoreDataRecords: ObservableObject {
 
                 buffer += "\t\n" // specifically added to allow split in createExportableGroupedRecordsAsViews
 
-                projectIds.append(group.key!.project!)
+                projects.append(group.key!.project!)
+                jobs.append(group.key!)
             }
         }
 
         return (
             buffer,
             calculateBillablePeriodIntersections(groupedRecords),
-            projectIds
+            projects,
+            jobs
         )
     }
 

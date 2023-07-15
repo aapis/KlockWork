@@ -28,6 +28,7 @@ struct TodaySettings: View {
     @AppStorage("today.showColumnActions") public var showColumnActions: Bool = false
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures: Bool = false
     @AppStorage("today.maxCharsPerGroup") public var maxCharsPerGroup: Int = 0
+    @AppStorage("today.colourizeExportableGroupedRecord") public var colourizeExportableGroupedRecord: Bool = false
     
     @State private var calendars: [CustomPickerItem] = []
 
@@ -95,6 +96,8 @@ struct TodaySettings: View {
                         Text("3000").tag(3000)
                         Text("4000").tag(4000)
                     }
+
+                    Toggle("Colourize grouped data records", isOn: $colourizeExportableGroupedRecord)
                 }
 
             }

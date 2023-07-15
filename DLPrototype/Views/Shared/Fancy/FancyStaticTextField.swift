@@ -23,6 +23,7 @@ public struct FancyStaticTextField: View, Identifiable {
     public var text: String = ""
     public var intersection: Intersection
     public var project: Project?
+    public var job: Job?
     
     @State public var internalText: String = ""
     @State public var copied: Bool = false
@@ -30,6 +31,7 @@ public struct FancyStaticTextField: View, Identifiable {
 
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
     @AppStorage("today.maxCharsPerGroup") public var maxCharsPerGroup: Int = 0
+    @AppStorage("today.colourizeExportableGroupedRecord") public var colourizeExportableGroupedRecord: Bool = false
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -56,7 +58,7 @@ public struct FancyStaticTextField: View, Identifiable {
             Divider()
             HStack {
                 ProgressView(value: intersection.rate, total: 100)
-                    .padding([.leading], 5)
+                    .padding([.leading], 8)
                     .disabled(true)
                 Spacer()
             }
@@ -204,6 +206,12 @@ public struct FancyStaticTextField: View, Identifiable {
 
         if internalText.count > maxCharsPerGroup {
             return Theme.rowStatusYellow
+        }
+
+        if colourizeExportableGroupedRecord {
+            if job != nil {
+                return Color.fromStored(job!.colour!)
+            }
         }
 
         return transparent! ? Color.clear : bgColour!
