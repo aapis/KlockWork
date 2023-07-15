@@ -53,6 +53,7 @@ public struct FancyStaticTextField: View, Identifiable {
             Divider()
             HStack {
                 ProgressView(value: intersection.rate, total: 100)
+                    .padding([.leading], 5)
                     .disabled(true)
                 Spacer()
             }
