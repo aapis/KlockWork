@@ -221,9 +221,10 @@ public class CoreDataRecords: ObservableObject {
         for group in groupedRecords {
             if group.key != nil {
                 let jid = String(Int(group.key!.jid))
+                let shredable = group.key!.shredable ? " (SR&ED)" : ""
 
                 if group.key!.uri != nil {
-                    buffer += "\(jid): \(group.key!.uri!.absoluteString)\n"
+                    buffer += "\(jid)\(shredable): \(group.key!.uri!.absoluteString)\n"
                 } else {
                     buffer += "\(jid)\n"
                 }
