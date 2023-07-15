@@ -160,6 +160,8 @@ struct LogTableDetails: View {
     }
 
     private func setTimers() -> Void {
+        timer?.invalidate()
+        
         func _setStateEventData() -> Void {
             ce.truncate()
             
