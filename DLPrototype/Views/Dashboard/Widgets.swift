@@ -24,6 +24,14 @@ struct WidgetLoading: View {
 }
 
 struct Widgets: View {
+    @AppStorage("dashboard.widget.history") public var showWidgetHistory: Bool = true
+    @AppStorage("dashboard.widget.thisweek") public var showWidgetThisWeek: Bool = true
+    @AppStorage("dashboard.widget.thismonth") public var showWidgetThisMonth: Bool = true
+    @AppStorage("dashboard.widget.thisyear") public var showWidgetThisYear: Bool = true
+    @AppStorage("dashboard.widget.favnotes") public var showWidgetFavNotes: Bool = true
+    @AppStorage("dashboard.widget.recentProjects") public var showWidgetRecentProjects: Bool = true
+    @AppStorage("dashboard.widget.recentJobs") public var showWidgetRecentJobs: Bool = true
+
     @EnvironmentObject public var crm: CoreDataRecords
     @EnvironmentObject public var ce: CoreDataCalendarEvent
     @EnvironmentObject public var jm: CoreDataJob
@@ -40,29 +48,47 @@ struct Widgets: View {
                 
                 Grid(alignment: .top, horizontalSpacing: 5, verticalSpacing: 5) {
                     GridRow {
-                        ThisDay()
-                            .environmentObject(crm)
-                            .environmentObject(ce)
-                        ThisWeek()
-                            .environmentObject(crm)
-                            .environmentObject(ce)
-                        ThisMonth()
-                            .environmentObject(crm)
-                            .environmentObject(ce)
+                        if showWidgetHistory {
+                            ThisDay()
+                                .environmentObject(crm)
+                                .environmentObject(ce)
+                        }
+
+                        if showWidgetThisWeek {
+                            ThisWeek()
+                                .environmentObject(crm)
+                                .environmentObject(ce)
+                        }
+
+                        if showWidgetThisMonth {
+                            ThisMonth()
+                                .environmentObject(crm)
+                                .environmentObject(ce)
+                        }
                     }
                     .frame(maxHeight: 250)
                     
                     GridRow(alignment: .top) {
-                        ThisYear()
-                            .environmentObject(crm)
-                            .environmentObject(ce)
-                        Favourites()
-                        RecentProjects()
+                        if showWidgetThisYear {
+                            ThisYear()
+                                .environmentObject(crm)
+                                .environmentObject(ce)
+                        }
+
+                        if showWidgetFavNotes {
+                            Favourites()
+                        }
+
+                        if showWidgetRecentProjects {
+                            RecentProjects()
+                        }
                     }
                     .frame(maxHeight: 250)
 
                     GridRow(alignment: .top) {
-                        RecentJobs()
+                        if showWidgetRecentJobs {
+                            RecentJobs()
+                        }
                     }
                     .frame(maxHeight: 250)
                 }
