@@ -84,7 +84,7 @@ struct FindDashboard: View {
             }
             .frame(height: 40)
             
-            if !activeSearchText.isEmpty {
+            if searching {
                 FancyDivider()
                 
                 Results(
