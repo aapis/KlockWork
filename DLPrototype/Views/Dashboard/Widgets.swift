@@ -26,7 +26,6 @@ struct WidgetLoading: View {
 struct Widgets: View {
     @EnvironmentObject public var crm: CoreDataRecords
     @EnvironmentObject public var ce: CoreDataCalendarEvent
-    @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var jm: CoreDataJob
     
     var body: some View {
@@ -58,6 +57,12 @@ struct Widgets: View {
                             .environmentObject(crm)
                             .environmentObject(ce)
                         Favourites()
+                        RecentProjects()
+                    }
+                    .frame(maxHeight: 250)
+
+                    GridRow(alignment: .top) {
+                        RecentJobs()
                     }
                     .frame(maxHeight: 250)
                 }

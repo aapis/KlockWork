@@ -174,6 +174,8 @@ struct Today: View {
                 job.id = UUID()
                 job.records = NSSet(array: [record])
                 job.colour = Color.randomStorable()
+                job.created = Date()
+                job.lastUpdate = Date()
                 
                 if !taskUrl.isEmpty && isUrl {
                     // TODO: add some kind of popup or something here and make them send again
@@ -183,6 +185,7 @@ struct Today: View {
                 record.job = job
             } else {
                 record.job = match
+                match?.lastUpdate = Date()
             }
             
             // clear input fields

@@ -105,4 +105,17 @@ public class CoreDataJob: ObservableObject {
         
         return all
     }
+
+    static public func recentJobsWidgetData() -> FetchRequest<Job> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Job.lastUpdate?, ascending: false)
+        ]
+
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.predicate = NSPredicate(format: "alive = true && lastUpdate != nil")
+        fetch.sortDescriptors = descriptors
+        fetch.fetchLimit = 10
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
 }

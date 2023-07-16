@@ -62,6 +62,7 @@ struct Home: View {
                             .environmentObject(jm)
                             .environmentObject(ce)
                             .environmentObject(crm)
+//                            .environmentObject(pr)
                             .environmentObject(updater)
                             .toolbar {
                                 Button(action: redraw, label: {
@@ -302,6 +303,7 @@ struct Home: View {
                 .environmentObject(crm)
                 .environmentObject(ce)
                 .environmentObject(updater)
+//                .environmentObject(pr)
                 .toolbar {
                     Button(action: redraw, label: {
                         Image(systemName: "arrow.triangle.2.circlepath")
