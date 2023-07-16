@@ -15,6 +15,7 @@ struct SearchBar: View {
     public var disabled: Bool
     public var placeholder: String? = "Search..."
     public var onSubmit: (() -> Void)? = nil
+    public var onReset: (() -> Void)? = nil
     
     var body: some View {
         GridRow {
@@ -35,5 +36,9 @@ struct SearchBar: View {
     
     private func reset() -> Void {
         text = ""
+
+        if onReset != nil {
+            onReset!()
+        }
     }
 }

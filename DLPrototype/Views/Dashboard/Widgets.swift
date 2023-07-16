@@ -39,12 +39,6 @@ struct Widgets: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
-                HStack {
-                    Title(text: "Welcome back!", image: "house")
-                    Spacer()
-                }
-                
-                FancyDivider()
                 
                 Grid(alignment: .top, horizontalSpacing: 5, verticalSpacing: 5) {
                     GridRow {
@@ -95,9 +89,6 @@ struct Widgets: View {
                 
                 Spacer()
             }
-            .font(Theme.font)
-            .padding()
         }
-        .background(Theme.toolbarColour)
     }
 }

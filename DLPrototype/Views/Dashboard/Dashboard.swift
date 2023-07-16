@@ -11,15 +11,32 @@ import SwiftUI
 
 struct Dashboard: View {
     static public let id: UUID = UUID()
+
+    @State public var searching: Bool = false
     
     @EnvironmentObject public var crm: CoreDataRecords
     @EnvironmentObject public var ce: CoreDataCalendarEvent
     
     var body: some View {
         VStack(spacing: 0) {
-            Widgets()
-                .environmentObject(crm)
-                .environmentObject(ce)
+            HStack {
+                Title(text: "Welcome back!", image: "house")
+                Spacer()
+            }
+
+            FancyDivider()
+            FindDashboard(searching: $searching)
+            FancyDivider()
+
+            if !searching {
+                Widgets()
+                    .environmentObject(crm)
+                    .environmentObject(ce)
+            }
+
         }
+        .font(Theme.font)
+        .padding()
+        .background(Theme.toolbarColour)
     }
 }

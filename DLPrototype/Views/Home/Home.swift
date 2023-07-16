@@ -101,25 +101,25 @@ struct Home: View {
                         Text("Today")
                     }
                     
-                    NavigationLink {
-                        FindDashboard()
-                            .navigationTitle("Find")
-                            .environmentObject(rm)
-                            .environmentObject(jm)
-                            .environmentObject(updater)
-                            .toolbar {
-                                Button(action: redraw, label: {
-                                    Image(systemName: "arrow.triangle.2.circlepath")
-                                })
-                                .buttonStyle(.borderless)
-                                .font(.title)
-                                .keyboardShortcut("r")
-                            }
-                    } label: {
-                        Image(systemName: "magnifyingglass")
-                            .padding(.trailing, 10)
-                        Text("Find")
-                    }
+//                    NavigationLink {
+//                        FindDashboard()
+//                            .navigationTitle("Find")
+//                            .environmentObject(rm)
+//                            .environmentObject(jm)
+//                            .environmentObject(updater)
+//                            .toolbar {
+//                                Button(action: redraw, label: {
+//                                    Image(systemName: "arrow.triangle.2.circlepath")
+//                                })
+//                                .buttonStyle(.borderless)
+//                                .font(.title)
+//                                .keyboardShortcut("r")
+//                            }
+//                    } label: {
+//                        Image(systemName: "magnifyingglass")
+//                            .padding(.trailing, 10)
+//                        Text("Find")
+//                    }
                 }
                 
                 Section(header: Text("Entities")) {

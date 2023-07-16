@@ -15,6 +15,8 @@ struct RecentSearch: Identifiable {
 }
 
 struct FindDashboard: View {
+    @Binding public var searching: Bool
+
     @State private var searchText: String = ""
     @State private var activeSearchText: String = ""
     @State private var showRecords: Bool = true
@@ -27,24 +29,27 @@ struct FindDashboard: View {
     @EnvironmentObject public var jm: CoreDataJob
     
     var body: some View {
-        VStack(alignment: .leading) {
-            VStack(alignment: .leading) {
-                search
-
-                Spacer()
-            }
-            .font(Theme.font)
-            .padding()
-        }
-        .background(Theme.toolbarColour)
+        // TODO: commented out to experiment including this view on the dashboard
+//        VStack(alignment: .leading) {
+//            VStack(alignment: .leading) {
+//                search
+//
+//                Spacer()
+//            }
+//            .font(Theme.font)
+//            .padding()
+//        }
+//        .background(Theme.toolbarColour)
+        search
     }
     
     @ViewBuilder
     var search: some View {
-        HStack {
-            Title(text: "Find", image: "magnifyingglass")
-            Spacer()
-        }
+        // TODO: commented out to experiment including this view on the dashboard
+//        HStack {
+//            Title(text: "Find", image: "magnifyingglass")
+//            Spacer()
+//        }
         
         Grid(horizontalSpacing: 0, verticalSpacing: 1) {
             GridRow {
@@ -52,7 +57,8 @@ struct FindDashboard: View {
                     text: $activeSearchText,
                     disabled: false,
                     placeholder: "Hit enter to search",
-                    onSubmit: onSubmit
+                    onSubmit: onSubmit,
+                    onReset: onReset
                 )
                 .onChange(of: searchText) { _ in
                     onSubmit()
@@ -108,6 +114,16 @@ struct FindDashboard: View {
     }
     
     private func onSubmit() -> Void {
+        if activeSearchText != "" {
+            searching = true
+        } else {
+            searching = false
+        }
+
         searchText = activeSearchText
+    }
+
+    private func onReset() -> Void {
+        searching = false
     }
 }
