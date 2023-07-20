@@ -72,7 +72,7 @@ struct LogTable: View, Identifiable {
             if group != 2 {
                 records = defaultGrouping()
             }
-            
+
             updater.updateOne("ltd.rows")
             changeSort()
         }
@@ -236,22 +236,29 @@ struct LogTable: View, Identifiable {
             }
             
             if records.count > 0 {
-                ForEach(records) { record in
-                    if record.job != nil {
-                        let entry = Entry(
-                            timestamp: DateHelper.longDate(record.timestamp!),
-                            job: record.job!,
-                            message: record.message!
-                        )
-                        
-                        LogRow(
-                            entry: entry,
-                            index: records.firstIndex(of: record),
-                            colour: Color.fromStored((record.job?.colour) ?? Theme.rowColourAsDouble),
-                            selectedJob: $job
-                        )
-                    }
-                }.onAppear(perform: changeSort)
+                if selectedTab == .grouped {
+                    // custom UI for grouped results
+                    // TODO: shouldn't instantiate CDR here
+                    let groupedByJob = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(records)
+                    ForEach(groupedByJob) { group in group }
+                } else {
+                    ForEach(records) { record in
+                        if record.job != nil {
+                            let entry = Entry(
+                                timestamp: DateHelper.longDate(record.timestamp!),
+                                job: record.job!,
+                                message: record.message!
+                            )
+
+                            LogRow(
+                                entry: entry,
+                                index: records.firstIndex(of: record),
+                                colour: Color.fromStored((record.job?.colour) ?? Theme.rowColourAsDouble),
+                                selectedJob: $job
+                            )
+                        }
+                    }.onAppear(perform: changeSort)
+                }
             } else {
                 LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
             }
