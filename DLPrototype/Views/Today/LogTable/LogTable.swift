@@ -303,8 +303,6 @@ struct LogTable: View, Identifiable {
         if records.count > 0 {
             if selectedTab == .chronologic || selectedTab == .calendar{
                 records = ungrouped()
-            } else if selectedTab == .grouped {
-                records = grouped()
             } else if selectedTab == .summarized {
                 records = summarized()
             }
@@ -350,12 +348,6 @@ struct LogTable: View, Identifiable {
     
     private func defaultGrouping() -> [LogRecord] {
         return recordsNoFilter().sorted(by: { $0.timestamp! > $1.timestamp! }).filter({
-            findMatches($0.message!)
-        })
-    }
-
-    private func grouped() -> [LogRecord] {
-        return records.sorted(by: { $0.job!.jid > $1.job!.jid }).filter({
             findMatches($0.message!)
         })
     }
