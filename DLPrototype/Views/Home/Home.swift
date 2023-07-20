@@ -136,6 +136,14 @@ struct Home: View {
                                     .buttonStyle(.borderless)
                                     .font(.title)
                                 }
+                                NavigationLink {
+                                    NoteCreate()
+                                        .environmentObject(jm)
+                                        .environmentObject(updater)
+                                } label: {
+                                    Image(systemName: "plus")
+                                        .font(.title)
+                                }
                             }
                     } label: {
                         Image(systemName: "note.text")
