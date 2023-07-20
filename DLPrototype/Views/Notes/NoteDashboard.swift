@@ -22,11 +22,14 @@ struct NoteDashboard: View {
     
     @FetchRequest public var notes: FetchedResults<Note>
     @FetchRequest public var notesStarred: FetchedResults<Note>
-    
+
+    private var columns: [GridItem] = Array(repeating: .init(.flexible(minimum: 100)), count: 3)
+
     public init(defaultSelectedJob: Job? = nil) {
         self.defaultSelectedJob = defaultSelectedJob
         
         let sharedDescriptors = [
+            NSSortDescriptor(keyPath: \Note.lastUpdate?, ascending: false),
             NSSortDescriptor(keyPath: \Note.mJob?.project?.id, ascending: false),
             NSSortDescriptor(keyPath: \Note.mJob?.id, ascending: false),
             NSSortDescriptor(keyPath: \Note.title, ascending: true)
@@ -39,10 +42,10 @@ struct NoteDashboard: View {
         
         if self.defaultSelectedJob != nil {
             let byJobPredicate = NSPredicate(format: "ANY mJob.jid = %f", self.defaultSelectedJob!.jid)
-            let predicates = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: [aliveNotStarredPredicate, byJobPredicate])
+            let predicates = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: [byJobPredicate])
             request.predicate = predicates
         } else {
-            request.predicate = aliveNotStarredPredicate
+//            request.predicate = aliveNotStarredPredicate
         }
         
         _notes = FetchRequest(fetchRequest: request, animation: .easeInOut)
@@ -50,7 +53,7 @@ struct NoteDashboard: View {
         let starredReq: NSFetchRequest<Note> = Note.fetchRequest()
         let aliveStarredPredicate = NSPredicate(format: "alive = true && starred = true")
         starredReq.sortDescriptors = sharedDescriptors
-        
+
         if self.defaultSelectedJob != nil {
             let byJobPredicate = NSPredicate(format: "ANY mJob.jid = %f", self.defaultSelectedJob!.jid)
             let predicates = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: [aliveStarredPredicate, byJobPredicate])
@@ -58,34 +61,49 @@ struct NoteDashboard: View {
         } else {
             starredReq.predicate = aliveStarredPredicate
         }
-        
+
         _notesStarred = FetchRequest(fetchRequest: starredReq, animation: .easeInOut)
     }
     
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
-                create
-                
                 HStack {
-                    Title(text: "Search", image: "note.text")
                     Spacer()
+                    FancyLink(icon: "plus", destination: AnyView(NoteCreate().environmentObject(jm)))
                 }
-                
+
                 SearchBar(
                     text: $searchText,
                     disabled: false,
                     placeholder: "Search \(notes.count) notes"
                 )
 
-                starredTable
-                allTable
+                recentNotes
+//                starredTable
+//                allTable
 
                 Spacer()
             }
             .padding()
         }
         .background(Theme.toolbarColour)
+    }
+
+    @ViewBuilder private var recentNotes: some View {
+        if notes.count > 0 {
+            ScrollView() {
+                LazyVGrid(columns: columns, alignment: .leading) {
+                    ForEach(filter(notes)) { note in
+                        NoteBlock(note: note)
+                            .environmentObject(jm)
+                            .environmentObject(updater)
+                    }
+                }
+            }
+        } else {
+            Text("No notes for this query")
+        }
     }
     
     @ViewBuilder

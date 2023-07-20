@@ -22,8 +22,9 @@ struct FancyLink: View {
     public var fgColour: Color = Color.white
     public var destination: AnyView?
     public var size: ButtonSize = .large
-    
+
     @State private var padding: CGFloat = 10
+    @State private var highlighted: Bool = false
     
     var body: some View {
         VStack {
@@ -33,7 +34,7 @@ struct FancyLink: View {
                 if showIcon {
                     Image(systemName: icon)
                 }
-                
+
                 if showLabel && label != nil {
                     Text(label!)
                         .foregroundColor(fgColour)
@@ -44,13 +45,15 @@ struct FancyLink: View {
             .foregroundColor(Color.white)
             .font(.title3)
             .padding(padding)
-            .background(colour)
+            .background(highlighted ? .black.opacity(0.3) : colour)
             .onHover { inside in
                 if inside {
                     NSCursor.pointingHand.push()
                 } else {
                     NSCursor.pop()
                 }
+
+                highlighted.toggle()
             }
         }
         .onAppear(perform: onAppear)
