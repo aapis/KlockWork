@@ -21,7 +21,6 @@ struct NoteDashboard: View {
     @EnvironmentObject public var jm: CoreDataJob
     
     @FetchRequest public var notes: FetchedResults<Note>
-    @FetchRequest public var notesStarred: FetchedResults<Note>
 
     private var columns: [GridItem] = Array(repeating: .init(.flexible(minimum: 100)), count: 3)
 
@@ -36,8 +35,6 @@ struct NoteDashboard: View {
         ]
         
         let request: NSFetchRequest<Note> = Note.fetchRequest()
-        let aliveNotStarredPredicate = NSPredicate(format: "alive = true && (starred = false || starred = nil)")
-        
         request.sortDescriptors = sharedDescriptors
         
         if self.defaultSelectedJob != nil {
@@ -45,34 +42,15 @@ struct NoteDashboard: View {
             let predicates = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: [byJobPredicate])
             request.predicate = predicates
         } else {
-//            request.predicate = aliveNotStarredPredicate
+            request.predicate = NSPredicate(format: "alive = true")
         }
         
         _notes = FetchRequest(fetchRequest: request, animation: .easeInOut)
-        
-        let starredReq: NSFetchRequest<Note> = Note.fetchRequest()
-        let aliveStarredPredicate = NSPredicate(format: "alive = true && starred = true")
-        starredReq.sortDescriptors = sharedDescriptors
-
-        if self.defaultSelectedJob != nil {
-            let byJobPredicate = NSPredicate(format: "ANY mJob.jid = %f", self.defaultSelectedJob!.jid)
-            let predicates = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: [aliveStarredPredicate, byJobPredicate])
-            starredReq.predicate = predicates
-        } else {
-            starredReq.predicate = aliveStarredPredicate
-        }
-
-        _notesStarred = FetchRequest(fetchRequest: starredReq, animation: .easeInOut)
     }
     
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
-                HStack {
-                    Spacer()
-                    FancyLink(icon: "plus", destination: AnyView(NoteCreate().environmentObject(jm)))
-                }
-
                 SearchBar(
                     text: $searchText,
                     disabled: false,
@@ -80,8 +58,6 @@ struct NoteDashboard: View {
                 )
 
                 recentNotes
-//                starredTable
-//                allTable
 
                 Spacer()
             }
@@ -105,17 +81,8 @@ struct NoteDashboard: View {
             Text("No notes for this query")
         }
     }
-    
-    @ViewBuilder
-    var create: some View {
-        HStack {
-            Title(text: "Create", image: "pencil")
-        }
-        
-        FancyLink(icon: "note.text.badge.plus", destination: AnyView(NoteCreate().environmentObject(jm)))
-        FancyDivider()
-    }
-    
+
+    // TODO: keep this, but make it optional
     @ViewBuilder
     var allTable: some View {
         Grid(horizontalSpacing: 1, verticalSpacing: 1) {
@@ -146,44 +113,6 @@ struct NoteDashboard: View {
     }
     
     @ViewBuilder
-    var starredTable: some View {
-        Grid(horizontalSpacing: 1, verticalSpacing: 1) {
-            HStack(spacing: 0) {
-                GridRow {
-                    Group {
-                        ZStack(alignment: .leading) {
-                            Theme.headerColour
-                            Text("Favourites")
-                                .padding()
-                        }
-                    }
-                    Group {
-                        ZStack {
-                            Theme.headerColour
-                            Text("Star")
-                                .padding()
-                        }
-                    }
-                    .frame(width: 100)
-                    Group {
-                        ZStack {
-                            Theme.headerColour
-                            Text("Versions")
-                                .padding()
-                        }
-                    }
-                    .frame(width: 100)
-                }
-            }
-            .frame(height: 46)
-            
-            starredRows
-        }
-        .font(Theme.font)
-        .frame(maxHeight: 300)
-    }
-    
-    @ViewBuilder
     var allRows: some View {
         ScrollView {
             if notes.count > 0 {
@@ -194,21 +123,6 @@ struct NoteDashboard: View {
                 }
             } else {
                 Text("No notes for this query")
-            }
-        }
-    }
-    
-    @ViewBuilder
-    var starredRows: some View {
-        ScrollView {
-            if notesStarred.count > 0 {
-                VStack(alignment: .leading, spacing: 1) {
-                    ForEach(filter(notesStarred)) { note in
-                        NoteRow(note: note)
-                    }
-                }
-            } else {
-                Text("No favourite notes for this query")
             }
         }
     }
