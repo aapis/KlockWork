@@ -195,7 +195,18 @@ struct NoteView: View {
                 Spacer()
                 HStack(spacing: 10) {
                     Spacer()
-                    FancyButtonv2(text: "Delete", action: delete, icon: "xmark", showLabel: false, type: .destructive)
+                    FancyButtonv2(
+                        text: "Delete",
+                        action: delete,
+                        icon: "xmark",
+                        showLabel: false,
+                        type: .destructive,
+                        redirect: AnyView(
+                            NoteDashboard()
+                                .environmentObject(jm)
+                                .environmentObject(updater)
+                        )
+                    )
 
                     if revisionNotLatest() {
                         FancyButtonv2(text: "Restore", action: update, size: .medium, type: .primary)

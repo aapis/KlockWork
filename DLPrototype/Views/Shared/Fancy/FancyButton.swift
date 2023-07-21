@@ -112,50 +112,65 @@ public struct FancyButtonv2: View {
     public var showIcon: Bool? = true
     public var size: ButtonSize = .small
     public var type: ButtonType = .standard
+    public var redirect: AnyView? = nil
 
     @State private var padding: CGFloat = 10
     @State private var highlighted: Bool = false
 
     public var body: some View {
         VStack {
-            Button(action: action, label: {
-                ZStack {
-                    if highlighted {
-                        HighlightedBackground
-                    } else {
-                        Background
-                    }
-
-                    HStack {
-                        if showIcon! {
-                            Image(systemName: icon!)
-                                .symbolRenderingMode(.hierarchical)
-                                .font(.title2)
-                                .foregroundColor(type.textColour)
-                        }
-
-                        if showLabel! {
-                            Text(text)
-                                .foregroundColor(type.textColour)
-                        }
-                    }
-                    .padding(5)
+            if redirect != nil {
+                NavigationLink {
+                    redirect!
+                        .onAppear(perform: action)
+                } label: {
+                    button
                 }
-                .frame(maxWidth: buttonFrameWidth())
-                .foregroundColor(Color.white)
-                .font(.title3)
-                .help(text)
-                .onHover { inside in
-                    if inside {
-                        NSCursor.pointingHand.push()
-                    } else {
-                        NSCursor.pop()
-                    }
-
-                    highlighted.toggle()
+                .buttonStyle(.plain)
+            } else {
+                Button(action: action) {
+                    button
                 }
-            })
-            .buttonStyle(.borderless)
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    private var button: some View {
+        ZStack {
+            if highlighted {
+                HighlightedBackground
+            } else {
+                Background
+            }
+
+            HStack {
+                if showIcon! {
+                    Image(systemName: icon!)
+                        .symbolRenderingMode(.hierarchical)
+                        .font(.title2)
+                        .foregroundColor(type.textColour)
+                }
+
+                if showLabel! {
+                    Text(text)
+                        .foregroundColor(type.textColour)
+                }
+            }
+            .padding(5)
+        }
+        .frame(maxWidth: buttonFrameWidth())
+        .foregroundColor(Color.white)
+        .font(.title3)
+        .help(text)
+        .onHover { inside in
+            if inside {
+                NSCursor.pointingHand.push()
+            } else {
+                NSCursor.pop()
+            }
+
+            highlighted.toggle()
         }
     }
 
