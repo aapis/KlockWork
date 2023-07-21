@@ -65,6 +65,151 @@ struct FancyButton: View {
     }
 }
 
+public enum ButtonType {
+    case destructive, standard, primary
+
+    var colours: [Color] {
+        switch self {
+        case .primary:
+            return [Color.green, Color.blue]
+        case .destructive:
+            return [Color.red, Color(hue: 0.0/100, saturation: 84.0/100, brightness: 43.0/100)]
+        case .standard:
+            return [Color.white, Color.gray]
+        }
+    }
+
+    var textColour: Color {
+        switch self {
+        case .primary:
+            return Color.white
+        case .destructive:
+            return Color.white
+        case .standard:
+            return Color.black
+        }
+    }
+
+    var highlightColour: Color {
+        switch self {
+        case .primary:
+            return Color.green
+        case .destructive:
+            return Color.red
+        case .standard:
+            return Color.white
+        }
+    }
+}
+
+public struct FancyButtonv2: View {
+    public var text: String
+    public var action: () -> Void
+    public var icon: String? = "checkmark.circle"
+    public var altIcon: String? = "checkmark.circle"
+    public var transparent: Bool? = false
+    public var showLabel: Bool? = true
+    public var showIcon: Bool? = true
+    public var size: ButtonSize = .small
+    public var type: ButtonType = .standard
+    public var redirect: AnyView? = nil
+
+    @State private var padding: CGFloat = 10
+    @State private var highlighted: Bool = false
+
+    public var body: some View {
+        VStack {
+            if redirect != nil {
+                NavigationLink {
+                    redirect!
+                        .onAppear(perform: action)
+                } label: {
+                    button
+                }
+                .buttonStyle(.plain)
+            } else {
+                Button(action: action) {
+                    button
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    private var button: some View {
+        ZStack {
+            if highlighted {
+                HighlightedBackground
+            } else {
+                Background
+            }
+
+            HStack {
+                if showIcon! {
+                    Image(systemName: icon!)
+                        .symbolRenderingMode(.hierarchical)
+                        .font(.title2)
+                        .foregroundColor(type.textColour)
+                }
+
+                if showLabel! {
+                    Text(text)
+                        .foregroundColor(type.textColour)
+                }
+            }
+            .padding(5)
+        }
+        .frame(maxWidth: buttonFrameWidth())
+        .foregroundColor(Color.white)
+        .font(.title3)
+        .help(text)
+        .onHover { inside in
+            if inside {
+                NSCursor.pointingHand.push()
+            } else {
+                NSCursor.pop()
+            }
+
+            highlighted.toggle()
+        }
+    }
+
+    private var Background: some View {
+        ZStack {
+            LinearGradient(gradient: Gradient(colors: type.colours), startPoint: .topLeading, endPoint: .bottomTrailing)
+                .mask(
+                    RoundedRectangle(cornerRadius: 5)
+                )
+        }
+    }
+
+    private var HighlightedBackground: some View {
+        ZStack {
+            LinearGradient(gradient: Gradient(colors: [type.highlightColour, type.highlightColour]), startPoint: .top, endPoint: .bottom)
+                .mask(
+                    RoundedRectangle(cornerRadius: 5)
+                )
+        }
+        .shadow(color: .black.opacity(0.3), radius: 1, x: 1, y: 1)
+    }
+
+    private func buttonFrameWidth() -> CGFloat {
+        switch size {
+        case .small:
+            return 40
+        case .medium:
+            return 200
+        case .large:
+            return 200
+        }
+    }
+
+    private func fgColourEffect() -> Color {
+//        let gradient = LinearGradient(colors: [fgColour, Color.black])
+        return Color.black
+    }
+}
+
 struct FancyButtonPreview: PreviewProvider {
     static var previews: some View {        
         FancyButton(text: "Button text", action: {}, icon: "checkmark.circle")

@@ -1,6 +1,15 @@
-#  DLPrototype
+#  ClockWork (formerly DLPrototype)
 
-This is a small macOS application I've been using to play with `swiftui` and to dabble in `swift` development in general over the past few years.  The whole thing is a WIP and I caution you that it does NOT follow any swift coding standards beyond what the compiler enforces, nor is there any attempt at system architecture.  It's an app front end for a plain text file. 
+The productivity app for ADHD people. Well that's the goal, anyways.
+
+## Major Features
+
+* Simple task tracking
+* Simple note taking
+* People, Companies, Projects and Jobs. These are your high level organizational items.
+* Lastly, the activity log (Today view) where you log what you're working on.
+
+See the [wiki](https://github.com/aapis/DLPrototype/wiki) for more details.
 
 ![record view](Screenshots/record-view.png)
 ![search view (beta)](Screenshots/search-view-beta.png)

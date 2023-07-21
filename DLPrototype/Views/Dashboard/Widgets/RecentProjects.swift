@@ -32,5 +32,6 @@ struct RecentProjects: View {
         }
         .padding()
         .border(Theme.darkBtnColour)
+        .frame(height: 250)
     }
 }

@@ -116,13 +116,13 @@ struct ThisDay: View {
         .onChange(of: currentDate) { _ in
             loadWidgetData()
         }
-        .frame(minHeight: 250)
-        
+        .frame(height: 250)
     }
     
     private func findHistoricalDataForToday() async -> Void {
         let calendar = Calendar.autoupdatingCurrent
         let current = calendar.dateComponents([.year, .month, .day], from: currentDate)
+        todayInHistory = []
 
         if current.isValidDate == false {
             for offset in 0...maxYearsPastInHistory {

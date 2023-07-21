@@ -12,7 +12,6 @@ import SwiftUI
 struct NoteCreate: View {
     @State private var title: String = ""
     @State private var content: String = ""
-    @State private var showForm: Bool = true
     @State private var selectedJob: Job?
     @State private var jobId: String = ""
     
@@ -23,62 +22,55 @@ struct NoteCreate: View {
     private var jobs: [Job] {
         CoreDataJob(moc: moc).all()
     }
-    
+
     var body: some View {
-        if showForm {
-            form
-        } else {
-            // TODO: probably a bad idea to just.. show it here
-            NoteDashboard()
-                .environmentObject(jm)
-                .environmentObject(updater)
-        }
-    }
-    
-    @ViewBuilder
-    var form: some View {
         VStack(alignment: .leading) {
-            VStack(alignment: .leading, spacing: 22) {
+            VStack(alignment: .leading, spacing: 13) {
                 Title(text: "Create a note", image: "note.text.badge.plus")
                 JobPickerUsing(onChange: pickerChange, jobId: $jobId)
                 FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
-                
                 FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
                 
                 Spacer()
-                
-                HStack {
-                    // TODO: FancyLink()
-                    NavigationLink {
-                        NoteDashboard()
-                            .navigationTitle("Note dashboard")
-                            .environmentObject(jm)
-                            .environmentObject(updater)
-                    } label: {
-                        HStack {
-                            Image(systemName: "arrow.left")
-                            Text("Dashboard")
-                        }
-                    }
-                    .buttonStyle(.borderless)
-                    .foregroundColor(Color.white)
-                    .font(.title3)
-                    .padding()
-                    .background(Color.black.opacity(0.2))
-                    .onHover { inside in
-                        if inside {
-                            NSCursor.pointingHand.push()
-                        } else {
-                            NSCursor.pop()
-                        }
-                    }
-                    
-                    Spacer()
-                    FancyButton(text: "Create", action: save)
-                }
+
+                HelpBar
             }.padding()
         }
         .background(Theme.toolbarColour)
+    }
+
+    @ViewBuilder private var HelpBar: some View {
+        Spacer()
+        ZStack(alignment: .topLeading) {
+            Theme.darkBtnColour
+            HStack {
+                HStack {
+                    Text("\u{2318} s: Create")
+                }
+
+                Spacer()
+                HStack(spacing: 10) {
+                    Spacer()
+                    FancyButtonv2(
+                        text: "Create",
+                        action: save,
+                        size: .medium,
+                        type: .primary,
+                        redirect: AnyView(
+                            NoteDashboard()
+                                .environmentObject(jm)
+                                .environmentObject(updater)
+                        )
+                    )
+                        .keyboardShortcut("s", modifiers: .command)
+
+                }
+                .frame(width: 300, height: 30)
+            }
+            .font(.callout)
+            .padding()
+        }
+        .frame(height: 30)
     }
     
     // TODO: should not be part of this view
@@ -95,6 +87,7 @@ struct NoteCreate: View {
         note.title = title
         note.body = content
         note.postedDate = Date()
+        note.lastUpdate = Date()
         note.id = UUID()
         note.job = selectedJob // TODO: DEPRECATED
         note.mJob = selectedJob
@@ -108,8 +101,6 @@ struct NoteCreate: View {
         version.created = note.postedDate
 
         PersistenceController.shared.save()
-        
-        showForm = false
     }
 }
 
