@@ -23,7 +23,7 @@ struct NoteView: View {
     @State private var disableNextButton: Bool = false
     @State private var disablePreviousButton: Bool = false
     @State private var noteVersions: [NoteVersion] = []
-    @State private var sidebarVisible: Bool = true // TODO: move to app settings
+    @State private var sidebarVisible: Bool = false // TODO: move to app settings
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var jm: CoreDataJob
@@ -48,34 +48,29 @@ struct NoteView: View {
     }
     
     var body: some View {
-        VStack {
-            if isShowingEditor {
-                VStack(alignment: .leading) {
-                    VStack(alignment: .leading, spacing: 13) {
-                        TopBar
+        VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 13) {
+                TopBar
 
-                        JobPickerUsing(onChange: pickerChange, jobId: $autoSelectedJobId)
+                JobPickerUsing(onChange: pickerChange, jobId: $autoSelectedJobId)
 
-                        HStack(alignment: .top, spacing: 5) {
-                            VStack(alignment: .leading) {
-                                FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, disabled: revisionNotLatest(), text: $title)
-                                FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, disabled: revisionNotLatest(), text: $content)
-                            }
-
-                            if sidebarVisible {
-                                SideBar
-                            }
-                        }
-
-                        HelpBar
+                HStack(alignment: .top, spacing: 5) {
+                    VStack(alignment: .leading) {
+                        FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, disabled: revisionNotLatest(), text: $title)
+                        FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, disabled: revisionNotLatest(), text: $content)
+                            .scrollIndicators(.never)
                     }
-                    .padding()
+
+                    if sidebarVisible {
+                        SideBar
+                    }
                 }
-                .background(Theme.toolbarColour)
-            } else {
-                NoteDashboard() // TODO: not a great idea, I think
+
+                HelpBar
             }
+            .padding()
         }
+        .background(Theme.toolbarColour)
         .onAppear(perform: {createBindings(note: note)})
         .onChange(of: note, perform: createBindings)
     }
@@ -95,11 +90,6 @@ struct NoteView: View {
                     .font(Theme.font)
                 FancyButton(text: "Next", action: nextVersion, icon: "arrowtriangle.right", showLabel: false)
                     .disabled(disableNextButton)
-
-                Image(systemName: "pencil")
-                    .help("Created: \(DateHelper.shortDateWithTime(note.postedDate))")
-                    .padding(8)
-                    .background(Theme.toolbarColour)
                 
                 if sidebarVisible {
                     FancyButton(
@@ -136,72 +126,91 @@ struct NoteView: View {
             ZStack {
                 Theme.darkBtnColour
 
-                VStack {
-                    if let date = note.lastUpdate {
-                        Text("Edited: \(date)")
+                VStack(alignment: .leading) {
+                    Text("Meta")
+                        .font(.title)
+
+                    Divider()
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        if let date = note.postedDate {
+                            HStack(alignment: .top, spacing: 10) {
+                                Image(systemName: "calendar")
+                                Text("\(date.formatted())")
+                                    .help("Created on \(date)")
+                            }
+                        }
+
+                        if let date = note.lastUpdate {
+                            HStack(alignment: .top, spacing: 10) {
+                                Image(systemName: "pencil")
+                                Text("\(date.formatted())")
+                                    .help("Edited on \(date)")
+                            }
+                        }
+
+                        if let id = note.id {
+                            HStack(alignment: .top, spacing: 10) {
+                                Image(systemName: "questionmark")
+                                Text("\(id.uuidString)")
+                                    .help("System id: \(id.uuidString)")
+                            }
+                        }
+
+                        if !note.alive {
+                            HStack(alignment: .top, spacing: 10) {
+                                Image(systemName: "eye")
+                                Text("Soft deleted")
+                            }
+                        }
+
+                        if let versions = note.versions {
+                            HStack(alignment: .top, spacing: 10) {
+                                Image(systemName: "square.grid.3x1.fill.below.line.grid.1x2")
+                                Text("\(versions.count)")
+                                    .help("\(versions.count) versions saved")
+                            }
+                        }
                     }
 
                     Spacer()
-                    HStack(spacing: 0) {
-
-//                        FancyButton(text: "Delete", action: delete)
-
-                        FancyButtonv2(text: "Delete", action: {}, icon: "xmark", showLabel: false, type: .destructive)
-                        Spacer()
-                        FancyButtonv2(text: "Save", action: {}, showLabel: false, type: .primary)
-//                        NavigationLink {
-//                            EmptyView()
-//                        } label: {
-//                            ZStack {
-//                                RoundedRectangle(cornerRadius: 5)
-//                                    .foregroundColor(.orange)
-//
-//                                HStack {
-//                                    Image(systemName: "xmark")
-//                                        .symbolRenderingMode(.hierarchical)
-//                                    Text("Delete")
-//                                }
-//                                .padding()
-//                            }
-//                            .frame(height: 50)
-//                        }
-//                        .buttonStyle(.plain)
-//                        .onHover { inside in
-//                            if inside {
-//                                NSCursor.pointingHand.push()
-//                            } else {
-//                                NSCursor.pop()
-//                            }
-//                        }
-
-//                        Spacer()
-//                        if revisionNotLatest() {
-//                            FancyButton(text: "Restore", action: update)
-//                                .keyboardShortcut("s")
-//                        } else {
-//                            FancyButton(text: "Update", action: update)
-//                                .keyboardShortcut("s")
-//                        }
-                    }
                 }
+                .padding()
             }
         }
         .frame(minWidth: 300, maxWidth: 400)
     }
 
-    private var HelpBar: some View {
-        VStack(alignment: .leading) {
-            ZStack(alignment: .topLeading) {
-                Theme.darkBtnColour
+    @ViewBuilder private var HelpBar: some View {
+        Spacer()
+        ZStack(alignment: .topLeading) {
+            Theme.darkBtnColour
+            HStack {
                 HStack {
-                    Text("\u{2318} S: Save")
-                    Text("\u{2318} +: Star/Unstar")
+                    Text("\u{2318} s: Save")
+                    Text("\u{2318} +: Toggle star")
+                    Text("\u{2318} b: Toggle sidebar")
                 }
-                .font(.callout)
-                .padding()
+
+                Spacer()
+                HStack(spacing: 10) {
+                    Spacer()
+                    FancyButtonv2(text: "Delete", action: delete, icon: "xmark", showLabel: false, type: .destructive)
+
+                    if revisionNotLatest() {
+                        FancyButtonv2(text: "Restore", action: update, size: .medium, type: .primary)
+                            .keyboardShortcut("s", modifiers: .command)
+                    } else {
+                        FancyButtonv2(text: "Save", action: update, size: .medium, type: .primary)
+                            .keyboardShortcut("s", modifiers: .command)
+                    }
+                }
+                .frame(width: 300, height: 30)
             }
-            .frame(height: 30)
+            .font(.callout)
+            .padding()
         }
+        .frame(height: 30)
     }
     
     private func previousVersion() -> Void {

@@ -47,7 +47,6 @@ struct NoteBlock: View {
                 NSCursor.pointingHand.push()
             } else {
                 NSCursor.pop()
-
             }
 
             highlighted.toggle()

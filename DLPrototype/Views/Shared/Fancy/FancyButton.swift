@@ -71,11 +71,33 @@ public enum ButtonType {
     var colours: [Color] {
         switch self {
         case .primary:
-            return [Color.blue, Color(hue: 216.0/100, saturation: 85.0/100, brightness: 34.0/100)]
+            return [Color.green, Color.blue]
         case .destructive:
             return [Color.red, Color(hue: 0.0/100, saturation: 84.0/100, brightness: 43.0/100)]
         case .standard:
             return [Color.white, Color.gray]
+        }
+    }
+
+    var textColour: Color {
+        switch self {
+        case .primary:
+            return Color.white
+        case .destructive:
+            return Color.white
+        case .standard:
+            return Color.black
+        }
+    }
+
+    var highlightColour: Color {
+        switch self {
+        case .primary:
+            return Color.green
+        case .destructive:
+            return Color.red
+        case .standard:
+            return Color.white
         }
     }
 }
@@ -88,7 +110,7 @@ public struct FancyButtonv2: View {
     public var transparent: Bool? = false
     public var showLabel: Bool? = true
     public var showIcon: Bool? = true
-    public var size: ButtonSize = .medium
+    public var size: ButtonSize = .small
     public var type: ButtonType = .standard
 
     @State private var padding: CGFloat = 10
@@ -98,24 +120,30 @@ public struct FancyButtonv2: View {
         VStack {
             Button(action: action, label: {
                 ZStack {
-                    Background
+                    if highlighted {
+                        HighlightedBackground
+                    } else {
+                        Background
+                    }
 
                     HStack {
                         if showIcon! {
                             Image(systemName: icon!)
                                 .symbolRenderingMode(.hierarchical)
+                                .font(.title2)
+                                .foregroundColor(type.textColour)
                         }
 
                         if showLabel! {
                             Text(text)
+                                .foregroundColor(type.textColour)
                         }
                     }
-                    .padding()
+                    .padding(5)
                 }
-                .frame(width: 50, height: 50)
+                .frame(maxWidth: buttonFrameWidth())
                 .foregroundColor(Color.white)
                 .font(.title3)
-                .padding(padding)
                 .help(text)
                 .onHover { inside in
                     if inside {
@@ -128,7 +156,6 @@ public struct FancyButtonv2: View {
                 }
             })
             .buttonStyle(.borderless)
-            .onAppear(perform: onAppear)
         }
     }
 
@@ -137,21 +164,28 @@ public struct FancyButtonv2: View {
             LinearGradient(gradient: Gradient(colors: type.colours), startPoint: .topLeading, endPoint: .bottomTrailing)
                 .mask(
                     RoundedRectangle(cornerRadius: 5)
-                    //                                .foregroundColor(highlighted ? fgColourEffect() : fgColour!)
-
                 )
-//                .shadow(color: .black.opacity(0.5), radius: 3)
         }
     }
 
-    private func onAppear() -> Void {
+    private var HighlightedBackground: some View {
+        ZStack {
+            LinearGradient(gradient: Gradient(colors: [type.highlightColour, type.highlightColour]), startPoint: .top, endPoint: .bottom)
+                .mask(
+                    RoundedRectangle(cornerRadius: 5)
+                )
+        }
+        .shadow(color: .black.opacity(0.3), radius: 1, x: 1, y: 1)
+    }
+
+    private func buttonFrameWidth() -> CGFloat {
         switch size {
         case .small:
-            padding = 0
+            return 40
         case .medium:
-            padding = 5
+            return 200
         case .large:
-            padding = 10
+            return 200
         }
     }
 
