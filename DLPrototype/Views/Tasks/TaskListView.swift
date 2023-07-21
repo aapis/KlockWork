@@ -50,7 +50,7 @@ struct TaskListView: View {
                         Grid(alignment: .top, horizontalSpacing: 1, verticalSpacing: 1) {
                             header.font(Theme.font)
                             
-                            ScrollView {
+                            ScrollView(showsIndicators: false) {
                                 VStack(spacing: 1) {
                                     ForEach(tasks, id: \LogTask.id) { task in
                                         TaskView(task: task, showCreated: true, showUpdated: true, showCancelled: true)

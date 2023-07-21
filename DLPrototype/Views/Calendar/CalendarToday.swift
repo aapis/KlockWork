@@ -33,7 +33,7 @@ struct CalendarToday: View {
             .frame(height: 40)
             .background(Theme.headerColour)
 
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 HStack(spacing: 0) {
                     ForEach(startOfDay..<(endOfDay - 1), id: \.self) { time in
                         ZStack {

@@ -97,7 +97,7 @@ struct LogTable: View, Identifiable {
             Grid(alignment: .top, horizontalSpacing: 1, verticalSpacing: 1) {
                 headers.font(Theme.font)
                 
-                ScrollView {
+                ScrollView(showsIndicators: false) {
                     rows.font(Theme.font)
                 }
             }
@@ -110,7 +110,7 @@ struct LogTable: View, Identifiable {
             Grid(alignment: .top, horizontalSpacing: 1, verticalSpacing: 1) {
                 headers.font(Theme.font)
                 
-                ScrollView {
+                ScrollView(showsIndicators: false) {
                     plainRows.font(Theme.font)
                 }
             }

@@ -101,7 +101,7 @@ struct LogTableDetails: View {
                 header
                     .font(Theme.font)
                 
-                ScrollView {
+                ScrollView(showsIndicators: false) {
                     rows.font(Theme.font)
                 }
                 .id(updater.ids["ltd.rows"])

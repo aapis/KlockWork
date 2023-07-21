@@ -22,7 +22,7 @@ struct RecentJobs: View {
             FancySubTitle(text: "\(title)")
             Divider()
 
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 VStack(spacing: 1) {
                     ForEach(resource) { job in
                         JobRow(job: job, colour: Color.fromStored(job.colour ?? Theme.rowColourAsDouble))

@@ -30,7 +30,7 @@ struct Results: View {
     @EnvironmentObject public var updater: ViewUpdater
     
     var body: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             VStack(spacing: 0) {
                 if records.count > 0 && showRecords {
                     RecordResult(bucket: records, text: $text, isLoading: $isLoading)

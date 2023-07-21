@@ -15,6 +15,8 @@ struct NoteDashboard: View {
     @State private var searchText: String = ""
     @State private var selected: Int = 0
     @State private var note: Note?
+
+    @AppStorage("notes.columns") private var numColumns: Int = 3
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
@@ -22,7 +24,9 @@ struct NoteDashboard: View {
     
     @FetchRequest public var notes: FetchedResults<Note>
 
-    private var columns: [GridItem] = Array(repeating: .init(.flexible(minimum: 100)), count: 3)
+    private var columns: [GridItem] {
+        return Array(repeating: .init(.flexible(minimum: 100)), count: numColumns)
+    }
 
     public init(defaultSelectedJob: Job? = nil) {
         self.defaultSelectedJob = defaultSelectedJob
@@ -68,7 +72,7 @@ struct NoteDashboard: View {
 
     @ViewBuilder private var recentNotes: some View {
         if notes.count > 0 {
-            ScrollView() {
+            ScrollView(showsIndicators: false) {
                 LazyVGrid(columns: columns, alignment: .leading) {
                     ForEach(filter(notes)) { note in
                         NoteBlock(note: note)
@@ -114,7 +118,7 @@ struct NoteDashboard: View {
     
     @ViewBuilder
     var allRows: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             if notes.count > 0 {
                 VStack(alignment: .leading, spacing: 1) {
                     ForEach(filter(notes)) { note in

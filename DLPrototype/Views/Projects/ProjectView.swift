@@ -216,7 +216,7 @@ struct ProjectView: View {
             }
             .frame(height: 40)
             
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 1) {
                     ForEach(selectedJobs, id: \.jid) { job in
                         HStack(alignment: .top, spacing: 1) {
@@ -296,7 +296,7 @@ struct ProjectView: View {
             }
             .frame(height: 40)
         
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 1) {
                     ForEach(allUnOwned, id: \.jid) { job in
                         HStack(alignment: .top, spacing: 1) {

@@ -77,7 +77,7 @@ struct ProjectCreate: View {
             Toggle("All?", isOn: $selectAllToggle)
         }
         
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             Grid(alignment: .leading, horizontalSpacing: 1, verticalSpacing: 1) {
                 GridRow {
                     Group {

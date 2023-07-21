@@ -22,7 +22,7 @@ struct RecentProjects: View {
             FancySubTitle(text: "\(title)")
             Divider()
 
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 VStack(spacing: 1) {
                     ForEach(resource) { project in
                         ProjectRow(project: project)

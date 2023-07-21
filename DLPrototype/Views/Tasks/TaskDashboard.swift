@@ -81,7 +81,7 @@ struct TaskDashboard: View {
                 .frame(height: 40)
                 
                 GridRow {
-                    ScrollView {
+                    ScrollView(showsIndicators: false) {
                         VStack(alignment: .leading, spacing: 1) {
                             ForEach(filter(tasks)) { task in
                                 TaskView(task: task, showJobId: true, showCreated: true, showUpdated: true, showCompleted: true, colourizeRow: true)
