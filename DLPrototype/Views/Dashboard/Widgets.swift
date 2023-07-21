@@ -35,13 +35,14 @@ struct Widgets: View {
     @EnvironmentObject public var crm: CoreDataRecords
     @EnvironmentObject public var ce: CoreDataCalendarEvent
     @EnvironmentObject public var jm: CoreDataJob
-    
+
+    private var columns: [GridItem] = Array(repeating: .init(.flexible(minimum: 100)), count: 3)
+
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
-                
-                Grid(alignment: .top, horizontalSpacing: 5, verticalSpacing: 5) {
-                    GridRow {
+                ScrollView(showsIndicators: false) {
+                    LazyVGrid(columns: columns, alignment: .leading) {
                         if showWidgetHistory {
                             ThisDay()
                                 .environmentObject(crm)
@@ -59,10 +60,7 @@ struct Widgets: View {
                                 .environmentObject(crm)
                                 .environmentObject(ce)
                         }
-                    }
-                    .frame(maxHeight: 250)
-                    
-                    GridRow(alignment: .top) {
+
                         if showWidgetThisYear {
                             ThisYear()
                                 .environmentObject(crm)
@@ -76,18 +74,14 @@ struct Widgets: View {
                         if showWidgetRecentProjects {
                             RecentProjects()
                         }
-                    }
-                    .frame(maxHeight: 250)
 
-                    GridRow(alignment: .top) {
                         if showWidgetRecentJobs {
                             RecentJobs()
                         }
                     }
-                    .frame(maxHeight: 250)
+
+                    Spacer()
                 }
-                
-                Spacer()
             }
         }
     }

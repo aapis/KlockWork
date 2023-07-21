@@ -35,6 +35,7 @@ struct ThisMonth: View {
         .padding()
         .border(Theme.darkBtnColour)
         .onAppear(perform: onAppear)
+        .frame(height: 250)
     }
     
     private func onAppear() -> Void {
