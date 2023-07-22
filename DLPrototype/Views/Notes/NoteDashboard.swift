@@ -14,7 +14,6 @@ struct NoteDashboard: View {
     
     @State private var searchText: String = ""
     @State private var selected: Int = 0
-    @State private var note: Note?
 
     @AppStorage("notes.columns") private var numColumns: Int = 3
     
@@ -58,7 +57,7 @@ struct NoteDashboard: View {
                 SearchBar(
                     text: $searchText,
                     disabled: false,
-                    placeholder: "Search \(notes.count) notes"
+                    placeholder: notes.count > 1 ? "Search \(notes.count) notes" : "Search 1 note"
                 )
 
                 recentNotes
