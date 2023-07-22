@@ -23,7 +23,7 @@ struct Favourites: View {
             FancySubTitle(text: "\(title)")
             Divider()
             
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 VStack(spacing: 1) {
                     ForEach(notes) { note in
                         NoteRow(note: note, showStarred: false, showRevisionCount: false, showActive: false)

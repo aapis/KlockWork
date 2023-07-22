@@ -89,7 +89,7 @@ struct ProjectsDashboard: View {
     
     @ViewBuilder
     var projectsView: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 1) {
                 ForEach(filter(projects)) { project in
                     ProjectRow(project: project)

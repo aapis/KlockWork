@@ -67,7 +67,7 @@ struct NoteResult: View {
                 ZStack {
                     Theme.rowColour
                     
-                    ScrollView {
+                    ScrollView(showsIndicators: false) {
                         VStack(spacing: 1) {
                             ForEach(0..<bucket.count) { i in
                                 if i < bucket.count {

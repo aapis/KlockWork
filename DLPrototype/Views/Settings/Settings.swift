@@ -11,7 +11,7 @@ import SwiftUI
 
 struct SettingsView: View {
     private enum Tabs: Hashable {
-        case general, today, advanced
+        case general, today, advanced, dashboard, notedashboard
     }
 
     @Environment(\.managedObjectContext) var moc
@@ -34,7 +34,13 @@ struct SettingsView: View {
                 .tabItem {
                     Label("Dashboard", systemImage: "house")
                 }
-                .tag(Tabs.today)
+                .tag(Tabs.dashboard)
+
+            NoteDashboardSettings()
+                .tabItem {
+                    Label("Notes", systemImage: "note.text")
+                }
+                .tag(Tabs.notedashboard)
         }
         .padding(20)
     }
