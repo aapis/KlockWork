@@ -198,7 +198,7 @@ struct NoteView: View {
                     FancyButtonv2(
                         text: "Delete",
                         action: delete,
-                        icon: "xmark",
+                        icon: "trash",
                         showLabel: false,
                         type: .destructive,
                         redirect: AnyView(

@@ -13,6 +13,7 @@ struct LogRow: View, Identifiable {
     public var entry: Entry
     public var index: Array<Entry>.Index?
     public var colour: Color
+    public var record: LogRecord?
     public var id = UUID()
     
     @Binding public var selectedJob: String
@@ -25,7 +26,9 @@ struct LogRow: View, Identifiable {
     @State public var aIndex: String = "0"
     @State public var activeColour: Color = Theme.rowColour
     @State public var projectColHelpText: String = ""
-    
+//    @State public var editJobPicker: String = ""
+
+    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var jm: CoreDataJob
     
     @AppStorage("tigerStriped") private var tigerStriped = false
@@ -35,8 +38,23 @@ struct LogRow: View, Identifiable {
     @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
     @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
     @AppStorage("today.showColumnActions") public var showColumnActions: Bool = false
-    
+
     var body: some View {
+        if isEditing {
+            VStack {
+                ZStack {
+                    Color.black
+                    ViewModeNormal
+                        .opacity(0.5)
+                }
+            }
+            ViewModeEdit
+        } else {
+            ViewModeNormal
+        }
+    }
+
+    var ViewModeNormal: some View {
         HStack(spacing: 1) {
             GridRow {
                 Column(
@@ -56,14 +74,12 @@ struct LogRow: View, Identifiable {
                 }
 
                 if showColumnTimestamp {
-                    EditableColumn(
-                        type: "timestamp",
+                    Column(
+                        type: .timestamp,
                         colour: applyColour(),
                         textColour: rowTextColour(),
                         index: index,
                         alignment: .center,
-                        isEditing: $isEditing,
-                        isDeleting: $isDeleting,
                         text: $timestamp
                     )
                     .frame(maxWidth: 101)
@@ -71,49 +87,27 @@ struct LogRow: View, Identifiable {
                 }
 
                 if showColumnJobId {
-                    EditableColumn(
-                        type: "job",
+                    Column(
+                        type: .job,
                         colour: applyColour(),
                         textColour: rowTextColour(),
                         index: index,
                         alignment: .center,
-                        isEditing: $isEditing,
-                        isDeleting: $isDeleting,
-                        text: $job,
                         url: (entry.jobObject != nil && entry.jobObject!.uri != nil ? entry.jobObject!.uri : nil),
-                        job: entry.jobObject
+                        job: entry.jobObject,
+                        text: $job
                     )
                     .frame(maxWidth: 80)
                 }
                 
-                EditableColumn(
-                    type: "message",
+                Column(
+                    type: .standard,
                     colour: applyColour(),
                     textColour: rowTextColour(),
                     index: index,
-                    isEditing: $isEditing,
-                    isDeleting: $isDeleting,
+                    alignment: .leading,
                     text: $message
                 )
-                
-                if showExperimentalFeatures {
-                    if showColumnActions {
-                        Group {
-                            ZStack {
-                                applyColour()
-                                
-                                LogRowActions(
-                                    entry: entry,
-                                    colour: rowTextColour(),
-                                    index: index,
-                                    isEditing: $isEditing,
-                                    isDeleting: $isDeleting
-                                )
-                            }
-                        }
-                        .frame(maxWidth: 100)
-                    }
-                }
             }
             .contextMenu { contextMenu }
         }
@@ -122,16 +116,49 @@ struct LogRow: View, Identifiable {
         .onChange(of: timestamp) { _ in
             setEditableValues()
         }
-//        .onHover(perform: onHover)
+    }
+
+    private var ViewModeEdit: some View {
+        VStack(alignment: .leading) {
+            // onChange cb intentionally void
+            JobPickerUsing(onChange: {_,_ in }, jobId: $job)
+            FancyDivider()
+
+            VStack(alignment: .leading) {
+                Text("Time")
+                FancyTextField(placeholder: "Current time", lineLimit: 1, text: $timestamp)
+            }
+
+            VStack(alignment: .leading) {
+                Text("Message")
+                FancyTextField(placeholder: "Message", lineLimit: 6, text: $message)
+            }
+
+            Spacer()
+            HStack(spacing: 10) {
+                FancyButtonv2(text: "Delete", action: {isEditing.toggle()}, icon: "trash", showLabel: false, type: .destructive)
+                Spacer()
+                FancyButtonv2(text: "Cancel", action: {isEditing.toggle()}, icon: "xmark", showLabel: false)
+                FancyButtonv2(text: "Save", action: save, size: .medium, type: .primary)
+            }
+        }
+        .padding()
+        .background(Theme.darkBtnColour)
     }
     
     @ViewBuilder private var contextMenu: some View {
         if entry.jobObject != nil {
+            Button("Edit record") {
+                isEditing = true
+            }
+
             if entry.jobObject!.uri != nil {
                 Link(destination: entry.jobObject!.uri!, label: {
                     Text("Open job link in browser")
                 })
             }
+
+            Divider()
 
             Menu("Copy") {
                 if entry.jobObject!.uri != nil {
@@ -157,35 +184,33 @@ struct LogRow: View, Identifiable {
                 NavigationLink(destination: NoteDashboard(defaultSelectedJob: entry.jobObject).environmentObject(jm)) {
                     Text("Notes")
                 }
-//                .keyboardShortcut("n")
                 
                 NavigationLink(destination: TaskDashboard(defaultSelectedJob: entry.jobObject!).environmentObject(jm)) {
                     Text("Tasks")
                 }
-//                .keyboardShortcut("t")
                 
                 if entry.jobObject!.project != nil {
                     NavigationLink(destination: ProjectView(project: entry.jobObject!.project!).environmentObject(jm)) {
                         Text("Project")
                     }
-//                    .keyboardShortcut("p")
                 }
                 
                 NavigationLink(destination: JobDashboard(defaultSelectedJob: entry.jobObject!.jid).environmentObject(jm)) {
                     Text("Job")
                 }
-                //            .keyboardShortcut("j")
             }
 
-            Menu("Inspect"){
+            Menu("Inspect") {
                 Text("SR&ED Eligible: " + (entry.jobObject!.shredable ? "Yes" : "No"))
             }
             
             Divider()
-            
-            Button(action: {setJob(entry.jobObject!.jid.string)}, label: {
-                Text("Set job")
-            })
+
+            if let jo = entry.jobObject {
+                Button(action: {setJob(jo.jid.string)}, label: {
+                    Text("Set job")
+                })
+            }
         }
     }
     
@@ -197,30 +222,15 @@ struct LogRow: View, Identifiable {
         }
     }
 
+    // TODO: remove?
     private func setEditableValues() -> Void {
         message = entry.message
         job = entry.job
         timestamp = entry.timestamp
         aIndex = adjustedIndexAsString()
     }
-    
-    // this can be forced to work but it causes perf and state modification problems
-    // TODO: maybe show actions on hover?
-//    private func onHover(hovering: Bool) -> Void {
-//        let oldColour = colour
-//
-//        if hovering {
-//            activeColour = Color.white.opacity(0.1)
-//        } else {
-//            activeColour = oldColour
-//        }
-//    }
-    
-    private func applyColour() -> Color {
-        if isEditing {
-            return Color.orange
-        }
 
+    private func applyColour() -> Color {
         if isDeleting {
             return Color.red
         }
@@ -247,6 +257,37 @@ struct LogRow: View, Identifiable {
         let adjusted = adjustedIndex()
         
         return String(adjusted)
+    }
+
+    private func save() -> Void {
+        if let rec = record {
+            if !message.isEmpty && !job.isEmpty {
+                rec.timestamp = newDate()
+                rec.message = message
+                rec.id = entry.id
+                
+                if let jid = Double(job) {
+                    if let match = CoreDataJob(moc: moc).byId(jid) {
+                        rec.job = match
+                        match.lastUpdate = Date()
+                    }
+                }
+
+                PersistenceController.shared.save()
+                isEditing.toggle()
+            } else {
+                print("[error] Message, job ID OR task URL are required to submit")
+            }
+        }
+    }
+
+    private func newDate() -> Date? {
+        if let newDate = DateHelper.date(timestamp, fmt: "yyyy-MM-dd hh:mm:ss") {
+            return newDate
+        }
+
+        // default to now if date cannot be parsed for some reason
+        return Date()
     }
 }
 

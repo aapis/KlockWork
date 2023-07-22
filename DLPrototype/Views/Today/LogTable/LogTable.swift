@@ -254,6 +254,7 @@ struct LogTable: View, Identifiable {
                                 entry: entry,
                                 index: records.firstIndex(of: record),
                                 colour: Color.fromStored((record.job?.colour) ?? Theme.rowColourAsDouble),
+                                record: record,
                                 selectedJob: $job
                             )
                         }
