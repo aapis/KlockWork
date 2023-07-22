@@ -170,6 +170,34 @@ struct Home: View {
                             .padding(.trailing, 10)
                         Text("Tasks")
                     }
+
+                    NavigationLink {
+                        CompanyDashboard()
+                            .environmentObject(jm)
+                            .environmentObject(updater)
+                            .navigationTitle("Companies")
+                            .toolbar {
+                                if showExperimentalFeatures {
+                                    Button(action: {}, label: {
+                                        Image(systemName: "arrow.triangle.2.circlepath")
+                                    })
+                                    .buttonStyle(.borderless)
+                                    .font(.title)
+                                }
+                                NavigationLink {
+                                    CompanyView(company: nil)
+                                        .environmentObject(jm)
+                                        .environmentObject(updater)
+                                } label: {
+                                    Image(systemName: "plus")
+                                        .font(.title)
+                                }
+                            }
+                    } label: {
+                        Image(systemName: "person.2")
+                            .padding(.trailing, 10)
+                        Text("Companies")
+                    }
                     
                     NavigationLink {
                         ProjectsDashboard()

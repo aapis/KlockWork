@@ -15,6 +15,7 @@ public final class SearchHelper {
     public var projectBucket: [Project] = []
     public var noteBucket: [Note] = []
     public var recordBucket: [LogRecord] = []
+    public var companyBucket: [Company] = []
     public var fields: [String] = []
     
     public init(bucket: FetchedResults<LogTask>) {
@@ -31,6 +32,10 @@ public final class SearchHelper {
     
     public init(bucket: FetchedResults<LogRecord>) {
         self.recordBucket = Array(bucket)
+    }
+
+    public init(bucket: FetchedResults<Company>) {
+        self.companyBucket = Array(bucket)
     }
     
     public func exec(_ searchText: Binding<String>) -> [LogTask] {
@@ -54,6 +59,12 @@ public final class SearchHelper {
     public func findInRecords(_ searchText: Binding<String>) -> [LogRecord] {
         return recordBucket.filter {
             matches(searchText, fields: [$0.message!])
+        }
+    }
+
+    public func findInCompanies(_ searchText: Binding<String>) -> [Company] {
+        return companyBucket.filter {
+            matches(searchText, fields: [$0.name!])
         }
     }
     

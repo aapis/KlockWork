@@ -16,6 +16,15 @@
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
     </entity>
+    <entity name="Company" representedClassName="Company" syncable="YES" codeGenerationType="class">
+        <attribute name="abbreviation" optional="YES" attributeType="String"/>
+        <attribute name="alive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="projects" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Project" inverseName="company" inverseEntity="Project"/>
+    </entity>
     <entity name="Job" representedClassName="Job" syncable="YES" codeGenerationType="class">
         <attribute name="alive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="colour" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[Double]"/>
@@ -74,6 +83,7 @@
         <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="pid" optional="YES" attributeType="Integer 64" defaultValueString="0.0" usesScalarValueType="YES" customClassName="Int"/>
+        <relationship name="company" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Company" inverseName="projects" inverseEntity="Company"/>
         <relationship name="configuration" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ProjectConfiguration" inverseName="projects" inverseEntity="ProjectConfiguration"/>
         <relationship name="jobs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Job" inverseName="project" inverseEntity="Job"/>
     </entity>
@@ -94,5 +104,6 @@
         <memberEntity name="BannedWord"/>
         <memberEntity name="ProjectConfiguration"/>
         <memberEntity name="CalendarEvent"/>
+        <memberEntity name="Company"/>
     </configuration>
 </model>

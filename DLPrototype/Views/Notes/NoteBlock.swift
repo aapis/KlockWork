@@ -25,6 +25,8 @@ struct NoteBlock: View {
             VStack(spacing: 0) {
                 ZStack(alignment: .topLeading) {
                     (note.starred ? Color.yellow : Color.white)
+                    // TODO: not sure I want this or not
+//                    (note.starred ? LinearGradient(colors: [Color.yellow, Color.clear], startPoint: .topLeading, endPoint: .bottomTrailing) : LinearGradient(colors: [Color.white, Color.clear], startPoint: .topLeading, endPoint: .bottomTrailing))
                         .shadow(color: .black.opacity(1), radius: 3)
                         .opacity(highlighted ? 0.2 : 0.1)
 
