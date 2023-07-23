@@ -75,7 +75,6 @@
 		537628B429665F4E00DE8ECF /* Data.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 537628B229665F4E00DE8ECF /* Data.xcdatamodeld */; };
 		537AEB9F29627DCC00385787 /* LogTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEB9E29627DCC00385787 /* LogTable.swift */; };
 		537AEBA1296287B900385787 /* LogRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA0296287B900385787 /* LogRow.swift */; };
-		537AEBA329629DE400385787 /* LogRowActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA229629DE400385787 /* LogRowActions.swift */; };
 		53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A19297377A7007A2549 /* FancyGenericToolbar.swift */; };
 		53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1C2973897F007A2549 /* ProjectConfig.swift */; };
 		53959A1F29738AAA007A2549 /* FancySubTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1E29738AAA007A2549 /* FancySubTitle.swift */; };
@@ -222,7 +221,6 @@
 		537628B329665F4E00DE8ECF /* Note.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Note.xcdatamodel; sourceTree = "<group>"; };
 		537AEB9E29627DCC00385787 /* LogTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTable.swift; sourceTree = "<group>"; };
 		537AEBA0296287B900385787 /* LogRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRow.swift; sourceTree = "<group>"; };
-		537AEBA229629DE400385787 /* LogRowActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRowActions.swift; sourceTree = "<group>"; };
 		53959A19297377A7007A2549 /* FancyGenericToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyGenericToolbar.swift; sourceTree = "<group>"; };
 		53959A1C2973897F007A2549 /* ProjectConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfig.swift; sourceTree = "<group>"; };
 		53959A1E29738AAA007A2549 /* FancySubTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancySubTitle.swift; sourceTree = "<group>"; };
@@ -678,7 +676,6 @@
 			isa = PBXGroup;
 			children = (
 				53EDDFA12963502A008D34C7 /* LogRowEmpty.swift */,
-				537AEBA229629DE400385787 /* LogRowActions.swift */,
 				537AEBA0296287B900385787 /* LogRow.swift */,
 				53C6D0932965048500EA6129 /* DetailsRow.swift */,
 				53C6D09729654F4C00EA6129 /* DetailGroup.swift */,
@@ -957,7 +954,6 @@
 				53967D8429EC6D14006616A0 /* TodaySettings.swift in Sources */,
 				531E2F752A140533009CA230 /* CalendarToday.swift in Sources */,
 				537AEB9F29627DCC00385787 /* LogTable.swift in Sources */,
-				537AEBA329629DE400385787 /* LogRowActions.swift in Sources */,
 				5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */,
 				532A722F299037AC0038C18B /* RecordResult.swift in Sources */,
 				53F589602998335A00843B32 /* NoteRow.swift in Sources */,

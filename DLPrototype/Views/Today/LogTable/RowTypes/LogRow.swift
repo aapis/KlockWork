@@ -19,14 +19,12 @@ struct LogRow: View, Identifiable {
     @Binding public var selectedJob: String
     
     @State public var isEditing: Bool = false
-    @State public var isDeleting: Bool = false
     @State public var message: String = ""
     @State public var job: String = ""
     @State public var timestamp: String = ""
     @State public var aIndex: String = "0"
     @State public var activeColour: Color = Theme.rowColour
     @State public var projectColHelpText: String = ""
-//    @State public var editJobPicker: String = ""
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var jm: CoreDataJob
@@ -58,6 +56,7 @@ struct LogRow: View, Identifiable {
         HStack(spacing: 1) {
             GridRow {
                 Column(
+                    type: .index,
                     colour: (entry.jobObject != nil  && entry.jobObject!.project != nil ? Color.fromStored(entry.jobObject!.project!.colour ?? Theme.rowColourAsDouble) : applyColour()),
                     textColour: rowTextColour(),
                     text: $projectColHelpText
@@ -231,10 +230,6 @@ struct LogRow: View, Identifiable {
     }
 
     private func applyColour() -> Color {
-        if isDeleting {
-            return Color.red
-        }
-
         if tigerStriped {
             return colour.opacity(index!.isMultiple(of: 2) ? 1 : 0.5)
         }
