@@ -21,7 +21,7 @@ struct Home: View {
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
-//    @StateObject public var pr: CoreDataProjects = CoreDataProjects(moc: PersistenceController.shared.container.viewContext)
+    @StateObject public var pr: CoreDataProjects = CoreDataProjects(moc: PersistenceController.shared.container.viewContext)
     
     @State public var appVersion: String?
     @State public var splitDirection: Bool = false // false == horizontal, true == vertical
@@ -173,25 +173,20 @@ struct Home: View {
 
                     NavigationLink {
                         CompanyDashboard()
-                            .environmentObject(jm)
                             .environmentObject(updater)
+                            .environmentObject(pr)
                             .navigationTitle("Companies")
                             .toolbar {
-                                if showExperimentalFeatures {
-                                    Button(action: {}, label: {
-                                        Image(systemName: "arrow.triangle.2.circlepath")
-                                    })
-                                    .buttonStyle(.borderless)
-                                    .font(.title)
-                                }
-                                NavigationLink {
-                                    CompanyView(company: nil)
-                                        .environmentObject(jm)
-                                        .environmentObject(updater)
-                                } label: {
-                                    Image(systemName: "plus")
-                                        .font(.title)
-                                }
+                                // TODO: forgot what this was for lol, remove?
+//                                NavigationLink {
+//                                    CompanyView(company: nil)
+//                                        .environmentObject(jm)
+//                                        .environmentObject(updater)
+//                                        .environmentObject(pr)
+//                                } label: {
+//                                    Image(systemName: "plus")
+//                                        .font(.title)
+//                                }
                             }
                     } label: {
                         Image(systemName: "person.2")

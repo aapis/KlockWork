@@ -13,14 +13,17 @@ struct CompanyBlock: View {
 
     @State private var highlighted: Bool = false
 
-    @EnvironmentObject public var jm: CoreDataJob
     @EnvironmentObject public var updater: ViewUpdater
+    @EnvironmentObject public var pm: CoreDataProjects
+    @EnvironmentObject public var cdc: CoreDataCompanies
 
     var body: some View {
         NavigationLink {
             CompanyView(company: company)
-                .environmentObject(jm)
                 .environmentObject(updater)
+                .environmentObject(pm)
+                .environmentObject(cdc)
+                .navigationTitle("Editing \(company.name!)")
         } label: {
             VStack(spacing: 0) {
                 ZStack(alignment: .topLeading) {

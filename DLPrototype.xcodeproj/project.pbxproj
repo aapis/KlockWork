@@ -60,6 +60,7 @@
 		5363B6782A6BB2CC00C2FBB8 /* CompanyDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B6772A6BB2CC00C2FBB8 /* CompanyDashboard.swift */; };
 		5363B67A2A6BB75F00C2FBB8 /* CompanyBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B6792A6BB75F00C2FBB8 /* CompanyBlock.swift */; };
 		5363B67C2A6BB78900C2FBB8 /* CompanyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B67B2A6BB78900C2FBB8 /* CompanyView.swift */; };
+		5363B67E2A6DD70700C2FBB8 /* CoreDataCompanies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B67D2A6DD70700C2FBB8 /* CoreDataCompanies.swift */; };
 		5367FAF0296772730060D2AA /* Split.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5367FAEF296772730060D2AA /* Split.swift */; };
 		536FBF6E2A68F77100F00CE4 /* NoteBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536FBF6D2A68F77100F00CE4 /* NoteBlock.swift */; };
 		5372C02A2A105AA1008CB120 /* FancyChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5372C0292A105AA1008CB120 /* FancyChip.swift */; };
@@ -75,7 +76,6 @@
 		537628B429665F4E00DE8ECF /* Data.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 537628B229665F4E00DE8ECF /* Data.xcdatamodeld */; };
 		537AEB9F29627DCC00385787 /* LogTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEB9E29627DCC00385787 /* LogTable.swift */; };
 		537AEBA1296287B900385787 /* LogRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA0296287B900385787 /* LogRow.swift */; };
-		537AEBA329629DE400385787 /* LogRowActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA229629DE400385787 /* LogRowActions.swift */; };
 		53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A19297377A7007A2549 /* FancyGenericToolbar.swift */; };
 		53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1C2973897F007A2549 /* ProjectConfig.swift */; };
 		53959A1F29738AAA007A2549 /* FancySubTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1E29738AAA007A2549 /* FancySubTitle.swift */; };
@@ -207,6 +207,7 @@
 		5363B6772A6BB2CC00C2FBB8 /* CompanyDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyDashboard.swift; sourceTree = "<group>"; };
 		5363B6792A6BB75F00C2FBB8 /* CompanyBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyBlock.swift; sourceTree = "<group>"; };
 		5363B67B2A6BB78900C2FBB8 /* CompanyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyView.swift; sourceTree = "<group>"; };
+		5363B67D2A6DD70700C2FBB8 /* CoreDataCompanies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataCompanies.swift; sourceTree = "<group>"; };
 		5367FAEF296772730060D2AA /* Split.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Split.swift; sourceTree = "<group>"; };
 		536FBF6D2A68F77100F00CE4 /* NoteBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteBlock.swift; sourceTree = "<group>"; };
 		5372C0292A105AA1008CB120 /* FancyChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyChip.swift; sourceTree = "<group>"; };
@@ -222,7 +223,6 @@
 		537628B329665F4E00DE8ECF /* Note.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Note.xcdatamodel; sourceTree = "<group>"; };
 		537AEB9E29627DCC00385787 /* LogTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTable.swift; sourceTree = "<group>"; };
 		537AEBA0296287B900385787 /* LogRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRow.swift; sourceTree = "<group>"; };
-		537AEBA229629DE400385787 /* LogRowActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRowActions.swift; sourceTree = "<group>"; };
 		53959A19297377A7007A2549 /* FancyGenericToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyGenericToolbar.swift; sourceTree = "<group>"; };
 		53959A1C2973897F007A2549 /* ProjectConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfig.swift; sourceTree = "<group>"; };
 		53959A1E29738AAA007A2549 /* FancySubTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancySubTitle.swift; sourceTree = "<group>"; };
@@ -571,6 +571,7 @@
 				53B0BE8029725B52007CB663 /* CoreDataProjects.swift */,
 				53959A202973D3E5007A2549 /* CoreDataProjectConfiguration.swift */,
 				530318462A11DD13009CA90B /* CoreDataCalendarEvent.swift */,
+				5363B67D2A6DD70700C2FBB8 /* CoreDataCompanies.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -678,7 +679,6 @@
 			isa = PBXGroup;
 			children = (
 				53EDDFA12963502A008D34C7 /* LogRowEmpty.swift */,
-				537AEBA229629DE400385787 /* LogRowActions.swift */,
 				537AEBA0296287B900385787 /* LogRow.swift */,
 				53C6D0932965048500EA6129 /* DetailsRow.swift */,
 				53C6D09729654F4C00EA6129 /* DetailGroup.swift */,
@@ -871,6 +871,7 @@
 				53F5896429983FA300843B32 /* ProjectResult.swift in Sources */,
 				53EDDF9E29634852008D34C7 /* Entry.swift in Sources */,
 				53C6D0912965044C00EA6129 /* DetailsColumn.swift in Sources */,
+				5363B67E2A6DD70700C2FBB8 /* CoreDataCompanies.swift in Sources */,
 				53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */,
 				535C1AE629F48FD500CD95FD /* ThisWeek.swift in Sources */,
 				53ECD0572971F8F400A09AAB /* CoreDataRecords.swift in Sources */,
@@ -957,7 +958,6 @@
 				53967D8429EC6D14006616A0 /* TodaySettings.swift in Sources */,
 				531E2F752A140533009CA230 /* CalendarToday.swift in Sources */,
 				537AEB9F29627DCC00385787 /* LogTable.swift in Sources */,
-				537AEBA329629DE400385787 /* LogRowActions.swift in Sources */,
 				5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */,
 				532A722F299037AC0038C18B /* RecordResult.swift in Sources */,
 				53F589602998335A00843B32 /* NoteRow.swift in Sources */,

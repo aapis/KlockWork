@@ -18,7 +18,9 @@ struct CompanyDashboard: View {
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
-    @EnvironmentObject public var jm: CoreDataJob
+    @EnvironmentObject public var pm: CoreDataProjects
+
+    @StateObject public var cdc: CoreDataCompanies = CoreDataCompanies(moc: PersistenceController.shared.container.viewContext)
 
     @FetchRequest public var companies: FetchedResults<Company>
 
@@ -71,8 +73,9 @@ struct CompanyDashboard: View {
                 LazyVGrid(columns: columns, alignment: .leading) {
                     ForEach(filter(companies)) { company in
                         CompanyBlock(company: company)
-                            .environmentObject(jm)
                             .environmentObject(updater)
+                            .environmentObject(pm)
+                            .environmentObject(cdc)
                     }
                 }
             }
