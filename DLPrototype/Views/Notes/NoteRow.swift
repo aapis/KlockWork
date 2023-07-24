@@ -14,6 +14,8 @@ struct NoteRow: View {
     public var showStarred: Bool = true
     public var showRevisionCount: Bool = true
     public var showActive: Bool = true
+
+    @State private var jobId: String = ""
     
     @EnvironmentObject public var jm: CoreDataJob
     @EnvironmentObject public var updater: ViewUpdater

@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 public enum ColumnType {
-    case timestamp, job, standard
+    case timestamp, job, standard, index
 }
 
 struct Column: View {
@@ -61,13 +61,17 @@ struct Column: View {
                             }
 
                             // TODO: move to new statuses column
-        //                                if job!.shredable {
-        //                                    Image(systemName: "dollarsign.circle")
-        //                                        .foregroundColor(colour.isBright() ? Color.black : Color.white)
-        //                                        .help("Eligible for SR&ED")
-        //                                }
+                            //                                if job!.shredable {
+                            //                                    Image(systemName: "dollarsign.circle")
+                            //                                        .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                            //                                        .help("Eligible for SR&ED")
+                            //                                }
                         }
                         .padding([.leading, .trailing], 10)
+                    } else if type == .index {
+                        Text(text)
+                            .foregroundColor(textColour)
+                            .help(text)
                     } else {
                         Text(text)
                             .padding(10)

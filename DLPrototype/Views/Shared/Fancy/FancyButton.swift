@@ -66,7 +66,7 @@ struct FancyButton: View {
 }
 
 public enum ButtonType {
-    case destructive, standard, primary
+    case destructive, standard, primary, star
 
     var colours: [Color] {
         switch self {
@@ -74,6 +74,8 @@ public enum ButtonType {
             return [Color.green, Color.blue]
         case .destructive:
             return [Color.red, Color(hue: 0.0/100, saturation: 84.0/100, brightness: 43.0/100)]
+        case .star:
+            return [Color.yellow, Color.orange]
         case .standard:
             return [Color.white, Color.gray]
         }
@@ -85,6 +87,8 @@ public enum ButtonType {
             return Color.white
         case .destructive:
             return Color.white
+        case .star:
+            return Color.black
         case .standard:
             return Color.black
         }
@@ -96,6 +100,8 @@ public enum ButtonType {
             return Color.green
         case .destructive:
             return Color.red
+        case .star:
+            return Color.yellow
         case .standard:
             return Color.white
         }
@@ -106,7 +112,7 @@ public struct FancyButtonv2: View {
     public var text: String
     public var action: () -> Void
     public var icon: String? = "checkmark.circle"
-    public var altIcon: String? = "checkmark.circle"
+    public var fgColour: Color?
     public var transparent: Bool? = false
     public var showLabel: Bool? = true
     public var showIcon: Bool? = true
@@ -149,17 +155,17 @@ public struct FancyButtonv2: View {
                     Image(systemName: icon!)
                         .symbolRenderingMode(.hierarchical)
                         .font(.title2)
-                        .foregroundColor(type.textColour)
+                        .foregroundColor(fgColour != nil ? fgColour : type.textColour)
                 }
 
                 if showLabel! {
                     Text(text)
-                        .foregroundColor(type.textColour)
+                        .foregroundColor(fgColour != nil ? fgColour : type.textColour)
                 }
             }
             .padding(5)
         }
-        .frame(maxWidth: buttonFrameWidth())
+        .frame(maxWidth: buttonFrameWidth(), maxHeight: 40)
         .foregroundColor(Color.white)
         .font(.title3)
         .help(text)
