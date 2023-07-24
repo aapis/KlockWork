@@ -26,20 +26,20 @@ struct MainMenu: Commands {
         ToolbarCommands()
         TextEditingCommands()
 
-        CommandGroup(after: .newItem) {
-            Divider()
-            Button("Save") {
-                viewCanSave()
+//        CommandGroup(after: .newItem) {
+//            Divider()
+//            Button("Save") {
+//                viewCanSave()
 //                let currentView = window.first!.title
 //                print("DERPO currentView.title \(currentView)")
 //
 //                if currentView == "Notes" {
 //
 //                }
-            }
+//            }
 //            .disabled(currentView == "Notes")
-            .keyboardShortcut("s", modifiers: .command)
-        }
+//            .keyboardShortcut("s", modifiers: .command)
+//        }
 
 //        CommandMenu("Entities") {
             // TODO: this doesn't fucking work
