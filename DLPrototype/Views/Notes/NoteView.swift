@@ -24,6 +24,8 @@ struct NoteView: View {
     @State private var disablePreviousButton: Bool = false
     @State private var noteVersions: [NoteVersion] = []
     @State private var sidebarVisible: Bool = false // TODO: move to app settings
+
+    @State private var isShareAlertVisible: Bool = false
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var jm: CoreDataJob
@@ -71,8 +73,8 @@ struct NoteView: View {
             .padding()
         }
         .background(Theme.toolbarColour)
-        .onAppear(perform: {createBindings(note: note)})
-        .onChange(of: note, perform: createBindings)
+//        .onChange(of: note, perform: createBindings)
+        .onAppear(perform: createBindings)
     }
 
     private var TopBar: some View {
@@ -90,18 +92,28 @@ struct NoteView: View {
                     .font(Theme.font)
                 FancyButton(text: "Next", action: nextVersion, icon: "arrowtriangle.right", showLabel: false)
                     .disabled(disableNextButton)
+
+                FancyButtonv2(
+                    text: "Share \(note.title!)",
+                    action: share,
+                    icon: "square.and.arrow.up",
+                    showLabel: false
+                )
+                .alert("Copied note contents to clipboard", isPresented: $isShareAlertVisible) {
+                    Button("OK", role: .cancel) {}
+                }
                 
                 if sidebarVisible {
-                    FancyButton(
+                    FancyButtonv2(
                         text: "Close sidebar",
                         action: {sidebarVisible.toggle()},
                         icon: "sidebar.right",
-                        showLabel: false,
-                        fgColour: Color.accentColor
+                        fgColour: Color.accentColor,
+                        showLabel: false
                     )
                     .keyboardShortcut("b", modifiers: .command)
                 } else {
-                    FancyButton(
+                    FancyButtonv2(
                         text: "Open sidebar",
                         action: {sidebarVisible.toggle()},
                         icon: "sidebar.right",
@@ -112,10 +124,10 @@ struct NoteView: View {
             }
 
             if note.starred {
-                FancyButton(text: "Un-favourite", action: starred, icon: "star.fill", showLabel: false)
+                FancyButtonv2(text: "Un-favourite", action: starred, icon: "star.fill", showLabel: false, type: .star)
                     .keyboardShortcut("+", modifiers: .command)
             } else {
-                FancyButton(text: "Favourite", action: starred, icon: "star", showLabel: false)
+                FancyButtonv2(text: "Favourite", action: starred, icon: "star", showLabel: false)
                     .keyboardShortcut("+", modifiers: .command)
             }
         }
@@ -185,38 +197,40 @@ struct NoteView: View {
         Spacer()
         ZStack(alignment: .topLeading) {
             Theme.darkBtnColour
-            HStack {
-                HStack {
-                    Text("\u{2318} s: Save")
-                    Text("\u{2318} +: Toggle star")
-                    Text("\u{2318} b: Toggle sidebar")
-                }
+
+            HStack(spacing: 10) {
+                FancyButtonv2(
+                    text: "Delete",
+                    action: delete,
+                    icon: "trash",
+                    showLabel: false,
+                    type: .destructive,
+                    redirect: AnyView(
+                        NoteDashboard()
+                            .environmentObject(jm)
+                            .environmentObject(updater)
+                    )
+                )
 
                 Spacer()
-                HStack(spacing: 10) {
-                    Spacer()
-                    FancyButtonv2(
-                        text: "Delete",
-                        action: delete,
-                        icon: "trash",
-                        showLabel: false,
-                        type: .destructive,
-                        redirect: AnyView(
-                            NoteDashboard()
-                                .environmentObject(jm)
-                                .environmentObject(updater)
-                        )
+                FancyButtonv2(
+                    text: "Cancel",
+                    action: {},
+                    icon: "xmark",
+                    showLabel: false,
+                    redirect: AnyView(
+                        NoteDashboard()
+                            .environmentObject(jm)
+                            .environmentObject(updater)
                     )
-
-                    if revisionNotLatest() {
-                        FancyButtonv2(text: "Restore", action: update, size: .medium, type: .primary)
-                            .keyboardShortcut("s", modifiers: .command)
-                    } else {
-                        FancyButtonv2(text: "Save", action: update, size: .medium, type: .primary)
-                            .keyboardShortcut("s", modifiers: .command)
-                    }
+                )
+                if revisionNotLatest() {
+                    FancyButtonv2(text: "Restore", action: update, size: .medium, type: .primary)
+                        .keyboardShortcut("s", modifiers: .command)
+                } else {
+                    FancyButtonv2(text: "Save", action: update, size: .medium, type: .primary)
+                        .keyboardShortcut("s", modifiers: .command)
                 }
-                .frame(width: 300, height: 30)
             }
             .font(.callout)
             .padding()
@@ -276,17 +290,12 @@ struct NoteView: View {
         
         update()
     }
-    
-    private func cancel() -> Void {
-        isShowingEditor = false
-    }
-    
+
     private func update() -> Void {
         note.title = title // TODO: REMOVE
         note.body = content // TODO: REMOVE
         note.lastUpdate = Date()
         lastUpdate = note.lastUpdate
-        note.job = selectedJob // TODO: REMOVE
         note.mJob = selectedJob
         note.alive = true
         
@@ -299,9 +308,6 @@ struct NoteView: View {
     }
     
     private func delete() -> Void {
-        isShowingEditor = false
-        title = ""
-        content = ""
         note.alive = false
         
         PersistenceController.shared.save()
@@ -314,7 +320,7 @@ struct NoteView: View {
         PersistenceController.shared.save()
     }
     
-    private func createBindings(note: Note) -> Void {
+    private func createBindings() -> Void {
         title = note.title!
         content = note.body!
         selectedJob = note.mJob ?? nil
@@ -327,6 +333,32 @@ struct NoteView: View {
     
     private func revisionNotLatest() -> Bool {
         return currentVersion < noteVersions.count
+    }
+
+    private func share() -> Void {
+        isShareAlertVisible = true
+
+        var exportableNote = ""
+
+        if let title = note.title {
+            exportableNote += "\(title)\n"
+        }
+
+        if let job = note.mJob {
+            if let uri = job.uri {
+                exportableNote += "Job ID \(job.jid.string) - \(uri.absoluteString)\n"
+            } else {
+                exportableNote += "Job ID \(job.jid.string)\n"
+            }
+        }
+
+        if let body = note.body {
+            exportableNote += body
+        }
+
+        if !exportableNote.isEmpty {
+            ClipboardHelper.copy(exportableNote)
+        }
     }
 }
 

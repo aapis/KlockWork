@@ -21,6 +21,7 @@ struct NoteBlock: View {
             NoteView(note: note)
                 .environmentObject(jm)
                 .environmentObject(updater)
+                .navigationTitle("Editing note \"\(note.title!)\"")
         } label: {
             VStack(spacing: 0) {
                 ZStack(alignment: .topLeading) {
