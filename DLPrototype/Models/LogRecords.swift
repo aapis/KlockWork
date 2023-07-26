@@ -80,7 +80,7 @@ class LogRecords: ObservableObject, Identifiable, Equatable {
     public func fromToday() -> Void {
         let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: true)]
-        fetch.predicate = NSPredicate(format: "timestamp > %@", DateHelper.thisAm())
+        fetch.predicate = NSPredicate(format: "alive = true && timestamp > %@", DateHelper.thisAm())
         
         do {
             recordsForToday = try moc!.fetch(fetch)
@@ -96,7 +96,7 @@ class LogRecords: ObservableObject, Identifiable, Equatable {
         
         let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)]
-        fetch.predicate = NSPredicate(format: "timestamp > %@ && timestamp <= %@", before as CVarArg, after as CVarArg)
+        fetch.predicate = NSPredicate(format: "alive = true && (timestamp > %@ && timestamp <= %@)", before as CVarArg, after as CVarArg)
 
         do {
             results = try moc!.fetch(fetch)

@@ -55,7 +55,7 @@ struct FancyButton: View {
     
     private func onAppear() -> Void {
         switch size {
-        case .small:
+        case .small, .link:
             padding = 0
         case .medium:
             padding = 5
@@ -201,7 +201,7 @@ public struct FancyButtonv2: View {
 
     private func buttonFrameWidth() -> CGFloat {
         switch size {
-        case .small:
+        case .small, .link:
             return 40
         case .medium:
             return 200

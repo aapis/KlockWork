@@ -41,6 +41,20 @@ public class CoreDataRecords: ObservableObject {
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
     }
+
+    static public func softDelete(_ record: LogRecord) -> Void {
+        record.alive = false
+        PersistenceController.shared.save()
+    }
+
+//    static public func hardDelete(_ record: LogRecord) -> (() -> Void) {
+//        let cb: (() -> Void)
+//
+//        CoreDataRecords.softDelete(record)
+//        PersistenceController.shared.delete(record)
+//
+//        return cb
+//    }
     
     public func createWithJob(job: Job, date: Date, text: String) -> Void {
         let record = LogRecord(context: moc!)

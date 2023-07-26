@@ -136,6 +136,7 @@ struct Home: View {
                                     .buttonStyle(.borderless)
                                     .font(.title)
                                 }
+
                                 NavigationLink {
                                     NoteCreate()
                                         .environmentObject(jm)
@@ -322,12 +323,9 @@ struct Home: View {
                 }
         }
         .navigationTitle("ClockWork b.\(appVersion ?? "0")")
-        .onAppear(perform: updateName)
+        .onAppear(perform: onAppear)
         .environmentObject(rm)
-    }
-    
-    private func updateName() -> Void {
-        appVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+        .navigationSplitViewStyle(.balanced)
     }
     
     private func setSplitViewDirection() -> Void {
@@ -336,6 +334,10 @@ struct Home: View {
     
     private func redraw() -> Void {
         updater.update()
+    }
+
+    private func onAppear() -> Void {
+        appVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
     }
 }
 

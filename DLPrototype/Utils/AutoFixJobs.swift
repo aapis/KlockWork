@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 final public class AutoFixJobs {
-    static public func run(records: FetchedResults<LogRecord>, context: NSManagedObjectContext) -> Void {
+    static public func run(records: [LogRecord], context: NSManagedObjectContext) -> Void {
         let defaultJob = CoreDataJob(moc: context).byId(11.0)
         for rec in records {
             if rec.job == nil {
