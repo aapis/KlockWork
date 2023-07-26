@@ -56,6 +56,7 @@ struct JobRow: View {
                                 }
                                 .help("Visit job URL on the web")
                         })
+                        .padding([.trailing], 5)
                     }
                 }
             }.frame(width: 200)

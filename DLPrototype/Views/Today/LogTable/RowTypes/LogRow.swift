@@ -139,7 +139,7 @@ struct LogRow: View, Identifiable {
 
             Spacer()
             HStack(spacing: 10) {
-                FancyButtonv2(text: "Delete", action: {isEditing.toggle()}, icon: "trash", showLabel: false, type: .destructive)
+                FancyButtonv2(text: "Delete", action: softDelete, icon: "trash", showLabel: false, type: .destructive)
                 Spacer()
                 FancyButtonv2(text: "Cancel", action: {isEditing.toggle()}, icon: "xmark", showLabel: false)
                 FancyButtonv2(text: "Save", action: save, size: .medium, type: .primary)
@@ -290,6 +290,10 @@ struct LogRow: View, Identifiable {
 
         // default to now if date cannot be parsed for some reason
         return Date()
+    }
+
+    private func softDelete() -> Void {
+        CoreDataRecords.softDelete(record!)
     }
 }
 

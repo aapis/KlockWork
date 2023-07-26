@@ -25,28 +25,10 @@ struct Today: View {
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var ce: CoreDataCalendarEvent
     
-    @FetchRequest(
-        sortDescriptors: [
-            SortDescriptor(\.timestamp, order: .reverse)
-        ],
-        predicate: NSPredicate(format: "timestamp > %@ && timestamp <= %@", DateHelper.thisAm(), DateHelper.tomorrow())
-    ) public var rawToday: FetchedResults<LogRecord>
-    
-    private var today: FetchedResults<LogRecord> {
-        if showExperimentalFeatures {
-            if autoFixJobs {
-                AutoFixJobs.run(records: rawToday, context: moc)
-            }
-        }
-        
-        return rawToday
-    }
-    
     // MARK: body view
     var body: some View {
         VStack(alignment: .leading) {
             editor
-//            actions
             table
         }
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
@@ -74,7 +56,7 @@ struct Today: View {
                 FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
                     .onChange(of: taskUrl) { url in
                         if !url.isEmpty {
-                            getJobIdFromUrl() // selects the job in the picker if it exists
+                            let _ = getJobIdFromUrl() // selects the job in the picker if it exists
 
                             if url.starts(with: "https:") {
                                 isUrl = true
@@ -141,15 +123,16 @@ struct Today: View {
 //    }
     
     private func onAppear() -> Void {
-        setDefaultJob()
-    }
-    
-    private func setDefaultJob() -> Void {
-        let record = today.first
-        
-        if record != nil {
-            let rounded = record!.job!.jid.rounded(.toNearestOrEven)
+        let todaysRecords = LogRecords(moc: moc).forDate(Date())
+        if let record = todaysRecords.first {
+            let rounded = record.job!.jid.rounded(.toNearestOrEven)
             jobId = String(Int(exactly: rounded) ?? 0)
+        }
+
+        if showExperimentalFeatures {
+            if autoFixJobs {
+                AutoFixJobs.run(records: todaysRecords, context: moc)
+            }
         }
     }
 
@@ -164,6 +147,7 @@ struct Today: View {
             let record = LogRecord(context: moc)
             record.timestamp = Date()
             record.message = text
+            record.alive = true
             record.id = UUID()
             
             let match = CoreDataJob(moc: moc).byId(jid)

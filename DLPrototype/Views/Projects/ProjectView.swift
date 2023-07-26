@@ -140,8 +140,9 @@ struct ProjectView: View {
     var jobAssignment: some View {
         HStack(spacing: 5) {
             VStack(alignment: .leading, spacing: 1) {
-                VStack(alignment: .leading, spacing: 1) {
+                VStack(alignment: .leading, spacing: 20) {
                     FancySubTitle(text: "Associated jobs", image: "checkmark")
+                    Divider()
                     HStack(spacing: 1) {
                         Text("\(selectedJobs.count)/\(all.count) selected")
                             .font(Theme.fontCaption)
@@ -159,8 +160,9 @@ struct ProjectView: View {
             }
         
             VStack(alignment: .leading, spacing: 1) {
-                VStack(alignment: .leading, spacing: 1) {
+                VStack(alignment: .leading, spacing: 20) {
                     FancySubTitle(text: "Unowned jobs", image: "questionmark")
+                    Divider()
                     HStack(spacing: 1) {
                         Text("\(allUnOwned.count)/\(all.count) selected")
                             .font(Theme.fontCaption)
@@ -233,11 +235,29 @@ struct ProjectView: View {
                                 Group {
                                     ZStack(alignment: .leading) {
                                         Theme.rowColour
+                                        
                                         HStack {
-                                            Text(job.jid.string)
-                                                .padding(5)
+                                            FancyLink(
+                                                icon: "xmark",
+                                                showIcon: false,
+                                                label: job.jid.string,
+                                                showLabel: true,
+                                                destination: AnyView(
+                                                    JobDashboard(defaultSelectedJob: job.jid)
+                                                        .environmentObject(jobModel)
+                                                ),
+                                                size: .link
+                                            )
+                                            .help("Open job \(job.jid.string)")
                                             Spacer()
-                                            
+
+                                            if let uri = job.uri {
+                                                Link(destination: uri, label: {
+                                                    Image(systemName: "link")
+                                                        .help("Open \(uri) in browser")
+                                                })
+                                            }
+
                                             if project.configuration!.ignoredJobs!.contains(job.jid.string) {
                                                 FancyButton(text: "Hide from exports", action: {disableExport(job.jid.string)}, icon: "eye.slash", transparent: true, showLabel: false)
                                                     .opacity(0.3)
@@ -245,6 +265,7 @@ struct ProjectView: View {
                                                 FancyButton(text: "Included in exports", action: {enableExport(job.jid.string)}, icon: "eye", transparent: true, showLabel: false)
                                             }
                                         }
+                                        .padding([.leading, .trailing], 5)
                                     }
                                 }
                                 
@@ -313,9 +334,30 @@ struct ProjectView: View {
                                 Group {
                                     ZStack(alignment: .leading) {
                                         Theme.rowColour
-                                        Text(job.jid.string)
-                                            .padding(5)
-                                        
+
+                                        HStack {
+                                            FancyLink(
+                                                icon: "xmark",
+                                                showIcon: false,
+                                                label: job.jid.string,
+                                                showLabel: true,
+                                                destination: AnyView(
+                                                    JobDashboard(defaultSelectedJob: job.jid)
+                                                        .environmentObject(jobModel)
+                                                ),
+                                                size: .link
+                                            )
+                                            .help("Open job \(job.jid.string)")
+                                            Spacer()
+
+                                            if let uri = job.uri {
+                                                Link(destination: uri, label: {
+                                                    Image(systemName: "link")
+                                                        .help("Open \(uri) in browser")
+                                                })
+                                            }
+                                        }
+                                        .padding([.leading, .trailing], 5)
                                     }
                                 }
                                 

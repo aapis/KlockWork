@@ -10,11 +10,11 @@ import Foundation
 import SwiftUI
 
 public enum ButtonSize {
-    case small, medium, large
+    case small, medium, large, link
 }
 
 struct FancyLink: View {
-    public var icon: String
+    public var icon: String?
     public var showIcon: Bool = true
     public var label: String? = ""
     public var showLabel: Bool = false
@@ -28,11 +28,11 @@ struct FancyLink: View {
     
     var body: some View {
         VStack {
-            NavigationLink {
+            let button = NavigationLink {
                 destination
             } label: {
-                if showIcon {
-                    Image(systemName: icon)
+                if showIcon && icon != nil {
+                    Image(systemName: icon!)
                 }
 
                 if showLabel && label != nil {
@@ -55,13 +55,19 @@ struct FancyLink: View {
 
                 highlighted.toggle()
             }
+
+            if size == .link {
+                button.underline()
+            } else {
+                button
+            }
         }
         .onAppear(perform: onAppear)
     }
     
     private func onAppear() -> Void {
         switch size {
-        case .small:
+        case .small, .link:
             padding = 0
         case .medium:
             padding = 5
