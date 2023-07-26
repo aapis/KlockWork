@@ -25,7 +25,7 @@ struct FindDashboard: View {
     @State private var showProjects: Bool = true
     @State private var showJobs: Bool = true
     @State private var allowAlive: Bool = true
-    
+ 
     @EnvironmentObject public var jm: CoreDataJob
     
     var body: some View {
@@ -45,18 +45,12 @@ struct FindDashboard: View {
     
     @ViewBuilder
     var search: some View {
-        // TODO: commented out to experiment including this view on the dashboard
-//        HStack {
-//            Title(text: "Find", image: "magnifyingglass")
-//            Spacer()
-//        }
-        
         Grid(horizontalSpacing: 0, verticalSpacing: 1) {
             GridRow {
                 SearchBar(
                     text: $activeSearchText,
                     disabled: false,
-                    placeholder: "Hit enter to search",
+                    placeholder: "Type and hit enter to search...",
                     onSubmit: onSubmit,
                     onReset: onReset
                 )

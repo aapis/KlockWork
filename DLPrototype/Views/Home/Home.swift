@@ -167,7 +167,7 @@ struct Home: View {
                                 }
                             }
                     } label: {
-                        Image(systemName: "list.number")
+                        Image(systemName: "checklist")
                             .padding(.trailing, 10)
                         Text("Tasks")
                     }
