@@ -257,6 +257,7 @@ struct LogTable: View, Identifiable {
                                 record: record,
                                 selectedJob: $job
                             )
+                            .environmentObject(updater)
                         }
                     }.onAppear(perform: changeSort)
                 }

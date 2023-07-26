@@ -26,8 +26,10 @@ struct LogRow: View, Identifiable {
     @State public var activeColour: Color = Theme.rowColour
     @State public var projectColHelpText: String = ""
     @State public var showingTimestampColumn: Bool = true
+    @State private var isDeleteAlertShowing: Bool = false
 
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var jm: CoreDataJob
     
     @AppStorage("tigerStriped") private var tigerStriped = false
@@ -114,7 +116,9 @@ struct LogRow: View, Identifiable {
         .defaultAppStorage(.standard)
         .onAppear(perform: setEditableValues)
         .onChange(of: timestamp) { _ in
-            setEditableValues()
+            if !isEditing {
+                setEditableValues()
+            }
         }
         .onHover { inside in
             showingTimestampColumn.toggle()
@@ -129,7 +133,7 @@ struct LogRow: View, Identifiable {
 
             VStack(alignment: .leading) {
                 Text("Time")
-                FancyTextField(placeholder: "Current time", lineLimit: 1, text: $timestamp)
+                FancyTextField(placeholder: "Post date", lineLimit: 1, text: $timestamp)
             }
 
             VStack(alignment: .leading) {
@@ -139,7 +143,13 @@ struct LogRow: View, Identifiable {
 
             Spacer()
             HStack(spacing: 10) {
-                FancyButtonv2(text: "Delete", action: softDelete, icon: "trash", showLabel: false, type: .destructive)
+                FancyButtonv2(text: "Delete", action: {isDeleteAlertShowing = true}, icon: "trash", showLabel: false, type: .destructive)
+                    .alert("Are you sure you want to delete this record?", isPresented: $isDeleteAlertShowing) {
+                        Button("Yes", role: .destructive) {
+                            softDelete()
+                        }
+                        Button("No", role: .cancel) {}
+                    }
                 Spacer()
                 FancyButtonv2(text: "Cancel", action: {isEditing.toggle()}, icon: "xmark", showLabel: false)
                 FancyButtonv2(text: "Save", action: save, size: .medium, type: .primary)
@@ -284,7 +294,7 @@ struct LogRow: View, Identifiable {
     }
 
     private func newDate() -> Date? {
-        if let newDate = DateHelper.date(timestamp, fmt: "yyyy-MM-dd hh:mm:ss") {
+        if let newDate = DateHelper.date(timestamp, fmt: "yyyy-MM-dd HH:mm:ss") {
             return newDate
         }
 
@@ -293,7 +303,10 @@ struct LogRow: View, Identifiable {
     }
 
     private func softDelete() -> Void {
+        isDeleteAlertShowing = false
         CoreDataRecords.softDelete(record!)
+        isEditing.toggle()
+        updater.updateOne("today.table")
     }
 }
 
