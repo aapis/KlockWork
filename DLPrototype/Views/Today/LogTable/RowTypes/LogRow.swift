@@ -25,6 +25,7 @@ struct LogRow: View, Identifiable {
     @State public var aIndex: String = "0"
     @State public var activeColour: Color = Theme.rowColour
     @State public var projectColHelpText: String = ""
+    @State public var showingTimestampColumn: Bool = true
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var jm: CoreDataJob
@@ -72,7 +73,7 @@ struct LogRow: View, Identifiable {
                     .frame(maxWidth: 50)
                 }
 
-                if showColumnTimestamp {
+                if showColumnTimestamp || showingTimestampColumn {
                     Column(
                         type: .timestamp,
                         colour: applyColour(),
@@ -114,6 +115,9 @@ struct LogRow: View, Identifiable {
         .onAppear(perform: setEditableValues)
         .onChange(of: timestamp) { _ in
             setEditableValues()
+        }
+        .onHover { inside in
+            showingTimestampColumn.toggle()
         }
     }
 
@@ -227,6 +231,9 @@ struct LogRow: View, Identifiable {
         job = entry.job
         timestamp = entry.timestamp
         aIndex = adjustedIndexAsString()
+
+        // shows timestamp column on row hover
+        showingTimestampColumn = showColumnTimestamp
     }
 
     private func applyColour() -> Color {
