@@ -25,6 +25,7 @@ struct Home: View {
     
     @State public var appVersion: String?
     @State public var splitDirection: Bool = false // false == horizontal, true == vertical
+    @State public var selectedView: AnyView = AnyView(Dashboard())
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
 
@@ -51,7 +52,7 @@ struct Home: View {
 //        return links
 //    }
     
-    var body: some View {
+    var body2: some View {
         NavigationSplitView {
             List {
                 Section {
@@ -78,7 +79,7 @@ struct Home: View {
                         Text("Dashboard")
                     }
                 }
-                
+
                 Section(header: Text("Views")) {
                     NavigationLink {
                         Today()
@@ -100,7 +101,7 @@ struct Home: View {
                             .padding(.trailing, 10)
                         Text("Today")
                     }
-                    
+
 //                    NavigationLink {
 //                        FindDashboard()
 //                            .navigationTitle("Find")
@@ -121,7 +122,7 @@ struct Home: View {
 //                        Text("Find")
 //                    }
                 }
-                
+
                 Section(header: Text("Entities")) {
                     NavigationLink {
                         NoteDashboard()
@@ -151,7 +152,7 @@ struct Home: View {
                             .padding(.trailing, 10)
                         Text("Notes")
                     }
-                    
+
                     NavigationLink {
                         TaskDashboard()
                             .navigationTitle("Tasks")
@@ -171,7 +172,7 @@ struct Home: View {
                             .padding(.trailing, 10)
                         Text("Tasks")
                     }
-                    
+
                     NavigationLink {
                         ProjectsDashboard()
                             .navigationTitle("Projects")
@@ -192,7 +193,7 @@ struct Home: View {
                             .padding(.trailing, 10)
                         Text("Projects")
                     }
-                    
+
                     NavigationLink {
                         JobDashboard()
                             .navigationTitle("Jobs")
@@ -214,7 +215,7 @@ struct Home: View {
                         Text("Jobs")
                     }
                 }
-                
+
                 if showExperimentalFeatures {
                     Section(header: Text("Experimental")) {
                         NavigationLink {
@@ -231,7 +232,7 @@ struct Home: View {
                                     })
                                     .buttonStyle(.borderless)
                                     .font(.title)
-                                    
+
                                     if showExperimentalFeatures {
                                         Button(action: {}, label: {
                                             Image(systemName: "arrow.triangle.2.circlepath")
@@ -245,7 +246,7 @@ struct Home: View {
                                 .padding(.trailing, 10)
                             Text("Multitasking")
                         }
-                        
+
                         NavigationLink {
                             Manage()
                                 .navigationTitle("Manage")
@@ -263,7 +264,7 @@ struct Home: View {
                                 .padding(.trailing, 10)
                             Text("Manage")
                         }
-                        
+
                         NavigationLink {
                             CalendarView()
                                 .navigationTitle("Calendar")
@@ -272,8 +273,8 @@ struct Home: View {
                                 .padding(.trailing, 10)
                             Text("Calendar")
                         }
-                        
-                        
+
+
                         NavigationLink {
                             Backup(category: Category(title: "Daily"))
                                 .navigationTitle("Backup")
@@ -326,6 +327,90 @@ struct Home: View {
         .onAppear(perform: onAppear)
         .environmentObject(rm)
         .navigationSplitViewStyle(.balanced)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            HStack(alignment: .top, spacing: 0) {
+                VStack(alignment: .leading) {
+                    ZStack(alignment: .topTrailing) {
+                        Theme.toolbarColour
+                        LinearGradient(gradient: Gradient(colors: [Color.black, Theme.toolbarColour]), startPoint: .topTrailing, endPoint: .topLeading)
+                            .opacity(0.25)
+
+                        VStack(alignment: .trailing, spacing: 10) {
+                            PrimaryEntities
+                            Entities
+                        }
+                    }
+                }
+                .frame(width: 100)
+
+                // TODO: make draggable
+                ZStack {
+                    Theme.headerColour
+                        .opacity(0.5)
+                }
+                .frame(width: 1)
+
+                selectedView
+                    .navigationTitle("Today")
+                    .environmentObject(rm)
+                    .environmentObject(crm)
+                    .environmentObject(jm)
+                    .environmentObject(ce)
+                    .environmentObject(updater)
+            }
+        }
+    }
+
+    @ViewBuilder private var PrimaryEntities: some View {
+        FancyDivider()
+        SidebarButton(
+            view: $selectedView,
+            destination: AnyView(Dashboard()),
+            icon: "house",
+            label: "Dashboard"
+        )
+
+        SidebarButton(
+            view: $selectedView,
+            destination: AnyView(Today()),
+            icon: "doc.append.fill",
+            label: "Today"
+        )
+    }
+
+    @ViewBuilder private var Entities: some View {
+        FancyDivider()
+
+        SidebarButton(
+            view: $selectedView,
+            destination: AnyView(NoteDashboard()),
+            icon: "note.text",
+            label: "Notes"
+        )
+
+        SidebarButton(
+            view: $selectedView,
+            destination: AnyView(TaskDashboard()),
+            icon: "checklist",
+            label: "Tasks"
+        )
+
+        SidebarButton(
+            view: $selectedView,
+            destination: AnyView(ProjectsDashboard()),
+            icon: "folder",
+            label: "Projects"
+        )
+
+        SidebarButton(
+            view: $selectedView,
+            destination: AnyView(JobDashboard()),
+            icon: "hammer",
+            label: "Jobs"
+        )
     }
     
     private func setSplitViewDirection() -> Void {

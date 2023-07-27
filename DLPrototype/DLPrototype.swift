@@ -25,6 +25,9 @@ struct DLPrototype: App {
                     persistenceController.save()
                 }
         }
+        // TODO: still shows the window close/minimize/zoom,
+        // see https://stackoverflow.com/questions/70501890/how-can-i-hide-title-bar-in-swiftui-for-macos-app
+//        .windowStyle(.hiddenTitleBar)
         // TODO: need to define the commands we want to implement
         .commands {
             MainMenu(moc: persistenceController.container.viewContext)

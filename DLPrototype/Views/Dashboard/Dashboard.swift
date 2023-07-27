@@ -41,6 +41,20 @@ struct Dashboard: View {
     @ViewBuilder private var shortcuts: some View {
         HStack {
             FancyButtonv2(
+                text: "New Record",
+                action: {},
+                icon: "doc.append.fill",
+                showLabel: true,
+                size: .medium,
+                redirect: AnyView(
+                    Today()
+                        .environmentObject(jm)
+                        .environmentObject(ce)
+                        .environmentObject(updater)
+                )
+            )
+
+            FancyButtonv2(
                 text: "New Note",
                 action: {},
                 icon: "note.text.badge.plus",
