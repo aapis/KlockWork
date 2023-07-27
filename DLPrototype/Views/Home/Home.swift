@@ -8,9 +8,23 @@
 
 import SwiftUI
 
+// TODO: remove
 struct Category: Identifiable {
     var id = UUID()
     var title: String
+}
+
+public enum Page {
+    case dashboard
+    case today
+    case notes, noteview
+    case tasks
+    case projects
+    case jobs
+}
+
+public enum PageGroup: Hashable {
+    case views, entities
 }
 
 struct Home: View {
@@ -26,31 +40,66 @@ struct Home: View {
     @State public var appVersion: String?
     @State public var splitDirection: Bool = false // false == horizontal, true == vertical
     @State public var selectedView: AnyView = AnyView(Dashboard())
+    @State public var selectedSidebarButton: Page = .dashboard
+
+    private var buttons: [PageGroup: [SidebarButton]] {
+        [
+            .views: [
+                SidebarButton(
+                    view: $selectedView,
+                    destination: AnyView(Dashboard()),
+                    currentPage: $selectedSidebarButton,
+                    pageType: .dashboard,
+                    icon: "house",
+                    label: "Dashboard"
+                ),
+                SidebarButton(
+                    view: $selectedView,
+                    destination: AnyView(Today()),
+                    currentPage: $selectedSidebarButton,
+                    pageType: .today,
+                    icon: "doc.append.fill",
+                    label: "Today"
+                )
+            ],
+            .entities: [
+                SidebarButton(
+                    view: $selectedView,
+                    destination: AnyView(NoteDashboard()),
+                    currentPage: $selectedSidebarButton,
+                    pageType: .notes,
+                    icon: "note.text",
+                    label: "Notes"
+                ),
+                SidebarButton(
+                    view: $selectedView,
+                    destination: AnyView(TaskDashboard()),
+                    currentPage: $selectedSidebarButton,
+                    pageType: .tasks,
+                    icon: "checklist",
+                    label: "Tasks"
+                ),
+                SidebarButton(
+                    view: $selectedView,
+                    destination: AnyView(ProjectsDashboard()),
+                    currentPage: $selectedSidebarButton,
+                    pageType: .projects,
+                    icon: "folder",
+                    label: "Projects"
+                ),
+                SidebarButton(
+                    view: $selectedView,
+                    destination: AnyView(JobDashboard()),
+                    currentPage: $selectedSidebarButton,
+                    pageType: .jobs,
+                    icon: "hammer",
+                    label: "Jobs"
+                )
+            ]
+        ]
+    }
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
-
-    // TODO: started trying to add "child items" under each nav link but it didn't work as expected so I moved on
-//    private var projects: [Any] {
-//        var links: [Any] = []
-//
-//        let alive = pr.alive()
-//
-//        for p in alive {
-//            let link = NavigationLink {
-//                ProjectsDashboard()
-//                    .navigationTitle("Project 1")
-//                    .environmentObject(rm)
-//                    .environmentObject(jm)
-//                    .environmentObject(updater)
-//            } label: {
-//                Text(p.name ?? "Item")
-//            }
-//
-//            links.append(link)
-//        }
-//
-//        return links
-//    }
     
     var body2: some View {
         NavigationSplitView {
@@ -338,9 +387,12 @@ struct Home: View {
                         LinearGradient(gradient: Gradient(colors: [Color.black, Theme.toolbarColour]), startPoint: .topTrailing, endPoint: .topLeading)
                             .opacity(0.25)
 
-                        VStack(alignment: .trailing, spacing: 10) {
-                            PrimaryEntities
-                            Entities
+                        VStack(alignment: .trailing, spacing: 5) {
+                            FancyDivider()
+                            ForEach(buttons[.views]!) { button in button }
+
+                            FancyDivider()
+                            ForEach(buttons[.entities]!) { button in button }
                         }
                     }
                 }
@@ -360,57 +412,10 @@ struct Home: View {
                     .environmentObject(jm)
                     .environmentObject(ce)
                     .environmentObject(updater)
+                    
             }
         }
-    }
-
-    @ViewBuilder private var PrimaryEntities: some View {
-        FancyDivider()
-        SidebarButton(
-            view: $selectedView,
-            destination: AnyView(Dashboard()),
-            icon: "house",
-            label: "Dashboard"
-        )
-
-        SidebarButton(
-            view: $selectedView,
-            destination: AnyView(Today()),
-            icon: "doc.append.fill",
-            label: "Today"
-        )
-    }
-
-    @ViewBuilder private var Entities: some View {
-        FancyDivider()
-
-        SidebarButton(
-            view: $selectedView,
-            destination: AnyView(NoteDashboard()),
-            icon: "note.text",
-            label: "Notes"
-        )
-
-        SidebarButton(
-            view: $selectedView,
-            destination: AnyView(TaskDashboard()),
-            icon: "checklist",
-            label: "Tasks"
-        )
-
-        SidebarButton(
-            view: $selectedView,
-            destination: AnyView(ProjectsDashboard()),
-            icon: "folder",
-            label: "Projects"
-        )
-
-        SidebarButton(
-            view: $selectedView,
-            destination: AnyView(JobDashboard()),
-            icon: "hammer",
-            label: "Jobs"
-        )
+        .background(Theme.base)
     }
     
     private func setSplitViewDirection() -> Void {
