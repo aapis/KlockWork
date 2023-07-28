@@ -77,7 +77,7 @@ public enum ButtonType {
         case .star:
             return [Color.yellow, Color.orange]
         case .standard:
-            return [Color.white, Color.gray]
+            return [Theme.headerColour, Color.black]
         }
     }
 
@@ -90,7 +90,7 @@ public enum ButtonType {
         case .star:
             return Color.black
         case .standard:
-            return Color.black
+            return Color.white
         }
     }
 
@@ -103,7 +103,7 @@ public enum ButtonType {
         case .star:
             return Color.yellow
         case .standard:
-            return Color.white
+            return Theme.headerColour
         }
     }
 }
@@ -119,17 +119,23 @@ public struct FancyButtonv2: View {
     public var size: ButtonSize = .small
     public var type: ButtonType = .standard
     public var redirect: AnyView? = nil
+    public var pageType: Page? = nil
+
+    @EnvironmentObject public var nav: Navigation
 
     @State private var padding: CGFloat = 10
     @State private var highlighted: Bool = false
 
     public var body: some View {
         VStack {
-            if redirect != nil {
-                NavigationLink {
-                    redirect!
-                        .onAppear(perform: action)
-                } label: {
+            if let destination = redirect {
+                Button(action: {
+                    nav.view = destination
+
+                    if let pType = pageType {
+                        nav.parent = pType
+                    }
+                }) {
                     button
                 }
                 .buttonStyle(.plain)
@@ -182,21 +188,23 @@ public struct FancyButtonv2: View {
 
     private var Background: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(colors: type.colours), startPoint: .topLeading, endPoint: .bottomTrailing)
-                .mask(
-                    RoundedRectangle(cornerRadius: 5)
-                )
+            type.colours.first
         }
+        .mask(
+            RoundedRectangle(cornerRadius: 3)
+        )
     }
 
     private var HighlightedBackground: some View {
         ZStack {
-            LinearGradient(gradient: Gradient(colors: [type.highlightColour, type.highlightColour]), startPoint: .top, endPoint: .bottom)
-                .mask(
-                    RoundedRectangle(cornerRadius: 5)
-                )
+            type.colours.first
+            LinearGradient(gradient: Gradient(colors: type.colours), startPoint: .top, endPoint: .bottom)
+                .blendMode(.softLight)
+                .opacity(0.3)
         }
-        .shadow(color: .black.opacity(0.3), radius: 1, x: 1, y: 1)
+        .mask(
+            RoundedRectangle(cornerRadius: 3)
+        )
     }
 
     private func buttonFrameWidth() -> CGFloat {

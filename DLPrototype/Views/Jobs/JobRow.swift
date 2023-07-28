@@ -12,7 +12,8 @@ import SwiftUI
 struct JobRow: View {
     public var job: Job
     public var colour: Color
-    
+
+    @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var jm: CoreDataJob
     
     var body: some View {
@@ -23,9 +24,12 @@ struct JobRow: View {
                 colour
                 
                 HStack {
-                    NavigationLink {
-                        JobDashboard(defaultSelectedJob: job.jid)
-                            .environmentObject(jm)
+                    Button {
+                        nav.view = AnyView(
+                            JobDashboard(defaultSelectedJob: job.jid)
+                                .environmentObject(jm)
+                            )
+                        nav.parent = .jobs
                     } label: {
                         Text(job.jid.string)
                             .foregroundColor(colour.isBright() ? Color.black : Color.white)

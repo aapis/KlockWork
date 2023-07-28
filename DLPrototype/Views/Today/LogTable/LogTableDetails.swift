@@ -81,6 +81,7 @@ struct LogTableDetails: View {
     ]
 
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var jm: CoreDataJob
     @EnvironmentObject public var ce: CoreDataCalendarEvent
@@ -247,11 +248,14 @@ struct LogTableDetails: View {
                             colour: Color.fromStored(note.mJob?.colour ?? Theme.rowColourAsDouble),
                             group: .notes,
                             view: AnyView(
-                                NavigationLink {
-                                    NoteView(note: note)
-                                        .navigationTitle("Viewing \(note.title!)")
-                                        .environmentObject(jm)
-                                        .environmentObject(updater)
+                                Button {
+                                    nav.view = AnyView(
+                                        NoteView(note: note)
+                                            .navigationTitle("Viewing \(note.title!)")
+                                            .environmentObject(jm)
+                                            .environmentObject(updater)
+                                        )
+                                    nav.parent = .notes
                                 } label: {
                                     VStack(alignment: .leading) {
                                         ZStack(alignment: .leading) {

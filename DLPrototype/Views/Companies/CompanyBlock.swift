@@ -13,14 +13,18 @@ struct CompanyBlock: View {
 
     @State private var highlighted: Bool = false
 
+    @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var jm: CoreDataJob
     @EnvironmentObject public var updater: ViewUpdater
 
     var body: some View {
-        NavigationLink {
-            CompanyView(company: company)
-                .environmentObject(jm)
-                .environmentObject(updater)
+        Button {
+            nav.view = AnyView(
+                CompanyView(company: company)
+                    .environmentObject(jm)
+                    .environmentObject(updater)
+                )
+            nav.parent = .companies
         } label: {
             VStack(spacing: 0) {
                 ZStack(alignment: .topLeading) {

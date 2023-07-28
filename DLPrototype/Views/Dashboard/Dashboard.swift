@@ -13,14 +13,15 @@ struct Dashboard: View {
     static public let id: UUID = UUID()
 
     @State public var searching: Bool = false
-    
+
+    @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var crm: CoreDataRecords
     @EnvironmentObject public var ce: CoreDataCalendarEvent
     @EnvironmentObject public var jm: CoreDataJob
     @EnvironmentObject public var updater: ViewUpdater
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 5) {
             FindDashboard(searching: $searching)
             FancyDivider()
 
@@ -31,7 +32,6 @@ struct Dashboard: View {
                     .environmentObject(crm)
                     .environmentObject(ce)
             }
-
         }
         .font(Theme.font)
         .padding()
@@ -40,6 +40,21 @@ struct Dashboard: View {
 
     @ViewBuilder private var shortcuts: some View {
         HStack {
+            FancyButtonv2(
+                text: "New Record",
+                action: {},
+                icon: "doc.append.fill",
+                showLabel: true,
+                size: .medium,
+                redirect: AnyView(
+                    Today()
+                        .environmentObject(jm)
+                        .environmentObject(ce)
+                        .environmentObject(updater)
+                ),
+                pageType: .today
+            )
+
             FancyButtonv2(
                 text: "New Note",
                 action: {},
@@ -50,7 +65,8 @@ struct Dashboard: View {
                     NoteCreate()
                         .environmentObject(jm)
                         .environmentObject(updater)
-                )
+                ),
+                pageType: .notes
             )
 
             FancyButtonv2(
@@ -63,7 +79,8 @@ struct Dashboard: View {
                     TaskDashboard()
                         .environmentObject(jm)
                         .environmentObject(updater)
-                )
+                ),
+                pageType: .tasks
             )
 
             FancyButtonv2(
@@ -76,7 +93,8 @@ struct Dashboard: View {
                     ProjectCreate()
                         .environmentObject(jm)
                         .environmentObject(updater)
-                )
+                ),
+                pageType: .projects
             )
 
 //                FancyButtonv2(
@@ -88,6 +106,8 @@ struct Dashboard: View {
 //                    redirect: AnyView(
 //                        TaskDashboard()
 //                    )
+//            ,
+//            pageType: .jobs
 //                )
         }
         FancyDivider()

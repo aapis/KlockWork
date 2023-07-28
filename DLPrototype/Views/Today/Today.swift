@@ -22,6 +22,7 @@ struct Today: View {
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
     
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var ce: CoreDataCalendarEvent
     
@@ -87,6 +88,7 @@ struct Today: View {
             .id(updater.ids["today.table"])
             .environmentObject(updater)
             .environmentObject(ce)
+            .environmentObject(nav)
     }
 
     // TODO: convert to current in progress event status update UX/UI

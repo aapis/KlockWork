@@ -74,6 +74,9 @@
 		537628A8296659DC00DE8ECF /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537628A7296659DC00DE8ECF /* PersistenceController.swift */; };
 		537628AC29665B4E00DE8ECF /* NoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537628AB29665B4E00DE8ECF /* NoteView.swift */; };
 		537628B429665F4E00DE8ECF /* Data.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 537628B229665F4E00DE8ECF /* Data.xcdatamodeld */; };
+		53790C032A72F18200D3FFD4 /* SidebarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53790C022A72F18200D3FFD4 /* SidebarButton.swift */; };
+		53790C052A72F45900D3FFD4 /* EdgeBorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53790C042A72F45900D3FFD4 /* EdgeBorder.swift */; };
+		53790C072A74408D00D3FFD4 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53790C062A74408D00D3FFD4 /* Navigation.swift */; };
 		537AEB9F29627DCC00385787 /* LogTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEB9E29627DCC00385787 /* LogTable.swift */; };
 		537AEBA1296287B900385787 /* LogRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA0296287B900385787 /* LogRow.swift */; };
 		53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A19297377A7007A2549 /* FancyGenericToolbar.swift */; };
@@ -221,6 +224,9 @@
 		537628A7296659DC00DE8ECF /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		537628AB29665B4E00DE8ECF /* NoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteView.swift; sourceTree = "<group>"; };
 		537628B329665F4E00DE8ECF /* Note.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Note.xcdatamodel; sourceTree = "<group>"; };
+		53790C022A72F18200D3FFD4 /* SidebarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarButton.swift; sourceTree = "<group>"; };
+		53790C042A72F45900D3FFD4 /* EdgeBorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeBorder.swift; sourceTree = "<group>"; };
+		53790C062A74408D00D3FFD4 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
 		537AEB9E29627DCC00385787 /* LogTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTable.swift; sourceTree = "<group>"; };
 		537AEBA0296287B900385787 /* LogRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRow.swift; sourceTree = "<group>"; };
 		53959A19297377A7007A2549 /* FancyGenericToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyGenericToolbar.swift; sourceTree = "<group>"; };
@@ -596,6 +602,14 @@
 			path = Notes;
 			sourceTree = "<group>";
 		};
+		53790C012A72F15200D3FFD4 /* AppSidebar */ = {
+			isa = PBXGroup;
+			children = (
+				53790C022A72F18200D3FFD4 /* SidebarButton.swift */,
+			);
+			path = AppSidebar;
+			sourceTree = "<group>";
+		};
 		53B0BE7D29725413007CB663 /* Projects */ = {
 			isa = PBXGroup;
 			children = (
@@ -689,6 +703,7 @@
 		53EDDF9C29634840008D34C7 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				53790C012A72F15200D3FFD4 /* AppSidebar */,
 				53B0BE822972610C007CB663 /* Fancy */,
 				53EDDF9D29634852008D34C7 /* Entry.swift */,
 				53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */,
@@ -698,6 +713,8 @@
 				53B0BE8729726400007CB663 /* GenericToolbar.swift */,
 				53529A06299F38C0000D2FCB /* JobPickerUsing.swift */,
 				53561F8429F1FC7900D828AD /* ProjectPickerUsing.swift */,
+				53790C042A72F45900D3FFD4 /* EdgeBorder.swift */,
+				53790C062A74408D00D3FFD4 /* Navigation.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -901,6 +918,7 @@
 				533AB3F2296CA34600E91A9F /* ManageRecords.swift in Sources */,
 				53EFCE7D2963D309004E45EC /* LogTableDetails.swift in Sources */,
 				53DFF075296F124E0051DA91 /* ManageTasks.swift in Sources */,
+				53790C052A72F45900D3FFD4 /* EdgeBorder.swift in Sources */,
 				533E40682970DD170007785A /* AutoFixJobs.swift in Sources */,
 				53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */,
 				5376289E29664F8C00DE8ECF /* Theme.swift in Sources */,
@@ -924,6 +942,7 @@
 				53759E0D2967ECAE00DCDC4B /* LogRecords.swift in Sources */,
 				53959A212973D3E5007A2549 /* CoreDataProjectConfiguration.swift in Sources */,
 				5330EEB7298B6418004FC38A /* JobRow.swift in Sources */,
+				53790C032A72F18200D3FFD4 /* SidebarButton.swift in Sources */,
 				53F10FE0296E77BE0048D040 /* CoreDataJob.swift in Sources */,
 				533E40652970DA640007785A /* ViewUpdater.swift in Sources */,
 				53F589682998437D00843B32 /* JobResult.swift in Sources */,
@@ -975,6 +994,7 @@
 				53152CDA296B849200A14E43 /* FancyPickerWithRelativeNavigation.swift in Sources */,
 				53EFCE7B29637F49004E45EC /* Settings.swift in Sources */,
 				537628A8296659DC00DE8ECF /* PersistenceController.swift in Sources */,
+				53790C072A74408D00D3FFD4 /* Navigation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1138,7 +1158,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 112;
+				CURRENT_PROJECT_VERSION = 113;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -1152,6 +1172,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.DLPrototype;
 				PRODUCT_NAME = ClockWork.Beta;
 				SUPPORTED_PLATFORMS = macosx;
@@ -1172,7 +1193,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 112;
+				CURRENT_PROJECT_VERSION = 113;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -1186,6 +1207,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.DLPrototype;
 				PRODUCT_NAME = ClockWork;
 				SUPPORTED_PLATFORMS = macosx;

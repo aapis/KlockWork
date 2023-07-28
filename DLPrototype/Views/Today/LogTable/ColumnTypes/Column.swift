@@ -24,6 +24,7 @@ struct Column: View {
     
     @Binding public var text: String
 
+    @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var jm: CoreDataJob
     
     @AppStorage("tigerStriped") private var tigerStriped = false
@@ -41,9 +42,12 @@ struct Column: View {
                     if type == .job {
                         HStack {
                             if job != nil {
-                                NavigationLink {
-                                    JobDashboard(defaultSelectedJob: job!.jid)
-                                        .environmentObject(jm)
+                                Button {
+                                    nav.view = AnyView(
+                                            JobDashboard(defaultSelectedJob: job!.jid)
+                                                .environmentObject(jm)
+                                            )
+                                    nav.parent = .jobs
                                 } label: {
                                     Text(text.replacingOccurrences(of: ".0", with: ""))
                                         .foregroundColor(colour.isBright() ? Color.black : Color.white)

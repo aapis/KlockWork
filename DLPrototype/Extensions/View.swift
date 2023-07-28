@@ -10,11 +10,7 @@ import Foundation
 import SwiftUI
 
 extension View {
-    public func saveable(title: String) -> Bool {
-        if title == "Notes" {
-            return false
-        }
-
-        return true
+    func border(width: CGFloat, edges: [Edge], color: Color) -> some View {
+        overlay(EdgeBorder(width: width, edges: edges).foregroundColor(color))
     }
 }

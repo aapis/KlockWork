@@ -40,7 +40,7 @@ struct ProjectsDashboard: View {
             Title(text: "Create", image: "pencil")
         }
         
-        FancyLink(icon: "folder.badge.plus", destination: AnyView(ProjectCreate().environmentObject(jobModel)))
+        FancyLink(icon: "folder.badge.plus", destination: AnyView(ProjectCreate().environmentObject(jobModel)), pageType: .projects)
         FancyDivider()
     }
     

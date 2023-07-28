@@ -71,7 +71,8 @@ struct NoteRow: View {
                         .environmentObject(jm)
                         .environmentObject(updater)
                     ),
-                    fgColour: (note.mJob != nil ? (Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white) : Color.white)
+                    fgColour: (note.mJob != nil ? (Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white) : Color.white),
+                    pageType: .notes
                 )
             }
         }

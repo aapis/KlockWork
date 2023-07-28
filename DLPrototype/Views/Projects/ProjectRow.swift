@@ -38,7 +38,7 @@ struct ProjectRow: View {
         Group {
             ZStack(alignment: .leading) {
                 Theme.rowColour
-                FancyTextLink(text: project.name!, destination: AnyView(ProjectView(project: project).environmentObject(jm)))
+                FancyTextLink(text: project.name!, destination: AnyView(ProjectView(project: project).environmentObject(jm)), pageType: .projects)
             }
         }
     }

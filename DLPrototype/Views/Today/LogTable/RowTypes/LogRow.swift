@@ -29,6 +29,7 @@ struct LogRow: View, Identifiable {
     @State private var isDeleteAlertShowing: Bool = false
 
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var jm: CoreDataJob
     
@@ -194,21 +195,33 @@ struct LogRow: View, Identifiable {
             }
             
             Menu("Go to"){
-                NavigationLink(destination: NoteDashboard(defaultSelectedJob: entry.jobObject).environmentObject(jm)) {
+                Button {
+                    nav.view = AnyView(NoteDashboard(defaultSelectedJob: entry.jobObject).environmentObject(jm))
+                    nav.parent = .notes
+                } label: {
                     Text("Notes")
                 }
                 
-                NavigationLink(destination: TaskDashboard(defaultSelectedJob: entry.jobObject!).environmentObject(jm)) {
+                Button {
+                    nav.view = AnyView(TaskDashboard(defaultSelectedJob: entry.jobObject!).environmentObject(jm))
+                    nav.parent = .tasks
+                } label: {
                     Text("Tasks")
                 }
                 
                 if entry.jobObject!.project != nil {
-                    NavigationLink(destination: ProjectView(project: entry.jobObject!.project!).environmentObject(jm)) {
+                    Button {
+                        nav.view = AnyView(ProjectView(project: entry.jobObject!.project!).environmentObject(jm))
+                        nav.parent = .projects
+                    } label: {
                         Text("Project")
                     }
                 }
                 
-                NavigationLink(destination: JobDashboard(defaultSelectedJob: entry.jobObject!.jid).environmentObject(jm)) {
+                Button {
+                    nav.view = AnyView(JobDashboard(defaultSelectedJob: entry.jobObject!.jid).environmentObject(jm))
+                    nav.parent = .jobs
+                } label: {
                     Text("Job")
                 }
             }

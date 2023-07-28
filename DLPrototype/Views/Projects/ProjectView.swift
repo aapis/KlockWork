@@ -246,7 +246,8 @@ struct ProjectView: View {
                                                     JobDashboard(defaultSelectedJob: job.jid)
                                                         .environmentObject(jobModel)
                                                 ),
-                                                size: .link
+                                                size: .link,
+                                                pageType: .jobs
                                             )
                                             .help("Open job \(job.jid.string)")
                                             Spacer()
@@ -345,7 +346,8 @@ struct ProjectView: View {
                                                     JobDashboard(defaultSelectedJob: job.jid)
                                                         .environmentObject(jobModel)
                                                 ),
-                                                size: .link
+                                                size: .link,
+                                                pageType: .jobs
                                             )
                                             .help("Open job \(job.jid.string)")
                                             Spacer()

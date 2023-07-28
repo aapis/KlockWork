@@ -18,6 +18,7 @@ struct NoteDashboard: View {
     @AppStorage("notes.columns") private var numColumns: Int = 3
     
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var jm: CoreDataJob
     
@@ -75,6 +76,7 @@ struct NoteDashboard: View {
                 LazyVGrid(columns: columns, alignment: .leading) {
                     ForEach(filter(notes)) { note in
                         NoteBlock(note: note)
+                            .environmentObject(nav)
                             .environmentObject(jm)
                             .environmentObject(updater)
                     }
