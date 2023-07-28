@@ -76,6 +76,7 @@
 		537628B429665F4E00DE8ECF /* Data.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 537628B229665F4E00DE8ECF /* Data.xcdatamodeld */; };
 		53790C032A72F18200D3FFD4 /* SidebarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53790C022A72F18200D3FFD4 /* SidebarButton.swift */; };
 		53790C052A72F45900D3FFD4 /* EdgeBorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53790C042A72F45900D3FFD4 /* EdgeBorder.swift */; };
+		53790C072A74408D00D3FFD4 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53790C062A74408D00D3FFD4 /* Navigation.swift */; };
 		537AEB9F29627DCC00385787 /* LogTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEB9E29627DCC00385787 /* LogTable.swift */; };
 		537AEBA1296287B900385787 /* LogRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA0296287B900385787 /* LogRow.swift */; };
 		53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A19297377A7007A2549 /* FancyGenericToolbar.swift */; };
@@ -225,6 +226,7 @@
 		537628B329665F4E00DE8ECF /* Note.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Note.xcdatamodel; sourceTree = "<group>"; };
 		53790C022A72F18200D3FFD4 /* SidebarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarButton.swift; sourceTree = "<group>"; };
 		53790C042A72F45900D3FFD4 /* EdgeBorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeBorder.swift; sourceTree = "<group>"; };
+		53790C062A74408D00D3FFD4 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
 		537AEB9E29627DCC00385787 /* LogTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTable.swift; sourceTree = "<group>"; };
 		537AEBA0296287B900385787 /* LogRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRow.swift; sourceTree = "<group>"; };
 		53959A19297377A7007A2549 /* FancyGenericToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyGenericToolbar.swift; sourceTree = "<group>"; };
@@ -712,6 +714,7 @@
 				53529A06299F38C0000D2FCB /* JobPickerUsing.swift */,
 				53561F8429F1FC7900D828AD /* ProjectPickerUsing.swift */,
 				53790C042A72F45900D3FFD4 /* EdgeBorder.swift */,
+				53790C062A74408D00D3FFD4 /* Navigation.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -991,6 +994,7 @@
 				53152CDA296B849200A14E43 /* FancyPickerWithRelativeNavigation.swift in Sources */,
 				53EFCE7B29637F49004E45EC /* Settings.swift in Sources */,
 				537628A8296659DC00DE8ECF /* PersistenceController.swift in Sources */,
+				53790C072A74408D00D3FFD4 /* Navigation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1168,6 +1172,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.DLPrototype;
 				PRODUCT_NAME = ClockWork.Beta;
 				SUPPORTED_PLATFORMS = macosx;
@@ -1202,6 +1207,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.DLPrototype;
 				PRODUCT_NAME = ClockWork;
 				SUPPORTED_PLATFORMS = macosx;

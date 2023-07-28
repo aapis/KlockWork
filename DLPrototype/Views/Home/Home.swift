@@ -8,27 +8,6 @@
 
 import SwiftUI
 
-// TODO: remove
-struct Category: Identifiable {
-    var id = UUID()
-    var title: String
-}
-
-public enum Page {
-    case dashboard, today, notes, tasks, projects, jobs, companies
-}
-
-public enum PageGroup: Hashable {
-    case views, entities
-}
-
-public class Navigation: Identifiable, ObservableObject {
-    public var id: UUID = UUID()
-
-    @Published public var view: AnyView?
-    @Published public var parent: Page? = .dashboard
-}
-
 struct Home: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
@@ -148,7 +127,6 @@ struct Home: View {
 
         nav.view = selectedView
         nav.parent = selectedSidebarButton
-
     }
 }
 
