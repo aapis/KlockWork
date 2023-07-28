@@ -21,7 +21,7 @@ struct Dashboard: View {
     @EnvironmentObject public var updater: ViewUpdater
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 5) {
             FindDashboard(searching: $searching)
             FancyDivider()
 
@@ -32,7 +32,6 @@ struct Dashboard: View {
                     .environmentObject(crm)
                     .environmentObject(ce)
             }
-
         }
         .font(Theme.font)
         .padding()
