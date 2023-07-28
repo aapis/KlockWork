@@ -15,16 +15,18 @@ struct Category: Identifiable {
 }
 
 public enum Page {
-    case dashboard
-    case today
-    case notes, noteview
-    case tasks
-    case projects
-    case jobs
+    case dashboard, today, notes, tasks, projects, jobs
 }
 
 public enum PageGroup: Hashable {
     case views, entities
+}
+
+public class Navigation: Identifiable, ObservableObject {
+    public var id: UUID = UUID()
+
+    @Published public var view: AnyView?
+    @Published public var name: Page? = .dashboard
 }
 
 struct Home: View {
@@ -35,10 +37,12 @@ struct Home: View {
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
+    @StateObject public var nav: Navigation = Navigation()
 //    @StateObject public var pr: CoreDataProjects = CoreDataProjects(moc: PersistenceController.shared.container.viewContext)
     
-    @State public var appVersion: String?
-    @State public var splitDirection: Bool = false // false == horizontal, true == vertical
+    @State public var version: String?
+    @State public var build: String?
+    @State public var appName: String?
     @State public var selectedView: AnyView = AnyView(Dashboard())
     @State public var selectedSidebarButton: Page = .dashboard
 
@@ -98,285 +102,6 @@ struct Home: View {
             ]
         ]
     }
-    
-    @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
-    
-    var body2: some View {
-        NavigationSplitView {
-            List {
-                Section {
-                    NavigationLink {
-                        Dashboard()
-                            .navigationTitle("Dashboard")
-                            .environmentObject(rm)
-                            .environmentObject(jm)
-                            .environmentObject(ce)
-                            .environmentObject(crm)
-//                            .environmentObject(pr)
-                            .environmentObject(updater)
-                            .toolbar {
-                                Button(action: redraw, label: {
-                                    Image(systemName: "arrow.triangle.2.circlepath")
-                                })
-                                .buttonStyle(.borderless)
-                                .font(.title)
-                                .keyboardShortcut("r")
-                            }
-                    } label: {
-                        Image(systemName: "house")
-                            .padding(.trailing, 5)
-                        Text("Dashboard")
-                    }
-                }
-
-                Section(header: Text("Views")) {
-                    NavigationLink {
-                        Today()
-                            .navigationTitle("Today")
-                            .environmentObject(rm)
-                            .environmentObject(jm)
-                            .environmentObject(ce)
-                            .environmentObject(updater)
-                            .toolbar {
-                                Button(action: redraw, label: {
-                                    Image(systemName: "arrow.triangle.2.circlepath")
-                                })
-                                .buttonStyle(.borderless)
-                                .font(.title)
-                                .keyboardShortcut("r")
-                            }
-                    } label: {
-                        Image(systemName: "doc.append.fill")
-                            .padding(.trailing, 10)
-                        Text("Today")
-                    }
-
-//                    NavigationLink {
-//                        FindDashboard()
-//                            .navigationTitle("Find")
-//                            .environmentObject(rm)
-//                            .environmentObject(jm)
-//                            .environmentObject(updater)
-//                            .toolbar {
-//                                Button(action: redraw, label: {
-//                                    Image(systemName: "arrow.triangle.2.circlepath")
-//                                })
-//                                .buttonStyle(.borderless)
-//                                .font(.title)
-//                                .keyboardShortcut("r")
-//                            }
-//                    } label: {
-//                        Image(systemName: "magnifyingglass")
-//                            .padding(.trailing, 10)
-//                        Text("Find")
-//                    }
-                }
-
-                Section(header: Text("Entities")) {
-                    NavigationLink {
-                        NoteDashboard()
-                            .environmentObject(jm)
-                            .environmentObject(updater)
-                            .navigationTitle("Notes")
-                            .toolbar {
-                                if showExperimentalFeatures {
-                                    Button(action: {}, label: {
-                                        Image(systemName: "arrow.triangle.2.circlepath")
-                                    })
-                                    .buttonStyle(.borderless)
-                                    .font(.title)
-                                }
-
-                                NavigationLink {
-                                    NoteCreate()
-                                        .environmentObject(jm)
-                                        .environmentObject(updater)
-                                } label: {
-                                    Image(systemName: "plus")
-                                        .font(.title)
-                                }
-                            }
-                    } label: {
-                        Image(systemName: "note.text")
-                            .padding(.trailing, 10)
-                        Text("Notes")
-                    }
-
-                    NavigationLink {
-                        TaskDashboard()
-                            .navigationTitle("Tasks")
-                            .environmentObject(jm)
-                            .environmentObject(updater)
-                            .toolbar {
-                                if showExperimentalFeatures {
-                                    Button(action: {}, label: {
-                                        Image(systemName: "arrow.triangle.2.circlepath")
-                                    })
-                                    .buttonStyle(.borderless)
-                                    .font(.title)
-                                }
-                            }
-                    } label: {
-                        Image(systemName: "checklist")
-                            .padding(.trailing, 10)
-                        Text("Tasks")
-                    }
-
-                    NavigationLink {
-                        ProjectsDashboard()
-                            .navigationTitle("Projects")
-                            .environmentObject(rm)
-                            .environmentObject(jm)
-                            .environmentObject(updater)
-                            .toolbar {
-                                if showExperimentalFeatures {
-                                    Button(action: {}, label: {
-                                        Image(systemName: "arrow.triangle.2.circlepath")
-                                    })
-                                    .buttonStyle(.borderless)
-                                    .font(.title)
-                                }
-                            }
-                    } label: {
-                        Image(systemName: "folder")
-                            .padding(.trailing, 10)
-                        Text("Projects")
-                    }
-
-                    NavigationLink {
-                        JobDashboard()
-                            .navigationTitle("Jobs")
-                            .environmentObject(rm)
-                            .environmentObject(jm)
-                            .environmentObject(updater)
-                            .toolbar {
-                                if showExperimentalFeatures {
-                                    Button(action: {}, label: {
-                                        Image(systemName: "arrow.triangle.2.circlepath")
-                                    })
-                                    .buttonStyle(.borderless)
-                                    .font(.title)
-                                }
-                            }
-                    } label: {
-                        Image(systemName: "hammer")
-                            .padding(.trailing, 10)
-                        Text("Jobs")
-                    }
-                }
-
-                if showExperimentalFeatures {
-                    Section(header: Text("Experimental")) {
-                        NavigationLink {
-                            Split(direction: $splitDirection)
-                                .navigationTitle("Multitasking")
-                                .environmentObject(rm)
-                                .toolbar {
-                                    Button(action: setSplitViewDirection, label: {
-                                        if !splitDirection {
-                                            Image(systemName: "rectangle.split.1x2")
-                                        } else {
-                                            Image(systemName: "rectangle.split.2x1")
-                                        }
-                                    })
-                                    .buttonStyle(.borderless)
-                                    .font(.title)
-
-                                    if showExperimentalFeatures {
-                                        Button(action: {}, label: {
-                                            Image(systemName: "arrow.triangle.2.circlepath")
-                                        })
-                                        .buttonStyle(.borderless)
-                                        .font(.title)
-                                    }
-                                }
-                        } label: {
-                            Image(systemName: "rectangle.split.2x1")
-                                .padding(.trailing, 10)
-                            Text("Multitasking")
-                        }
-
-                        NavigationLink {
-                            Manage()
-                                .navigationTitle("Manage")
-                                .toolbar {
-                                    if showExperimentalFeatures {
-                                        Button(action: {}, label: {
-                                            Image(systemName: "arrow.triangle.2.circlepath")
-                                        })
-                                        .buttonStyle(.borderless)
-                                        .font(.title)
-                                    }
-                                }
-                        } label: {
-                            Image(systemName: "books.vertical")
-                                .padding(.trailing, 10)
-                            Text("Manage")
-                        }
-
-                        NavigationLink {
-                            CalendarView()
-                                .navigationTitle("Calendar")
-                        } label: {
-                            Image(systemName: "calendar")
-                                .padding(.trailing, 10)
-                            Text("Calendar")
-                        }
-
-
-                        NavigationLink {
-                            Backup(category: Category(title: "Daily"))
-                                .navigationTitle("Backup")
-                        } label: {
-                            Image(systemName: "cloud.fill")
-                                .padding(.trailing, 10)
-                            Text("Backup")
-                        }
-
-                        NavigationLink {
-                            Import()
-                                .navigationTitle("Import")
-                                .environmentObject(rm)
-                                .toolbar {
-                                    if showExperimentalFeatures {
-                                        Button(action: {}, label: {
-                                            Image(systemName: "arrow.triangle.2.circlepath")
-                                        })
-                                        .buttonStyle(.borderless)
-                                        .font(.title)
-                                    }
-                                }
-                        } label: {
-                            Image(systemName: "square.and.arrow.up.fill")
-                                .padding(.trailing, 10)
-                            Text("In + Out")
-                        }
-                    }
-                }
-            }
-        } detail: {
-            Dashboard()
-                .navigationTitle("Dashboard")
-                .environmentObject(rm)
-                .environmentObject(jm)
-                .environmentObject(crm)
-                .environmentObject(ce)
-                .environmentObject(updater)
-//                .environmentObject(pr)
-                .toolbar {
-                    Button(action: redraw, label: {
-                        Image(systemName: "arrow.triangle.2.circlepath")
-                    })
-                    .buttonStyle(.borderless)
-                    .font(.title)
-                    .keyboardShortcut("r")
-                }
-        }
-        .navigationTitle("ClockWork b.\(appVersion ?? "0")")
-        .onAppear(perform: onAppear)
-        .environmentObject(rm)
-        .navigationSplitViewStyle(.balanced)
-    }
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -389,10 +114,10 @@ struct Home: View {
 
                         VStack(alignment: .trailing, spacing: 5) {
                             FancyDivider()
-                            ForEach(buttons[.views]!) { button in button }
+                            ForEach(buttons[.views]!) { button in button.environmentObject(nav) }
 
                             FancyDivider()
-                            ForEach(buttons[.entities]!) { button in button }
+                            ForEach(buttons[.entities]!) { button in button.environmentObject(nav) }
                         }
                     }
                 }
@@ -405,21 +130,23 @@ struct Home: View {
                 }
                 .frame(width: 1)
 
-                selectedView
-                    .navigationTitle("Today")
+                // TODO: key to making custom nav links work is to allow buttons to receive/modify $selectedView
+                nav.view
+                    .navigationTitle("\(appName ?? "DLPrototype") \(version ?? "0").\(build ?? "0")")
+                    .environmentObject(nav)
                     .environmentObject(rm)
                     .environmentObject(crm)
                     .environmentObject(jm)
                     .environmentObject(ce)
                     .environmentObject(updater)
-                    
+
             }
         }
         .background(Theme.base)
-    }
-    
-    private func setSplitViewDirection() -> Void {
-        splitDirection.toggle()
+        .onAppear(perform: onAppear)
+        .onChange(of: nav.name!) { buttonToHighlight in
+            selectedSidebarButton = buttonToHighlight
+        }
     }
     
     private func redraw() -> Void {
@@ -427,7 +154,13 @@ struct Home: View {
     }
 
     private func onAppear() -> Void {
-        appVersion = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+        version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+        appName = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
+
+        nav.view = selectedView
+        nav.name = selectedSidebarButton
+
     }
 }
 

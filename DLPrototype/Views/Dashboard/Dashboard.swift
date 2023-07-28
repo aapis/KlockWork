@@ -13,7 +13,8 @@ struct Dashboard: View {
     static public let id: UUID = UUID()
 
     @State public var searching: Bool = false
-    
+
+    @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var crm: CoreDataRecords
     @EnvironmentObject public var ce: CoreDataCalendarEvent
     @EnvironmentObject public var jm: CoreDataJob
@@ -51,7 +52,8 @@ struct Dashboard: View {
                         .environmentObject(jm)
                         .environmentObject(ce)
                         .environmentObject(updater)
-                )
+                ),
+                pageType: .today
             )
 
             FancyButtonv2(
@@ -64,7 +66,8 @@ struct Dashboard: View {
                     NoteCreate()
                         .environmentObject(jm)
                         .environmentObject(updater)
-                )
+                ),
+                pageType: .notes
             )
 
             FancyButtonv2(
@@ -77,7 +80,8 @@ struct Dashboard: View {
                     TaskDashboard()
                         .environmentObject(jm)
                         .environmentObject(updater)
-                )
+                ),
+                pageType: .tasks
             )
 
             FancyButtonv2(
@@ -90,7 +94,8 @@ struct Dashboard: View {
                     ProjectCreate()
                         .environmentObject(jm)
                         .environmentObject(updater)
-                )
+                ),
+                pageType: .projects
             )
 
 //                FancyButtonv2(
@@ -102,6 +107,8 @@ struct Dashboard: View {
 //                    redirect: AnyView(
 //                        TaskDashboard()
 //                    )
+//            ,
+//            pageType: .jobs
 //                )
         }
         FancyDivider()
