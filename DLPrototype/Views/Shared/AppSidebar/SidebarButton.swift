@@ -10,11 +10,8 @@ import Foundation
 import SwiftUI
 
 struct SidebarButton: View, Identifiable {
-    public var id: UUID = UUID()
-    @Binding public var view: AnyView
-
+    public let id: UUID = UUID()
     public var destination: AnyView
-    @Binding public var currentPage: Page
     public let pageType: Page
     public var icon: String
     public var label: String
@@ -22,13 +19,15 @@ struct SidebarButton: View, Identifiable {
 
     @State private var highlighted: Bool = false
 
+    @EnvironmentObject public var nav: Navigation
+
     var body: some View {
         Button(action: {
-            view = destination
-            currentPage = pageType
+            nav.parent = pageType
+            nav.view = destination
         }, label: {
             ZStack {
-                currentPage == pageType ? Color.pink : Theme.headerColour
+                nav.parent == pageType ? Color.pink : Theme.headerColour
                 LinearGradient(
                     colors: [(highlighted ? .black : .white), Theme.toolbarColour],
                     startPoint: .topTrailing,
@@ -37,7 +36,7 @@ struct SidebarButton: View, Identifiable {
                 .opacity(0.1)
 
                 Image(systemName: icon)
-                    .font(.largeTitle)
+                    .font(.title)
                     .symbolRenderingMode(.hierarchical)
             }
         })

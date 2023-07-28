@@ -13,15 +13,19 @@ struct NoteBlock: View {
 
     @State private var highlighted: Bool = false
 
+    @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var jm: CoreDataJob
     @EnvironmentObject public var updater: ViewUpdater
     
     var body: some View {
-        NavigationLink {
-            NoteView(note: note)
-                .environmentObject(jm)
-                .environmentObject(updater)
-                .navigationTitle("Editing note \"\(note.title!)\"")
+        Button {
+            nav.view = AnyView(
+                NoteView(note: note)
+                    .environmentObject(nav)
+                    .environmentObject(jm)
+                    .environmentObject(updater)
+                )
+            nav.parent = .notes
         } label: {
             VStack(spacing: 0) {
                 ZStack(alignment: .topLeading) {

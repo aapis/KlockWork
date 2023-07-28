@@ -15,7 +15,7 @@ struct Category: Identifiable {
 }
 
 public enum Page {
-    case dashboard, today, notes, tasks, projects, jobs
+    case dashboard, today, notes, tasks, projects, jobs, companies
 }
 
 public enum PageGroup: Hashable {
@@ -26,7 +26,7 @@ public class Navigation: Identifiable, ObservableObject {
     public var id: UUID = UUID()
 
     @Published public var view: AnyView?
-    @Published public var name: Page? = .dashboard
+    @Published public var parent: Page? = .dashboard
 }
 
 struct Home: View {
@@ -50,17 +50,13 @@ struct Home: View {
         [
             .views: [
                 SidebarButton(
-                    view: $selectedView,
                     destination: AnyView(Dashboard()),
-                    currentPage: $selectedSidebarButton,
                     pageType: .dashboard,
                     icon: "house",
                     label: "Dashboard"
                 ),
                 SidebarButton(
-                    view: $selectedView,
                     destination: AnyView(Today()),
-                    currentPage: $selectedSidebarButton,
                     pageType: .today,
                     icon: "doc.append.fill",
                     label: "Today"
@@ -68,33 +64,25 @@ struct Home: View {
             ],
             .entities: [
                 SidebarButton(
-                    view: $selectedView,
                     destination: AnyView(NoteDashboard()),
-                    currentPage: $selectedSidebarButton,
                     pageType: .notes,
                     icon: "note.text",
                     label: "Notes"
                 ),
                 SidebarButton(
-                    view: $selectedView,
                     destination: AnyView(TaskDashboard()),
-                    currentPage: $selectedSidebarButton,
                     pageType: .tasks,
                     icon: "checklist",
                     label: "Tasks"
                 ),
                 SidebarButton(
-                    view: $selectedView,
                     destination: AnyView(ProjectsDashboard()),
-                    currentPage: $selectedSidebarButton,
                     pageType: .projects,
                     icon: "folder",
                     label: "Projects"
                 ),
                 SidebarButton(
-                    view: $selectedView,
                     destination: AnyView(JobDashboard()),
-                    currentPage: $selectedSidebarButton,
                     pageType: .jobs,
                     icon: "hammer",
                     label: "Jobs"
@@ -144,7 +132,7 @@ struct Home: View {
         }
         .background(Theme.base)
         .onAppear(perform: onAppear)
-        .onChange(of: nav.name!) { buttonToHighlight in
+        .onChange(of: nav.parent!) { buttonToHighlight in
             selectedSidebarButton = buttonToHighlight
         }
     }
@@ -159,7 +147,7 @@ struct Home: View {
         appName = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
 
         nav.view = selectedView
-        nav.name = selectedSidebarButton
+        nav.parent = selectedSidebarButton
 
     }
 }

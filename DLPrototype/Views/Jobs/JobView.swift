@@ -65,7 +65,8 @@ struct JobView: View {
                 destination: AnyView(
                     ProjectView(project: project)
                         .environmentObject(jm)
-                )
+                ),
+                pageType: .projects
             )
         }
     }

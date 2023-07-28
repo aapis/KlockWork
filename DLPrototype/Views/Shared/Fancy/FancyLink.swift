@@ -22,14 +22,18 @@ struct FancyLink: View {
     public var fgColour: Color = Color.white
     public var destination: AnyView?
     public var size: ButtonSize = .large
+    public var pageType: Page = .dashboard
 
+    @EnvironmentObject public var nav: Navigation
+    
     @State private var padding: CGFloat = 10
     @State private var highlighted: Bool = false
     
     var body: some View {
         VStack {
-            let button = NavigationLink {
-                destination
+            let button = Button {
+                nav.view = destination
+                nav.parent = pageType
             } label: {
                 if showIcon && icon != nil {
                     Image(systemName: icon!)

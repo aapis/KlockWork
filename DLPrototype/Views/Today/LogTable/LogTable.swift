@@ -36,6 +36,7 @@ struct LogTable: View, Identifiable {
     @AppStorage("today.showColumnActions") public var showColumnActions: Bool = false
     
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var ce: CoreDataCalendarEvent
     
@@ -298,6 +299,7 @@ struct LogTable: View, Identifiable {
     var tableDetails: some View {
         LogTableDetails(records: $records, selectedDate: $selectedDate, open: $showSidebar, selectedTab: $selectedTab)
             .environmentObject(updater)
+            .environmentObject(nav)
     }
     
     // TODO: move this func to CoreDataRecords model
