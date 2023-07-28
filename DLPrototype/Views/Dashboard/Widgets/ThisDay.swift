@@ -74,7 +74,8 @@ struct ThisDay: View {
                                         .environmentObject(jm)
                                         .environmentObject(ce)
                                         .environmentObject(updater)
-                                )
+                                ),
+                                pageType: .today
                             )
                             Spacer()
                         }
@@ -103,7 +104,8 @@ struct ThisDay: View {
                                 .environmentObject(ce)
                                 .environmentObject(updater)
                         ),
-                        size: .small
+                        size: .small,
+                        pageType: .today
                     )
                 }
             }

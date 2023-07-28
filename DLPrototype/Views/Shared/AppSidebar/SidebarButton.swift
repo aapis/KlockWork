@@ -27,7 +27,7 @@ struct SidebarButton: View, Identifiable {
             nav.view = destination
         }, label: {
             ZStack {
-                nav.parent == pageType ? Color.pink : Theme.headerColour
+                nav.parent == pageType ? Theme.secondary : Theme.headerColour
                 LinearGradient(
                     colors: [(highlighted ? .black : .white), Theme.toolbarColour],
                     startPoint: .topTrailing,

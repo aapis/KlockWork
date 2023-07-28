@@ -10,6 +10,25 @@ import SwiftUI
 
 public enum Page {
     case dashboard, today, notes, tasks, projects, jobs, companies
+
+    var title: String {
+        switch self {
+        case .dashboard:
+            return "Dashboard"
+        case .today:
+            return "Today"
+        case .notes:
+            return "Notes"
+        case .tasks:
+            return "Tasks"
+        case .projects:
+            return "Projects"
+        case .jobs:
+            return "Jobs"
+        case .companies:
+            return "Companies"
+        }
+    }
 }
 
 public enum PageGroup: Hashable {

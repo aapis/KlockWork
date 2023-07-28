@@ -119,17 +119,23 @@ public struct FancyButtonv2: View {
     public var size: ButtonSize = .small
     public var type: ButtonType = .standard
     public var redirect: AnyView? = nil
+    public var pageType: Page? = nil
+
+    @EnvironmentObject public var nav: Navigation
 
     @State private var padding: CGFloat = 10
     @State private var highlighted: Bool = false
 
     public var body: some View {
         VStack {
-            if redirect != nil {
-                NavigationLink {
-                    redirect!
-                        .onAppear(perform: action)
-                } label: {
+            if let destination = redirect {
+                Button(action: {
+                    nav.view = destination
+
+                    if let pType = pageType {
+                        nav.parent = pType
+                    }
+                }) {
                     button
                 }
                 .buttonStyle(.plain)
