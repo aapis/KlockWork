@@ -22,6 +22,7 @@ struct JobCreate: View {
     @State private var validColour: Bool = false
     @State private var colourAsDouble: [Double] = []
     @State private var project: Project?
+    @State private var job: Job?
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
@@ -107,6 +108,7 @@ struct JobCreate: View {
                 action: update,
                 size: .medium,
                 type: .primary,
+//                redirect: AnyView(JobView(job: $job)), // this works but the view page isn't styled properly yet
                 redirect: AnyView(JobDashboard()),
                 pageType: .jobs
             )
@@ -118,19 +120,21 @@ struct JobCreate: View {
     }
 
     private func update() -> Void {
-        let job = Job(context: moc)
+        let newJob = Job(context: moc)
         if !url.isEmpty {
-            job.uri = URL(string: url)!
+            newJob.uri = URL(string: url)!
         }
 
         if !id.isEmpty {
-            job.jid = Double(id)!
+            newJob.jid = Double(id)!
         }
 
-        job.project = project!
-        job.alive = alive
-        job.shredable = shredable
-        job.colour = colourAsDouble
+        newJob.project = project!
+        newJob.alive = alive
+        newJob.shredable = shredable
+        newJob.colour = colourAsDouble
+
+        job = newJob
 
         PersistenceController.shared.save()
         updater.update()
@@ -141,10 +145,14 @@ struct JobCreate: View {
         validColour = true
     }
 
-    private func projectPickerChange(selected: Int, sender: String?) -> Void {
-        if selected > 0 {
-            project = CoreDataProjects(moc: moc).byId(selected)
-            validProject = true
+    private func projectPickerChange(selected: String, sender: String?) -> Void {
+        if !selected.isEmpty {
+            if let match = CoreDataProjects(moc: moc).byName(selected) {
+                project = match
+                validProject = true
+            } else {
+                print("DERPO Unable to find project named \"\(selected)\"")
+            }
         }
     }
 }

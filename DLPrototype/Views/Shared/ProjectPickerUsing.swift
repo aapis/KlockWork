@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 
 struct ProjectPickerUsing: View {
-    public var onChange: (Int, String?) -> Void
+    public var onChange: (String, String?) -> Void
     public var transparent: Bool? = false
     public var labelText: String?
     public var showLabel: Bool? = false
@@ -77,7 +77,7 @@ struct ProjectPickerUsing: View {
             idFieldTextColour = Color.white
         }
         
-        onChange(selected, sender)
+        onChange(projectName, sender)
     }
     
     private func onAppear() -> Void {
