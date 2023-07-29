@@ -108,7 +108,7 @@ public class CoreDataProjects: ObservableObject {
 
             print(error)
         }
-        print("DERPO projects.count \(results.count) \(predicate!.predicateFormat)")
+
         return results
     }
 }

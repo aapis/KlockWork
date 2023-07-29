@@ -10,11 +10,12 @@ import Foundation
 import SwiftUI
 
 struct LogRow: View, Identifiable {
+    public var id = UUID()
     public var entry: Entry
     public var index: Array<Entry>.Index?
     public var colour: Color
     public var record: LogRecord?
-    public var id = UUID()
+    public var viewRequiresColumns: Set<RecordTableColumn> = []
     
     @Binding public var selectedJob: String
     
@@ -26,6 +27,7 @@ struct LogRow: View, Identifiable {
     @State public var activeColour: Color = Theme.rowColour
     @State public var projectColHelpText: String = ""
     @State public var showingTimestampColumn: Bool = true
+    @State public var columns: Set<RecordTableColumn> = [.message]
     @State private var isDeleteAlertShowing: Bool = false
 
     @Environment(\.managedObjectContext) var moc
@@ -38,8 +40,8 @@ struct LogRow: View, Identifiable {
     @AppStorage("showExperiment.actions") private var showExperimentActions = false
     @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
     @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
+    @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
     @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
-    @AppStorage("today.showColumnActions") public var showColumnActions: Bool = false
 
     var body: some View {
         if isEditing {
@@ -67,7 +69,7 @@ struct LogRow: View, Identifiable {
                 )
                 .frame(width: 5)
 
-                if showColumnIndex {
+                if columns.contains(.index) {
                     Column(
                         colour: applyColour(),
                         textColour: rowTextColour(),
@@ -76,7 +78,20 @@ struct LogRow: View, Identifiable {
                     .frame(maxWidth: 50)
                 }
 
-                if showColumnTimestamp || showingTimestampColumn {
+                if columns.contains(.extendedTimestamp) {
+                    Column(
+                        type: .extendedTimestamp,
+                        colour: applyColour(),
+                        textColour: rowTextColour(),
+                        index: index,
+                        alignment: .center,
+                        text: $timestamp
+                    )
+                    .frame(maxWidth: 101)
+                    .help(entry.timestamp)
+                }
+
+                if columns.contains(.timestamp) {
                     Column(
                         type: .timestamp,
                         colour: applyColour(),
@@ -89,7 +104,7 @@ struct LogRow: View, Identifiable {
                     .help(entry.timestamp)
                 }
 
-                if showColumnJobId {
+                if columns.contains(.job) {
                     Column(
                         type: .job,
                         colour: applyColour(),
@@ -102,15 +117,17 @@ struct LogRow: View, Identifiable {
                     )
                     .frame(maxWidth: 80)
                 }
-                
-                Column(
-                    type: .standard,
-                    colour: applyColour(),
-                    textColour: rowTextColour(),
-                    index: index,
-                    alignment: .leading,
-                    text: $message
-                )
+
+                if columns.contains(.message) {
+                    Column(
+                        type: .message,
+                        colour: applyColour(),
+                        textColour: rowTextColour(),
+                        index: index,
+                        alignment: .leading,
+                        text: $message
+                    )
+                }
             }
             .contextMenu { contextMenu }
         }
@@ -120,9 +137,6 @@ struct LogRow: View, Identifiable {
             if !isEditing {
                 setEditableValues()
             }
-        }
-        .onHover { inside in
-            showingTimestampColumn.toggle()
         }
     }
 
@@ -257,6 +271,10 @@ struct LogRow: View, Identifiable {
 
         // shows timestamp column on row hover
         showingTimestampColumn = showColumnTimestamp
+
+        if !viewRequiresColumns.isEmpty {
+            columns = columns.union(viewRequiresColumns)
+        }
     }
 
     private func applyColour() -> Color {

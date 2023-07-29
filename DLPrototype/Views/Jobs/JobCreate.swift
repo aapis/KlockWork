@@ -150,8 +150,6 @@ struct JobCreate: View {
             if let match = CoreDataProjects(moc: moc).byName(selected) {
                 project = match
                 validProject = true
-            } else {
-                print("DERPO Unable to find project named \"\(selected)\"")
             }
         }
     }

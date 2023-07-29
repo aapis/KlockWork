@@ -24,8 +24,8 @@ struct TodaySettings: View {
     @AppStorage("today.defaultTableSortOrder") private var defaultTableSortOrder: String = "DESC"
     @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
     @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
+    @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
     @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
-    @AppStorage("today.showColumnActions") public var showColumnActions: Bool = false
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures: Bool = false
     @AppStorage("today.maxCharsPerGroup") public var maxCharsPerGroup: Int = 0
     @AppStorage("today.colourizeExportableGroupedRecord") public var colourizeExportableGroupedRecord: Bool = false
@@ -83,8 +83,8 @@ struct TodaySettings: View {
                 Section("Display columns") {
                     Toggle("Index", isOn: $showColumnIndex)
                     Toggle("Timestamp", isOn: $showColumnTimestamp)
+                    Toggle("Extended timestamp", isOn: $showColumnExtendedTimestamp)
                     Toggle("Job ID", isOn: $showColumnJobId)
-                    Toggle("Actions (EXPERIMENTAL)", isOn: $showColumnActions).disabled(!showExperimentalFeatures) // TODO: future feature
                     Divider()
                 }
 
