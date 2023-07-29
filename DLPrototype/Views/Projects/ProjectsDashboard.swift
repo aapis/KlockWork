@@ -37,20 +37,21 @@ struct ProjectsDashboard: View {
     @ViewBuilder
     var create: some View {
         HStack {
-            Title(text: "Create", image: "pencil")
+            Title(text: "Projects")
+            Spacer()
+            FancyButtonv2(
+                text: "New project",
+                action: {},
+                icon: "plus",
+                showLabel: false,
+                redirect: AnyView(ProjectCreate()),
+                pageType: .projects
+            )
         }
-        
-        FancyLink(icon: "folder.badge.plus", destination: AnyView(ProjectCreate().environmentObject(jobModel)), pageType: .projects)
-        FancyDivider()
     }
     
     @ViewBuilder
     var search: some View {
-        HStack {
-            Title(text: "Search", image: "folder")
-            Spacer()
-        }
-        
         SearchBar(
             text: $searchText,
             disabled: false,

@@ -13,6 +13,7 @@ import SwiftUI
 struct DLPrototype: App {
     private let persistenceController = PersistenceController.shared
     @StateObject public var updater: ViewUpdater = ViewUpdater()
+    @StateObject public var nav: Navigation = Navigation()
     
     @Environment(\.scenePhase) var scenePhase
     
@@ -21,6 +22,7 @@ struct DLPrototype: App {
             Home()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(updater)
+                .environmentObject(nav)
                 .onChange(of: scenePhase) { _ in
                     persistenceController.save()
                 }
@@ -30,7 +32,7 @@ struct DLPrototype: App {
 //        .windowStyle(.hiddenTitleBar)
         // TODO: need to define the commands we want to implement
         .commands {
-            MainMenu(moc: persistenceController.container.viewContext)
+            MainMenu(moc: persistenceController.container.viewContext, nav: nav)
         }
         
         #if os(macOS)

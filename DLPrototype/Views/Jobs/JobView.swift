@@ -19,7 +19,10 @@ struct JobView: View {
     @State private var colour: String = ""
     @State private var alive: Bool = true
     @State private var shredable: Bool = false
-    
+    @State private var validJob: Bool = false
+    @State private var validUrl: Bool = false
+
+    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var jm: CoreDataJob
     
@@ -31,9 +34,12 @@ struct JobView: View {
                 fieldProjectLink
                 fieldIsOn
                 fieldIsShredable
-                
-                FancyTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, showLabel: true, text: $id)
+
                 FancyTextField(placeholder: "URL", lineLimit: 1, onSubmit: {}, showLabel: true, text: $url)
+                    .background(validUrl ? Color.clear : Color.red)
+                FancyTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, showLabel: true, text: $id)
+                    .background(validJob ? Color.clear : Color.red)
+
                 
                 HStack {
                     FancyRandomJobColourPicker(job: job!, colour: $colour)
@@ -46,6 +52,20 @@ struct JobView: View {
         .onAppear(perform: setEditableValues)
         .onChange(of: job) { _ in
             setEditableValues()
+        }
+        .onChange(of: id) { jobId in
+            JobFormValidator(moc: moc).onChangeCallback(
+                jobFieldValue: jobId,
+                valid: $validJob,
+                id: $id
+            )
+        }
+        .onChange(of: url) { newUrl in
+            JobFormValidator(moc: moc).onChangeCallback(
+                urlFieldValue: newUrl,
+                valid: $validUrl,
+                id: $id
+            )
         }
     }
     
@@ -151,5 +171,37 @@ struct JobView: View {
             PersistenceController.shared.save()
             updater.update()
         }
+    }
+
+    private func validateJob(_ jobId: String) -> Bool {
+        if jobId.isEmpty {
+            return false
+        }
+
+        if let doubleId = Double(jobId) {
+            if let _ = CoreDataJob(moc: moc).byId(doubleId) {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    private func validateUrl(_ url: String) -> Bool {
+        if url.isEmpty {
+            return false
+        }
+
+        if url.starts(with: "https:") {
+            if let uri = URL(string: url) {
+                if let _ = CoreDataJob(moc: moc).byUrl(uri) {
+                    return false
+                }
+            }
+        } else {
+            return false
+        }
+
+        return true
     }
 }

@@ -30,6 +30,21 @@ public class CoreDataProjects: ObservableObject {
         
         return results.first
     }
+
+    public func byName(_ term: String) -> Project? {
+        let predicate = NSPredicate(
+            format: "name = %@",
+            term
+        )
+
+        let results = query(predicate)
+
+        if results.isEmpty {
+            return nil
+        }
+
+        return results.first
+    }
     
     public func all() -> [Project] {
         return query()
@@ -90,8 +105,10 @@ public class CoreDataProjects: ObservableObject {
             } else {
                 print("[error] CoreDataProjects.query Unable to find records for query")
             }
+
+            print(error)
         }
-        
+        print("DERPO projects.count \(results.count) \(predicate!.predicateFormat)")
         return results
     }
 }

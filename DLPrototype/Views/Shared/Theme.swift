@@ -10,8 +10,7 @@ import Foundation
 import SwiftUI
 
 struct Theme {
-//    static public var base: Color = Color.init(hue: 228, saturation: 36, brightness: 34) // rgb-encoded hex value of indigo.opacity(0.2)
-    static public var base: Color = Color.clear // TODO: apparently this is the default window bg colour
+    static public var base: Color = Color(red: 0.1863933206, green: 0.1880253851, blue: 0.2143694162)
     static public var secondary: Color = Color.pink
     static public var rowColour: Color = Color.gray.opacity(0.2)
     static public var rowColourAsDouble: [Double] = [0.5, 0.5, 0.5, 0.2]

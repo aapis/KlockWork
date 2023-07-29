@@ -24,7 +24,7 @@ struct JobDashboard: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
-                create.onAppear(perform: setJob)
+                manage.onAppear(perform: setJob)
 
                 Spacer()
             }
@@ -34,10 +34,18 @@ struct JobDashboard: View {
     }
     
     @ViewBuilder
-    var create: some View {
+    var manage: some View {
         HStack {
-            Title(text: "Manage jobs", image: "hammer")
+            Title(text: "Jobs")
             Spacer()
+            FancyButtonv2(
+                text: "New job",
+                action: {},
+                icon: "plus",
+                showLabel: false,
+                redirect: AnyView(JobCreate()),
+                pageType: .jobs
+            )
         }
         
         VStack {
