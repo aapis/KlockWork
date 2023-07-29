@@ -17,6 +17,8 @@ struct RecordResult: View {
     public let maxPerPage: Int = 100
     public let pType: String = "Records"
     public let sType: String = "Record"
+
+    private let viewRequiresColumns: Set<RecordTableColumn> = [.extendedTimestamp, .job]
     
     @State private var page: Int = 1
     @State private var numPages: Int = 1
@@ -81,6 +83,7 @@ struct RecordResult: View {
                                         entry: entry,
                                         index: bucket.firstIndex(of: item),
                                         colour: Color.fromStored(item.job!.colour ?? Theme.rowColourAsDouble),
+                                        viewRequiresColumns: viewRequiresColumns,
                                         selectedJob: $text
                                     )
                                 }

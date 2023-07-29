@@ -24,6 +24,7 @@ struct LogTable: View, Identifiable {
     @State private var selectedDate: Date = Date()
     @State private var viewMode: ViewMode = .full
     @State private var selectedTab: Tab = .chronologic
+    @State private var viewRequiresColumns: Set<RecordTableColumn> = [.message]
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("showExperiment.actions") private var showExperimentActions = false
@@ -32,8 +33,8 @@ struct LogTable: View, Identifiable {
     @AppStorage("today.recordGrouping") public var recordGrouping: Int = 0
     @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
     @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
+    @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
     @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
-    @AppStorage("today.showColumnActions") public var showColumnActions: Bool = false
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
@@ -44,7 +45,7 @@ struct LogTable: View, Identifiable {
     var body: some View {
         VStack(alignment: .leading, spacing: 1) {
             toolbar.font(Theme.font)
-            
+
             HStack(spacing: 1) {
                 if selectedTab != .calendar {
                     if viewMode == .full {
@@ -161,7 +162,7 @@ struct LogTable: View, Identifiable {
             }
             .frame(width: 5)
 
-            if showColumnIndex {
+            if viewRequiresColumns.contains(.index) {
                 Group {
                     ZStack {
                         Theme.headerColour
@@ -183,7 +184,7 @@ struct LogTable: View, Identifiable {
                 .frame(width: 50)
             }
 
-            if showColumnTimestamp {
+            if viewRequiresColumns.contains(.timestamp) || viewRequiresColumns.contains(.extendedTimestamp) {
                 Group {
                     ZStack(alignment: .leading) {
                         Theme.headerColour
@@ -194,7 +195,7 @@ struct LogTable: View, Identifiable {
                 .frame(width: 101)
             }
 
-            if showColumnJobId {
+            if viewRequiresColumns.contains(.job) {
                 Group {
                     ZStack(alignment: .leading) {
                         Theme.headerColour
@@ -204,25 +205,14 @@ struct LogTable: View, Identifiable {
                 }
                 .frame(width: 80)
             }
-            
-            Group {
-                ZStack(alignment: .leading) {
-                    Theme.headerColour
-                    Text("Message")
-                        .padding(10)
-                }
-            }
-            
-            if showExperimentalFeatures {
-                if showExperimentActions {
-                    Group {
-                        ZStack(alignment: .leading) {
-                            Theme.headerColour
-                            Text("Actions")
-                                .padding(10)
-                        }
+
+            if viewRequiresColumns.contains(.message) {
+                Group {
+                    ZStack(alignment: .leading) {
+                        Theme.headerColour
+                        Text("Message")
+                            .padding(10)
                     }
-                    .frame(width: 100)
                 }
             }
         }
@@ -256,6 +246,7 @@ struct LogTable: View, Identifiable {
                                 index: records.firstIndex(of: record),
                                 colour: Color.fromStored((record.job?.colour) ?? Theme.rowColourAsDouble),
                                 record: record,
+                                viewRequiresColumns: viewRequiresColumns,
                                 selectedJob: $job
                             )
                             .environmentObject(updater)
@@ -269,6 +260,10 @@ struct LogTable: View, Identifiable {
         .onChange(of: recordGrouping, perform: { _ in
             changeSort()
         })
+        .onChange(of: showColumnIndex, perform: redrawTable)
+        .onChange(of: showColumnJobId, perform: redrawTable)
+        .onChange(of: showColumnTimestamp, perform: redrawTable)
+        .onChange(of: showColumnExtendedTimestamp, perform: redrawTable)
     }
     
     var plainRows: some View {
@@ -326,6 +321,11 @@ struct LogTable: View, Identifiable {
         recordGrouping = selectedTab.id
         
         loadFor(selectedDate)
+
+        if showColumnIndex {viewRequiresColumns.insert(.index)}
+        if showColumnJobId {viewRequiresColumns.insert(.job)}
+        if showColumnTimestamp {viewRequiresColumns.insert(.timestamp)}
+        if showColumnExtendedTimestamp {viewRequiresColumns.insert(.extendedTimestamp)}
     }
     
     private func loadFor(_ date: Date) -> Void {
@@ -378,5 +378,9 @@ struct LogTable: View, Identifiable {
         withAnimation(.easeInOut) {
             records = records.reversed()
         }
+    }
+
+    private func redrawTable(_ changedValue: Bool) -> Void {
+        updater.updateOne("today.table")
     }
 }
