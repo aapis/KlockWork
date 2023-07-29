@@ -179,36 +179,4 @@ struct JobView: View {
             updater.update()
         }
     }
-
-    private func validateJob(_ jobId: String) -> Bool {
-        if jobId.isEmpty {
-            return false
-        }
-
-        if let doubleId = Double(jobId) {
-            if let _ = CoreDataJob(moc: moc).byId(doubleId) {
-                return false
-            }
-        }
-
-        return true
-    }
-
-    private func validateUrl(_ url: String) -> Bool {
-        if url.isEmpty {
-            return false
-        }
-
-        if url.starts(with: "https:") {
-            if let uri = URL(string: url) {
-                if let _ = CoreDataJob(moc: moc).byUrl(uri) {
-                    return false
-                }
-            }
-        } else {
-            return false
-        }
-
-        return true
-    }
 }
