@@ -132,8 +132,15 @@ struct JobView: View {
     @ViewBuilder private var buttonSubmit: some View {
         HStack {
             Spacer()
-            FancyButton(text: "Update", action: update)
-                .keyboardShortcut("s")
+            FancyButtonv2(
+                text: "Update",
+                action: update,
+                size: .medium,
+                type: .primary,
+                redirect: AnyView(JobDashboard()),
+                pageType: .jobs
+            )
+            .keyboardShortcut("s", modifiers: .command)
         }
     }
     

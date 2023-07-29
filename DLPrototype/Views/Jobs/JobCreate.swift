@@ -33,7 +33,7 @@ struct JobCreate: View {
         VStack(alignment: .leading) {
 
             VStack(alignment: .leading) {
-                Title(text: "New job", image: "hammer")
+                Title(text: "New job")
 
                 fieldProjectLink
                 fieldIsOn

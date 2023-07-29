@@ -32,7 +32,7 @@ struct TaskListView: View {
         VStack(alignment: .leading, spacing: 0) {
             VStack {
                 HStack {
-                    Title(text: "Tasks", image: "list.number")
+                    Title(text: "Tasks")
                     Spacer()
                 }
                 

@@ -30,14 +30,11 @@ struct TaskDashboard: View {
                 HStack {
                     Title(text: "Tasks")
                     Spacer()
-//                    FancyButtonv2(
-//                        text: "New task",
-//                        action: {},
-//                        icon: "plus",
-//                        showLabel: false,
-//                        redirect: AnyView(Task()),
-//                        pageType: .projects
-//                    )
+                    // Other entity views have a button here but tasks are created inline for this one, so this spacer
+                    // is for visual consistency only
+                    Rectangle()
+                        .frame(width: 40, height: 40)
+                        .opacity(0)
                 }
 
                 search.font(Theme.font)
