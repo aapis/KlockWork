@@ -77,6 +77,7 @@
 		53790C032A72F18200D3FFD4 /* SidebarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53790C022A72F18200D3FFD4 /* SidebarButton.swift */; };
 		53790C052A72F45900D3FFD4 /* EdgeBorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53790C042A72F45900D3FFD4 /* EdgeBorder.swift */; };
 		53790C072A74408D00D3FFD4 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53790C062A74408D00D3FFD4 /* Navigation.swift */; };
+		53790C0B2A747E0300D3FFD4 /* JobCreate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53790C0A2A747E0300D3FFD4 /* JobCreate.swift */; };
 		537AEB9F29627DCC00385787 /* LogTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEB9E29627DCC00385787 /* LogTable.swift */; };
 		537AEBA1296287B900385787 /* LogRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA0296287B900385787 /* LogRow.swift */; };
 		53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A19297377A7007A2549 /* FancyGenericToolbar.swift */; };
@@ -227,6 +228,7 @@
 		53790C022A72F18200D3FFD4 /* SidebarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarButton.swift; sourceTree = "<group>"; };
 		53790C042A72F45900D3FFD4 /* EdgeBorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeBorder.swift; sourceTree = "<group>"; };
 		53790C062A74408D00D3FFD4 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
+		53790C0A2A747E0300D3FFD4 /* JobCreate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobCreate.swift; sourceTree = "<group>"; };
 		537AEB9E29627DCC00385787 /* LogTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTable.swift; sourceTree = "<group>"; };
 		537AEBA0296287B900385787 /* LogRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRow.swift; sourceTree = "<group>"; };
 		53959A19297377A7007A2549 /* FancyGenericToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyGenericToolbar.swift; sourceTree = "<group>"; };
@@ -675,6 +677,7 @@
 				5330EEB6298B6418004FC38A /* JobRow.swift */,
 				53C3418B299960310071B855 /* JobDashboard.swift */,
 				53C3418D299968160071B855 /* JobView.swift */,
+				53790C0A2A747E0300D3FFD4 /* JobCreate.swift */,
 			);
 			path = Jobs;
 			sourceTree = "<group>";
@@ -921,6 +924,7 @@
 				53790C052A72F45900D3FFD4 /* EdgeBorder.swift in Sources */,
 				533E40682970DD170007785A /* AutoFixJobs.swift in Sources */,
 				53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */,
+				53790C0B2A747E0300D3FFD4 /* JobCreate.swift in Sources */,
 				5376289E29664F8C00DE8ECF /* Theme.swift in Sources */,
 				53FBCC902A630CBE00B88539 /* MainMenu.swift in Sources */,
 				53C6D09829654F4C00EA6129 /* DetailGroup.swift in Sources */,
