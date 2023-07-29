@@ -57,7 +57,9 @@ struct Today: View {
                 FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
                     .onChange(of: taskUrl) { url in
                         if !url.isEmpty {
-                            jobId = UrlHelper.parts(of: taskUrl).jid_string
+                            if let newUrl = URL(string: taskUrl) {
+                                jobId = UrlHelper.parts(of: newUrl).jid_string
+                            }
 
                             if url.starts(with: "https:") {
                                 isUrl = true
@@ -145,15 +147,21 @@ struct Today: View {
     
     private func submitAction() -> Void {
         if !text.isEmpty && (!jobId.isEmpty || !taskUrl.isEmpty) {
-            let jid = UrlHelper.parts(of: taskUrl).jid_double! //getJobIdFromUrl()
+            var jid: Double = 0.0
+            if let newUrl = URL(string: taskUrl) {
+                jid = UrlHelper.parts(of: newUrl).jid_double!
+            } else {
+                jid = Double(jobId)!
+            }
+
             let record = LogRecord(context: moc)
             record.timestamp = Date()
             record.message = text
             record.alive = true
             record.id = UUID()
-            
+
             let match = CoreDataJob(moc: moc).byId(jid)
-            
+
             if match == nil {
                 let job = Job(context: moc)
                 job.jid = jid
@@ -178,7 +186,6 @@ struct Today: View {
             taskUrl = ""
             // redraw the views that need to be updated
             reloadUi()
-            
             PersistenceController.shared.save()
         } else {
             print("[error] Message, job ID OR task URL are required to submit")

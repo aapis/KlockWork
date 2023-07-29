@@ -70,7 +70,9 @@ public final class JobFormValidator {
 
         if valid != nil {
             if valid!.wrappedValue {
-                id?.wrappedValue = UrlHelper.parts(of: urlFieldValue).jid_string
+                if let newUrl = URL(string: urlFieldValue) {
+                    id?.wrappedValue = UrlHelper.parts(of: newUrl).jid_string
+                }
             }
         }
     }

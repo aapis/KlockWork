@@ -20,46 +20,16 @@ public final class UrlHelper {
         self.url = url
     }
 
-    public init(url: String) {
-        if let validUrl = URL(string: url) {
-            self.url = validUrl
-        } else {
-            self.url = URL(string: "https://apple.com")!
-        }
-    }
-
     static public func parts(of url: URL) -> UrlParts {
         let instance = UrlHelper(url: url)
         var jobId = ""
 
         if instance.isAsanaLink() {
-            let id = instance.fromAsana()
-            if id != nil {
-                jobId = String(id!.suffix(6))
+            if let identifier = instance.fromAsana() {
+                jobId = String(identifier.suffix(6))
             }
         } else {
             jobId = String(url.absoluteString.suffix(6))
-        }
-
-        let defaultJid = 11.0
-
-        return UrlParts(
-            jid_double: Double(jobId) ?? defaultJid,
-            jid_string: jobId
-        )
-    }
-
-    static public func parts(of url: String) -> UrlParts {
-        let instance = UrlHelper(url: url)
-        var jobId = ""
-
-        if instance.isAsanaLink() {
-            let id = instance.fromAsana()
-            if id != nil {
-                jobId = String(id!.suffix(6))
-            }
-        } else {
-            jobId = String(url.suffix(6))
         }
 
         let defaultJid = 11.0
