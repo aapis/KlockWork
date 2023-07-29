@@ -97,18 +97,18 @@ struct Dashboard: View {
                 pageType: .projects
             )
 
-//                FancyButtonv2(
-//                    text: "New Job",
-//                    action: {},
-//                    icon: "plus",
-//                    showLabel: true,
-//                    size: .medium,
-//                    redirect: AnyView(
-//                        TaskDashboard()
-//                    )
-//            ,
-//            pageType: .jobs
-//                )
+            FancyButtonv2(
+                text: "New Job",
+                action: {},
+                icon: "hammer",
+                showLabel: true,
+                size: .medium,
+                redirect: AnyView(
+                    JobCreate()
+                )
+                ,
+                pageType: .jobs
+            )
         }
         FancyDivider()
     }

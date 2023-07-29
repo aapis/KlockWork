@@ -55,6 +55,18 @@ struct NoteDashboard: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
+                HStack {
+                    Title(text: "Notes")
+                    Spacer()
+                    FancyButtonv2(
+                        text: "New note",
+                        action: {},
+                        icon: "plus",
+                        showLabel: false,
+                        redirect: AnyView(NoteCreate()),
+                        pageType: .notes
+                    )
+                }
                 SearchBar(
                     text: $searchText,
                     disabled: false,

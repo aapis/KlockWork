@@ -41,6 +41,23 @@ public class CoreDataJob: ObservableObject {
         
         return nil
     }
+
+    public func byUrl(_ url: URL) -> Job? {
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.jid, ascending: false)]
+        fetch.predicate = NSPredicate(format: "uri = %@", url as CVarArg)
+        fetch.fetchLimit = 1
+
+        do {
+            let results = try moc!.fetch(fetch)
+
+            return results.first
+        } catch {
+            print("General Error: Unable to find task with URL \(url)")
+        }
+
+        return nil
+    }
     
     public func byProject(_ projectId: UUID) -> [Job] {
         var all: [Job] = []

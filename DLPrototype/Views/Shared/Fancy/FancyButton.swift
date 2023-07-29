@@ -135,6 +135,8 @@ public struct FancyButtonv2: View {
                     if let pType = pageType {
                         nav.parent = pType
                     }
+
+                    action()
                 }) {
                     button
                 }

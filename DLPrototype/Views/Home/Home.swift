@@ -11,18 +11,17 @@ import SwiftUI
 struct Home: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
+    @EnvironmentObject public var nav: Navigation
     
     @StateObject public var rm: LogRecords = LogRecords(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
-    @StateObject public var nav: Navigation = Navigation()
 //    @StateObject public var pr: CoreDataProjects = CoreDataProjects(moc: PersistenceController.shared.container.viewContext)
     
     @State public var version: String?
     @State public var build: String?
     @State public var appName: String?
-    @State public var selectedView: AnyView = AnyView(Dashboard())
     @State public var selectedSidebarButton: Page = .dashboard
 
     private var buttons: [PageGroup: [SidebarButton]] {
@@ -125,7 +124,7 @@ struct Home: View {
         build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
         appName = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
 
-        nav.view = selectedView
+        nav.view = AnyView(Dashboard())
         nav.parent = selectedSidebarButton
     }
 }
