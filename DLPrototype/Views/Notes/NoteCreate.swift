@@ -26,7 +26,7 @@ struct NoteCreate: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 13) {
-                Title(text: "Create a note", image: "note.text.badge.plus")
+                Title(text: "Create a note")
                 JobPickerUsing(onChange: pickerChange, jobId: $jobId)
                 FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, text: $title)
                 FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)

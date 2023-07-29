@@ -13,7 +13,6 @@ struct ProjectCreate: View {
     @State private var name: String = ""
     @State private var created: Date = Date()
     @State private var pid: Double = 0.0
-    @State private var showForm: Bool = true
     @State private var selectedJob: Job?
     @State private var selectedJobs: [Job] = []
     @State private var allUnOwned: [Job] = []
@@ -32,23 +31,22 @@ struct ProjectCreate: View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
                 HStack {
-                    Title(text: "Create a project", image: "folder")
+                    Title(text: "Create a project")
                     Spacer()
                 }
 
-                if showForm {
-                    form
-                    
-                    HStack {
-                        Spacer()
-                        FancyButton(text: "Create project", action: create)
-                    }
-                } else {
-                    // TODO: probably a bad idea to just.. show it here
-                    ProjectsDashboard()
+                form
+
+                HStack {
+                    Spacer()
+                    FancyButtonv2(
+                        text: "Create project",
+                        action: create,
+                        size: .medium,
+                        redirect: AnyView(ProjectsDashboard()),
+                        pageType: .projects
+                    )
                 }
-                
-                Spacer()
             }
             .padding()
         }
@@ -120,8 +118,16 @@ struct ProjectCreate: View {
                         Group {
                             ZStack(alignment: .leading) {
                                 Theme.rowColour
-                                Text(job.jid.string)
-                                    .padding(5)
+                                FancyLink(
+                                    label: job.jid.string,
+                                    showLabel: true,
+                                    destination: AnyView(
+                                        JobDashboard(defaultSelectedJob: job.jid)
+                                    ),
+                                    size: .link,
+                                    pageType: .jobs
+                                )
+                                .padding(5)
                             }
                         }
                         
@@ -167,7 +173,6 @@ struct ProjectCreate: View {
         PersistenceController.shared.save()
         
         name = ""
-        showForm = false
         selectedJobs = []
     }
     

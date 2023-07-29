@@ -27,6 +27,9 @@ struct Title: View {
                         .font(Theme.fontTitle)
                 }
             }
+            .padding(3)
+            .background(.pink)
+            .foregroundColor(.black)
         }
     }
 }

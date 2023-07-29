@@ -43,7 +43,7 @@ struct ProjectView: View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
                 HStack {
-                    Title(text: "Edit a project", image: "folder")
+                    Title(text: "Edit a project")
                     Spacer()
                     
                     if lastUpdate != nil {

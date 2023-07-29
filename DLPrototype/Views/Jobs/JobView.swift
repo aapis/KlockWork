@@ -132,8 +132,15 @@ struct JobView: View {
     @ViewBuilder private var buttonSubmit: some View {
         HStack {
             Spacer()
-            FancyButton(text: "Update", action: update)
-                .keyboardShortcut("s")
+            FancyButtonv2(
+                text: "Update",
+                action: update,
+                size: .medium,
+                type: .primary,
+                redirect: AnyView(JobDashboard()),
+                pageType: .jobs
+            )
+            .keyboardShortcut("s", modifiers: .command)
         }
     }
     
@@ -171,37 +178,5 @@ struct JobView: View {
             PersistenceController.shared.save()
             updater.update()
         }
-    }
-
-    private func validateJob(_ jobId: String) -> Bool {
-        if jobId.isEmpty {
-            return false
-        }
-
-        if let doubleId = Double(jobId) {
-            if let _ = CoreDataJob(moc: moc).byId(doubleId) {
-                return false
-            }
-        }
-
-        return true
-    }
-
-    private func validateUrl(_ url: String) -> Bool {
-        if url.isEmpty {
-            return false
-        }
-
-        if url.starts(with: "https:") {
-            if let uri = URL(string: url) {
-                if let _ = CoreDataJob(moc: moc).byUrl(uri) {
-                    return false
-                }
-            }
-        } else {
-            return false
-        }
-
-        return true
     }
 }

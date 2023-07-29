@@ -40,8 +40,8 @@ struct GenericToolbar: View {
     }
     
     private func setupPickers() -> Void {
-        leftPickerItems.append(contentsOf: Split.modules)
-        rightPickerItems.append(contentsOf: Split.modules)
+//        leftPickerItems.append(contentsOf: Split.modules)
+//        rightPickerItems.append(contentsOf: Split.modules)
     }
     
     private func change(selected: Int, sender: String?) -> Void {
