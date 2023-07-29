@@ -20,7 +20,21 @@ struct Favourites: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            FancySubTitle(text: "\(title)")
+            HStack {
+                FancySubTitle(text: "\(title)")
+                Spacer()
+                FancyButtonv2(
+                    text: "New Note",
+                    action: {},
+                    icon: "plus",
+                    showLabel: false,
+                    size: .small,
+                    redirect: AnyView(
+                        NoteCreate()
+                    ),
+                    pageType: .notes
+                )
+            }
             Divider()
             
             ScrollView(showsIndicators: false) {

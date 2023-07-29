@@ -54,13 +54,18 @@ struct JobView: View {
             setEditableValues()
         }
         .onChange(of: id) { jobId in
-            let filtered = jobId.filter { "0123456789\\.".contains($0) }
-
-            validJob = validateJob(filtered)
-            id = filtered
+            JobFormValidator(moc: moc).onChangeCallback(
+                jobFieldValue: jobId,
+                valid: $validJob,
+                id: $id
+            )
         }
         .onChange(of: url) { newUrl in
-            validUrl = validateUrl(newUrl)
+            JobFormValidator(moc: moc).onChangeCallback(
+                urlFieldValue: newUrl,
+                valid: $validUrl,
+                id: $id
+            )
         }
     }
     

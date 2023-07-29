@@ -10,10 +10,12 @@ import Foundation
 import SwiftUI
 
 struct FancyRandomJobColourPicker: View {
-    public var job: Job
+    public var job: Job?
     @Binding public var colour: String
+    public var onChange: (([Double]) -> Void)? = nil
     
     @State private var colourChanged: Bool = false
+    @State private var newColour: [Double] = []
     
     @EnvironmentObject public var updater: ViewUpdater
     
@@ -21,7 +23,7 @@ struct FancyRandomJobColourPicker: View {
         HStack(spacing: 0) {
             Rectangle()
                 .frame(width: 15)
-                .background(Color.fromStored(job.colour!))
+                .background(backgroundColour())
                 .foregroundColor(.clear)
             
             FancyTextField(
@@ -35,21 +37,36 @@ struct FancyRandomJobColourPicker: View {
             .border(Color.black.opacity(0.1), width: 2)
             .frame(width: 200)
             .onAppear(perform: {
-                colour = Color.fromStored(job.colour!).description
+                colour = backgroundColour().description
             })
             
-            FancyButton(text: "Regenerate colour", action: regenerateColour, icon: "arrow.counterclockwise", showLabel: false)
+            FancyButtonv2(text: "Regenerate colour", action: regenerateColour, icon: "arrow.counterclockwise", showLabel: false)
                 .padding(.leading)
         }.frame(height: 40)
     }
     
     private func regenerateColour() -> Void {
-        let rndColour = Color.randomStorable()
-        colour = Color.fromStored(rndColour).description
-        job.colour = rndColour
+        newColour = Color.randomStorable()
+        colour = Color.fromStored(newColour).description
         colourChanged = true
-        
-        PersistenceController.shared.save()
+
+        if onChange != nil {
+            onChange!(newColour)
+        }
+
+        if job != nil {
+            job!.colour = newColour
+            PersistenceController.shared.save()
+        }
+
         updater.update()
+    }
+
+    private func backgroundColour() -> Color {
+        if job != nil {
+            return Color.fromStored(job!.colour ?? Theme.rowColourAsDouble)
+        }
+
+        return Color.fromStored(newColour)
     }
 }

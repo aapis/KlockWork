@@ -14,12 +14,12 @@ struct ProjectPickerUsing: View {
     public var transparent: Bool? = false
     public var labelText: String?
     public var showLabel: Bool? = false
-    
-    @Binding public var id: String
+
     @Binding public var displayName: String
     @State private var idFieldColour: Color = Color.clear
     @State private var idFieldTextColour: Color = Color.white
     @State private var selectedId: String = ""
+    @State private var projectName: String = ""
     
     @Environment(\.managedObjectContext) var moc
     
@@ -45,21 +45,14 @@ struct ProjectPickerUsing: View {
                     onSubmit: {},
                     fgColour: idFieldTextColour,
                     bgColour: idFieldColour,
-                    text: displayName.isEmpty ? $id : $displayName
+                    text: $projectName
                 )
                 .border(idFieldColour == Color.clear ? Color.black.opacity(0.1) : Color.clear, width: 2)
-                // TODO: remove? unnecessary?
-//                .onChange(of: id) { _ in
-//                    if id != "" {
-//                        if let pid = Int(id) {
-//                            pickerChange(selected: pid, sender: nil)
-//                        }
-//                    }
-//                }
+                
                 HStack {
-                    if !id.isEmpty {
-                        FancyButton(text: "Reset", action: resetUi, icon: "xmark", showLabel: false)
-                    }
+//                    if !id.isEmpty {
+//                        FancyButton(text: "Reset", action: resetUi, icon: "xmark", showLabel: false)
+//                    }
                     FancyPicker(onChange: pickerChange, items: pickerItems, transparent: transparent, labelText: labelText, showLabel: showLabel)
                 }
                 .padding([.leading], 150)
@@ -70,21 +63,13 @@ struct ProjectPickerUsing: View {
     }
     
     private func pickerChange(selected: Int, sender: String?) -> Void {
-        id = String(selected)
-        selectedId = String(selected)
-        let pm = CoreDataProjects(moc: moc)
-        
-        let s = pm.byId(selected)
-        
-        print("JERB pid changed \(id) \(Int(id))")
-        
-        if s != nil {
-            print("JERB pid changed w/name \(id) \(s!.name)")
-        } else {
-            print("JERB s is nil for \(id)")
+        if let item = pickerItems.filter({$0.tag == selected}).first {
+            projectName = item.title.replacingOccurrences(of: " - ", with: "")
         }
+
+        selectedId = String(selected)
         
-        if let selectedJob = pm.byId(Int(id)!) {
+        if let selectedJob = CoreDataProjects(moc: moc).byId(Int(exactly: selected)!) {
             idFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
             idFieldTextColour = idFieldColour.isBright() ? Color.black : Color.white
         } else {
@@ -92,20 +77,20 @@ struct ProjectPickerUsing: View {
             idFieldTextColour = Color.white
         }
         
-        onChange(selected, "")
+        onChange(selected, sender)
     }
     
     private func onAppear() -> Void {
-        if !id.isEmpty {
-            let pid = (id as NSString).integerValue
-            print("JERB pid \(pid)")
-            
-            pickerChange(selected: pid, sender: "")
-        }
+        // TODO: this is borked now, fix it
+//        if !id.isEmpty {
+//            let pid = (id as NSString).integerValue
+//            print("JERB pid \(pid)")
+//
+//            pickerChange(selected: pid, sender: "")
+//        }
     }
     
     private func resetUi() -> Void {
-        id = ""
         idFieldColour = Color.clear
         idFieldTextColour = Color.white
     }

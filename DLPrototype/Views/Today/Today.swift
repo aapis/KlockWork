@@ -57,7 +57,7 @@ struct Today: View {
                 FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
                     .onChange(of: taskUrl) { url in
                         if !url.isEmpty {
-                            let _ = getJobIdFromUrl() // selects the job in the picker if it exists
+                            jobId = UrlHelper.parts(of: taskUrl).jid_string
 
                             if url.starts(with: "https:") {
                                 isUrl = true
@@ -145,7 +145,7 @@ struct Today: View {
     
     private func submitAction() -> Void {
         if !text.isEmpty && (!jobId.isEmpty || !taskUrl.isEmpty) {
-            let jid = getJobIdFromUrl()
+            let jid = UrlHelper.parts(of: taskUrl).jid_double! //getJobIdFromUrl()
             let record = LogRecord(context: moc)
             record.timestamp = Date()
             record.message = text
@@ -164,7 +164,6 @@ struct Today: View {
                 job.lastUpdate = Date()
                 
                 if !taskUrl.isEmpty && isUrl {
-                    // TODO: add some kind of popup or something here and make them send again
                     job.uri = URL(string: taskUrl)
                 }
                 
@@ -184,39 +183,6 @@ struct Today: View {
         } else {
             print("[error] Message, job ID OR task URL are required to submit")
         }
-    }
-    
-    private func getJobIdFromUrl() -> Double {
-        if !taskUrl.isEmpty {
-            if isAsanaLink() {
-                let id = asanaJobId()
-                if id != nil {
-                    jobId = String(id!.suffix(6))
-                }
-            } else {
-                jobId = String(taskUrl.suffix(6))
-            }
-        }
-        
-        let defaultJid = 11.0
-
-        return Double(jobId) ?? defaultJid
-    }
-    
-    private func asanaJobId() -> String? {
-        let pattern = /https:\/\/app.asana.com\/0\/\d+\/(\d+)\/f/
-        
-        if let match = taskUrl.firstMatch(of: pattern) {
-            return String(match.1)
-        }
-        
-        return nil
-    }
-    
-    private func isAsanaLink() -> Bool {
-        let pattern = /^https:\/\/app.asana.com/
-        
-        return taskUrl.contains(pattern)
     }
 }
 

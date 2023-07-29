@@ -17,6 +17,19 @@ public class CoreDataTasks {
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
     }
+
+    static public func recentTasksWidgetData() -> FetchRequest<LogTask> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \LogTask.lastUpdate?, ascending: false)
+        ]
+
+        let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
+        fetch.predicate = NSPredicate(format: "completedDate = nil && cancelledDate = nil")
+        fetch.sortDescriptors = descriptors
+        fetch.fetchLimit = 10
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
     
     public func forDate(_ date: Date, from: [LogRecord]) -> [LogTask] {
         var results: [LogTask] = []

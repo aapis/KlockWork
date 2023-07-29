@@ -26,8 +26,6 @@ struct Dashboard: View {
             FancyDivider()
 
             if !searching {
-                shortcuts
-
                 Widgets()
                     .environmentObject(crm)
                     .environmentObject(ce)
@@ -36,80 +34,5 @@ struct Dashboard: View {
         .font(Theme.font)
         .padding()
         .background(Theme.toolbarColour)
-    }
-
-    @ViewBuilder private var shortcuts: some View {
-        HStack {
-            FancyButtonv2(
-                text: "New Record",
-                action: {},
-                icon: "doc.append.fill",
-                showLabel: true,
-                size: .medium,
-                redirect: AnyView(
-                    Today()
-                        .environmentObject(jm)
-                        .environmentObject(ce)
-                        .environmentObject(updater)
-                ),
-                pageType: .today
-            )
-
-            FancyButtonv2(
-                text: "New Note",
-                action: {},
-                icon: "note.text.badge.plus",
-                showLabel: true,
-                size: .medium,
-                redirect: AnyView(
-                    NoteCreate()
-                        .environmentObject(jm)
-                        .environmentObject(updater)
-                ),
-                pageType: .notes
-            )
-
-            FancyButtonv2(
-                text: "New Task",
-                action: {},
-                icon: "plus",
-                showLabel: true,
-                size: .medium,
-                redirect: AnyView(
-                    TaskDashboard()
-                        .environmentObject(jm)
-                        .environmentObject(updater)
-                ),
-                pageType: .tasks
-            )
-
-            FancyButtonv2(
-                text: "New Project",
-                action: {},
-                icon: "folder.badge.plus",
-                showLabel: true,
-                size: .medium,
-                redirect: AnyView(
-                    ProjectCreate()
-                        .environmentObject(jm)
-                        .environmentObject(updater)
-                ),
-                pageType: .projects
-            )
-
-            FancyButtonv2(
-                text: "New Job",
-                action: {},
-                icon: "hammer",
-                showLabel: true,
-                size: .medium,
-                redirect: AnyView(
-                    JobCreate()
-                )
-                ,
-                pageType: .jobs
-            )
-        }
-        FancyDivider()
     }
 }

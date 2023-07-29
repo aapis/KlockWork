@@ -18,6 +18,7 @@ struct DashboardSettings: View {
     @AppStorage("dashboard.widget.favnotes") public var showWidgetFavNotes: Bool = true
     @AppStorage("dashboard.widget.recentProjects") public var showWidgetRecentProjects: Bool = true
     @AppStorage("dashboard.widget.recentJobs") public var showWidgetRecentJobs: Bool = true
+    @AppStorage("dashboard.widget.recentTasks") public var showWidgetRecentTasks: Bool = true
     
     var body: some View {
         Form {
@@ -37,6 +38,7 @@ struct DashboardSettings: View {
                 Toggle("Show favourite notes", isOn: $showWidgetFavNotes)
                 Toggle("Show recent projects", isOn: $showWidgetRecentProjects)
                 Toggle("Show recent jobs", isOn: $showWidgetRecentJobs)
+                Toggle("Show recent tasks", isOn: $showWidgetRecentTasks)
             }
         }
         .padding(20)

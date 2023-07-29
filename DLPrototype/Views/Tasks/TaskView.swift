@@ -17,6 +17,7 @@ struct TaskView: View {
     public var showCompleted: Bool? = false
     public var showCancelled: Bool? = false
     public var colourizeRow: Bool? = false
+    public var showActions: Bool? = true
     
     @State private var completed: Bool = false
     @State private var cancelled: Bool = false
@@ -72,51 +73,55 @@ struct TaskView: View {
                         }
                     }
                 }
-                
-                Group {
-                    ZStack(alignment: .trailing) {
-                        colourize()
-                        
-                        HStack {
-                            if showCreated == true {
-                                Image(systemName: "clock.fill")
-                                    .help(DateHelper.shortDateWithTime(task.created!))
-                                    .help("Created \(DateHelper.shortDateWithTime(task.created!))")
-                                    .padding(5)
-                                    .foregroundColor(colourizeText())
+                .frame(minWidth: 200)
+
+                if showActions! {
+                    Group {
+                        ZStack(alignment: .trailing) {
+                            colourize()
+
+                            HStack {
+                                if showCreated == true {
+                                    Image(systemName: "clock.fill")
+                                        .help(DateHelper.shortDateWithTime(task.created!))
+                                        .help("Created \(DateHelper.shortDateWithTime(task.created!))")
+                                        .padding(5)
+                                        .foregroundColor(colourizeText())
+                                }
+
+                                if showUpdated == true && task.lastUpdate != nil {
+                                    Image(systemName: "rectangle.and.pencil.and.ellipsis")
+                                        .help("Edited at \(DateHelper.shortDateWithTime(task.lastUpdate!))")
+                                        .padding(5)
+                                        .foregroundColor(colourizeText())
+                                }
+
+                                if showCompleted == true && task.completedDate != nil {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .help("Completed at \(DateHelper.shortDateWithTime(task.completedDate!))")
+                                        .padding(5)
+                                        .foregroundColor(colourizeText())
+                                }
+
+                                if showCancelled == true && task.cancelledDate != nil {
+                                    Image(systemName: "xmark.app.fill")
+                                        .help("Cancelled at \(DateHelper.shortDateWithTime(task.cancelledDate!))")
+                                        .padding(5)
+                                        .foregroundColor(colourizeText())
+
+                                }
+
+
+                                if task.cancelledDate == nil && task.completedDate == nil {
+                                    FancyButton(text: "Cancel", action: cancel, icon: "xmark", showLabel: false, fgColour: colourizeText())
+                                    FancyButton(text: "Edit", action: beginEdit, icon: "pencil", showLabel: false, fgColour: colourizeText())
+                                }
+
                             }
-                            
-                            if showUpdated == true && task.lastUpdate != nil {
-                                Image(systemName: "rectangle.and.pencil.and.ellipsis")
-                                    .help("Edited at \(DateHelper.shortDateWithTime(task.lastUpdate!))")
-                                    .padding(5)
-                                    .foregroundColor(colourizeText())
-                            }
-                            
-                            if showCompleted == true && task.completedDate != nil {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .help("Completed at \(DateHelper.shortDateWithTime(task.completedDate!))")
-                                    .padding(5)
-                                    .foregroundColor(colourizeText())
-                            }
-                            
-                            if showCancelled == true && task.cancelledDate != nil {
-                                Image(systemName: "xmark.app.fill")
-                                    .help("Cancelled at \(DateHelper.shortDateWithTime(task.cancelledDate!))")
-                                    .padding(5)
-                                    .foregroundColor(colourizeText())
-                                
-                            }
-                            
-                            if task.cancelledDate == nil && task.completedDate == nil {
-                                FancyButton(text: "Cancel", action: cancel, icon: "xmark", showLabel: false, fgColour: colourizeText())
-                                FancyButton(text: "Edit", action: beginEdit, icon: "pencil", showLabel: false, fgColour: colourizeText())
-                            }
+                            .padding(.trailing, 5)
                         }
-                        .padding(.trailing, 5)
                     }
                 }
-                .frame(width: 200)
             }
         }
     }

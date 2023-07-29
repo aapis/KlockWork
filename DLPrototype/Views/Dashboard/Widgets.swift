@@ -31,6 +31,7 @@ struct Widgets: View {
     @AppStorage("dashboard.widget.favnotes") public var showWidgetFavNotes: Bool = true
     @AppStorage("dashboard.widget.recentProjects") public var showWidgetRecentProjects: Bool = true
     @AppStorage("dashboard.widget.recentJobs") public var showWidgetRecentJobs: Bool = true
+    @AppStorage("dashboard.widget.recentTasks") public var showWidgetRecentTasks: Bool = true
 
     @EnvironmentObject public var crm: CoreDataRecords
     @EnvironmentObject public var ce: CoreDataCalendarEvent
@@ -77,6 +78,10 @@ struct Widgets: View {
 
                         if showWidgetRecentJobs {
                             RecentJobs()
+                        }
+
+                        if showWidgetRecentTasks {
+                            RecentTasks()
                         }
                     }
 

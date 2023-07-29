@@ -17,7 +17,11 @@ struct JobCreate: View {
     @State private var alive: Bool = true
     @State private var shredable: Bool = false
     @State private var validJob: Bool = false
-    @State private var validUrl: Bool = false
+    @State private var validUrl: Bool = true
+    @State private var validProject: Bool = false
+    @State private var validColour: Bool = false
+    @State private var colourAsDouble: [Double] = []
+    @State private var project: Project?
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
@@ -29,7 +33,8 @@ struct JobCreate: View {
 
             VStack(alignment: .leading) {
                 Title(text: "New job", image: "hammer")
-                //                fieldProjectLink
+
+                fieldProjectLink
                 fieldIsOn
                 fieldIsShredable
 
@@ -37,12 +42,7 @@ struct JobCreate: View {
                     .background(validUrl ? Color.clear : Color.red)
                 FancyTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, showLabel: true, text: $id)
                     .background(validJob ? Color.clear : Color.red)
-
-                //                HStack {
-                //                    FancyRandomJobColourPicker(job: job!, colour: $colour)
-                //                    Spacer()
-                //                }
-
+                FancyRandomJobColourPicker(colour: $colour, onChange: colourPickerChange)
                 buttonSubmit
                 Spacer()
             }
@@ -50,13 +50,18 @@ struct JobCreate: View {
         }
         .background(Theme.toolbarColour)
         .onChange(of: id) { jobId in
-            let filtered = jobId.filter { "0123456789\\.".contains($0) }
-
-            validJob = validateJob(filtered)
-            id = filtered
+            JobFormValidator(moc: moc).onChangeCallback(
+                jobFieldValue: jobId,
+                valid: $validJob,
+                id: $id
+            )
         }
         .onChange(of: url) { newUrl in
-            validUrl = validateUrl(newUrl)
+            JobFormValidator(moc: moc).onChangeCallback(
+                urlFieldValue: newUrl,
+                valid: $validUrl,
+                id: $id
+            )
         }
     }
 
@@ -66,21 +71,9 @@ struct JobCreate: View {
         FancyDivider()
     }
 
-//    @ViewBuilder private var fieldProjectLink: some View {
-//        if let project = job!.project {
-//            FancyLink(
-//                icon: "folder",
-//                label: "Project: \(project.name!)",
-//                showLabel: true,
-//                colour: Color.fromStored(job!.project!.colour ?? Theme.rowColourAsDouble),
-//                destination: AnyView(
-//                    ProjectView(project: project)
-//                        .environmentObject(jm)
-//                ),
-//                pageType: .projects
-//            )
-//        }
-//    }
+    @ViewBuilder private var fieldProjectLink: some View {
+        ProjectPickerUsing(onChange: projectPickerChange, displayName: $pName)
+    }
 
     @ViewBuilder private var fieldIsOn: some View {
         FancyDivider()
@@ -102,15 +95,25 @@ struct JobCreate: View {
         HStack {
             Spacer()
             FancyButtonv2(
-                text: "Create",
-                action: update,
-                size: .medium,
+                text: "Cancel",
+                action: {},
+                icon: "xmark",
+                showLabel: false,
                 redirect: AnyView(JobDashboard()),
                 pageType: .jobs
             )
-            .onAppear(perform: {print("DERPO viewload validJob:\(validJob) validUrl:\(validUrl)")})
+            FancyButtonv2(
+                text: "Create",
+                action: update,
+                size: .medium,
+                type: .primary,
+                redirect: AnyView(JobDashboard()),
+                pageType: .jobs
+            )
                 .keyboardShortcut("s")
-                .disabled(validJob == true && validUrl == true ? false : true)
+                .disabled(
+                    validJob == true && validUrl == true && validColour == true && validProject == true ? false : true
+                )
         }
     }
 
@@ -124,43 +127,25 @@ struct JobCreate: View {
             job.jid = Double(id)!
         }
 
+        job.project = project!
         job.alive = alive
         job.shredable = shredable
+        job.colour = colourAsDouble
 
         PersistenceController.shared.save()
         updater.update()
     }
 
-    private func validateJob(_ jobId: String) -> Bool {
-        if jobId.isEmpty {
-            return false
-        }
-
-        if let doubleId = Double(jobId) {
-            if let _ = CoreDataJob(moc: moc).byId(doubleId) {
-                return false
-            }
-        }
-
-        return true
+    private func colourPickerChange(colour: [Double]) -> Void {
+        colourAsDouble = colour
+        validColour = true
     }
 
-    private func validateUrl(_ url: String) -> Bool {
-        if url.isEmpty {
-            return false
+    private func projectPickerChange(selected: Int, sender: String?) -> Void {
+        if selected > 0 {
+            project = CoreDataProjects(moc: moc).byId(selected)
+            validProject = true
         }
-
-        if url.starts(with: "https:") {
-            if let uri = URL(string: url) {
-                if let _ = CoreDataJob(moc: moc).byUrl(uri) {
-                    return false
-                }
-            }
-        } else {
-            return false
-        }
-
-        return true
     }
 }
 

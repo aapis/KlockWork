@@ -1,20 +1,20 @@
 //
-//  RecentJobs.swift
+//  RecentTasks.swift
 //  DLPrototype
 //
-//  Created by Ryan Priebe on 2023-07-15.
+//  Created by Ryan Priebe on 2023-07-28.
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
 import SwiftUI
 
-struct RecentJobs: View {
-    public let title: String = "Recent Jobs"
+struct RecentTasks: View {
+    public let title: String = "Recent Tasks"
 
-    @FetchRequest public var resource: FetchedResults<Job>
+    @FetchRequest public var resource: FetchedResults<LogTask>
 
     public init() {
-        _resource = CoreDataJob.recentJobsWidgetData()
+        _resource = CoreDataTasks.recentTasksWidgetData()
     }
 
     var body: some View {
@@ -23,23 +23,23 @@ struct RecentJobs: View {
                 FancySubTitle(text: "\(title)")
                 Spacer()
                 FancyButtonv2(
-                    text: "New Job",
+                    text: "New Task",
                     action: {},
                     icon: "plus",
                     showLabel: false,
                     size: .small,
                     redirect: AnyView(
-                        JobCreate()
+                        TaskDashboard()
                     ),
-                    pageType: .jobs
+                    pageType: .tasks
                 )
             }
             Divider()
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 1) {
-                    ForEach(resource) { job in
-                        JobRow(job: job, colour: Color.fromStored(job.colour ?? Theme.rowColourAsDouble))
+                    ForEach(resource) { task in
+                        TaskView(task: task, showActions: false)
                     }
                 }
             }

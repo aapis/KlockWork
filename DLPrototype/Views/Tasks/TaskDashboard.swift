@@ -28,8 +28,16 @@ struct TaskDashboard: View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
                 HStack {
-                    Title(text: "Search tasks", image: "magnifyingglass")
+                    Title(text: "Tasks")
                     Spacer()
+//                    FancyButtonv2(
+//                        text: "New task",
+//                        action: {},
+//                        icon: "plus",
+//                        showLabel: false,
+//                        redirect: AnyView(Task()),
+//                        pageType: .projects
+//                    )
                 }
 
                 search.font(Theme.font)
@@ -96,13 +104,10 @@ struct TaskDashboard: View {
     @ViewBuilder
     var create: some View {
         if searchText == "" {
-            Divider()
-                .frame(height: 20)
-                .overlay(.clear)
-                .foregroundColor(.clear)
+            FancyDivider()
 
             HStack {
-                Title(text: "Manage tasks", image: "pencil")
+                FancySubTitle(text: "Choose a job to get started")
             }
             
             JobPickerUsing(onChange: change, jobId: $jobId)
