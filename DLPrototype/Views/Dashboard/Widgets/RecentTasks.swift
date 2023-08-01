@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct RecentTasks: View {
-    public let title: String = "Recent Tasks"
+    public let title: String = "Incomplete Tasks"
 
     @FetchRequest public var resource: FetchedResults<LogTask>
 

@@ -23,6 +23,7 @@ struct DLPrototype: App {
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(updater)
                 .environmentObject(nav)
+                .onAppear(perform: onAppear)
                 .onChange(of: scenePhase) { _ in
                     persistenceController.save()
                 }
@@ -56,5 +57,13 @@ struct DLPrototype: App {
 //            }.keyboardShortcut("q")
 //        }
         #endif
+    }
+
+    private func onAppear() -> Void {
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+        let appName = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
+
+        nav.title = "\(appName ?? "DLPrototype") \(version ?? "0").\(build ?? "0")"
     }
 }

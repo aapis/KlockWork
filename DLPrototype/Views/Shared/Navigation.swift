@@ -38,6 +38,8 @@ public enum PageGroup: Hashable {
 public class Navigation: Identifiable, ObservableObject {
     public var id: UUID = UUID()
 
-    @Published public var view: AnyView?
+    @Published public var view: AnyView? = AnyView(Dashboard())
     @Published public var parent: Page? = .dashboard
+    @Published public var sidebar: AnyView?
+    @Published public var title: String = ""
 }

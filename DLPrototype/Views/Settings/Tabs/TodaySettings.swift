@@ -27,7 +27,7 @@ struct TodaySettings: View {
     @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
     @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures: Bool = false
-    @AppStorage("today.maxCharsPerGroup") public var maxCharsPerGroup: Int = 0
+    @AppStorage("today.maxCharsPerGroup") public var maxCharsPerGroup: Int = 2000
     @AppStorage("today.colourizeExportableGroupedRecord") public var colourizeExportableGroupedRecord: Bool = false
     
     @State private var calendars: [CustomPickerItem] = []
