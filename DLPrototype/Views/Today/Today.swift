@@ -93,6 +93,10 @@ struct Today: View {
             .environmentObject(nav)
     }
 
+    public func appSidebar() -> AnyView? {
+        return nil
+    }
+
     // TODO: convert to current in progress event status update UX/UI
 //    @ViewBuilder private var actions: some View {
 //        HStack {

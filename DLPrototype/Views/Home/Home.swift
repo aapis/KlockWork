@@ -19,10 +19,8 @@ struct Home: View {
     @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
 //    @StateObject public var pr: CoreDataProjects = CoreDataProjects(moc: PersistenceController.shared.container.viewContext)
     
-    @State public var version: String?
-    @State public var build: String?
-    @State public var appName: String?
     @State public var selectedSidebarButton: Page = .dashboard
+    @State private var todayView: Today = Today()
 
     private var buttons: [PageGroup: [SidebarButton]] {
         [
@@ -34,10 +32,11 @@ struct Home: View {
                     label: "Dashboard"
                 ),
                 SidebarButton(
-                    destination: AnyView(Today()),
+                    destination: AnyView(todayView),
                     pageType: .today,
                     icon: "doc.append.fill",
-                    label: "Today"
+                    label: "Today",
+                    sidebar: nil //AnyView(todayView.appSidebar())
                 )
             ],
             .entities: [
@@ -63,7 +62,8 @@ struct Home: View {
                     destination: AnyView(JobDashboard()),
                     pageType: .jobs,
                     icon: "hammer",
-                    label: "Jobs"
+                    label: "Jobs",
+                    sidebar: AnyView(ManageDashboard())
                 )
             ]
         ]
@@ -89,23 +89,34 @@ struct Home: View {
                 }
                 .frame(width: 100)
 
-                // TODO: make draggable
-                ZStack {
-                    Theme.headerColour
-                        .opacity(0.5)
+                HStack(spacing: 0) {
+                    if nav.sidebar != nil {
+                        ZStack {
+//                            Theme.base
+//                            Color.black
+//                            Color.white.opacity(0.2)
+//                            Theme.toolbarColour
+                            Theme.tabActiveColour
+//                            LinearGradient(gradient: Gradient(colors: [Theme.tabActiveColour, .black]), startPoint: .top, endPoint: .bottom)
+//                                .opacity(0.25)
+                            nav.sidebar
+                        }
+                        .frame(maxWidth: 300)
+                    } else {
+                        HorizontalSeparator // TODO: maybe remove?
+                    }
+
+
+
+                    nav.view
+                        .navigationTitle(nav.title)
+                        .environmentObject(nav)
+                        .environmentObject(rm)
+                        .environmentObject(crm)
+                        .environmentObject(jm)
+                        .environmentObject(ce)
+                        .environmentObject(updater)
                 }
-                .frame(width: 1)
-
-                // TODO: key to making custom nav links work is to allow buttons to receive/modify $selectedView
-                nav.view
-                    .navigationTitle("\(appName ?? "DLPrototype") \(version ?? "0").\(build ?? "0")")
-                    .environmentObject(nav)
-                    .environmentObject(rm)
-                    .environmentObject(crm)
-                    .environmentObject(jm)
-                    .environmentObject(ce)
-                    .environmentObject(updater)
-
             }
         }
         .background(Theme.base)
@@ -114,17 +125,20 @@ struct Home: View {
             selectedSidebarButton = buttonToHighlight
         }
     }
+
+    var HorizontalSeparator: some View {
+        // TODO: make draggable
+        ZStack {
+            Theme.headerColour
+        }
+        .frame(width: 3)
+    }
     
     private func redraw() -> Void {
         updater.update()
     }
 
     private func onAppear() -> Void {
-        version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-        build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
-        appName = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
-
-        nav.view = AnyView(Dashboard())
         nav.parent = selectedSidebarButton
     }
 }

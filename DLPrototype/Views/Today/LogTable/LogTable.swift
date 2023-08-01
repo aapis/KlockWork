@@ -27,7 +27,6 @@ struct LogTable: View, Identifiable {
     @State private var viewRequiresColumns: Set<RecordTableColumn> = [.message]
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
-    @AppStorage("showExperiment.actions") private var showExperimentActions = false
     @AppStorage("showSidebar") public var showSidebar: Bool = true
     @AppStorage("showTodaySearch") public var showSearch: Bool = true
     @AppStorage("today.recordGrouping") public var recordGrouping: Int = 0
