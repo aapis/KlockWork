@@ -17,10 +17,6 @@ struct RecentTasksWidget: View {
 
     @Environment(\.managedObjectContext) var moc
 
-    public init() {
-        _resource = CoreDataTasks.recentTasksWidgetData()
-    }
-
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -28,7 +24,7 @@ struct RecentTasksWidget: View {
                 Spacer()
                 FancyButtonv2(
                     text: "Minimize",
-                    action: {minimized.toggle()},
+                    action: actionMinimize,
                     icon: minimized ? "plus" : "minus",
                     showLabel: false,
                     type: .white
@@ -39,10 +35,24 @@ struct RecentTasksWidget: View {
             if !minimized {
                 VStack(alignment: .leading, spacing: 5) {
                     ForEach(resource) { task in
-                        TaskView(task: task, showActions: false)
+//                        TaskView(task: task, showActions: false)
+                        TaskViewPlain(task: task)
                     }
                 }
             }
         }
     }
 }
+
+extension RecentTasksWidget {
+    public init() {
+        _resource = CoreDataTasks.recentTasksWidgetData()
+    }
+
+    private func actionMinimize() -> Void {
+        withAnimation {
+            minimized.toggle()
+        }
+    }
+}
+

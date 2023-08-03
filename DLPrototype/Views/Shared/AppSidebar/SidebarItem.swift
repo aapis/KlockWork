@@ -24,24 +24,26 @@ public enum ItemRole {
 struct SidebarItem: View {
     public var data: String
     public var help: String
-    public var icon: String = "xmark"
+    public var icon: String?
     public var role: ItemRole = .standard
 
     @State private var highlighted: Bool = false
     
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
-            ZStack(alignment: .center) {
-                if role != .important {
-                    role.colour.opacity(highlighted ? 0.15 : 0.08)
-                } else {
-                    role.colour
+            if let ic = icon {
+                ZStack(alignment: .center) {
+                    if role != .important {
+                        role.colour.opacity(highlighted ? 0.15 : 0.08)
+                    } else {
+                        role.colour
+                    }
+                    Image(systemName: ic)
+                        .font(.title2)
+                        .frame(width: 30, height: 30)
                 }
-                Image(systemName: icon)
-                    .font(.title2)
-                    .frame(width: 30, height: 30)
+                .frame(width: 50)
             }
-            .frame(width: 50)
 
             ZStack(alignment: .topLeading) {
                 role.colour.opacity(0.02)

@@ -17,10 +17,6 @@ struct RecentNotesWidget: View {
 
     @Environment(\.managedObjectContext) var moc
 
-    public init() {
-        _notes = CoreDataNotes.fetchRecentNotes(limit: 7)
-    }
-
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -28,7 +24,7 @@ struct RecentNotesWidget: View {
                 Spacer()
                 FancyButtonv2(
                     text: "Minimize",
-                    action: {minimized.toggle()},
+                    action: actionMinimize,
                     icon: minimized ? "plus" : "minus",
                     showLabel: false,
                     type: .white
@@ -47,6 +43,18 @@ struct RecentNotesWidget: View {
                     }
                 }
             }
+        }
+    }
+}
+
+extension RecentNotesWidget {
+    public init() {
+        _notes = CoreDataNotes.fetchRecentNotes(limit: 7)
+    }
+    
+    private func actionMinimize() -> Void {
+        withAnimation {
+            minimized.toggle()
         }
     }
 }

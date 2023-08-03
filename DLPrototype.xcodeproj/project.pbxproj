@@ -74,6 +74,7 @@
 		5371BA372A7B412300DEEC21 /* TodaySidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA362A7B412300DEEC21 /* TodaySidebar.swift */; };
 		5371BA392A7B41E900DEEC21 /* StatisticsAndInformationWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA382A7B41E900DEEC21 /* StatisticsAndInformationWidget.swift */; };
 		5371BA3B2A7B490C00DEEC21 /* RecentTasksWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA3A2A7B490C00DEEC21 /* RecentTasksWidget.swift */; };
+		5371BA3D2A7B7F1200DEEC21 /* TaskViewPlain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA3C2A7B7F1200DEEC21 /* TaskViewPlain.swift */; };
 		5372C02A2A105AA1008CB120 /* FancyChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5372C0292A105AA1008CB120 /* FancyChip.swift */; };
 		537368D124B93DB600193E88 /* Today.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537368D024B93DB600193E88 /* Today.swift */; };
 		53759E0829678DC700DCDC4B /* Import.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53759E0729678DC700DCDC4B /* Import.swift */; };
@@ -241,6 +242,7 @@
 		5371BA362A7B412300DEEC21 /* TodaySidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaySidebar.swift; sourceTree = "<group>"; };
 		5371BA382A7B41E900DEEC21 /* StatisticsAndInformationWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsAndInformationWidget.swift; sourceTree = "<group>"; };
 		5371BA3A2A7B490C00DEEC21 /* RecentTasksWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentTasksWidget.swift; sourceTree = "<group>"; };
+		5371BA3C2A7B7F1200DEEC21 /* TaskViewPlain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewPlain.swift; sourceTree = "<group>"; };
 		5372C0292A105AA1008CB120 /* FancyChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyChip.swift; sourceTree = "<group>"; };
 		537368D024B93DB600193E88 /* Today.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Today.swift; sourceTree = "<group>"; };
 		53759E0729678DC700DCDC4B /* Import.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Import.swift; sourceTree = "<group>"; };
@@ -485,6 +487,7 @@
 				5335A5B2296D17EB000051B1 /* TaskDashboard.swift */,
 				5335A5B4296D1FA7000051B1 /* TaskView.swift */,
 				5335A5B6296D2089000051B1 /* TaskListView.swift */,
+				5371BA3C2A7B7F1200DEEC21 /* TaskViewPlain.swift */,
 			);
 			path = Tasks;
 			sourceTree = "<group>";
@@ -1006,6 +1009,7 @@
 				53790C102A74D54C00D3FFD4 /* JobFormValidator.swift in Sources */,
 				53790C0D2A74CB6000D3FFD4 /* UrlHelper.swift in Sources */,
 				53790C052A72F45900D3FFD4 /* EdgeBorder.swift in Sources */,
+				5371BA3D2A7B7F1200DEEC21 /* TaskViewPlain.swift in Sources */,
 				533E40682970DD170007785A /* AutoFixJobs.swift in Sources */,
 				53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */,
 				5371BA2D2A7B27BB00DEEC21 /* NoteDashboardSidebar.swift in Sources */,
