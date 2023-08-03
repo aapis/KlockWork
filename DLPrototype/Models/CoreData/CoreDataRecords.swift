@@ -55,6 +55,27 @@ public class CoreDataRecords: ObservableObject {
 //
 //        return cb
 //    }
+
+    static public func fetchForDate(_ date: Date, limit: Int? = 10) -> FetchRequest<LogRecord> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: true)
+        ]
+
+        let (start, end) = DateHelper.startAndEndOf(date)
+        let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "alive == true && (timestamp > %@ && timestamp <= %@)",
+            start as CVarArg,
+            end as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        if let lim = limit {
+            fetch.fetchLimit = lim
+        }
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
     
     public func createWithJob(job: Job, date: Date, text: String) -> Void {
         let record = LogRecord(context: moc!)

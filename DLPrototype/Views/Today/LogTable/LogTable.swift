@@ -57,10 +57,11 @@ struct LogTable: View, Identifiable {
                         .id(updater.ids["today.calendarStrip"])
                         .environmentObject(ce)
                 }
-                
-                if showSidebar {
-                    tableDetails.frame(minWidth: 300, maxWidth: 400)
-                }
+
+                // TODO: remove
+//                if showSidebar {
+//                    tableDetails.frame(minWidth: 300, maxWidth: 400)
+//                }
             }
         }
         .onChange(of: recordGrouping) { group in
@@ -289,7 +290,8 @@ struct LogTable: View, Identifiable {
             changeSort()
         })
     }
-    
+
+    // TODO: remove
     var tableDetails: some View {
         LogTableDetails(records: $records, selectedDate: $selectedDate, open: $showSidebar, selectedTab: $selectedTab)
             .environmentObject(updater)

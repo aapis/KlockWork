@@ -1,5 +1,5 @@
 //
-//  RecentNotesWidget.swift
+//  RecentTasksWidget.swift
 //  DLPrototype
 //
 //  Created by Ryan Priebe on 2023-08-02.
@@ -8,17 +8,17 @@
 
 import SwiftUI
 
-struct RecentNotesWidget: View {
-    public let title: String = "Recent Notes"
+struct RecentTasksWidget: View {
+    public let title: String = "Incomplete Tasks"
 
     @State private var minimized: Bool = false
 
-    @FetchRequest public var notes: FetchedResults<Note>
+    @FetchRequest public var resource: FetchedResults<LogTask>
 
     @Environment(\.managedObjectContext) var moc
 
     public init() {
-        _notes = CoreDataNotes.fetchRecentNotes(limit: 7)
+        _resource = CoreDataTasks.recentTasksWidgetData()
     }
 
     var body: some View {
@@ -38,12 +38,8 @@ struct RecentNotesWidget: View {
 
             if !minimized {
                 VStack(alignment: .leading, spacing: 5) {
-                    if notes.count > 0 {
-                        ForEach(notes) { note in
-                            NoteRowPlain(note: note, moc: moc)
-                        }
-                    } else {
-                        Text("Create a note first")
+                    ForEach(resource) { task in
+                        TaskView(task: task, showActions: false)
                     }
                 }
             }

@@ -36,7 +36,8 @@ struct Home: View {
                     destination: AnyView(todayView),
                     pageType: .today,
                     icon: "doc.append.fill",
-                    label: "Today"
+                    label: "Today",
+                    sidebar: AnyView(TodaySidebar())
                 )
             ],
             .entities: [

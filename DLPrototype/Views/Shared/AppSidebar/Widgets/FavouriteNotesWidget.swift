@@ -18,7 +18,8 @@ struct FavouriteNotesWidget: View {
     @Environment(\.managedObjectContext) var moc
 
     public init() {
-        _notes = CoreDataNotes.starredFetchRequest(limit: 5)
+        // TODO: Could make the limit based on a setting? Something to think about
+        _notes = CoreDataNotes.starredFetchRequest(limit: 20)
     }
 
     var body: some View {
@@ -38,8 +39,12 @@ struct FavouriteNotesWidget: View {
 
             if !minimized {
                 VStack(alignment: .leading, spacing: 5) {
-                    ForEach(notes) { note in
-                        NoteRowPlain(note: note, moc: moc, icon: "star")
+                    if notes.count > 0 {
+                        ForEach(notes) { note in
+                            NoteRowPlain(note: note, moc: moc, icon: "star")
+                        }
+                    } else {
+                        Text("Star notes to see them here")
                     }
                 }
             }
