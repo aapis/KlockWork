@@ -35,6 +35,7 @@ struct DLPrototype: App {
         .commands {
             MainMenu(moc: persistenceController.container.viewContext, nav: nav)
         }
+
         
         #if os(macOS)
         Settings {
@@ -63,6 +64,10 @@ struct DLPrototype: App {
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
         let appName = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
+        
+        // https://github.com/lukakerr/NSWindowStyles
+//        NSApp?.mainWindow?.styleMask.remove(.titled)
+//        NSApp.presentationOptions.remove(.titled)
 
         nav.title = "\(appName ?? "DLPrototype") \(version ?? "0").\(build ?? "0")"
     }
