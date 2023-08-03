@@ -17,7 +17,8 @@ struct Home: View {
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
-//    @StateObject public var pr: CoreDataProjects = CoreDataProjects(moc: PersistenceController.shared.container.viewContext)
+    @StateObject public var pr: CoreDataProjects = CoreDataProjects(moc: PersistenceController.shared.container.viewContext)
+    @StateObject public var cvm: CoreDataNoteVersions = CoreDataNoteVersions(moc: PersistenceController.shared.container.viewContext)
     
     @State public var selectedSidebarButton: Page = .dashboard
     @State private var todayView: Today = Today()
@@ -35,8 +36,7 @@ struct Home: View {
                     destination: AnyView(todayView),
                     pageType: .today,
                     icon: "doc.append.fill",
-                    label: "Today",
-                    sidebar: nil //AnyView(todayView.appSidebar())
+                    label: "Today"
                 )
             ],
             .entities: [
@@ -44,7 +44,8 @@ struct Home: View {
                     destination: AnyView(NoteDashboard()),
                     pageType: .notes,
                     icon: "note.text",
-                    label: "Notes"
+                    label: "Notes",
+                    sidebar: AnyView(NoteDashboardSidebar())
                 ),
                 SidebarButton(
                     destination: AnyView(TaskDashboard()),
@@ -63,7 +64,7 @@ struct Home: View {
                     pageType: .jobs,
                     icon: "hammer",
                     label: "Jobs",
-                    sidebar: AnyView(ManageDashboard())
+                    sidebar: AnyView(JobDashboardSidebar())
                 )
             ]
         ]
@@ -91,22 +92,19 @@ struct Home: View {
 
                 HStack(spacing: 0) {
                     if nav.sidebar != nil {
-                        ZStack {
-//                            Theme.base
-//                            Color.black
-//                            Color.white.opacity(0.2)
-//                            Theme.toolbarColour
+                        ZStack(alignment: .topLeading) {
                             Theme.tabActiveColour
-//                            LinearGradient(gradient: Gradient(colors: [Theme.tabActiveColour, .black]), startPoint: .top, endPoint: .bottom)
-//                                .opacity(0.25)
-                            nav.sidebar
+                            VStack {
+                                // TODO: add sidebar show/hide functionality
+//                                Image(systemName: "sidebar.right")
+                                nav.sidebar
+                                    .environmentObject(cvm)
+                            }
                         }
                         .frame(maxWidth: 300)
                     } else {
                         HorizontalSeparator // TODO: maybe remove?
                     }
-
-
 
                     nav.view
                         .navigationTitle(nav.title)
@@ -115,6 +113,7 @@ struct Home: View {
                         .environmentObject(crm)
                         .environmentObject(jm)
                         .environmentObject(ce)
+                        .environmentObject(cvm)
                         .environmentObject(updater)
                 }
             }

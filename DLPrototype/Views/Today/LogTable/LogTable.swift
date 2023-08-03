@@ -42,7 +42,7 @@ struct LogTable: View, Identifiable {
     
     // MARK: body view
     var body: some View {
-        VStack(alignment: .leading, spacing: 1) {
+        VStack(alignment: .leading, spacing: 0) {
             toolbar.font(Theme.font)
 
             HStack(spacing: 1) {

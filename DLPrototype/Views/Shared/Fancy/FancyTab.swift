@@ -11,13 +11,26 @@ import SwiftUI
 
 struct FancyTab: View {
     @State public var tab: Tab
-    
+
     @Binding public var selected: Int
-    
+
     var body: some View {
         Button(action: {setActive(tab.id)}, label: {
             ZStack {
-                (selected == tab.id ? Theme.tabActiveColour : Theme.tabColour)
+                Theme.toolbarColour
+
+                if selected == tab.id {
+                    Theme.tabActiveColour
+                } else {
+                    Theme.tabColour
+                    VStack {
+                        Spacer()
+                        LinearGradient(gradient: Gradient(colors: [.clear, .black]), startPoint: .top, endPoint: .bottom)
+                            .opacity(0.6)
+                            .blendMode(.softLight)
+                            .frame(height: 12)
+                    }
+                }
                 Image(systemName: tab.icon)
             }
         })

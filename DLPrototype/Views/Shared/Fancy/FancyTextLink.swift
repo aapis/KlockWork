@@ -17,6 +17,7 @@ struct FancyTextLink: View {
     public var fgColour: Color? = Color.white
     public var bgColour: Color? = Color.black.opacity(0.2)
     public var pageType: Page
+    public var sidebar: AnyView? = nil
 
     @EnvironmentObject public var nav: Navigation
     
@@ -25,6 +26,7 @@ struct FancyTextLink: View {
             Button {
                 nav.view = destination
                 nav.parent = pageType
+                nav.sidebar = sidebar
             } label: {
                 if showIcon! {
                     Image(systemName: "link")

@@ -54,7 +54,7 @@ final public class DateHelper {
         
         return formatter.date(from: date)
     }
-    
+
     static public func shortDateWithTime(_ date: Date? = Date()) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd h:mm a"

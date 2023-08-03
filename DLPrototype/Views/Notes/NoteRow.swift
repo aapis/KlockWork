@@ -16,7 +16,8 @@ struct NoteRow: View {
     public var showActive: Bool = true
 
     @State private var jobId: String = ""
-    
+
+    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var jm: CoreDataJob
     @EnvironmentObject public var updater: ViewUpdater
     
@@ -67,12 +68,10 @@ struct NoteRow: View {
                 
                 FancyTextLink(
                     text: note.title!,
-                    destination: AnyView(NoteView(note: note)
-                        .environmentObject(jm)
-                        .environmentObject(updater)
-                    ),
+                    destination: AnyView(NoteView(note: note, moc: moc)),
                     fgColour: (note.mJob != nil ? (Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white) : Color.white),
-                    pageType: .notes
+                    pageType: .notes,
+                    sidebar: AnyView(NoteViewSidebar(note: note, moc: moc))
                 )
             }
         }

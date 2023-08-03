@@ -47,16 +47,10 @@ struct ToolbarButtons: View {
                 Image(systemName: "arrow.down.to.line")
             })
             .buttonStyle(.borderless)
-            .keyboardShortcut("c")
+            .keyboardShortcut("c", modifiers: [.command, .shift])
             .help("Export this view")
             .foregroundColor(Color.white)
-            .onHover { inside in
-                if inside {
-                    NSCursor.pointingHand.push()
-                } else {
-                    NSCursor.pop()
-                }
-            }
+            .useDefaultHover({_ in})
             
             Spacer()
             
@@ -66,13 +60,7 @@ struct ToolbarButtons: View {
             .help("Toggle search")
             .buttonStyle(.borderless)
             .foregroundColor(Color.white)
-            .onHover { inside in
-                if inside {
-                    NSCursor.pointingHand.push()
-                } else {
-                    NSCursor.pop()
-                }
-            }
+            .useDefaultHover({_ in})
             
             Button(action: toggleSidebar, label: {
                 Image(systemName: "sidebar.right")
@@ -80,13 +68,7 @@ struct ToolbarButtons: View {
             .help("Toggle sidebar")
             .buttonStyle(.borderless)
             .foregroundColor(Color.white)
-            .onHover { inside in
-                if inside {
-                    NSCursor.pointingHand.push()
-                } else {
-                    NSCursor.pop()
-                }
-            }
+            .useDefaultHover({_ in})
         }.padding(8)
     }
     
