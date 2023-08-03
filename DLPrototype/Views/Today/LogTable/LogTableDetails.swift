@@ -250,10 +250,8 @@ struct LogTableDetails: View {
                             view: AnyView(
                                 Button {
                                     nav.view = AnyView(
-                                        NoteView(note: note)
+                                        NoteView(note: note, moc: moc)
                                             .navigationTitle("Viewing \(note.title!)")
-                                            .environmentObject(jm)
-                                            .environmentObject(updater)
                                         )
                                     nav.parent = .notes
                                 } label: {

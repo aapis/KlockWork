@@ -74,15 +74,17 @@ public struct FancyStaticTextField: View, Identifiable {
             backgroundColour = setBackground()
         }
         .onHover { inside in
-            if inside {
-                if copied {
-                    backgroundColour = Color.green.opacity(0.3)
+            if !colourizeExportableGroupedRecord {
+                if inside {
+                    if copied {
+                        backgroundColour = Color.green.opacity(0.3)
+                    } else {
+                        backgroundColour = Color.white.opacity(0.01)
+                    }
+                    
                 } else {
-                    backgroundColour = Color.white.opacity(0.01)
+                    backgroundColour = bgColour!
                 }
-
-            } else {
-                backgroundColour = setBackground()
             }
         }
     }

@@ -13,19 +13,16 @@ struct NoteBlock: View {
 
     @State private var highlighted: Bool = false
 
+    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var jm: CoreDataJob
     @EnvironmentObject public var updater: ViewUpdater
-    
+
     var body: some View {
         Button {
-            nav.view = AnyView(
-                NoteView(note: note)
-                    .environmentObject(nav)
-                    .environmentObject(jm)
-                    .environmentObject(updater)
-                )
+            nav.view = AnyView(NoteView(note: note, moc: moc))
             nav.parent = .notes
+            nav.sidebar = AnyView(NoteViewSidebar(note: note, moc: moc))
         } label: {
             VStack(spacing: 0) {
                 ZStack(alignment: .topLeading) {
@@ -49,15 +46,7 @@ struct NoteBlock: View {
                 }
             }
         }
-        .onHover { inside in
-            if inside {
-                NSCursor.pointingHand.push()
-            } else {
-                NSCursor.pop()
-            }
-
-            highlighted.toggle()
-        }
+        .useDefaultHover({ inside in highlighted = inside})
         .buttonStyle(.plain)
     }
 

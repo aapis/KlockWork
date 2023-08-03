@@ -70,10 +70,25 @@ public class CoreDataNotes {
         ]
         
         let fetch: NSFetchRequest<Note> = Note.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive = true && starred = true")
+        fetch.predicate = NSPredicate(format: "alive == true && starred == true")
         fetch.sortDescriptors = descriptors
         fetch.fetchLimit = limit!
         
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
+    static public func fetchRecentNotes(limit: Int? = 0) -> FetchRequest<Note> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Note.mJob?.project?.id, ascending: false),
+            NSSortDescriptor(keyPath: \Note.mJob?.id, ascending: false),
+            NSSortDescriptor(keyPath: \Note.title, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<Note> = Note.fetchRequest()
+        fetch.predicate = NSPredicate(format: "alive == true && lastUpdate != nil")
+        fetch.sortDescriptors = descriptors
+        fetch.fetchLimit = limit!
+
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 }

@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-public class CoreDataNoteVersions {
+public class CoreDataNoteVersions: ObservableObject {
     public var moc: NSManagedObjectContext?
     
     public init(moc: NSManagedObjectContext?) {

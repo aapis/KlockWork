@@ -67,7 +67,7 @@ public enum Tab: CaseIterable {
 
 struct ToolbarTabs: View {
     @Binding public var selectedTab: Int
-    
+
     var body: some View {
         HStack(spacing: 1) {
             ForEach(Tab.allCases, id: \.self) { tab in

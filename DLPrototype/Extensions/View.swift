@@ -13,4 +13,16 @@ extension View {
     func border(width: CGFloat, edges: [Edge], color: Color) -> some View {
         overlay(EdgeBorder(width: width, edges: edges).foregroundColor(color))
     }
+
+    func useDefaultHover(_ onChange: @escaping (Bool) -> Void) -> some View {
+        self.onHover { inside in
+            if inside {
+                NSCursor.pointingHand.push()
+            } else {
+                NSCursor.pop()
+            }
+
+            onChange(inside)
+        }
+    }
 }

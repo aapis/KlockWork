@@ -66,7 +66,7 @@ struct FancyButton: View {
 }
 
 public enum ButtonType {
-    case destructive, standard, primary, star
+    case destructive, standard, primary, star, white
 
     var colours: [Color] {
         switch self {
@@ -78,6 +78,8 @@ public enum ButtonType {
             return [Color.yellow, Color.orange]
         case .standard:
             return [Theme.headerColour, Color.black]
+        case .white:
+            return [Color.white, Color.gray]
         }
     }
 
@@ -91,6 +93,8 @@ public enum ButtonType {
             return Color.black
         case .standard:
             return Color.white
+        case .white:
+            return Color.black
         }
     }
 
@@ -104,6 +108,8 @@ public enum ButtonType {
             return Color.yellow
         case .standard:
             return Theme.headerColour
+        case .white:
+            return Color.gray
         }
     }
 }
@@ -120,6 +126,7 @@ public struct FancyButtonv2: View {
     public var type: ButtonType = .standard
     public var redirect: AnyView? = nil
     public var pageType: Page? = nil
+    public var sidebar: AnyView? = nil
 
     @EnvironmentObject public var nav: Navigation
 
@@ -131,6 +138,7 @@ public struct FancyButtonv2: View {
             if let destination = redirect {
                 Button(action: {
                     nav.view = destination
+                    nav.sidebar = sidebar
 
                     if let pType = pageType {
                         nav.parent = pType
@@ -151,11 +159,15 @@ public struct FancyButtonv2: View {
     }
 
     private var button: some View {
-        ZStack {
-            if highlighted {
-                HighlightedBackground
+        ZStack(alignment: size == .link ? .topLeading : .center) {
+            if size != .link {
+                if highlighted {
+                    HighlightedBackground
+                } else {
+                    Background
+                }
             } else {
-                Background
+                Color.clear
             }
 
             HStack {
@@ -171,21 +183,14 @@ public struct FancyButtonv2: View {
                         .foregroundColor(fgColour != nil ? fgColour : type.textColour)
                 }
             }
-            .padding(5)
+            .padding(size == .link ? 0 : 5)
         }
         .frame(maxWidth: buttonFrameWidth(), maxHeight: 40)
         .foregroundColor(Color.white)
-        .font(.title3)
+        .font(size == .link ? .body : .title3)
         .help(text)
-        .onHover { inside in
-            if inside {
-                NSCursor.pointingHand.push()
-            } else {
-                NSCursor.pop()
-            }
-
-            highlighted.toggle()
-        }
+        .underline(size == .link && highlighted)
+        .useDefaultHover({ inside in highlighted = inside})
     }
 
     private var Background: some View {
@@ -211,11 +216,11 @@ public struct FancyButtonv2: View {
 
     private func buttonFrameWidth() -> CGFloat {
         switch size {
-        case .small, .link:
+        case .small:
             return 40
         case .medium:
             return 200
-        case .large:
+        case .large, .link:
             return 200
         }
     }

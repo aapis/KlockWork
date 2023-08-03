@@ -64,7 +64,7 @@ struct SidebarButton: View, Identifiable {
                     }
                 } else {
                     LinearGradient(
-                        colors: [(highlighted ? .black : .white), Theme.toolbarColour],
+                        colors: [(highlighted ? .black : .clear), Theme.toolbarColour],
                         startPoint: .bottomLeading,
                         endPoint: .topTrailing
                     )

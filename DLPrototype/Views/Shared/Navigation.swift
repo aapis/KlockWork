@@ -40,6 +40,6 @@ public class Navigation: Identifiable, ObservableObject {
 
     @Published public var view: AnyView? = AnyView(Dashboard())
     @Published public var parent: Page? = .dashboard
-    @Published public var sidebar: AnyView?
+    @Published public var sidebar: AnyView? = nil
     @Published public var title: String = ""
 }
