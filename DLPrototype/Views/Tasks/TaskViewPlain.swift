@@ -15,7 +15,8 @@ struct TaskViewPlain: View {
         SidebarItem(
             data: task.content!,
             help: task.content!,
-            icon: "circle"
+            icon: "circle",
+            type: .thin
         )
     }
 }

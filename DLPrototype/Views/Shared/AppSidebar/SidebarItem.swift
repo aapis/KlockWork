@@ -21,11 +21,52 @@ public enum ItemRole {
     }
 }
 
+public enum ItemType {
+    case standard, thin
+
+    var iconSize: (CGFloat, CGFloat) {
+        switch self {
+        case .standard:
+            return (30, 30)
+        case .thin:
+            return (10, 10)
+        }
+    }
+
+    var iconFrameSize: CGFloat {
+        switch self {
+        case .standard:
+            return 50
+        case .thin:
+            return 20
+        }
+    }
+
+    var frameHeight: CGFloat {
+        switch self {
+        case .standard:
+            return 50
+        case .thin:
+            return 20
+        }
+    }
+
+    var padding: CGFloat {
+        switch self {
+        case .standard:
+            return 10
+        case .thin:
+            return 5
+        }
+    }
+}
+
 struct SidebarItem: View {
     public var data: String
     public var help: String
     public var icon: String?
     public var role: ItemRole = .standard
+    public var type: ItemType = .standard
 
     @State private var highlighted: Bool = false
     
@@ -40,23 +81,23 @@ struct SidebarItem: View {
                     }
                     Image(systemName: ic)
                         .font(.title2)
-                        .frame(width: 30, height: 30)
+                        .frame(width: type.iconSize.0, height: type.iconSize.1)
                 }
-                .frame(width: 50)
+                .frame(width: type.iconFrameSize)
             }
 
             ZStack(alignment: .topLeading) {
                 role.colour.opacity(0.02)
                 Text(data)
                     .help(help)
-                    .padding()
+                    .padding(type.padding)
             }
         }
         .border(.black.opacity(0.2), width: 1)
         .mask(
             RoundedRectangle(cornerRadius: 4)
         )
-        .frame(maxHeight: 50)
+        .frame(maxHeight: type.frameHeight)
         .onHover { inside in
             highlighted.toggle()
         }

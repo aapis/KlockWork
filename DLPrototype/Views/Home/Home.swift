@@ -52,7 +52,8 @@ struct Home: View {
                     destination: AnyView(TaskDashboard()),
                     pageType: .tasks,
                     icon: "checklist",
-                    label: "Tasks"
+                    label: "Tasks",
+                    sidebar: AnyView(TaskDashboardSidebar())
                 ),
                 SidebarButton(
                     destination: AnyView(ProjectsDashboard()),
