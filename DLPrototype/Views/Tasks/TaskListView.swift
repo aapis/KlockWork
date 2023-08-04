@@ -31,11 +31,6 @@ struct TaskListView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack {
-                HStack {
-                    Title(text: "Tasks")
-                    Spacer()
-                }
-                
                 VStack(alignment: .leading, spacing: 0) {
                     FancyTextField(placeholder: "Add a task to \(job.jid.string)", lineLimit: 1, onSubmit: createTask, text: $entryText)
                     

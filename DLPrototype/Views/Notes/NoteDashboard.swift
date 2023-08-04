@@ -80,6 +80,7 @@ struct NoteDashboard: View {
             .padding()
         }
         .background(Theme.toolbarColour)
+        .id(updater.get("note.dashboard"))
     }
 
     @ViewBuilder private var recentNotes: some View {

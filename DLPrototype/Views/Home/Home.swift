@@ -124,6 +124,9 @@ struct Home: View {
         .onChange(of: nav.parent!) { buttonToHighlight in
             selectedSidebarButton = buttonToHighlight
         }
+        .onChange(of: nav.pageId!) { newUuid in
+            updater.setOne(nav.parent!.ViewUpdaterKey, newUuid)
+        }
     }
 
     var HorizontalSeparator: some View {

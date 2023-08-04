@@ -26,7 +26,15 @@ public class ViewUpdater: ObservableObject {
         "find.pr": UUID(),
         "find.jr": UUID(),
         "sidebar.today.incompleteTasksWidget": UUID(),
+        "task.dashboard": UUID(),
+        "note.dashboard": UUID(),
+        "project.dashboard": UUID(),
+        "job.dashboard": UUID(),
     ]
+
+    public func get(_ key: String) -> UUID {
+        ids[key]!
+    }
     
     public func update(_ key: String? = "") -> Void {
         for (k, _) in ids {
@@ -40,5 +48,9 @@ public class ViewUpdater: ObservableObject {
     
     public func set(_ uuids: [String: UUID]) -> Void {
         ids = uuids
+    }
+
+    public func setOne(_ key: String, _ uuid: UUID) -> Void {
+        ids[key] = uuid
     }
 }

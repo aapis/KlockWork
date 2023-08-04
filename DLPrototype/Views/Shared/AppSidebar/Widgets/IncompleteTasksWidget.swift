@@ -42,11 +42,19 @@ struct IncompleteTasksWidget: View {
                         .onChange(of: query, perform: search)
                 }
 
-                VStack(alignment: .leading, spacing: 0) {
-                    ForEach(Array(groupedTasks.keys.enumerated()), id: \.element) { index, key in
-                        TaskGroup(index: index, key: key, tasks: groupedTasks)
+                if groupedTasks.count > 0 {
+                    VStack(alignment: .leading, spacing: 0) {
+                        ForEach(Array(groupedTasks.keys.enumerated()), id: \.element) { index, key in
+                            TaskGroup(index: index, key: key, tasks: groupedTasks)
+                        }
+                        FancyDivider()
                     }
-                    FancyDivider()
+                } else {
+                    SidebarItem(
+                        data: "No tasks or jobs matching query",
+                        help: "No tasks or jobs matching query",
+                        role: .important
+                    )
                 }
             }
         }
@@ -57,7 +65,7 @@ struct IncompleteTasksWidget: View {
 
 extension IncompleteTasksWidget {
     public init() {
-        _resource = CoreDataTasks.recentTasksWidgetData(limit: 20)
+        _resource = CoreDataTasks.recentTasksWidgetData(limit: 100)
     }
 
     private func actionMinimize() -> Void {
@@ -102,6 +110,7 @@ extension IncompleteTasksWidget {
     }
 
     private func resetGroupedTasks() -> Void {
+        // TODO: need to figure out how to sort this dictionary
         groupedTasks = Dictionary(grouping: resource, by: {$0.owner!})
     }
 }

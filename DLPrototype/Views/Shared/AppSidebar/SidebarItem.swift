@@ -93,7 +93,12 @@ struct SidebarItem: View {
             }
 
             ZStack(alignment: .leading) {
-                role.colour.opacity(0.02)
+                if role != .important {
+                    role.colour.opacity(0.02)
+                } else {
+                    role.colour
+                }
+
                 Text(data)
                     .help(help)
                     .padding(type.padding)

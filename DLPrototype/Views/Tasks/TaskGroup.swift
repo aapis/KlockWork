@@ -14,6 +14,7 @@ struct TaskGroup: View {
     public var tasks: Dictionary<Job, [LogTask]>
 
     @State private var minimized: Bool = false
+    @State private var pinned: Bool = false
     
     var body: some View {
         let colour = Color.fromStored(key.colour ?? Theme.rowColourAsDouble)
@@ -28,14 +29,21 @@ struct TaskGroup: View {
                         size: .link
                     )
                     Spacer()
+//                    FancyButtonv2(
+//                        text: "Pin",
+//                        action: {},
+//                        icon: pinned ? "pin.circle" : "pin.circle.fill",
+//                        showLabel: false,
+//                        size: .link
+//                    )
                 }
                 .padding(8)
             }
             .background(Theme.base.opacity(0.3))
 
             if !minimized {
-                VStack(alignment: .leading, spacing: 10) {
-                    HStack(alignment: .firstTextBaseline, spacing: 5) {
+                VStack(alignment: .leading, spacing: 5) {
+                    HStack(alignment: .firstTextBaseline, spacing: 10) {
                         Spacer()
                         FancyButtonv2(
                             text: "See all tasks",
@@ -45,7 +53,7 @@ struct TaskGroup: View {
                             showLabel: false,
                             size: .link,
                             redirect: AnyView(TaskDashboard(defaultSelectedJob: key)),
-                            pageType: .jobs,
+                            pageType: .tasks,
                             sidebar: AnyView(TaskDashboardSidebar())
                         )
 

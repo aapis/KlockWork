@@ -32,6 +32,7 @@ struct ProjectsDashboard: View {
             .padding()
         }
         .background(Theme.toolbarColour)
+        .id(updater.get("project.dashboard"))
     }
     
     @ViewBuilder

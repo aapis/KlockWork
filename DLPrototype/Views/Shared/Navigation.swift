@@ -11,22 +11,22 @@ import SwiftUI
 public enum Page {
     case dashboard, today, notes, tasks, projects, jobs, companies
 
-    var title: String {
+    var ViewUpdaterKey: String {
         switch self {
         case .dashboard:
-            return "Dashboard"
+            return "dashboard"
         case .today:
-            return "Today"
-        case .notes:
-            return "Notes"
+            return "today.dashboard"
         case .tasks:
-            return "Tasks"
+            return "task.dashboard"
+        case .notes:
+            return "note.dashboard"
         case .projects:
-            return "Projects"
+            return "project.dashboard"
         case .jobs:
-            return "Jobs"
+            return "job.dashboard"
         case .companies:
-            return "Companies"
+            return "companies.dashboard"
         }
     }
 }
@@ -42,4 +42,5 @@ public class Navigation: Identifiable, ObservableObject {
     @Published public var parent: Page? = .dashboard
     @Published public var sidebar: AnyView? = nil
     @Published public var title: String = ""
+    @Published public var pageId: UUID? = UUID()
 }

@@ -20,11 +20,12 @@ public class CoreDataTasks {
 
     static public func recentTasksWidgetData(limit: Int? = 10) -> FetchRequest<LogTask> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \LogTask.created?, ascending: false)
+            NSSortDescriptor(keyPath: \LogTask.owner?.jid, ascending: false),
+            NSSortDescriptor(keyPath: \LogTask.owner?.created, ascending: false)
         ]
 
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
-        fetch.predicate = NSPredicate(format: "completedDate = nil && cancelledDate = nil")
+        fetch.predicate = NSPredicate(format: "completedDate == nil && cancelledDate == nil")
         fetch.sortDescriptors = descriptors
 
         if let lim = limit {

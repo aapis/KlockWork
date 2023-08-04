@@ -18,6 +18,7 @@ struct JobDashboard: View {
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var jm: CoreDataJob
+    @EnvironmentObject public var updater: ViewUpdater
     
     @FetchRequest(sortDescriptors: [SortDescriptor(\.jid, order: .reverse)]) public var jobs: FetchedResults<Job>
     
@@ -31,6 +32,7 @@ struct JobDashboard: View {
             .padding()
         }
         .background(Theme.toolbarColour)
+        .id(updater.get("job.dashboard"))
     }
     
     @ViewBuilder

@@ -139,6 +139,7 @@ public struct FancyButtonv2: View {
                 Button(action: {
                     nav.view = destination
                     nav.sidebar = sidebar
+                    nav.pageId = UUID()
 
                     if let pType = pageType {
                         nav.parent = pType
@@ -174,7 +175,7 @@ public struct FancyButtonv2: View {
                 if showIcon! {
                     Image(systemName: icon!)
                         .symbolRenderingMode(.hierarchical)
-                        .font(size == .link ? .body : .title2)
+                        .font(.title2)
                         .foregroundColor(fgColour != nil ? fgColour : type.textColour)
                 }
 

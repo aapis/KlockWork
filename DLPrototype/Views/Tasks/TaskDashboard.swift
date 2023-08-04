@@ -19,6 +19,7 @@ struct TaskDashboard: View {
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var jm: CoreDataJob
+    @EnvironmentObject public var updater: ViewUpdater
     
     @FetchRequest(sortDescriptors: [SortDescriptor(\.jid, order: .reverse)]) public var jobs: FetchedResults<Job>
     @FetchRequest(sortDescriptors: [SortDescriptor(\.id)]) public var tasks: FetchedResults<LogTask>
@@ -46,6 +47,7 @@ struct TaskDashboard: View {
         }
         .background(Theme.toolbarColour)
         .onAppear(perform: setJob)
+        .id(updater.get("task.dashboard"))
     }
     
     @ViewBuilder
@@ -102,17 +104,18 @@ struct TaskDashboard: View {
     var create: some View {
         if searchText == "" {
             FancyDivider()
-
-            HStack {
-                FancySubTitle(text: "Choose a job to get started")
-            }
             
+            if selectedJob == 0 {
+                HStack {
+                    FancySubTitle(text: "Choose a job to get started")
+                }
+            }
+
             JobPickerUsing(onChange: change, jobId: $jobId)
                 .onAppear(perform: setJob)
                 .onChange(of: selectedJob) { _ in
                     setJob()
                 }
-            
             if job != nil {
                 TaskListView(job: job!)
             }
