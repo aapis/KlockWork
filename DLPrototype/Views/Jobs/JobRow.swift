@@ -31,13 +31,7 @@ struct JobRow: View {
                         Text(job.jid.string)
                             .foregroundColor(colour.isBright() ? Color.black : Color.white)
                             .padding([.leading, .trailing], 10)
-                            .onHover { inside in
-                                if inside {
-                                    NSCursor.pointingHand.push()
-                                } else {
-                                    NSCursor.pop()
-                                }
-                            }
+                            .useDefaultHover({_ in})
                             .help("Edit job")
                     }
                     .buttonStyle(.borderless)

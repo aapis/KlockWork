@@ -174,7 +174,7 @@ public struct FancyButtonv2: View {
                 if showIcon! {
                     Image(systemName: icon!)
                         .symbolRenderingMode(.hierarchical)
-                        .font(.title2)
+                        .font(size == .link ? .body : .title2)
                         .foregroundColor(fgColour != nil ? fgColour : type.textColour)
                 }
 
@@ -216,11 +216,17 @@ public struct FancyButtonv2: View {
 
     private func buttonFrameWidth() -> CGFloat {
         switch size {
+        case .link:
+            if showLabel! {
+                return 200
+            } else {
+                return 20
+            }
         case .small:
             return 40
         case .medium:
             return 200
-        case .large, .link:
+        case .large:
             return 200
         }
     }

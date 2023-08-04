@@ -18,15 +18,18 @@ public class CoreDataTasks {
         self.moc = moc
     }
 
-    static public func recentTasksWidgetData() -> FetchRequest<LogTask> {
+    static public func recentTasksWidgetData(limit: Int? = 10) -> FetchRequest<LogTask> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \LogTask.lastUpdate?, ascending: false)
+            NSSortDescriptor(keyPath: \LogTask.created?, ascending: false)
         ]
 
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
         fetch.predicate = NSPredicate(format: "completedDate = nil && cancelledDate = nil")
         fetch.sortDescriptors = descriptors
-        fetch.fetchLimit = 10
+
+        if let lim = limit {
+            fetch.fetchLimit = lim
+        }
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
@@ -82,6 +85,12 @@ public class CoreDataTasks {
         
         do {
             try moc!.save()
+
+            CoreDataRecords(moc: moc).createWithJob(
+                job: task.owner!,
+                date: task.lastUpdate!,
+                text: "Completed task: \(task.content ?? "Invalid task")"
+            )
         } catch {
             PersistenceController.shared.save()
         }
@@ -93,6 +102,12 @@ public class CoreDataTasks {
         
         do {
             try moc!.save()
+
+            CoreDataRecords(moc: moc).createWithJob(
+                job: task.owner!,
+                date: task.lastUpdate!,
+                text: "Cancelled task: \(task.content ?? "Invalid task")"
+            )
         } catch {
             PersistenceController.shared.save()
         }

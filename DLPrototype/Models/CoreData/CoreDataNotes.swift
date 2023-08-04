@@ -72,7 +72,10 @@ public class CoreDataNotes {
         let fetch: NSFetchRequest<Note> = Note.fetchRequest()
         fetch.predicate = NSPredicate(format: "alive == true && starred == true")
         fetch.sortDescriptors = descriptors
-        fetch.fetchLimit = limit!
+
+        if let lim = limit {
+            fetch.fetchLimit = lim
+        }
         
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
@@ -87,7 +90,10 @@ public class CoreDataNotes {
         let fetch: NSFetchRequest<Note> = Note.fetchRequest()
         fetch.predicate = NSPredicate(format: "alive == true && lastUpdate != nil")
         fetch.sortDescriptors = descriptors
-        fetch.fetchLimit = limit!
+
+        if let lim = limit {
+            fetch.fetchLimit = lim
+        }
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }

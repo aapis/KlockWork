@@ -61,14 +61,15 @@ struct ToolbarButtons: View {
             .buttonStyle(.borderless)
             .foregroundColor(Color.white)
             .useDefaultHover({_ in})
-            
-            Button(action: toggleSidebar, label: {
-                Image(systemName: "sidebar.right")
-            })
-            .help("Toggle sidebar")
-            .buttonStyle(.borderless)
-            .foregroundColor(Color.white)
-            .useDefaultHover({_ in})
+
+            // TODO: remove
+//            Button(action: toggleSidebar, label: {
+//                Image(systemName: "sidebar.right")
+//            })
+//            .help("Toggle sidebar")
+//            .buttonStyle(.borderless)
+//            .foregroundColor(Color.white)
+//            .useDefaultHover({_ in})
         }.padding(8)
     }
     

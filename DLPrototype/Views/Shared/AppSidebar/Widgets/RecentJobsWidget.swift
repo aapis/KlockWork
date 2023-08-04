@@ -17,10 +17,6 @@ struct RecentJobsWidget: View {
 
     @Environment(\.managedObjectContext) var moc
 
-    public init() {
-        _resource = CoreDataJob.fetchRecentJobs(limit: 5)
-    }
-
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -28,7 +24,7 @@ struct RecentJobsWidget: View {
                 Spacer()
                 FancyButtonv2(
                     text: "Minimize",
-                    action: {minimized.toggle()},
+                    action: actionMinimize,
                     icon: minimized ? "plus" : "minus",
                     showLabel: false,
                     type: .white
@@ -41,8 +37,21 @@ struct RecentJobsWidget: View {
                     ForEach(resource) { job in
                         JobRowPlain(job: job)
                     }
+                    FancyDivider()
                 }
             }
+        }
+    }
+}
+
+extension RecentJobsWidget {
+    public init() {
+        _resource = CoreDataJob.fetchRecentJobs(limit: 5)
+    }
+    
+    private func actionMinimize() -> Void {
+        withAnimation {
+            minimized.toggle()
         }
     }
 }

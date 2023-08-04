@@ -17,10 +17,6 @@ struct FavouriteNotesWidget: View {
     
     @Environment(\.managedObjectContext) var moc
 
-    public init() {
-        _notes = CoreDataNotes.starredFetchRequest(limit: 5)
-    }
-
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -28,7 +24,7 @@ struct FavouriteNotesWidget: View {
                 Spacer()
                 FancyButtonv2(
                     text: "Minimize",
-                    action: {minimized.toggle()},
+                    action: actionMinimize,
                     icon: minimized ? "plus" : "minus",
                     showLabel: false,
                     type: .white
@@ -38,11 +34,29 @@ struct FavouriteNotesWidget: View {
 
             if !minimized {
                 VStack(alignment: .leading, spacing: 5) {
-                    ForEach(notes) { note in
-                        NoteRowPlain(note: note, moc: moc, icon: "star")
+                    if notes.count > 0 {
+                        ForEach(notes) { note in
+                            NoteRowPlain(note: note, moc: moc, icon: "star")
+                        }
+                    } else {
+                        Text("Star notes to see them here")
                     }
+                    FancyDivider()
                 }
             }
+        }
+    }
+}
+
+extension FavouriteNotesWidget {
+    public init() {
+        // TODO: Could make the limit based on a setting? Something to think about
+        _notes = CoreDataNotes.starredFetchRequest(limit: 20)
+    }
+    
+    private func actionMinimize() -> Void {
+        withAnimation {
+            minimized.toggle()
         }
     }
 }

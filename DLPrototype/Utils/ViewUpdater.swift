@@ -25,6 +25,7 @@ public class ViewUpdater: ObservableObject {
         "find.tr": UUID(),
         "find.pr": UUID(),
         "find.jr": UUID(),
+        "sidebar.today.incompleteTasksWidget": UUID(),
     ]
     
     public func update(_ key: String? = "") -> Void {

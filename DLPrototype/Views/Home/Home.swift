@@ -21,7 +21,6 @@ struct Home: View {
     @StateObject public var cvm: CoreDataNoteVersions = CoreDataNoteVersions(moc: PersistenceController.shared.container.viewContext)
     
     @State public var selectedSidebarButton: Page = .dashboard
-    @State private var todayView: Today = Today()
 
     private var buttons: [PageGroup: [SidebarButton]] {
         [
@@ -33,10 +32,11 @@ struct Home: View {
                     label: "Dashboard"
                 ),
                 SidebarButton(
-                    destination: AnyView(todayView),
+                    destination: AnyView(Today()),
                     pageType: .today,
                     icon: "doc.append.fill",
-                    label: "Today"
+                    label: "Today",
+                    sidebar: AnyView(TodaySidebar())
                 )
             ],
             .entities: [
@@ -51,7 +51,8 @@ struct Home: View {
                     destination: AnyView(TaskDashboard()),
                     pageType: .tasks,
                     icon: "checklist",
-                    label: "Tasks"
+                    label: "Tasks",
+                    sidebar: AnyView(TaskDashboardSidebar())
                 ),
                 SidebarButton(
                     destination: AnyView(ProjectsDashboard()),
