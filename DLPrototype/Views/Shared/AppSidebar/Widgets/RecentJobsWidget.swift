@@ -37,6 +37,7 @@ struct RecentJobsWidget: View {
                     ForEach(resource) { job in
                         JobRowPlain(job: job)
                     }
+                    FancyDivider()
                 }
             }
         }

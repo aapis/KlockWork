@@ -35,7 +35,6 @@ struct JobRowPlain: View {
                     }
                     .buttonStyle(.borderless)
                     .underline()
-
                     if job.uri != nil {
                         Spacer()
                         Link(destination: job.uri!, label: {

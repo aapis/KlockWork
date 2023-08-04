@@ -10,9 +10,10 @@ import Foundation
 import SwiftUI
 
 struct FancyDivider: View {
+    public var height: CGFloat? = 20
     var body: some View {
         Divider()
-            .frame(height: 20)
+            .frame(height: height!)
             .overlay(.clear)
             .foregroundColor(.clear)
     }

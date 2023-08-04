@@ -24,21 +24,12 @@ public enum ItemRole {
 public enum ItemType {
     case standard, thin
 
-    var iconSize: (CGFloat, CGFloat) {
-        switch self {
-        case .standard:
-            return (30, 30)
-        case .thin:
-            return (10, 10)
-        }
-    }
-
     var iconFrameSize: CGFloat {
         switch self {
         case .standard:
             return 50
         case .thin:
-            return 20
+            return 30
         }
     }
 
@@ -47,7 +38,7 @@ public enum ItemType {
         case .standard:
             return 50
         case .thin:
-            return 20
+            return 30
         }
     }
 
@@ -59,6 +50,15 @@ public enum ItemType {
             return 5
         }
     }
+
+    var fontSize: Font {
+        switch self {
+        case .standard:
+            return .body
+        case .thin:
+            return .caption
+        }
+    }
 }
 
 struct SidebarItem: View {
@@ -67,37 +67,43 @@ struct SidebarItem: View {
     public var icon: String?
     public var role: ItemRole = .standard
     public var type: ItemType = .standard
+    public var action: (() -> Void)?
 
     @State private var highlighted: Bool = false
     
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             if let ic = icon {
-                ZStack(alignment: .center) {
+                ZStack(alignment: .topLeading) {
                     if role != .important {
                         role.colour.opacity(highlighted ? 0.15 : 0.08)
                     } else {
                         role.colour
                     }
-                    Image(systemName: ic)
-                        .font(.title2)
-                        .frame(width: type.iconSize.0, height: type.iconSize.1)
+
+                    Button(action: doAction) {
+                        Image(systemName: ic)
+                            .font(.title2)
+                            .frame(maxWidth: 30, maxHeight: 30)
+                    }
+                    .buttonStyle(.plain)
+//                    .useDefaultHover({_ in}) // TODO: this causes the cursor to stay off hover for some reason
                 }
                 .frame(width: type.iconFrameSize)
             }
 
-            ZStack(alignment: .topLeading) {
+            ZStack(alignment: .leading) {
                 role.colour.opacity(0.02)
                 Text(data)
                     .help(help)
                     .padding(type.padding)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
         .border(.black.opacity(0.2), width: 1)
         .mask(
             RoundedRectangle(cornerRadius: 4)
         )
-        .frame(maxHeight: type.frameHeight)
         .onHover { inside in
             highlighted.toggle()
         }
@@ -105,6 +111,14 @@ struct SidebarItem: View {
             Button("Copy \(data)") {
                 ClipboardHelper.copy(data)
             }
+        }
+    }
+}
+
+extension SidebarItem {
+    private func doAction() -> Void {
+        if let callback = action {
+            callback()
         }
     }
 }

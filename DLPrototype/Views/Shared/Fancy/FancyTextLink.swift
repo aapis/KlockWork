@@ -38,7 +38,7 @@ struct FancyTextLink: View {
             .buttonStyle(.borderless)
             .foregroundColor(fgColour)
             .font(.title3)
-            .padding()
+            .underline()
             .background(transparent! ? Color.clear : bgColour)
             .onHover { inside in
                 if inside {

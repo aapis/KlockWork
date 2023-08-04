@@ -41,6 +41,7 @@ struct FavouriteNotesWidget: View {
                     } else {
                         Text("Star notes to see them here")
                     }
+                    FancyDivider()
                 }
             }
         }

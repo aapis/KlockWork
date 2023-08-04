@@ -12,7 +12,7 @@ struct StatisticsAndInformationWidget: View {
     public let title: String = "Statistics & Information"
 
     @State private var minimized: Bool = false
-    
+
     @Binding public var date: Date
 
     @FetchRequest public var notes: FetchedResults<Note>
@@ -41,6 +41,7 @@ struct StatisticsAndInformationWidget: View {
                     SidebarItem(data: "Coming soon", help: "View description")
                     SidebarItem(data: "Coming soon", help: "Word count")
                     SidebarItem(data: records.count.description + " records", help: "Records in set")
+                    FancyDivider()
                 }
             }
         }

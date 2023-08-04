@@ -41,6 +41,7 @@ struct RecentNotesWidget: View {
                     } else {
                         Text("Create a note first")
                     }
+                    FancyDivider()
                 }
             }
         }

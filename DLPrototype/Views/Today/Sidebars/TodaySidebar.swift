@@ -14,7 +14,7 @@ struct TodaySidebar: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             ScrollView(showsIndicators: false) {
-                StatisticsAndInformationWidget(date: $date)
+//                StatisticsAndInformationWidget(date: $date)
                 IncompleteTasksWidget()
                 RecentJobsWidget()
             }

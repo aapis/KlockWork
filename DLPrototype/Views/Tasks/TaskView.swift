@@ -194,11 +194,6 @@ struct TaskView: View {
     
     private func complete() -> Void {
         CoreDataTasks(moc: moc).complete(task)
-        CoreDataRecords(moc: moc).createWithJob(
-            job: task.owner!,
-            date: task.lastUpdate!,
-            text: "Completed task: \(task.content ?? "Invalid task")"
-        )
         
         withAnimation(.easeInOut(duration: 0.2)) {
             // update viewable status indicators
@@ -209,12 +204,7 @@ struct TaskView: View {
     
     private func cancel() -> Void {
         CoreDataTasks(moc: moc).cancel(task)
-        CoreDataRecords(moc: moc).createWithJob(
-            job: task.owner!,
-            date: task.lastUpdate!,
-            text: "Cancelled task: \(task.content ?? "Invalid task")"
-        )
-        
+
         withAnimation(.easeInOut(duration: 0.2)) {
             // update viewable status indicators
             cancelled = true
