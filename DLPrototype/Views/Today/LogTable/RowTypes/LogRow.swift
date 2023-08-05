@@ -227,6 +227,7 @@ struct LogRow: View, Identifiable {
                     Button {
                         nav.view = AnyView(ProjectView(project: entry.jobObject!.project!).environmentObject(jm))
                         nav.parent = .projects
+                        nav.sidebar = AnyView(ProjectsDashboardSidebar())
                     } label: {
                         Text("Project")
                     }

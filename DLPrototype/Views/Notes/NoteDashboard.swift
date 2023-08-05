@@ -56,7 +56,6 @@ struct NoteDashboard: View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
                 HStack {
-                    Title(text: "Notes")
                     Spacer()
                     FancyButtonv2(
                         text: "New note",

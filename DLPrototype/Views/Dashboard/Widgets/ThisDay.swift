@@ -42,10 +42,6 @@ struct ThisDay: View {
     @State private var todayInHistory: [DayInHistory] = []
 
     @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var crm: CoreDataRecords
-    @EnvironmentObject public var ce: CoreDataCalendarEvent
-    @EnvironmentObject public var updater: ViewUpdater
-    @EnvironmentObject public var jm: CoreDataJob
     
     @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
     
@@ -68,15 +64,11 @@ struct ThisDay: View {
                             FancyTextLink(
                                 text: "\(selectedDate)",
                                 transparent: true,
-                                destination: AnyView(
-                                    Today(defaultSelectedDate: currentDate)
-                                        .environmentObject(crm)
-                                        .environmentObject(jm)
-                                        .environmentObject(ce)
-                                        .environmentObject(updater)
-                                ),
-                                pageType: .today
+                                destination: AnyView(Today(defaultSelectedDate: currentDate)),
+                                pageType: .today,
+                                sidebar: AnyView(TodaySidebar())
                             )
+                            .padding()
                             Spacer()
                         }
                     }
@@ -97,13 +89,7 @@ struct ThisDay: View {
                         label: day.linkLabel(),
                         showLabel: true,
                         fgColour: day.highlight ? Color.gray : Color.white,
-                        destination: AnyView(
-                            Today(defaultSelectedDate: day.date)
-                                .environmentObject(crm)
-                                .environmentObject(jm)
-                                .environmentObject(ce)
-                                .environmentObject(updater)
-                        ),
+                        destination: AnyView(Today(defaultSelectedDate: day.date)),
                         size: .small,
                         pageType: .today
                     )

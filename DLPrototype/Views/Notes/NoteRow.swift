@@ -73,6 +73,7 @@ struct NoteRow: View {
                     pageType: .notes,
                     sidebar: AnyView(NoteViewSidebar(note: note, moc: moc))
                 )
+                .padding(10)
             }
         }
     }

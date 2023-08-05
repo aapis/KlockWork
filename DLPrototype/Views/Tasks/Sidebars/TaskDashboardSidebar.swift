@@ -12,11 +12,11 @@ struct TaskDashboardSidebar: View {
     @State public var date: Date = Date()
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            ScrollView(showsIndicators: false) {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 5) {
+                Title(text: "Tasks")
                 IncompleteTasksWidget()
             }
-
             Spacer()
         }
         .padding()

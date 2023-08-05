@@ -23,70 +23,70 @@ struct NoteViewSidebar: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            Title(text: "Meta")
-            FancyDivider()
-
-            if let date = note.postedDate {
-                SidebarItem(
-                    data: date.formatted(),
-                    help: "Created on \(date.formatted())",
-                    icon: "calendar"
-                )
-            }
-
-            if let date = note.lastUpdate {
-                SidebarItem(
-                    data: date.formatted(),
-                    help: "Last editied at \(date)",
-                    icon: "pencil"
-                )
-            }
-
-            if let id = note.id {
-                SidebarItem(
-                    data: id.uuidString,
-                    help: "System ID: \(id.uuidString)",
-                    icon: "questionmark"
-                )
-            }
-
-            if note.alive {
-                SidebarItem(
-                    data: "Published",
-                    help: "Published on \(note.postedDate!.formatted())",
-                    icon: "eye"
-                )
-            } else {
-                SidebarItem(
-                    data: "Unpublished",
-                    help: "No longer published",
-                    icon: "eye.slash",
-                    role: .important
-                )
-            }
-
-            if let versions = note.versions {
-                SidebarItem(
-                    data: String(versions.count),
-                    help: "\(versions.count) versions saved",
-                    icon: "square.grid.3x1.fill.below.line.grid.1x2"
-                )
-
-//                    NoteVersionNavigationWidget(
-//                        note: note,
-//                        title: title,
-//                        content: content,
-//                        lastUpdate: lastUpdate // TODO: this won't work since these are properties of NoteView, I need to pull all this version stuff out and refactor the whole view to move functionality to the sidebar
-//                    )
-            } else {
-                SidebarItem(
-                    data: "0",
-                    help: "No versions saved yet",
-                    icon: "square.grid.3x1.fill.below.line.grid.1x2"
-                )
-            }
-
-            FancyDivider()
+//            Title(text: "Meta")
+//            FancyDivider()
+//
+//            if let date = note.postedDate {
+//                SidebarItem(
+//                    data: date.formatted(),
+//                    help: "Created on \(date.formatted())",
+//                    icon: "calendar"
+//                )
+//            }
+//
+//            if let date = note.lastUpdate {
+//                SidebarItem(
+//                    data: date.formatted(),
+//                    help: "Last editied at \(date)",
+//                    icon: "pencil"
+//                )
+//            }
+//
+//            if let id = note.id {
+//                SidebarItem(
+//                    data: id.uuidString,
+//                    help: "System ID: \(id.uuidString)",
+//                    icon: "questionmark"
+//                )
+//            }
+//
+//            if note.alive {
+//                SidebarItem(
+//                    data: "Published",
+//                    help: "Published on \(note.postedDate!.formatted())",
+//                    icon: "eye"
+//                )
+//            } else {
+//                SidebarItem(
+//                    data: "Unpublished",
+//                    help: "No longer published",
+//                    icon: "eye.slash",
+//                    role: .important
+//                )
+//            }
+//
+//            if let versions = note.versions {
+//                SidebarItem(
+//                    data: String(versions.count),
+//                    help: "\(versions.count) versions saved",
+//                    icon: "square.grid.3x1.fill.below.line.grid.1x2"
+//                )
+//
+////                    NoteVersionNavigationWidget(
+////                        note: note,
+////                        title: title,
+////                        content: content,
+////                        lastUpdate: lastUpdate // TODO: this won't work since these are properties of NoteView, I need to pull all this version stuff out and refactor the whole view to move functionality to the sidebar
+////                    )
+//            } else {
+//                SidebarItem(
+//                    data: "0",
+//                    help: "No versions saved yet",
+//                    icon: "square.grid.3x1.fill.below.line.grid.1x2"
+//                )
+//            }
+//
+//            FancyDivider()
             Title(text: "Context")
 //                FancyDivider()
 

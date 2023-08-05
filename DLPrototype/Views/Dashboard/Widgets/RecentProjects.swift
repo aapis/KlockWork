@@ -28,10 +28,9 @@ struct RecentProjects: View {
                     icon: "plus",
                     showLabel: false,
                     size: .small,
-                    redirect: AnyView(
-                        ProjectCreate()
-                    ),
-                    pageType: .projects
+                    redirect: AnyView(ProjectCreate()),
+                    pageType: .projects,
+                    sidebar: AnyView(ProjectsDashboardSidebar())
                 )
             }
             Divider()

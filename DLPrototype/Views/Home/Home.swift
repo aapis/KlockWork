@@ -58,7 +58,8 @@ struct Home: View {
                     destination: AnyView(ProjectsDashboard()),
                     pageType: .projects,
                     icon: "folder",
-                    label: "Projects"
+                    label: "Projects",
+                    sidebar: AnyView(ProjectsDashboardSidebar())
                 ),
                 SidebarButton(
                     destination: AnyView(JobDashboard()),

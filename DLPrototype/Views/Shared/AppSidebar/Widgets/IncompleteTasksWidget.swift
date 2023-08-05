@@ -14,17 +14,29 @@ struct IncompleteTasksWidget: View {
     @State private var minimized: Bool = false
     @State private var groupedTasks: Dictionary<Job, [LogTask]> = [:]
     @State private var query: String = ""
+    @State private var isSettingsPresented: Bool = false
 
     @FetchRequest public var resource: FetchedResults<LogTask>
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
 
+    @AppStorage("widget.incompleteTasks.showSearch") private var showSearch: Bool = true
+
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
                 FancySubTitle(text: "\(title)")
                 Spacer()
+                FancyButtonv2(
+                    text: "Settings",
+                    action: actionSettings,
+                    icon: "gear",
+                    showLabel: false,
+                    type: .white
+                )
+                .frame(width: 30, height: 30)
+                
                 FancyButtonv2(
                     text: "Minimize",
                     action: actionMinimize,
@@ -36,30 +48,38 @@ struct IncompleteTasksWidget: View {
             }
 
             if !minimized {
-                // TODO: move this to a new view
-                VStack {
-                    SearchBar(text: $query, disabled: minimized)
-                        .onChange(of: query, perform: search)
-                }
-
-                if groupedTasks.count > 0 {
-                    VStack(alignment: .leading, spacing: 0) {
-                        ForEach(Array(groupedTasks.keys.enumerated()), id: \.element) { index, key in
-                            TaskGroup(index: index, key: key, tasks: groupedTasks)
-                        }
-                        FancyDivider()
-                    }
-                } else {
-                    SidebarItem(
-                        data: "No tasks or jobs matching query",
-                        help: "No tasks or jobs matching query",
-                        role: .important
+                if isSettingsPresented {
+                    Settings(
+                        showSearch: $showSearch
                     )
+                } else {
+                    if showSearch {
+                        VStack {
+                            SearchBar(text: $query, disabled: minimized)
+                                .onChange(of: query, perform: search)
+                        }
+                    }
+
+                    if groupedTasks.count > 0 {
+                        VStack(alignment: .leading, spacing: 0) {
+                            ForEach(Array(groupedTasks.keys.enumerated()), id: \.element) { index, key in
+                                TaskGroup(index: index, key: key, tasks: groupedTasks)
+                            }
+                            FancyDivider()
+                        }
+                    } else {
+                        SidebarItem(
+                            data: "No tasks or jobs matching query",
+                            help: "No tasks or jobs matching query",
+                            role: .important
+                        )
+                    }
                 }
             }
         }
         .onAppear(perform: onAppear)
         .id(updater.ids["sidebar.today.incompleteTasksWidget"])
+        .font(Theme.font)
     }
 }
 
@@ -71,6 +91,12 @@ extension IncompleteTasksWidget {
     private func actionMinimize() -> Void {
         withAnimation {
             minimized.toggle()
+        }
+    }
+
+    private func actionSettings() -> Void {
+        withAnimation {
+            isSettingsPresented.toggle()
         }
     }
 
@@ -112,5 +138,24 @@ extension IncompleteTasksWidget {
     private func resetGroupedTasks() -> Void {
         // TODO: need to figure out how to sort this dictionary
         groupedTasks = Dictionary(grouping: resource, by: {$0.owner!})
+    }
+}
+
+extension IncompleteTasksWidget {
+    struct Settings: View {
+        @Binding public var showSearch: Bool
+
+        var body: some View {
+            ZStack(alignment: .leading) {
+                Theme.base.opacity(0.3)
+                
+                VStack(alignment: .leading) {
+                    Toggle("Show search bar", isOn: $showSearch)
+                    Spacer()
+                    FancyDivider()
+                }
+                .padding()
+            }
+        }
     }
 }

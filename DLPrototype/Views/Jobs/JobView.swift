@@ -82,11 +82,9 @@ struct JobView: View {
                 label: "Project: \(project.name!)",
                 showLabel: true,
                 colour: Color.fromStored(job!.project!.colour ?? Theme.rowColourAsDouble),
-                destination: AnyView(
-                    ProjectView(project: project)
-                        .environmentObject(jm)
-                ),
-                pageType: .projects
+                destination: AnyView(ProjectView(project: project)),
+                pageType: .projects,
+                sidebar: AnyView(ProjectsDashboardSidebar())
             )
         }
     }

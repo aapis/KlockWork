@@ -38,7 +38,6 @@ struct JobDashboard: View {
     @ViewBuilder
     var manage: some View {
         HStack {
-            Title(text: "Jobs")
             Spacer()
             FancyButtonv2(
                 text: "New job",

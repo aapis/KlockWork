@@ -97,4 +97,23 @@ public class CoreDataNotes {
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
+
+    static public func fetchNotes() -> FetchRequest<Note> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Note.mJob?.project?.id, ascending: false),
+            NSSortDescriptor(keyPath: \Note.mJob?.id, ascending: false),
+            NSSortDescriptor(keyPath: \Note.title, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<Note> = Note.fetchRequest()
+//        if let txt = text {
+//            fetch.predicate = NSPredicate(format: "alive == true && title CONTAINS[c] %s", txt.wrappedValue)
+//        } else {
+            fetch.predicate = NSPredicate(format: "alive == true")
+//        }
+        fetch.sortDescriptors = descriptors
+        fetch.fetchLimit = 1000
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
 }

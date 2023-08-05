@@ -14,7 +14,6 @@ struct TaskGroup: View {
     public var tasks: Dictionary<Job, [LogTask]>
 
     @State private var minimized: Bool = false
-    @State private var pinned: Bool = false
     
     var body: some View {
         let colour = Color.fromStored(key.colour ?? Theme.rowColourAsDouble)
@@ -26,20 +25,24 @@ struct TaskGroup: View {
                         text: project.name!,
                         action: minimize,
                         icon: minimized ? "plus" : "minus",
+                        fgColour: minimized ? (colour.isBright() ? .black : .white) : .white,
+                        showIcon: false,
                         size: .link
                     )
+
                     Spacer()
-//                    FancyButtonv2(
-//                        text: "Pin",
-//                        action: {},
-//                        icon: pinned ? "pin.circle" : "pin.circle.fill",
-//                        showLabel: false,
-//                        size: .link
-//                    )
+                    FancyButtonv2(
+                        text: project.name!,
+                        action: minimize,
+                        icon: minimized ? "plus" : "minus",
+                        fgColour: minimized ? (colour.isBright() ? .black : .white) : .white,
+                        showLabel: false,
+                        size: .link
+                    )
                 }
                 .padding(8)
             }
-            .background(Theme.base.opacity(0.3))
+            .background(minimized ? colour : Theme.base.opacity(0.3))
 
             if !minimized {
                 VStack(alignment: .leading, spacing: 5) {
@@ -65,7 +68,8 @@ struct TaskGroup: View {
                             showLabel: false,
                             size: .link,
                             redirect: AnyView(ProjectsDashboard()),
-                            pageType: .projects
+                            pageType: .projects,
+                            sidebar: AnyView(ProjectsDashboardSidebar())
                         )
 
                         FancyButtonv2(
