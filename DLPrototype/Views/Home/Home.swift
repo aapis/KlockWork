@@ -132,6 +132,7 @@ struct Home: View {
             selectedSidebarButton = buttonToHighlight
         }
         .onChange(of: nav.pageId!) { newUuid in
+            print("DERPO parent=\(nav.parent!)")
             updater.setOne(nav.parent!.ViewUpdaterKey, newUuid)
         }
     }

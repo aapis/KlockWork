@@ -13,7 +13,7 @@ struct JobDashboard: View {
     public var defaultSelectedJob: Job?
     
     @State private var selectedJob: Int = 0
-    @State private var job: Job?
+    @State private var job: Job? // TODO: refactor setJob + remove
     @State private var jobId: String = ""
     
     @Environment(\.managedObjectContext) var moc
@@ -25,13 +25,14 @@ struct JobDashboard: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
-                manage.onAppear(perform: setJob)
+                manage
 
                 Spacer()
             }
             .padding()
         }
         .background(Theme.toolbarColour)
+        .onAppear(perform: actionOnAppear)
         .id(updater.get("job.dashboard"))
     }
     
@@ -45,12 +46,13 @@ struct JobDashboard: View {
                 icon: "plus",
                 showLabel: false,
                 redirect: AnyView(JobCreate()),
-                pageType: .jobs
+                pageType: .jobs,
+                sidebar: AnyView(JobDashboardSidebar())
             )
         }
         
         VStack {
-            JobPickerUsing(onChange: change, jobId: $jobId)
+            JobPickerUsing(onChange: actionOnChange, jobId: $jobId)
                 .onAppear(perform: setJob)
                 .onChange(of: selectedJob) { _ in
                     setJob()
@@ -58,27 +60,31 @@ struct JobDashboard: View {
         }
 
         if !jobId.isEmpty {
-            JobView(job: $job).environmentObject(jm)
+            JobView(job: job!).environmentObject(jm)
+        } else {
+            Text("NO JOB")
         }
     }
     
     private func setJob() -> Void {
         if let def = defaultSelectedJob {
             job = def
+        } else if selectedJob > 0 {
+            job = jm.byId(Double(selectedJob))
         }
-        // TODO: this creates an inifinte loop lol
-//        else if selectedJob > 0 {
-//            job = jm.byId(Double(selectedJob))
-//        }
         
-        if job != nil {
-            jobId = job!.jid.string
+        if let jerb = job {
+            jobId = jerb.jid.string
         }
+        print("DERPO job=\(jobId)")
     }
     
-    private func change(selected: Int, sender: String?) -> Void {
+    private func actionOnChange(selected: Int, sender: String?) -> Void {
         selectedJob = selected
-        
+        setJob()
+    }
+
+    private func actionOnAppear() -> Void {
         setJob()
     }
 }

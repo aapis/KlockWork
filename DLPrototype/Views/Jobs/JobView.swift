@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 struct JobView: View {
-    @Binding public var job: Job?
+    public var job: Job
     
     @State private var id: String = ""
     @State private var pName: String = ""
@@ -28,26 +28,24 @@ struct JobView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            if job != nil {
-                topSpace
+            topSpace
 
-                fieldProjectLink
-                fieldIsOn
-                fieldIsShredable
+            fieldProjectLink
+            fieldIsOn
+            fieldIsShredable
 
-                FancyTextField(placeholder: "URL", lineLimit: 1, onSubmit: {}, showLabel: true, text: $url)
-                    .background(validUrl ? Color.clear : Color.red)
-                FancyTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, showLabel: true, text: $id)
-                    .background(validJob ? Color.clear : Color.red)
+            FancyTextField(placeholder: "URL", lineLimit: 1, onSubmit: {}, showLabel: true, text: $url)
+                .background(validUrl ? Color.clear : Color.red)
+            FancyTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, showLabel: true, text: $id)
+                .background(validJob ? Color.clear : Color.red)
 
-                
-                HStack {
-                    FancyRandomJobColourPicker(job: job!, colour: $colour)
-                    Spacer()
-                }
-                
-                buttonSubmit
+
+            HStack {
+                FancyRandomJobColourPicker(job: job, colour: $colour)
+                Spacer()
             }
+
+            buttonSubmit
         }
         .onAppear(perform: setEditableValues)
         .onChange(of: job) { _ in
@@ -76,12 +74,12 @@ struct JobView: View {
     }
     
     @ViewBuilder private var fieldProjectLink: some View {
-        if let project = job!.project {
+        if let project = job.project {
             FancyLink(
                 icon: "folder",
                 label: "Project: \(project.name!)",
                 showLabel: true,
-                colour: Color.fromStored(job!.project!.colour ?? Theme.rowColourAsDouble),
+                colour: Color.fromStored(job.project!.colour ?? Theme.rowColourAsDouble),
                 destination: AnyView(ProjectView(project: project)),
                 pageType: .projects,
                 sidebar: AnyView(ProjectsDashboardSidebar())
@@ -94,17 +92,15 @@ struct JobView: View {
         
         HStack {
             Toggle("Job is active", isOn: $alive)
-                .onAppear(perform: {
-                    if job != nil {
-                        if job!.alive {
-                            alive = true
-                        } else {
-                            alive = false
-                        }
-                        
-                        update()
-                    }
-                })
+//                .onAppear(perform: {
+//                    if job.alive {
+//                        alive = true
+//                    } else {
+//                        alive = false
+//                    }
+//
+//                    update()
+//                })
             Spacer()
         }
     }
@@ -112,17 +108,15 @@ struct JobView: View {
     @ViewBuilder private var fieldIsShredable: some View {
         HStack {
             Toggle("Eligible for SR&ED", isOn: $shredable)
-                .onAppear(perform: {
-                    if job != nil {
-                        if job!.shredable {
-                            shredable = true
-                        } else {
-                            shredable = false
-                        }
-                        
-                        update()
-                    }
-                })
+//                .onAppear(perform: {
+//                    if job.shredable {
+//                        shredable = true
+//                    } else {
+//                        shredable = false
+//                    }
+//
+//                    update()
+//                })
             Spacer()
         }
     }
@@ -143,38 +137,32 @@ struct JobView: View {
     }
     
     private func setEditableValues() -> Void {
-        if job != nil {
-            id = job!.jid.string
-            if job!.project != nil {
-                pName = job!.project!.name!
-                pId = String(job!.project!.pid)
-            }
-            
-            if job!.uri != nil {
-                url = job!.uri!.description
-            } else {
-                url = ""
-            }
+        id = job.jid.string
+        if job.project != nil {
+            pName = job.project!.name!
+            pId = String(job.project!.pid)
+        }
+
+        if job.uri != nil {
+            url = job.uri!.description
         } else {
-            print("[error] Attempting to edit NIL job")
+            url = ""
         }
     }
     
     private func update() -> Void {
-        if job != nil {
-            if !url.isEmpty {
-                job!.uri = URL(string: url)!
-            }
-            
-            if !id.isEmpty {
-                job!.jid = Double(id)!
-            }
-            
-            job?.alive = alive
-            job?.shredable = shredable
-            
-            PersistenceController.shared.save()
-            updater.update()
+        if !url.isEmpty {
+            job.uri = URL(string: url)!
         }
+
+        if !id.isEmpty {
+            job.jid = Double(id)!
+        }
+
+        job.alive = alive
+        job.shredable = shredable
+
+        PersistenceController.shared.save()
+        updater.update()
     }
 }
