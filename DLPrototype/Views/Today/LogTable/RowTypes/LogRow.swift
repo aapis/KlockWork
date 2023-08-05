@@ -234,8 +234,9 @@ struct LogRow: View, Identifiable {
                 }
                 
                 Button {
-                    nav.view = AnyView(JobDashboard(defaultSelectedJob: entry.jobObject!.jid).environmentObject(jm))
+                    nav.view = AnyView(JobDashboard(defaultSelectedJob: entry.jobObject!))
                     nav.parent = .jobs
+                    nav.sidebar = AnyView(JobDashboardSidebar())
                 } label: {
                     Text("Job")
                 }

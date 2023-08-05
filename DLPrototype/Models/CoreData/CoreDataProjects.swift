@@ -15,6 +15,31 @@ public class CoreDataProjects: ObservableObject {
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
     }
+
+    static public func recentProjectsWidgetData() -> FetchRequest<Project> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Project.lastUpdate?, ascending: false)
+        ]
+
+        let fetch: NSFetchRequest<Project> = Project.fetchRequest()
+        fetch.predicate = NSPredicate(format: "alive = true")
+        fetch.sortDescriptors = descriptors
+        fetch.fetchLimit = 10
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
+    static public func fetchProjects() -> FetchRequest<Project> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Project.lastUpdate?, ascending: false)
+        ]
+
+        let fetch: NSFetchRequest<Project> = Project.fetchRequest()
+        fetch.predicate = NSPredicate(format: "alive = true")
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
     
     public func byId(_ id: Int) -> Project? {
         let predicate = NSPredicate(
@@ -73,19 +98,6 @@ public class CoreDataProjects: ObservableObject {
         }
         
         return results
-    }
-
-    static public func recentProjectsWidgetData() -> FetchRequest<Project> {
-        let descriptors = [
-            NSSortDescriptor(keyPath: \Project.lastUpdate?, ascending: false)
-        ]
-
-        let fetch: NSFetchRequest<Project> = Project.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive = true")
-        fetch.sortDescriptors = descriptors
-        fetch.fetchLimit = 10
-
-        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
     private func query(_ predicate: NSPredicate? = nil) -> [Project] {

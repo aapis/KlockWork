@@ -79,7 +79,7 @@ struct TaskGroup: View {
                             fgColour: colour.isBright() ? .black : .white,
                             showLabel: false,
                             size: .link,
-                            redirect: AnyView(JobDashboard(defaultSelectedJob: key.jid)),
+                            redirect: AnyView(JobDashboard(defaultSelectedJob: key)),
                             pageType: .jobs,
                             sidebar: AnyView(JobDashboardSidebar())
                         )

@@ -45,7 +45,11 @@ struct NoteSearchWidget: View {
                             NoteRowPlain(note: note, moc: moc, icon: "star")
                         }
                     } else {
-                        Text("Create a note first")
+                        SidebarItem(
+                            data: "No notes matching query",
+                            help: "No notes matching query",
+                            role: .important
+                        )
                     }
                     FancyDivider()
                 }

@@ -101,7 +101,8 @@ struct JobCreate: View {
                 icon: "xmark",
                 showLabel: false,
                 redirect: AnyView(JobDashboard()),
-                pageType: .jobs
+                pageType: .jobs,
+                sidebar: AnyView(JobDashboardSidebar())
             )
             FancyButtonv2(
                 text: "Create",

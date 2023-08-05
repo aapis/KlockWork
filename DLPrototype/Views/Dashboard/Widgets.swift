@@ -24,7 +24,6 @@ struct WidgetLoading: View {
 }
 
 struct Widgets: View {
-    @AppStorage("dashboard.widget.history") public var showWidgetHistory: Bool = true
     @AppStorage("dashboard.widget.thisweek") public var showWidgetThisWeek: Bool = true
     @AppStorage("dashboard.widget.thismonth") public var showWidgetThisMonth: Bool = true
     @AppStorage("dashboard.widget.thisyear") public var showWidgetThisYear: Bool = true
@@ -44,12 +43,6 @@ struct Widgets: View {
             VStack(alignment: .leading) {
                 ScrollView(showsIndicators: false) {
                     LazyVGrid(columns: columns, alignment: .leading) {
-                        if showWidgetHistory {
-                            ThisDay()
-                                .environmentObject(crm)
-                                .environmentObject(ce)
-                        }
-
                         if showWidgetThisWeek {
                             ThisWeek()
                                 .environmentObject(crm)

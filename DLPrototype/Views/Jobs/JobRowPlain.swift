@@ -12,18 +12,17 @@ struct JobRowPlain: View {
     public var job: Job
 
     @EnvironmentObject public var nav: Navigation
-    @EnvironmentObject public var jm: CoreDataJob
 
     var body: some View {
         HStack(spacing: 1) {
             project
 
             ZStack(alignment: .leading) {
-                Color.clear
+                Color.fromStored(job.colour ?? Theme.rowColourAsDouble)
 
                 HStack {
                     Button {
-                        nav.view = AnyView(JobDashboard(defaultSelectedJob: job.jid))
+                        nav.view = AnyView(JobDashboard(defaultSelectedJob: job))
                         nav.parent = .jobs
                         nav.sidebar = AnyView(JobDashboardSidebar())
                     } label: {
@@ -46,6 +45,7 @@ struct JobRowPlain: View {
                         .padding([.trailing], 5)
                     }
                 }
+                .padding()
             }
         }
     }

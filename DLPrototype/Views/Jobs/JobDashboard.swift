@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 struct JobDashboard: View {
-    public var defaultSelectedJob: Double? = 0.0
+    public var defaultSelectedJob: Job?
     
     @State private var selectedJob: Int = 0
     @State private var job: Job?
@@ -56,18 +56,20 @@ struct JobDashboard: View {
                     setJob()
                 }
         }
-        
-        if selectedJob > 0 || defaultSelectedJob! > 0.0 || !jobId.isEmpty {
+
+        if !jobId.isEmpty {
             JobView(job: $job).environmentObject(jm)
         }
     }
     
     private func setJob() -> Void {
-        if defaultSelectedJob! > 0.0 {
-            job = jm.byId(defaultSelectedJob!)
-        } else if selectedJob > 0 {
-            job = jm.byId(Double(selectedJob))
+        if let def = defaultSelectedJob {
+            job = def
         }
+        // TODO: this creates an inifinte loop lol
+//        else if selectedJob > 0 {
+//            job = jm.byId(Double(selectedJob))
+//        }
         
         if job != nil {
             jobId = job!.jid.string

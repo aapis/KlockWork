@@ -11,7 +11,6 @@ import SwiftUI
 
 struct DashboardSettings: View {
     @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
-    @AppStorage("dashboard.widget.history") public var showWidgetHistory: Bool = true
     @AppStorage("dashboard.widget.thisweek") public var showWidgetThisWeek: Bool = true
     @AppStorage("dashboard.widget.thismonth") public var showWidgetThisMonth: Bool = true
     @AppStorage("dashboard.widget.thisyear") public var showWidgetThisYear: Bool = true
@@ -31,7 +30,6 @@ struct DashboardSettings: View {
             }
 
             Section("Widgets") {
-                Toggle("Show history", isOn: $showWidgetHistory)
                 Toggle("Show this week", isOn: $showWidgetThisWeek)
                 Toggle("Show this month", isOn: $showWidgetThisMonth)
                 Toggle("Show this year", isOn: $showWidgetThisYear)

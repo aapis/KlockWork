@@ -51,8 +51,7 @@ struct SidebarButton: View, Identifiable {
             }
         }, label: {
             ZStack {
-                Theme.toolbarColour
-                nav.parent == pageType ? Theme.tabActiveColour : Theme.tabColour
+                backgroundColour
 
                 if nav.parent != pageType {
                     HStack {
@@ -88,6 +87,19 @@ struct SidebarButton: View, Identifiable {
             }
 
             highlighted.toggle()
+        }
+    }
+
+    @ViewBuilder private var backgroundColour: some View {
+        Theme.toolbarColour
+        if nav.parent == pageType {
+            if let parent = nav.parent {
+                parent.colour
+            } else {
+                Theme.tabActiveColour
+            }
+        } else {
+            Theme.tabColour
         }
     }
 }

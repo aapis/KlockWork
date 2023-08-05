@@ -24,7 +24,7 @@ struct JobRow: View {
                 
                 HStack {
                     Button {
-                        nav.view = AnyView(JobDashboard(defaultSelectedJob: job.jid))
+                        nav.view = AnyView(JobDashboard(defaultSelectedJob: job))
                         nav.parent = .jobs
                         nav.sidebar = AnyView(JobDashboardSidebar())
                     } label: {

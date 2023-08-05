@@ -1,34 +1,27 @@
 //
-//  RecentJobsWidget.swift
+//  ProjectsWidget.swift
 //  DLPrototype
 //
-//  Created by Ryan Priebe on 2023-08-02.
+//  Created by Ryan Priebe on 2023-08-05.
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
 import SwiftUI
 
-struct RecentJobsWidget: View {
-    public let title: String = "Recent Jobs"
+struct ProjectsWidget: View {
+    public let title: String = "Projects"
 
     @State private var minimized: Bool = false
     @State private var query: String = ""
-    @State private var listItems: [Job] = []
+    @State private var listItems: [Project] = []
 
-    @FetchRequest public var resource: FetchedResults<Job>
+    @FetchRequest public var resource: FetchedResults<Project>
 
     @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var nav: Navigation
 
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                if let parent = nav.parent {
-                    if parent != .jobs {
-                        FancySubTitle(text: "Jobs")
-                    }
-                }
-
                 Spacer()
                 FancyButtonv2(
                     text: "Minimize",
@@ -41,14 +34,20 @@ struct RecentJobsWidget: View {
             }
 
             if !minimized {
-                VStack {
-                    SearchBar(text: $query, disabled: minimized, placeholder: "Search jobs...")
-                        .onChange(of: query, perform: actionOnSearch)
-                }
-                
+                SearchBar(text: $query, disabled: minimized, placeholder: "Search projects...")
+                    .onChange(of: query, perform: actionOnSearch)
+
                 VStack(alignment: .leading, spacing: 5) {
-                    ForEach(listItems) { job in
-                        JobRowPlain(job: job)
+                    if listItems.count > 0 {
+                        ForEach(listItems) { project in
+                            ProjectRowPlain(project: project)
+                        }
+                    } else {
+                        SidebarItem(
+                            data: "No projects matching query",
+                            help: "No projects matching query",
+                            role: .important
+                        )
                     }
                     FancyDivider()
                 }
@@ -58,29 +57,23 @@ struct RecentJobsWidget: View {
     }
 }
 
-extension RecentJobsWidget {
+extension ProjectsWidget {
     public init() {
-        _resource = CoreDataJob.fetchRecentJobs()
+        _resource = CoreDataProjects.fetchProjects()
     }
 
-    private func getRecent() -> [Job] {
-        var jobs: [Job] = []
+    private func getRecent() -> [Project] {
+        var projects: [Project] = []
 
         if resource.count > 0 {
             let items = resource[..<5]
 
             for item in items {
-                jobs.append(item)
+                projects.append(item)
             }
         }
 
-        return jobs
-    }
-    
-    private func actionMinimize() -> Void {
-        withAnimation {
-            minimized.toggle()
-        }
+        return projects
     }
 
     private func actionOnAppear() -> Void {
@@ -88,15 +81,15 @@ extension RecentJobsWidget {
     }
 
     private func actionOnSearch(term: String) -> Void {
-        if term.count > 1 {
+        if term.count > 3 {
             setListItems(
                 resource.filter {
-                    $0.jid.string.caseInsensitiveCompare(term) == .orderedSame
+                    $0.name?.caseInsensitiveCompare(term) == .orderedSame
                     ||
                     (
-                        $0.jid.string.contains(term)
+                        $0.name?.contains(term) ?? false
                         ||
-                        $0.jid.string.starts(with: term)
+                        $0.name?.starts(with: term) ?? false
                     )
                 }
             )
@@ -105,7 +98,13 @@ extension RecentJobsWidget {
         }
     }
 
-    private func setListItems(_ list: [Job]) -> Void {
+    private func actionMinimize() -> Void {
+        withAnimation {
+            minimized.toggle()
+        }
+    }
+
+    private func setListItems(_ list: [Project]) -> Void {
         listItems = list
     }
 }

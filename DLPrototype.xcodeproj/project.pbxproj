@@ -117,7 +117,6 @@
 		53B0BE90297333C3007CB663 /* ManageProjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8F297333C3007CB663 /* ManageProjects.swift */; };
 		53B0DC122A79D7FC00DA1679 /* NoteVersionNavigationWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0DC112A79D7FC00DA1679 /* NoteVersionNavigationWidget.swift */; };
 		53B446B72A7D8CB100FA79E5 /* TaskGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B446B62A7D8CB100FA79E5 /* TaskGroup.swift */; };
-		53C036EC29F884E600539C3C /* ThisDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C036EB29F884E600539C3C /* ThisDay.swift */; };
 		53C036EF29F8A59900539C3C /* DashboardSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C036EE29F8A59900539C3C /* DashboardSettings.swift */; };
 		53C3418C299960310071B855 /* JobDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418B299960310071B855 /* JobDashboard.swift */; };
 		53C3418E299968160071B855 /* JobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418D299968160071B855 /* JobView.swift */; };
@@ -130,6 +129,12 @@
 		53DFF075296F124E0051DA91 /* ManageTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DFF074296F124E0051DA91 /* ManageTasks.swift */; };
 		53E202562A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202552A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift */; };
 		53E202582A7E19B900B4DF70 /* NoteSearchWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202572A7E19B900B4DF70 /* NoteSearchWidget.swift */; };
+		53E2025A2A7EAE5B00B4DF70 /* ProjectsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202592A7EAE5B00B4DF70 /* ProjectsWidget.swift */; };
+		53E2025C2A7EAF6100B4DF70 /* ProjectRowPlain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E2025B2A7EAF6100B4DF70 /* ProjectRowPlain.swift */; };
+		53E2025E2A7EB20500B4DF70 /* SidebarWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E2025D2A7EB20500B4DF70 /* SidebarWidget.swift */; };
+		53E202612A7EC96D00B4DF70 /* DashboardSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202602A7EC96D00B4DF70 /* DashboardSidebar.swift */; };
+		53E202632A7ECC6500B4DF70 /* TodayInHistoryWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202622A7ECC6500B4DF70 /* TodayInHistoryWidget.swift */; };
+		53E202652A7ECE7A00B4DF70 /* DayInHistory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202642A7ECE7A00B4DF70 /* DayInHistory.swift */; };
 		53ECD0572971F8F400A09AAB /* CoreDataRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */; };
 		53EDDF9E29634852008D34C7 /* Entry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDF9D29634852008D34C7 /* Entry.swift */; };
 		53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */; };
@@ -288,7 +293,6 @@
 		53B0BE8F297333C3007CB663 /* ManageProjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageProjects.swift; sourceTree = "<group>"; };
 		53B0DC112A79D7FC00DA1679 /* NoteVersionNavigationWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteVersionNavigationWidget.swift; sourceTree = "<group>"; };
 		53B446B62A7D8CB100FA79E5 /* TaskGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskGroup.swift; sourceTree = "<group>"; };
-		53C036EB29F884E600539C3C /* ThisDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThisDay.swift; sourceTree = "<group>"; };
 		53C036EE29F8A59900539C3C /* DashboardSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardSettings.swift; sourceTree = "<group>"; };
 		53C3418B299960310071B855 /* JobDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDashboard.swift; sourceTree = "<group>"; };
 		53C3418D299968160071B855 /* JobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobView.swift; sourceTree = "<group>"; };
@@ -301,6 +305,12 @@
 		53DFF074296F124E0051DA91 /* ManageTasks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageTasks.swift; sourceTree = "<group>"; };
 		53E202552A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsDashboardSidebar.swift; sourceTree = "<group>"; };
 		53E202572A7E19B900B4DF70 /* NoteSearchWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteSearchWidget.swift; sourceTree = "<group>"; };
+		53E202592A7EAE5B00B4DF70 /* ProjectsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsWidget.swift; sourceTree = "<group>"; };
+		53E2025B2A7EAF6100B4DF70 /* ProjectRowPlain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectRowPlain.swift; sourceTree = "<group>"; };
+		53E2025D2A7EB20500B4DF70 /* SidebarWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarWidget.swift; sourceTree = "<group>"; };
+		53E202602A7EC96D00B4DF70 /* DashboardSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardSidebar.swift; sourceTree = "<group>"; };
+		53E202622A7ECC6500B4DF70 /* TodayInHistoryWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayInHistoryWidget.swift; sourceTree = "<group>"; };
+		53E202642A7ECE7A00B4DF70 /* DayInHistory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayInHistory.swift; sourceTree = "<group>"; };
 		53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataRecords.swift; sourceTree = "<group>"; };
 		53EDDF9D29634852008D34C7 /* Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entry.swift; sourceTree = "<group>"; };
 		53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPickerItem.swift; sourceTree = "<group>"; };
@@ -537,9 +547,11 @@
 		535C1ADF29F48EE600CD95FD /* Dashboard */ = {
 			isa = PBXGroup;
 			children = (
+				53E2025F2A7EC96300B4DF70 /* Sidebars */,
 				535C1AE429F48FBD00CD95FD /* Widgets */,
 				535C1AE029F48EF700CD95FD /* Dashboard.swift */,
 				535C1AE229F48F6800CD95FD /* Widgets.swift */,
+				53E202642A7ECE7A00B4DF70 /* DayInHistory.swift */,
 			);
 			path = Dashboard;
 			sourceTree = "<group>";
@@ -552,7 +564,6 @@
 				535C1AE729F4912800CD95FD /* ThisMonth.swift */,
 				535C1AE929F4913900CD95FD /* ThisYear.swift */,
 				535C1AEB29F4914900CD95FD /* Favourites.swift */,
-				53C036EB29F884E600539C3C /* ThisDay.swift */,
 				53FBCC912A63605300B88539 /* RecentProjects.swift */,
 				53FBCC932A63666400B88539 /* RecentJobs.swift */,
 				53790C112A74DD7C00D3FFD4 /* RecentTasks.swift */,
@@ -685,6 +696,7 @@
 				53B0DC102A79D7E200DA1679 /* Widgets */,
 				53790C022A72F18200D3FFD4 /* SidebarButton.swift */,
 				535DDE5D2A7982F3008350D4 /* SidebarItem.swift */,
+				53E2025D2A7EB20500B4DF70 /* SidebarWidget.swift */,
 			);
 			path = AppSidebar;
 			sourceTree = "<group>";
@@ -706,6 +718,7 @@
 				53B0BE8B297318A6007CB663 /* ProjectView.swift */,
 				53959A1C2973897F007A2549 /* ProjectConfig.swift */,
 				53F5896529983FD100843B32 /* ProjectRow.swift */,
+				53E2025B2A7EAF6100B4DF70 /* ProjectRowPlain.swift */,
 			);
 			path = Projects;
 			sourceTree = "<group>";
@@ -740,6 +753,8 @@
 				5371BA382A7B41E900DEEC21 /* StatisticsAndInformationWidget.swift */,
 				5371BA3A2A7B490C00DEEC21 /* IncompleteTasksWidget.swift */,
 				53E202572A7E19B900B4DF70 /* NoteSearchWidget.swift */,
+				53E202592A7EAE5B00B4DF70 /* ProjectsWidget.swift */,
+				53E202622A7ECC6500B4DF70 /* TodayInHistoryWidget.swift */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -809,6 +824,14 @@
 			isa = PBXGroup;
 			children = (
 				53E202552A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift */,
+			);
+			path = Sidebars;
+			sourceTree = "<group>";
+		};
+		53E2025F2A7EC96300B4DF70 /* Sidebars */ = {
+			isa = PBXGroup;
+			children = (
+				53E202602A7EC96D00B4DF70 /* DashboardSidebar.swift */,
 			);
 			path = Sidebars;
 			sourceTree = "<group>";
@@ -1002,15 +1025,18 @@
 				53F5896429983FA300843B32 /* ProjectResult.swift in Sources */,
 				53EDDF9E29634852008D34C7 /* Entry.swift in Sources */,
 				53C6D0912965044C00EA6129 /* DetailsColumn.swift in Sources */,
+				53E202632A7ECC6500B4DF70 /* TodayInHistoryWidget.swift in Sources */,
 				53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */,
 				535C1AE629F48FD500CD95FD /* ThisWeek.swift in Sources */,
 				53ECD0572971F8F400A09AAB /* CoreDataRecords.swift in Sources */,
 				53EFCE7929637F35004E45EC /* GeneralSettings.swift in Sources */,
 				5335A5B7296D2089000051B1 /* TaskListView.swift in Sources */,
 				533AB3F0296C9ED100E91A9F /* ManageNotes.swift in Sources */,
+				53E2025C2A7EAF6100B4DF70 /* ProjectRowPlain.swift in Sources */,
 				53561F8529F1FC7900D828AD /* ProjectPickerUsing.swift in Sources */,
 				5371BA222A7B1C9D00DEEC21 /* RecentNotesWidget.swift in Sources */,
 				5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */,
+				53E202652A7ECE7A00B4DF70 /* DayInHistory.swift in Sources */,
 				53B446B72A7D8CB100FA79E5 /* TaskGroup.swift in Sources */,
 				537628A02966518B00DE8ECF /* ToolbarTabs.swift in Sources */,
 				53FBCC922A63605300B88539 /* RecentProjects.swift in Sources */,
@@ -1076,10 +1102,10 @@
 				535C1AE329F48F6800CD95FD /* Widgets.swift in Sources */,
 				53C6D08F2964E25F00EA6129 /* Column.swift in Sources */,
 				532A7228298EE9E80038C18B /* FindDashboard.swift in Sources */,
-				53C036EC29F884E600539C3C /* ThisDay.swift in Sources */,
 				53C036EF29F8A59900539C3C /* DashboardSettings.swift in Sources */,
 				5371BA302A7B2A8800DEEC21 /* JobDashboardSidebar.swift in Sources */,
 				53759E0829678DC700DCDC4B /* Import.swift in Sources */,
+				53E2025A2A7EAE5B00B4DF70 /* ProjectsWidget.swift in Sources */,
 				532CF0DC2A12A14200710B67 /* EventRow.swift in Sources */,
 				5371BA282A7B264900DEEC21 /* NoteRowPlain.swift in Sources */,
 				535C1AE829F4912800CD95FD /* ThisMonth.swift in Sources */,
@@ -1089,6 +1115,7 @@
 				5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */,
 				53C6D0942965048500EA6129 /* DetailsRow.swift in Sources */,
 				5363B6802A6DE87000C2FBB8 /* View.swift in Sources */,
+				53E2025E2A7EB20500B4DF70 /* SidebarWidget.swift in Sources */,
 				5335A5B9296D2490000051B1 /* CoreDataTasks.swift in Sources */,
 				53218D4824B7F6EB0088ABE9 /* DLPrototype.swift in Sources */,
 				531B38FC29674EC400E74013 /* Title.swift in Sources */,
@@ -1111,6 +1138,7 @@
 				531E2F752A140533009CA230 /* CalendarToday.swift in Sources */,
 				537AEB9F29627DCC00385787 /* LogTable.swift in Sources */,
 				5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */,
+				53E202612A7EC96D00B4DF70 /* DashboardSidebar.swift in Sources */,
 				532A722F299037AC0038C18B /* RecordResult.swift in Sources */,
 				53F589602998335A00843B32 /* NoteRow.swift in Sources */,
 				53FBCC8E2A61D59B00B88539 /* FancyStaticTextField.swift in Sources */,
@@ -1294,7 +1322,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 123;
+				CURRENT_PROJECT_VERSION = 124;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -1329,7 +1357,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 123;
+				CURRENT_PROJECT_VERSION = 124;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;

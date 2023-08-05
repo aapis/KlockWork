@@ -19,6 +19,7 @@ struct IncompleteTasksWidget: View {
     @FetchRequest public var resource: FetchedResults<LogTask>
 
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
 
     @AppStorage("widget.incompleteTasks.showSearch") private var showSearch: Bool = true
@@ -26,7 +27,12 @@ struct IncompleteTasksWidget: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                FancySubTitle(text: "\(title)")
+                if let parent = nav.parent {
+                    if parent != .tasks {
+                        FancySubTitle(text: "Tasks")
+                    }
+                }
+
                 Spacer()
                 FancyButtonv2(
                     text: "Settings",
@@ -55,7 +61,7 @@ struct IncompleteTasksWidget: View {
                 } else {
                     if showSearch {
                         VStack {
-                            SearchBar(text: $query, disabled: minimized)
+                            SearchBar(text: $query, disabled: minimized, placeholder: "Search tasks...")
                                 .onChange(of: query, perform: search)
                         }
                     }
@@ -143,6 +149,8 @@ extension IncompleteTasksWidget {
 
 extension IncompleteTasksWidget {
     struct Settings: View {
+        private let title: String = "Widget Settings"
+        
         @Binding public var showSearch: Bool
 
         var body: some View {
@@ -150,6 +158,7 @@ extension IncompleteTasksWidget {
                 Theme.base.opacity(0.3)
                 
                 VStack(alignment: .leading) {
+                    FancySubTitle(text: title)
                     Toggle("Show search bar", isOn: $showSearch)
                     Spacer()
                     FancyDivider()

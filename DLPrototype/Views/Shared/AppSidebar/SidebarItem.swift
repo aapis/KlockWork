@@ -61,10 +61,15 @@ public enum ItemType {
     }
 }
 
+public enum ItemOrientation {
+    case left, right
+}
+
 struct SidebarItem: View {
     public var data: String
     public var help: String
     public var icon: String?
+    public var orientation: ItemOrientation = .left
     public var role: ItemRole = .standard
     public var type: ItemType = .standard
     public var action: (() -> Void)?
@@ -73,36 +78,12 @@ struct SidebarItem: View {
     
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
-            if let ic = icon {
-                ZStack(alignment: .topLeading) {
-                    if role != .important {
-                        role.colour.opacity(highlighted ? 0.15 : 0.08)
-                    } else {
-                        role.colour
-                    }
-
-                    Button(action: doAction) {
-                        Image(systemName: ic)
-                            .font(.title2)
-                            .frame(maxWidth: 30, maxHeight: 30)
-                    }
-                    .buttonStyle(.plain)
-//                    .useDefaultHover({_ in}) // TODO: this causes the cursor to stay off hover for some reason
-                }
-                .frame(width: type.iconFrameSize)
-            }
-
-            ZStack(alignment: .leading) {
-                if role != .important {
-                    role.colour.opacity(0.02)
-                } else {
-                    role.colour
-                }
-
-                Text(data)
-                    .help(help)
-                    .padding(type.padding)
-                    .fixedSize(horizontal: false, vertical: true)
+            if orientation == .left {
+                ItemIcon
+                ItemLabel
+            } else {
+                ItemLabel
+                ItemIcon
             }
         }
         .border(.black.opacity(0.2), width: 1)
@@ -116,6 +97,42 @@ struct SidebarItem: View {
             Button("Copy \(data)") {
                 ClipboardHelper.copy(data)
             }
+        }
+    }
+
+    @ViewBuilder private var ItemIcon: some View {
+        if let ic = icon {
+            ZStack(alignment: .center) {
+                if role != .important {
+                    role.colour.opacity(highlighted ? 0.15 : 0.08)
+                } else {
+                    role.colour
+                }
+
+                Button(action: doAction) {
+                    Image(systemName: ic)
+                        .font(.title2)
+                        .frame(maxWidth: 30, maxHeight: 30)
+                }
+                .buttonStyle(.plain)
+                .useDefaultHover({ inside in highlighted = inside})
+            }
+            .frame(width: type.iconFrameSize)
+        }
+    }
+
+    private var ItemLabel: some View {
+        ZStack(alignment: .leading) {
+            if role != .important {
+                role.colour.opacity(0.02)
+            } else {
+                role.colour
+            }
+
+            Text(data)
+                .help(help)
+                .padding(type.padding)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 }

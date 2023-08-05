@@ -29,7 +29,8 @@ struct Home: View {
                     destination: AnyView(Dashboard()),
                     pageType: .dashboard,
                     icon: "house",
-                    label: "Dashboard"
+                    label: "Dashboard",
+                    sidebar: AnyView(DashboardSidebar())
                 ),
                 SidebarButton(
                     destination: AnyView(Today()),
@@ -95,7 +96,12 @@ struct Home: View {
                 HStack(spacing: 0) {
                     if nav.sidebar != nil {
                         ZStack(alignment: .topLeading) {
-                            Theme.tabActiveColour
+                            if let parent = nav.parent {
+                                parent.colour
+                            } else {
+                                Theme.tabActiveColour
+                            }
+                            
                             VStack {
                                 // TODO: add sidebar show/hide functionality
 //                                Image(systemName: "sidebar.right")
@@ -109,7 +115,7 @@ struct Home: View {
                     }
 
                     nav.view
-                        .navigationTitle(nav.title)
+                        .navigationTitle(nav.pageTitle())
                         .environmentObject(nav)
                         .environmentObject(rm)
                         .environmentObject(crm)

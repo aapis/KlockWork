@@ -39,7 +39,11 @@ struct RecentNotesWidget: View {
                             NoteRowPlain(note: note, moc: moc)
                         }
                     } else {
-                        Text("Create a note first")
+                        SidebarItem(
+                            data: "Create a note first",
+                            help: "Create a note first",
+                            role: .important
+                        )
                     }
                     FancyDivider()
                 }

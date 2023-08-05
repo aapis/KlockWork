@@ -39,7 +39,11 @@ struct FavouriteNotesWidget: View {
                             NoteRowPlain(note: note, moc: moc, icon: "star")
                         }
                     } else {
-                        Text("Star notes to see them here")
+                        SidebarItem(
+                            data: "Star notes to see them here",
+                            help: "Star notes to see them here",
+                            role: .important
+                        )
                     }
                     FancyDivider()
                 }
