@@ -23,6 +23,7 @@ struct FancyLink: View {
     public var destination: AnyView?
     public var size: ButtonSize = .large
     public var pageType: Page = .dashboard
+    public var sidebar: AnyView? = nil
 
     @EnvironmentObject public var nav: Navigation
     
@@ -34,6 +35,7 @@ struct FancyLink: View {
             let button = Button {
                 nav.view = destination
                 nav.parent = pageType
+                nav.sidebar = sidebar
             } label: {
                 if showIcon && icon != nil {
                     Image(systemName: icon!)

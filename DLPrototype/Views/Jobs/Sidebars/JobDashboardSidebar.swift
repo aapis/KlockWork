@@ -10,11 +10,11 @@ import SwiftUI
 
 struct JobDashboardSidebar: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            ScrollView(showsIndicators: false) {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 5) {
+                Title(text: "Jobs")
                 RecentJobsWidget()
             }
-
             Spacer()
         }
         .padding()

@@ -44,7 +44,8 @@ struct ProjectCreate: View {
                         action: create,
                         size: .medium,
                         redirect: AnyView(ProjectsDashboard()),
-                        pageType: .projects
+                        pageType: .projects,
+                        sidebar: AnyView(ProjectsDashboardSidebar())
                     )
                 }
             }

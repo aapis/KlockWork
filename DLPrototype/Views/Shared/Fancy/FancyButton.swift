@@ -112,6 +112,21 @@ public enum ButtonType {
             return Color.gray
         }
     }
+
+    var activeColour: Color {
+        switch self {
+        case .primary:
+            return Theme.secondary
+        case .destructive:
+            return Theme.secondary
+        case .star:
+            return Theme.secondary
+        case .standard:
+            return Theme.secondary
+        case .white:
+            return Theme.secondary
+        }
+    }
 }
 
 public struct FancyButtonv2: View {
@@ -132,6 +147,7 @@ public struct FancyButtonv2: View {
 
     @State private var padding: CGFloat = 10
     @State private var highlighted: Bool = false
+    @State private var active: Bool = false
 
     public var body: some View {
         VStack {
@@ -151,7 +167,10 @@ public struct FancyButtonv2: View {
                 }
                 .buttonStyle(.plain)
             } else {
-                Button(action: action) {
+                Button(action: {
+                    active.toggle()
+                    action()
+                }) {
                     button
                 }
                 .buttonStyle(.plain)
@@ -162,10 +181,14 @@ public struct FancyButtonv2: View {
     private var button: some View {
         ZStack(alignment: size == .link ? .topLeading : .center) {
             if size != .link {
-                if highlighted {
-                    HighlightedBackground
+                if active {
+                    ActiveBackground
                 } else {
-                    Background
+                    if highlighted {
+                        HighlightedBackground
+                    } else {
+                        Background
+                    }
                 }
             } else {
                 Color.clear
@@ -176,18 +199,16 @@ public struct FancyButtonv2: View {
                     Image(systemName: icon!)
                         .symbolRenderingMode(.hierarchical)
                         .font(.title2)
-                        .foregroundColor(fgColour != nil ? fgColour : type.textColour)
                 }
 
                 if showLabel! {
                     Text(text)
-                        .foregroundColor(fgColour != nil ? fgColour : type.textColour)
                 }
             }
             .padding(size == .link ? 0 : 5)
         }
         .frame(maxWidth: buttonFrameWidth(), maxHeight: 40)
-        .foregroundColor(Color.white)
+        .foregroundColor(fgColour == nil ? type.textColour : fgColour)
         .font(size == .link ? .body : .title3)
         .help(text)
         .underline(size == .link && highlighted)
@@ -207,6 +228,18 @@ public struct FancyButtonv2: View {
         ZStack {
             type.colours.first
             LinearGradient(gradient: Gradient(colors: type.colours), startPoint: .top, endPoint: .bottom)
+                .blendMode(.softLight)
+                .opacity(0.3)
+        }
+        .mask(
+            RoundedRectangle(cornerRadius: 3)
+        )
+    }
+
+    private var ActiveBackground: some View {
+        ZStack {
+            type.activeColour
+            LinearGradient(gradient: Gradient(colors: [type.activeColour, .black]), startPoint: .top, endPoint: .bottom)
                 .blendMode(.softLight)
                 .opacity(0.3)
         }

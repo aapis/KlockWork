@@ -177,7 +177,8 @@ extension NoteView {
                         icon: "trash",
                         showLabel: false,
                         type: .destructive,
-                        redirect: AnyView(NoteDashboard())
+                        redirect: AnyView(NoteDashboard()),
+                        sidebar: AnyView(NoteDashboardSidebar())
                     )
                     
                     Spacer()
@@ -186,7 +187,8 @@ extension NoteView {
                         action: {},
                         icon: "xmark",
                         showLabel: false,
-                        redirect: AnyView(NoteDashboard())
+                        redirect: AnyView(NoteDashboard()),
+                        sidebar: AnyView(NoteDashboardSidebar())
                     )
                     if ref.revisionNotLatest() {
                         FancyButtonv2(text: "Restore", action: update, size: .medium, type: .primary)

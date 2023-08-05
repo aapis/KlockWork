@@ -38,7 +38,6 @@ struct ProjectsDashboard: View {
     @ViewBuilder
     var create: some View {
         HStack {
-            Title(text: "Projects")
             Spacer()
             FancyButtonv2(
                 text: "New project",
@@ -46,7 +45,8 @@ struct ProjectsDashboard: View {
                 icon: "plus",
                 showLabel: false,
                 redirect: AnyView(ProjectCreate()),
-                pageType: .projects
+                pageType: .projects,
+                sidebar: AnyView(ProjectsDashboardSidebar())
             )
         }
     }

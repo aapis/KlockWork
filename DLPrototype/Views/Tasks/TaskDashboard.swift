@@ -28,16 +28,6 @@ struct TaskDashboard: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
-                HStack {
-                    Title(text: "Tasks")
-                    Spacer()
-                    // Other entity views have a button here but tasks are created inline for this one, so this spacer
-                    // is for visual consistency only
-                    Rectangle()
-                        .frame(width: 40, height: 40)
-                        .opacity(0)
-                }
-
                 search.font(Theme.font)
                 create
 
@@ -104,7 +94,7 @@ struct TaskDashboard: View {
     var create: some View {
         if searchText == "" {
             FancyDivider()
-            
+
             if selectedJob == 0 {
                 HStack {
                     FancySubTitle(text: "Choose a job to get started")

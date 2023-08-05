@@ -26,6 +26,8 @@ struct Title: View {
                     Text(text)
                         .font(Theme.fontTitle)
                 }
+
+
             }
             .padding(3)
             .background(Theme.tabActiveColour)

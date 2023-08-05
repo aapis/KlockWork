@@ -1,20 +1,18 @@
 //
-//  NoteDashboardSidebar.swift
+//  ProjectsDashboardSidebar.swift
 //  DLPrototype
 //
-//  Created by Ryan Priebe on 2023-08-02.
+//  Created by Ryan Priebe on 2023-08-04.
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
 import SwiftUI
 
-struct NoteDashboardSidebar: View {
+struct ProjectsDashboardSidebar: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 5) {
-                Title(text: "Notes")
-//                NoteSearchWidget()
-                FavouriteNotesWidget()
+                Title(text: "Projects")
                 RecentNotesWidget()
             }
             Spacer()
@@ -22,3 +20,4 @@ struct NoteDashboardSidebar: View {
         .padding()
     }
 }
+
