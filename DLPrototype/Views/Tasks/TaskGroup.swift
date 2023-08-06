@@ -14,6 +14,8 @@ struct TaskGroup: View {
     public var tasks: Dictionary<Job, [LogTask]>
 
     @State private var minimized: Bool = false
+
+    @AppStorage("widget.tasks.minimizeAll") private var minimizeAll: Bool = false
     
     var body: some View {
         let colour = Color.fromStored(key.colour ?? Theme.rowColourAsDouble)
@@ -43,6 +45,7 @@ struct TaskGroup: View {
                 .padding(8)
             }
             .background(minimized ? colour : Theme.base.opacity(0.3))
+            .onAppear(perform: actionOnAppear)
 
             if !minimized {
                 VStack(alignment: .leading, spacing: 5) {
@@ -107,5 +110,9 @@ extension TaskGroup {
         withAnimation {
             minimized.toggle()
         }
+    }
+
+    private func actionOnAppear() -> Void {
+        minimized = minimizeAll
     }
 }

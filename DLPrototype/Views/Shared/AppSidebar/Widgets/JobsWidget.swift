@@ -74,12 +74,17 @@ extension JobsWidget {
 
     private func getRecent() -> [Job] {
         var jobs: [Job] = []
+        let max = 5
 
         if resource.count > 0 {
-            let items = resource[..<5]
-
-            for item in items {
-                jobs.append(item)
+            if resource.count < max {
+                for item in resource {
+                    jobs.append(item)
+                }
+            } else {
+                for item in resource[..<5] {
+                    jobs.append(item)
+                }
             }
         }
 

@@ -30,7 +30,6 @@ struct JobRowPlain: View {
         }
     }
 
-    // TODO: remove?
     @ViewBuilder var project: some View {
         Group {
             HStack(spacing: 0) {

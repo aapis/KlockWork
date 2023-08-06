@@ -30,19 +30,14 @@ public class CoreDataJob: ObservableObject {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
-    static public func fetchAll(limit: Int? = 10, onlyAlive: Bool = true) -> FetchRequest<Job> {
-        let descriptors = [
-            NSSortDescriptor(keyPath: \Job.project?, ascending: false),
-            NSSortDescriptor(keyPath: \Job.lastUpdate?, ascending: false)
-        ]
-
+    static public func fetchAll(limit: Int? = 10) -> FetchRequest<Job> {
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
-
-        if onlyAlive {
-            fetch.predicate = NSPredicate(format: "alive == true")
-        }
-
-        fetch.sortDescriptors = descriptors
+        fetch.predicate = NSPredicate(format: "alive == true")
+        fetch.sortDescriptors = [
+            NSSortDescriptor(keyPath: \Job.project?, ascending: false),
+            NSSortDescriptor(keyPath: \Job.lastUpdate?, ascending: false),
+            NSSortDescriptor(keyPath: \Job.jid, ascending: false)
+        ]
 
         if let lim = limit {
             fetch.fetchLimit = lim
@@ -51,20 +46,17 @@ public class CoreDataJob: ObservableObject {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
-//    static public func fetchAll() -> FetchRequest<Job> {
-//        let descriptors = [
-//            NSSortDescriptor(keyPath: \Job.lastUpdate?, ascending: false)
-//        ]
-//
-//        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
-//        fetch.sortDescriptors = descriptors
-//
-//        if let lim = limit {
-//            fetch.fetchLimit = lim
-//        }
-//
-//        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
-//    }
+    public func getRecentlyUsed(records: FetchedResults<LogRecord>) -> [Job] {
+        var jobs: Set<Job> = []
+
+        for rec in records {
+            if let job = rec.job {
+                jobs.insert(job)
+            }
+        }
+
+        return jobs.sorted {$0.project!.pid > $1.project!.pid}
+    }
     
     public func getDefault() -> Job? {
         if let job = byId(11.0) {

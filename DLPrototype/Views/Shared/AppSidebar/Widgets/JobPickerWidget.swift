@@ -14,8 +14,13 @@ struct JobPickerWidget: View {
     @State private var minimized: Bool = false
     @State private var query: String = ""
     @State private var listItems: [Job] = []
+    @State private var grouped: Dictionary<Project, [Job]> = [:]
+    @State private var isSettingsPresented: Bool = false
 
-    @FetchRequest public var resource: FetchedResults<Job>
+    @FetchRequest public var resource: FetchedResults<LogRecord>
+
+    @AppStorage("widget.jobpicker.showSearch") private var showSearch: Bool = true
+    @AppStorage("widget.jobpicker.minimizeAll") private var minimizeAll: Bool = false
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
@@ -25,11 +30,20 @@ struct JobPickerWidget: View {
             HStack {
                 if let parent = nav.parent {
                     if parent != .jobs {
-                        FancySubTitle(text: "Jobs")
+                        FancySubTitle(text: title)
                     }
                 }
 
                 Spacer()
+                FancyButtonv2(
+                    text: "Settings",
+                    action: actionSettings,
+                    icon: "gear",
+                    showLabel: false,
+                    type: .white
+                )
+                .frame(width: 30, height: 30)
+
                 FancyButtonv2(
                     text: "Minimize",
                     action: actionMinimize,
@@ -41,25 +55,35 @@ struct JobPickerWidget: View {
             }
 
             if !minimized {
-                VStack {
-                    SearchBar(text: $query, disabled: minimized, placeholder: "Job ID or URL")
-                        .onChange(of: query, perform: actionOnSearch)
-                }
-
-                VStack(alignment: .leading, spacing: 5) {
-                    if listItems.count > 0 {
-                        ForEach(listItems) { job in
-                            JobRowPlain(job: job)
+                if isSettingsPresented {
+                    Settings(
+                        showSearch: $showSearch,
+                        minimizeAll: $minimizeAll
+                    )
+                } else {
+                    if showSearch {
+                        VStack {
+                            SearchBar(text: $query, disabled: minimized, placeholder: "Job ID or URL")
+                                .onChange(of: query, perform: actionOnSearch)
                         }
-                    } else {
-                        SidebarItem(
-                            data: "No jobs matching query",
-                            help: "No jobs matching query",
-                            role: .important
-                        )
+                        
+                        VStack(alignment: .leading, spacing: 0) {
+                            if grouped.count > 0 {
+                                ForEach(Array(grouped.keys.enumerated()), id: \.element) { index, key in
+                                    JobProjectGroup(index: index, key: key, jobs: grouped)
+                                }
+                                FancyDivider()
+                            } else {
+                                SidebarItem(
+                                    data: "No jobs matching query",
+                                    help: "No jobs matching query",
+                                    role: .important
+                                )
+                            }
+                            
+                            FancyDivider()
+                        }
                     }
-
-                    FancyDivider()
                 }
             }
         }
@@ -69,21 +93,19 @@ struct JobPickerWidget: View {
 
 extension JobPickerWidget {
     public init() {
-        _resource = CoreDataJob.fetchAll()
+        _resource = CoreDataRecords.fetchRecent()
     }
 
-    private func getRecent() -> [Job] {
-        var jobs: [Job] = []
+    private func actionOnAppear() -> Void {
+        let recent = CoreDataJob(moc: moc).getRecentlyUsed(records: resource)
 
-        if resource.count > 0 {
-            let items = resource[..<5]
+        grouped = Dictionary(grouping: recent, by: {$0.project!})
+    }
 
-            for item in items {
-                jobs.append(item)
-            }
+    private func actionSettings() -> Void {
+        withAnimation {
+            isSettingsPresented.toggle()
         }
-
-        return jobs
     }
 
     private func actionMinimize() -> Void {
@@ -92,41 +114,59 @@ extension JobPickerWidget {
         }
     }
 
-    private func actionOnAppear() -> Void {
-        setListItems(getRecent())
-    }
-
     private func actionOnSearch(term: String) -> Void {
         if term.count > 1 {
-            setListItems(
-                resource.filter {
-                    (
-                        $0.jid.string.caseInsensitiveCompare(term) == .orderedSame
-                        ||
-                        (
-                            $0.jid.string.contains(term)
-                            ||
-                            $0.jid.string.starts(with: term)
-                        )
-                    )
+            var filtered = grouped.filter {
+                (
+                    $0.value.contains(where: {$0.jid.string.caseInsensitiveCompare(term) == .orderedSame})
                     ||
                     (
-                        $0.uri?.absoluteString.caseInsensitiveCompare(term) == .orderedSame
+                        $0.value.contains(where: {$0.jid.string.starts(with: term)})
+                    )
+                )
+            }
+
+            if term.starts(with: "https://") { 
+                filtered = grouped.filter {
+                    (
+                        $0.value.contains(where: {$0.uri?.absoluteString.caseInsensitiveCompare(term) == .orderedSame})
                         ||
                         (
-                            $0.uri?.absoluteString.contains(term) ?? false
+                            $0.value.contains(where: {$0.uri?.absoluteString.contains(term) ?? false})
                             ||
-                            $0.uri?.absoluteString.starts(with: term) ?? false
+                            $0.value.contains(where: {$0.uri?.absoluteString.starts(with: term) ?? false})
                         )
                     )
                 }
-            )
+            }
+
+            grouped = filtered
         } else {
-            setListItems(getRecent())
+            actionOnAppear()
         }
     }
+}
 
-    private func setListItems(_ list: [Job]) -> Void {
-        listItems = list
+extension JobPickerWidget {
+    struct Settings: View {
+        private let title: String = "Widget Settings"
+
+        @Binding public var showSearch: Bool
+        @Binding public var minimizeAll: Bool
+
+        var body: some View {
+            ZStack(alignment: .leading) {
+                Theme.base.opacity(0.3)
+
+                VStack(alignment: .leading) {
+                    FancySubTitle(text: title)
+                    Toggle("Show search bar", isOn: $showSearch)
+                    Toggle("Minimize all groups", isOn: $minimizeAll)
+                    Spacer()
+                    FancyDivider()
+                }
+                .padding()
+            }
+        }
     }
 }

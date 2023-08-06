@@ -76,6 +76,22 @@ public class CoreDataRecords: ObservableObject {
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
+
+    static public func fetchRecent() -> FetchRequest<LogRecord> {
+        let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
+        fetch.sortDescriptors = [
+            NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)
+        ]
+
+        let date = DateHelper.daysPast(14)
+
+        fetch.predicate = NSPredicate(
+            format: "alive == true && timestamp >= %@",
+            date
+        )
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
     
     public func createWithJob(job: Job, date: Date, text: String) -> Void {
         let record = LogRecord(context: moc!)

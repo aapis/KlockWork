@@ -22,7 +22,8 @@ struct TasksWidget: View {
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
 
-    @AppStorage("widget.incompleteTasks.showSearch") private var showSearch: Bool = true
+    @AppStorage("widget.tasks.showSearch") private var showSearch: Bool = true
+    @AppStorage("widget.tasks.minimizeAll") private var minimizeAll: Bool = false
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -56,7 +57,8 @@ struct TasksWidget: View {
             if !minimized {
                 if isSettingsPresented {
                     Settings(
-                        showSearch: $showSearch
+                        showSearch: $showSearch,
+                        minimizeAll: $minimizeAll
                     )
                 } else {
                     if showSearch {
@@ -152,6 +154,7 @@ extension TasksWidget {
         private let title: String = "Widget Settings"
         
         @Binding public var showSearch: Bool
+        @Binding public var minimizeAll: Bool
 
         var body: some View {
             ZStack(alignment: .leading) {
@@ -160,6 +163,7 @@ extension TasksWidget {
                 VStack(alignment: .leading) {
                     FancySubTitle(text: title)
                     Toggle("Show search bar", isOn: $showSearch)
+                    Toggle("Minimize all groups", isOn: $minimizeAll)
                     Spacer()
                     FancyDivider()
                 }
