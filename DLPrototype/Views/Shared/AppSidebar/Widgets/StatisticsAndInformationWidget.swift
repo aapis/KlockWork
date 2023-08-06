@@ -11,7 +11,7 @@ import SwiftUI
 struct StatisticsAndInformationWidget: View {
     public let title: String = "Information"
 
-    @State private var minimized: Bool = true
+    @State private var minimized: Bool = false
 
     @Binding public var date: Date
 

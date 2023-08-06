@@ -80,8 +80,6 @@ struct JobPickerWidget: View {
                                     role: .important
                                 )
                             }
-                            
-                            FancyDivider()
                         }
                     }
                 }

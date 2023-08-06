@@ -16,7 +16,6 @@ struct DashboardSidebar: View {
             VStack(alignment: .leading, spacing: 5) {
                 Title(text: "Dashboard")
                 TodayInHistoryWidget()
-                JobPickerWidget()
             }
             Spacer()
         }
