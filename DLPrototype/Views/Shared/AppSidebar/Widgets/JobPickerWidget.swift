@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct JobPickerWidget: View {
-    public let title: String = "Recent Jobs"
+    public let title: String = "Recently Used Jobs"
 
     @State private var minimized: Bool = false
     @State private var query: String = ""

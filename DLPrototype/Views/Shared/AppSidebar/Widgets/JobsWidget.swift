@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct JobsWidget: View {
-    public let title: String = "Recent Jobs"
+    public let title: String = "Find Jobs"
 
     @State private var minimized: Bool = false
     @State private var query: String = ""
@@ -25,7 +25,7 @@ struct JobsWidget: View {
             HStack {
                 if let parent = nav.parent {
                     if parent != .jobs {
-                        FancySubTitle(text: "Jobs")
+                        FancySubTitle(text: title)
                     }
                 }
 

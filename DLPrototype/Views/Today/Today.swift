@@ -37,6 +37,7 @@ struct Today: View {
         .defaultAppStorage(.standard)
         .background(Theme.toolbarColour)
         .onAppear(perform: onAppear)
+        .onChange(of: nav.job, perform: actionOnChangeJob)
     }
     
     // MARK: Editor view
@@ -92,9 +93,81 @@ struct Today: View {
             .environmentObject(ce)
             .environmentObject(nav)
     }
+}
 
-    public func appSidebar() -> AnyView? {
-        return nil
+extension Today {
+    private func onAppear() -> Void {
+        let todaysRecords = LogRecords(moc: moc).forDate(Date())
+        if let record = todaysRecords.first {
+            let rounded = record.job!.jid.rounded(.toNearestOrEven)
+            jobId = String(Int(exactly: rounded) ?? 0)
+        }
+
+        if showExperimentalFeatures {
+            if autoFixJobs {
+                AutoFixJobs.run(records: todaysRecords, context: moc)
+            }
+        }
+    }
+
+    private func actionOnChangeJob(job: Job?) -> Void {
+        print("DERPO changed job nav=\(nav)")
+        if let jerb = job {
+            let rounded = jerb.jid.rounded(.toNearestOrEven)
+            jobId = String(Int(exactly: rounded) ?? 0)
+        }
+    }
+
+    private func reloadUi() -> Void {
+        updater.updateOne("today.table")
+        updater.updateOne("today.picker")
+    }
+
+    private func submitAction() -> Void {
+        if !text.isEmpty && (!jobId.isEmpty || !taskUrl.isEmpty) {
+            var jid: Double = 0.0
+            if let newUrl = URL(string: taskUrl) {
+                jid = UrlHelper.parts(of: newUrl).jid_double!
+            } else {
+                jid = Double(jobId)!
+            }
+
+            let record = LogRecord(context: moc)
+            record.timestamp = Date()
+            record.message = text
+            record.alive = true
+            record.id = UUID()
+
+            let match = CoreDataJob(moc: moc).byId(jid)
+
+            if match == nil {
+                let job = Job(context: moc)
+                job.jid = jid
+                job.id = UUID()
+                job.records = NSSet(array: [record])
+                job.colour = Color.randomStorable()
+                job.created = Date()
+                job.lastUpdate = Date()
+
+                if !taskUrl.isEmpty && isUrl {
+                    job.uri = URL(string: taskUrl)
+                }
+
+                record.job = job
+            } else {
+                record.job = match
+                match?.lastUpdate = Date()
+            }
+
+            // clear input fields
+            text = ""
+            taskUrl = ""
+            // redraw the views that need to be updated
+            reloadUi()
+            PersistenceController.shared.save()
+        } else {
+            print("[error] Message, job ID OR task URL are required to submit")
+        }
     }
 
     // TODO: convert to current in progress event status update UX/UI
@@ -129,79 +202,4 @@ struct Today: View {
 //            reloadUi()
 //        }
 //    }
-    
-    private func onAppear() -> Void {
-        let todaysRecords = LogRecords(moc: moc).forDate(Date())
-        if let record = todaysRecords.first {
-            let rounded = record.job!.jid.rounded(.toNearestOrEven)
-            jobId = String(Int(exactly: rounded) ?? 0)
-        }
-
-        if showExperimentalFeatures {
-            if autoFixJobs {
-                AutoFixJobs.run(records: todaysRecords, context: moc)
-            }
-        }
-    }
-
-    public func reloadUi() -> Void {
-        updater.updateOne("today.table")
-        updater.updateOne("today.picker")
-    }
-    
-    private func submitAction() -> Void {
-        if !text.isEmpty && (!jobId.isEmpty || !taskUrl.isEmpty) {
-            var jid: Double = 0.0
-            if let newUrl = URL(string: taskUrl) {
-                jid = UrlHelper.parts(of: newUrl).jid_double!
-            } else {
-                jid = Double(jobId)!
-            }
-
-            let record = LogRecord(context: moc)
-            record.timestamp = Date()
-            record.message = text
-            record.alive = true
-            record.id = UUID()
-
-            let match = CoreDataJob(moc: moc).byId(jid)
-
-            if match == nil {
-                let job = Job(context: moc)
-                job.jid = jid
-                job.id = UUID()
-                job.records = NSSet(array: [record])
-                job.colour = Color.randomStorable()
-                job.created = Date()
-                job.lastUpdate = Date()
-                
-                if !taskUrl.isEmpty && isUrl {
-                    job.uri = URL(string: taskUrl)
-                }
-                
-                record.job = job
-            } else {
-                record.job = match
-                match?.lastUpdate = Date()
-            }
-            
-            // clear input fields
-            text = ""
-            taskUrl = ""
-            // redraw the views that need to be updated
-            reloadUi()
-            PersistenceController.shared.save()
-        } else {
-            print("[error] Message, job ID OR task URL are required to submit")
-        }
-    }
-}
-
-struct TodayPreview: PreviewProvider {
-    static var previews: some View {
-        Today()
-            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-            .environmentObject(LogRecords(moc: PersistenceController.preview.container.viewContext))
-            .frame(width: 800, height: 800)
-    }
 }

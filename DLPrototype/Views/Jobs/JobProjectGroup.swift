@@ -56,7 +56,7 @@ struct JobProjectGroup: View {
 
                         VStack(alignment: .leading, spacing: 0) {
                             ForEach(subtasks) { job in
-                                JobRowPlain(job: job)
+                                JobRowPicker(job: job)
                             }
                         }
                     }

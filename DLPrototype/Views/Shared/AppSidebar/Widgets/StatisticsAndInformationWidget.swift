@@ -11,7 +11,7 @@ import SwiftUI
 struct StatisticsAndInformationWidget: View {
     public let title: String = "Information"
 
-    @State private var minimized: Bool = false
+    @State private var minimized: Bool = true
 
     @Binding public var date: Date
 
@@ -23,7 +23,7 @@ struct StatisticsAndInformationWidget: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                FancySubTitle(text: "\(title)")
+                FancySubTitle(text: title)
                 Spacer()
                 FancyButtonv2(
                     text: "Minimize",

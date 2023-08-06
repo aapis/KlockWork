@@ -81,6 +81,7 @@ public class Navigation: Identifiable, ObservableObject {
     @Published public var sidebar: AnyView? = AnyView(DashboardSidebar())
     @Published public var title: String? = ""
     @Published public var pageId: UUID? = UUID()
+    @Published public var job: Job? = nil
 
     public func pageTitle() -> String {
         if title!.isEmpty {
@@ -115,10 +116,16 @@ public class Navigation: Identifiable, ObservableObject {
         pageId = UUID()
     }
 
+    public func setJob(_ newJob: Job) -> Void {
+        job = nil
+        job = newJob
+    }
+
     public func reset() -> Void {
         parent = .dashboard
         view = nil
         sidebar = nil
+        job = nil
         setId()
     }
 }
