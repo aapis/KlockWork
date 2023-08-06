@@ -27,6 +27,7 @@ struct JobRow: View {
                         nav.view = AnyView(JobDashboard(defaultSelectedJob: job))
                         nav.parent = .jobs
                         nav.sidebar = AnyView(JobDashboardSidebar())
+                        nav.pageId = UUID()
                     } label: {
                         Text(job.jid.string)
                             .foregroundColor(colour.isBright() ? Color.black : Color.white)

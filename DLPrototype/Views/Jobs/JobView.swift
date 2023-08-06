@@ -69,8 +69,6 @@ struct JobView: View {
     
     @ViewBuilder private var topSpace: some View {
         FancyDivider()
-        Divider()
-        FancyDivider()
     }
     
     @ViewBuilder private var fieldProjectLink: some View {

@@ -21,6 +21,7 @@ struct Home: View {
     @StateObject public var cvm: CoreDataNoteVersions = CoreDataNoteVersions(moc: PersistenceController.shared.container.viewContext)
     
     @State public var selectedSidebarButton: Page = .dashboard
+    @State public var selectedJob: Job?
 
     private var buttons: [PageGroup: [SidebarButton]] {
         [
@@ -132,7 +133,7 @@ struct Home: View {
             selectedSidebarButton = buttonToHighlight
         }
         .onChange(of: nav.pageId!) { newUuid in
-            print("DERPO parent=\(nav.parent!)")
+//            print("DERPO parent=\(nav.parent!)")
             updater.setOne(nav.parent!.ViewUpdaterKey, newUuid)
         }
     }

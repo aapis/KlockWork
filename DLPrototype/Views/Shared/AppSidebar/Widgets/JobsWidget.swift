@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct RecentJobsWidget: View {
+struct JobsWidget: View {
     public let title: String = "Recent Jobs"
 
     @State private var minimized: Bool = false
@@ -42,14 +42,23 @@ struct RecentJobsWidget: View {
 
             if !minimized {
                 VStack {
-                    SearchBar(text: $query, disabled: minimized, placeholder: "Search jobs...")
+                    SearchBar(text: $query, disabled: minimized, placeholder: "Job ID or URL")
                         .onChange(of: query, perform: actionOnSearch)
                 }
                 
                 VStack(alignment: .leading, spacing: 5) {
-                    ForEach(listItems) { job in
-                        JobRowPlain(job: job)
+                    if listItems.count > 0 {
+                        ForEach(listItems) { job in
+                            JobRowPlain(job: job)
+                        }
+                    } else {
+                        SidebarItem(
+                            data: "No jobs matching query",
+                            help: "No jobs matching query",
+                            role: .important
+                        )
                     }
+                    
                     FancyDivider()
                 }
             }
@@ -58,9 +67,9 @@ struct RecentJobsWidget: View {
     }
 }
 
-extension RecentJobsWidget {
+extension JobsWidget {
     public init() {
-        _resource = CoreDataJob.fetchRecentJobs()
+        _resource = CoreDataJob.fetchAll()
     }
 
     private func getRecent() -> [Job] {
@@ -91,12 +100,24 @@ extension RecentJobsWidget {
         if term.count > 1 {
             setListItems(
                 resource.filter {
-                    $0.jid.string.caseInsensitiveCompare(term) == .orderedSame
+                    (
+                        $0.jid.string.caseInsensitiveCompare(term) == .orderedSame
+                        ||
+                        (
+                            $0.jid.string.contains(term)
+                            ||
+                            $0.jid.string.starts(with: term)
+                        )
+                    )
                     ||
                     (
-                        $0.jid.string.contains(term)
+                        $0.uri?.absoluteString.caseInsensitiveCompare(term) == .orderedSame
                         ||
-                        $0.jid.string.starts(with: term)
+                        (
+                            $0.uri?.absoluteString.contains(term) ?? false
+                            ||
+                            $0.uri?.absoluteString.starts(with: term) ?? false
+                        )
                     )
                 }
             )

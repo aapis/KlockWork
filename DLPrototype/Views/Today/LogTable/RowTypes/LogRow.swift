@@ -237,6 +237,7 @@ struct LogRow: View, Identifiable {
                     nav.view = AnyView(JobDashboard(defaultSelectedJob: entry.jobObject!))
                     nav.parent = .jobs
                     nav.sidebar = AnyView(JobDashboardSidebar())
+                    nav.pageId = UUID()
                 } label: {
                     Text("Job")
                 }

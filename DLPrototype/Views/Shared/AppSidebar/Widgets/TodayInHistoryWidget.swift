@@ -68,6 +68,8 @@ struct TodayInHistoryWidget: View {
                     .foregroundColor(day.highlight ? Color.black.opacity(0.6) : Color.white)
                 }
             }
+            
+            FancyDivider()
         }
         .onAppear(perform: loadWidgetData)
         .onChange(of: currentDate) { _ in
@@ -127,5 +129,6 @@ extension TodayInHistoryWidget {
         nav.parent = .today
         nav.view = AnyView(Today(defaultSelectedDate: day.date))
         nav.sidebar = AnyView(TodaySidebar(date: day.date))
+        nav.pageId = UUID()
     }
 }

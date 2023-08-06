@@ -55,7 +55,7 @@ struct FancyButton: View {
     
     private func onAppear() -> Void {
         switch size {
-        case .small, .link:
+        case .small, .link, .tiny:
             padding = 0
         case .medium:
             padding = 5
@@ -205,9 +205,9 @@ public struct FancyButtonv2: View {
                     Text(text)
                 }
             }
-            .padding(size == .link ? 0 : 5)
+            .padding(size.padding)
         }
-        .frame(maxWidth: buttonFrameWidth(), maxHeight: 40)
+        .frame(maxWidth: buttonFrameWidth(), maxHeight: size.height)
         .foregroundColor(fgColour == nil ? type.textColour : fgColour)
         .font(size == .link ? .body : .title3)
         .help(text)
@@ -247,32 +247,19 @@ public struct FancyButtonv2: View {
             RoundedRectangle(cornerRadius: 3)
         )
     }
+}
 
+extension FancyButtonv2 {
     private func buttonFrameWidth() -> CGFloat {
-        switch size {
-        case .link:
-            if showLabel! {
-                return 200
-            } else {
-                return 20
-            }
-        case .small:
-            return 40
-        case .medium:
-            return 200
-        case .large:
+        if showLabel! {
             return 200
         }
+
+        return size.width
     }
 
     private func fgColourEffect() -> Color {
 //        let gradient = LinearGradient(colors: [fgColour, Color.black])
         return Color.black
-    }
-}
-
-struct FancyButtonPreview: PreviewProvider {
-    static var previews: some View {        
-        FancyButton(text: "Button text", action: {}, icon: "checkmark.circle")
     }
 }

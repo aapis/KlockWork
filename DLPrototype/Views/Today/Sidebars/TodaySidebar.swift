@@ -26,9 +26,9 @@ struct TodaySidebar: View {
 //                    )
 //                    .frame(width: 30, height: 30)
                 }
-                StatisticsAndInformationWidget(date: $date)
-                IncompleteTasksWidget()
-                RecentJobsWidget()
+//                StatisticsAndInformationWidget(date: $date)
+                JobPickerWidget()
+//                TasksWidget()
             }
             Spacer()
         }

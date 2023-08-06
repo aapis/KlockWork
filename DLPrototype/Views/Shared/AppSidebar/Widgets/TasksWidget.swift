@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct IncompleteTasksWidget: View {
+struct TasksWidget: View {
     public let title: String = "Incomplete Tasks"
 
     @State private var minimized: Bool = false
@@ -89,7 +89,7 @@ struct IncompleteTasksWidget: View {
     }
 }
 
-extension IncompleteTasksWidget {
+extension TasksWidget {
     public init() {
         _resource = CoreDataTasks.recentTasksWidgetData(limit: 100)
     }
@@ -147,7 +147,7 @@ extension IncompleteTasksWidget {
     }
 }
 
-extension IncompleteTasksWidget {
+extension TasksWidget {
     struct Settings: View {
         private let title: String = "Widget Settings"
         

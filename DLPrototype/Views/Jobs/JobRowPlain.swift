@@ -12,54 +12,25 @@ struct JobRowPlain: View {
     public var job: Job
 
     @EnvironmentObject public var nav: Navigation
+    @EnvironmentObject public var updater: ViewUpdater
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            Color.fromStored(job.colour ?? Theme.rowColourAsDouble)
-            SidebarItem(
-                data: job.jid.string,
-                help: "Edit job \(job.jid.string)",
-                icon: "arrow.right",
-                orientation: .right,
-                action: actionOpenJob
-            )
+        HStack(alignment: .top, spacing: 0) {
+            project
+            ZStack(alignment: .topLeading) {
+                Color.fromStored(job.colour ?? Theme.rowColourAsDouble)
+                SidebarItem(
+                    data: job.jid.string,
+                    help: "Edit job \(job.jid.string)",
+                    icon: "arrow.right",
+                    orientation: .right,
+                    action: actionOpenJob
+                )
+            }
         }
     }
-//    var body: some View {
-//        HStack(spacing: 1) {
-//            project
-//
-//            ZStack(alignment: .leading) {
-//                HStack {
-//                    Button {
-//                        nav.view = AnyView(JobDashboard(defaultSelectedJob: job))
-//                        nav.parent = .jobs
-//                        nav.sidebar = AnyView(JobDashboardSidebar())
-//                    } label: {
-//                        Text(job.jid.string)
-//                            .foregroundColor(.white)
-//                            .padding([.leading, .trailing], 10)
-//                            .useDefaultHover({_ in})
-//                            .help("Edit job")
-//                    }
-//                    .buttonStyle(.borderless)
-//                    .underline()
-//                    if job.uri != nil {
-//                        Spacer()
-//                        Link(destination: job.uri!, label: {
-//                            Image(systemName: "link")
-//                                .foregroundColor(.white)
-//                                .useDefaultHover({_ in})
-//                                .help("Visit job URL on the web")
-//                        })
-//                        .padding([.trailing], 5)
-//                    }
-//                }
-//                .padding()
-//            }
-//        }
-//    }
 
+    // TODO: remove?
     @ViewBuilder var project: some View {
         Group {
             HStack(spacing: 0) {
@@ -78,8 +49,10 @@ struct JobRowPlain: View {
 
 extension JobRowPlain {
     private func actionOpenJob() -> Void {
-        nav.view = AnyView(JobDashboard(defaultSelectedJob: job))
-        nav.parent = .jobs
-        nav.sidebar = AnyView(JobDashboardSidebar())
+        nav.reset()
+        nav.setId()
+        nav.setParent(.jobs)
+        nav.setView(AnyView(JobDashboard(defaultSelectedJob: job)))
+        nav.setSidebar(AnyView(JobDashboardSidebar()))
     }
 }

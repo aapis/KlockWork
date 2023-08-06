@@ -79,15 +79,46 @@ public class Navigation: Identifiable, ObservableObject {
     @Published public var view: AnyView? = AnyView(Dashboard())
     @Published public var parent: Page? = .dashboard
     @Published public var sidebar: AnyView? = AnyView(DashboardSidebar())
-    @Published public var title: String = ""
+    @Published public var title: String? = ""
     @Published public var pageId: UUID? = UUID()
 
     public func pageTitle() -> String {
-        if title.isEmpty {
-
+        if title!.isEmpty {
             return parent?.defaultTitle ?? ""
         }
 
-        return title + " - " + parent!.defaultTitle
+        return title! + " - " + parent!.defaultTitle
+    }
+
+    public func setView(_ newView: AnyView) -> Void {
+        view = nil
+        view = newView
+    }
+
+    public func setParent(_ newParent: Page) -> Void {
+        parent = nil
+        parent = newParent
+    }
+
+    public func setSidebar(_ newView: AnyView) -> Void {
+        sidebar = nil
+        sidebar = newView
+    }
+
+    public func setTitle(_ newTitle: String) -> Void {
+        title = nil
+        title = newTitle
+    }
+
+    public func setId() -> Void {
+        pageId = nil
+        pageId = UUID()
+    }
+
+    public func reset() -> Void {
+        parent = .dashboard
+        view = nil
+        sidebar = nil
+        setId()
     }
 }

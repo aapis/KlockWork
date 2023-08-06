@@ -13,7 +13,7 @@ struct JobDashboardSidebar: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 5) {
                 Title(text: "Jobs")
-                RecentJobsWidget()
+                JobsWidget()
             }
             Spacer()
         }

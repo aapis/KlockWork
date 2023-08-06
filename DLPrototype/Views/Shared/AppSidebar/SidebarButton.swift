@@ -32,9 +32,7 @@ struct SidebarButton: View, Identifiable {
             button.frame(width: 40, height: 40)
         case .small:
             button.frame(width: 20, height: 20)
-        case .link:
-            button
-        case .none:
+        case .link, .tiny, .none:
             button
         }
     }
@@ -43,6 +41,7 @@ struct SidebarButton: View, Identifiable {
         Button(action: {
             nav.parent = pageType
             nav.view = destination
+            nav.pageId = UUID()
 
             if sidebar != nil {
                 nav.sidebar = sidebar

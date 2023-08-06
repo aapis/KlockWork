@@ -15,15 +15,8 @@ struct DashboardSidebar: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 5) {
                 Title(text: "Dashboard")
-//
-//                FancyButtonv2(
-//                    text: "New Note",
-//                    action: {},
-//                    showLabel: true,
-//                    size: .large,
-//                    type: .white
-//                )
                 TodayInHistoryWidget()
+                JobsWidget()
             }
             Spacer()
         }

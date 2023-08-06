@@ -15,7 +15,7 @@ struct TaskDashboardSidebar: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 5) {
                 Title(text: "Tasks")
-                IncompleteTasksWidget()
+                TasksWidget()
             }
             Spacer()
         }

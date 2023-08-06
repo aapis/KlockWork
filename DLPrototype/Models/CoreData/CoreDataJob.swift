@@ -30,13 +30,18 @@ public class CoreDataJob: ObservableObject {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
-    static public func fetchRecentJobs(limit: Int? = 10) -> FetchRequest<Job> {
+    static public func fetchAll(limit: Int? = 10, onlyAlive: Bool = true) -> FetchRequest<Job> {
         let descriptors = [
+            NSSortDescriptor(keyPath: \Job.project?, ascending: false),
             NSSortDescriptor(keyPath: \Job.lastUpdate?, ascending: false)
         ]
 
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
-//        fetch.predicate = NSPredicate(format: "alive == true && lastUpdate != nil")
+
+        if onlyAlive {
+            fetch.predicate = NSPredicate(format: "alive == true")
+        }
+
         fetch.sortDescriptors = descriptors
 
         if let lim = limit {
@@ -45,6 +50,21 @@ public class CoreDataJob: ObservableObject {
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
+
+//    static public func fetchAll() -> FetchRequest<Job> {
+//        let descriptors = [
+//            NSSortDescriptor(keyPath: \Job.lastUpdate?, ascending: false)
+//        ]
+//
+//        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+//        fetch.sortDescriptors = descriptors
+//
+//        if let lim = limit {
+//            fetch.fetchLimit = lim
+//        }
+//
+//        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+//    }
     
     public func getDefault() -> Job? {
         if let job = byId(11.0) {
