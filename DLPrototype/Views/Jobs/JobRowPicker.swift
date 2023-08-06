@@ -1,14 +1,14 @@
 //
-//  JobRowPlain.swift
+//  JobRowJobPicker.swift
 //  DLPrototype
 //
-//  Created by Ryan Priebe on 2023-08-02.
+//  Created by Ryan Priebe on 2023-08-06.
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
 import SwiftUI
 
-struct JobRowPlain: View {
+struct JobRowPicker: View {
     public var job: Job
 
     @EnvironmentObject public var nav: Navigation
@@ -46,12 +46,13 @@ struct JobRowPlain: View {
     }
 }
 
-extension JobRowPlain {
+extension JobRowPicker {
     private func actionOpenJob() -> Void {
         nav.reset()
         nav.setId()
-        nav.setParent(.jobs)
-        nav.setView(AnyView(JobDashboard(defaultSelectedJob: job)))
-        nav.setSidebar(AnyView(JobDashboardSidebar()))
+        nav.setParent(.today)
+        nav.setJob(job)
+        nav.setView(AnyView(Today()))
+        nav.setSidebar(AnyView(TodaySidebar()))
     }
 }

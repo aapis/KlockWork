@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct StatisticsAndInformationWidget: View {
-    public let title: String = "Statistics & Information"
+    public let title: String = "Information"
 
     @State private var minimized: Bool = false
 
@@ -23,7 +23,7 @@ struct StatisticsAndInformationWidget: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                FancySubTitle(text: "\(title)")
+                FancySubTitle(text: title)
                 Spacer()
                 FancyButtonv2(
                     text: "Minimize",
@@ -37,24 +37,14 @@ struct StatisticsAndInformationWidget: View {
 
             if !minimized {
                 VStack(alignment: .leading, spacing: 5) {
-                    SidebarItem(data: dateForToday(), help: "Viewing")
-                    SidebarItem(data: "Coming soon", help: "View description")
-                    SidebarItem(data: "Coming soon", help: "Word count")
-                    SidebarItem(data: records.count.description + " records", help: "Records in set")
+                    SidebarItem(data: calculateWordCount(), help: "Word count")
+                    SidebarItem(data: recordCount(), help: "Records in set")
                     FancyDivider()
                 }
             }
         }
     }
 }
-
-//struct SidebarWidget: View {
-//
-//}
-//
-//extension SidebarWidget: View {
-//    // TODO: put parts of the view into this extension and extend all sidebar with this struct
-//}
 
 extension StatisticsAndInformationWidget {
     public init(date: Binding<Date>) {
@@ -79,5 +69,26 @@ extension StatisticsAndInformationWidget {
         withAnimation {
             minimized.toggle()
         }
+    }
+
+    private func calculateWordCount() -> String {
+        let count = CoreDataRecords(moc: moc).countWordsIn(
+            // converts records to an array, I assume this is terrible but it works
+            records.map {$0}
+        )
+
+        if count == 1 {
+            return "\(count) word"
+        }
+
+        return "\(count) words"
+    }
+
+    private func recordCount() -> String {
+        if records.count == 1 {
+            return records.count.description + " record"
+        }
+
+        return records.count.description + " records"
     }
 }

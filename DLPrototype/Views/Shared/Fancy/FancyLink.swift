@@ -9,10 +9,6 @@
 import Foundation
 import SwiftUI
 
-public enum ButtonSize {
-    case small, medium, large, link
-}
-
 struct FancyLink: View {
     public var icon: String?
     public var showIcon: Bool = true
@@ -36,6 +32,7 @@ struct FancyLink: View {
                 nav.view = destination
                 nav.parent = pageType
                 nav.sidebar = sidebar
+                nav.pageId = UUID()
             } label: {
                 if showIcon && icon != nil {
                     Image(systemName: icon!)
@@ -73,7 +70,7 @@ struct FancyLink: View {
     
     private func onAppear() -> Void {
         switch size {
-        case .small, .link:
+        case .small, .link, .tiny:
             padding = 0
         case .medium:
             padding = 5

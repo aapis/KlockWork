@@ -122,11 +122,10 @@ struct ProjectCreate: View {
                                 FancyLink(
                                     label: job.jid.string,
                                     showLabel: true,
-                                    destination: AnyView(
-                                        JobDashboard(defaultSelectedJob: job.jid)
-                                    ),
+                                    destination: AnyView(JobDashboard(defaultSelectedJob: job)),
                                     size: .link,
-                                    pageType: .jobs
+                                    pageType: .jobs,
+                                    sidebar: AnyView(JobDashboardSidebar())
                                 )
                                 .padding(5)
                             }

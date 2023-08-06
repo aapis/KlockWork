@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct IncompleteTasksWidget: View {
+struct TasksWidget: View {
     public let title: String = "Incomplete Tasks"
 
     @State private var minimized: Bool = false
@@ -19,14 +19,21 @@ struct IncompleteTasksWidget: View {
     @FetchRequest public var resource: FetchedResults<LogTask>
 
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
 
-    @AppStorage("widget.incompleteTasks.showSearch") private var showSearch: Bool = true
+    @AppStorage("widget.tasks.showSearch") private var showSearch: Bool = true
+    @AppStorage("widget.tasks.minimizeAll") private var minimizeAll: Bool = false
 
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                FancySubTitle(text: "\(title)")
+                if let parent = nav.parent {
+                    if parent != .tasks {
+                        FancySubTitle(text: "Tasks")
+                    }
+                }
+
                 Spacer()
                 FancyButtonv2(
                     text: "Settings",
@@ -50,12 +57,13 @@ struct IncompleteTasksWidget: View {
             if !minimized {
                 if isSettingsPresented {
                     Settings(
-                        showSearch: $showSearch
+                        showSearch: $showSearch,
+                        minimizeAll: $minimizeAll
                     )
                 } else {
                     if showSearch {
                         VStack {
-                            SearchBar(text: $query, disabled: minimized)
+                            SearchBar(text: $query, disabled: minimized, placeholder: "Search tasks...")
                                 .onChange(of: query, perform: search)
                         }
                     }
@@ -83,7 +91,7 @@ struct IncompleteTasksWidget: View {
     }
 }
 
-extension IncompleteTasksWidget {
+extension TasksWidget {
     public init() {
         _resource = CoreDataTasks.recentTasksWidgetData(limit: 100)
     }
@@ -141,16 +149,21 @@ extension IncompleteTasksWidget {
     }
 }
 
-extension IncompleteTasksWidget {
+extension TasksWidget {
     struct Settings: View {
+        private let title: String = "Widget Settings"
+        
         @Binding public var showSearch: Bool
+        @Binding public var minimizeAll: Bool
 
         var body: some View {
             ZStack(alignment: .leading) {
                 Theme.base.opacity(0.3)
                 
                 VStack(alignment: .leading) {
+                    FancySubTitle(text: title)
                     Toggle("Show search bar", isOn: $showSearch)
+                    Toggle("Minimize all groups", isOn: $minimizeAll)
                     Spacer()
                     FancyDivider()
                 }

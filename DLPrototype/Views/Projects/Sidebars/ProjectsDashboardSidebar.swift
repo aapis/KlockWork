@@ -13,7 +13,7 @@ struct ProjectsDashboardSidebar: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 5) {
                 Title(text: "Projects")
-                RecentNotesWidget()
+                ProjectsWidget()
             }
             Spacer()
         }

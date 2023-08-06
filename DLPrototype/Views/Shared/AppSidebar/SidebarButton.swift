@@ -32,9 +32,7 @@ struct SidebarButton: View, Identifiable {
             button.frame(width: 40, height: 40)
         case .small:
             button.frame(width: 20, height: 20)
-        case .link:
-            button
-        case .none:
+        case .link, .tiny, .none:
             button
         }
     }
@@ -43,6 +41,7 @@ struct SidebarButton: View, Identifiable {
         Button(action: {
             nav.parent = pageType
             nav.view = destination
+            nav.pageId = UUID()
 
             if sidebar != nil {
                 nav.sidebar = sidebar
@@ -51,8 +50,7 @@ struct SidebarButton: View, Identifiable {
             }
         }, label: {
             ZStack {
-                Theme.toolbarColour
-                nav.parent == pageType ? Theme.tabActiveColour : Theme.tabColour
+                backgroundColour
 
                 if nav.parent != pageType {
                     HStack {
@@ -88,6 +86,19 @@ struct SidebarButton: View, Identifiable {
             }
 
             highlighted.toggle()
+        }
+    }
+
+    @ViewBuilder private var backgroundColour: some View {
+        Theme.toolbarColour
+        if nav.parent == pageType {
+            if let parent = nav.parent {
+                parent.colour
+            } else {
+                Theme.tabActiveColour
+            }
+        } else {
+            Theme.tabColour
         }
     }
 }

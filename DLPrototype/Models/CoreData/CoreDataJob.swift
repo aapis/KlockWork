@@ -16,6 +16,47 @@ public class CoreDataJob: ObservableObject {
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
     }
+
+    static public func recentJobsWidgetData() -> FetchRequest<Job> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Job.lastUpdate?, ascending: false)
+        ]
+
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.predicate = NSPredicate(format: "alive == true && lastUpdate != nil")
+        fetch.sortDescriptors = descriptors
+        fetch.fetchLimit = 10
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
+    static public func fetchAll(limit: Int? = 10) -> FetchRequest<Job> {
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.predicate = NSPredicate(format: "alive == true")
+        fetch.sortDescriptors = [
+            NSSortDescriptor(keyPath: \Job.project?, ascending: false),
+            NSSortDescriptor(keyPath: \Job.lastUpdate?, ascending: false),
+            NSSortDescriptor(keyPath: \Job.jid, ascending: false)
+        ]
+
+        if let lim = limit {
+            fetch.fetchLimit = lim
+        }
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
+    public func getRecentlyUsed(records: FetchedResults<LogRecord>) -> [Job] {
+        var jobs: Set<Job> = []
+
+        for rec in records {
+            if let job = rec.job {
+                jobs.insert(job)
+            }
+        }
+
+        return jobs.sorted {$0.project!.pid > $1.project!.pid}
+    }
     
     public func getDefault() -> Job? {
         if let job = byId(11.0) {
@@ -121,31 +162,5 @@ public class CoreDataJob: ObservableObject {
         }
         
         return all
-    }
-
-    static public func recentJobsWidgetData() -> FetchRequest<Job> {
-        let descriptors = [
-            NSSortDescriptor(keyPath: \Job.lastUpdate?, ascending: false)
-        ]
-
-        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive == true && lastUpdate != nil")
-        fetch.sortDescriptors = descriptors
-        fetch.fetchLimit = 10
-
-        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
-    }
-
-    static public func fetchRecentJobs(limit: Int? = 0) -> FetchRequest<Job> {
-        let descriptors = [
-            NSSortDescriptor(keyPath: \Job.lastUpdate?, ascending: false)
-        ]
-
-        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive == true && lastUpdate != nil")
-        fetch.sortDescriptors = descriptors
-        fetch.fetchLimit = limit!
-
-        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 }

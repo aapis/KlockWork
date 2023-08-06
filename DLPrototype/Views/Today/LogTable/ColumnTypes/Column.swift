@@ -61,11 +61,10 @@ struct Column: View {
         HStack {
             if job != nil {
                 Button {
-                    nav.view = AnyView(
-                        JobDashboard(defaultSelectedJob: job!.jid)
-                            .environmentObject(jm)
-                        )
+                    nav.view = AnyView(JobDashboard(defaultSelectedJob: job!))
                     nav.parent = .jobs
+                    nav.sidebar = AnyView(JobDashboardSidebar())
+                    nav.pageId = UUID()
                 } label: {
                     Text(text.replacingOccurrences(of: ".0", with: ""))
                         .foregroundColor(colour.isBright() ? Color.black : Color.white)

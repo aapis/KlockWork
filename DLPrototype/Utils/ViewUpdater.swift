@@ -29,6 +29,7 @@ public class ViewUpdater: ObservableObject {
         "task.dashboard": UUID(),
         "note.dashboard": UUID(),
         "project.dashboard": UUID(),
+        "project.view": UUID(),
         "job.dashboard": UUID(),
     ]
 

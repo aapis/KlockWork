@@ -29,4 +29,10 @@ struct Theme {
     static public let fontTitle: Font = .system(.title, design: .monospaced)
     static public let fontSubTitle: Font = .system(.title3, design: .monospaced)
     static public let fontCaption: Font = .system(.caption, design: .monospaced)
+
+    static public let cYellow: Color = .init(.sRGB, red: 0.34, green: 0.32, blue: 0.22, opacity: 1)
+    static public let cRed: Color = .init(.sRGB, red: 0.34, green: 0.22, blue: 0.24, opacity: 1)
+    static public let cGreen: Color = .init(.sRGB, red: 0.22, green: 0.34, blue: 0.32, opacity: 1)
+    static public let cPurple: Color = .init(.sRGB, red: 0.34, green: 0.37, blue: 0.53, opacity: 1)
+    static public let cOrange: Color = .init(.sRGB, red: 0.34, green: 0.26, blue: 0.22, opacity: 1)
 }

@@ -21,6 +21,7 @@ struct Home: View {
     @StateObject public var cvm: CoreDataNoteVersions = CoreDataNoteVersions(moc: PersistenceController.shared.container.viewContext)
     
     @State public var selectedSidebarButton: Page = .dashboard
+    @State public var selectedJob: Job?
 
     private var buttons: [PageGroup: [SidebarButton]] {
         [
@@ -29,7 +30,8 @@ struct Home: View {
                     destination: AnyView(Dashboard()),
                     pageType: .dashboard,
                     icon: "house",
-                    label: "Dashboard"
+                    label: "Dashboard",
+                    sidebar: AnyView(DashboardSidebar())
                 ),
                 SidebarButton(
                     destination: AnyView(Today()),
@@ -95,7 +97,12 @@ struct Home: View {
                 HStack(spacing: 0) {
                     if nav.sidebar != nil {
                         ZStack(alignment: .topLeading) {
-                            Theme.tabActiveColour
+                            if let parent = nav.parent {
+                                parent.colour
+                            } else {
+                                Theme.tabActiveColour
+                            }
+                            
                             VStack {
                                 // TODO: add sidebar show/hide functionality
 //                                Image(systemName: "sidebar.right")
@@ -109,7 +116,7 @@ struct Home: View {
                     }
 
                     nav.view
-                        .navigationTitle(nav.title)
+                        .navigationTitle(nav.pageTitle())
                         .environmentObject(nav)
                         .environmentObject(rm)
                         .environmentObject(crm)
@@ -126,6 +133,7 @@ struct Home: View {
             selectedSidebarButton = buttonToHighlight
         }
         .onChange(of: nav.pageId!) { newUuid in
+//            print("DERPO parent=\(nav.parent!)")
             updater.setOne(nav.parent!.ViewUpdaterKey, newUuid)
         }
     }

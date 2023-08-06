@@ -27,6 +27,7 @@ struct FancyTextLink: View {
                 nav.view = destination
                 nav.parent = pageType
                 nav.sidebar = sidebar
+                nav.pageId = UUID()
             } label: {
                 if showIcon! {
                     Image(systemName: "link")

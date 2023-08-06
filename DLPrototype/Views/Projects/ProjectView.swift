@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 struct ProjectView: View {
-    public var project: Project
+    public let project: Project
     
     @State private var name: String = ""
     @State private var colour: String = ""
@@ -43,7 +43,6 @@ struct ProjectView: View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
                 HStack {
-                    Title(text: "Edit a project")
                     Spacer()
                     
                     if lastUpdate != nil {
@@ -54,22 +53,7 @@ struct ProjectView: View {
                             }
                     }
                 }
-                
-                HStack {
-                    Toggle("Project is active", isOn: $alive)
-                        .onAppear(perform: {
-                            if project.alive {
-                                alive = true
-                            } else {
-                                alive = false
-                            }
-                            
-                            project.alive = alive
-                            
-                            PersistenceController.shared.save()
-                        })
-                }
-                
+
                 form.id(updater.ids["pv.form"])
 
                 HStack {
@@ -81,9 +65,10 @@ struct ProjectView: View {
             }
             .padding()
         }
+        .id(updater.get("project.view"))
         .background(Theme.toolbarColour)
         .font(Theme.font)
-        .onAppear(perform: onAppear)
+//        .onAppear(perform: onAppear)
         .onChange(of: selectAllToggleAssociated) { _ in
             if selectAllToggleAssociated == true {
                 selectAll()
@@ -104,8 +89,23 @@ struct ProjectView: View {
     @ViewBuilder
     var form: some View {
         FancyTextField(placeholder: "Project name", lineLimit: 1, onSubmit: update, text: $name)
+
+        HStack {
+            Toggle("Project is active", isOn: $alive)
+                .onAppear(perform: {
+                    if project.alive {
+                        alive = true
+                    } else {
+                        alive = false
+                    }
+
+                    project.alive = alive
+
+                    PersistenceController.shared.save()
+                })
+        }
         FancyDivider()
-        
+
         HStack(spacing: 0) {
             Rectangle()
                 .frame(width: 15)
@@ -242,12 +242,10 @@ struct ProjectView: View {
                                                 showIcon: false,
                                                 label: job.jid.string,
                                                 showLabel: true,
-                                                destination: AnyView(
-                                                    JobDashboard(defaultSelectedJob: job.jid)
-                                                        .environmentObject(jobModel)
-                                                ),
+                                                destination: AnyView(JobDashboard(defaultSelectedJob: job)),
                                                 size: .link,
-                                                pageType: .jobs
+                                                pageType: .jobs,
+                                                sidebar: AnyView(JobDashboardSidebar())
                                             )
                                             .help("Open job \(job.jid.string)")
                                             Spacer()
@@ -342,12 +340,10 @@ struct ProjectView: View {
                                                 showIcon: false,
                                                 label: job.jid.string,
                                                 showLabel: true,
-                                                destination: AnyView(
-                                                    JobDashboard(defaultSelectedJob: job.jid)
-                                                        .environmentObject(jobModel)
-                                                ),
+                                                destination: AnyView(JobDashboard(defaultSelectedJob: job)),
                                                 size: .link,
-                                                pageType: .jobs
+                                                pageType: .jobs,
+                                                sidebar: AnyView(JobDashboardSidebar())
                                             )
                                             .help("Open job \(job.jid.string)")
                                             Spacer()
@@ -379,17 +375,19 @@ struct ProjectView: View {
             }
         }
     }
-    
+}
+
+extension ProjectView {
     private func regenerateColour() -> Void {
         let rndColour = Color.randomStorable()
         colour = Color.fromStored(rndColour).description.debugDescription
         project.colour = rndColour
         colourChanged = true
-        
+
         PersistenceController.shared.save()
         updater.update()
     }
-    
+
     private func createToolbar() -> Void {
         // TODO: apply this pattern to Today view
         buttons = [
@@ -407,146 +405,146 @@ struct ProjectView: View {
             )
         ]
     }
-    
+
     private func update() -> Void {
         project.name = name
         project.jobs = []
         project.alive = alive
         project.lastUpdate = Date()
-        
+
         if colourChanged {
             project.colour = Color.randomStorable()
         }
-        
+
         lastUpdate = project.lastUpdate!
-        
+
         saveSelectedJobs()
-        
+
         PersistenceController.shared.save()
     }
-    
+
     private func isJobOnIgnoreList(_ jid: String) -> Bool {
         if let ignoredJobs = project.configuration!.ignoredJobs {
             do {
                 let dec = JSONDecoder()
                 let data = ignoredJobs.data(using: .utf8)
                 let decodedIgnoredJobs = try dec.decode([String].self, from: data!)
-                
+
                 return decodedIgnoredJobs.contains(jid)
             } catch {
                 print("Couldn't decode ignored")
             }
         }
-        
+
         return false
     }
-    
+
     private func enableExport(_ jid: String) -> Void {
         if let ignoredJobs = project.configuration!.ignoredJobs {
             do {
                 let dec = JSONDecoder()
                 let data = ignoredJobs.data(using: .utf8)
                 var decodedIgnoredJobs = try dec.decode([String].self, from: data!)
-                
+
                 if !decodedIgnoredJobs.contains(jid) {
                     decodedIgnoredJobs.append(jid)
                 }
-                
+
                 let enc = JSONEncoder()
                 let json = try enc.encode(decodedIgnoredJobs)
-                
+
                 project.configuration!.ignoredJobs = String(data: json, encoding: .utf8)!
-                
+
                 updater.update()
             } catch {
                 print("Couldn't encode ignoredJobs")
             }
         }
-        
+
         PersistenceController.shared.save()
     }
-    
+
     private func disableExport(_ jid: String) -> Void {
         if let ignoredJobs = project.configuration!.ignoredJobs {
             do {
                 let dec = JSONDecoder()
                 let data = ignoredJobs.data(using: .utf8)
                 var decodedIgnoredJobs = try dec.decode([String].self, from: data!)
-                
+
                 decodedIgnoredJobs.removeAll(where: ({$0 == jid}))
-                
+
                 let enc = JSONEncoder()
                 let json = try enc.encode(decodedIgnoredJobs)
-                
+
                 project.configuration!.ignoredJobs = String(data: json, encoding: .utf8)!
-                
+
                 updater.update()
             } catch {
                 print("Couldn't parse ignoredJobs")
             }
         }
-        
+
         PersistenceController.shared.save()
     }
-    
+
     public func onAppear() -> Void {
         allUnOwned = jobModel.unowned()
         name = project.name!
         created = project.created!
-        
+
         if project.lastUpdate != nil {
             lastUpdate = project.lastUpdate!
         }
-        
+
         if project.jobs!.count > 0 {
             let existingJobs = project.jobs?.allObjects as! [Job]
             selectedJobs = existingJobs.sorted(by: ({$0.jid < $1.jid}))
         }
     }
-    
+
     private func selectJob(_ job: Job) -> Void {
         selectedJobs.append(job)
         allUnOwned.removeAll(where: ({$0 == job}))
-        
+
         saveSelectedJobs()
         updater.update()
     }
-    
+
     private func deSelectJob(_ job: Job) -> Void {
         selectedJobs.removeAll(where: ({$0 == job}))
         allUnOwned.append(job)
-        
+
         saveSelectedJobs()
         updater.update()
     }
-    
+
     private func selectAll() -> Void {
         for job in allUnOwned {
             selectedJobs.append(job)
             allUnOwned.removeAll(where: ({$0 == job}))
         }
-        
+
         saveSelectedJobs()
     }
-    
+
     private func deselectAll() -> Void {
         allUnOwned = unownedJobs
         selectedJobs = []
-        
+
         saveSelectedJobs()
     }
-    
+
     private func saveSelectedJobs() -> Void {
         let existingJobs = project.jobs?.allObjects as! [Job]
         for job in existingJobs {
             project.removeFromJobs(job)
         }
         lastUpdate = project.lastUpdate ?? Date()
-        
+
         for job in selectedJobs {
             project.addToJobs(job)
         }
-        
+
         PersistenceController.shared.save()
     }
 }

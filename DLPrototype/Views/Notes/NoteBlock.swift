@@ -23,6 +23,7 @@ struct NoteBlock: View {
             nav.view = AnyView(NoteView(note: note, moc: moc))
             nav.parent = .notes
             nav.sidebar = AnyView(NoteViewSidebar(note: note, moc: moc))
+            nav.pageId = UUID()
         } label: {
             VStack(spacing: 0) {
                 ZStack(alignment: .topLeading) {
