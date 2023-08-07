@@ -8,43 +8,12 @@
 
 import SwiftUI
 
-struct DateSelectorRow: View {
-    public var day: IdentifiableDay
-    public var callback: ((IdentifiableDay) -> Void)?
-
-    @State private var highlighted: Bool = false
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Button {
-                if let cb = callback {
-                    cb(day)
-                }
-            } label: {
-                VStack(spacing: 0) {
-                    HStack(alignment: .top, spacing: 0) {
-                        Text(day.string)
-                            .foregroundColor(.black)
-                            .padding()
-                        Spacer()
-                    }
-                    FancyDivider(height: 3)
-                        .background(Color.lightGray())
-                }
-            }
-            .font(Theme.fontTitle)
-            .buttonStyle(.plain)
-            .useDefaultHover({ inside in highlighted = inside})
-            .background(highlighted ?  Color.lightGray() : .clear)
-        }
-    }
-}
-
 struct DateSelectorWidget: View {
     @Binding public var isDatePickerPresented: Bool
 
     @State private var days: [IdentifiableDay] = []
 
+    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject private var nav: Navigation
 
     @AppStorage("today.numPastDates") public var numPastDates: Int = 20
@@ -75,7 +44,12 @@ struct DateSelectorWidget: View {
                     ScrollView(showsIndicators: false) {
                         VStack(alignment: .leading, spacing: 0) {
                             ForEach(days) { day in
-                                DateSelectorRow(day: day, callback: actionOnChangeDate)
+                                DateSelectorRow(
+                                    day: day,
+                                    callback: actionOnChangeDate,
+                                    current: isCurrentDay(day),
+                                    active: isActive(day)
+                                )
                             }
                         }
                     }
@@ -105,9 +79,76 @@ struct DateSelectorWidget: View {
 }
 
 extension DateSelectorWidget {
+    struct DateSelectorRow: View {
+        public var day: IdentifiableDay
+        public var callback: ((IdentifiableDay) -> Void)?
+        public var current: Bool = false
+        public var active: Bool = false
+
+        @State private var highlighted: Bool = false
+
+        var body: some View {
+            VStack(spacing: 0) {
+                Button {
+                    if let cb = callback {
+                        cb(day)
+                    }
+                } label: {
+                    DefaultRow
+                }
+                .font(Theme.fontTitle)
+                .buttonStyle(.plain)
+                .useDefaultHover({ inside in highlighted = inside})
+                .background(active ? Theme.secondary : highlighted ?  Color.lightGray() : .clear)
+            }
+        }
+
+        private var DefaultRow: some View {
+            VStack(spacing: 0) {
+                HStack(alignment: .top, spacing: 0) {
+                    TodayIndicator
+                    Text(formatDate())
+                    Spacer()
+                    RecordCountBadge
+                }
+                .foregroundColor(.black)
+                .padding()
+
+                FancyDivider(height: 3)
+                    .background(Color.lightGray())
+            }
+        }
+
+        private var RecordCountBadge: some View {
+            ZStack {
+                (highlighted ? active ? Color.white.opacity(0.5) : Theme.secondary : Color.lightGray())
+                Text(String(day.recordCount))
+                    .help("\(day.recordCount) records")
+                    .font(.body)
+            }
+            .mask {
+                Circle()
+            }
+            .frame(width: 30, height: 30)
+        }
+
+        @ViewBuilder var TodayIndicator: some View {
+            (
+                current ?
+                Image(systemName: "calendar")
+                    .padding([.trailing])
+                    .foregroundColor(.black)
+                    .help("That's today!")
+                : nil
+            )
+        }
+    }
+}
+
+extension DateSelectorWidget {
     private func actionOnAppear() -> Void {
         // TODO: add dateFormat: "EEEEEE - yyyy-MM-dd"
-        days = DateHelper.dateObjectsBeforeToday(numPastDates)
+        days = DateHelper.dateObjectsBeforeToday(numPastDates, moc: moc)
     }
 
     private func actionOpenSelector() -> Void {
@@ -128,5 +169,46 @@ extension DateSelectorWidget {
         let df = DateFormatter()
         df.dateFormat = "MMM d, yyyy"
         return df.string(from: nav.session.date)
+    }
+
+    private func isCurrentDay(_ day: IdentifiableDay) -> Bool {
+        let currentDay = Date.now.timeIntervalSince1970
+        if let date = day.date  {
+            let rowDay = date.timeIntervalSince1970
+            let window = (currentDay - 86400, currentDay + 84600)
+
+            return rowDay > window.0 && rowDay <= window.1
+        }
+
+        return false
+    }
+
+    private func isActive(_ day: IdentifiableDay) -> Bool {
+        if let date = day.date  {
+            return areSameDate(date, nav.session.date)
+        }
+
+        return false
+    }
+
+    private func areSameDate(_ lhs: Date, _ rhs: Date) -> Bool {
+        let df = DateFormatter()
+        df.dateFormat = "MMMM d"
+        let fmtDate = df.string(from: lhs)
+        let fmtSessionDate = df.string(from: rhs)
+
+        return fmtDate == fmtSessionDate
+    }
+}
+
+extension DateSelectorWidget.DateSelectorRow {
+    private func formatDate() -> String {
+        if let date = day.date {
+            let df = DateFormatter()
+            df.dateFormat = "MMMM d"
+            return df.string(from: date)
+        }
+
+        return day.string
     }
 }
