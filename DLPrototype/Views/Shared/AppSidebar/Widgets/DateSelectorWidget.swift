@@ -106,7 +106,6 @@ extension DateSelectorWidget {
                 .font(Theme.fontTitle)
                 .buttonStyle(.plain)
                 .useDefaultHover({ inside in highlighted = inside})
-                .background(active ? Theme.secondary : highlighted ?  Color.lightGray() : .clear)
             }
         }
 
@@ -118,8 +117,9 @@ extension DateSelectorWidget {
                     Spacer()
                     RecordCountBadge
                 }
-                .foregroundColor(.black)
                 .padding()
+                .background(active ? Theme.secondary : highlighted ?  Color.lightGray() : .clear)
+                .foregroundColor(.black)
 
                 FancyDivider(height: 3)
                     .background(Color.lightGray())
