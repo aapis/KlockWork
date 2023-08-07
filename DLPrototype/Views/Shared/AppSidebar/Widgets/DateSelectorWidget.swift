@@ -86,6 +86,7 @@ extension DateSelectorWidget {
         public var active: Bool = false
 
         @State private var highlighted: Bool = false
+        @State private var isWeekend: Bool = false
 
         var body: some View {
             VStack(spacing: 0) {
@@ -94,8 +95,14 @@ extension DateSelectorWidget {
                         cb(day)
                     }
                 } label: {
-                    DefaultRow
+                    if !isWeekend {
+                        DefaultRow
+                    } else {
+                        DefaultRow
+                            .opacity(0.4)
+                    }
                 }
+                .onAppear(perform: actionOnAppear)
                 .font(Theme.fontTitle)
                 .buttonStyle(.plain)
                 .useDefaultHover({ inside in highlighted = inside})
@@ -202,6 +209,16 @@ extension DateSelectorWidget {
 }
 
 extension DateSelectorWidget.DateSelectorRow {
+    private func actionOnAppear() -> Void {
+        if let date = day.date {
+            let df = DateFormatter()
+            df.dateFormat = "EE"
+            let fmt = df.string(from: date)
+
+            isWeekend = ["Sat", "Sun"].contains(fmt)
+        }
+    }
+
     private func formatDate() -> String {
         if let date = day.date {
             let df = DateFormatter()
