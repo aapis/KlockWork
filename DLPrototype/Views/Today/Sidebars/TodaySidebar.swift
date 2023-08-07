@@ -17,7 +17,6 @@ struct TodaySidebar: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 5) {
                 HStack {
-                    Title(text: formattedDate())
                     Spacer()
 //                    FancyButtonv2(
 //                        text: "Settings",

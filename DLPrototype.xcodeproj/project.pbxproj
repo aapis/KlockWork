@@ -137,6 +137,8 @@
 		53E2026A2A80389500B4DF70 /* JobPickerWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202692A80389500B4DF70 /* JobPickerWidget.swift */; };
 		53E2026C2A80457400B4DF70 /* JobProjectGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E2026B2A80457400B4DF70 /* JobProjectGroup.swift */; };
 		53E2026E2A8051AD00B4DF70 /* JobRowPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E2026D2A8051AD00B4DF70 /* JobRowPicker.swift */; };
+		53E202702A80984400B4DF70 /* DateSelectorWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E2026F2A80984400B4DF70 /* DateSelectorWidget.swift */; };
+		53E202722A80BAD500B4DF70 /* ButtonType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202712A80BAD500B4DF70 /* ButtonType.swift */; };
 		53ECD0572971F8F400A09AAB /* CoreDataRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */; };
 		53EDDF9E29634852008D34C7 /* Entry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDF9D29634852008D34C7 /* Entry.swift */; };
 		53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */; };
@@ -314,6 +316,8 @@
 		53E202692A80389500B4DF70 /* JobPickerWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobPickerWidget.swift; sourceTree = "<group>"; };
 		53E2026B2A80457400B4DF70 /* JobProjectGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobProjectGroup.swift; sourceTree = "<group>"; };
 		53E2026D2A8051AD00B4DF70 /* JobRowPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobRowPicker.swift; sourceTree = "<group>"; };
+		53E2026F2A80984400B4DF70 /* DateSelectorWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateSelectorWidget.swift; sourceTree = "<group>"; };
+		53E202712A80BAD500B4DF70 /* ButtonType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonType.swift; sourceTree = "<group>"; };
 		53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataRecords.swift; sourceTree = "<group>"; };
 		53EDDF9D29634852008D34C7 /* Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entry.swift; sourceTree = "<group>"; };
 		53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPickerItem.swift; sourceTree = "<group>"; };
@@ -758,6 +762,7 @@
 				53E202592A7EAE5B00B4DF70 /* ProjectsWidget.swift */,
 				53E202622A7ECC6500B4DF70 /* TodayInHistoryWidget.swift */,
 				53E202692A80389500B4DF70 /* JobPickerWidget.swift */,
+				53E2026F2A80984400B4DF70 /* DateSelectorWidget.swift */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -843,6 +848,7 @@
 			isa = PBXGroup;
 			children = (
 				53E202672A802D0900B4DF70 /* ButtonSize.swift */,
+				53E202712A80BAD500B4DF70 /* ButtonType.swift */,
 			);
 			path = Enums;
 			sourceTree = "<group>";
@@ -1086,6 +1092,7 @@
 				53790C142A758A7200D3FFD4 /* RecordTableColumn.swift in Sources */,
 				533E406A2970F5610007785A /* SearchHelper.swift in Sources */,
 				53529A07299F38C0000D2FCB /* JobPickerUsing.swift in Sources */,
+				53E202722A80BAD500B4DF70 /* ButtonType.swift in Sources */,
 				5376289B2966467100DE8ECF /* SearchBar.swift in Sources */,
 				5363B67A2A6BB75F00C2FBB8 /* CompanyBlock.swift in Sources */,
 				5363B6752A6B4A9A00C2FBB8 /* NoteDashboardSettings.swift in Sources */,
@@ -1109,6 +1116,7 @@
 				533E40652970DA640007785A /* ViewUpdater.swift in Sources */,
 				53F589682998437D00843B32 /* JobResult.swift in Sources */,
 				535DDE5E2A7982F3008350D4 /* SidebarItem.swift in Sources */,
+				53E202702A80984400B4DF70 /* DateSelectorWidget.swift in Sources */,
 				53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */,
 				53E2026C2A80457400B4DF70 /* JobProjectGroup.swift in Sources */,
 				535C1AE329F48F6800CD95FD /* Widgets.swift in Sources */,
@@ -1334,7 +1342,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 124;
+				CURRENT_PROJECT_VERSION = 125;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -1369,7 +1377,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 124;
+				CURRENT_PROJECT_VERSION = 125;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;

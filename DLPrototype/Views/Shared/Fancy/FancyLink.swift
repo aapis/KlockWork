@@ -74,7 +74,7 @@ struct FancyLink: View {
             padding = 0
         case .medium:
             padding = 5
-        case .large:
+        case .large, .titleLink:
             padding = 10
         }
     }

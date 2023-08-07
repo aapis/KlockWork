@@ -28,8 +28,6 @@ struct Title: View {
                 }
             }
             .padding(3)
-            .background(Theme.tabActiveColour)
-            .foregroundColor(Theme.tabActiveColour.isBright() ? .black : .white)
         }
     }
 }

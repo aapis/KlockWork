@@ -23,6 +23,8 @@ struct Home: View {
     @State public var selectedSidebarButton: Page = .dashboard
     @State public var selectedJob: Job?
 
+    @AppStorage("home.isDatePickerPresented") public var isDatePickerPresented: Bool = false
+
     private var buttons: [PageGroup: [SidebarButton]] {
         [
             .views: [
@@ -94,36 +96,52 @@ struct Home: View {
                 }
                 .frame(width: 100)
 
-                HStack(spacing: 0) {
+                HStack(alignment: .top, spacing: 0) {
                     if nav.sidebar != nil {
-                        ZStack(alignment: .topLeading) {
-                            if let parent = nav.parent {
-                                parent.colour
+                        VStack(alignment: .leading, spacing: 0) {
+                            DateSelectorWidget(isDatePickerPresented: $isDatePickerPresented)
+
+                            if isDatePickerPresented{
+                                ZStack {
+                                    nav.sidebar
+                                        .environmentObject(cvm)
+                                    Color.black.opacity(0.7)
+                                }
                             } else {
-                                Theme.tabActiveColour
-                            }
-                            
-                            VStack {
-                                // TODO: add sidebar show/hide functionality
-//                                Image(systemName: "sidebar.right")
                                 nav.sidebar
                                     .environmentObject(cvm)
                             }
                         }
                         .frame(maxWidth: 300)
+                        .background(nav.parent != nil ? nav.parent!.colour : Theme.tabActiveColour)
                     } else {
                         HorizontalSeparator // TODO: maybe remove?
                     }
 
-                    nav.view
-                        .navigationTitle(nav.pageTitle())
-                        .environmentObject(nav)
-                        .environmentObject(rm)
-                        .environmentObject(crm)
-                        .environmentObject(jm)
-                        .environmentObject(ce)
-                        .environmentObject(cvm)
-                        .environmentObject(updater)
+                    if isDatePickerPresented{
+                        ZStack {
+                            nav.view
+                                .navigationTitle(nav.pageTitle())
+                                .environmentObject(nav)
+                                .environmentObject(rm)
+                                .environmentObject(crm)
+                                .environmentObject(jm)
+                                .environmentObject(ce)
+                                .environmentObject(cvm)
+                                .environmentObject(updater)
+                            Color.black.opacity(0.7)
+                        }
+                    } else {
+                        nav.view
+                            .navigationTitle(nav.pageTitle())
+                            .environmentObject(nav)
+                            .environmentObject(rm)
+                            .environmentObject(crm)
+                            .environmentObject(jm)
+                            .environmentObject(ce)
+                            .environmentObject(cvm)
+                            .environmentObject(updater)
+                    }
                 }
             }
         }
@@ -133,8 +151,10 @@ struct Home: View {
             selectedSidebarButton = buttonToHighlight
         }
         .onChange(of: nav.pageId!) { newUuid in
-//            print("DERPO parent=\(nav.parent!)")
             updater.setOne(nav.parent!.ViewUpdaterKey, newUuid)
+        }
+        .onChange(of: nav.session.date) { newDate in
+            updater.updateOne("today.table")
         }
     }
 
@@ -152,6 +172,19 @@ struct Home: View {
 
     private func onAppear() -> Void {
         nav.parent = selectedSidebarButton
+
+        // Thank you https://blog.rampatra.com/how-to-detect-escape-key-pressed-in-macos-apps
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown) {
+            if self.isEscapeKey(with: $0) {
+                isDatePickerPresented = false
+                return nil
+            } else {
+                return $0
+            }
+        }
+    }
+    private func isEscapeKey(with event: NSEvent) -> Bool {
+        return Int(event.keyCode) == 53
     }
 }
 

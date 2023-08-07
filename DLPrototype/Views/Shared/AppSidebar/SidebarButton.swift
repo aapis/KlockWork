@@ -23,6 +23,8 @@ struct SidebarButton: View, Identifiable {
 
     @EnvironmentObject public var nav: Navigation
 
+    @AppStorage("home.isDatePickerPresented") public var isDatePickerPresented: Bool = false
+
     var body: some View {
         let button = FancyButton
         switch(size) {
@@ -32,7 +34,7 @@ struct SidebarButton: View, Identifiable {
             button.frame(width: 40, height: 40)
         case .small:
             button.frame(width: 20, height: 20)
-        case .link, .tiny, .none:
+        case .link, .tiny, .titleLink, .none:
             button
         }
     }
@@ -93,7 +95,11 @@ struct SidebarButton: View, Identifiable {
         Theme.toolbarColour
         if nav.parent == pageType {
             if let parent = nav.parent {
-                parent.colour
+                if isDatePickerPresented {
+                    Theme.secondary
+                } else {
+                    parent.colour
+                }
             } else {
                 Theme.tabActiveColour
             }

@@ -32,11 +32,6 @@ struct ToolbarButtons: View {
             // TODO: coming back soon
 //            FancyButton(text: "Previous day", action: previous, icon: "chevron.left", transparent: true, showLabel: false)
 //                .frame(maxHeight: 20)
-            FancyPicker(onChange: change, items: datePickerItems)
-                .onAppear(perform: {createListOfDays(changeDetected: false)})
-                .onChange(of: numPastDates) { _ in
-                    createListOfDays(changeDetected: true)
-                }
             // TODO: coming back soon
 //            FancyButton(text: "Next day", action: next, icon: "chevron.right", transparent: true, showLabel: false)
 //                .frame(maxHeight: 20)
@@ -71,14 +66,6 @@ struct ToolbarButtons: View {
 //            .foregroundColor(Color.white)
 //            .useDefaultHover({_ in})
         }.padding(8)
-    }
-    
-    private func createListOfDays(changeDetected: Bool = false) -> Void {
-        datePickerItems = CustomPickerItem.listFrom(DateHelper.datesBeforeToday(numDays: numPastDates)) // TODO: add dateFormat: "EEEEEE - yyyy-MM-dd"
-        
-        if changeDetected {
-            updater.updateOne("today.dayList")
-        }
     }
     
     private func change(selected: Int, sender: String?) -> Void {

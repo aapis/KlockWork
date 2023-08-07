@@ -76,7 +76,6 @@ struct LogTable: View, Identifiable {
         .onChange(of: selectedDate) { date in
             loadFor(date)
             nav.session.date = date
-            print("DERPO LogTable.onChange(of: selectedDate) nav.session=\(nav.session)")
         }
         .onChange(of: searchText) { _ in
             if resetSearchButtonHit || searchText.count == 0 {
@@ -305,9 +304,11 @@ struct LogTable: View, Identifiable {
     }
     
     private func loadRecordsBySelectedDate() -> Void {
-        if defaultSelectedDate != nil {
-            selectedDate = defaultSelectedDate!
-        }
+//        if defaultSelectedDate != nil {
+//            selectedDate = defaultSelectedDate!
+//        }
+        selectedDate = nav.session.date
+        print("DERPO selectedDate=\(selectedDate)")
         
         recordGrouping = selectedTab.id
         
