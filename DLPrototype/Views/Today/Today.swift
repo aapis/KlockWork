@@ -37,7 +37,7 @@ struct Today: View {
         .defaultAppStorage(.standard)
         .background(Theme.toolbarColour)
         .onAppear(perform: onAppear)
-        .onChange(of: nav.job, perform: actionOnChangeJob)
+        .onChange(of: nav.session.job, perform: actionOnChangeJob)
     }
     
     // MARK: Editor view
@@ -111,7 +111,6 @@ extension Today {
     }
 
     private func actionOnChangeJob(job: Job?) -> Void {
-        print("DERPO changed job nav=\(nav)")
         if let jerb = job {
             let rounded = jerb.jid.rounded(.toNearestOrEven)
             jobId = String(Int(exactly: rounded) ?? 0)

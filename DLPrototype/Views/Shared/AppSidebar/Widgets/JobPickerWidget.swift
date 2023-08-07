@@ -15,7 +15,9 @@ struct JobPickerWidget: View {
     @State private var query: String = ""
     @State private var listItems: [Job] = []
     @State private var grouped: Dictionary<Project, [Job]> = [:]
+    @State private var sgrouped: Dictionary<Project, [Job]> = [:]
     @State private var isSettingsPresented: Bool = false
+    @State private var isLoading: Bool = false
 
     @FetchRequest public var resource: FetchedResults<LogRecord>
 
@@ -26,6 +28,14 @@ struct JobPickerWidget: View {
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {
+        if isLoading {
+            WidgetLoading()
+        } else {
+            JobPickerWidget
+        }
+    }
+
+    var JobPickerWidget: some View {
         VStack(alignment: .leading) {
             HStack {
                 if let parent = nav.parent {
@@ -65,6 +75,7 @@ struct JobPickerWidget: View {
                         VStack {
                             SearchBar(text: $query, disabled: minimized, placeholder: "Job ID or URL")
                                 .onChange(of: query, perform: actionOnSearch)
+                                .onChange(of: nav.session.job, perform: actionOnChangeJob)
                         }
                         
                         VStack(alignment: .leading, spacing: 0) {
@@ -98,6 +109,8 @@ extension JobPickerWidget {
         let recent = CoreDataJob(moc: moc).getRecentlyUsed(records: resource)
 
         grouped = Dictionary(grouping: recent, by: {$0.project!})
+        // prefixed with S because its just a SHITTY cache
+        sgrouped = grouped
     }
 
     private func actionSettings() -> Void {
@@ -141,6 +154,13 @@ extension JobPickerWidget {
             grouped = filtered
         } else {
             actionOnAppear()
+        }
+    }
+
+    private func actionOnChangeJob(job: Job?) -> Void {
+        if let jerb = job {
+            query = jerb.jid.string
+            grouped = sgrouped
         }
     }
 }

@@ -75,6 +75,8 @@ struct LogTable: View, Identifiable {
         }
         .onChange(of: selectedDate) { date in
             loadFor(date)
+            nav.session.date = date
+            print("DERPO LogTable.onChange(of: selectedDate) nav.session=\(nav.session)")
         }
         .onChange(of: searchText) { _ in
             if resetSearchButtonHit || searchText.count == 0 {

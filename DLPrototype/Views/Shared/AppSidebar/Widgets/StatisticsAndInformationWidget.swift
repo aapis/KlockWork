@@ -19,6 +19,7 @@ struct StatisticsAndInformationWidget: View {
     @FetchRequest public var records: FetchedResults<LogRecord>
 
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var nav: Navigation
 
     var body: some View {
         VStack(alignment: .leading) {

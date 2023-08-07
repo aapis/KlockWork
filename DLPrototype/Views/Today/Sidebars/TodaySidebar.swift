@@ -11,6 +11,8 @@ import SwiftUI
 struct TodaySidebar: View {
     @State public var date: Date = Date()
 
+    @EnvironmentObject public var nav: Navigation
+
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 5) {
@@ -40,6 +42,6 @@ extension TodaySidebar {
     private func formattedDate() -> String {
         let df = DateFormatter()
         df.dateFormat = "MMM d, yyyy"
-        return df.string(from: date)
+        return df.string(from: nav.session.date)
     }
 }

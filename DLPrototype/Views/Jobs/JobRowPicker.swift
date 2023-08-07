@@ -51,7 +51,7 @@ extension JobRowPicker {
         nav.reset()
         nav.setId()
         nav.setParent(.today)
-        nav.setJob(job)
+        nav.session.job = job
         nav.setView(AnyView(Today()))
         nav.setSidebar(AnyView(TodaySidebar()))
     }

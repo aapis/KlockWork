@@ -64,7 +64,8 @@ struct TasksWidget: View {
                     if showSearch {
                         VStack {
                             SearchBar(text: $query, disabled: minimized, placeholder: "Search tasks...")
-                                .onChange(of: query, perform: search)
+                                .onChange(of: query, perform: actionOnSearch)
+                                .onChange(of: nav.session.job, perform: actionOnChangeJob)
                         }
                     }
 
@@ -85,7 +86,7 @@ struct TasksWidget: View {
                 }
             }
         }
-        .onAppear(perform: onAppear)
+        .onAppear(perform: actionOnAppear)
         .id(updater.ids["sidebar.today.incompleteTasksWidget"])
         .font(Theme.font)
     }
@@ -94,6 +95,11 @@ struct TasksWidget: View {
 extension TasksWidget {
     public init() {
         _resource = CoreDataTasks.recentTasksWidgetData(limit: 100)
+    }
+
+    private func resetGroupedTasks() -> Void {
+        // TODO: need to figure out how to sort this dictionary
+        groupedTasks = Dictionary(grouping: resource, by: {$0.owner!})
     }
 
     private func actionMinimize() -> Void {
@@ -108,44 +114,44 @@ extension TasksWidget {
         }
     }
 
-    private func onAppear() -> Void {
+    private func actionOnAppear() -> Void {
         resetGroupedTasks()
     }
 
-    private func search(term: String) -> Void {
-        if term.count > 3 {
-            let filtered = groupedTasks.filter({
-                (
-                    (
-                        $0.key.project?.name?.contains(term) ?? false
-                    )
-                    ||
-                    (
-                        $0.key.project?.name?.caseInsensitiveCompare(term) == .orderedSame
-                    )
-                    ||
-                    (
-                        $0.value.contains(where: {$0.content?.contains(term) ?? false})
-                    )
-                    ||
-                    (
-                        $0.value.contains(where: {$0.content?.caseInsensitiveCompare(term) == .orderedSame})
-                    )
-                )
-            })
-            // TODO: figure out how to apply sort (below doesn't work)
-//            .sorted(by: {$0.key.created! > $1.key.created!})
-
-            groupedTasks = filtered
-        }
-        else {
+    private func actionOnChangeJob(job: Job?) -> Void {
+        if let jerb = job {
+            query = jerb.jid.string
             resetGroupedTasks()
         }
     }
 
-    private func resetGroupedTasks() -> Void {
-        // TODO: need to figure out how to sort this dictionary
-        groupedTasks = Dictionary(grouping: resource, by: {$0.owner!})
+    private func actionOnSearch(term: String) -> Void {
+        resetGroupedTasks()
+        groupedTasks = groupedTasks.filter({searchCriteria(term: term, job: $0.key, tasks: $0.value)})
+        // TODO: figure out how to apply sort (below doesn't work)
+//            .sorted(by: {$0.key.created! > $1.key.created!})
+    }
+
+    internal func searchCriteria(term: String, job: Job, tasks: [LogTask]) -> Bool {
+        if let projectName = job.project?.name {
+            if projectName.contains(term) || projectName.caseInsensitiveCompare(term) == .orderedSame {
+                return true
+            }
+        }
+
+        if job.jid.string == term {
+            return true
+        }
+
+        if tasks.contains(where: {$0.content?.contains(term) ?? false}) {
+            return true
+        }
+
+        if tasks.contains(where: {$0.content?.caseInsensitiveCompare(term) == .orderedSame}) {
+            return true
+        }
+
+        return false
     }
 }
 
