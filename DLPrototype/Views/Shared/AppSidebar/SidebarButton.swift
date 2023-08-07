@@ -71,11 +71,10 @@ struct SidebarButton: View, Identifiable {
                     .opacity(0.1)
                 }
 
-
                 Image(systemName: icon)
                     .font(.title)
                     .symbolRenderingMode(.hierarchical)
-                    .foregroundColor(highlighted ? .white : .white.opacity(0.8))
+                    .foregroundColor(isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
             }
         })
         .help(label)
@@ -96,7 +95,8 @@ struct SidebarButton: View, Identifiable {
         if nav.parent == pageType {
             if let parent = nav.parent {
                 if isDatePickerPresented {
-                    Theme.secondary
+//                    Theme.secondary
+                    Color.white
                 } else {
                     parent.colour
                 }

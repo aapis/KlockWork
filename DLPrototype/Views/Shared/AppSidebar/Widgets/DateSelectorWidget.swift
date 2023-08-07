@@ -23,25 +23,19 @@ struct DateSelectorRow: View {
             } label: {
                 VStack(spacing: 0) {
                     HStack(alignment: .top, spacing: 0) {
-                        VStack(alignment: .listRowSeparatorLeading, spacing: 0) {
-                            ZStack {
-                                Theme.secondary
-                            }
-                        }
-                        .frame(width: 20)
-
                         Text(day.string)
                             .foregroundColor(.black)
                             .padding()
                         Spacer()
                     }
+                    FancyDivider(height: 3)
+                        .background(Color.lightGray())
                 }
             }
-
             .font(Theme.fontTitle)
             .buttonStyle(.plain)
             .useDefaultHover({ inside in highlighted = inside})
-            .background(highlighted ? .black.opacity(0.2) : .clear)
+            .background(highlighted ?  Color.lightGray() : .clear)
         }
     }
 }
@@ -58,8 +52,6 @@ struct DateSelectorWidget: View {
     var body: some View {
         VStack(alignment: .trailing, spacing: 0) {
             HStack(alignment: .top, spacing: 0) {
-                SecondaryOpenButton
-
                 FancyButtonv2(
                     text: formattedDate(),
                     action: actionOpenSelector,
@@ -69,10 +61,14 @@ struct DateSelectorWidget: View {
                     size: .titleLink,
                     type: .titleLink
                 )
+                .padding()
+
                 Spacer()
+                SecondaryOpenButton
             }
             .background(.white)
-            .frame(height: 75)
+            .frame(height: 78)
+            .border(width: 3, edges: [.bottom], color: Color.lightGray())
 
             if isDatePickerPresented {
                 VStack(alignment: .leading, spacing: 0) {
@@ -95,20 +91,16 @@ struct DateSelectorWidget: View {
             actionOpenSelector()
         } label: {
             ZStack {
-                if isDatePickerPresented {
-                    Theme.secondary
-                } else {
-                    Theme.tabActiveColour
-                    VStack {
-                        Spacer()
-                        Image(systemName: "chevron.down")
-                            .padding([.bottom], 5)
-                    }
+                Color.lightGray()
+                VStack(alignment: .center) {
+                    Image(systemName: "chevron.up.chevron.down")
+                        .font(Theme.fontSubTitle)
+                        .foregroundColor(.black)
                 }
             }
         }
         .buttonStyle(.plain)
-        .frame(width: 20)
+        .frame(width: 50)
     }
 }
 

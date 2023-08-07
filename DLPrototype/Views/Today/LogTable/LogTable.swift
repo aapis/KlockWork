@@ -304,11 +304,7 @@ struct LogTable: View, Identifiable {
     }
     
     private func loadRecordsBySelectedDate() -> Void {
-//        if defaultSelectedDate != nil {
-//            selectedDate = defaultSelectedDate!
-//        }
         selectedDate = nav.session.date
-        print("DERPO selectedDate=\(selectedDate)")
         
         recordGrouping = selectedTab.id
         
