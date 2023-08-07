@@ -192,18 +192,18 @@ public class CoreDataRecords: ObservableObject {
     }
     
     public func countForDate(_ date: Date? = nil) -> Int {
-        if date == nil {
-            return 0
+        if let d = date {
+            let (start, end) = DateHelper.startAndEndOf(d)
+            let predicate = NSPredicate(
+                format: "timestamp > %@ && timestamp <= %@",
+                start as CVarArg,
+                end as CVarArg
+            )
+
+            return count(predicate)
         }
-        
-        let endDate = (date ?? Date()) + 86400
-        let predicate = NSPredicate(
-            format: "timestamp > %@ && timestamp < %@",
-            date! as CVarArg,
-            endDate as CVarArg
-        )
-        
-        return count(predicate)
+
+        return 0
     }
     
     public func weeklyStats(after: (() -> Void)? = nil) async -> (Int, Int, Int) {
