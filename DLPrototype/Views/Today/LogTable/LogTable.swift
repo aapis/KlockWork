@@ -75,6 +75,7 @@ struct LogTable: View, Identifiable {
         }
         .onChange(of: selectedDate) { date in
             loadFor(date)
+            nav.session.date = date
         }
         .onChange(of: searchText) { _ in
             if resetSearchButtonHit || searchText.count == 0 {
@@ -303,9 +304,7 @@ struct LogTable: View, Identifiable {
     }
     
     private func loadRecordsBySelectedDate() -> Void {
-        if defaultSelectedDate != nil {
-            selectedDate = defaultSelectedDate!
-        }
+        selectedDate = nav.session.date
         
         recordGrouping = selectedTab.id
         

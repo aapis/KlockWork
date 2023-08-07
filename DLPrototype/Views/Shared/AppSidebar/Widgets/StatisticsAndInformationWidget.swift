@@ -19,6 +19,7 @@ struct StatisticsAndInformationWidget: View {
     @FetchRequest public var records: FetchedResults<LogRecord>
 
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var nav: Navigation
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -43,6 +44,7 @@ struct StatisticsAndInformationWidget: View {
                 }
             }
         }
+        .onChange(of: nav.session.date, perform: actionOnChangeOfDate)
     }
 }
 
@@ -63,6 +65,10 @@ extension StatisticsAndInformationWidget {
         }
 
         return out
+    }
+
+    private func actionOnChangeOfDate(newDate: Date) -> Void {
+        date = newDate
     }
 
     private func actionMinimize() -> Void {

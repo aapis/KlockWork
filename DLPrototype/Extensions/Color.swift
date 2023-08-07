@@ -33,6 +33,10 @@ extension Color {
     static func randomStorable() -> [Double] {
         return [Double.random(in: 0...1), Double.random(in: 0...1), Double.random(in: 0...1)]
     }
+
+    static func lightGray() -> Color {
+        Color(nsColor: .lightGray)
+    }
     
     public func isBright() -> Bool {
         guard let components = cgColor?.components, components.count > 2 else {return false}

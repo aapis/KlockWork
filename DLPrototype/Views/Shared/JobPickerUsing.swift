@@ -22,6 +22,7 @@ struct JobPickerUsing: View {
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var jm: CoreDataJob
+    @EnvironmentObject public var nav: Navigation
     
     @AppStorage("today.relativeJobList") public var allowRelativeJobList: Bool = false
     @AppStorage("today.numWeeks") public var numWeeks: Int = 2
@@ -88,6 +89,7 @@ struct JobPickerUsing: View {
                 .onChange(of: jobId) { _ in
                     if jobId != "" {
                         if let iJid = Int(jobId) {
+                            nav.session.job = CoreDataJob(moc: moc).byId(Double(iJid))
                             pickerChange(selected: iJid, sender: nil)
                         }
                     }

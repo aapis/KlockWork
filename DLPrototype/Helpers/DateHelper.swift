@@ -9,6 +9,13 @@
 import Foundation
 import SwiftUI
 
+public struct IdentifiableDay: Identifiable {
+    public var id: UUID = UUID()
+    public var string: String = ""
+    public var date: Date?
+    public var recordCount: Int = 0
+}
+
 final public class DateHelper {
     // Returns string like 2020-06-11 representing a date, for use in filtering
     static public func thisAm() -> CVarArg {
@@ -107,6 +114,36 @@ final public class DateHelper {
             
         }
         
+        return dates
+    }
+
+    static public func dateObjectsBeforeToday(_ numDays: Int, dateFormat: String? = "yyyy-MM-dd", moc: NSManagedObjectContext) -> [IdentifiableDay] {
+        var dates: [IdentifiableDay] = []
+        let cdr = CoreDataRecords(moc: moc)
+
+        for i in 0...numDays {
+            var components = DateComponents()
+            components.day = -(1*i)
+
+
+            if let computedDay = Calendar.current.date(byAdding: components, to: Date()) {
+                let fmt = DateFormatter()
+                fmt.dateFormat = dateFormat
+                fmt.timeZone = TimeZone.autoupdatingCurrent
+                fmt.locale = NSLocale.current
+
+                let fmtComputedDay = fmt.string(from: computedDay)
+
+                let identifiable = IdentifiableDay(
+                    string: fmtComputedDay,
+                    date: computedDay,
+                    recordCount: cdr.countForDate(computedDay)
+                )
+
+                dates.append(identifiable)
+            }
+        }
+
         return dates
     }
     

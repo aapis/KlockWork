@@ -59,72 +59,8 @@ struct FancyButton: View {
             padding = 0
         case .medium:
             padding = 5
-        case .large:
+        case .large, .titleLink:
             padding = 10
-        }
-    }
-}
-
-public enum ButtonType {
-    case destructive, standard, primary, star, white
-
-    var colours: [Color] {
-        switch self {
-        case .primary:
-            return [Color.green, Color.blue]
-        case .destructive:
-            return [Color.red, Color(hue: 0.0/100, saturation: 84.0/100, brightness: 43.0/100)]
-        case .star:
-            return [Color.yellow, Color.orange]
-        case .standard:
-            return [Theme.headerColour, Color.black]
-        case .white:
-            return [Color.white, Color.gray]
-        }
-    }
-
-    var textColour: Color {
-        switch self {
-        case .primary:
-            return Color.white
-        case .destructive:
-            return Color.white
-        case .star:
-            return Color.black
-        case .standard:
-            return Color.white
-        case .white:
-            return Color.black
-        }
-    }
-
-    var highlightColour: Color {
-        switch self {
-        case .primary:
-            return Color.green
-        case .destructive:
-            return Color.red
-        case .star:
-            return Color.yellow
-        case .standard:
-            return Theme.headerColour
-        case .white:
-            return Color.gray
-        }
-    }
-
-    var activeColour: Color {
-        switch self {
-        case .primary:
-            return Theme.secondary
-        case .destructive:
-            return Theme.secondary
-        case .star:
-            return Theme.secondary
-        case .standard:
-            return Theme.secondary
-        case .white:
-            return Theme.secondary
         }
     }
 }
@@ -179,8 +115,8 @@ public struct FancyButtonv2: View {
     }
 
     private var button: some View {
-        ZStack(alignment: size == .link ? .topLeading : .center) {
-            if size != .link {
+        ZStack(alignment: [.link, .titleLink].contains(size) ? .topLeading : .center) {
+            if ![.link, .titleLink].contains(size)  {
                 if active {
                     ActiveBackground
                 } else {
@@ -208,10 +144,10 @@ public struct FancyButtonv2: View {
             .padding(size.padding)
         }
         .frame(maxWidth: buttonFrameWidth(), maxHeight: size.height)
-        .foregroundColor(fgColour == nil ? type.textColour : fgColour)
-        .font(size == .link ? .body : .title3)
+        .foregroundColor(fgColour == nil ? (highlighted ? type.highlightColour : type.textColour) : fgColour)
+        .font(size.font)
         .help(text)
-        .underline(size == .link && highlighted)
+        .underline((size == .link || size == .titleLink) && highlighted)
         .useDefaultHover({ inside in highlighted = inside})
     }
 
