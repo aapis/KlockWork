@@ -15,6 +15,8 @@ struct TaskGroup: View {
 
     @State private var minimized: Bool = false
 
+    @EnvironmentObject public var nav: Navigation
+
     @AppStorage("widget.tasks.minimizeAll") private var minimizeAll: Bool = false
     
     var body: some View {
@@ -23,6 +25,13 @@ struct TaskGroup: View {
         if let project = key.project {
             VStack {
                 HStack(alignment: .firstTextBaseline, spacing: 5) {
+                    if let job = nav.session.job {
+                        if job == key {
+                            FancyStar(background: Color.fromStored(key.colour ?? Theme.rowColourAsDouble))
+                                .help("Records you create will be associated with this job (#\(job.jid.string))")
+                        }
+                    }
+
                     FancyButtonv2(
                         text: project.name!,
                         action: minimize,

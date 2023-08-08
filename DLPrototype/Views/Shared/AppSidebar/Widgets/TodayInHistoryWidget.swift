@@ -70,6 +70,9 @@ struct TodayInHistoryWidget: View {
         .onChange(of: currentDate) { _ in
             loadWidgetData()
         }
+        .onChange(of: nav.session.date) { _ in
+            loadWidgetData()
+        }
     }
 }
 

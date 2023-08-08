@@ -21,27 +21,52 @@ struct DateSelectorWidget: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .top, spacing: 0) {
-                VStack(alignment: .center) {
-                    Spacer()
-                    FancyButtonv2(
-                        text: formattedDate(),
-                        action: actionOpenSelector,
-                        fgColour: .black,
-                        showLabel: true,
-                        showIcon: false,
-                        size: .titleLink,
-                        type: .titleLink
-                    )
-                    .padding(.leading, 10)
-                    Spacer()
-                }
-
+            HStack(alignment: .center) {
+                FancyButtonv2(
+                    text: "Previous day",
+                    action: actionPreviousDay,
+                    icon: "chevron.left",
+                    fgColour: .black,
+                    showLabel: false,
+                    size: .titleLink,
+                    type: .titleLink
+                )
+                .frame(height: 20)
 
                 Spacer()
-                SecondaryOpenButton
+                HStack(alignment: .top, spacing: 0) {
+                    VStack(alignment: .center) {
+                        Spacer()
+                        FancyButtonv2(
+                            text: formattedDate(),
+                            action: actionOpenSelector,
+                            fgColour: .black,
+                            showLabel: true,
+                            showIcon: false,
+                            size: .titleLink,
+                            type: .titleLink
+                        )
+                        .padding(.leading, 10)
+                        Spacer()
+                    }
+
+                    Spacer()
+                    SecondaryOpenButton
+                }
+
+                Spacer()
+                FancyButtonv2(
+                    text: "Next day",
+                    action: actionNextDay,
+                    icon: "chevron.right",
+                    fgColour: .black,
+                    showLabel: false,
+                    size: .titleLink,
+                    type: .titleLink
+                )
+                .frame(height: 20)
             }
-            .background(.white)
+            .background(areSameDate(nav.session.date, Date()) ? .yellow : .white)
             .frame(height: 78)
             .border(width: 3, edges: [.bottom], color: Color.lightGray())
 
@@ -164,7 +189,6 @@ extension DateSelectorWidget {
 
 extension DateSelectorWidget {
     private func actionOnAppear() -> Void {
-        // TODO: add dateFormat: "EEEEEE - yyyy-MM-dd"
         days = DateHelper.dateObjectsBeforeToday(numPastDates, moc: moc)
     }
 
@@ -216,6 +240,14 @@ extension DateSelectorWidget {
         let fmtSessionDate = df.string(from: rhs)
 
         return fmtDate == fmtSessionDate
+    }
+
+    private func actionPreviousDay() -> Void {
+        nav.session.date -= 86400
+    }
+
+    private func actionNextDay() -> Void {
+        nav.session.date += 86400
     }
 }
 

@@ -26,7 +26,7 @@ struct JobProjectGroup: View {
             HStack(alignment: .firstTextBaseline, spacing: 5) {
                 if let job = nav.session.job {
                     if job.project == key {
-                        FancyStar()
+                        FancyStar(background: Color.fromStored(key.colour ?? Theme.rowColourAsDouble))
                             .help("Records you create will be associated with a job in this project (#\(job.jid.string))")
                     }
                 }

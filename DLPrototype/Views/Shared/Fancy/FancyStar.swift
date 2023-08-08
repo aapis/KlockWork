@@ -9,9 +9,11 @@
 import SwiftUI
 
 struct FancyStar: View {
+    public var background: Color = Color.clear
+
     var body: some View {
         Image(systemName: "star.fill")
-            .foregroundColor(.yellow)
-            .shadow(color: .black.opacity(0.4), radius: 3)
+            .foregroundColor(background.isBright() ? .black : .yellow)
+            .shadow(color: (background.isBright() ? Color.yellow : Color.black).opacity(0.4), radius: 3)
     }
 }
