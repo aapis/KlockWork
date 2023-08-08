@@ -128,6 +128,7 @@ public class Navigation: Identifiable, ObservableObject {
 extension Navigation {
     public struct Session {
         var job: Job?
+        var project: Project?
         var date: Date = Date()
         var idate: IdentifiableDay = IdentifiableDay()
     }
