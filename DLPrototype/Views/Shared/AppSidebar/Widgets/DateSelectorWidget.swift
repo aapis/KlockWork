@@ -15,6 +15,7 @@ struct DateSelectorWidget: View {
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject private var nav: Navigation
+    @EnvironmentObject private var updater: ViewUpdater
 
     @AppStorage("today.numPastDates") public var numPastDates: Int = 20
     
@@ -50,6 +51,7 @@ struct DateSelectorWidget: View {
                                     current: isCurrentDay(day),
                                     active: isActive(day)
                                 )
+                                .environmentObject(nav)
                             }
                         }
                     }
@@ -58,6 +60,9 @@ struct DateSelectorWidget: View {
             }
         }
         .onAppear(perform: actionOnAppear)
+        .onChange(of: nav.session.idate) { _ in
+            actionOnAppear()
+        }
     }
 
     @ViewBuilder private var SecondaryOpenButton: some View {
@@ -87,6 +92,8 @@ extension DateSelectorWidget {
 
         @State private var highlighted: Bool = false
         @State private var isWeekend: Bool = false
+
+        @EnvironmentObject private var nav: Navigation
 
         var body: some View {
             VStack(spacing: 0) {
@@ -167,6 +174,7 @@ extension DateSelectorWidget {
     private func actionOnChangeDate(_ day: IdentifiableDay) -> Void {
         if let selectedDate = day.date {
             nav.session.date = selectedDate
+            nav.session.idate = day
         }
 
         actionOpenSelector()
@@ -227,5 +235,9 @@ extension DateSelectorWidget.DateSelectorRow {
         }
 
         return day.string
+    }
+
+    private func actionOnChangeJob(_ job: Job?) -> Void {
+        print("DERPO added something")
     }
 }

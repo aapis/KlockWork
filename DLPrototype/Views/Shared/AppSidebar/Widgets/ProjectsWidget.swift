@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct ProjectsWidget: View {
-    public let title: String = "Projects"
+    public let title: String = "Recent projects"
 
     @State private var minimized: Bool = false
     @State private var query: String = ""

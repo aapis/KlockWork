@@ -105,11 +105,13 @@ struct Home: View {
                                 ZStack {
                                     nav.sidebar
                                         .environmentObject(cvm)
+                                        .environmentObject(nav)
                                     Color.black.opacity(0.7)
                                 }
                             } else {
                                 nav.sidebar
                                     .environmentObject(cvm)
+                                    .environmentObject(nav)
                             }
                         }
                         .frame(maxWidth: 300)

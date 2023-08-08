@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-public struct IdentifiableDay: Identifiable {
+public struct IdentifiableDay: Identifiable, Equatable {
     public var id: UUID = UUID()
     public var string: String = ""
     public var date: Date?

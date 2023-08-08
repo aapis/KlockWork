@@ -16,18 +16,8 @@ struct TodaySidebar: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 5) {
-                HStack {
-                    Spacer()
-//                    FancyButtonv2(
-//                        text: "Settings",
-//                        action: {},
-//                        icon: "gear",
-//                        showLabel: false,
-//                        type: .white
-//                    )
-//                    .frame(width: 30, height: 30)
-                }
                 JobPickerWidget()
+                    .environmentObject(nav)
                 TasksWidget()
             }
             Spacer()
