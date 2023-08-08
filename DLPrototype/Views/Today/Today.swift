@@ -38,6 +38,7 @@ struct Today: View {
         .background(Theme.toolbarColour)
         .onAppear(perform: onAppear)
         .onChange(of: nav.session.job, perform: actionOnChangeJob)
+        .onChange(of: nav.session.date, perform: actionOnChangeDate)
     }
     
     // MARK: Editor view
@@ -103,6 +104,10 @@ extension Today {
             jobId = String(Int(exactly: rounded) ?? 0)
         }
 
+        if let date = defaultSelectedDate {
+            nav.session.date = date
+        }
+
         if showExperimentalFeatures {
             if autoFixJobs {
                 AutoFixJobs.run(records: todaysRecords, context: moc)
@@ -115,6 +120,9 @@ extension Today {
             let rounded = jerb.jid.rounded(.toNearestOrEven)
             jobId = String(Int(exactly: rounded) ?? 0)
         }
+    }
+
+    private func actionOnChangeDate(date: Date) -> Void {
     }
 
     private func reloadUi() -> Void {

@@ -9,8 +9,6 @@
 import SwiftUI
 
 struct DashboardSidebar: View {
-    @State public var date: Date = Date()
-
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 5) {

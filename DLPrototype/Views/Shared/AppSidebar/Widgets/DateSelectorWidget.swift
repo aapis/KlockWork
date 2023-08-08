@@ -20,18 +20,23 @@ struct DateSelectorWidget: View {
     @AppStorage("today.numPastDates") public var numPastDates: Int = 20
     
     var body: some View {
-        VStack(alignment: .trailing, spacing: 0) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top, spacing: 0) {
-                FancyButtonv2(
-                    text: formattedDate(),
-                    action: actionOpenSelector,
-                    fgColour: .black,
-                    showLabel: true,
-                    showIcon: false,
-                    size: .titleLink,
-                    type: .titleLink
-                )
-                .padding()
+                VStack(alignment: .center) {
+                    Spacer()
+                    FancyButtonv2(
+                        text: formattedDate(),
+                        action: actionOpenSelector,
+                        fgColour: .black,
+                        showLabel: true,
+                        showIcon: false,
+                        size: .titleLink,
+                        type: .titleLink
+                    )
+                    .padding(.leading, 10)
+                    Spacer()
+                }
+
 
                 Spacer()
                 SecondaryOpenButton
@@ -70,13 +75,17 @@ struct DateSelectorWidget: View {
             actionOpenSelector()
         } label: {
             ZStack {
-                Color.lightGray()
+                (isDatePickerPresented ? Theme.secondary : Color.lightGray())
                 VStack(alignment: .center) {
                     Image(systemName: "chevron.up.chevron.down")
                         .font(Theme.fontSubTitle)
                         .foregroundColor(.black)
                 }
             }
+            .mask(
+                Circle()
+                    .frame(width: 30)
+            )
         }
         .buttonStyle(.plain)
         .frame(width: 50)
@@ -229,9 +238,5 @@ extension DateSelectorWidget.DateSelectorRow {
         }
 
         return day.string
-    }
-
-    private func actionOnChangeJob(_ job: Job?) -> Void {
-        print("DERPO added something")
     }
 }
