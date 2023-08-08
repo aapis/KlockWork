@@ -119,7 +119,6 @@ extension DateSelectorWidget {
         private var DefaultRow: some View {
             VStack(spacing: 0) {
                 HStack(alignment: .top, spacing: 0) {
-                    TodayIndicator
                     Text(formatDate())
                     Spacer()
                     RecordCountBadge
@@ -134,27 +133,22 @@ extension DateSelectorWidget {
         }
 
         private var RecordCountBadge: some View {
-            ZStack {
-                (highlighted ? active ? Color.white.opacity(0.5) : Theme.secondary : Color.lightGray())
+            ZStack(alignment: .center) {
+                if current {
+                    Color.yellow
+                } else {
+                    (highlighted ? (active ? Color.white.opacity(0.5) : Theme.secondary) : Color.lightGray())
+                }
                 Text(String(day.recordCount))
                     .help("\(day.recordCount) records")
-                    .font(.body)
+                    .font(.caption)
             }
             .mask {
-                Circle()
+                (current ? Image(systemName: "seal.fill") : Image(systemName: "circle.fill"))
+
+
             }
             .frame(width: 30, height: 30)
-        }
-
-        @ViewBuilder var TodayIndicator: some View {
-            (
-                current ?
-                Image(systemName: "calendar")
-                    .padding([.trailing])
-                    .foregroundColor(.black)
-                    .help("That's today!")
-                : nil
-            )
         }
     }
 }
@@ -230,7 +224,7 @@ extension DateSelectorWidget.DateSelectorRow {
     private func formatDate() -> String {
         if let date = day.date {
             let df = DateFormatter()
-            df.dateFormat = "MMMM d"
+            df.dateFormat = "EE MMMM d"
             return df.string(from: date)
         }
 
