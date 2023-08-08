@@ -52,6 +52,8 @@ struct JobPickerWidget: View {
                         if parent != .jobs {
                             Text(title)
                                 .padding(.trailing, 10)
+                        } else {
+                            Text("Recently used jobs")
                         }
                     }
                 }

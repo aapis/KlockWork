@@ -33,9 +33,16 @@ struct JobsWidget: View {
                     )
                     .frame(width: 30, height: 30)
 
+                    if let parent = nav.parent {
+                        if parent != .jobs {
+                            Text(title)
+                                .padding(.trailing, 10)
+                        } else {
+                            Text("Search all jobs")
+                        }
+                    }
 
-                    Text(title)
-                        .padding(.trailing, 10)
+                    Spacer()
                 }
                 .padding(5)
             }
