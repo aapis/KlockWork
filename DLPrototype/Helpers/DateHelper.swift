@@ -111,9 +111,8 @@ final public class DateHelper {
                 
                 dates.append(fmtComputedDay)
             }
-            
         }
-        
+
         return dates
     }
 
@@ -121,7 +120,8 @@ final public class DateHelper {
         var dates: [IdentifiableDay] = []
         let cdr = CoreDataRecords(moc: moc)
 
-        for i in 0...numDays {
+        // negative values result in that many days in the future being included in the list
+        for i in -2...numDays {
             var components = DateComponents()
             components.day = -(1*i)
 
