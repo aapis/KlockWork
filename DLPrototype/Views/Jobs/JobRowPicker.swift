@@ -22,7 +22,7 @@ struct JobRowPicker: View {
                 HStack {
                     if let jerb = nav.session.job {
                         if jerb == job {
-                            FancyStar()
+                            FancyStar(background: Color.fromStored(jerb.colour ?? Theme.rowColourAsDouble))
                                 .padding(.leading, 10)
                                 .help("Records you create will be associated with this job (#\(job.jid.string))")
                         }
