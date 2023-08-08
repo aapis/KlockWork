@@ -68,7 +68,7 @@ struct ProjectView: View {
         .id(updater.get("project.view"))
         .background(Theme.toolbarColour)
         .font(Theme.font)
-//        .onAppear(perform: onAppear)
+        .onAppear(perform: onAppear)
         .onChange(of: selectAllToggleAssociated) { _ in
             if selectAllToggleAssociated == true {
                 selectAll()
