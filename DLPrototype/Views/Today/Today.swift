@@ -132,10 +132,12 @@ extension Today {
             }
 
             let record = LogRecord(context: moc)
-            record.timestamp = Date()
+            record.timestamp = nav.session.date
             record.message = text
             record.alive = true
             record.id = UUID()
+
+            nav.session.idate = DateHelper.identifiedDate(for: record.timestamp!, moc: moc)
 
             let match = CoreDataJob(moc: moc).byId(jid)
 

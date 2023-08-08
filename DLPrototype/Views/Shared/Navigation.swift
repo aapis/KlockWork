@@ -129,5 +129,6 @@ extension Navigation {
     public struct Session {
         var job: Job?
         var date: Date = Date()
+        var idate: IdentifiableDay = IdentifiableDay()
     }
 }

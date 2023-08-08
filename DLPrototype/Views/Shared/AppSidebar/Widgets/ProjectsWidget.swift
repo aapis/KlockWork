@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct ProjectsWidget: View {
-    public let title: String = "Projects"
+    public let title: String = "Recent projects"
 
     @State private var minimized: Bool = false
     @State private var query: String = ""
@@ -20,38 +20,52 @@ struct ProjectsWidget: View {
     @Environment(\.managedObjectContext) var moc
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack {
-                Spacer()
-                FancyButtonv2(
-                    text: "Minimize",
-                    action: actionMinimize,
-                    icon: minimized ? "plus" : "minus",
-                    showLabel: false,
-                    type: .white
-                )
-                .frame(width: 30, height: 30)
+                HStack {
+                    FancyButtonv2(
+                        text: "Minimize",
+                        action: actionMinimize,
+                        icon: minimized ? "plus" : "minus",
+                        showLabel: false,
+                        type: .clear
+                    )
+                    .frame(width: 30, height: 30)
+
+                    Text(title)
+                        .padding(.trailing, 10)
+                }
+                .padding(5)
             }
+            .background(Theme.base.opacity(0.2))
 
-            if !minimized {
-                SearchBar(text: $query, disabled: minimized, placeholder: "Search projects...")
-                    .onChange(of: query, perform: actionOnSearch)
+            VStack {
+                if !minimized {
+                    SearchBar(text: $query, disabled: minimized, placeholder: "Search projects...")
+                        .onChange(of: query, perform: actionOnSearch)
 
-                VStack(alignment: .leading, spacing: 5) {
-                    if listItems.count > 0 {
-                        ForEach(listItems) { project in
-                            ProjectRowPlain(project: project)
+                    VStack(alignment: .leading, spacing: 5) {
+                        if listItems.count > 0 {
+                            ForEach(listItems) { project in
+                                ProjectRowPlain(project: project)
+                            }
+                        } else {
+                            SidebarItem(
+                                data: "No projects matching query",
+                                help: "No projects matching query",
+                                role: .important
+                            )
                         }
-                    } else {
-                        SidebarItem(
-                            data: "No projects matching query",
-                            help: "No projects matching query",
-                            role: .important
-                        )
                     }
-                    FancyDivider()
+                } else {
+                    HStack {
+                        Text("\(listItems.count) projects")
+                        Spacer()
+                    }
                 }
             }
+            .padding(8)
+            .background(Theme.base.opacity(0.2))
         }
         .onAppear(perform: actionOnAppear)
     }

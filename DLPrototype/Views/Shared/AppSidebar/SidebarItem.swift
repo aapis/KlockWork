@@ -65,7 +65,8 @@ public enum ItemOrientation {
     case left, right
 }
 
-struct SidebarItem: View {
+struct SidebarItem: View, Identifiable {
+    public let id: UUID = UUID()
     public var data: String
     public var help: String
     public var icon: String?

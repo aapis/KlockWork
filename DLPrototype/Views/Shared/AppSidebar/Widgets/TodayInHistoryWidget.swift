@@ -54,22 +54,23 @@ struct TodayInHistoryWidget: View {
                         FancyButton(text: "Next day", action: next, icon: "chevron.right", transparent: true, showLabel: false, size: .small)
                     }
                 }
-            }
-
-            VStack(alignment: .leading) {
-                ForEach(todayInHistory, id: \.year) { day in
-                    SidebarItem(
-                        data: day.linkLabel(),
-                        help: day.linkLabel(),
-                        icon: "arrowshape.right",
-                        orientation: .right,
-                        action: {actionTodayInHistory(day)}
-                    )
-                    .foregroundColor(day.highlight ? Color.black.opacity(0.6) : Color.white)
+                .frame(height: 30)
+                
+                VStack(alignment: .leading) {
+                    ForEach(todayInHistory, id: \.year) { day in
+                        SidebarItem(
+                            data: day.linkLabel(),
+                            help: day.linkLabel(),
+                            icon: "arrowshape.right",
+                            orientation: .right,
+                            action: {actionTodayInHistory(day)}
+                        )
+                        .foregroundColor(day.highlight ? Color.black.opacity(0.6) : Color.white)
+                    }
                 }
             }
-            
-            FancyDivider()
+            .padding(8)
+            .background(Theme.base.opacity(0.2))
         }
         .onAppear(perform: loadWidgetData)
         .onChange(of: currentDate) { _ in

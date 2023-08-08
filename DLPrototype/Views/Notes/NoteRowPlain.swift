@@ -29,6 +29,7 @@ struct NoteRowPlain: View {
                     pageType: .notes,
                     sidebar: AnyView(NoteViewSidebar(note: note, moc: moc))
                 )
+                Spacer()
             }
             .padding(5)
         }
