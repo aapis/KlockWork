@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct TasksWidget: View {
-    public let title: String = "Incomplete Tasks"
+    public let title: String = "Tasks"
 
     @State private var minimized: Bool = false
     @State private var groupedTasks: Dictionary<Job, [LogTask]> = [:]
@@ -26,65 +26,82 @@ struct TasksWidget: View {
     @AppStorage("widget.tasks.minimizeAll") private var minimizeAll: Bool = false
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack {
-                if let parent = nav.parent {
-                    if parent != .tasks {
-                        FancySubTitle(text: "Tasks")
+                HStack {
+                    if let parent = nav.parent {
+                        FancyButtonv2(
+                            text: "Minimize",
+                            action: actionMinimize,
+                            icon: minimized ? "plus" : "minus",
+                            showLabel: false,
+                            type: .clear
+                        )
+                        .frame(width: 30, height: 30)
+                        
+                        if parent != .tasks {
+                            Text(title)
+                                .padding(.trailing, 10)
+                        }
                     }
                 }
+                .padding(5)
 
                 Spacer()
-                FancyButtonv2(
-                    text: "Settings",
-                    action: actionSettings,
-                    icon: "gear",
-                    showLabel: false,
-                    type: .white
-                )
-                .frame(width: 30, height: 30)
-                
-                FancyButtonv2(
-                    text: "Minimize",
-                    action: actionMinimize,
-                    icon: minimized ? "plus" : "minus",
-                    showLabel: false,
-                    type: .white
-                )
-                .frame(width: 30, height: 30)
-            }
 
-            if !minimized {
-                if isSettingsPresented {
-                    Settings(
-                        showSearch: $showSearch,
-                        minimizeAll: $minimizeAll
+                HStack {
+                    FancyButtonv2(
+                        text: "Settings",
+                        action: actionSettings,
+                        icon: "gear",
+                        showLabel: false,
+                        type: .clear
                     )
-                } else {
-                    if showSearch {
-                        VStack {
-                            SearchBar(text: $query, disabled: minimized, placeholder: "Search tasks...")
-                                .onChange(of: query, perform: actionOnSearch)
-                                .onChange(of: nav.session.job, perform: actionOnChangeJob)
+                    .frame(width: 30, height: 30)
+                }
+                .padding(5)
+            }
+            .background(Theme.base.opacity(0.2))
+
+            VStack {
+                if !minimized {
+                    if isSettingsPresented {
+                        Settings(
+                            showSearch: $showSearch,
+                            minimizeAll: $minimizeAll
+                        )
+                    } else {
+                        if showSearch {
+                            VStack {
+                                SearchBar(text: $query, disabled: minimized, placeholder: "Search tasks...")
+                                    .onChange(of: query, perform: actionOnSearch)
+                                    .onChange(of: nav.session.job, perform: actionOnChangeJob)
+                            }
+                        }
+
+                        if groupedTasks.count > 0 {
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(Array(groupedTasks.keys.enumerated()), id: \.element) { index, key in
+                                    TaskGroup(index: index, key: key, tasks: groupedTasks)
+                                }
+                            }
+                        } else {
+                            SidebarItem(
+                                data: "No tasks or jobs matching query",
+                                help: "No tasks or jobs matching query",
+                                role: .important
+                            )
                         }
                     }
-
-                    if groupedTasks.count > 0 {
-                        VStack(alignment: .leading, spacing: 0) {
-                            ForEach(Array(groupedTasks.keys.enumerated()), id: \.element) { index, key in
-                                TaskGroup(index: index, key: key, tasks: groupedTasks)
-                            }
-                            FancyDivider()
-                        }
-                    } else {
-                        SidebarItem(
-                            data: "No tasks or jobs matching query",
-                            help: "No tasks or jobs matching query",
-                            role: .important
-                        )
+                } else {
+                    HStack {
+                        Text("\(groupedTasks.count) jobs")
+                        Spacer()
                     }
                 }
             }
+            .padding(8)
+            .background(Theme.base.opacity(0.2))
         }
         .onAppear(perform: actionOnAppear)
         .id(updater.ids["sidebar.today.incompleteTasksWidget"])
@@ -130,6 +147,10 @@ extension TasksWidget {
         groupedTasks = groupedTasks.filter({searchCriteria(term: term, job: $0.key, tasks: $0.value)})
         // TODO: figure out how to apply sort (below doesn't work)
 //            .sorted(by: {$0.key.created! > $1.key.created!})
+
+        if query.isEmpty {
+            resetGroupedTasks()
+        }
     }
 
     internal func searchCriteria(term: String, job: Job, tasks: [LogTask]) -> Bool {

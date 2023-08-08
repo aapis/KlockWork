@@ -36,65 +36,82 @@ struct JobPickerWidget: View {
     }
 
     var JobPickerWidget: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack {
-                if let parent = nav.parent {
-                    if parent != .jobs {
-                        FancySubTitle(text: title)
+                HStack {
+                    if let parent = nav.parent {
+                        FancyButtonv2(
+                            text: "Minimize",
+                            action: actionMinimize,
+                            icon: minimized ? "plus" : "minus",
+                            showLabel: false,
+                            type: .clear
+                        )
+                        .frame(width: 30, height: 30)
+
+                        if parent != .jobs {
+                            Text(title)
+                                .padding(.trailing, 10)
+                        }
                     }
                 }
+                .padding(5)
 
                 Spacer()
-                FancyButtonv2(
-                    text: "Settings",
-                    action: actionSettings,
-                    icon: "gear",
-                    showLabel: false,
-                    type: .white
-                )
-                .frame(width: 30, height: 30)
 
-                FancyButtonv2(
-                    text: "Minimize",
-                    action: actionMinimize,
-                    icon: minimized ? "plus" : "minus",
-                    showLabel: false,
-                    type: .white
-                )
-                .frame(width: 30, height: 30)
-            }
-
-            if !minimized {
-                if isSettingsPresented {
-                    Settings(
-                        showSearch: $showSearch,
-                        minimizeAll: $minimizeAll
+                HStack {
+                    FancyButtonv2(
+                        text: "Settings",
+                        action: actionSettings,
+                        icon: "gear",
+                        showLabel: false,
+                        type: .clear
                     )
-                } else {
-                    if showSearch {
-                        VStack {
-                            SearchBar(text: $query, disabled: minimized, placeholder: "Job ID or URL")
-                                .onChange(of: query, perform: actionOnSearch)
-                                .onChange(of: nav.session.job, perform: actionOnChangeJob)
-                        }
-                        
-                        VStack(alignment: .leading, spacing: 0) {
-                            if grouped.count > 0 {
-                                ForEach(Array(grouped.keys.enumerated()), id: \.element) { index, key in
-                                    JobProjectGroup(index: index, key: key, jobs: grouped)
+                    .frame(width: 30, height: 30)
+                }
+                .padding(5)
+            }
+            .background(Theme.base.opacity(0.2))
+
+            VStack {
+                if !minimized {
+                    if isSettingsPresented {
+                        Settings(
+                            showSearch: $showSearch,
+                            minimizeAll: $minimizeAll
+                        )
+                    } else {
+                        if showSearch {
+                            VStack {
+                                SearchBar(text: $query, disabled: minimized, placeholder: "Job ID or URL")
+                                    .onChange(of: query, perform: actionOnSearch)
+                                    .onChange(of: nav.session.job, perform: actionOnChangeJob)
+                            }
+
+                            VStack(alignment: .leading, spacing: 0) {
+                                if grouped.count > 0 {
+                                    ForEach(Array(grouped.keys.enumerated()), id: \.element) { index, key in
+                                        JobProjectGroup(index: index, key: key, jobs: grouped)
+                                    }
+                                } else {
+                                    SidebarItem(
+                                        data: "No jobs matching query",
+                                        help: "No jobs matching query",
+                                        role: .important
+                                    )
                                 }
-                                FancyDivider()
-                            } else {
-                                SidebarItem(
-                                    data: "No jobs matching query",
-                                    help: "No jobs matching query",
-                                    role: .important
-                                )
                             }
                         }
                     }
+                } else {
+                    HStack {
+                        Text("\(grouped.count) jobs")
+                        Spacer()
+                    }
                 }
             }
+            .padding(8)
+            .background(Theme.base.opacity(0.2))
         }
         .onAppear(perform: actionOnAppear)
     }

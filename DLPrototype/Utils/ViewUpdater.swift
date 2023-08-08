@@ -26,6 +26,7 @@ public class ViewUpdater: ObservableObject {
         "find.pr": UUID(),
         "find.jr": UUID(),
         "sidebar.today.incompleteTasksWidget": UUID(),
+        "sidebar.widget.information": UUID(),
         "task.dashboard": UUID(),
         "note.dashboard": UUID(),
         "project.dashboard": UUID(),

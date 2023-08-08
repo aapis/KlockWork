@@ -146,6 +146,22 @@ final public class DateHelper {
 
         return dates
     }
+
+    static public func identifiedDate(for date: Date, moc: NSManagedObjectContext) -> IdentifiableDay {
+        let cdr = CoreDataRecords(moc: moc)
+        let fmt = DateFormatter()
+        fmt.timeZone = TimeZone.autoupdatingCurrent
+        fmt.locale = NSLocale.current
+
+        let fmtComputedDay = fmt.string(from: date)
+
+        let identifiable = IdentifiableDay(
+            string: fmtComputedDay,
+            date: date,
+            recordCount: cdr.countForDate(date)
+        )
+        return identifiable
+    }
     
     static public func datesAround(_ date: Date) -> (Date, Date) {
         let before = date - 86400
