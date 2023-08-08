@@ -74,20 +74,22 @@ struct SidebarItem: View, Identifiable {
     public var role: ItemRole = .standard
     public var type: ItemType = .standard
     public var action: (() -> Void)?
+    public var showBorder: Bool = true
+    public var showButton: Bool = true
 
     @State private var highlighted: Bool = false
     
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             if orientation == .left {
-                ItemIcon
+                if showButton {ItemIcon}
                 ItemLabel
             } else {
                 ItemLabel
-                ItemIcon
+                if showButton {ItemIcon}
             }
         }
-        .border(.black.opacity(0.2), width: 1)
+        .border(.black.opacity(0.2), width: (showBorder ? 1 : 0))
         .mask(
             RoundedRectangle(cornerRadius: 4)
         )
