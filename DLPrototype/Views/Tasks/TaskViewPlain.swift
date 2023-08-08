@@ -29,5 +29,6 @@ extension TaskViewPlain {
     private func completeAction() -> Void {
         CoreDataTasks(moc: moc).complete(task)
         updater.updateOne("sidebar.today.incompleteTasksWidget")
+        updater.updateOne("today.table")
     }
 }

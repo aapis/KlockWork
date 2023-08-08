@@ -140,7 +140,7 @@ extension Today {
             }
 
             let record = LogRecord(context: moc)
-            record.timestamp = nav.session.date
+            record.timestamp = Date()
             record.message = text
             record.alive = true
             record.id = UUID()
