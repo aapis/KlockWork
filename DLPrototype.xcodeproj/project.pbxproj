@@ -138,6 +138,7 @@
 		53E2026E2A8051AD00B4DF70 /* JobRowPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E2026D2A8051AD00B4DF70 /* JobRowPicker.swift */; };
 		53E202702A80984400B4DF70 /* DateSelectorWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E2026F2A80984400B4DF70 /* DateSelectorWidget.swift */; };
 		53E202722A80BAD500B4DF70 /* ButtonType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202712A80BAD500B4DF70 /* ButtonType.swift */; };
+		53E202762A81F2E100B4DF70 /* FancyStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202752A81F2E100B4DF70 /* FancyStar.swift */; };
 		53ECD0572971F8F400A09AAB /* CoreDataRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */; };
 		53EDDF9E29634852008D34C7 /* Entry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDF9D29634852008D34C7 /* Entry.swift */; };
 		53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */; };
@@ -316,6 +317,7 @@
 		53E2026D2A8051AD00B4DF70 /* JobRowPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobRowPicker.swift; sourceTree = "<group>"; };
 		53E2026F2A80984400B4DF70 /* DateSelectorWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateSelectorWidget.swift; sourceTree = "<group>"; };
 		53E202712A80BAD500B4DF70 /* ButtonType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonType.swift; sourceTree = "<group>"; };
+		53E202752A81F2E100B4DF70 /* FancyStar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyStar.swift; sourceTree = "<group>"; };
 		53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataRecords.swift; sourceTree = "<group>"; };
 		53EDDF9D29634852008D34C7 /* Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entry.swift; sourceTree = "<group>"; };
 		53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPickerItem.swift; sourceTree = "<group>"; };
@@ -743,6 +745,7 @@
 				5333E7A02A0ECE0D00EE4A36 /* FancyTab.swift */,
 				5372C0292A105AA1008CB120 /* FancyChip.swift */,
 				53FBCC8D2A61D59B00B88539 /* FancyStaticTextField.swift */,
+				53E202752A81F2E100B4DF70 /* FancyStar.swift */,
 			);
 			path = Fancy;
 			sourceTree = "<group>";
@@ -1055,6 +1058,7 @@
 				537628A02966518B00DE8ECF /* ToolbarTabs.swift in Sources */,
 				53FBCC922A63605300B88539 /* RecentProjects.swift in Sources */,
 				53152CD6296A2DA300A14E43 /* FancyPicker.swift in Sources */,
+				53E202762A81F2E100B4DF70 /* FancyStar.swift in Sources */,
 				53E2026A2A80389500B4DF70 /* JobPickerWidget.swift in Sources */,
 				53152CE4296BC8A100A14E43 /* NoteDashboard.swift in Sources */,
 				536FBF6E2A68F77100F00CE4 /* NoteBlock.swift in Sources */,
@@ -1338,7 +1342,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 125;
+				CURRENT_PROJECT_VERSION = 126;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -1373,7 +1377,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 125;
+				CURRENT_PROJECT_VERSION = 126;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;

@@ -19,13 +19,25 @@ struct JobRowPicker: View {
             project
             ZStack(alignment: .topLeading) {
                 Color.fromStored(job.colour ?? Theme.rowColourAsDouble)
-                SidebarItem(
-                    data: job.jid.string,
-                    help: "Edit job \(job.jid.string)",
-                    icon: "arrowshape.right",
-                    orientation: .right,
-                    action: actionOpenJob
-                )
+                HStack {
+                    if let jerb = nav.session.job {
+                        if jerb == job {
+                            FancyStar()
+                                .padding(.leading, 10)
+                                .help("Records you create will be associated with this job (#\(job.jid.string))")
+                        }
+                    }
+
+                    SidebarItem(
+                        data: job.jid.string,
+                        help: "Edit job \(job.jid.string)",
+                        icon: "arrowshape.right",
+                        orientation: .right,
+                        action: actionOpenJob,
+                        showBorder: false,
+                        showButton: nav.session.job != job
+                    )
+                }
             }
         }
     }

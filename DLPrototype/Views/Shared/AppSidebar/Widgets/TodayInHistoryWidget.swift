@@ -33,11 +33,6 @@ struct TodayInHistoryWidget: View {
                     VStack(alignment: .center) {
                         HStack {
                             Spacer()
-                            if todaysDate.compare(currentDate).rawValue == 0 {
-                                Image(systemName: "calendar")
-                                    .help("That's today!")
-                            }
-
                             FancyTextLink(
                                 text: "\(selectedDate)",
                                 transparent: true,
@@ -45,7 +40,6 @@ struct TodayInHistoryWidget: View {
                                 pageType: .today,
                                 sidebar: AnyView(TodaySidebar())
                             )
-                            .padding()
                             Spacer()
                         }
                     }
@@ -106,11 +100,13 @@ extension TodayInHistoryWidget {
     private func prev() -> Void {
         todayInHistory = []
         currentDate -= 86400
+        nav.session.date = currentDate
     }
 
     private func next() -> Void {
         todayInHistory = []
         currentDate += 86400
+        nav.session.date = currentDate
     }
 
     private func loadWidgetData() -> Void {
@@ -118,7 +114,7 @@ extension TodayInHistoryWidget {
         formatter.dateFormat = "EEEE, MMM d, yyyy"
         formatter.timeZone = TimeZone.autoupdatingCurrent
         formatter.locale = NSLocale.current
-
+        currentDate = nav.session.date
         selectedDate = formatter.string(from: currentDate)
 
         Task {

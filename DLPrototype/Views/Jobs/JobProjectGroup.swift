@@ -15,13 +15,22 @@ struct JobProjectGroup: View {
 
     @State private var minimized: Bool = false
 
+    @EnvironmentObject public var nav: Navigation
+
     @AppStorage("widget.jobpicker.minimizeAll") private var minimizeAll: Bool = false
 
     var body: some View {
         let colour = Color.fromStored(key.colour ?? Theme.rowColourAsDouble)
         
-        VStack {
+        VStack(alignment: .leading) {
             HStack(alignment: .firstTextBaseline, spacing: 5) {
+                if let job = nav.session.job {
+                    if job.project == key {
+                        FancyStar()
+                            .help("Records you create will be associated with a job in this project (#\(job.jid.string))")
+                    }
+                }
+
                 FancyButtonv2(
                     text: key.name!,
                     action: minimize,

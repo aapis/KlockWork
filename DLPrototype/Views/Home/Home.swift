@@ -156,7 +156,11 @@ struct Home: View {
             updater.setOne(nav.parent!.ViewUpdaterKey, newUuid)
         }
         .onChange(of: nav.session.date) { newDate in
-            updater.updateOne("today.table")
+            if let page = nav.parent {
+                if page == .today {
+                    updater.updateOne("today.table")
+                }
+            }
         }
     }
 

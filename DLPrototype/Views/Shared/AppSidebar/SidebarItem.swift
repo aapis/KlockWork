@@ -74,26 +74,28 @@ struct SidebarItem: View, Identifiable {
     public var role: ItemRole = .standard
     public var type: ItemType = .standard
     public var action: (() -> Void)?
+    public var showBorder: Bool = true
+    public var showButton: Bool = true
 
     @State private var highlighted: Bool = false
+    @State private var altIcon: String?
     
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             if orientation == .left {
-                ItemIcon
+                if showButton {ItemIcon}
                 ItemLabel
             } else {
                 ItemLabel
-                ItemIcon
+                if showButton {ItemIcon}
             }
         }
-        .border(.black.opacity(0.2), width: 1)
+        .border(.black.opacity(0.2), width: (showBorder ? 1 : 0))
         .mask(
             RoundedRectangle(cornerRadius: 4)
         )
-        .onHover { inside in
-            highlighted.toggle()
-        }
+        .useDefaultHover({ inside in highlighted = inside})
+        .onAppear(perform: actionOnAppear)
         .contextMenu {
             Button("Copy \(data)") {
                 ClipboardHelper.copy(data)
@@ -111,12 +113,24 @@ struct SidebarItem: View, Identifiable {
                 }
 
                 Button(action: doAction) {
-                    Image(systemName: ic)
-                        .font(.title2)
-                        .frame(maxWidth: 30, maxHeight: 30)
+                    if let alt = altIcon {
+                        if highlighted {
+                            Image(systemName: alt)
+                                .font(.title2)
+                                .frame(maxWidth: 30, maxHeight: 30)
+                        } else {
+                            Image(systemName: ic)
+                                .font(.title2)
+                                .frame(maxWidth: 30, maxHeight: 30)
+                        }
+                    } else {
+                        Image(systemName: ic)
+                            .font(.title2)
+                            .frame(maxWidth: 30, maxHeight: 30)
+                    }
                 }
                 .buttonStyle(.plain)
-                .useDefaultHover({ inside in highlighted = inside})
+                .useDefaultHover({_ in})
             }
             .frame(width: type.iconFrameSize)
         }
@@ -142,6 +156,12 @@ extension SidebarItem {
     private func doAction() -> Void {
         if let callback = action {
             callback()
+        }
+    }
+
+    private func actionOnAppear() -> Void {
+        if let ic = icon {
+            altIcon = ic + ".fill"
         }
     }
 }

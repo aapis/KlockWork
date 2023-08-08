@@ -42,6 +42,8 @@ struct TasksWidget: View {
                         if parent != .tasks {
                             Text(title)
                                 .padding(.trailing, 10)
+                        } else {
+                            Text("Search all tasks")
                         }
                     }
                 }
