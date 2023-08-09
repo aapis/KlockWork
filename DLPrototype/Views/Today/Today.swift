@@ -25,6 +25,8 @@ struct Today: View {
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var ce: CoreDataCalendarEvent
+
+    @FocusState private var primaryTextFieldInFocus: Bool
     
     // MARK: body view
     var body: some View {
@@ -82,6 +84,13 @@ struct Today: View {
                     onSubmit: submitAction,
                     text: $text
                 )
+                .focused($primaryTextFieldInFocus)
+                .onAppear {
+                    // thx https://www.kodeco.com/31569019-focus-management-in-swiftui-getting-started#toc-anchor-002
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                        self.primaryTextFieldInFocus = true
+                    }
+                }
             }
         }
     }
@@ -122,8 +131,7 @@ extension Today {
         }
     }
 
-    private func actionOnChangeDate(date: Date) -> Void {
-    }
+    private func actionOnChangeDate(date: Date) -> Void {}
 
     private func reloadUi() -> Void {
         updater.updateOne("today.table")
