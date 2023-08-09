@@ -99,7 +99,7 @@ struct Home: View {
                 HStack(alignment: .top, spacing: 0) {
                     if nav.sidebar != nil {
                         VStack(alignment: .leading, spacing: 0) {
-                            DateSelectorWidget(isDatePickerPresented: $isDatePickerPresented)
+                            GlobalSidebarWidgets(isDatePickerPresented: $isDatePickerPresented)
 
                             if isDatePickerPresented{
                                 ZStack {
