@@ -30,7 +30,7 @@ public class CoreDataJob: ObservableObject {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
-    static public func fetchAll(limit: Int? = 10) -> FetchRequest<Job> {
+    static public func fetchAll(limit: Int? = nil) -> FetchRequest<Job> {
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.predicate = NSPredicate(format: "alive == true")
         fetch.sortDescriptors = [
