@@ -15,6 +15,7 @@ struct SettingsView: View {
     }
 
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var ce: CoreDataCalendarEvent
 
     var body: some View {
         TabView {
@@ -25,6 +26,7 @@ struct SettingsView: View {
                 .tag(Tabs.general)
             
             TodaySettings()
+                .environmentObject(ce)
                 .tabItem {
                     Label("Today", systemImage: "doc.append.fill")
                 }

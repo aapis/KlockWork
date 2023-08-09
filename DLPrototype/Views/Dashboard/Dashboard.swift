@@ -63,7 +63,6 @@ extension Dashboard {
 
                     VStack(alignment: .leading) {
                         Title(text: "Welcome back!")
-//                        FancyDivider()
 
                         if calendar > -1 {
                             HStack {
@@ -77,9 +76,11 @@ extension Dashboard {
                                 VStack(alignment: .leading) {
                                     ForEach(upcomingEvents, id: \.self) { event in
                                         HStack {
-                                            Image(systemName: "arrow.right")
+                                            let hasPassed = event.startDate >= Date()
+                                            Image(systemName: hasPassed ? "arrow.right" : "checkmark")
                                                 .padding(.leading, 15)
                                             Text("\(event.title) at \(event.startTime())")
+                                                .foregroundColor(hasPassed ? .white : .gray)
                                         }
                                     }
                                 }

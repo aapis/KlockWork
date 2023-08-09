@@ -47,17 +47,17 @@ public class CoreDataCalendarEvent: ObservableObject {
         return query(NSPredicate(format: "type = %@", "\(type)"))
     }
     
-    public func store(events: [EKEvent], type: CalendarEventType) -> [CalendarEvent] {
+    public func save(events: [EKEvent], type: CalendarEventType) -> [CalendarEvent] {
         var calendarEvents: [CalendarEvent] = []
 
         for event in events {
-            calendarEvents.append(self.store(event: event, type: type))
+            calendarEvents.append(self.save(event: event, type: type))
         }
 
         return calendarEvents
     }
 
-    public func store(event: EKEvent, type: CalendarEventType) -> CalendarEvent {
+    public func save(event: EKEvent, type: CalendarEventType) -> CalendarEvent {
         let entity = CalendarEvent(context: moc!)
         entity.id = UUID()
         entity.eid = Int64(event.hash)
@@ -218,13 +218,23 @@ public class CoreDataCalendarEvent: ObservableObject {
         return pickerItems
     }
 
+    public func requestAccess() -> Void {
+        store.requestAccess(to: EKEntityType.event) { (accessGranted, error) in
+            if !accessGranted {
+                print("[warning] User denied/ignored calendar permission prompt")
+            }
+        }
+    }
+
     private func eventsForDay(_ calendar: EKCalendar) -> [EKEvent] {
         let now = Date()
         let (start, end) = DateHelper.startAndEndOf(now)
         let predicate = store.predicateForEvents(withStart: start, end: end, calendars: [calendar])
         let events = store.events(matching: predicate)
 
-        return events
+        return events.filter {
+            !$0.isAllDay && $0.status != .canceled && !$0.title.contains(try! Regex("Busy").ignoresCase())
+        }
     }
 
     private func inProgress(_ calendarName: String) -> [EKEvent] {
@@ -284,14 +294,6 @@ public class CoreDataCalendarEvent: ObservableObject {
         }
 
         return upcomingEvents
-    }
-
-    private func requestAccess() -> Void {
-        store.requestAccess(to: EKEntityType.event) { (accessGranted, error) in
-            if !accessGranted {
-                print("[warning] User denied/ignored calendar permission prompt")
-            }
-        }
     }
 
     private func persist() -> Void {

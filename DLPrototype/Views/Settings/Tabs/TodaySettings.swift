@@ -31,6 +31,8 @@ struct TodaySettings: View {
     
     @State private var calendars: [CustomPickerItem] = []
 
+    @EnvironmentObject public var ce: CoreDataCalendarEvent
+
     @Environment(\.managedObjectContext) var moc
 
     var body: some View {
@@ -117,9 +119,17 @@ struct TodaySettings: View {
                     }
                 }
 
-                Picker("Active calendar", selection: $calendar) {
-                    ForEach(calendars, id: \.self) { item in
-                        Text(item.title).tag(item.tag)
+                VStack(alignment: .trailing) {
+                    if calendar > -1 {
+                        Picker("Active calendar", selection: $calendar) {
+                            ForEach(calendars, id: \.self) { item in
+                                Text(item.title).tag(item.tag)
+                            }
+                        }
+                    } else {
+                        Button("Request access to calendar") {
+                            ce.requestAccess()
+                        }
                     }
                 }
             }
