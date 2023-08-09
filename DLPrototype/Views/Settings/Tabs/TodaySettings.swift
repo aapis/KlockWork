@@ -15,7 +15,6 @@ struct TodaySettings: View {
     @AppStorage("today.numWeeks") public var numWeeks: Int = 2
     @AppStorage("today.recordGrouping") public var recordGrouping: Int = 0
     @AppStorage("today.relativeJobList") public var allowRelativeJobList: Bool = false
-    @AppStorage("showSidebar") public var showSidebar: Bool = true
     @AppStorage("showTodaySearch") public var showSearch: Bool = true
     @AppStorage("today.ltd.tasks.all") public var showAllJobsInDetailsPane: Bool = false
     @AppStorage("today.calendar") public var calendar: Int = -1
@@ -69,8 +68,7 @@ struct TodaySettings: View {
                         }
                     }
                 }
-                
-                Toggle("Show sidebar", isOn: $showSidebar)
+
                 Toggle("Show search on Today", isOn: $showSearch)
                 Toggle("Include all incomplete tasks in details pane", isOn: $showAllJobsInDetailsPane)
 

@@ -27,7 +27,6 @@ struct LogTable: View, Identifiable {
     @State private var viewRequiresColumns: Set<RecordTableColumn> = [.message]
     
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
-    @AppStorage("showSidebar") public var showSidebar: Bool = true
     @AppStorage("showTodaySearch") public var showSearch: Bool = true
     @AppStorage("today.recordGrouping") public var recordGrouping: Int = 0
     @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
@@ -133,7 +132,6 @@ struct LogTable: View, Identifiable {
                             ToolbarButtons(
                                 selectedTab: $recordGrouping,
                                 isShowingAlert: $isShowingAlert,
-                                showSidebar: $showSidebar,
                                 showSearch: $showSearch,
                                 searchText: $searchText,
                                 selectedDate: $selectedDate,

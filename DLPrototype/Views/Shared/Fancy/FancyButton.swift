@@ -67,9 +67,10 @@ struct FancyButton: View {
 
 public struct FancyButtonv2: View {
     public var text: String
-    public var action: () -> Void
+    public var action: (() -> Void)?
     public var icon: String? = "checkmark.circle"
     public var fgColour: Color?
+    public var highlightColour: Color?
     public var transparent: Bool? = false
     public var showLabel: Bool? = true
     public var showIcon: Bool? = true
@@ -97,15 +98,22 @@ public struct FancyButtonv2: View {
                         nav.parent = pType
                     }
 
-                    action()
+                    if let ac = action {
+                        ac()
+                    }
                 }) {
                     button
                 }
                 .buttonStyle(.plain)
             } else {
                 Button(action: {
-                    active.toggle()
-                    action()
+                    if type != .primary {
+                        active.toggle()
+                    }
+
+                    if let ac = action {
+                        ac()
+                    }
                 }) {
                     button
                 }
@@ -121,7 +129,16 @@ public struct FancyButtonv2: View {
                     ActiveBackground
                 } else {
                     if highlighted {
-                        HighlightedBackground
+                        if let highlightColour = highlightColour {
+                            ZStack {
+                                highlightColour
+                            }
+                            .mask(
+                                RoundedRectangle(cornerRadius: 3)
+                            )
+                        } else {
+                            HighlightedBackground
+                        }
                     } else {
                         Background
                     }

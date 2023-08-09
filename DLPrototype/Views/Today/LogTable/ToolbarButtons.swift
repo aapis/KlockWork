@@ -12,7 +12,6 @@ import SwiftUI
 struct ToolbarButtons: View {
     @Binding public var selectedTab: Int
     @Binding public var isShowingAlert: Bool
-    @Binding public var showSidebar: Bool
     @Binding public var showSearch: Bool
     @Binding public var searchText: String
     @Binding public var selectedDate: Date
@@ -29,13 +28,6 @@ struct ToolbarButtons: View {
     
     var body: some View {
         HStack {
-            // TODO: coming back soon
-//            FancyButton(text: "Previous day", action: previous, icon: "chevron.left", transparent: true, showLabel: false)
-//                .frame(maxHeight: 20)
-            // TODO: coming back soon
-//            FancyButton(text: "Next day", action: next, icon: "chevron.right", transparent: true, showLabel: false)
-//                .frame(maxHeight: 20)
-            
             ViewModeSelector(mode: $viewMode)
             
             Button(action: export, label: {
@@ -56,15 +48,6 @@ struct ToolbarButtons: View {
             .buttonStyle(.borderless)
             .foregroundColor(Color.white)
             .useDefaultHover({_ in})
-
-            // TODO: remove
-//            Button(action: toggleSidebar, label: {
-//                Image(systemName: "sidebar.right")
-//            })
-//            .help("Toggle sidebar")
-//            .buttonStyle(.borderless)
-//            .foregroundColor(Color.white)
-//            .useDefaultHover({_ in})
         }.padding(8)
     }
     
@@ -73,12 +56,6 @@ struct ToolbarButtons: View {
         
         pickerSelection = selected
         selectedDate = DateHelper.date(item) ?? Date()
-    }
-    
-    private func toggleSidebar() -> Void {
-        withAnimation(.easeInOut) {
-            showSidebar.toggle()
-        }
     }
     
     private func toggleSearch() -> Void {

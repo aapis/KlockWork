@@ -19,8 +19,10 @@ public enum ButtonType {
             return [Color.red, Color(hue: 0.0/100, saturation: 84.0/100, brightness: 43.0/100)]
         case .star:
             return [Color.yellow, Color.orange]
-        case .standard, .secondary:
+        case .standard:
             return [Theme.headerColour, Color.black]
+        case .secondary:
+            return [Theme.secondary, Color.black]
         case .white:
             return [Color.white, Color.gray]
         case .titleLink, .clear:

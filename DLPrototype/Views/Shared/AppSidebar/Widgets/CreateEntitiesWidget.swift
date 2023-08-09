@@ -16,7 +16,6 @@ struct CreateEntitiesWidget: View {
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
             if isDatePickerPresented {
-
                 ZStack {
                     Buttons
                     Color.black.opacity(0.7)
@@ -36,11 +35,10 @@ struct CreateEntitiesWidget: View {
                 Theme.base.opacity(0.5)
                 FancyButtonv2(
                     text: "New record",
-                    action: {},
                     icon: "doc.badge.plus",
-                    transparent: true,
                     showLabel: false,
                     size: .small,
+                    type: nav.parent == .today ? .secondary : .standard,
                     redirect: AnyView(Today()),
                     pageType: .today,
                     sidebar: AnyView(TodaySidebar())
@@ -54,10 +52,10 @@ struct CreateEntitiesWidget: View {
                Theme.base.opacity(0.5)
                FancyButtonv2(
                    text: "New note",
-                   action: {},
                    icon: "note.text.badge.plus",
                    showLabel: false,
                    size: .small,
+                   type: nav.parent == .notes ? .secondary : .standard,
                    redirect: AnyView(NoteCreate()),
                    pageType: .today,
                    sidebar: AnyView(NoteDashboardSidebar())
@@ -71,10 +69,10 @@ struct CreateEntitiesWidget: View {
                 Theme.base.opacity(0.5)
                 FancyButtonv2(
                     text: "New Task",
-                    action: {},
                     icon: "checklist.unchecked",
                     showLabel: false,
                     size: .small,
+                    type: nav.parent == .tasks ? .secondary : .standard,
                     redirect: AnyView(TaskDashboard()),
                     pageType: .tasks,
                     sidebar: AnyView(TaskDashboardSidebar())
@@ -88,10 +86,10 @@ struct CreateEntitiesWidget: View {
                 Theme.base.opacity(0.5)
                 FancyButtonv2(
                     text: "New Project",
-                    action: {},
                     icon: "folder.badge.plus",
                     showLabel: false,
                     size: .small,
+                    type: nav.parent == .projects ? .secondary : .standard,
                     redirect: AnyView(ProjectCreate()),
                     pageType: .projects,
                     sidebar: AnyView(ProjectsDashboardSidebar())
@@ -105,11 +103,10 @@ struct CreateEntitiesWidget: View {
                 Theme.base.opacity(0.5)
                 FancyButtonv2(
                     text: "New Job",
-                    action: {},
-                    icon: "hammer.fill",
+                    icon: "hammer",
                     showLabel: false,
                     size: .small,
-                    type: .secondary,
+                    type: nav.parent == .jobs ? .secondary : .standard,
                     redirect: AnyView(JobCreate()),
                     pageType: .jobs,
                     sidebar: AnyView(JobDashboardSidebar())

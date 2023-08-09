@@ -114,7 +114,7 @@ struct Home: View {
                                     .environmentObject(nav)
                             }
                         }
-                        .frame(maxWidth: 300)
+                        .frame(width: 320)
                         .background(nav.parent != nil ? nav.parent!.colour : Theme.tabActiveColour)
                     } else {
                         HorizontalSeparator // TODO: maybe remove?
