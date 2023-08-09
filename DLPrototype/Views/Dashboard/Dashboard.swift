@@ -6,8 +6,8 @@
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
+import EventKit
 
 struct Dashboard: View {
     static public let id: UUID = UUID()
@@ -17,22 +17,71 @@ struct Dashboard: View {
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var crm: CoreDataRecords
     @EnvironmentObject public var ce: CoreDataCalendarEvent
-    @EnvironmentObject public var jm: CoreDataJob
-    @EnvironmentObject public var updater: ViewUpdater
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            FindDashboard(searching: $searching)
-            FancyDivider()
+        VStack(alignment: .leading, spacing: 0) {
+            Header()
+            VStack(alignment: .leading, spacing: 0) {
+                FindDashboard(searching: $searching)
+                FancyDivider()
 
-            if !searching {
-                Widgets()
-                    .environmentObject(crm)
-                    .environmentObject(ce)
+                if !searching {
+                    Widgets()
+                        .environmentObject(crm)
+                        .environmentObject(ce)
+                }
             }
+            .font(Theme.font)
+            .padding()
+            .background(Theme.toolbarColour)
         }
-        .font(Theme.font)
-        .padding()
-        .background(Theme.toolbarColour)
+    }
+}
+
+extension Dashboard {
+
+}
+
+extension Dashboard {
+    struct Header: View {
+        @State private var upcomingEvents: [EKEvent] = []
+        
+        @EnvironmentObject public var nav: Navigation
+        @EnvironmentObject public var ce: CoreDataCalendarEvent
+
+        @AppStorage("today.calendar") public var calendar: Int = -1
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                ZStack(alignment: .topLeading) {
+                    Color.indigo
+                    Color.black.opacity(0.8)
+                    LinearGradient(gradient: Gradient(colors: [.clear, .black]), startPoint: .top, endPoint: .bottom)
+                        .opacity(0.6)
+                        .blendMode(.softLight)
+
+                    VStack(alignment: .leading) {
+                        Title(text: "Welcome back!")
+                        FancyDivider()
+
+                        if calendar > -1 {
+                            Text("You have \(upcomingEvents.count) meetings today")
+                                .font(Theme.font)
+                        }
+                    }
+                    .padding()
+                }
+            }
+            .frame(height: 150)
+            .onAppear(perform: actionOnAppear)
+        }
+    }
+}
+
+extension Dashboard.Header {
+    private func actionOnAppear() -> Void {
+        if let chosenCalendar = ce.selectedCalendar() {
+            upcomingEvents = ce.eventsUpcoming(chosenCalendar)
+        }
     }
 }
