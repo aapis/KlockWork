@@ -12,11 +12,11 @@ struct Home: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var nav: Navigation
+    @EnvironmentObject public var ce: CoreDataCalendarEvent
     
     @StateObject public var rm: LogRecords = LogRecords(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
-    @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var pr: CoreDataProjects = CoreDataProjects(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var cvm: CoreDataNoteVersions = CoreDataNoteVersions(moc: PersistenceController.shared.container.viewContext)
     

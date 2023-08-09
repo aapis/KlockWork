@@ -14,6 +14,7 @@ struct DLPrototype: App {
     private let persistenceController = PersistenceController.shared
     @StateObject public var updater: ViewUpdater = ViewUpdater()
     @StateObject public var nav: Navigation = Navigation()
+    @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
     
     @Environment(\.scenePhase) var scenePhase
     
@@ -23,6 +24,7 @@ struct DLPrototype: App {
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(updater)
                 .environmentObject(nav)
+                .environmentObject(ce)
                 .onAppear(perform: onAppear)
                 .onChange(of: scenePhase) { _ in
                     persistenceController.save()
@@ -36,11 +38,12 @@ struct DLPrototype: App {
             MainMenu(moc: persistenceController.container.viewContext, nav: nav)
         }
 
-        
         #if os(macOS)
         Settings {
             SettingsView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environmentObject(ce)
+                .environmentObject(nav)
         }
         
         // TODO: temp commented out, too early to include this

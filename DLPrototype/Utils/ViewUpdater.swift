@@ -9,6 +9,7 @@
 import Foundation
 
 public class ViewUpdater: ObservableObject {
+    // TODO: this is gross, try to remove it
     @Published public var ids: [String: UUID] = [
         "today.table": UUID(),
         "today.picker": UUID(),
@@ -32,6 +33,7 @@ public class ViewUpdater: ObservableObject {
         "project.dashboard": UUID(),
         "project.view": UUID(),
         "job.dashboard": UUID(),
+        "dashboard.header": UUID(),
     ]
 
     public func get(_ key: String) -> UUID {
