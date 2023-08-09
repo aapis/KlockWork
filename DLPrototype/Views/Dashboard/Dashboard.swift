@@ -45,6 +45,7 @@ extension Dashboard {
 extension Dashboard {
     struct Header: View {
         @State private var upcomingEvents: [EKEvent] = []
+        @State private var calendarName: String = ""
         
         @EnvironmentObject public var nav: Navigation
         @EnvironmentObject public var ce: CoreDataCalendarEvent
@@ -62,11 +63,27 @@ extension Dashboard {
 
                     VStack(alignment: .leading) {
                         Title(text: "Welcome back!")
-                        FancyDivider()
+//                        FancyDivider()
 
                         if calendar > -1 {
-                            Text("You have \(upcomingEvents.count) meetings today")
-                                .font(Theme.font)
+                            HStack {
+                                Image(systemName: "calendar")
+                                Text("You have \(upcomingEvents.count) meetings today")
+                                    .font(Theme.font)
+                            }
+                            .padding(5)
+
+                            if upcomingEvents.count <= 3 {
+                                VStack(alignment: .leading) {
+                                    ForEach(upcomingEvents, id: \.self) { event in
+                                        HStack {
+                                            Image(systemName: "arrow.right")
+                                                .padding(.leading, 15)
+                                            Text("\(event.title) at \(event.startTime())")
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                     .padding()
@@ -81,7 +98,8 @@ extension Dashboard {
 extension Dashboard.Header {
     private func actionOnAppear() -> Void {
         if let chosenCalendar = ce.selectedCalendar() {
-            upcomingEvents = ce.eventsUpcoming(chosenCalendar)
+            calendarName = chosenCalendar
+            upcomingEvents = ce.events(chosenCalendar)
         }
     }
 }

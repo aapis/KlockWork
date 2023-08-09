@@ -172,8 +172,6 @@ public class CoreDataCalendarEvent: ObservableObject {
                 }
             }
 
-//            let _ = self.store(events: ekEvents, type: .upcoming)
-
             return ekEvents
         }
     }
