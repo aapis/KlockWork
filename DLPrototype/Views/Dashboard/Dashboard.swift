@@ -14,13 +14,17 @@ struct Dashboard: View {
 
     @State public var searching: Bool = false
 
+    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var crm: CoreDataRecords
     @EnvironmentObject public var ce: CoreDataCalendarEvent
+    @EnvironmentObject public var updater: ViewUpdater
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Header()
+                .environmentObject(updater)
+
             VStack(alignment: .leading, spacing: 0) {
                 FindDashboard(searching: $searching)
                 FancyDivider()
@@ -46,9 +50,11 @@ extension Dashboard {
     struct Header: View {
         @State private var upcomingEvents: [EKEvent] = []
         @State private var calendarName: String = ""
-        
+
+        @Environment(\.managedObjectContext) var moc
         @EnvironmentObject public var nav: Navigation
         @EnvironmentObject public var ce: CoreDataCalendarEvent
+        @EnvironmentObject public var updater: ViewUpdater
 
         @AppStorage("today.calendar") public var calendar: Int = -1
 
@@ -92,6 +98,8 @@ extension Dashboard {
             }
             .frame(height: 150)
             .onAppear(perform: actionOnAppear)
+            .onChange(of: calendar, perform: actionOnChangeCalendar)
+            .id(updater.get("dashboard.header"))
         }
     }
 }
@@ -101,6 +109,14 @@ extension Dashboard.Header {
         if let chosenCalendar = ce.selectedCalendar() {
             calendarName = chosenCalendar
             upcomingEvents = ce.events(chosenCalendar)
+        }
+    }
+
+    private func actionOnChangeCalendar(calendar: Int) -> Void {
+        let calendars = CoreDataCalendarEvent(moc: moc).getCalendarsForPicker()
+        let calendarChanged = calendars.first(where: ({$0.tag == calendar})) != nil
+        if calendarChanged {
+            updater.updateOne("dashboard.header")
         }
     }
 }

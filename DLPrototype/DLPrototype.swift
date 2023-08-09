@@ -43,6 +43,7 @@ struct DLPrototype: App {
             SettingsView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(ce)
+                .environmentObject(nav)
         }
         
         // TODO: temp commented out, too early to include this

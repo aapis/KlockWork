@@ -32,6 +32,7 @@ struct TodaySettings: View {
     @State private var calendars: [CustomPickerItem] = []
 
     @EnvironmentObject public var ce: CoreDataCalendarEvent
+    @EnvironmentObject public var nav: Navigation
 
     @Environment(\.managedObjectContext) var moc
 
