@@ -46,6 +46,7 @@ struct Today: View {
     // MARK: Editor view
     var editor: some View {
         VStack(alignment: .leading) {
+            // TODO: remove?
             HStack {
                 JobPickerUsing(onChange: {_,_ in }, supportsDynamicPicker: true, jobId: $jobId)
                     .onReceive(Just(jobId)) { input in
@@ -54,9 +55,9 @@ struct Today: View {
                             jobId = filtered
                         }
                     }
-                
+
                 Text("Or").font(Theme.font)
-                
+
                 // TODO: background colours stack here, fix that
                 FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
                     .onChange(of: taskUrl) { url in
@@ -77,20 +78,38 @@ struct Today: View {
                     .background(isUrl ? Color.clear : Theme.rowStatusRed)
             }
             
-            VStack {
-                FancyTextField(
-                    placeholder: "Type and hit enter to save...",
-                    lineLimit: 6,
-                    onSubmit: submitAction,
-                    text: $text
-                )
-                .focused($primaryTextFieldInFocus)
-                .onAppear {
-                    // thx https://www.kodeco.com/31569019-focus-management-in-swiftui-getting-started#toc-anchor-002
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-                        self.primaryTextFieldInFocus = true
+            VStack(alignment: .leading) {
+                ZStack(alignment: .topLeading) {
+                    FancyTextField(
+                        placeholder: "Type and hit enter to create a record",
+                        lineLimit: 6,
+                        onSubmit: submitAction,
+                        text: $text
+                    )
+                    .focused($primaryTextFieldInFocus)
+                    .onAppear {
+                        // thx https://www.kodeco.com/31569019-focus-management-in-swiftui-getting-started#toc-anchor-002
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                            self.primaryTextFieldInFocus = true
+                        }
+                    }
+
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            FancyButtonv2(
+                                text: "Save",
+                                action: submitAction,
+                                icon: "plus",
+                                showLabel: false,
+                                size: .small,
+                                type: .primary
+                            )
+                        }
                     }
                 }
+                .frame(height: 130)
             }
         }
     }
