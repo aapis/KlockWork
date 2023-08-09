@@ -60,22 +60,6 @@ struct Widgets: View {
                                 .environmentObject(crm)
                                 .environmentObject(ce)
                         }
-
-                        if showWidgetFavNotes {
-                            Favourites()
-                        }
-
-                        if showWidgetRecentProjects {
-                            RecentProjects()
-                        }
-
-                        if showWidgetRecentJobs {
-                            RecentJobs()
-                        }
-
-                        if showWidgetRecentTasks {
-                            RecentTasks()
-                        }
                     }
 
                     Spacer()
