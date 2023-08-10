@@ -13,6 +13,8 @@ struct NoteRowPlain: View {
     public var moc: NSManagedObjectContext
     public var icon: String = "arrow.right"
 
+    @EnvironmentObject public var nav: Navigation
+
     var body: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .firstTextBaseline, spacing: 0) {
@@ -22,7 +24,8 @@ struct NoteRowPlain: View {
 
                 FancyButtonv2(
                     text: note.title!,
-                    action: {},
+                    action: actionOpenNote,
+                    fgColour: note.mJob != nil && Color.fromStored(note.mJob!.colour!).isBright() ? .black : .white,
                     showIcon: false,
                     size: .link,
                     redirect: AnyView(NoteView(note: note, moc: moc)),
@@ -35,3 +38,15 @@ struct NoteRowPlain: View {
         }
     }
 }
+
+extension NoteRowPlain {
+    private func actionOpenNote() -> Void {
+        nav.reset()
+        nav.setId()
+        nav.setParent(.today)
+        nav.session.note = note
+        nav.setView(AnyView(NoteView(note: note, moc: moc)))
+        nav.setSidebar(AnyView(NoteViewSidebar(note: note, moc: moc)))
+    }
+}
+

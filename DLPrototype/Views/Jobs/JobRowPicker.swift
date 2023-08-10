@@ -12,7 +12,6 @@ struct JobRowPicker: View {
     public var job: Job
 
     @EnvironmentObject public var nav: Navigation
-    @EnvironmentObject public var updater: ViewUpdater
 
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
@@ -37,6 +36,7 @@ struct JobRowPicker: View {
                         showBorder: false,
                         showButton: nav.session.job != job
                     )
+                    .foregroundColor(job.colour != nil && Color.fromStored(job.colour!).isBright() ? .black : .white)
                 }
             }
         }

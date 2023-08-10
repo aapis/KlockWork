@@ -21,7 +21,7 @@ struct NoteSearchWidget: View {
 
     @AppStorage("widget.notesearch.showSearch") private var showSearch: Bool = true
     @AppStorage("widget.notesearch.minimizeAll") private var minimizeAll: Bool = false
-    @AppStorage("widget.notesearch.onlyRecent") private var onlyRecent: Bool = true
+//    @AppStorage("widget.notesearch.onlyRecent") private var onlyRecent: Bool = true
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation

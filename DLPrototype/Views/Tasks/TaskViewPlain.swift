@@ -22,6 +22,7 @@ struct TaskViewPlain: View {
             type: .thin,
             action: completeAction
         )
+        .foregroundColor(task.owner != nil && Color.fromStored(task.owner!.colour!).isBright() ? .black : .white)
     }
 }
 

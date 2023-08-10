@@ -46,46 +46,48 @@ struct Today: View {
     // MARK: Editor view
     var editor: some View {
         VStack(alignment: .leading) {
-            // TODO: remove?
-            HStack {
-                JobPickerUsing(onChange: {_,_ in }, supportsDynamicPicker: true, jobId: $jobId)
-                    .onReceive(Just(jobId)) { input in
-                        let filtered = input.filter { "0123456789".contains($0) }
-                        if filtered != input {
-                            jobId = filtered
-                        }
-                    }
-
-                Text("Or").font(Theme.font)
-
-                // TODO: background colours stack here, fix that
-                FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
-                    .onChange(of: taskUrl) { url in
-                        if !url.isEmpty {
-                            if let newUrl = URL(string: taskUrl) {
-                                jobId = UrlHelper.parts(of: newUrl).jid_string
-                            }
-
-                            if url.starts(with: "https:") {
-                                isUrl = true
-                            } else {
-                                isUrl = false
-                            }
-                        } else {
-                            isUrl = true
-                        }
-                    }
-                    .background(isUrl ? Color.clear : Theme.rowStatusRed)
-            }
+            // TODO: remove (currently testing usability w/o these fields)
+//            HStack {
+//                JobPickerUsing(onChange: {_,_ in }, supportsDynamicPicker: true, jobId: $jobId)
+//                    .onReceive(Just(jobId)) { input in
+//                        let filtered = input.filter { "0123456789".contains($0) }
+//                        if filtered != input {
+//                            jobId = filtered
+//                        }
+//                    }
+//
+//                Text("Or").font(Theme.font)
+//
+//                // TODO: background colours stack here, fix that
+//                FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
+//                    .onChange(of: taskUrl) { url in
+//                        if !url.isEmpty {
+//                            if let newUrl = URL(string: taskUrl) {
+//                                jobId = UrlHelper.parts(of: newUrl).jid_string
+//                            }
+//
+//                            if url.starts(with: "https:") {
+//                                isUrl = true
+//                            } else {
+//                                isUrl = false
+//                            }
+//                        } else {
+//                            isUrl = true
+//                        }
+//                    }
+//                    .background(isUrl ? Color.clear : Theme.rowStatusRed)
+//            }
             
             VStack(alignment: .leading) {
                 ZStack(alignment: .topLeading) {
                     FancyTextField(
-                        placeholder: "Type and hit enter to create a record",
+                        placeholder: nav.session.job != nil ? "Type and hit enter to create a record" : "Choose a job from the jobs sidebar widget first",
                         lineLimit: 6,
                         onSubmit: submitAction,
+                        fgColour: nav.session.job != nil ? Color.fromStored(nav.session.job!.colour!).isBright() ? .black : .white : .white,
                         text: $text
                     )
+                    .background(nav.session.job != nil ? Color.fromStored(nav.session.job!.colour!) : .clear)
                     .focused($primaryTextFieldInFocus)
                     .onAppear {
                         // thx https://www.kodeco.com/31569019-focus-management-in-swiftui-getting-started#toc-anchor-002
@@ -94,19 +96,22 @@ struct Today: View {
                         }
                     }
 
-                    VStack {
+                    VStack(alignment: .trailing) {
                         Spacer()
                         HStack {
                             Spacer()
                             FancyButtonv2(
-                                text: "Save",
+                                text: nav.session.job != nil ? "Log to job \(nav.session.job!.jid)" : "Log",
                                 action: submitAction,
-                                icon: "doc.badge.plus",
-                                fgColour: .black,
+                                icon: "plus",
+                                fgColour: nav.session.job != nil ? Color.fromStored(nav.session.job!.colour!).isBright() ? .black : .white : .white,
                                 showLabel: false,
-                                size: .small,
-                                type: .primary
+                                size: .tiny,
+                                type: .clear
                             )
+                            .frame(width: 30, height: 30)
+                            .background(nav.session.job != nil ? Color.fromStored(nav.session.job!.colour!) : Theme.toolbarColour)
+                            .disabled(nav.session.job == nil)
                         }
                     }
                 }

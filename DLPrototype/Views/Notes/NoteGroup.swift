@@ -86,6 +86,5 @@ extension NoteGroup {
     private func actionOnAppear() -> Void {
         minimized = minimizeAll
     }
-    
 }
 

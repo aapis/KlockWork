@@ -111,7 +111,8 @@ struct JobCreate: View {
                 type: .primary,
 //                redirect: AnyView(JobView(job: $job)), // this works but the view page isn't styled properly yet
                 redirect: AnyView(JobDashboard()),
-                pageType: .jobs
+                pageType: .jobs,
+                sidebar: AnyView(JobDashboardSidebar())
             )
                 .keyboardShortcut("s")
                 .disabled(
