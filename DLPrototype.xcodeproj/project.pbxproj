@@ -18,6 +18,7 @@
 		53152CE4296BC8A100A14E43 /* NoteDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CE3296BC8A100A14E43 /* NoteDashboard.swift */; };
 		53196AC92A168E7200FE49FC /* CalendarIndividualEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53196AC82A168E7200FE49FC /* CalendarIndividualEvent.swift */; };
 		531B38FC29674EC400E74013 /* Title.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531B38FB29674EC400E74013 /* Title.swift */; };
+		531B8DF22A847BE8005D911B /* NoteGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531B8DF12A847BE8005D911B /* NoteGroup.swift */; };
 		531E2F752A140533009CA230 /* CalendarToday.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531E2F742A140533009CA230 /* CalendarToday.swift */; };
 		53218D4824B7F6EB0088ABE9 /* DLPrototype.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */; };
 		53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4924B7F6EB0088ABE9 /* Home.swift */; };
@@ -188,6 +189,7 @@
 		53152CE3296BC8A100A14E43 /* NoteDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDashboard.swift; sourceTree = "<group>"; };
 		53196AC82A168E7200FE49FC /* CalendarIndividualEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarIndividualEvent.swift; sourceTree = "<group>"; };
 		531B38FB29674EC400E74013 /* Title.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Title.swift; sourceTree = "<group>"; };
+		531B8DF12A847BE8005D911B /* NoteGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteGroup.swift; sourceTree = "<group>"; };
 		531E2F742A140533009CA230 /* CalendarToday.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarToday.swift; sourceTree = "<group>"; };
 		53218D4424B7F6EB0088ABE9 /* ClockWork.Beta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClockWork.Beta.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DLPrototype.swift; sourceTree = "<group>"; };
@@ -686,6 +688,7 @@
 				53F5895F2998335A00843B32 /* NoteRow.swift */,
 				536FBF6D2A68F77100F00CE4 /* NoteBlock.swift */,
 				5371BA272A7B264900DEEC21 /* NoteRowPlain.swift */,
+				531B8DF12A847BE8005D911B /* NoteGroup.swift */,
 			);
 			path = Notes;
 			sourceTree = "<group>";
@@ -1091,6 +1094,7 @@
 				53E202722A80BAD500B4DF70 /* ButtonType.swift in Sources */,
 				5376289B2966467100DE8ECF /* SearchBar.swift in Sources */,
 				5363B67A2A6BB75F00C2FBB8 /* CompanyBlock.swift in Sources */,
+				531B8DF22A847BE8005D911B /* NoteGroup.swift in Sources */,
 				5363B6752A6B4A9A00C2FBB8 /* NoteDashboardSettings.swift in Sources */,
 				530318472A11DD13009CA90B /* CoreDataCalendarEvent.swift in Sources */,
 				535C1AE129F48EF700CD95FD /* Dashboard.swift in Sources */,
@@ -1338,7 +1342,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 130;
+				CURRENT_PROJECT_VERSION = 131;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -1373,7 +1377,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 130;
+				CURRENT_PROJECT_VERSION = 131;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;

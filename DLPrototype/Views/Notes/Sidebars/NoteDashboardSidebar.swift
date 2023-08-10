@@ -12,10 +12,8 @@ struct NoteDashboardSidebar: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 5) {
-                Title(text: "Notes")
-//                NoteSearchWidget()
+                NoteSearchWidget()
                 FavouriteNotesWidget()
-                RecentNotesWidget()
             }
             Spacer()
         }

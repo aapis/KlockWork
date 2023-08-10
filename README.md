@@ -11,5 +11,4 @@ The productivity app for ADHD people. Well that's the goal, anyways.
 
 See the [wiki](https://github.com/aapis/DLPrototype/wiki) for more details.
 
-![record view](Screenshots/record-view.png)
-![search view (beta)](Screenshots/search-view-beta.png)
+![Dashboard view](Screenshots/dashboard.png)

@@ -109,7 +109,7 @@ public class CoreDataNotes {
 //        if let txt = text {
 //            fetch.predicate = NSPredicate(format: "alive == true && title CONTAINS[c] %s", txt.wrappedValue)
 //        } else {
-            fetch.predicate = NSPredicate(format: "alive == true")
+            fetch.predicate = NSPredicate(format: "alive == true && mJob != nil")
 //        }
         fetch.sortDescriptors = descriptors
         fetch.fetchLimit = 1000

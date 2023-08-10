@@ -1,24 +1,25 @@
 //
-//  TaskGroup.swift
+//  NoteGroup.swift
 //  DLPrototype
 //
-//  Created by Ryan Priebe on 2023-08-04.
+//  Created by Ryan Priebe on 2023-08-09.
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
 import SwiftUI
 
-struct TaskGroup: View {
+struct NoteGroup: View {
     public let index: Int
     public let key: Job
-    public var tasks: Dictionary<Job, [LogTask]>
+    public var notes: Dictionary<Job, [Note]>
 
     @State private var minimized: Bool = false
 
+    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
 
     @AppStorage("widget.tasks.minimizeAll") private var minimizeAll: Bool = false
-    
+
     var body: some View {
         let colour = Color.fromStored(key.colour ?? Theme.rowColourAsDouble)
 
@@ -58,48 +59,9 @@ struct TaskGroup: View {
 
             if !minimized {
                 VStack(alignment: .leading, spacing: 5) {
-                    HStack(alignment: .firstTextBaseline, spacing: 10) {
-                        Spacer()
-                        FancyButtonv2(
-                            text: "See all tasks",
-                            action: {},
-                            icon: "checklist",
-                            fgColour: colour.isBright() ? .black : .white,
-                            showLabel: false,
-                            size: .link,
-                            redirect: AnyView(TaskDashboard(defaultSelectedJob: key)),
-                            pageType: .tasks,
-                            sidebar: AnyView(TaskDashboardSidebar())
-                        )
-
-                        FancyButtonv2(
-                            text: "Go to project: \(project.name!)",
-                            action: {},
-                            icon: "folder",
-                            fgColour: colour.isBright() ? .black : .white,
-                            showLabel: false,
-                            size: .link,
-                            redirect: AnyView(ProjectsDashboard()),
-                            pageType: .projects,
-                            sidebar: AnyView(ProjectsDashboardSidebar())
-                        )
-
-                        FancyButtonv2(
-                            text: "Go to job: \(key.jid.string)",
-                            action: {},
-                            icon: "hammer",
-                            fgColour: colour.isBright() ? .black : .white,
-                            showLabel: false,
-                            size: .link,
-                            redirect: AnyView(JobDashboard(defaultSelectedJob: key)),
-                            pageType: .jobs,
-                            sidebar: AnyView(JobDashboardSidebar())
-                        )
-                    }
-
-                    if let subtasks = self.tasks[key] {
-                        ForEach(subtasks) { task in
-                            TaskViewPlain(task: task)
+                    if let subtasks = self.notes[key] {
+                        ForEach(subtasks) { note in
+                            NoteRowPlain(note: note, moc: moc)
                         }
                     }
                 }
@@ -114,7 +76,7 @@ struct TaskGroup: View {
     }
 }
 
-extension TaskGroup {
+extension NoteGroup {
     private func minimize() -> Void {
         withAnimation {
             minimized.toggle()
@@ -124,4 +86,6 @@ extension TaskGroup {
     private func actionOnAppear() -> Void {
         minimized = minimizeAll
     }
+    
 }
+

@@ -55,6 +55,10 @@ struct NoteDashboard: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
+                HStack {
+                    Spacer()
+                }
+                // TODO: remove!
                 SearchBar(
                     text: $searchText,
                     disabled: false,
