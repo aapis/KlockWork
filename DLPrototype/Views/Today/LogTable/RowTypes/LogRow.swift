@@ -262,6 +262,10 @@ struct LogRow: View, Identifiable {
         
         if dotIndex != nil {
             selectedJob = String(job.prefix(upTo: dotIndex!))
+            
+            if let jobIdDbl = Double(job) {
+                nav.session.job = CoreDataJob(moc: moc).byId(jobIdDbl)
+            }
         }
     }
 
