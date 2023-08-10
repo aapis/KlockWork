@@ -13,7 +13,6 @@ struct JobPickerWidget: View {
 
     @State private var minimized: Bool = false
     @State private var query: String = ""
-    @State private var listItems: [Job] = []
     @State private var grouped: Dictionary<Project, [Job]> = [:]
     @State private var sgrouped: Dictionary<Project, [Job]> = [:]
     @State private var isSettingsPresented: Bool = false
@@ -90,19 +89,19 @@ struct JobPickerWidget: View {
                                     .onChange(of: query, perform: actionOnSearch)
                                     .onChange(of: nav.session.job, perform: actionOnChangeJob)
                             }
+                        }
 
-                            VStack(alignment: .leading, spacing: 0) {
-                                if grouped.count > 0 {
-                                    ForEach(Array(grouped.keys.enumerated()), id: \.element) { index, key in
-                                        JobProjectGroup(index: index, key: key, jobs: grouped)
-                                    }
-                                } else {
-                                    SidebarItem(
-                                        data: "No jobs matching query",
-                                        help: "No jobs matching query",
-                                        role: .important
-                                    )
+                        VStack(alignment: .leading, spacing: 0) {
+                            if grouped.count > 0 {
+                                ForEach(Array(grouped.keys.enumerated()), id: \.element) { index, key in
+                                    JobProjectGroup(index: index, key: key, jobs: grouped)
                                 }
+                            } else {
+                                SidebarItem(
+                                    data: "No jobs matching query",
+                                    help: "No jobs matching query",
+                                    role: .important
+                                )
                             }
                         }
                     }

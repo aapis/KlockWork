@@ -150,7 +150,7 @@ public struct FancyStaticTextField: View, Identifiable {
 
     private var oneLine: some View {
         TextField(placeholder, text: $internalText)
-            .font(Theme.font)
+            .font(Theme.fontTextField)
             .textFieldStyle(.plain)
             .disableAutocorrection(enableAutoCorrection)
             .padding()
@@ -165,7 +165,7 @@ public struct FancyStaticTextField: View, Identifiable {
 
     private var oneBigLine: some View {
         TextField(placeholder, text: $internalText, axis: .vertical)
-            .font(Theme.font)
+            .font(Theme.fontTextField)
             .textFieldStyle(.plain)
             .disableAutocorrection(enableAutoCorrection)
             .padding()
@@ -179,7 +179,7 @@ public struct FancyStaticTextField: View, Identifiable {
 
     private var multiLine: some View {
         TextEditor(text: $internalText)
-            .font(Theme.font)
+            .font(Theme.fontTextField)
             .textFieldStyle(.plain)
             .disableAutocorrection(enableAutoCorrection)
             .padding()

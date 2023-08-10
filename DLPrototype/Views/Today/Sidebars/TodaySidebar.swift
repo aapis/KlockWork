@@ -17,8 +17,8 @@ struct TodaySidebar: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 5) {
                 JobPickerWidget()
-                    .environmentObject(nav)
                 TasksWidget()
+                NoteSearchWidget()
             }
             Spacer()
         }
