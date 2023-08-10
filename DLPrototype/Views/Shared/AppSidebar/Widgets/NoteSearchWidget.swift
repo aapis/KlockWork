@@ -68,8 +68,10 @@ extension NoteSearchWidget {
     }
 
     private func actionMinimize() -> Void {
-        withAnimation {
-            minimized.toggle()
-        }
+        minimized.toggle()
+    }
+
+    private func actionSettings() -> Void {
+//        isSettingsPresented.toggle()
     }
 }

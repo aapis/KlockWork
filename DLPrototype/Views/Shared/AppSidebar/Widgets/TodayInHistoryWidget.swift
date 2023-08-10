@@ -78,9 +78,11 @@ struct TodayInHistoryWidget: View {
 
 extension TodayInHistoryWidget {
     private func actionMinimize() -> Void {
-        withAnimation {
-            minimized.toggle()
-        }
+        minimized.toggle()
+    }
+
+    private func actionSettings() -> Void {
+//        isSettingsPresented.toggle()
     }
 
     private func findHistoricalDataForToday() async -> Void {

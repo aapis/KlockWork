@@ -193,9 +193,7 @@ extension DateSelectorWidget {
     }
 
     private func actionOpenSelector() -> Void {
-        withAnimation(.spring(), {
-            isDatePickerPresented.toggle()
-        })
+        isDatePickerPresented.toggle()
     }
 
     private func actionOnChangeDate(_ day: IdentifiableDay) -> Void {

@@ -101,7 +101,8 @@ struct Today: View {
                             FancyButtonv2(
                                 text: "Save",
                                 action: submitAction,
-                                icon: "plus",
+                                icon: "doc.badge.plus",
+                                fgColour: .black,
                                 showLabel: false,
                                 size: .small,
                                 type: .primary
@@ -117,7 +118,7 @@ struct Today: View {
     // MARK: Table view
     var table: some View {
         LogTable(job: $jobId, defaultSelectedDate: defaultSelectedDate)
-            .id(updater.ids["today.table"])
+            .id(updater.get("today.table"))
             .environmentObject(updater)
             .environmentObject(ce)
             .environmentObject(nav)

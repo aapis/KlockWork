@@ -89,15 +89,15 @@ extension JobsWidget {
 
     private func getRecent() -> [Job] {
         var jobs: [Job] = []
-        let max = 5
+        let max = 15
 
         if resource.count > 0 {
-            if resource.count < max {
+            if resource.count <= max {
                 for item in resource {
                     jobs.append(item)
                 }
             } else {
-                for item in resource[..<5] {
+                for item in resource[..<max] {
                     jobs.append(item)
                 }
             }
@@ -107,9 +107,11 @@ extension JobsWidget {
     }
     
     private func actionMinimize() -> Void {
-        withAnimation {
-            minimized.toggle()
-        }
+        minimized.toggle()
+    }
+
+    private func actionSettings() -> Void {
+//        isSettingsPresented.toggle()
     }
 
     private func actionOnAppear() -> Void {

@@ -27,10 +27,6 @@ struct Widgets: View {
     @AppStorage("dashboard.widget.thisweek") public var showWidgetThisWeek: Bool = true
     @AppStorage("dashboard.widget.thismonth") public var showWidgetThisMonth: Bool = true
     @AppStorage("dashboard.widget.thisyear") public var showWidgetThisYear: Bool = true
-    @AppStorage("dashboard.widget.favnotes") public var showWidgetFavNotes: Bool = true
-    @AppStorage("dashboard.widget.recentProjects") public var showWidgetRecentProjects: Bool = true
-    @AppStorage("dashboard.widget.recentJobs") public var showWidgetRecentJobs: Bool = true
-    @AppStorage("dashboard.widget.recentTasks") public var showWidgetRecentTasks: Bool = true
 
     @EnvironmentObject public var crm: CoreDataRecords
     @EnvironmentObject public var ce: CoreDataCalendarEvent

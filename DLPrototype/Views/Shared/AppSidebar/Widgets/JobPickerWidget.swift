@@ -23,6 +23,7 @@ struct JobPickerWidget: View {
 
     @AppStorage("widget.jobpicker.showSearch") private var showSearch: Bool = true
     @AppStorage("widget.jobpicker.minimizeAll") private var minimizeAll: Bool = false
+    @AppStorage("widget.jobpicker.onlyRecent") private var onlyRecent: Bool = true
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
@@ -132,16 +133,12 @@ extension JobPickerWidget {
         sgrouped = grouped
     }
 
-    private func actionSettings() -> Void {
-        withAnimation {
-            isSettingsPresented.toggle()
-        }
+    private func actionMinimize() -> Void {
+        minimized.toggle()
     }
 
-    private func actionMinimize() -> Void {
-        withAnimation {
-            minimized.toggle()
-        }
+    private func actionSettings() -> Void {
+        isSettingsPresented.toggle()
     }
 
     private func actionOnSearch(term: String) -> Void {

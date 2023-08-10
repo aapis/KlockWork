@@ -143,23 +143,18 @@ extension ProjectsWidget {
             setListItems(getRecent())
         }
     }
-
-    private func actionMinimize() -> Void {
-        withAnimation {
-            minimized.toggle()
-        }
-    }
-
+    
     private func setListItems(_ list: [Project]) -> Void {
         listItems = list
     }
 
-    private func actionSettings() -> Void {
-        withAnimation {
-            isSettingsPresented.toggle()
-        }
+    private func actionMinimize() -> Void {
+        minimized.toggle()
     }
 
+    private func actionSettings() -> Void {
+        isSettingsPresented.toggle()
+    }
 }
 
 extension ProjectsWidget {
