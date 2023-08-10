@@ -18,6 +18,7 @@ struct TodaySettings: View {
     @AppStorage("showTodaySearch") public var showSearch: Bool = true
     @AppStorage("today.ltd.tasks.all") public var showAllJobsInDetailsPane: Bool = false
     @AppStorage("today.calendar") public var calendar: Int = -1
+    @AppStorage("today.calendar.hasAccess") public var hasAccess: Bool = false
     @AppStorage("today.startOfDay") public var startOfDay: Int = 9
     @AppStorage("today.endOfDay") public var endOfDay: Int = 18
     @AppStorage("today.defaultTableSortOrder") private var defaultTableSortOrder: String = "DESC"
@@ -121,7 +122,7 @@ struct TodaySettings: View {
                 }
 
                 VStack(alignment: .trailing) {
-                    if calendar > -1 {
+                    if hasAccess {
                         Picker("Active calendar", selection: $calendar) {
                             ForEach(calendars, id: \.self) { item in
                                 Text(item.title).tag(item.tag)
@@ -129,7 +130,10 @@ struct TodaySettings: View {
                         }
                     } else {
                         Button("Request access to calendar") {
-                            ce.requestAccess()
+                            ce.requestAccess({(granted, error) in
+                                hasAccess = granted
+                                onAppear()
+                            })
                         }
                     }
                 }
@@ -140,7 +144,9 @@ struct TodaySettings: View {
     }
     
     private func onAppear() -> Void {
-        calendars = CoreDataCalendarEvent(moc: moc).getCalendarsForPicker()
+        if hasAccess {
+            calendars = CoreDataCalendarEvent(moc: moc).getCalendarsForPicker()
+        }
     }
 }
 

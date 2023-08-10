@@ -218,10 +218,14 @@ public class CoreDataCalendarEvent: ObservableObject {
         return pickerItems
     }
 
-    public func requestAccess() -> Void {
-        store.requestAccess(to: EKEntityType.event) { (accessGranted, error) in
-            if !accessGranted {
-                print("[warning] User denied/ignored calendar permission prompt")
+    public func requestAccess(_ callback: EKEventStoreRequestAccessCompletionHandler? = nil) -> Void {
+        if callback != nil {
+            store.requestAccess(to: EKEntityType.event, completion: callback!)
+        } else {
+            store.requestAccess(to: EKEntityType.event) { (accessGranted, error) in
+                if !accessGranted {
+                    print("[warning] User denied/ignored calendar permission prompt")
+                }
             }
         }
     }
