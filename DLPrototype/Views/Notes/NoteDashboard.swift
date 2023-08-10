@@ -59,11 +59,11 @@ struct NoteDashboard: View {
                     Spacer()
                 }
                 // TODO: remove!
-//                SearchBar(
-//                    text: $searchText,
-//                    disabled: false,
-//                    placeholder: notes.count > 1 ? "Search \(notes.count) notes" : "Search 1 note"
-//                )
+                SearchBar(
+                    text: $searchText,
+                    disabled: false,
+                    placeholder: notes.count > 1 ? "Search \(notes.count) notes" : "Search 1 note"
+                )
 
                 recentNotes
 
