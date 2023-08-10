@@ -55,11 +55,15 @@ struct NoteDashboard: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
-                SearchBar(
-                    text: $searchText,
-                    disabled: false,
-                    placeholder: notes.count > 1 ? "Search \(notes.count) notes" : "Search 1 note"
-                )
+                HStack {
+                    Spacer()
+                }
+                // TODO: remove!
+//                SearchBar(
+//                    text: $searchText,
+//                    disabled: false,
+//                    placeholder: notes.count > 1 ? "Search \(notes.count) notes" : "Search 1 note"
+//                )
 
                 recentNotes
 
