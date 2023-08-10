@@ -169,6 +169,7 @@ extension JobPickerWidget {
             grouped = filtered
         } else {
             actionOnAppear()
+            nav.session.job = nil
         }
     }
 
