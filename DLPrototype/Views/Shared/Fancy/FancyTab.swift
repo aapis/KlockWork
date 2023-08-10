@@ -11,6 +11,7 @@ import SwiftUI
 
 struct FancyTab: View {
     @State public var tab: Tab
+    @State public var highlighted: Bool = false
 
     @Binding public var selected: Int
 
@@ -32,21 +33,18 @@ struct FancyTab: View {
                     }
                 }
                 Image(systemName: tab.icon)
+                    .foregroundColor(highlighted || selected == tab.id ? .white : .white.opacity(0.8))
             }
         })
         .buttonStyle(.borderless)
         .foregroundColor(Color.white)
         .help(tab.help)
         .frame(width: 50)
-        .onHover { inside in
-            if inside {
-                NSCursor.pointingHand.push()
-            } else {
-                NSCursor.pop()
-            }
-        }
+        .useDefaultHover({ inside in highlighted = inside})
     }
-    
+}
+
+extension FancyTab {
     private func setActive(_ index: Int) -> Void {
         selected = index
     }

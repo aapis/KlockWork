@@ -81,7 +81,7 @@ struct Today: View {
             VStack(alignment: .leading) {
                 ZStack(alignment: .topLeading) {
                     FancyTextField(
-                        placeholder: nav.session.job != nil ? "Type and hit enter to create a record" : "Choose a job from the jobs sidebar widget first",
+                        placeholder: nav.session.job != nil ? "Type and hit enter to create a record" : "Choose a job from the recent jobs list in the sidebar",
                         lineLimit: 6,
                         onSubmit: submitAction,
                         fgColour: nav.session.job != nil ? Color.fromStored(nav.session.job!.colour!).isBright() ? .black : .white : .white,

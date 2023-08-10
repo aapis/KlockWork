@@ -191,7 +191,7 @@ struct LogTable: View, Identifiable {
 
             if viewRequiresColumns.contains(.job) {
                 Group {
-                    ZStack(alignment: .leading) {
+                    ZStack(alignment: .center) {
                         Theme.headerColour
                         Text("Job ID")
                             .padding(10)
