@@ -122,12 +122,13 @@ struct TodaySettings: View {
                 }
 
                 VStack(alignment: .trailing) {
-                    if hasAccess {
+                    if hasAccess && calendars.count > 0 {
                         Picker("Active calendar", selection: $calendar) {
                             ForEach(calendars, id: \.self) { item in
                                 Text(item.title).tag(item.tag)
                             }
                         }
+                        .onAppear(perform: {print("DERPO HI")})
                     } else {
                         Button("Request access to calendar") {
                             ce.requestAccess({(granted, error) in
@@ -144,9 +145,14 @@ struct TodaySettings: View {
     }
     
     private func onAppear() -> Void {
-        if hasAccess {
-            calendars = CoreDataCalendarEvent(moc: moc).getCalendarsForPicker()
-        }
+        ce.requestAccess({(granted, error) in
+            if granted {
+                calendars = CoreDataCalendarEvent(moc: moc).getCalendarsForPicker()
+            } else {
+                print("[error][calendar] No calendar access")
+                print("[error][calendar] \(error.debugDescription)")
+            }
+        })
     }
 }
 
