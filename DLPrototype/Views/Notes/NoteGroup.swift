@@ -18,7 +18,7 @@ struct NoteGroup: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
 
-    @AppStorage("widget.tasks.minimizeAll") private var minimizeAll: Bool = false
+    @AppStorage("widget.notesearch.minimizeAll") private var minimizeAll: Bool = false
 
     var body: some View {
         let colour = Color.fromStored(key.colour ?? Theme.rowColourAsDouble)
@@ -87,4 +87,3 @@ extension NoteGroup {
         minimized = minimizeAll
     }
 }
-
