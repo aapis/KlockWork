@@ -30,7 +30,7 @@ struct JobRowPicker: View {
 
                     SidebarItem(
                         data: job.jid.string,
-                        help: "Edit job \(job.jid.string)",
+                        help: "Set current job to \(job.jid.string)",
                         icon: "arrowshape.right",
                         orientation: .right,
                         action: actionOpenJob,

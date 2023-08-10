@@ -51,9 +51,12 @@ public class CoreDataJob: ObservableObject {
 
         for rec in records {
             if let job = rec.job {
-                jobs.insert(job)
+                if job.project != nil {
+                    jobs.insert(job)
+                }
             }
         }
+
 
         return jobs.sorted {$0.project!.pid > $1.project!.pid}
     }

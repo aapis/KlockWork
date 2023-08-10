@@ -14,10 +14,6 @@ struct DashboardSettings: View {
     @AppStorage("dashboard.widget.thisweek") public var showWidgetThisWeek: Bool = true
     @AppStorage("dashboard.widget.thismonth") public var showWidgetThisMonth: Bool = true
     @AppStorage("dashboard.widget.thisyear") public var showWidgetThisYear: Bool = true
-    @AppStorage("dashboard.widget.favnotes") public var showWidgetFavNotes: Bool = true
-    @AppStorage("dashboard.widget.recentProjects") public var showWidgetRecentProjects: Bool = true
-    @AppStorage("dashboard.widget.recentJobs") public var showWidgetRecentJobs: Bool = true
-    @AppStorage("dashboard.widget.recentTasks") public var showWidgetRecentTasks: Bool = true
     
     var body: some View {
         Form {
@@ -33,10 +29,6 @@ struct DashboardSettings: View {
                 Toggle("Show this week", isOn: $showWidgetThisWeek)
                 Toggle("Show this month", isOn: $showWidgetThisMonth)
                 Toggle("Show this year", isOn: $showWidgetThisYear)
-                Toggle("Show favourite notes", isOn: $showWidgetFavNotes)
-                Toggle("Show recent projects", isOn: $showWidgetRecentProjects)
-                Toggle("Show recent jobs", isOn: $showWidgetRecentJobs)
-                Toggle("Show recent tasks", isOn: $showWidgetRecentTasks)
             }
         }
         .padding(20)

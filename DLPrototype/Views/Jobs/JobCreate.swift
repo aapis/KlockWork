@@ -155,9 +155,3 @@ struct JobCreate: View {
         }
     }
 }
-
-struct JobCreate_Previews: PreviewProvider {
-    static var previews: some View {
-        JobCreate()
-    }
-}

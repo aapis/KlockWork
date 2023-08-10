@@ -14,7 +14,6 @@ struct JobDashboardSidebar: View {
             VStack(alignment: .leading, spacing: 5) {
                 Title(text: "Jobs")
                 JobsWidget()
-                JobPickerWidget()
             }
             Spacer()
         }

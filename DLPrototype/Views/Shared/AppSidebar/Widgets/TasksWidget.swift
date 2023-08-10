@@ -122,15 +122,11 @@ extension TasksWidget {
     }
 
     private func actionMinimize() -> Void {
-        withAnimation {
-            minimized.toggle()
-        }
+        minimized.toggle()
     }
 
     private func actionSettings() -> Void {
-        withAnimation {
-            isSettingsPresented.toggle()
-        }
+        isSettingsPresented.toggle()
     }
 
     private func actionOnAppear() -> Void {
