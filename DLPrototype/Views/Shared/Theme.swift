@@ -6,7 +6,6 @@
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
 
 struct Theme {

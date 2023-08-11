@@ -10,6 +10,7 @@ import SwiftUI
 
 struct JobRowPicker: View {
     public var job: Job
+    public var location: WidgetLocation
 
     @EnvironmentObject public var nav: Navigation
 
@@ -32,7 +33,7 @@ struct JobRowPicker: View {
                         help: "Set current job to \(job.jid.string)",
                         icon: "arrowshape.right",
                         orientation: .right,
-                        action: actionOpenJob,
+                        action: action,
                         showBorder: false,
                         showButton: nav.session.job != job
                     )
@@ -59,6 +60,15 @@ struct JobRowPicker: View {
 }
 
 extension JobRowPicker {
+    private func action() -> Void {
+        switch location {
+        case .sidebar, .header, .taskbar:
+            actionOpenJob()
+        case .content:
+            actionUpdatePlanningStore()
+        }
+    }
+
     private func actionOpenJob() -> Void {
         nav.reset()
         nav.setId()
@@ -66,5 +76,9 @@ extension JobRowPicker {
         nav.session.job = job
         nav.setView(AnyView(Today()))
         nav.setSidebar(AnyView(TodaySidebar()))
+    }
+
+    private func actionUpdatePlanningStore() -> Void {
+        nav.session.planning.jobs.insert(job)
     }
 }

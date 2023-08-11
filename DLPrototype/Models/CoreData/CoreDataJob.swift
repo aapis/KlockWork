@@ -6,12 +6,12 @@
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
-
 
 public class CoreDataJob: ObservableObject {
     public var moc: NSManagedObjectContext?
+
+    private let lock = NSLock()
     
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
@@ -165,5 +165,53 @@ public class CoreDataJob: ObservableObject {
         }
         
         return all
+    }
+
+    public func countAll() -> Int {
+        let predicate = NSPredicate(
+            format: "alive == true"
+        )
+
+        return count(predicate)
+    }
+
+    private func query(_ predicate: NSPredicate) -> [Job] {
+        lock.lock()
+
+        var results: [Job] = []
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.created?, ascending: true)]
+        fetch.predicate = predicate
+        fetch.returnsDistinctResults = true
+
+        do {
+            results = try moc!.fetch(fetch)
+        } catch {
+            print("[error] CoreDataJob.query Unable to find records for predicate \(predicate.predicateFormat)")
+        }
+
+        lock.unlock()
+
+        return results
+    }
+
+    private func count(_ predicate: NSPredicate) -> Int {
+        lock.lock()
+
+        var count = 0
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.created?, ascending: true)]
+        fetch.predicate = predicate
+        fetch.returnsDistinctResults = true
+
+        do {
+            count = try moc!.fetch(fetch).count
+        } catch {
+            print("[error] CoreDataJob.query Unable to find records for predicate \(predicate.predicateFormat)")
+        }
+
+        lock.unlock()
+
+        return count
     }
 }

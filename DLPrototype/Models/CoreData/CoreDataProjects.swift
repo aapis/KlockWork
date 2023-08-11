@@ -11,6 +11,8 @@ import SwiftUI
 
 public class CoreDataProjects: ObservableObject {
     public var moc: NSManagedObjectContext?
+
+    private let lock = NSLock()
     
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
@@ -100,7 +102,17 @@ public class CoreDataProjects: ObservableObject {
         return results
     }
 
+    public func countAll() -> Int {
+        let predicate = NSPredicate(
+            format: "alive == true"
+        )
+
+        return count(predicate)
+    }
+
     private func query(_ predicate: NSPredicate? = nil) -> [Project] {
+        lock.lock()
+
         var results: [Project] = []
         let fetch: NSFetchRequest<Project> = Project.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Project.created, ascending: false)]
@@ -121,6 +133,28 @@ public class CoreDataProjects: ObservableObject {
             print(error)
         }
 
+        lock.unlock()
+
         return results
+    }
+
+    private func count(_ predicate: NSPredicate) -> Int {
+        lock.lock()
+
+        var count = 0
+        let fetch: NSFetchRequest<Project> = Project.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Project.created?, ascending: true)]
+        fetch.predicate = predicate
+        fetch.returnsDistinctResults = true
+
+        do {
+            count = try moc!.fetch(fetch).count
+        } catch {
+            print("[error] CoreDataProjects.query Unable to find records for predicate \(predicate.predicateFormat)")
+        }
+
+        lock.unlock()
+
+        return count
     }
 }

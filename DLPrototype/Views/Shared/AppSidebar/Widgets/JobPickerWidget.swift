@@ -10,6 +10,7 @@ import SwiftUI
 
 struct JobPickerWidget: View {
     public let title: String = "Recently Used Jobs"
+    public var location: WidgetLocation = .sidebar
 
     @State private var minimized: Bool = false
     @State private var query: String = ""
@@ -39,39 +40,46 @@ struct JobPickerWidget: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 HStack {
-                    if let parent = nav.parent {
-                        FancyButtonv2(
-                            text: "Minimize",
-                            action: actionMinimize,
-                            icon: minimized ? "plus" : "minus",
-                            showLabel: false,
-                            type: .clear
-                        )
-                        .frame(width: 30, height: 30)
+                    if location == .sidebar {
+                        if let parent = nav.parent {
+                            FancyButtonv2(
+                                text: "Minimize",
+                                action: actionMinimize,
+                                icon: minimized ? "plus" : "minus",
+                                showLabel: false,
+                                type: .clear
+                            )
+                            .frame(width: 30, height: 30)
+                            .padding(5)
 
-                        if parent != .jobs {
-                            Text(title)
-                                .padding(.trailing, 10)
-                        } else {
-                            Text("Recently used jobs")
+                            if parent != .jobs {
+                                Text(title)
+                                    .padding(.trailing, 10)
+                            } else {
+                                Text("Recently used jobs")
+                                    .padding(5)
+                            }
                         }
+
+                        Spacer()
+
+                        HStack {
+                            FancyButtonv2(
+                                text: "Settings",
+                                action: actionSettings,
+                                icon: "gear",
+                                showLabel: false,
+                                type: .clear
+                            )
+                            .frame(width: 30, height: 30)
+                        }
+                        .padding(5)
+                    } else {
+                        Text(title)
+                            .padding(10)
+                        Spacer()
                     }
                 }
-                .padding(5)
-
-                Spacer()
-
-                HStack {
-                    FancyButtonv2(
-                        text: "Settings",
-                        action: actionSettings,
-                        icon: "gear",
-                        showLabel: false,
-                        type: .clear
-                    )
-                    .frame(width: 30, height: 30)
-                }
-                .padding(5)
             }
             .background(Theme.base.opacity(0.2))
 
@@ -94,7 +102,7 @@ struct JobPickerWidget: View {
                         VStack(alignment: .leading, spacing: 0) {
                             if grouped.count > 0 {
                                 ForEach(Array(grouped.keys.enumerated()), id: \.element) { index, key in
-                                    JobProjectGroup(index: index, key: key, jobs: grouped)
+                                    JobProjectGroup(index: index, key: key, jobs: grouped, location: location)
                                 }
                             } else {
                                 SidebarItem(
@@ -120,8 +128,12 @@ struct JobPickerWidget: View {
 }
 
 extension JobPickerWidget {
-    public init() {
+    public init(location: WidgetLocation? = nil) {
         _resource = CoreDataRecords.fetchRecent()
+
+        if let loc = location {
+            self.location = loc
+        }
     }
 
     private func actionOnAppear() -> Void {
@@ -133,11 +145,17 @@ extension JobPickerWidget {
     }
 
     private func actionMinimize() -> Void {
-        minimized.toggle()
+        // only allow when widget is installed on a sidebar
+        if location == .sidebar {
+            minimized.toggle()
+        }
     }
 
     private func actionSettings() -> Void {
-        isSettingsPresented.toggle()
+        // only allow when widget is installed on a sidebar
+        if location == .sidebar {
+            isSettingsPresented.toggle()
+        }
     }
 
     private func actionOnSearch(term: String) -> Void {

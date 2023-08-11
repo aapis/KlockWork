@@ -132,5 +132,11 @@ extension Navigation {
         var note: Note?
         var date: Date = Date()
         var idate: IdentifiableDay = IdentifiableDay()
+        var planning: Planning = Planning()
+    }
+
+    public struct Planning {
+        var jobs: Set<Job> = []
+        var tasks: Set<LogTask> = []
     }
 }
