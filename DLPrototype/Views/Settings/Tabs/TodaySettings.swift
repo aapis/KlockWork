@@ -29,7 +29,8 @@ struct TodaySettings: View {
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures: Bool = false
     @AppStorage("today.maxCharsPerGroup") public var maxCharsPerGroup: Int = 2000
     @AppStorage("today.colourizeExportableGroupedRecord") public var colourizeExportableGroupedRecord: Bool = false
-    
+    @AppStorage("today.showLegacyForm") public var showLegacyJobForm: Bool = false
+
     @State private var calendars: [CustomPickerItem] = []
 
     @EnvironmentObject public var ce: CoreDataCalendarEvent
@@ -73,6 +74,7 @@ struct TodaySettings: View {
                     }
                 }
 
+                Toggle("Show legacy job creation form", isOn: $showLegacyJobForm)
                 Toggle("Show search on Today", isOn: $showSearch)
                 Toggle("Include all incomplete tasks in details pane", isOn: $showAllJobsInDetailsPane)
 

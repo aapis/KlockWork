@@ -20,6 +20,7 @@ struct Today: View {
 
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
+    @AppStorage("today.showLegacyForm") public var showLegacyJobForm: Bool = false
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
@@ -47,36 +48,38 @@ struct Today: View {
     var editor: some View {
         VStack(alignment: .leading) {
             // TODO: remove (currently testing usability w/o these fields)
-//            HStack {
-//                JobPickerUsing(onChange: {_,_ in }, supportsDynamicPicker: true, jobId: $jobId)
-//                    .onReceive(Just(jobId)) { input in
-//                        let filtered = input.filter { "0123456789".contains($0) }
-//                        if filtered != input {
-//                            jobId = filtered
-//                        }
-//                    }
-//
-//                Text("Or").font(Theme.font)
-//
-//                // TODO: background colours stack here, fix that
-//                FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
-//                    .onChange(of: taskUrl) { url in
-//                        if !url.isEmpty {
-//                            if let newUrl = URL(string: taskUrl) {
-//                                jobId = UrlHelper.parts(of: newUrl).jid_string
-//                            }
-//
-//                            if url.starts(with: "https:") {
-//                                isUrl = true
-//                            } else {
-//                                isUrl = false
-//                            }
-//                        } else {
-//                            isUrl = true
-//                        }
-//                    }
-//                    .background(isUrl ? Color.clear : Theme.rowStatusRed)
-//            }
+            if showLegacyJobForm {
+                HStack {
+                    JobPickerUsing(onChange: {_,_ in }, supportsDynamicPicker: true, jobId: $jobId)
+                        .onReceive(Just(jobId)) { input in
+                            let filtered = input.filter { "0123456789".contains($0) }
+                            if filtered != input {
+                                jobId = filtered
+                            }
+                        }
+                    
+                    Text("Or").font(Theme.font)
+                    
+                    // TODO: background colours stack here, fix that
+                    FancyTextField(placeholder: "Task URL", lineLimit: 1, onSubmit: {}, text: $taskUrl)
+                        .onChange(of: taskUrl) { url in
+                            if !url.isEmpty {
+                                if let newUrl = URL(string: taskUrl) {
+                                    jobId = UrlHelper.parts(of: newUrl).jid_string
+                                }
+                                
+                                if url.starts(with: "https:") {
+                                    isUrl = true
+                                } else {
+                                    isUrl = false
+                                }
+                            } else {
+                                isUrl = true
+                            }
+                        }
+                        .background(isUrl ? Color.clear : Theme.rowStatusRed)
+                }
+            }
             
             VStack(alignment: .leading) {
                 ZStack(alignment: .topLeading) {
