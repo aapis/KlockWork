@@ -108,11 +108,11 @@ struct JobCreate: View {
                 text: "Create",
                 action: update,
                 size: .medium,
-                type: .primary,
+                type: .primary
 //                redirect: AnyView(JobView(job: $job)), // this works but the view page isn't styled properly yet
-                redirect: AnyView(JobDashboard()),
-                pageType: .jobs,
-                sidebar: AnyView(JobDashboardSidebar())
+//                redirect: AnyView(ProjectsDashboard()),
+//                pageType: .jobs,
+//                sidebar: AnyView(JobDashboardSidebar())
             )
                 .keyboardShortcut("s")
                 .disabled(
@@ -120,10 +120,12 @@ struct JobCreate: View {
                 )
         }
     }
+}
 
+extension JobCreate {
     private func update() -> Void {
         let newJob = Job(context: moc)
-        if !url.isEmpty {
+        if validUrl && !url.isEmpty {
             newJob.uri = URL(string: url)!
         }
 
@@ -131,15 +133,27 @@ struct JobCreate: View {
             newJob.jid = Double(id)!
         }
 
-        newJob.project = project!
         newJob.alive = alive
         newJob.shredable = shredable
         newJob.colour = colourAsDouble
-
+        newJob.created = Date()
+        newJob.lastUpdate = newJob.created
         job = newJob
 
         PersistenceController.shared.save()
-        updater.update()
+
+        // TODO: workaround is to redirect to project instead
+        if validProject {
+            if let proj = project {
+                nav.setView(AnyView(ProjectView(project: proj)))
+                nav.setId()
+                nav.setParent(.projects)
+                nav.setSidebar(AnyView(ProjectsDashboardSidebar()))
+                // TODO: for some reason this throws an "unrecognized selector" exception, investigate
+//                proj.addToJobs(newJob)
+//                newJob.project = proj
+            }
+        }
     }
 
     private func colourPickerChange(colour: [Double]) -> Void {

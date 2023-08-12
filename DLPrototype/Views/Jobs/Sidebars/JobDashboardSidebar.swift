@@ -12,7 +12,6 @@ struct JobDashboardSidebar: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 5) {
-                Title(text: "Jobs")
                 JobsWidget()
             }
             Spacer()

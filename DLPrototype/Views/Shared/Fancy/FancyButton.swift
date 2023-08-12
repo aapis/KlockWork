@@ -90,6 +90,10 @@ public struct FancyButtonv2: View {
         VStack {
             if let destination = redirect {
                 Button(action: {
+                    if let ac = action {
+                        ac()
+                    }
+
                     nav.view = destination
                     nav.sidebar = sidebar
                     nav.pageId = UUID()
@@ -97,22 +101,18 @@ public struct FancyButtonv2: View {
                     if let pType = pageType {
                         nav.parent = pType
                     }
-
-                    if let ac = action {
-                        ac()
-                    }
                 }) {
                     button
                 }
                 .buttonStyle(.plain)
             } else {
                 Button(action: {
-                    if type != .primary {
-                        active.toggle()
-                    }
-
                     if let ac = action {
                         ac()
+                    }
+
+                    if type != .primary {
+                        active.toggle()
                     }
                 }) {
                     button
