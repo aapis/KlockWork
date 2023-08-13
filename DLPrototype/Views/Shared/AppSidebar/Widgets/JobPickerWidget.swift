@@ -18,6 +18,7 @@ struct JobPickerWidget: View {
     @State private var sgrouped: Dictionary<Project, [Job]> = [:]
     @State private var isSettingsPresented: Bool = false
     @State private var isLoading: Bool = false
+    @State private var sortedJobs: [EnumeratedSequence<Dictionary<Project, [Job]>.Keys>.Element] = []
 
     @FetchRequest public var resource: FetchedResults<LogRecord>
 
@@ -101,7 +102,7 @@ struct JobPickerWidget: View {
 
                         VStack(alignment: .leading, spacing: 0) {
                             if grouped.count > 0 {
-                                ForEach(Array(grouped.keys.enumerated()), id: \.element) { index, key in
+                                ForEach(sortedJobs, id: \.element) { index, key in
                                     JobProjectGroup(index: index, key: key, jobs: grouped, location: location)
                                 }
                             } else {
@@ -140,8 +141,11 @@ extension JobPickerWidget {
         let recent = CoreDataJob(moc: moc).getRecentlyUsed(records: resource)
 
         grouped = Dictionary(grouping: recent, by: {$0.project!})
+        sortedJobs = Array(grouped.keys.enumerated())
+            .sorted(by: ({$0.element.pid < $1.element.pid}))
+        
         // prefixed with S because its just a SHITTY cache
-        sgrouped = grouped
+//        sgrouped = grouped
     }
 
     private func actionMinimize() -> Void {

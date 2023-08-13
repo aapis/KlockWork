@@ -10,6 +10,7 @@ import SwiftUI
 
 struct JobsWidget: View {
     public let title: String = "Search Jobs"
+    public var location: WidgetLocation = .sidebar
 
     @State private var minimized: Bool = false
     @State private var query: String = ""
@@ -58,7 +59,7 @@ struct JobsWidget: View {
                     VStack(alignment: .leading, spacing: 5) {
                         if listItems.count > 0 {
                             ForEach(listItems) { job in
-                                JobRowPlain(job: job)
+                                JobRowPlain(job: job, location: location)
                             }
                         } else {
                             SidebarItem(
@@ -83,8 +84,12 @@ struct JobsWidget: View {
 }
 
 extension JobsWidget {
-    public init() {
+    public init(location: WidgetLocation? = nil) {
         _resource = CoreDataJob.fetchAll()
+        
+        if let loc = location {
+            self.location = loc
+        }
     }
 
     private func getRecent() -> [Job] {

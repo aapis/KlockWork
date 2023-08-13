@@ -190,6 +190,17 @@ extension DateSelectorWidget {
 extension DateSelectorWidget {
     private func actionOnAppear() -> Void {
         days = DateHelper.dateObjectsBeforeToday(numPastDates, moc: moc)
+
+        // Auto-advance date to tomorrow when the clock strikes midnight
+        Timer.scheduledTimer(withTimeInterval: 3600, repeats: true) { timer in
+            let components = Calendar.autoupdatingCurrent.dateComponents([.hour], from: Date())
+
+            if let hour = components.hour {
+                if hour == 24 {
+                    nav.session.date += 86400
+                }
+            }
+        }
     }
 
     private func actionOpenSelector() -> Void {

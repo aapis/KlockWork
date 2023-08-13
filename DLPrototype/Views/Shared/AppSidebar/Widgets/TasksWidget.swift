@@ -15,6 +15,7 @@ struct TasksWidget: View {
     @State private var groupedTasks: Dictionary<Job, [LogTask]> = [:]
     @State private var query: String = ""
     @State private var isSettingsPresented: Bool = false
+    @State private var sortedJobs: [EnumeratedSequence<Dictionary<Job, [LogTask]>.Keys>.Element] = []
 
     @FetchRequest public var resource: FetchedResults<LogTask>
 
@@ -119,6 +120,8 @@ extension TasksWidget {
     private func resetGroupedTasks() -> Void {
         // TODO: need to figure out how to sort this dictionary
         groupedTasks = Dictionary(grouping: resource, by: {$0.owner!})
+        sortedJobs = Array(groupedTasks.keys.enumerated())
+            .sorted(by: ({$0.element.jid < $1.element.jid}))
     }
 
     private func actionMinimize() -> Void {

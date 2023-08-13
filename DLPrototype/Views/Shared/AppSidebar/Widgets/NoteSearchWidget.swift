@@ -16,6 +16,7 @@ struct NoteSearchWidget: View {
     @State private var isLoading: Bool = false
     @State private var isSettingsPresented: Bool = false
     @State private var grouped: Dictionary<Job, [Note]> = [:]
+    @State private var sortedJobs: [EnumeratedSequence<Dictionary<Job, [Note]>.Keys>.Element] = []
 
     @FetchRequest public var resource: FetchedResults<Note>
 
@@ -159,6 +160,8 @@ extension NoteSearchWidget {
 
     private func actionOnAppear() -> Void {
         grouped = Dictionary(grouping: resource, by: {$0.mJob!})
+        sortedJobs = Array(grouped.keys.enumerated())
+            .sorted(by: ({$0.element.jid < $1.element.jid}))
     }
 
     private func actionMinimize() -> Void {
