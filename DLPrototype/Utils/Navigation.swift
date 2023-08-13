@@ -138,5 +138,11 @@ extension Navigation {
     public struct Planning {
         var jobs: Set<Job> = []
         var tasks: Set<LogTask> = []
+
+        func taskCount() -> Int {
+            var count = 0
+            let _ = jobs.map({count += $0.tasks?.count ?? 0})
+            return count
+        }
     }
 }

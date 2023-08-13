@@ -36,6 +36,7 @@
         <attribute name="uri" optional="YES" attributeType="URI"/>
         <relationship name="mNotes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Note" inverseName="mJob" inverseEntity="Note"/>
         <relationship name="notes" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Note" inverseName="job" inverseEntity="Note"/>
+        <relationship name="plans" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Plan" inverseName="jobs" inverseEntity="Plan"/>
         <relationship name="project" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="jobs" inverseEntity="Project"/>
         <relationship name="records" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LogRecord" inverseName="job" inverseEntity="LogRecord"/>
         <relationship name="tasks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LogTask" inverseName="owner" inverseEntity="LogTask"/>
@@ -55,6 +56,7 @@
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="tasks" inverseEntity="Job"/>
+        <relationship name="plans" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Plan" inverseName="tasks" inverseEntity="Plan"/>
     </entity>
     <entity name="Note" representedClassName="Note" syncable="YES" codeGenerationType="class">
         <attribute name="alive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
@@ -75,6 +77,13 @@
         <attribute name="starred" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="note" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Note" inverseName="versions" inverseEntity="Note"/>
+    </entity>
+    <entity name="Plan" representedClassName="Plan" syncable="YES" codeGenerationType="class">
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="period" optional="YES" attributeType="String"/>
+        <relationship name="jobs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Job" inverseName="plans" inverseEntity="Job"/>
+        <relationship name="tasks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LogTask" inverseName="plans" inverseEntity="LogTask"/>
     </entity>
     <entity name="Project" representedClassName="Project" syncable="YES" codeGenerationType="class">
         <attribute name="alive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
@@ -106,5 +115,6 @@
         <memberEntity name="ProjectConfiguration"/>
         <memberEntity name="CalendarEvent"/>
         <memberEntity name="Company"/>
+        <memberEntity name="Plan"/>
     </configuration>
 </model>

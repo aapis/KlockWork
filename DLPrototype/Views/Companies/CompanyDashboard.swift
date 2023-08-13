@@ -23,7 +23,7 @@ struct CompanyDashboard: View {
     @FetchRequest public var companies: FetchedResults<Company>
 
     private var columns: [GridItem] {
-        return Array(repeating: .init(.flexible(minimum: 100)), count: numColumns)
+        Array(repeating: .init(.flexible(minimum: 100)), count: numColumns)
     }
 
     public init(company: Company? = nil) {
