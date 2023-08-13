@@ -10,6 +10,7 @@ import SwiftUI
 
 struct JobRowPlain: View {
     public var job: Job
+    public var location: WidgetLocation = .sidebar
 
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
@@ -24,7 +25,7 @@ struct JobRowPlain: View {
                     help: "Edit job \(job.jid.string)",
                     icon: "arrowshape.right",
                     orientation: .right,
-                    action: actionOpenJob
+                    action: action
                 )
             }
         }
@@ -47,11 +48,24 @@ struct JobRowPlain: View {
 }
 
 extension JobRowPlain {
+    private func action() -> Void {
+        switch location {
+        case .sidebar, .header, .taskbar:
+            actionOpenJob()
+        case .content:
+            actionUpdatePlanningStore()
+        }
+    }
+
     private func actionOpenJob() -> Void {
         nav.reset()
         nav.setId()
         nav.setParent(.jobs)
         nav.setView(AnyView(JobDashboard(defaultSelectedJob: job)))
         nav.setSidebar(AnyView(JobDashboardSidebar()))
+    }
+
+    private func actionUpdatePlanningStore() -> Void {
+        nav.session.planning.jobs.insert(job)
     }
 }

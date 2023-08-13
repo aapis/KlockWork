@@ -36,30 +36,28 @@ struct Widgets: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            VStack(alignment: .leading) {
-                ScrollView(showsIndicators: false) {
-                    LazyVGrid(columns: columns, alignment: .leading) {
-                        if showWidgetThisWeek {
-                            ThisWeek()
-                                .environmentObject(crm)
-                                .environmentObject(ce)
-                        }
-
-                        if showWidgetThisMonth {
-                            ThisMonth()
-                                .environmentObject(crm)
-                                .environmentObject(ce)
-                        }
-
-                        if showWidgetThisYear {
-                            ThisYear()
-                                .environmentObject(crm)
-                                .environmentObject(ce)
-                        }
+            ScrollView(showsIndicators: false) {
+                LazyVGrid(columns: columns, alignment: .leading) {
+                    if showWidgetThisWeek {
+                        ThisWeek()
+                            .environmentObject(crm)
+                            .environmentObject(ce)
                     }
 
-                    Spacer()
+                    if showWidgetThisMonth {
+                        ThisMonth()
+                            .environmentObject(crm)
+                            .environmentObject(ce)
+                    }
+
+                    if showWidgetThisYear {
+                        ThisYear()
+                            .environmentObject(crm)
+                            .environmentObject(ce)
+                    }
                 }
+
+                Spacer()
             }
         }
     }
