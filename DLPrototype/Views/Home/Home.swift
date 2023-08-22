@@ -36,6 +36,13 @@ struct Home: View {
                     sidebar: AnyView(DashboardSidebar())
                 ),
                 SidebarButton(
+                    destination: AnyView(Planning()),
+                    pageType: .planning,
+                    icon: "circle.hexagongrid.fill",
+                    label: "Planning",
+                    sidebar: AnyView(DashboardSidebar())
+                ),
+                SidebarButton(
                     destination: AnyView(Today()),
                     pageType: .today,
                     icon: "doc.append.fill",

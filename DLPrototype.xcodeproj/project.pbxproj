@@ -98,6 +98,7 @@
 		53790C142A758A7200D3FFD4 /* RecordTableColumn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53790C132A758A7200D3FFD4 /* RecordTableColumn.swift */; };
 		537AEB9F29627DCC00385787 /* LogTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEB9E29627DCC00385787 /* LogTable.swift */; };
 		537AEBA1296287B900385787 /* LogRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA0296287B900385787 /* LogRow.swift */; };
+		53814A8B2A95151000A5A015 /* CoreDataPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53814A8A2A95151000A5A015 /* CoreDataPlan.swift */; };
 		53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A19297377A7007A2549 /* FancyGenericToolbar.swift */; };
 		53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1C2973897F007A2549 /* ProjectConfig.swift */; };
 		53959A1F29738AAA007A2549 /* FancySubTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1E29738AAA007A2549 /* FancySubTitle.swift */; };
@@ -281,6 +282,7 @@
 		53790C132A758A7200D3FFD4 /* RecordTableColumn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordTableColumn.swift; sourceTree = "<group>"; };
 		537AEB9E29627DCC00385787 /* LogTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTable.swift; sourceTree = "<group>"; };
 		537AEBA0296287B900385787 /* LogRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRow.swift; sourceTree = "<group>"; };
+		53814A8A2A95151000A5A015 /* CoreDataPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPlan.swift; sourceTree = "<group>"; };
 		53959A19297377A7007A2549 /* FancyGenericToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyGenericToolbar.swift; sourceTree = "<group>"; };
 		53959A1C2973897F007A2549 /* ProjectConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfig.swift; sourceTree = "<group>"; };
 		53959A1E29738AAA007A2549 /* FancySubTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancySubTitle.swift; sourceTree = "<group>"; };
@@ -674,6 +676,7 @@
 				53B0BE8029725B52007CB663 /* CoreDataProjects.swift */,
 				53959A202973D3E5007A2549 /* CoreDataProjectConfiguration.swift */,
 				530318462A11DD13009CA90B /* CoreDataCalendarEvent.swift */,
+				53814A8A2A95151000A5A015 /* CoreDataPlan.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -1097,6 +1100,7 @@
 				53790C102A74D54C00D3FFD4 /* JobFormValidator.swift in Sources */,
 				53790C0D2A74CB6000D3FFD4 /* UrlHelper.swift in Sources */,
 				53790C052A72F45900D3FFD4 /* EdgeBorder.swift in Sources */,
+				53814A8B2A95151000A5A015 /* CoreDataPlan.swift in Sources */,
 				5371BA3D2A7B7F1200DEEC21 /* TaskViewPlain.swift in Sources */,
 				533E40682970DD170007785A /* AutoFixJobs.swift in Sources */,
 				53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */,

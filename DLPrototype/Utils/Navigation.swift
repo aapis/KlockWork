@@ -9,7 +9,7 @@
 import SwiftUI
 
 public enum Page {
-    case dashboard, today, notes, tasks, projects, jobs, companies
+    case dashboard, today, notes, tasks, projects, jobs, companies, planning
 
     var ViewUpdaterKey: String {
         switch self {
@@ -27,6 +27,8 @@ public enum Page {
             return "job.dashboard"
         case .companies:
             return "companies.dashboard"
+        case .planning:
+            return "planning.dashboard"
         }
     }
 
@@ -45,6 +47,8 @@ public enum Page {
         case .jobs:
             return .blue
         case .companies:
+            return .blue
+        case .planning:
             return .blue
         }
     }
@@ -65,6 +69,8 @@ public enum Page {
             return "Jobs"
         case .companies:
             return "Companies"
+        case .planning:
+            return "Planning"
         }
     }
 }
@@ -76,6 +82,7 @@ public enum PageGroup: Hashable {
 public class Navigation: Identifiable, ObservableObject {
     public var id: UUID = UUID()
 
+//    @Published public var moc: NSManagedObjectContext = PersistenceController.shared.container.viewContext
     @Published public var view: AnyView? = AnyView(Dashboard())
     @Published public var parent: Page? = .dashboard
     @Published public var sidebar: AnyView? = AnyView(DashboardSidebar())
@@ -134,15 +141,46 @@ extension Navigation {
         var idate: IdentifiableDay = IdentifiableDay()
         var planning: Planning = Planning()
     }
+}
 
+extension Navigation {
     public struct Planning {
+        var id: UUID = UUID()
         var jobs: Set<Job> = []
         var tasks: Set<LogTask> = []
+        var finalized: Date? = nil
 
         func taskCount() -> Int {
             var count = 0
             let _ = jobs.map({count += $0.tasks?.count ?? 0})
             return count
+        }
+
+        mutating func finalize() -> Void {
+            finalized = Date()
+
+            let plan = Plan(context: PersistenceController.shared.container.viewContext)
+            plan.id = id
+            plan.created = finalized
+            plan.jobs = NSSet(set: jobs)
+            plan.tasks = NSSet(set: tasks)
+
+            PersistenceController.shared.save()
+        }
+
+        mutating func reset() -> Void {
+            finalized = nil
+            jobs = []
+            tasks = []
+            id = UUID()
+
+            let plans = CoreDataPlan(moc: PersistenceController.shared.container.viewContext).byId(id)
+
+            if plans.count > 0 {
+                for plan in plans {
+                    PersistenceController.shared.delete(plan)
+                }
+            }
         }
     }
 }

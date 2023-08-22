@@ -30,7 +30,6 @@ struct Dashboard: View {
                 FancyDivider()
 
                 if !searching {
-                    Planning()
                     Widgets()
                         .environmentObject(crm)
                         .environmentObject(ce)
