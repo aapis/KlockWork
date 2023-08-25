@@ -77,6 +77,7 @@ extension Planning {
         var job: Job
         var index: Array<Job>.Index?
         var type: PlanningObjectType
+        var colour: Color = Color.clear
 
         @FetchRequest public var tasks: FetchedResults<LogTask>
         @FetchRequest public var notes: FetchedResults<Note>
@@ -85,11 +86,12 @@ extension Planning {
             VStack(alignment: .leading, spacing: 1) {
                 if let idx = index {
                     Header(job: job, index: idx, type: type)
+                        .opacity((type == .tasks && tasks.count > 0) || (type == .notes && notes.count > 0) ? 1 : 0.7)
 
                     if type == .tasks && tasks.count > 0 {
-                        Tasks(job: job)
+                        Tasks(tasks: tasks, colour: colour)
                     } else if type == .notes && notes.count > 0 {
-                        Notes(job: job)
+                        Notes(notes: notes, colour: colour)
                     }
                 }
             }
@@ -102,6 +104,7 @@ extension Planning.JobPlanningRow {
         self.job = job
         self.index = index
         self.type = type
+        self.colour = Color.fromStored(self.job.colour ?? Theme.rowColourAsDouble)
 
         _tasks = FetchRequest(
             entity: LogTask.entity(),
@@ -129,6 +132,7 @@ extension Planning {
 
         @State private var colour: Color = .clear
         @State private var highlighted: Bool = false
+        @State private var numChildren: Int = 0
 
         @EnvironmentObject public var nav: Navigation
 
@@ -139,21 +143,17 @@ extension Planning {
                 VStack(alignment: .leading) {
                     HStack {
                         if type == .tasks {
-                            if let tasks = job.tasks {
-                                Image(systemName: "\(tasks.filtered(using: NSPredicate(format: "completedDate == nil")).count.string).circle")
-                                    .font(.title)
-                                    .foregroundColor(colour.isBright() ? .black : .white)
-                                Text("Tasks associated with job \(job.jid.string)")
-                                    .foregroundColor(colour.isBright() ? .black : .white)
-                            }
+                            Image(systemName: "\(numChildren).circle")
+                                .font(.title)
+                                .foregroundColor(colour.isBright() ? .black : .white)
+                            Text("All incomplete tasks associated with job \(job.jid.string)")
+                                .foregroundColor(colour.isBright() ? .black : .white)
                         } else if type == .notes {
-                            if let notes = job.mNotes {
-                                Image(systemName: "\(notes.filtered(using: NSPredicate(format: "alive == true")).count.string).circle")
-                                    .font(.title)
-                                    .foregroundColor(colour.isBright() ? .black : .white)
-                                Text("Recent notes for job \(job.jid.string)")
-                                    .foregroundColor(colour.isBright() ? .black : .white)
-                            }
+                            Image(systemName: "\(numChildren).circle")
+                                .font(.title)
+                                .foregroundColor(colour.isBright() ? .black : .white)
+                            Text("All notes associated with job \(job.jid.string)")
+                                .foregroundColor(colour.isBright() ? .black : .white)
                         }
 
                         Spacer()
@@ -178,18 +178,25 @@ extension Planning {
 extension Planning.Header {
     private func actionOnAppear() -> Void {
         colour = Color.fromStored(job.colour!)
+
+        if type == .tasks {
+            if let tasks = job.tasks {
+                numChildren = tasks.filtered(using: NSPredicate(format: "completedDate == nil")).count
+            }
+        } else if type == .notes {
+            if let notes = job.mNotes {
+                numChildren = notes.filtered(using: NSPredicate(format: "alive == true")).count
+            }
+        }
     }
 }
 
 extension Planning {
     struct Tasks: View {
-        public let job: Job
-
-        @State private var colour: Color = .clear
+        public var tasks: FetchedResults<LogTask>
+        public var colour: Color
 
         @EnvironmentObject public var nav: Navigation
-
-        @FetchRequest public var tasks: FetchedResults<LogTask>
 
         var body: some View {
             if tasks.count > 0 {
@@ -198,27 +205,8 @@ extension Planning {
                         Row(task: task, colour: colour)
                     }
                 }
-                .onAppear(perform: actionOnAppear)
             }
         }
-    }
-}
-
-extension Planning.Tasks {
-    init(job: Job) {
-        self.job = job
-
-        _tasks = FetchRequest(
-            entity: LogTask.entity(),
-            sortDescriptors: [
-                NSSortDescriptor(keyPath: \LogTask.completedDate, ascending: false)
-            ],
-            predicate: NSPredicate(format: "owner == %@ && completedDate == nil", self.job)
-        )
-    }
-
-    private func actionOnAppear() -> Void {
-        colour = Color.fromStored(job.colour!)
     }
 }
 
@@ -346,7 +334,7 @@ extension Planning {
             HStack {
                 Text("\(numNotes)")
                 Image(systemName: "note.text")
-                    .help("\(numNotes) jobs selected")
+                    .help("\(numNotes) notes selected")
             }
             .padding(8)
             .background(Theme.base.opacity(0.2))
@@ -412,13 +400,10 @@ extension Planning.Menu {
 
 extension Planning {
     struct Notes: View {
-        public let job: Job
-
-        @State private var colour: Color = .clear
+        public var notes: FetchedResults<Note>
+        public var colour: Color
 
         @EnvironmentObject public var nav: Navigation
-
-        @FetchRequest public var notes: FetchedResults<Note>
 
         var body: some View {
             if notes.count > 0 {
@@ -427,27 +412,8 @@ extension Planning {
                         Row(note: note, colour: colour)
                     }
                 }
-                .onAppear(perform: actionOnAppear)
             }
         }
-    }
-}
-
-extension Planning.Notes {
-    init(job: Job) {
-        self.job = job
-
-        _notes = FetchRequest(
-            entity: Note.entity(),
-            sortDescriptors: [
-                NSSortDescriptor(keyPath: \Note.postedDate, ascending: false)
-            ],
-            predicate: NSPredicate(format: "mJob == %@ && alive == true", self.job)
-        )
-    }
-
-    private func actionOnAppear() -> Void {
-        colour = Color.fromStored(job.colour!)
     }
 }
 
