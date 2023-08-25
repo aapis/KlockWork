@@ -159,6 +159,7 @@ extension Navigation {
         var id: UUID = UUID()
         var jobs: Set<Job> = []
         var tasks: Set<LogTask> = []
+        var notes: Set<Note> = []
         var finalized: Date? = nil
 
         func taskCount() -> Int {
@@ -175,6 +176,7 @@ extension Navigation {
             plan.created = finalized
             plan.jobs = NSSet(set: jobs)
             plan.tasks = NSSet(set: tasks)
+            plan.notes = NSSet(set: notes)
 
             PersistenceController.shared.save()
         }
@@ -183,7 +185,7 @@ extension Navigation {
             finalized = nil
             jobs = []
             tasks = []
-            id = UUID()
+            notes = []
 
             let plans = CoreDataPlan(moc: PersistenceController.shared.container.viewContext).byId(id)
 
@@ -192,6 +194,8 @@ extension Navigation {
                     PersistenceController.shared.delete(plan)
                 }
             }
+
+            id = UUID()
         }
     }
 }

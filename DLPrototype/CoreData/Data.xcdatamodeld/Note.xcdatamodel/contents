@@ -68,6 +68,7 @@
         <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="job" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="notes" inverseEntity="Job"/>
         <relationship name="mJob" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="mNotes" inverseEntity="Job"/>
+        <relationship name="relationship" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Plan" inverseName="notes" inverseEntity="Plan"/>
         <relationship name="versions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="NoteVersion" inverseName="note" inverseEntity="NoteVersion"/>
     </entity>
     <entity name="NoteVersion" representedClassName="NoteVersion" syncable="YES" codeGenerationType="class">
@@ -83,6 +84,7 @@
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="period" optional="YES" attributeType="String"/>
         <relationship name="jobs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Job" inverseName="plans" inverseEntity="Job"/>
+        <relationship name="notes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Note" inverseName="relationship" inverseEntity="Note"/>
         <relationship name="tasks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LogTask" inverseName="plans" inverseEntity="LogTask"/>
     </entity>
     <entity name="Project" representedClassName="Project" syncable="YES" codeGenerationType="class">
