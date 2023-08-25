@@ -40,7 +40,7 @@ struct Home: View {
                     pageType: .planning,
                     icon: "circle.hexagongrid.fill",
                     label: "Planning",
-                    sidebar: AnyView(DashboardSidebar())
+                    sidebar: AnyView(DefaultPlanningSidebar())
                 ),
                 SidebarButton(
                     destination: AnyView(Today()),

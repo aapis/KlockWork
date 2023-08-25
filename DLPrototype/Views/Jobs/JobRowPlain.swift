@@ -61,6 +61,7 @@ extension JobRowPlain {
         nav.reset()
         nav.setId()
         nav.setParent(.jobs)
+        nav.session.setJob(job)
         nav.setView(AnyView(JobDashboard(defaultSelectedJob: job)))
         nav.setSidebar(AnyView(JobDashboardSidebar()))
     }

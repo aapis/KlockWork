@@ -143,6 +143,17 @@ extension Navigation {
     }
 }
 
+extension Navigation.Session {
+    mutating func setJob(_ job: Job?) -> Void {
+        if job != nil {
+            self.planning.jobs.insert(job!)
+            self.job = job
+        } else {
+            self.job = nil
+        }
+    }
+}
+
 extension Navigation {
     public struct Planning {
         var id: UUID = UUID()

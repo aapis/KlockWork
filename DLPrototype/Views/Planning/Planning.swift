@@ -10,6 +10,8 @@ import SwiftUI
 
 struct Planning: View {
     private let maxItems: Int = 6
+    static private let tooManyJobs: Int = 5
+    static private let tooManyTasks: Int = 8
 
     @EnvironmentObject public var nav: Navigation
 
@@ -21,6 +23,8 @@ struct Planning: View {
             }
 
             FancySubTitle(text: "What am I working on today?")
+                .padding(.bottom, 10)
+            Text("Add jobs using the sidebar widget then select the tasks you'd like to focus on. Finalize to save the plan!")
 
             WorkingOnToday
 
@@ -34,27 +38,18 @@ struct Planning: View {
 
     private var WorkingOnToday: some View {
         VStack(alignment: .leading) {
-            HStack(alignment: .top, spacing: 5) {
-                ScrollView(.vertical, showsIndicators: false) {
-                    AllJobsPickerWidget(location: .content)
-                }
-                Spacer()
-                VStack(alignment: .leading) {
-                    Statistics()
-                    ScrollView(.vertical, showsIndicators: false) {
-                        let jobs = Array(nav.session.planning.jobs) //.sorted(by: {$0.jid > $1.jid})
-                        ForEach(jobs) { job in
-                            VStack(spacing: 1) {
-                                Group(job: job, index: jobs.firstIndex(of: job))
-                                Tasks(job: job)
-                            }
-                            .opacity(nav.session.planning.finalized == nil ? 1 : 0.1)
-                        }
+            Statistics()
+            ScrollView(.vertical, showsIndicators: false) {
+                let jobs = Array(nav.session.planning.jobs) //.sorted(by: {$0.jid > $1.jid})
+                ForEach(jobs) { job in
+                    VStack(spacing: 1) {
+                        Group(job: job, index: jobs.firstIndex(of: job))
+                        Tasks(job: job)
                     }
+                    .opacity(nav.session.planning.finalized == nil ? 1 : 0.1)
                 }
             }
         }
-        .padding()
     }
 }
 
@@ -81,7 +76,7 @@ extension Planning {
                 VStack(alignment: .leading) {
                     HStack {
                         if let tasks = job.tasks {
-                            Image(systemName: "\(tasks.count.string).circle")
+                            Image(systemName: "\(tasks.filtered(using: NSPredicate(format: "completedDate == nil")).count.string).circle")
                                 .font(.title)
                                 .foregroundColor(colour.isBright() ? .black : .white)
                             Text("Tasks associated with job \(job.jid.string)")
@@ -203,35 +198,73 @@ extension Planning {
 
         var body: some View {
             VStack {
-                HStack {
-                    Text("\(numTasks) Task(s)")
-                        .padding()
-                    Text("\(numJobs) Job(s)")
+                HStack(spacing: 10) {
+                    CountPills
                     Spacer()
                     if nav.session.planning.jobs.count > 0 {
-                        FancyButtonv2(
-                            text: "Finalize Plan",
-                            action: actionFinalizePlan,
-                            icon: "checkmark.seal.fill",
-                            showLabel: false,
-                            type: .primary
-                        )
+                        HStack {
+                            FancyButtonv2(
+                                text: "Start over",
+                                action: actionResetPlan,
+                                icon: "arrow.clockwise.circle.fill",
+                                showLabel: false,
+                                size: .small,
+                                type: .clear
+                            )
 
-                        FancyButtonv2(
-                            text: "Reset Plan",
-                            action: actionResetPlan,
-                            icon: "arrow.clockwise.circle.fill",
-                            showLabel: false,
-                            type: .white
-                        )
-                        .padding(.trailing, 4)
+                            FancyButtonv2(
+                                text: "Finalize",
+                                action: actionFinalizePlan,
+                                icon: "checkmark.seal",
+                                size: .small,
+                                type: .primary
+                            )
+                        }
+                        .frame(height: 30)
                     }
                 }
+                .padding(5)
             }
             .background(Theme.headerColour)
             .onAppear(perform: actionOnAppear)
             .onChange(of: nav.session.planning.tasks, perform: actionOnChangeTasks)
             .onChange(of: nav.session.planning.jobs, perform: actionOnChangeJobs)
+        }
+
+        var CountPills: some View {
+            HStack(spacing: 0) {
+                TaskPill
+                JobPill
+            }
+            .frame(height: 30)
+            .mask {
+                Capsule()
+            }
+        }
+
+        var TaskPill: some View {
+            HStack {
+                Text("\(numTasks)")
+                    .foregroundColor(numTasks > Planning.tooManyTasks ? .black : .white)
+                Image(systemName: "checklist")
+                    .help(numTasks > Planning.tooManyTasks ? "This is probably too much work, consider removing some" : "\(numTasks) tasks selected")
+                    .foregroundColor(numTasks > Planning.tooManyTasks ? .black : .white)
+            }
+            .padding(8)
+            .background(numTasks > Planning.tooManyTasks ? .yellow : Theme.base.opacity(0.2))
+        }
+
+        var JobPill: some View {
+            HStack {
+                Text("\(numJobs)")
+                    .foregroundColor(numJobs > Planning.tooManyJobs ? .black : .white)
+                Image(systemName: "hammer")
+                    .help(numJobs > Planning.tooManyJobs ? "This is probably too much work, consider removing some" : "\(numJobs) jobs selected")
+                    .foregroundColor(numJobs > Planning.tooManyJobs ? .black : .white)
+            }
+            .padding(8)
+            .background(numJobs > Planning.tooManyJobs ? .yellow : Theme.base.opacity(0.2))
+
         }
     }
 }
@@ -252,7 +285,10 @@ extension Planning.Statistics {
         for job in jobs {
             if let tasks = job.tasks {
                 for task in tasks {
-                    taskSet.insert(task as! LogTask)
+                    let t = task as! LogTask
+                    if t.completedDate == nil {
+                        taskSet.insert(t)
+                    }
                 }
             }
         }

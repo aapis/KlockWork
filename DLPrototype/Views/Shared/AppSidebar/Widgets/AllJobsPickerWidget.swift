@@ -15,7 +15,7 @@ struct AllJobsPickerWidget: View {
     @State private var minimized: Bool = false
     @State private var query: String = ""
     @State private var grouped: Dictionary<Project, [Job]> = [:]
-    @State private var sgrouped: Dictionary<Project, [Job]> = [:]
+//    @State private var sgrouped: Dictionary<Project, [Job]> = [:]
     @State private var isSettingsPresented: Bool = false
     @State private var isLoading: Bool = false
     @State private var sortedJobs: [EnumeratedSequence<Dictionary<Project, [Job]>.Keys>.Element] = []
@@ -198,14 +198,14 @@ extension AllJobsPickerWidget {
             grouped = filtered
         } else {
             actionOnAppear()
-            nav.session.job = nil
+            nav.session.setJob(nil)
         }
     }
 
     private func actionOnChangeJob(job: Job?) -> Void {
         if let jerb = job {
             query = jerb.jid.string
-            grouped = sgrouped
+//            grouped = sgrouped
         }
     }
 }

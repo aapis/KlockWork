@@ -89,7 +89,7 @@ struct JobPickerUsing: View {
                 .onChange(of: jobId) { _ in
                     if jobId != "" {
                         if let iJid = Int(jobId) {
-                            nav.session.job = CoreDataJob(moc: moc).byId(Double(iJid))
+                            nav.session.setJob(CoreDataJob(moc: moc).byId(Double(iJid)))
                             pickerChange(selected: iJid, sender: nil)
                         }
                     }

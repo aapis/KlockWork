@@ -264,7 +264,7 @@ struct LogRow: View, Identifiable {
             selectedJob = String(job.prefix(upTo: dotIndex!))
             
             if let jobIdDbl = Double(job) {
-                nav.session.job = CoreDataJob(moc: moc).byId(jobIdDbl)
+                nav.session.setJob(CoreDataJob(moc: moc).byId(jobIdDbl))
             }
         }
     }
