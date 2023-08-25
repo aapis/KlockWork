@@ -79,6 +79,6 @@ extension JobRowPicker {
     }
 
     private func actionUpdatePlanningStore() -> Void {
-        nav.session.planning.jobs.insert(job)
+        nav.planning.jobs.insert(job)
     }
 }

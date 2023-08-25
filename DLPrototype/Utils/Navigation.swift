@@ -89,6 +89,7 @@ public class Navigation: Identifiable, ObservableObject {
     @Published public var title: String? = ""
     @Published public var pageId: UUID? = UUID()
     @Published public var session: Session = Session()
+    @Published public var planning: Planning = Planning()
 
     public func pageTitle() -> String {
         if title!.isEmpty {
@@ -139,14 +140,12 @@ extension Navigation {
         var note: Note?
         var date: Date = Date()
         var idate: IdentifiableDay = IdentifiableDay()
-        var planning: Planning = Planning()
     }
 }
 
 extension Navigation.Session {
     mutating func setJob(_ job: Job?) -> Void {
         if job != nil {
-            self.planning.jobs.insert(job!)
             self.job = job
         } else {
             self.job = nil

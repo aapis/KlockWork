@@ -34,7 +34,7 @@ struct Planning: View {
 //            FancySubTitle(text: "Daily Summary")
         }
         .onAppear(perform: actionOnAppear)
-        .onChange(of: nav.session.planning.jobs, perform: actionOnChangeJobs)
+        .onChange(of: nav.planning.jobs, perform: actionOnChangeJobs)
         .font(Theme.font)
         .padding()
         .background(Theme.toolbarColour)
@@ -44,7 +44,7 @@ struct Planning: View {
         VStack(alignment: .leading, spacing: 1) {
             Menu()
             ScrollView(.vertical, showsIndicators: false) {
-                let jobs = Array(nav.session.planning.jobs).sorted(by: {$0.jid > $1.jid})
+                let jobs = Array(nav.planning.jobs).sorted(by: {$0.jid > $1.jid})
                 ForEach(jobs) { job in
                     VStack(spacing: 1) {
                         JobPlanningRow(job: job, index: jobs.firstIndex(of: job), type: .tasks)
@@ -52,7 +52,7 @@ struct Planning: View {
                     }
 
                 }
-                .opacity(nav.session.planning.finalized == nil ? 1 : 0.1)
+                .opacity(nav.planning.finalized == nil ? 1 : 0.1)
             }
         }
     }
@@ -64,7 +64,7 @@ extension Planning {
     }
 
     private func actionOnAppear() -> Void {
-        actionOnChangeJobs(nav.session.planning.jobs)
+        actionOnChangeJobs(nav.planning.jobs)
     }
 
     private func actionOnChangeJobs(_ newJobs: Set<Job>) -> Void {
@@ -158,7 +158,7 @@ extension Planning {
 
                         Spacer()
                         Button {
-                            nav.session.planning.jobs.remove(job)
+                            nav.planning.jobs.remove(job)
                         } label: {
                             Image(systemName: highlighted ? "clear.fill" : "clear")
                                 .foregroundColor(colour.isBright() ? .black : .white)
@@ -235,20 +235,20 @@ extension Planning.Tasks {
             HStack(alignment: .top) {
                 Button {
                     if selected {
-                        nav.session.planning.tasks.remove(task)
+                        nav.planning.tasks.remove(task)
                     } else {
-                        nav.session.planning.tasks.insert(task)
+                        nav.planning.tasks.insert(task)
                     }
 
                     selected.toggle()
                 } label: {
                     Image(systemName: selected ? "checkmark.square" : "square")
-                        .foregroundColor(colour.isBright() ? .black : .white)
-                        .font(.title2)
+                        .foregroundColor(selected ? colour.isBright() ? .black : .white : .black.opacity(0.4))
+                        .font(.title)
 
                     if let content = task.content {
                         Text("\(content)")
-                            .foregroundColor(colour.isBright() ? .black : .white)
+                            .foregroundColor(selected ? colour.isBright() ? .black : .white : .black.opacity(0.4))
                     }
                 }
                 .buttonStyle(.plain)
@@ -275,7 +275,7 @@ extension Planning {
                 HStack(spacing: 8) {
                     CountPills
                     Spacer()
-                    if nav.session.planning.jobs.count > 0 {
+                    if nav.planning.jobs.count > 0 {
                         HStack {
                             FancyButtonv2(
                                 text: "Start over",
@@ -301,9 +301,9 @@ extension Planning {
             }
             .background(Theme.headerColour)
             .onAppear(perform: actionOnAppear)
-            .onChange(of: nav.session.planning.tasks, perform: actionOnChangeTasks)
-            .onChange(of: nav.session.planning.jobs, perform: actionOnChangeJobs)
-            .onChange(of: nav.session.planning.notes, perform: actionOnChangeNotes)
+            .onChange(of: nav.planning.tasks, perform: actionOnChangeTasks)
+            .onChange(of: nav.planning.jobs, perform: actionOnChangeJobs)
+            .onChange(of: nav.planning.notes, perform: actionOnChangeNotes)
         }
 
         var CountPills: some View {
@@ -356,15 +356,15 @@ extension Planning {
 
 extension Planning.Menu {
     private func actionFinalizePlan() -> Void {
-        nav.session.planning.finalize()
+        nav.planning.finalize()
     }
 
     private func actionResetPlan() -> Void {
-        nav.session.planning.reset()
+        nav.planning.reset()
     }
 
     private func actionOnChangeJobs(jobs: Set<Job>) -> Void {
-        nav.session.planning.jobs = jobs
+        nav.planning.jobs = jobs
 
         var taskSet: Set<LogTask> = []
         var noteSet: Set<Note> = []
@@ -394,19 +394,19 @@ extension Planning.Menu {
     }
 
     private func actionOnChangeTasks(tasks: Set<LogTask>) -> Void {
-        nav.session.planning.tasks = tasks
+        nav.planning.tasks = tasks
         actionOnAppear()
     }
 
     private func actionOnChangeNotes(notes: Set<Note>) -> Void {
-        nav.session.planning.notes = notes
+        nav.planning.notes = notes
         actionOnAppear()
     }
 
     private func actionOnAppear() -> Void {
-        numTasks = nav.session.planning.tasks.count
-        numJobs = nav.session.planning.jobs.count
-        numNotes = nav.session.planning.notes.count
+        numTasks = nav.planning.tasks.count
+        numJobs = nav.planning.jobs.count
+        numNotes = nav.planning.notes.count
     }
 }
 
@@ -464,20 +464,20 @@ extension Planning.Notes {
             HStack(alignment: .top) {
                 Button {
                     if selected {
-                        nav.session.planning.notes.remove(note)
+                        nav.planning.notes.remove(note)
                     } else {
-                        nav.session.planning.notes.insert(note)
+                        nav.planning.notes.insert(note)
                     }
 
                     selected.toggle()
                 } label: {
                     Image(systemName: selected ? "checkmark.square" : "square")
-                        .foregroundColor(colour.isBright() ? .black : .white)
-                        .font(.title2)
+                        .foregroundColor(selected ? colour.isBright() ? .black : .white : .black.opacity(0.4))
+                        .font(.title)
 
                     if let content = note.title {
                         Text("\(content)")
-                            .foregroundColor(colour.isBright() ? .black : .white)
+                            .foregroundColor(selected ? colour.isBright() ? .black : .white : .black.opacity(0.4))
                     }
                 }
                 .buttonStyle(.plain)
