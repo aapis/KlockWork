@@ -45,14 +45,22 @@ struct Planning: View {
             Menu()
             ScrollView(.vertical, showsIndicators: false) {
                 let jobs = Array(nav.planning.jobs).sorted(by: {$0.jid > $1.jid})
-                ForEach(jobs) { job in
-                    VStack(spacing: 1) {
-                        JobPlanningRow(job: job, index: jobs.firstIndex(of: job), type: .tasks)
-                        JobPlanningRow(job: job, index: jobs.firstIndex(of: job), type: .notes)
+                if jobs.count > 0 {
+                    ForEach(jobs) { job in
+                        VStack(spacing: 1) {
+                            JobPlanningRow(job: job, index: jobs.firstIndex(of: job), type: .tasks)
+                            JobPlanningRow(job: job, index: jobs.firstIndex(of: job), type: .notes)
+                        }
                     }
-
+                } else {
+                    HStack(alignment: .center) {
+                        Text("Choose jobs from the left")
+                            .foregroundColor(.gray)
+                        Spacer()
+                    }
+                    .padding()
+                    .background(Theme.base.opacity(0.2))
                 }
-                .opacity(nav.planning.finalized == nil ? 1 : 0.1)
             }
         }
     }
@@ -146,13 +154,13 @@ extension Planning {
                             Image(systemName: "\(numChildren).circle")
                                 .font(.title)
                                 .foregroundColor(colour.isBright() ? .black : .white)
-                            Text("All incomplete tasks associated with job \(job.jid.string)")
+                            Text("Incomplete tasks associated with job \(job.jid.string)")
                                 .foregroundColor(colour.isBright() ? .black : .white)
                         } else if type == .notes {
                             Image(systemName: "\(numChildren).circle")
                                 .font(.title)
                                 .foregroundColor(colour.isBright() ? .black : .white)
-                            Text("All notes associated with job \(job.jid.string)")
+                            Text("Notes associated with job \(job.jid.string)")
                                 .foregroundColor(colour.isBright() ? .black : .white)
                         }
 
@@ -246,6 +254,21 @@ extension Planning.Tasks {
             }
             .padding(10)
             .background(colour)
+            .onAppear(perform: actionOnAppear)
+        }
+    }
+}
+
+extension Planning.Tasks.Row {
+    private func actionOnAppear() -> Void {
+        if let plan = nav.session.plan {
+            if let tasks = plan.tasks {
+                if tasks.contains(task) {
+                    selected = true
+                } else {
+                    selected = false
+                }
+            }
         }
     }
 }
@@ -263,7 +286,7 @@ extension Planning {
                 HStack(spacing: 8) {
                     CountPills
                     Spacer()
-                    if nav.planning.jobs.count > 0 {
+                    if nav.session.plan != nil || nav.planning.jobs.count > 0 {
                         HStack {
                             FancyButtonv2(
                                 text: "Start over",
@@ -272,14 +295,6 @@ extension Planning {
                                 showLabel: false,
                                 size: .small,
                                 type: .clear
-                            )
-
-                            FancyButtonv2(
-                                text: "Finalize",
-                                action: actionFinalizePlan,
-                                icon: "checkmark.seal",
-                                size: .small,
-                                type: .primary
                             )
                         }
                         .frame(height: 30)
@@ -344,50 +359,29 @@ extension Planning {
 
 extension Planning.Menu {
     private func actionFinalizePlan() -> Void {
-        nav.planning.finalize()
+        let plan = nav.planning.finalize()
+        nav.session.plan = plan
     }
 
     private func actionResetPlan() -> Void {
         nav.planning.reset()
+        nav.session.plan = nil
     }
 
     private func actionOnChangeJobs(jobs: Set<Job>) -> Void {
         nav.planning.jobs = jobs
-
-        var taskSet: Set<LogTask> = []
-        var noteSet: Set<Note> = []
-
-        for job in jobs {
-            if let tasks = job.tasks {
-                for task in tasks {
-                    let t = task as! LogTask
-                    if t.completedDate == nil {
-                        taskSet.insert(t)
-                    }
-                }
-            }
-
-            if let notes = job.mNotes {
-                for note in notes {
-                    let n = note as! Note
-                    if n.alive {
-                        noteSet.insert(n)
-                    }
-                }
-            }
-        }
-
-        actionOnChangeNotes(notes: noteSet)
-        actionOnChangeTasks(tasks: taskSet)
+        actionFinalizePlan()
     }
 
     private func actionOnChangeTasks(tasks: Set<LogTask>) -> Void {
         nav.planning.tasks = tasks
+        actionFinalizePlan()
         actionOnAppear()
     }
 
     private func actionOnChangeNotes(notes: Set<Note>) -> Void {
         nav.planning.notes = notes
+        actionFinalizePlan()
         actionOnAppear()
     }
 
@@ -395,6 +389,11 @@ extension Planning.Menu {
         numTasks = nav.planning.tasks.count
         numJobs = nav.planning.jobs.count
         numNotes = nav.planning.notes.count
+
+        if numJobs + numTasks + numNotes == 0 {
+            nav.planning.reset()
+            nav.session.plan = nil
+        }
     }
 }
 
@@ -453,6 +452,21 @@ extension Planning.Notes {
             }
             .padding(10)
             .background(colour)
+            .onAppear(perform: actionOnAppear)
+        }
+    }
+}
+
+extension Planning.Notes.Row {
+    private func actionOnAppear() -> Void {
+        if let plan = nav.session.plan {
+            if let notes = plan.notes {
+                if notes.contains(note) {
+                    selected = true
+                } else {
+                    selected = false
+                }
+            }
         }
     }
 }

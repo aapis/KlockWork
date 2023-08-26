@@ -138,8 +138,10 @@ extension Navigation {
         var job: Job?
         var project: Project?
         var note: Note?
+        var plan: Plan?
         var date: Date = Date()
         var idate: IdentifiableDay = IdentifiableDay()
+        var gif: Planning.GlobalInterfaceFilter = .normal
     }
 }
 
@@ -167,7 +169,7 @@ extension Navigation {
             return count
         }
 
-        mutating func finalize() -> Void {
+        mutating func finalize() -> Plan {
             finalized = Date()
 
             let plan = Plan(context: PersistenceController.shared.container.viewContext)
@@ -178,23 +180,35 @@ extension Navigation {
             plan.notes = NSSet(set: notes)
 
             PersistenceController.shared.save()
+            id = UUID()
+
+            return plan
         }
 
         mutating func reset() -> Void {
+            let moc = PersistenceController.shared.container.viewContext
+            let plans = CoreDataPlan(moc: moc).forToday()
+
             finalized = nil
             jobs = []
             tasks = []
             notes = []
 
-            let plans = CoreDataPlan(moc: PersistenceController.shared.container.viewContext).byId(id)
-
             if plans.count > 0 {
                 for plan in plans {
-                    PersistenceController.shared.delete(plan)
+                    moc.delete(plan)
                 }
             }
 
+            PersistenceController.shared.save()
+
             id = UUID()
         }
+    }
+}
+
+extension Navigation.Planning {
+    enum GlobalInterfaceFilter {
+        case normal, focus
     }
 }

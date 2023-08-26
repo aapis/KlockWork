@@ -123,6 +123,7 @@ struct Home: View {
                         }
                         .frame(width: 320)
                         .background(nav.parent != nil ? nav.parent!.colour : Theme.tabActiveColour)
+                        .id(updater.get("sidebar"))
                     } else {
                         HorizontalSeparator // TODO: maybe remove?
                     }
@@ -168,6 +169,9 @@ struct Home: View {
                     updater.updateOne("today.table")
                 }
             }
+        }
+        .onChange(of: nav.session.gif) { _ in
+            updater.updateOne("sidebar")
         }
     }
 

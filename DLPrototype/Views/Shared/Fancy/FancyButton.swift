@@ -111,7 +111,7 @@ public struct FancyButtonv2: View {
                         ac()
                     }
 
-                    if type != .primary {
+                    if ![.star, .primary, .tsWhite].contains(type) {
                         active.toggle()
                     }
                 }) {

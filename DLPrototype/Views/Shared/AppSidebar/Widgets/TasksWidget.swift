@@ -107,7 +107,7 @@ struct TasksWidget: View {
             .background(Theme.base.opacity(0.2))
         }
         .onAppear(perform: actionOnAppear)
-        .id(updater.ids["sidebar.today.incompleteTasksWidget"])
+        .id(updater.get("sidebar.today.incompleteTasksWidget"))
         .font(Theme.font)
     }
 }
@@ -134,6 +134,17 @@ extension TasksWidget {
 
     private func actionOnAppear() -> Void {
         resetGroupedTasks()
+
+        if nav.session.gif == .focus {
+            if let plan = nav.session.plan {
+                if let nsset = plan.jobs {
+                    let jobs = nsset.allObjects as! [Job]
+                    query = jobs.map({$0.jid.string}).joined(separator: ", ")
+                }
+            }
+        } else {
+            query = ""
+        }
     }
 
     private func actionOnChangeJob(job: Job?) -> Void {

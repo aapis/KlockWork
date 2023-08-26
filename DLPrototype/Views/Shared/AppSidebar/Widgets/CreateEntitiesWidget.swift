@@ -11,7 +11,15 @@ import SwiftUI
 struct CreateEntitiesWidget: View {
     @Binding public var isDatePickerPresented: Bool
 
+    @State private var followingPlan: Bool = false
+    @State private var gif: Navigation.Planning.GlobalInterfaceFilter = .normal
+
+    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
+
+    var doesPlanExist: Bool {
+        CoreDataPlan(moc: moc).countForToday() > 0
+    }
 
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -27,6 +35,7 @@ struct CreateEntitiesWidget: View {
                 Buttons
             }
         }
+        .onAppear(perform: actionOnAppear)
     }
 
     private var Buttons: some View {
@@ -34,21 +43,31 @@ struct CreateEntitiesWidget: View {
             ZStack {
                 ZStack {
                     Theme.base.opacity(0.5)
-                    FancyButtonv2(
-                        text: "New record",
-                        icon: "doc.append",
-                        showLabel: false,
-                        size: .small,
-                        type: nav.parent == .today ? .secondary : .standard,
-                        redirect: AnyView(Today()),
-                        pageType: .today,
-                        sidebar: AnyView(TodaySidebar())
-                    )
-                    .mask(Circle())
+                    if doesPlanExist {
+                        FancyButtonv2(
+                            text: gif == .focus ? "Disable planning focus" : "Enable global filter to only show you the things you need to see",
+                            action: actionOnChangeFocus,
+                            icon: gif == .focus ? "moon.fill" : "moon",
+                            showLabel: false,
+                            size: .small,
+                            type: .tsWhite // TODO: don't use star!
+                        )
+                        .mask(Circle())
+                    } else {
+                        FancyButtonv2(
+                            text: "You need to create a plan first, click here!",
+                            icon: "moon.zzz",
+                            showLabel: false,
+                            size: .small,
+                            type: nav.parent == .planning ? .secondary : .standard,
+                            redirect: AnyView(Planning()),
+                            pageType: .planning,
+                            sidebar: AnyView(DefaultPlanningSidebar())
+                        )
+                        .mask(Circle())
+                    }
                 }
                 .mask(Circle())
-                Image(systemName: "plus.circle.fill")
-                    .position(x: 38, y: 38)
             }
             .frame(width: 46, height: 46)
 
@@ -115,7 +134,6 @@ struct CreateEntitiesWidget: View {
             }
             .frame(width: 46, height: 46)
 
-
             ZStack {
                 ZStack {
                     Theme.base.opacity(0.5)
@@ -142,6 +160,16 @@ struct CreateEntitiesWidget: View {
 }
 
 extension CreateEntitiesWidget {
+    private func actionOnChangeFocus() -> Void {
+        if gif == .normal {
+            nav.session.gif = .focus
+        } else {
+            nav.session.gif = .normal
+        }
+    }
 
+    private func actionOnAppear() -> Void {
+        gif = nav.session.gif
+    }
 }
 

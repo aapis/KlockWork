@@ -19,11 +19,29 @@ public final class CoreDataPlan {
 
     public func byId(_ id: UUID) -> [Plan] {
         let predicate = NSPredicate(
-            format: "created <= %@",
+            format: "id == %@",
+            id.uuidString as CVarArg
+        )
+
+        return query(predicate)
+    }
+
+    public func forToday() -> [Plan] {
+        let predicate = NSPredicate(
+            format: "created >= (%@ - 86400)",
             Date() as CVarArg
         )
 
         return query(predicate)
+    }
+
+    public func countForToday() -> Int {
+        let predicate = NSPredicate(
+            format: "created >= (%@ - 86400)",
+            Date() as CVarArg
+        )
+
+        return count(predicate)
     }
 
     private func query(_ predicate: NSPredicate) -> [Plan] {
@@ -31,7 +49,7 @@ public final class CoreDataPlan {
 
         var results: [Plan] = []
         let fetch: NSFetchRequest<Plan> = Plan.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Plan.created?, ascending: true)]
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Plan.created?, ascending: false)]
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
 
@@ -51,7 +69,7 @@ public final class CoreDataPlan {
 
         var count = 0
         let fetch: NSFetchRequest<Plan> = Plan.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Plan.created?, ascending: true)]
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Plan.created?, ascending: false)]
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
 

@@ -101,7 +101,7 @@ struct JobPickerWidget: View {
                         }
 
                         VStack(alignment: .leading, spacing: 0) {
-                            if grouped.count > 0 {
+                            if sortedJobs.count > 0 {
                                 ForEach(sortedJobs, id: \.element) { index, key in
                                     JobProjectGroup(index: index, key: key, jobs: grouped, location: location)
                                 }
@@ -146,6 +146,17 @@ extension JobPickerWidget {
         
         // prefixed with S because its just a SHITTY cache
 //        sgrouped = grouped
+
+        if nav.session.gif == .focus {
+            if let plan = nav.session.plan {
+                if let nsset = plan.jobs {
+                    let jobs = nsset.allObjects as! [Job]
+                    query = jobs.map({$0.jid.string}).joined(separator: ", ")
+                }
+            }
+        } else {
+            query = ""
+        }
     }
 
     private func actionMinimize() -> Void {
@@ -164,27 +175,47 @@ extension JobPickerWidget {
 
     private func actionOnSearch(term: String) -> Void {
         if term.count > 1 {
-            var filtered = grouped.filter {
-                (
-                    $0.value.contains(where: {$0.jid.string.caseInsensitiveCompare(term) == .orderedSame})
-                    ||
-                    (
-                        $0.value.contains(where: {$0.jid.string.starts(with: term)})
-                    )
-                )
-            }
+            var filterTerm = ""
+            let terms = term.split(separator: ", ")
+            print("DERPO ids=\(terms)")
+            var filtered = grouped
 
-            if term.starts(with: "https://") { 
+            if terms.count == 1 {
                 filtered = grouped.filter {
                     (
-                        $0.value.contains(where: {$0.uri?.absoluteString.caseInsensitiveCompare(term) == .orderedSame})
+                        $0.value.contains(where: {$0.jid.string.caseInsensitiveCompare(term) == .orderedSame})
                         ||
                         (
-                            $0.value.contains(where: {$0.uri?.absoluteString.contains(term) ?? false})
-                            ||
-                            $0.value.contains(where: {$0.uri?.absoluteString.starts(with: term) ?? false})
+                            $0.value.contains(where: {$0.jid.string.starts(with: term)})
                         )
                     )
+                }
+
+                if term.starts(with: "https://") {
+                    filtered = grouped.filter {
+                        (
+                            $0.value.contains(where: {$0.uri?.absoluteString.caseInsensitiveCompare(term) == .orderedSame})
+                            ||
+                            (
+                                $0.value.contains(where: {$0.uri?.absoluteString.contains(term) ?? false})
+                                ||
+                                $0.value.contains(where: {$0.uri?.absoluteString.starts(with: term) ?? false})
+                            )
+                        )
+                    }
+                }
+            } else {
+                // TODO: this doesn't work yet :\
+                for t in terms {
+                    filtered = grouped.filter {
+                        (
+                            $0.value.contains(where: {$0.jid.string.caseInsensitiveCompare(t) == .orderedSame})
+                            ||
+                            (
+                                $0.value.contains(where: {$0.jid.string.starts(with: t)})
+                            )
+                        )
+                    }
                 }
             }
 

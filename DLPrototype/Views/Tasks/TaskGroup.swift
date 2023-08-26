@@ -97,9 +97,17 @@ struct TaskGroup: View {
                         )
                     }
 
-                    if let subtasks = self.tasks[key] {
-                        ForEach(subtasks) { task in
-                            TaskViewPlain(task: task)
+                    if let st = self.tasks[key] {
+                        if nav.session.gif == .focus {
+                            if let tasks = nav.session.plan!.tasks?.allObjects as? [LogTask] {
+                                ForEach(tasks) { task in
+                                    TaskViewPlain(task: task)
+                                }
+                            }
+                        } else {
+                            ForEach(st) { task in
+                                TaskViewPlain(task: task)
+                            }
                         }
                     }
                 }

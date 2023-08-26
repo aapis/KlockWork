@@ -117,7 +117,6 @@ struct NoteSearchWidget: View {
             .background(Theme.base.opacity(0.2))
         }
         .onAppear(perform: actionOnAppear)
-
     }
 }
 
@@ -162,6 +161,17 @@ extension NoteSearchWidget {
         grouped = Dictionary(grouping: resource, by: {$0.mJob!})
         sortedJobs = Array(grouped.keys.enumerated())
             .sorted(by: ({$0.element.jid < $1.element.jid}))
+
+        if nav.session.gif == .focus {
+            if let plan = nav.session.plan {
+                if let nsset = plan.jobs {
+                    let jobs = nsset.allObjects as! [Job]
+                    query = jobs.map({$0.jid.string}).joined(separator: ", ")
+                }
+            }
+        } else {
+            query = ""
+        }
     }
 
     private func actionMinimize() -> Void {
