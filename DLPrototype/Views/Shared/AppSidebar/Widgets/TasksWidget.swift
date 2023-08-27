@@ -119,9 +119,8 @@ extension TasksWidget {
 
     private func resetGroupedTasks() -> Void {
         grouped = Dictionary(grouping: resource, by: {$0.owner!})
-        sorted = Array(grouped.keys.enumerated())
+        sorted = Array(grouped.keys.enumerated()0)
             .sorted(by: ({$0.element.jid < $1.element.jid}))
-        print("DERPO TasksWidget.onAppear gif=\(nav.session.gif) grouped.count=\(grouped.count)")
     }
 
     private func actionMinimize() -> Void {
