@@ -26,7 +26,6 @@ struct Planning: View {
 
             FancySubTitle(text: "What am I working on today?")
                 .padding(.bottom, 10)
-            Text("Add jobs using the sidebar widget then select the tasks you'd like to focus on. Finalize to save the plan!")
 
             WorkingOnToday
 //            Spacer()
@@ -54,7 +53,7 @@ struct Planning: View {
                     }
                 } else {
                     HStack(alignment: .center) {
-                        Text("Choose jobs from the left")
+                        Text("Add jobs using the sidebar widget then select the tasks you'd like to focus on. This list saves automatically.")
                             .foregroundColor(.gray)
                         Spacer()
                     }
@@ -167,6 +166,12 @@ extension Planning {
                         Spacer()
                         Button {
                             nav.planning.jobs.remove(job)
+                            let plan = nav.planning.finalize()
+                            nav.session.plan = plan
+
+                            if nav.planning.jobs.count == 0 {
+                                nav.planning.reset()
+                            }
                         } label: {
                             Image(systemName: highlighted ? "clear.fill" : "clear")
                                 .foregroundColor(colour.isBright() ? .black : .white)
@@ -370,6 +375,7 @@ extension Planning.Menu {
 
     private func actionOnChangeJobs(jobs: Set<Job>) -> Void {
         nav.planning.jobs = jobs
+        actionOnAppear()
         actionFinalizePlan()
     }
 

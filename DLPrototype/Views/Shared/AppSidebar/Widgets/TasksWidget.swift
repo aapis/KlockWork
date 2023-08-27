@@ -119,7 +119,7 @@ extension TasksWidget {
 
     private func resetGroupedTasks() -> Void {
         grouped = Dictionary(grouping: resource, by: {$0.owner!})
-        sorted = Array(grouped.keys.enumerated()0)
+        sorted = Array(grouped.keys.enumerated())
             .sorted(by: ({$0.element.jid < $1.element.jid}))
     }
 

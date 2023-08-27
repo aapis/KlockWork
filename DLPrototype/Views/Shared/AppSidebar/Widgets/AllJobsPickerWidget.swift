@@ -15,7 +15,6 @@ struct AllJobsPickerWidget: View {
     @State private var minimized: Bool = false
     @State private var query: String = ""
     @State private var grouped: Dictionary<Project, [Job]> = [:]
-//    @State private var sgrouped: Dictionary<Project, [Job]> = [:]
     @State private var isSettingsPresented: Bool = false
     @State private var isLoading: Bool = false
     @State private var sortedJobs: [EnumeratedSequence<Dictionary<Project, [Job]>.Keys>.Element] = []
@@ -150,9 +149,6 @@ extension AllJobsPickerWidget {
         sortedJobs = Array(grouped.keys.enumerated())
             .sorted(by: ({$0.element.pid < $1.element.pid}))
             .filter { $0.element.pid != 1 }
-        
-        // prefixed with S because its just a SHITTY cache
-//        sgrouped = grouped
     }
 
     private func actionMinimize() -> Void {
@@ -205,7 +201,6 @@ extension AllJobsPickerWidget {
     private func actionOnChangeJob(job: Job?) -> Void {
         if let jerb = job {
             query = jerb.jid.string
-//            grouped = sgrouped
         }
     }
 }
