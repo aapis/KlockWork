@@ -57,7 +57,6 @@ public class CoreDataJob: ObservableObject {
             }
         }
 
-
         return jobs.sorted {$0.project!.pid > $1.project!.pid}
     }
     

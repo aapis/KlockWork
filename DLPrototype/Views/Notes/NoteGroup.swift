@@ -59,25 +59,11 @@ struct NoteGroup: View {
 
             if !minimized {
                 VStack(alignment: .leading, spacing: 5) {
-                    if let st = self.notes[key] {
-                        if nav.session.gif == .focus {
-                            if let notes = nav.session.plan!.notes?.allObjects as? [Note] {
-                                ForEach(notes) { note in
-                                    NoteRowPlain(note: note, moc: moc)
-                                }
-                            }
-                        } else {
-                            ForEach(st) { note in
-                                NoteRowPlain(note: note, moc: moc)
-                            }
+                    if let subtasks = self.notes[key] {
+                        ForEach(subtasks) { note in
+                            NoteRowPlain(note: note, moc: moc)
                         }
                     }
-
-//                    if let subtasks = self.notes[key] {
-//                        ForEach(subtasks) { note in
-//                            NoteRowPlain(note: note, moc: moc)
-//                        }
-//                    }
                 }
                 .foregroundColor(colour.isBright() ? .black : .white)
                 .padding(8)

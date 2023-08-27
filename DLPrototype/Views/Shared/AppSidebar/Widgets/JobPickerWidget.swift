@@ -18,7 +18,7 @@ struct JobPickerWidget: View {
     @State private var sgrouped: Dictionary<Project, [Job]> = [:]
     @State private var isSettingsPresented: Bool = false
     @State private var isLoading: Bool = false
-    @State private var sortedJobs: [EnumeratedSequence<Dictionary<Project, [Job]>.Keys>.Element] = []
+    @State private var sorted: [EnumeratedSequence<Dictionary<Project, [Job]>.Keys>.Element] = []
 
     @FetchRequest public var resource: FetchedResults<LogRecord>
 
@@ -101,8 +101,8 @@ struct JobPickerWidget: View {
                         }
 
                         VStack(alignment: .leading, spacing: 0) {
-                            if sortedJobs.count > 0 {
-                                ForEach(sortedJobs, id: \.element) { index, key in
+                            if sorted.count > 0 {
+                                ForEach(sorted, id: \.element) { index, key in
                                     JobProjectGroup(index: index, key: key, jobs: grouped, location: location)
                                 }
                             } else {
@@ -138,25 +138,22 @@ extension JobPickerWidget {
     }
 
     private func actionOnAppear() -> Void {
-        let recent = CoreDataJob(moc: moc).getRecentlyUsed(records: resource)
-
-        grouped = Dictionary(grouping: recent, by: {$0.project!})
-        sortedJobs = Array(grouped.keys.enumerated())
-            .sorted(by: ({$0.element.pid < $1.element.pid}))
-        
-        // prefixed with S because its just a SHITTY cache
-//        sgrouped = grouped
-
         if nav.session.gif == .focus {
             if let plan = nav.session.plan {
-                if let nsset = plan.jobs {
-                    let jobs = nsset.allObjects as! [Job]
+                if let setJobs = plan.jobs {
+                    let jobs = setJobs.allObjects as! [Job]
                     query = jobs.map({$0.jid.string}).joined(separator: ", ")
+                    grouped = Dictionary(grouping: jobs, by: {$0.project!})
                 }
             }
         } else {
+            let recent = CoreDataJob(moc: moc).getRecentlyUsed(records: resource)
+            grouped = Dictionary(grouping: recent, by: {$0.project!})
             query = ""
         }
+
+        sorted = Array(grouped.keys.enumerated())
+            .sorted(by: ({$0.element.pid < $1.element.pid}))
     }
 
     private func actionMinimize() -> Void {
@@ -174,48 +171,34 @@ extension JobPickerWidget {
     }
 
     private func actionOnSearch(term: String) -> Void {
-        if term.count > 1 {
-            var filterTerm = ""
-            let terms = term.split(separator: ", ")
-            print("DERPO ids=\(terms)")
-            var filtered = grouped
+        guard nav.session.gif != .focus else {
+            return actionOnAppear()
+        }
 
-            if terms.count == 1 {
+        if term.count > 1 {
+            var filtered: Dictionary<Project, [Job]> = [:]
+
+            filtered = grouped.filter {
+                (
+                    $0.value.contains(where: {$0.jid.string.caseInsensitiveCompare(term) == .orderedSame})
+                    ||
+                    (
+                        $0.value.contains(where: {$0.jid.string.starts(with: term)})
+                    )
+                )
+            }
+
+            if term.starts(with: "https://") {
                 filtered = grouped.filter {
                     (
-                        $0.value.contains(where: {$0.jid.string.caseInsensitiveCompare(term) == .orderedSame})
+                        $0.value.contains(where: {$0.uri?.absoluteString.caseInsensitiveCompare(term) == .orderedSame})
                         ||
                         (
-                            $0.value.contains(where: {$0.jid.string.starts(with: term)})
+                            $0.value.contains(where: {$0.uri?.absoluteString.contains(term) ?? false})
+                            ||
+                            $0.value.contains(where: {$0.uri?.absoluteString.starts(with: term) ?? false})
                         )
                     )
-                }
-
-                if term.starts(with: "https://") {
-                    filtered = grouped.filter {
-                        (
-                            $0.value.contains(where: {$0.uri?.absoluteString.caseInsensitiveCompare(term) == .orderedSame})
-                            ||
-                            (
-                                $0.value.contains(where: {$0.uri?.absoluteString.contains(term) ?? false})
-                                ||
-                                $0.value.contains(where: {$0.uri?.absoluteString.starts(with: term) ?? false})
-                            )
-                        )
-                    }
-                }
-            } else {
-                // TODO: this doesn't work yet :\
-                for t in terms {
-                    filtered = grouped.filter {
-                        (
-                            $0.value.contains(where: {$0.jid.string.caseInsensitiveCompare(t) == .orderedSame})
-                            ||
-                            (
-                                $0.value.contains(where: {$0.jid.string.starts(with: t)})
-                            )
-                        )
-                    }
                 }
             }
 

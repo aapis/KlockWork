@@ -56,11 +56,9 @@ struct NoteCreate: View {
                         action: save,
                         size: .medium,
                         type: .primary,
-                        redirect: AnyView(
-                            NoteDashboard()
-                                .environmentObject(jm)
-                                .environmentObject(updater)
-                        )
+                        redirect: AnyView(NoteDashboard()),
+                        pageType: .notes,
+                        sidebar: AnyView(NoteDashboardSidebar())
                     )
                         .keyboardShortcut("s", modifiers: .command)
 
