@@ -92,7 +92,7 @@ struct JobPickerWidget: View {
                             minimizeAll: $minimizeAll
                         )
                     } else {
-                        if showSearch {
+                        if showSearch && nav.session.gif != .focus {
                             VStack {
                                 SearchBar(text: $query, disabled: minimized, placeholder: "Job ID or URL")
                                     .onChange(of: query, perform: actionOnSearch)

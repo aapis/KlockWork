@@ -74,7 +74,7 @@ struct TasksWidget: View {
                             minimizeAll: $minimizeAll
                         )
                     } else {
-                        if showSearch {
+                        if showSearch && nav.session.gif != .focus {
                             VStack {
                                 SearchBar(text: $query, disabled: minimized, placeholder: "Search tasks...")
                                     .onChange(of: query, perform: actionOnSearch)

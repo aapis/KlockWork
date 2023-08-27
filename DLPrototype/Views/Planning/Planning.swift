@@ -52,13 +52,13 @@ struct Planning: View {
                         }
                     }
                 } else {
-                    HStack(alignment: .center) {
+                    HStack {
                         Text("Add jobs using the sidebar widget then select the tasks you'd like to focus on. This list saves automatically.")
                             .foregroundColor(.gray)
                         Spacer()
                     }
                     .padding()
-                    .background(Theme.base.opacity(0.2))
+                    .background(Theme.rowColour)
                 }
             }
         }
@@ -171,6 +171,8 @@ extension Planning {
 
                             if nav.planning.jobs.count == 0 {
                                 nav.planning.reset()
+                                nav.session.plan = nil
+                                nav.session.gif = .normal
                             }
                         } label: {
                             Image(systemName: highlighted ? "clear.fill" : "clear")
@@ -371,6 +373,7 @@ extension Planning.Menu {
     private func actionResetPlan() -> Void {
         nav.planning.reset()
         nav.session.plan = nil
+        nav.session.gif = .normal
     }
 
     private func actionOnChangeJobs(jobs: Set<Job>) -> Void {
@@ -399,6 +402,7 @@ extension Planning.Menu {
         if numJobs + numTasks + numNotes == 0 {
             nav.planning.reset()
             nav.session.plan = nil
+            nav.session.gif = .normal
         }
     }
 }

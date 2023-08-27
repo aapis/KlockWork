@@ -83,7 +83,7 @@ struct NoteSearchWidget: View {
                             minimizeAll: $minimizeAll
                         )
                     } else {
-                        if showSearch {
+                        if showSearch && nav.session.gif != .focus {
                             VStack {
                                 SearchBar(text: $query, disabled: minimized)
                                     .onChange(of: query, perform: actionOnSearch)
