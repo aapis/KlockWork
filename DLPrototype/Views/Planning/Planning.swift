@@ -47,8 +47,7 @@ struct Planning: View {
                 if jobs.count > 0 {
                     ForEach(jobs) { job in
                         VStack(spacing: 1) {
-                            JobPlanningRow(job: job, index: jobs.firstIndex(of: job), type: .tasks)
-                            JobPlanningRow(job: job, index: jobs.firstIndex(of: job), type: .notes)
+                            JobPlanningGroup(job: job, jobs: jobs)
                         }
                     }
                 } else {
@@ -132,6 +131,59 @@ extension Planning.JobPlanningRow {
 }
 
 extension Planning {
+    struct JobPlanningGroup: View {
+        var job: Job
+        var jobs: [Job]
+
+        @State private var colour: Color = .clear
+        @State private var highlighted: Bool = false
+
+        @EnvironmentObject public var nav: Navigation
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 1) {
+                HStack {
+                    Text("Job \(job.jid.string)")
+                        .foregroundColor(colour.isBright() ? .black : .white)
+                        .font(.title3)
+                    Spacer()
+                    Button {
+                        nav.planning.jobs.remove(job)
+
+                        if nav.planning.jobs.count == 0 {
+                            nav.planning.reset()
+                            nav.session.plan = nil
+                            nav.session.gif = .normal
+                        } else {
+                            let plan = nav.planning.finalize()
+                            nav.session.plan = plan
+                        }
+                    } label: {
+                        Image(systemName: highlighted ? "clear.fill" : "clear")
+                            .foregroundColor(colour.isBright() ? .black : .white)
+                            .font(.title)
+                    }
+                    .buttonStyle(.plain)
+                    .useDefaultHover({inside in highlighted = inside})
+                }
+                .padding()
+                .background(colour)
+
+                JobPlanningRow(job: job, index: jobs.firstIndex(of: job), type: .tasks)
+                JobPlanningRow(job: job, index: jobs.firstIndex(of: job), type: .notes)
+            }
+            .onAppear(perform: actionOnAppear)
+        }
+    }
+}
+
+extension Planning.JobPlanningGroup {
+    private func actionOnAppear() -> Void {
+        colour = Color.fromStored(job.colour!)
+    }
+}
+
+extension Planning {
     struct Header: View {
         var job: Job
         var index: Int?
@@ -144,48 +196,28 @@ extension Planning {
         @EnvironmentObject public var nav: Navigation
 
         var body: some View {
-            ZStack {
-                colour
-
-                VStack(alignment: .leading) {
-                    HStack {
-                        if type == .tasks {
-                            Image(systemName: "\(numChildren).circle")
-                                .font(.title)
-                                .foregroundColor(colour.isBright() ? .black : .white)
-                            Text("Incomplete tasks associated with job \(job.jid.string)")
-                                .foregroundColor(colour.isBright() ? .black : .white)
-                        } else if type == .notes {
-                            Image(systemName: "\(numChildren).circle")
-                                .font(.title)
-                                .foregroundColor(colour.isBright() ? .black : .white)
-                            Text("Notes associated with job \(job.jid.string)")
-                                .foregroundColor(colour.isBright() ? .black : .white)
-                        }
-
-                        Spacer()
-                        Button {
-                            nav.planning.jobs.remove(job)
-                            let plan = nav.planning.finalize()
-                            nav.session.plan = plan
-
-                            if nav.planning.jobs.count == 0 {
-                                nav.planning.reset()
-                                nav.session.plan = nil
-                                nav.session.gif = .normal
-                            }
-                        } label: {
-                            Image(systemName: highlighted ? "clear.fill" : "clear")
-                                .foregroundColor(colour.isBright() ? .black : .white)
-                                .font(.title)
-                        }
-                        .buttonStyle(.plain)
-                        .useDefaultHover({inside in highlighted = inside})
+            VStack(alignment: .leading, spacing: 5) {
+                HStack {
+                    if type == .tasks {
+                        Image(systemName: "\(numChildren).circle")
+                            .font(.title)
+                            .foregroundColor(colour.isBright() ? .black : .white)
+                        Text("Incomplete tasks associated with job \(job.jid.string)")
+                            .foregroundColor(colour.isBright() ? .black : .white)
+                    } else if type == .notes {
+                        Image(systemName: "\(numChildren).circle")
+                            .font(.title)
+                            .foregroundColor(colour.isBright() ? .black : .white)
+                        Text("Notes associated with job \(job.jid.string)")
+                            .foregroundColor(colour.isBright() ? .black : .white)
                     }
-                    .padding(10)
+
+                    Spacer()
                 }
+                .padding(10)
             }
             .onAppear(perform: actionOnAppear)
+            .background(colour)
         }
     }
 }
