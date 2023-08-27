@@ -97,8 +97,8 @@ struct TaskGroup: View {
                         )
                     }
 
-                    if let subtasks = self.tasks[key] {
-                        ForEach(subtasks) { task in
+                    if let st = self.tasks[key] {
+                        ForEach(st) { task in
                             TaskViewPlain(task: task)
                         }
                     }

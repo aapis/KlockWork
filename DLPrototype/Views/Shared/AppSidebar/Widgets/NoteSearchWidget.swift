@@ -16,6 +16,7 @@ struct NoteSearchWidget: View {
     @State private var isLoading: Bool = false
     @State private var isSettingsPresented: Bool = false
     @State private var grouped: Dictionary<Job, [Note]> = [:]
+    @State private var sorted: [EnumeratedSequence<Dictionary<Job, [Note]>.Keys>.Element] = []
 
     @FetchRequest public var resource: FetchedResults<Note>
 
@@ -82,7 +83,7 @@ struct NoteSearchWidget: View {
                             minimizeAll: $minimizeAll
                         )
                     } else {
-                        if showSearch {
+                        if showSearch && nav.session.gif != .focus {
                             VStack {
                                 SearchBar(text: $query, disabled: minimized)
                                     .onChange(of: query, perform: actionOnSearch)
@@ -91,8 +92,8 @@ struct NoteSearchWidget: View {
                         }
                         
                         VStack(alignment: .leading, spacing: 0) {
-                            if grouped.count > 0 {
-                                ForEach(Array(grouped.keys.enumerated()), id: \.element) { index, key in
+                            if sorted.count > 0 {
+                                ForEach(sorted, id: \.element) { index, key in
                                     NoteGroup(index: index, key: key, notes: grouped)
                                 }
                             } else {
@@ -116,7 +117,6 @@ struct NoteSearchWidget: View {
             .background(Theme.base.opacity(0.2))
         }
         .onAppear(perform: actionOnAppear)
-
     }
 }
 
@@ -126,6 +126,10 @@ extension NoteSearchWidget {
     }
 
     private func actionOnSearch(term: String) -> Void {
+        guard nav.session.gif != .focus else {
+            return actionOnAppear()
+        }
+        
         if term.count > 1 {
             var filtered = grouped.filter {
                 (
@@ -158,7 +162,25 @@ extension NoteSearchWidget {
     }
 
     private func actionOnAppear() -> Void {
-        grouped = Dictionary(grouping: resource, by: {$0.mJob!})
+        if nav.session.gif == .focus {
+            if let plan = nav.session.plan {
+                if let setJobs = plan.jobs {
+                    let jobs = setJobs.allObjects as! [Job]
+                    query = jobs.map({$0.jid.string}).joined(separator: ", ")
+                }
+
+                if let setNotes = plan.notes {
+                    let notes = setNotes.allObjects as! [Note]
+                    grouped = Dictionary(grouping: notes, by: {$0.mJob!})
+                }
+            }
+        } else {
+            grouped = Dictionary(grouping: resource, by: {$0.mJob!})
+            query = ""
+        }
+
+        sorted = Array(grouped.keys.enumerated())
+            .sorted(by: ({$0.element.jid < $1.element.jid}))
     }
 
     private func actionMinimize() -> Void {

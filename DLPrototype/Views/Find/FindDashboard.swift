@@ -25,7 +25,9 @@ struct FindDashboard: View {
     @State private var showProjects: Bool = true
     @State private var showJobs: Bool = true
     @State private var allowAlive: Bool = true
- 
+    @State private var counts: (Int, Int, Int, Int) = (0, 0, 0, 0)
+
+    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var jm: CoreDataJob
     
     var body: some View {
@@ -50,7 +52,7 @@ struct FindDashboard: View {
                 SearchBar(
                     text: $activeSearchText,
                     disabled: false,
-                    placeholder: "Type and hit enter to search...",
+                    placeholder: "Search \(counts.0) records, \(counts.1) jobs, \(counts.2) tasks and \(counts.3) projects",
                     onSubmit: onSubmit,
                     onReset: onReset
                 )
@@ -93,6 +95,7 @@ struct FindDashboard: View {
                 .environmentObject(jm)
             }
         }
+        .onAppear(perform: actionOnAppear)
     }
     
     @ViewBuilder
@@ -119,5 +122,14 @@ struct FindDashboard: View {
 
     private func onReset() -> Void {
         searching = false
+    }
+
+    private func actionOnAppear() -> Void {
+        counts = (
+            CoreDataRecords(moc: moc).countAll(),
+            CoreDataJob(moc: moc).countAll(),
+            CoreDataTasks(moc: moc).countAll(),
+            CoreDataProjects(moc: moc).countAll()
+        )
     }
 }

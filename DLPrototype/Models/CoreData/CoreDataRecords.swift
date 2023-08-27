@@ -179,6 +179,14 @@ public class CoreDataRecords: ObservableObject {
         
         return jobSet.count
     }
+
+    public func countAll() -> Int {
+        let predicate = NSPredicate(
+            format: "alive == true"
+        )
+
+        return count(predicate)
+    }
     
     public func forDate(_ date: Date) -> [LogRecord] {
         let endDate = date - 86400

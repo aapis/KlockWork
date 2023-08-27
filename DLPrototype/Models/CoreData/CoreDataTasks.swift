@@ -13,6 +13,8 @@ public class CoreDataTasks {
     @AppStorage("today.ltd.tasks.all") public var showAllJobsInDetailsPane: Bool = false
     
     public var moc: NSManagedObjectContext?
+
+    private let lock = NSLock()
     
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
@@ -112,5 +114,54 @@ public class CoreDataTasks {
         } catch {
             PersistenceController.shared.save()
         }
+    }
+
+    public func countAll() -> Int {
+        let predicate = NSPredicate(
+            format: "created <= %@",
+            Date() as CVarArg
+        )
+
+        return count(predicate)
+    }
+
+    private func query(_ predicate: NSPredicate) -> [LogTask] {
+        lock.lock()
+
+        var results: [LogTask] = []
+        let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogTask.created?, ascending: true)]
+        fetch.predicate = predicate
+        fetch.returnsDistinctResults = true
+
+        do {
+            results = try moc!.fetch(fetch)
+        } catch {
+            print("[error] CoreDataTasks.query Unable to find records for predicate \(predicate.predicateFormat)")
+        }
+
+        lock.unlock()
+
+        return results
+    }
+
+    private func count(_ predicate: NSPredicate) -> Int {
+        lock.lock()
+
+        var count = 0
+        let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogTask.created?, ascending: true)]
+        fetch.predicate = predicate
+        fetch.returnsDistinctResults = true
+
+        do {
+            count = try moc!.fetch(fetch).count
+        } catch {
+            print("[error] CoreDataTasks.query Unable to find records for predicate \(predicate.predicateFormat)")
+        }
+
+        lock.unlock()
+
+        return count
     }
 }

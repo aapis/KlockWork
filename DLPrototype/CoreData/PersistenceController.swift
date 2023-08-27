@@ -86,12 +86,7 @@ struct PersistenceController {
         let context = container.viewContext
 
         if context.hasChanges {
-            do {
-                try context.delete(item)
-            } catch {
-                // Show some error here
-                print("[error] PersistenceController.save error")
-            }
+            context.delete(item)
         }
     }
 }

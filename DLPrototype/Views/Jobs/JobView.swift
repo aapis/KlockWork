@@ -21,8 +21,10 @@ struct JobView: View {
     @State private var shredable: Bool = false
     @State private var validJob: Bool = false
     @State private var validUrl: Bool = false
+    @State private var isDeleteAlertShowing: Bool = false
 
     @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var jm: CoreDataJob
     
@@ -121,6 +123,20 @@ struct JobView: View {
     
     @ViewBuilder private var buttonSubmit: some View {
         HStack {
+            FancyButtonv2(
+                text: "Delete",
+                action: {isDeleteAlertShowing = true},
+                icon: "trash",
+                showLabel: false,
+                type: .destructive
+            )
+            .alert("Are you sure you want to delete job ID \(job.jid.string)?", isPresented: $isDeleteAlertShowing) {
+                Button("Yes", role: .destructive) {
+                    hardDelete()
+                }
+                Button("No", role: .cancel) {}
+            }
+            
             Spacer()
             FancyButtonv2(
                 text: "Update",
@@ -128,7 +144,8 @@ struct JobView: View {
                 size: .medium,
                 type: .primary,
                 redirect: AnyView(JobDashboard()),
-                pageType: .jobs
+                pageType: .jobs,
+                sidebar: AnyView(JobDashboardSidebar())
             )
             .keyboardShortcut("s", modifiers: .command)
         }
@@ -162,5 +179,21 @@ struct JobView: View {
 
         PersistenceController.shared.save()
         updater.update()
+    }
+
+    private func softDelete() -> Void {
+        job.alive = false
+        PersistenceController.shared.save()
+        updater.update()
+    }
+
+    private func hardDelete() -> Void {
+        moc.delete(job)
+        PersistenceController.shared.save()
+
+        nav.setView(AnyView(JobDashboard()))
+        nav.setId()
+        nav.setParent(.jobs)
+        nav.setSidebar(AnyView(JobDashboardSidebar()))
     }
 }

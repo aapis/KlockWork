@@ -12,6 +12,7 @@ struct JobProjectGroup: View {
     public let index: Int
     public let key: Project
     public var jobs: Dictionary<Project, [Job]>
+    public var location: WidgetLocation
 
     @State private var minimized: Bool = false
 
@@ -65,7 +66,7 @@ struct JobProjectGroup: View {
 
                         VStack(alignment: .leading, spacing: 0) {
                             ForEach(subtasks) { job in
-                                JobRowPicker(job: job)
+                                JobRowPicker(job: job, location: location)
                             }
                         }
                     }

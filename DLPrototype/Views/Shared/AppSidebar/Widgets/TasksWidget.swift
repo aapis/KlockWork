@@ -12,9 +12,10 @@ struct TasksWidget: View {
     public let title: String = "Tasks"
 
     @State private var minimized: Bool = false
-    @State private var groupedTasks: Dictionary<Job, [LogTask]> = [:]
+    @State private var grouped: Dictionary<Job, [LogTask]> = [:]
     @State private var query: String = ""
     @State private var isSettingsPresented: Bool = false
+    @State private var sorted: [EnumeratedSequence<Dictionary<Job, [LogTask]>.Keys>.Element] = []
 
     @FetchRequest public var resource: FetchedResults<LogTask>
 
@@ -73,7 +74,7 @@ struct TasksWidget: View {
                             minimizeAll: $minimizeAll
                         )
                     } else {
-                        if showSearch {
+                        if showSearch && nav.session.gif != .focus {
                             VStack {
                                 SearchBar(text: $query, disabled: minimized, placeholder: "Search tasks...")
                                     .onChange(of: query, perform: actionOnSearch)
@@ -81,10 +82,10 @@ struct TasksWidget: View {
                             }
                         }
 
-                        if groupedTasks.count > 0 {
+                        if sorted.count > 0 {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(Array(groupedTasks.keys.enumerated()), id: \.element) { index, key in
-                                    TaskGroup(index: index, key: key, tasks: groupedTasks)
+                                ForEach(sorted, id: \.element) { index, key in
+                                    TaskGroup(index: index, key: key, tasks: grouped)
                                 }
                             }
                         } else {
@@ -97,7 +98,7 @@ struct TasksWidget: View {
                     }
                 } else {
                     HStack {
-                        Text("\(groupedTasks.count) jobs")
+                        Text("\(grouped.count) jobs")
                         Spacer()
                     }
                 }
@@ -106,7 +107,7 @@ struct TasksWidget: View {
             .background(Theme.base.opacity(0.2))
         }
         .onAppear(perform: actionOnAppear)
-        .id(updater.ids["sidebar.today.incompleteTasksWidget"])
+        .id(updater.get("sidebar.today.incompleteTasksWidget"))
         .font(Theme.font)
     }
 }
@@ -117,8 +118,9 @@ extension TasksWidget {
     }
 
     private func resetGroupedTasks() -> Void {
-        // TODO: need to figure out how to sort this dictionary
-        groupedTasks = Dictionary(grouping: resource, by: {$0.owner!})
+        grouped = Dictionary(grouping: resource, by: {$0.owner!})
+        sorted = Array(grouped.keys.enumerated())
+            .sorted(by: ({$0.element.jid < $1.element.jid}))
     }
 
     private func actionMinimize() -> Void {
@@ -131,6 +133,25 @@ extension TasksWidget {
 
     private func actionOnAppear() -> Void {
         resetGroupedTasks()
+
+        if nav.session.gif == .focus {
+            if let plan = nav.session.plan {
+                if let setJobs = plan.jobs {
+                    let jobs = setJobs.allObjects as! [Job]
+                    query = jobs.map({$0.jid.string}).joined(separator: ", ")
+                }
+
+                if let setTasks = plan.tasks {
+                    let tasks = setTasks.allObjects as! [LogTask]
+                    grouped = Dictionary(grouping: tasks, by: {$0.owner!})
+                }
+            }
+        } else {
+            query = ""
+        }
+
+        sorted = Array(grouped.keys.enumerated())
+            .sorted(by: ({$0.element.jid < $1.element.jid}))
     }
 
     private func actionOnChangeJob(job: Job?) -> Void {
@@ -141,10 +162,10 @@ extension TasksWidget {
     }
 
     private func actionOnSearch(term: String) -> Void {
-        resetGroupedTasks()
-        groupedTasks = groupedTasks.filter({searchCriteria(term: term, job: $0.key, tasks: $0.value)})
-        // TODO: figure out how to apply sort (below doesn't work)
-//            .sorted(by: {$0.key.created! > $1.key.created!})
+        if nav.session.gif != .focus {
+            resetGroupedTasks()
+            grouped = grouped.filter({searchCriteria(term: term, job: $0.key, tasks: $0.value)})
+        }
 
         if query.isEmpty {
             resetGroupedTasks()

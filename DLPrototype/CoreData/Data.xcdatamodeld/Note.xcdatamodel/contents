@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22E261" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22G74" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="BannedWord" representedClassName="BannedWord" syncable="YES" codeGenerationType="class">
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
@@ -36,6 +36,7 @@
         <attribute name="uri" optional="YES" attributeType="URI"/>
         <relationship name="mNotes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Note" inverseName="mJob" inverseEntity="Note"/>
         <relationship name="notes" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Note" inverseName="job" inverseEntity="Note"/>
+        <relationship name="plans" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Plan" inverseName="jobs" inverseEntity="Plan"/>
         <relationship name="project" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Project" inverseName="jobs" inverseEntity="Project"/>
         <relationship name="records" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LogRecord" inverseName="job" inverseEntity="LogRecord"/>
         <relationship name="tasks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LogTask" inverseName="owner" inverseEntity="LogTask"/>
@@ -55,6 +56,7 @@
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="owner" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="tasks" inverseEntity="Job"/>
+        <relationship name="plans" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Plan" inverseName="tasks" inverseEntity="Plan"/>
     </entity>
     <entity name="Note" representedClassName="Note" syncable="YES" codeGenerationType="class">
         <attribute name="alive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
@@ -66,6 +68,7 @@
         <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="job" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="notes" inverseEntity="Job"/>
         <relationship name="mJob" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="mNotes" inverseEntity="Job"/>
+        <relationship name="plan" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Plan" inverseName="notes" inverseEntity="Plan"/>
         <relationship name="versions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="NoteVersion" inverseName="note" inverseEntity="NoteVersion"/>
     </entity>
     <entity name="NoteVersion" representedClassName="NoteVersion" syncable="YES" codeGenerationType="class">
@@ -75,6 +78,14 @@
         <attribute name="starred" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="note" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Note" inverseName="versions" inverseEntity="Note"/>
+    </entity>
+    <entity name="Plan" representedClassName="Plan" syncable="YES" codeGenerationType="class">
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="period" optional="YES" attributeType="String"/>
+        <relationship name="jobs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Job" inverseName="plans" inverseEntity="Job"/>
+        <relationship name="notes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Note" inverseName="plan" inverseEntity="Note"/>
+        <relationship name="tasks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LogTask" inverseName="plans" inverseEntity="LogTask"/>
     </entity>
     <entity name="Project" representedClassName="Project" syncable="YES" codeGenerationType="class">
         <attribute name="alive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
@@ -106,5 +117,6 @@
         <memberEntity name="ProjectConfiguration"/>
         <memberEntity name="CalendarEvent"/>
         <memberEntity name="Company"/>
+        <memberEntity name="Plan"/>
     </configuration>
 </model>

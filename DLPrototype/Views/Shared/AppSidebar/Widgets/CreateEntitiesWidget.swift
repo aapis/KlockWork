@@ -11,7 +11,15 @@ import SwiftUI
 struct CreateEntitiesWidget: View {
     @Binding public var isDatePickerPresented: Bool
 
+    @State private var followingPlan: Bool = false
+    @State private var gif: Navigation.Planning.GlobalInterfaceFilter = .normal
+
+    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
+
+    var doesPlanExist: Bool {
+        CoreDataPlan(moc: moc).countForToday() > 0
+    }
 
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -27,100 +35,141 @@ struct CreateEntitiesWidget: View {
                 Buttons
             }
         }
+        .onAppear(perform: actionOnAppear)
     }
 
     private var Buttons: some View {
         HStack(alignment: .center, spacing: 10) {
             ZStack {
-                Theme.base.opacity(0.5)
-                FancyButtonv2(
-                    text: "New record",
-                    icon: "doc.badge.plus",
-                    showLabel: false,
-                    size: .small,
-                    type: nav.parent == .today ? .secondary : .standard,
-                    redirect: AnyView(Today()),
-                    pageType: .today,
-                    sidebar: AnyView(TodaySidebar())
-                )
+                ZStack {
+                    Theme.base.opacity(0.5)
+                    if doesPlanExist {
+                        FancyButtonv2(
+                            text: gif == .focus ? "Disable planning focus" : "Enable global filter to only show you the things you need to see",
+                            action: actionOnChangeFocus,
+                            icon: gif == .focus ? "moon.fill" : "moon",
+                            showLabel: false,
+                            size: .small,
+                            type: .tsWhite // TODO: don't use star!
+                        )
+                        .mask(Circle())
+                    } else {
+                        FancyButtonv2(
+                            text: "You need to create a plan first, click here!",
+                            icon: "moon.zzz",
+                            showLabel: false,
+                            size: .small,
+                            type: nav.parent == .planning ? .secondary : .standard,
+                            redirect: AnyView(Planning()),
+                            pageType: .planning,
+                            sidebar: AnyView(DefaultPlanningSidebar())
+                        )
+                        .mask(Circle())
+                    }
+                }
                 .mask(Circle())
             }
-            .mask(Circle())
-            .frame(width: 46, height: 46)
-
-           ZStack {
-               Theme.base.opacity(0.5)
-               FancyButtonv2(
-                   text: "New note",
-                   icon: "note.text.badge.plus",
-                   showLabel: false,
-                   size: .small,
-                   type: nav.parent == .notes ? .secondary : .standard,
-                   redirect: AnyView(NoteCreate()),
-                   pageType: .today,
-                   sidebar: AnyView(NoteDashboardSidebar())
-               )
-               .mask(Circle())
-            }
-            .mask(Circle())
             .frame(width: 46, height: 46)
 
             ZStack {
-                Theme.base.opacity(0.5)
-                FancyButtonv2(
-                    text: "New Task",
-                    icon: "checklist.unchecked",
-                    showLabel: false,
-                    size: .small,
-                    type: nav.parent == .tasks ? .secondary : .standard,
-                    redirect: AnyView(TaskDashboard()),
-                    pageType: .tasks,
-                    sidebar: AnyView(TaskDashboardSidebar())
-                )
+                ZStack {
+                    Theme.base.opacity(0.5)
+                    FancyButtonv2(
+                        text: "New note",
+                        icon: "note.text",
+                        showLabel: false,
+                        size: .small,
+                        type: nav.parent == .notes ? .secondary : .standard,
+                        redirect: AnyView(NoteCreate()),
+                        pageType: .today,
+                        sidebar: AnyView(NoteDashboardSidebar())
+                    )
+                    .mask(Circle())
+                }
                 .mask(Circle())
-             }
-             .mask(Circle())
-             .frame(width: 46, height: 46)
+                Image(systemName: "plus.circle.fill")
+                    .position(x: 38, y: 38)
+            }
+            .frame(width: 46, height: 46)
 
             ZStack {
-                Theme.base.opacity(0.5)
-                FancyButtonv2(
-                    text: "New Project",
-                    icon: "folder.badge.plus",
-                    showLabel: false,
-                    size: .small,
-                    type: nav.parent == .projects ? .secondary : .standard,
-                    redirect: AnyView(ProjectCreate()),
-                    pageType: .projects,
-                    sidebar: AnyView(ProjectsDashboardSidebar())
-                )
+                ZStack {
+                    Theme.base.opacity(0.5)
+                    FancyButtonv2(
+                        text: "New Task",
+                        icon: "checklist.unchecked",
+                        showLabel: false,
+                        size: .small,
+                        type: nav.parent == .tasks ? .secondary : .standard,
+                        redirect: AnyView(TaskDashboard()),
+                        pageType: .tasks,
+                        sidebar: AnyView(TaskDashboardSidebar())
+                    )
+                    .mask(Circle())
+                }
                 .mask(Circle())
-             }
-             .mask(Circle())
-             .frame(width: 46, height: 46)
+                Image(systemName: "plus.circle.fill")
+                    .position(x: 38, y: 38)
+            }
+            .frame(width: 46, height: 46)
 
             ZStack {
-                Theme.base.opacity(0.5)
-                FancyButtonv2(
-                    text: "New Job",
-                    icon: "hammer",
-                    showLabel: false,
-                    size: .small,
-                    type: nav.parent == .jobs ? .secondary : .standard,
-                    redirect: AnyView(JobCreate()),
-                    pageType: .jobs,
-                    sidebar: AnyView(JobDashboardSidebar())
-                )
+                ZStack {
+                    Theme.base.opacity(0.5)
+                    FancyButtonv2(
+                        text: "New Project",
+                        icon: "folder",
+                        showLabel: false,
+                        size: .small,
+                        type: nav.parent == .projects ? .secondary : .standard,
+                        redirect: AnyView(ProjectCreate()),
+                        pageType: .projects,
+                        sidebar: AnyView(ProjectsDashboardSidebar())
+                    )
+                    .mask(Circle())
+                 }
+                 .mask(Circle())
+                Image(systemName: "plus.circle.fill")
+                    .position(x: 38, y: 38)
+            }
+            .frame(width: 46, height: 46)
+
+            ZStack {
+                ZStack {
+                    Theme.base.opacity(0.5)
+                    FancyButtonv2(
+                        text: "New Job",
+                        icon: "hammer",
+                        showLabel: false,
+                        size: .small,
+                        type: nav.parent == .jobs ? .secondary : .standard,
+                        redirect: AnyView(JobCreate()),
+                        pageType: .jobs,
+                        sidebar: AnyView(JobDashboardSidebar())
+                    )
+                    .mask(Circle())
+                }
                 .mask(Circle())
-             }
-             .mask(Circle())
-             .frame(width: 46, height: 46)
+                Image(systemName: "plus.circle.fill")
+                    .position(x: 38, y: 38)
+            }
+            .frame(width: 46, height: 46)
         }
         .padding(5)
     }
 }
 
 extension CreateEntitiesWidget {
+    private func actionOnChangeFocus() -> Void {
+        if gif == .normal {
+            nav.session.gif = .focus
+        } else {
+            nav.session.gif = .normal
+        }
+    }
 
+    private func actionOnAppear() -> Void {
+        gif = nav.session.gif
+    }
 }
 

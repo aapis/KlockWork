@@ -130,7 +130,6 @@ struct TodaySettings: View {
                                 Text(item.title).tag(item.tag)
                             }
                         }
-                        .onAppear(perform: {print("DERPO HI")})
                     } else {
                         Button("Request access to calendar") {
                             ce.requestAccess({(granted, error) in

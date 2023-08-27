@@ -9,7 +9,7 @@
 import SwiftUI
 
 public enum Page {
-    case dashboard, today, notes, tasks, projects, jobs, companies
+    case dashboard, today, notes, tasks, projects, jobs, companies, planning
 
     var ViewUpdaterKey: String {
         switch self {
@@ -27,6 +27,8 @@ public enum Page {
             return "job.dashboard"
         case .companies:
             return "companies.dashboard"
+        case .planning:
+            return "planning.dashboard"
         }
     }
 
@@ -45,6 +47,8 @@ public enum Page {
         case .jobs:
             return .blue
         case .companies:
+            return .blue
+        case .planning:
             return .blue
         }
     }
@@ -65,6 +69,8 @@ public enum Page {
             return "Jobs"
         case .companies:
             return "Companies"
+        case .planning:
+            return "Planning"
         }
     }
 }
@@ -76,12 +82,14 @@ public enum PageGroup: Hashable {
 public class Navigation: Identifiable, ObservableObject {
     public var id: UUID = UUID()
 
+//    @Published public var moc: NSManagedObjectContext = PersistenceController.shared.container.viewContext
     @Published public var view: AnyView? = AnyView(Dashboard())
     @Published public var parent: Page? = .dashboard
     @Published public var sidebar: AnyView? = AnyView(DashboardSidebar())
     @Published public var title: String? = ""
     @Published public var pageId: UUID? = UUID()
     @Published public var session: Session = Session()
+    @Published public var planning: Planning = Planning()
 
     public func pageTitle() -> String {
         if title!.isEmpty {
@@ -130,7 +138,77 @@ extension Navigation {
         var job: Job?
         var project: Project?
         var note: Note?
+        var plan: Plan?
         var date: Date = Date()
         var idate: IdentifiableDay = IdentifiableDay()
+        var gif: Planning.GlobalInterfaceFilter = .normal
+    }
+}
+
+extension Navigation.Session {
+    mutating func setJob(_ job: Job?) -> Void {
+        if job != nil {
+            self.job = job
+        } else {
+            self.job = nil
+        }
+    }
+}
+
+extension Navigation {
+    public struct Planning {
+        var id: UUID = UUID()
+        var jobs: Set<Job> = []
+        var tasks: Set<LogTask> = []
+        var notes: Set<Note> = []
+        var finalized: Date? = nil
+
+        func taskCount() -> Int {
+            var count = 0
+            let _ = jobs.map({count += $0.tasks?.count ?? 0})
+            return count
+        }
+
+        mutating func finalize() -> Plan {
+            finalized = Date()
+
+            let plan = Plan(context: PersistenceController.shared.container.viewContext)
+            plan.id = id
+            plan.created = finalized
+            plan.jobs = NSSet(set: jobs)
+            plan.tasks = NSSet(set: tasks)
+            plan.notes = NSSet(set: notes)
+
+            PersistenceController.shared.save()
+            id = UUID()
+
+            return plan
+        }
+
+        mutating func reset() -> Void {
+            let moc = PersistenceController.shared.container.viewContext
+            let plans = CoreDataPlan(moc: moc).forToday()
+
+            finalized = nil
+            jobs = []
+            tasks = []
+            notes = []
+
+            if plans.count > 0 {
+                for plan in plans {
+                    moc.delete(plan)
+                }
+            }
+
+            PersistenceController.shared.save()
+
+            id = UUID()
+        }
+    }
+}
+
+extension Navigation.Planning {
+    enum GlobalInterfaceFilter {
+        case normal, focus
     }
 }

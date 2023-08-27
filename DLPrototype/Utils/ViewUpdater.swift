@@ -34,6 +34,7 @@ public class ViewUpdater: ObservableObject {
         "project.view": UUID(),
         "job.dashboard": UUID(),
         "dashboard.header": UUID(),
+        "sidebar": UUID(),
     ]
 
     public func get(_ key: String) -> UUID {

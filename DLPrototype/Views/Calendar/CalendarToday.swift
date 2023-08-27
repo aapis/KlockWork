@@ -118,10 +118,10 @@ struct CalendarToday: View {
         inProgress = []
         upcoming = []
 
-        let chosenCalendar = ce.selectedCalendar()
-
-        inProgress = ce.eventsInProgress(chosenCalendar!)
-        upcoming = ce.eventsUpcoming(chosenCalendar!)
+        if let chosenCalendar = ce.selectedCalendar() {
+            inProgress = ce.eventsInProgress(chosenCalendar)
+            upcoming = ce.eventsUpcoming(chosenCalendar)
+        }
     }
 
     private func createEventChips() -> Void {

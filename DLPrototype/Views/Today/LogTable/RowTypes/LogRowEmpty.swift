@@ -22,6 +22,7 @@ struct LogRowEmpty: View, Identifiable {
                     ZStack {
                         tigerStripe()
                         Text(message)
+                            .foregroundColor(.gray)
                             .padding(10)
                     }
                 }
