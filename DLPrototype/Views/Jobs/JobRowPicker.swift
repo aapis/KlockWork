@@ -70,8 +70,6 @@ extension JobRowPicker {
     }
 
     private func actionOpenJob() -> Void {
-        nav.reset()
-        nav.setId()
         nav.setParent(.today)
         nav.session.setJob(job)
         nav.setView(AnyView(Today()))
