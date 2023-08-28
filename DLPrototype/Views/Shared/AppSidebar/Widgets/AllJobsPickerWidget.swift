@@ -137,15 +137,7 @@ extension AllJobsPickerWidget {
     }
 
     private func actionOnAppear() -> Void {
-        let dummy = Project(context: moc)
-        dummy.alive = true
-        dummy.colour = [0.0, 0.0, 0.0]
-        dummy.created = Date()
-        dummy.lastUpdate = dummy.created
-        dummy.name = "Unassigned jobs"
-        dummy.pid = 1
-
-        grouped = Dictionary(grouping: resource, by: {$0.project ?? dummy})
+        grouped = Dictionary(grouping: resource.filter {$0.alive == true && $0.project != nil}, by: {$0.project!})
         sortedJobs = Array(grouped.keys.enumerated())
             .sorted(by: ({$0.element.pid < $1.element.pid}))
             .filter { $0.element.pid != 1 }

@@ -15,6 +15,12 @@ public class CoreDataTasks {
     public var moc: NSManagedObjectContext?
 
     private let lock = NSLock()
+
+    static private var availableTasks: NSPredicate {
+        NSPredicate(
+            format: "completedDate == nil && cancelledDate == nil && owner.project.alive == true"
+        )
+    }
     
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
@@ -27,7 +33,7 @@ public class CoreDataTasks {
         ]
 
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
-        fetch.predicate = NSPredicate(format: "completedDate == nil && cancelledDate == nil")
+        fetch.predicate = CoreDataTasks.availableTasks
         fetch.sortDescriptors = descriptors
 
         if let lim = limit {
@@ -40,9 +46,6 @@ public class CoreDataTasks {
     public func forDate(_ date: Date, from: [LogRecord]) -> [LogTask] {
         var results: [LogTask] = []
         var filterPredicate: NSCompoundPredicate
-
-        // incomplete predicate
-        let incompletePredicate = NSPredicate(format: "completedDate == null && cancelledDate == null")
         
         // job ID relevancy predicate
         if !showAllJobsInDetailsPane {
@@ -55,17 +58,17 @@ public class CoreDataTasks {
             }
             
             // create compound predicate that includes INCOMPLETE and JOBRELEVANT predicates
-            let jobRelevancyPredicate = NSPredicate(format: "owner.jid IN %@", ownerJobs)
+            let jobRelevancyPredicate = NSPredicate(format: "owner.jid IN %@ && owner.alive == true", ownerJobs)
             
             filterPredicate = NSCompoundPredicate(
                 type: NSCompoundPredicate.LogicalType.and,
-                subpredicates: [incompletePredicate, jobRelevancyPredicate]
+                subpredicates: [CoreDataTasks.availableTasks, jobRelevancyPredicate]
             )
         } else {
             // create compound predicate to wrap INCOMPLETE predicate since filterPredicate must be compound
             filterPredicate = NSCompoundPredicate(
                 type: NSCompoundPredicate.LogicalType.and,
-                subpredicates: [incompletePredicate]
+                subpredicates: [CoreDataTasks.availableTasks]
             )
         }
         

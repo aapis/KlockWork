@@ -23,7 +23,7 @@ public class CoreDataJob: ObservableObject {
         ]
 
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive == true && lastUpdate != nil")
+        fetch.predicate = NSPredicate(format: "alive == true && lastUpdate != nil && project != nil")
         fetch.sortDescriptors = descriptors
         fetch.fetchLimit = 10
 
@@ -32,7 +32,7 @@ public class CoreDataJob: ObservableObject {
 
     static public func fetchAll(limit: Int? = nil) -> FetchRequest<Job> {
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive == true")
+        fetch.predicate = NSPredicate(format: "alive == true && project != nil && project.alive == true")
         fetch.sortDescriptors = [
             NSSortDescriptor(keyPath: \Job.project?, ascending: false),
             NSSortDescriptor(keyPath: \Job.lastUpdate?, ascending: false),
@@ -106,9 +106,8 @@ public class CoreDataJob: ObservableObject {
         var all: [Job] = []
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.jid, ascending: false)]
-        fetch.predicate = NSPredicate(format: "project.id = %@ && alive = true", projectId.uuidString)
-        
-        
+        fetch.predicate = NSPredicate(format: "project.id = %@ && project.alive == true", projectId.uuidString)
+
         do {
             all = try moc!.fetch(fetch)
         } catch {
@@ -124,7 +123,7 @@ public class CoreDataJob: ObservableObject {
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.jid, ascending: false)]
         
         if stillAlive! {
-            fetch.predicate = NSPredicate(format: "alive = true")
+            fetch.predicate = NSPredicate(format: "alive == true")
         }
         
         do {
