@@ -143,11 +143,9 @@ extension TasksWidget {
 
                 if let setTasks = plan.tasks {
                     let tasks = setTasks.allObjects as! [LogTask]
-                    grouped = Dictionary(grouping: tasks, by: {$0.owner!})
+                    grouped = Dictionary(grouping: tasks.filter {$0.completedDate == nil && $0.cancelledDate == nil}, by: {$0.owner!})
                 }
             }
-        } else {
-            query = ""
         }
 
         sorted = Array(grouped.keys.enumerated())

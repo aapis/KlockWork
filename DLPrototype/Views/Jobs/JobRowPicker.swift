@@ -34,8 +34,7 @@ struct JobRowPicker: View {
                         icon: "arrowshape.right",
                         orientation: .right,
                         action: action,
-                        showBorder: false,
-                        showButton: nav.session.job != job
+                        showBorder: false
                     )
                     .foregroundColor(job.colour != nil && Color.fromStored(job.colour!).isBright() ? .black : .white)
                 }
@@ -70,8 +69,6 @@ extension JobRowPicker {
     }
 
     private func actionOpenJob() -> Void {
-        nav.reset()
-        nav.setId()
         nav.setParent(.today)
         nav.session.setJob(job)
         nav.setView(AnyView(Today()))

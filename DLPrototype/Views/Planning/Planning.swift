@@ -252,8 +252,15 @@ extension Planning {
                         Row(task: task, colour: colour)
                     }
                 }
+                .onAppear(perform: actionOnAppear)
             }
         }
+    }
+}
+
+extension Planning.Tasks {
+    private func actionOnAppear() -> Void {
+        nav.planning.tasks = nav.planning.tasks.filter {$0.completedDate == nil}
     }
 }
 

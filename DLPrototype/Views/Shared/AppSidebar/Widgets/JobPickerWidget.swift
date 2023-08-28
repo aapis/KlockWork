@@ -148,8 +148,7 @@ extension JobPickerWidget {
             }
         } else {
             let recent = CoreDataJob(moc: moc).getRecentlyUsed(records: resource)
-            grouped = Dictionary(grouping: recent, by: {$0.project!})
-            query = ""
+            grouped = Dictionary(grouping: recent.filter {$0.alive == true && $0.project != nil}, by: {$0.project!})
         }
 
         sorted = Array(grouped.keys.enumerated())

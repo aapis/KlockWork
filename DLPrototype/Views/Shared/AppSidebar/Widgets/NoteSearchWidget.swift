@@ -176,7 +176,6 @@ extension NoteSearchWidget {
             }
         } else {
             grouped = Dictionary(grouping: resource, by: {$0.mJob!})
-            query = ""
         }
 
         sorted = Array(grouped.keys.enumerated())
@@ -194,7 +193,6 @@ extension NoteSearchWidget {
     private func actionOnChangeJob(job: Job?) -> Void {
         if let jerb = job {
             query = jerb.jid.string
-//            grouped = sgrouped
         }
     }
 }
