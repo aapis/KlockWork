@@ -405,7 +405,7 @@ extension Planning {
 
 extension Planning.Menu {
     private func actionFinalizePlan() -> Void {
-        nav.planning.clean()
+        nav.planning.reset()
         let plan = nav.planning.finalize()
         nav.session.plan = plan
     }

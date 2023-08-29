@@ -13,13 +13,10 @@ struct CreateEntitiesWidget: View {
 
     @State private var followingPlan: Bool = false
     @State private var gif: Navigation.Planning.GlobalInterfaceFilter = .normal
+    @State private var doesPlanExist: Bool = false
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
-
-    var doesPlanExist: Bool {
-        CoreDataPlan(moc: moc).countForToday() > 0
-    }
 
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -36,6 +33,7 @@ struct CreateEntitiesWidget: View {
             }
         }
         .onAppear(perform: actionOnAppear)
+        .onChange(of: nav.planning.tasks, perform: actionOnChangeOfTasks)
     }
 
     private var Buttons: some View {
@@ -170,6 +168,14 @@ extension CreateEntitiesWidget {
 
     private func actionOnAppear() -> Void {
         gif = nav.session.gif
+
+        doesPlanExist = CoreDataPlan(moc: moc).countForToday() > 0
+    }
+
+    private func actionOnChangeOfTasks(_ tasks: Set<LogTask>) -> Void {
+        if (tasks.count + nav.planning.jobs.count + nav.planning.notes.count) == 0 {
+            nav.planning = Navigation.Planning(moc: nav.planning.moc)
+        }
     }
 }
 
