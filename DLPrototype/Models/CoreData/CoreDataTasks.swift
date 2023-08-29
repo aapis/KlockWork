@@ -119,6 +119,15 @@ public class CoreDataTasks {
         }
     }
 
+    public func all() -> [LogTask] {
+        let predicate = NSPredicate(
+            format: "created <= %@",
+            Date() as CVarArg
+        )
+
+        return query(predicate)
+    }
+
     public func countAll() -> Int {
         let predicate = NSPredicate(
             format: "created <= %@",

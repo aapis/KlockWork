@@ -17,6 +17,15 @@ public final class CoreDataPlan {
         self.moc = moc
     }
 
+    public func all() -> [Plan] {
+        let predicate = NSPredicate(
+            format: "created <= %@",
+            Date() as CVarArg
+        )
+
+        return query(predicate)
+    }
+
     public func byId(_ id: UUID) -> [Plan] {
         let predicate = NSPredicate(
             format: "id == %@",

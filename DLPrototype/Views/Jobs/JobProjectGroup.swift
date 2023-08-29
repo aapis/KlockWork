@@ -65,7 +65,7 @@ struct JobProjectGroup: View {
                         .frame(width: 5)
 
                         VStack(alignment: .leading, spacing: 0) {
-                            ForEach(subtasks) { job in
+                            ForEach(subtasks.filter {$0.id != nil}) { job in
                                 JobRowPicker(job: job, location: location)
                             }
                         }

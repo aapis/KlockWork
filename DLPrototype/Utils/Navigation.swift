@@ -82,14 +82,14 @@ public enum PageGroup: Hashable {
 public class Navigation: Identifiable, ObservableObject {
     public var id: UUID = UUID()
 
-//    @Published public var moc: NSManagedObjectContext = PersistenceController.shared.container.viewContext
+    @Published public var moc: NSManagedObjectContext = PersistenceController.shared.container.viewContext
     @Published public var view: AnyView? = AnyView(Dashboard())
     @Published public var parent: Page? = .dashboard
     @Published public var sidebar: AnyView? = AnyView(DashboardSidebar())
     @Published public var title: String? = ""
     @Published public var pageId: UUID? = UUID()
     @Published public var session: Session = Session()
-    @Published public var planning: Planning = Planning()
+    @Published public var planning: Planning = Planning(moc: PersistenceController.shared.container.viewContext)
 
     public func pageTitle() -> String {
         if title!.isEmpty {
@@ -161,7 +161,7 @@ extension Navigation {
         var jobs: Set<Job> = []
         var tasks: Set<LogTask> = []
         var notes: Set<Note> = []
-        var finalized: Date? = nil
+        var moc: NSManagedObjectContext
 
         func taskCount() -> Int {
             var count = 0
@@ -169,30 +169,22 @@ extension Navigation {
             return count
         }
 
-        mutating func finalize() -> Plan {
-            finalized = Date()
-
+        func finalize() -> Plan {
             let plan = Plan(context: PersistenceController.shared.container.viewContext)
             plan.id = id
-            plan.created = finalized
+            plan.created = Date.now
             plan.jobs = NSSet(set: jobs)
             plan.tasks = NSSet(set: tasks)
             plan.notes = NSSet(set: notes)
 
             PersistenceController.shared.save()
-            id = UUID()
 
             return plan
         }
 
-        mutating func reset() -> Void {
-            let moc = PersistenceController.shared.container.viewContext
+        func reset() -> Void {
+//            let moc = PersistenceController.shared.container.viewContext
             let plans = CoreDataPlan(moc: moc).forToday()
-
-            finalized = nil
-            jobs = []
-            tasks = []
-            notes = []
 
             if plans.count > 0 {
                 for plan in plans {
@@ -201,8 +193,19 @@ extension Navigation {
             }
 
             PersistenceController.shared.save()
+        }
 
-            id = UUID()
+        func clean() -> Void {
+            let moc = PersistenceController.shared.container.viewContext
+            let plans = CoreDataPlan(moc: moc).all()
+
+            if plans.count > 0 {
+                for plan in plans {
+                    moc.delete(plan)
+                }
+            }
+
+            PersistenceController.shared.save()
         }
     }
 }

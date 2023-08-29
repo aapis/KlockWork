@@ -332,7 +332,7 @@ extension Planning {
                 HStack(spacing: 8) {
                     CountPills
                     Spacer()
-                    if nav.session.plan != nil || nav.planning.jobs.count > 0 {
+                    if numJobs > 0 {
                         HStack {
                             FancyButtonv2(
                                 text: "Start over",
@@ -405,12 +405,14 @@ extension Planning {
 
 extension Planning.Menu {
     private func actionFinalizePlan() -> Void {
+        nav.planning.reset()
         let plan = nav.planning.finalize()
         nav.session.plan = plan
     }
 
     private func actionResetPlan() -> Void {
         nav.planning.reset()
+        nav.planning = Navigation.Planning(moc: nav.planning.moc)
         nav.session.plan = nil
         nav.session.gif = .normal
     }
@@ -439,9 +441,7 @@ extension Planning.Menu {
         numNotes = nav.planning.notes.count
 
         if numJobs + numTasks + numNotes == 0 {
-            nav.planning.reset()
-            nav.session.plan = nil
-            nav.session.gif = .normal
+            actionResetPlan()
         }
     }
 }
