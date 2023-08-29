@@ -92,7 +92,6 @@ struct NoteVersionNavigationWidget: View {
     }
 
     private func onAppear() -> Void {
-        print("DERPO last update \(note.lastUpdate)")
         lastUpdate = note.lastUpdate
     }
 
