@@ -132,7 +132,7 @@ struct TasksWidget: View {
 
 extension TasksWidget {
     public init() {
-        _resource = CoreDataTasks.recentTasksWidgetData(limit: 100)
+        _resource = CoreDataTasks.recentTasksWidgetData()
     }
 
     private func resetGroupedTasks() -> Void {
