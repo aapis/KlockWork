@@ -58,6 +58,15 @@ public class CoreDataProjects: ObservableObject {
         return results.first
     }
 
+    public func anyName(_ term: String) -> [Project] {
+        let predicate = NSPredicate(
+            format: "name = %@",
+            term
+        )
+
+        return query(predicate)
+    }
+
     public func byName(_ term: String) -> Project? {
         let predicate = NSPredicate(
             format: "name = %@",

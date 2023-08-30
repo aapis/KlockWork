@@ -132,7 +132,7 @@ struct TasksWidget: View {
 
 extension TasksWidget {
     public init() {
-        _resource = CoreDataTasks.recentTasksWidgetData(limit: 100)
+        _resource = CoreDataTasks.recentTasksWidgetData()
     }
 
     private func resetGroupedTasks() -> Void {
@@ -171,10 +171,7 @@ extension TasksWidget {
     }
 
     private func actionOnChangeJob(job: Job?) -> Void {
-        if let jerb = job {
-            query = jerb.jid.string
-            resetGroupedTasks()
-        }
+        resetGroupedTasks()
     }
 
     private func actionOnSearch(term: String) -> Void {

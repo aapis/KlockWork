@@ -215,10 +215,7 @@ extension JobPickerWidget {
     }
 
     private func actionOnChangeJob(job: Job?) -> Void {
-        if let jerb = job {
-            query = jerb.jid.string
-            grouped = sgrouped
-        }
+        actionOnAppear()
     }
 }
 

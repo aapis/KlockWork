@@ -96,7 +96,6 @@ struct SidebarItem: View, Identifiable {
         .mask(
             RoundedRectangle(cornerRadius: 4)
         )
-        .useDefaultHover({ inside in highlighted = inside})
         .onAppear(perform: actionOnAppear)
         .contextMenu {
             Button("Copy \(data)") {
@@ -132,7 +131,7 @@ struct SidebarItem: View, Identifiable {
                     }
                 }
                 .buttonStyle(.plain)
-                .useDefaultHover({_ in})
+                .useDefaultHover({ inside in highlighted = inside})
             }
             .frame(width: type.iconFrameSize)
         }

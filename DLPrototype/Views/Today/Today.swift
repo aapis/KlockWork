@@ -137,8 +137,14 @@ extension Today {
     private func onAppear() -> Void {
         let todaysRecords = LogRecords(moc: moc).forDate(Date())
         if let record = todaysRecords.first {
-            let rounded = record.job!.jid.rounded(.toNearestOrEven)
-            jobId = String(Int(exactly: rounded) ?? 0)
+            if let firstRecordJob = record.job {
+                jobId = String(firstRecordJob.id_int())
+                nav.session.setJob(CoreDataJob(moc: moc).byId(firstRecordJob.jid))
+            }
+        } else {
+            if jobId == "" && nav.session.job != nil {
+                jobId = String(nav.session.job!.id_int())
+            }
         }
 
         if let date = defaultSelectedDate {

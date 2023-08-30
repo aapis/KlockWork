@@ -26,19 +26,16 @@ public class CoreDataTasks {
         self.moc = moc
     }
 
-    static public func recentTasksWidgetData(limit: Int? = 10) -> FetchRequest<LogTask> {
-        let descriptors = [
-            NSSortDescriptor(keyPath: \LogTask.owner?.jid, ascending: false),
-            NSSortDescriptor(keyPath: \LogTask.owner?.created, ascending: false)
+    static public func recentTasksWidgetData(limit: Int? = 1500) -> FetchRequest<LogTask> {
+        let descriptors: [NSSortDescriptor] = [
+            NSSortDescriptor(keyPath: \LogTask.owner?.project, ascending: true),
+            NSSortDescriptor(keyPath: \LogTask.owner?.jid, ascending: false)
         ]
 
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
         fetch.predicate = CoreDataTasks.availableTasks
         fetch.sortDescriptors = descriptors
-
-        if let lim = limit {
-            fetch.fetchLimit = lim
-        }
+        fetch.fetchLimit = limit!
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
