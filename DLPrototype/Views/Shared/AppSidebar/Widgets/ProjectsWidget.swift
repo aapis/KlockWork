@@ -46,7 +46,8 @@ struct ProjectsWidget: View {
                             action: actionSettings,
                             icon: "gear",
                             showLabel: false,
-                            type: .clear
+                            type: .clear,
+                            twoStage: true
                         )
                         .frame(width: 30, height: 30)
                     }

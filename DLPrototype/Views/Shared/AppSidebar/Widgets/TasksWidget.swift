@@ -58,7 +58,8 @@ struct TasksWidget: View {
                         action: actionSettings,
                         icon: "gear",
                         showLabel: false,
-                        type: .clear
+                        type: .clear,
+                        twoStage: true
                     )
                     .frame(width: 30, height: 30)
                 }
@@ -82,23 +83,40 @@ struct TasksWidget: View {
                             }
                         }
 
-                        if sorted.count > 0 {
-                            VStack(alignment: .leading, spacing: 0) {
+                        VStack(alignment: .leading, spacing: 0) {
+                            if sorted.count > 0 {
                                 ForEach(sorted, id: \.element) { index, key in
                                     TaskGroup(index: index, key: key, tasks: grouped)
                                 }
+                            } else {
+                                if nav.session.gif == .normal {
+                                    SidebarItem(
+                                        data: "No results for query \(query)",
+                                        help: "No results for query \(query)",
+                                        role: .important
+                                    )
+                                } else if nav.session.gif == .focus {
+                                    Button {
+                                        nav.setView(AnyView(Planning()))
+                                        nav.setId()
+                                        nav.setTitle("Update your plan")
+                                        nav.setParent(.planning)
+                                        nav.setSidebar(AnyView(DefaultPlanningSidebar()))
+                                    } label: {
+                                        SidebarItem(
+                                            data: "Add tasks to your plan...",
+                                            help: "Add tasks to your plan",
+                                            role: .action
+                                        )
+                                    }
+                                    .buttonStyle(.plain)
+                                }
                             }
-                        } else {
-                            SidebarItem(
-                                data: "No tasks or jobs matching query",
-                                help: "No tasks or jobs matching query",
-                                role: .important
-                            )
                         }
                     }
                 } else {
                     HStack {
-                        Text("\(grouped.count) jobs")
+                        Text("\(sorted.count) jobs")
                         Spacer()
                     }
                 }
@@ -162,7 +180,12 @@ extension TasksWidget {
     private func actionOnSearch(term: String) -> Void {
         if nav.session.gif != .focus {
             resetGroupedTasks()
-            grouped = grouped.filter({searchCriteria(term: term, job: $0.key, tasks: $0.value)})
+
+            let filtered = grouped.filter({searchCriteria(term: term, job: $0.key, tasks: $0.value)})
+
+            if filtered.count > 0 {
+                grouped = filtered
+            }
         }
 
         if query.isEmpty {

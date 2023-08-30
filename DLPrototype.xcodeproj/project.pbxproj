@@ -35,6 +35,7 @@
 		532C5FE52A83024900F2AAD4 /* CreateEntitiesWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532C5FE42A83024900F2AAD4 /* CreateEntitiesWidget.swift */; };
 		532CF0DC2A12A14200710B67 /* EventRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532CF0DB2A12A14200710B67 /* EventRow.swift */; };
 		5330EEB7298B6418004FC38A /* JobRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5330EEB6298B6418004FC38A /* JobRow.swift */; };
+		5331FCB32A9E6ECE005CDE0E /* Plan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5331FCB22A9E6ECE005CDE0E /* Plan.swift */; };
 		5333E7A12A0ECE0D00EE4A36 /* FancyTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5333E7A02A0ECE0D00EE4A36 /* FancyTab.swift */; };
 		5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5AD296CFF83000051B1 /* FileHelper.swift */; };
 		5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B2296D17EB000051B1 /* TaskDashboard.swift */; };
@@ -219,6 +220,7 @@
 		532C5FE42A83024900F2AAD4 /* CreateEntitiesWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEntitiesWidget.swift; sourceTree = "<group>"; };
 		532CF0DB2A12A14200710B67 /* EventRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventRow.swift; sourceTree = "<group>"; };
 		5330EEB6298B6418004FC38A /* JobRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobRow.swift; sourceTree = "<group>"; };
+		5331FCB22A9E6ECE005CDE0E /* Plan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Plan.swift; sourceTree = "<group>"; };
 		5333E7A02A0ECE0D00EE4A36 /* FancyTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyTab.swift; sourceTree = "<group>"; };
 		5335A5AD296CFF83000051B1 /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		5335A5B2296D17EB000051B1 /* TaskDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDashboard.swift; sourceTree = "<group>"; };
@@ -910,6 +912,7 @@
 				53152CC829690E7300A14E43 /* LosslessStringConvertible.swift */,
 				5363B67F2A6DE87000C2FBB8 /* View.swift */,
 				53E24C402A844BC800EB21FD /* EKEvent.swift */,
+				5331FCB22A9E6ECE005CDE0E /* Plan.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1208,6 +1211,7 @@
 				532A722B298F1CB70038C18B /* Results.swift in Sources */,
 				53196AC92A168E7200FE49FC /* CalendarIndividualEvent.swift in Sources */,
 				5333E7A12A0ECE0D00EE4A36 /* FancyTab.swift in Sources */,
+				5331FCB32A9E6ECE005CDE0E /* Plan.swift in Sources */,
 				53152CDA296B849200A14E43 /* FancyPickerWithRelativeNavigation.swift in Sources */,
 				53EFCE7B29637F49004E45EC /* Settings.swift in Sources */,
 				5371BA322A7B2ADE00DEEC21 /* JobsWidget.swift in Sources */,
@@ -1378,7 +1382,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 138;
+				CURRENT_PROJECT_VERSION = 139;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -1413,7 +1417,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 138;
+				CURRENT_PROJECT_VERSION = 139;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;

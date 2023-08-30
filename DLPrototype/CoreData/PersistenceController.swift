@@ -76,8 +76,8 @@ struct PersistenceController {
             do {
                 try context.save()
             } catch {
-                // Show some error here
-                print("[error] PersistenceController.save error")
+                print("[error] PersistenceController.save error: \(error)")
+                abort()
             }
         }
     }

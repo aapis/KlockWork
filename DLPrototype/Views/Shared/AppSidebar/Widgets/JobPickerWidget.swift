@@ -54,8 +54,13 @@ struct JobPickerWidget: View {
                             .padding(5)
 
                             if parent != .jobs {
-                                Text(title)
-                                    .padding(.trailing, 10)
+                                if nav.session.gif == .focus {
+                                    Text("Jobs")
+                                        .padding(.trailing, 10)
+                                } else {
+                                    Text(title)
+                                        .padding(.trailing, 10)
+                                }
                             } else {
                                 Text("Recently used jobs")
                                     .padding(5)
@@ -70,7 +75,8 @@ struct JobPickerWidget: View {
                                 action: actionSettings,
                                 icon: "gear",
                                 showLabel: false,
-                                type: .clear
+                                type: .clear,
+                                twoStage: true
                             )
                             .frame(width: 30, height: 30)
                         }
@@ -116,7 +122,7 @@ struct JobPickerWidget: View {
                     }
                 } else {
                     HStack {
-                        Text("\(grouped.count) jobs")
+                        Text("\(sorted.count) jobs")
                         Spacer()
                     }
                 }

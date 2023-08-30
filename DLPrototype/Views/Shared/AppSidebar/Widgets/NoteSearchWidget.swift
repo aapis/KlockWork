@@ -67,7 +67,8 @@ struct NoteSearchWidget: View {
                         action: actionSettings,
                         icon: "gear",
                         showLabel: false,
-                        type: .clear
+                        type: .clear,
+                        twoStage: true
                     )
                     .frame(width: 30, height: 30)
                 }
@@ -97,18 +98,34 @@ struct NoteSearchWidget: View {
                                     NoteGroup(index: index, key: key, notes: grouped)
                                 }
                             } else {
-                                SidebarItem(
-                                    data: "No notes matching query",
-                                    help: "No notes matching query",
-                                    role: .important
-                                )
+                                if nav.session.gif == .normal {
+                                    SidebarItem(
+                                        data: "No results for query \(query)",
+                                        help: "No results for query \(query)",
+                                        role: .important
+                                    )
+                                } else if nav.session.gif == .focus {
+                                    Button {
+                                        nav.setView(AnyView(Planning()))
+                                        nav.setId()
+                                        nav.setTitle("Update your plan")
+                                        nav.setParent(.planning)
+                                        nav.setSidebar(AnyView(DefaultPlanningSidebar()))
+                                    } label: {
+                                        SidebarItem(
+                                            data: "Add notes to your plan...",
+                                            help: "Add notes to your plan",
+                                            role: .action
+                                        )
+                                    }
+                                    .buttonStyle(.plain)
+                                }
                             }
-                            FancyDivider()
                         }
                     }
                 } else {
                     HStack {
-                        Text("\(grouped.count) notes")
+                        Text("\(sorted.count) notes")
                         Spacer()
                     }
                 }
@@ -126,10 +143,6 @@ extension NoteSearchWidget {
     }
 
     private func actionOnSearch(term: String) -> Void {
-        guard nav.session.gif != .focus else {
-            return actionOnAppear()
-        }
-        
         if term.count > 1 {
             var filtered = grouped.filter {
                 (
@@ -155,10 +168,11 @@ extension NoteSearchWidget {
                 }
             }
 
-            grouped = filtered
-        } else {
-            actionOnAppear()
+            if filtered.count > 0 {
+                grouped = filtered
+            }
         }
+        actionOnAppear()
     }
 
     private func actionOnAppear() -> Void {

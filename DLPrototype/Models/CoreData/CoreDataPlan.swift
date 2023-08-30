@@ -36,18 +36,20 @@ public final class CoreDataPlan {
     }
 
     public func forToday() -> [Plan] {
+        let (start, _) = DateHelper.startAndEndOf(Date())
         let predicate = NSPredicate(
-            format: "created >= (%@ - 86400)",
-            Date() as CVarArg
+            format: "created >= (%@)",
+            start as CVarArg
         )
 
         return query(predicate)
     }
 
     public func countForToday() -> Int {
+        let (start, _) = DateHelper.startAndEndOf(Date())
         let predicate = NSPredicate(
-            format: "created >= (%@ - 86400)",
-            Date() as CVarArg
+            format: "created >= (%@)",
+            start as CVarArg
         )
 
         return count(predicate)

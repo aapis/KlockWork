@@ -34,6 +34,8 @@ struct CreateEntitiesWidget: View {
         }
         .onAppear(perform: actionOnAppear)
         .onChange(of: nav.planning.tasks, perform: actionOnChangeOfTasks)
+        .onChange(of: nav.planning.jobs, perform: actionOnChangeOfJobs)
+        .onChange(of: nav.planning.notes, perform: actionOnChangeOfNotes)
     }
 
     private var Buttons: some View {
@@ -169,12 +171,39 @@ extension CreateEntitiesWidget {
     private func actionOnAppear() -> Void {
         gif = nav.session.gif
 
-        doesPlanExist = CoreDataPlan(moc: moc).countForToday() > 0
+        findPlan()
     }
 
-    private func actionOnChangeOfTasks(_ tasks: Set<LogTask>) -> Void {
-        if (tasks.count + nav.planning.jobs.count + nav.planning.notes.count) == 0 {
+    private func actionOnChangeOfTasks(_ items: Set<LogTask>) -> Void {
+        if (items.count + nav.planning.jobs.count + nav.planning.notes.count) == 0 {
             nav.planning = Navigation.Planning(moc: nav.planning.moc)
+        }
+
+        findPlan()
+    }
+
+    private func actionOnChangeOfJobs(_ items: Set<Job>) -> Void {
+        if (items.count + nav.planning.tasks.count + nav.planning.notes.count) == 0 {
+            nav.planning = Navigation.Planning(moc: nav.planning.moc)
+        }
+
+        findPlan()
+    }
+
+    private func actionOnChangeOfNotes(_ items: Set<Note>) -> Void {
+        if (items.count + nav.planning.jobs.count + nav.planning.tasks.count) == 0 {
+            nav.planning = Navigation.Planning(moc: nav.planning.moc)
+        }
+
+        findPlan()
+    }
+
+    private func findPlan() -> Void {
+        let plans = CoreDataPlan(moc: moc).forToday()
+        if plans.count > 0 {
+            if let plan = plans.first {
+                doesPlanExist = !plan.isEmpty()
+            }
         }
     }
 }
