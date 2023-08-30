@@ -9,7 +9,7 @@
 import SwiftUI
 
 public enum ItemRole {
-    case important, standard
+    case important, standard, action
 
     var colour: Color {
         switch self {
@@ -17,6 +17,8 @@ public enum ItemRole {
             return Color.red
         case .standard:
             return Color.black
+        case .action:
+            return Color.green
         }
     }
 }
@@ -106,7 +108,7 @@ struct SidebarItem: View, Identifiable {
     @ViewBuilder private var ItemIcon: some View {
         if let ic = icon {
             ZStack(alignment: .center) {
-                if role != .important {
+                if ![.important, .action].contains(role) {
                     role.colour.opacity(highlighted ? 0.15 : 0.08)
                 } else {
                     role.colour
@@ -138,7 +140,7 @@ struct SidebarItem: View, Identifiable {
 
     private var ItemLabel: some View {
         ZStack(alignment: .leading) {
-            if role != .important {
+            if ![.important, .action].contains(role) {
                 role.colour.opacity(0.02)
             } else {
                 role.colour

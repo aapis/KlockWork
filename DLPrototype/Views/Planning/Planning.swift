@@ -94,10 +94,52 @@ extension Planning {
                     Header(job: job, index: idx, type: type)
                         .opacity((type == .tasks && tasks.count > 0) || (type == .notes && notes.count > 0) ? 1 : 0.7)
 
-                    if type == .tasks && tasks.count > 0 {
-                        Tasks(tasks: tasks, colour: colour)
-                    } else if type == .notes && notes.count > 0 {
-                        Notes(notes: notes, colour: colour)
+                    if type == .tasks {
+                        if tasks.count > 0 {
+                            Tasks(tasks: tasks, colour: colour)
+                        } else {
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    FancyButtonv2(
+                                        text: "Add a task to this job",
+                                        icon: "plus",
+                                        fgColour: colour.isBright() ? .black : .white,
+                                        size: .link,
+                                        type: .clear,
+                                        redirect: AnyView(TaskDashboard(defaultSelectedJob: job)),
+                                        pageType: .tasks,
+                                        sidebar: AnyView(TaskDashboardSidebar())
+                                    )
+                                    Spacer()
+                                }
+                                .padding()
+                                .background(colour)
+                                .opacity(0.7)
+                            }
+                        }
+                    } else if type == .notes {
+                        if notes.count > 0 {
+                            Notes(notes: notes, colour: colour)
+                        } else {
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    FancyButtonv2(
+                                        text: "Add a note to this job",
+                                        icon: "plus",
+                                        fgColour: colour.isBright() ? .black : .white,
+                                        size: .link,
+                                        type: .clear,
+                                        redirect: AnyView(NoteDashboard()),
+                                        pageType: .notes,
+                                        sidebar: AnyView(NoteDashboardSidebar())
+                                    )
+                                    Spacer()
+                                }
+                                .padding()
+                                .background(colour)
+                                .opacity(0.7)
+                            }
+                        }
                     }
                 }
             }
@@ -117,7 +159,7 @@ extension Planning.JobPlanningRow {
             sortDescriptors: [
                 NSSortDescriptor(keyPath: \LogTask.completedDate, ascending: false)
             ],
-            predicate: NSPredicate(format: "owner == %@ && completedDate == nil", self.job)
+            predicate: NSPredicate(format: "owner == %@ && completedDate == nil && cancelledDate == nil", self.job)
         )
 
         _notes = FetchRequest(
@@ -143,9 +185,18 @@ extension Planning {
         var body: some View {
             VStack(alignment: .leading, spacing: 1) {
                 HStack {
-                    Text("Job \(job.jid.string)")
-                        .foregroundColor(colour.isBright() ? .black : .white)
-                        .font(.title3)
+                    FancyButtonv2(
+                        text: "Job #\(job.jid.string)",
+                        icon: "hammer",
+                        fgColour: colour.isBright() ? .black : .white,
+                        showIcon: false,
+                        size: .link,
+                        type: .clear,
+                        redirect: AnyView(JobDashboard(defaultSelectedJob: job)),
+                        pageType: .notes,
+                        sidebar: AnyView(JobDashboardSidebar())
+                    )
+
                     Spacer()
                     Button {
                         nav.planning.jobs.remove(job)
@@ -228,7 +279,7 @@ extension Planning.Header {
 
         if type == .tasks {
             if let tasks = job.tasks {
-                numChildren = tasks.filtered(using: NSPredicate(format: "completedDate == nil")).count
+                numChildren = tasks.filtered(using: NSPredicate(format: "completedDate == nil && cancelledDate == nil")).count
             }
         } else if type == .notes {
             if let notes = job.mNotes {
@@ -246,11 +297,9 @@ extension Planning {
         @EnvironmentObject public var nav: Navigation
 
         var body: some View {
-            if tasks.count > 0 {
-                VStack(alignment: .leading, spacing: 0) {
-                    ForEach(tasks) { task in
-                        Row(task: task, colour: colour)
-                    }
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(tasks) { task in
+                    Row(task: task, colour: colour)
                 }
                 .onAppear(perform: actionOnAppear)
             }
@@ -260,7 +309,7 @@ extension Planning {
 
 extension Planning.Tasks {
     private func actionOnAppear() -> Void {
-        nav.planning.tasks = nav.planning.tasks.filter {$0.completedDate == nil}
+        nav.planning.tasks = nav.planning.tasks.filter {$0.completedDate == nil && $0.cancelledDate == nil}
     }
 }
 
@@ -440,7 +489,7 @@ extension Planning.Menu {
         numJobs = nav.planning.jobs.count
         numNotes = nav.planning.notes.count
 
-        if numJobs + numTasks + numNotes == 0 {
+        if numJobs == 0 {
             actionResetPlan()
         }
     }

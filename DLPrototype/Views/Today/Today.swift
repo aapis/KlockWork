@@ -200,15 +200,15 @@ extension Today {
 
                 record.job = job
             } else {
-                record.job = match
-                match?.lastUpdate = Date()
+                record.job = match!
+                // TODO: figure out why this causes Project.compare exception
+//                match!.lastUpdate = record.timestamp!
             }
 
-            // clear input fields
             text = ""
             taskUrl = ""
-            // redraw the views that need to be updated
             reloadUi()
+
             PersistenceController.shared.save()
         } else {
             print("[error] Message, job ID OR task URL are required to submit")
