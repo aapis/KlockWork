@@ -22,6 +22,7 @@ struct ProjectView: View {
     @State private var allUnOwned: [Job] = []
     @State private var selectAllToggleAssociated: Bool = false
     @State private var selectAllToggleUnassociated: Bool = false
+    @State private var isDeleteAlertShowing: Bool = false
     // for Toolbar
     @State private var isShowingAlert: Bool = false
     @State private var buttons: [ToolbarButton] = []
@@ -29,6 +30,7 @@ struct ProjectView: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var jobModel: CoreDataJob
+    @EnvironmentObject public var nav: Navigation
     
     private var all: [Job] {
         jobModel.all()
@@ -57,6 +59,20 @@ struct ProjectView: View {
                 form.id(updater.ids["pv.form"])
 
                 HStack {
+                    FancyButtonv2(
+                        text: "Delete",
+                        action: {isDeleteAlertShowing = true},
+                        icon: "trash",
+                        showLabel: false,
+                        type: .destructive
+                    )
+                    .alert("Are you sure you want to delete project \(project.name ?? "Invalid project name")?", isPresented: $isDeleteAlertShowing) {
+                        Button("Yes", role: .destructive) {
+                            actionHardDelete()
+                        }
+                        Button("No", role: .cancel) {}
+                    }
+
                     Spacer()
                     FancyButton(text: "Update project", action: update)
                 }
@@ -546,5 +562,15 @@ extension ProjectView {
         }
 
         PersistenceController.shared.save()
+    }
+
+    private func actionHardDelete() -> Void {
+        moc.delete(project)
+        PersistenceController.shared.save()
+
+        nav.setId()
+        nav.setView(AnyView(ProjectsDashboard()))
+        nav.setParent(.projects)
+        nav.setSidebar(AnyView(ProjectsDashboardSidebar()))
     }
 }

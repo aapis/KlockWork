@@ -13,7 +13,7 @@ struct ProjectsDashboard: View {
     @EnvironmentObject public var updater: ViewUpdater
     
     @FetchRequest(sortDescriptors: [SortDescriptor(\.jid, order: .reverse)]) public var jobs: FetchedResults<Job>
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.name, order: .reverse)]) public var projects: FetchedResults<Project>
+    @FetchRequest(sortDescriptors: [SortDescriptor(\.name)]) public var projects: FetchedResults<Project>
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -32,6 +32,7 @@ struct ProjectsDashboard: View {
     @ViewBuilder
     var create: some View {
         HStack {
+            Text("\(projects.count) Projects")
             Spacer()
             FancyButtonv2(
                 text: "New project",
