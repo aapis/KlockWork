@@ -180,7 +180,12 @@ extension TasksWidget {
     private func actionOnSearch(term: String) -> Void {
         if nav.session.gif != .focus {
             resetGroupedTasks()
-            grouped = grouped.filter({searchCriteria(term: term, job: $0.key, tasks: $0.value)})
+
+            let filtered = grouped.filter({searchCriteria(term: term, job: $0.key, tasks: $0.value)})
+
+            if filtered.count > 0 {
+                grouped = filtered
+            }
         }
 
         if query.isEmpty {

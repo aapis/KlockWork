@@ -143,10 +143,6 @@ extension NoteSearchWidget {
     }
 
     private func actionOnSearch(term: String) -> Void {
-        guard nav.session.gif != .focus else {
-            return actionOnAppear()
-        }
-        
         if term.count > 1 {
             var filtered = grouped.filter {
                 (
@@ -172,10 +168,11 @@ extension NoteSearchWidget {
                 }
             }
 
-            grouped = filtered
-        } else {
-            actionOnAppear()
+            if filtered.count > 0 {
+                grouped = filtered
+            }
         }
+        actionOnAppear()
     }
 
     private func actionOnAppear() -> Void {
