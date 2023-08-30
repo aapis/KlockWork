@@ -171,10 +171,7 @@ extension TasksWidget {
     }
 
     private func actionOnChangeJob(job: Job?) -> Void {
-        if let jerb = job {
-            query = jerb.jid.string
-            resetGroupedTasks()
-        }
+        resetGroupedTasks()
     }
 
     private func actionOnSearch(term: String) -> Void {
