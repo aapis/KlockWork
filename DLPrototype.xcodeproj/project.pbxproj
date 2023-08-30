@@ -21,6 +21,7 @@
 		531B38FC29674EC400E74013 /* Title.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531B38FB29674EC400E74013 /* Title.swift */; };
 		531B8DF22A847BE8005D911B /* NoteGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531B8DF12A847BE8005D911B /* NoteGroup.swift */; };
 		531E2F752A140533009CA230 /* CalendarToday.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531E2F742A140533009CA230 /* CalendarToday.swift */; };
+		531EB6E82A9FDA5A00B3059C /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531EB6E72A9FDA5A00B3059C /* Job.swift */; };
 		53218D4824B7F6EB0088ABE9 /* DLPrototype.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */; };
 		53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4924B7F6EB0088ABE9 /* Home.swift */; };
 		53218D4F24B7F6EC0088ABE9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 53218D4E24B7F6EC0088ABE9 /* Assets.xcassets */; };
@@ -198,6 +199,7 @@
 		531B38FB29674EC400E74013 /* Title.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Title.swift; sourceTree = "<group>"; };
 		531B8DF12A847BE8005D911B /* NoteGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteGroup.swift; sourceTree = "<group>"; };
 		531E2F742A140533009CA230 /* CalendarToday.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarToday.swift; sourceTree = "<group>"; };
+		531EB6E72A9FDA5A00B3059C /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
 		53218D4424B7F6EB0088ABE9 /* ClockWork.Beta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClockWork.Beta.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DLPrototype.swift; sourceTree = "<group>"; };
 		53218D4924B7F6EB0088ABE9 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
@@ -424,6 +426,15 @@
 				53196AC82A168E7200FE49FC /* CalendarIndividualEvent.swift */,
 			);
 			path = Calendar;
+			sourceTree = "<group>";
+		};
+		531EB6E62A9FDA5000B3059C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				5331FCB22A9E6ECE005CDE0E /* Plan.swift */,
+				531EB6E72A9FDA5A00B3059C /* Job.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		53218D3B24B7F6EB0088ABE9 = {
@@ -908,11 +919,11 @@
 		53EFCE7429637CB8004E45EC /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				531EB6E62A9FDA5000B3059C /* Models */,
 				53EFCE7529637CC6004E45EC /* Color.swift */,
 				53152CC829690E7300A14E43 /* LosslessStringConvertible.swift */,
 				5363B67F2A6DE87000C2FBB8 /* View.swift */,
 				53E24C402A844BC800EB21FD /* EKEvent.swift */,
-				5331FCB22A9E6ECE005CDE0E /* Plan.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1098,6 +1109,7 @@
 				536FBF6E2A68F77100F00CE4 /* NoteBlock.swift in Sources */,
 				53B0BE86297261A3007CB663 /* ProjectCreate.swift in Sources */,
 				533AB3F4296CA58C00E91A9F /* ManageJobs.swift in Sources */,
+				531EB6E82A9FDA5A00B3059C /* Job.swift in Sources */,
 				53B0BE8C297318A6007CB663 /* ProjectView.swift in Sources */,
 				5361DDED2971E1DF00437064 /* CoreDataNotes.swift in Sources */,
 				5309EE3D25619A6D00B3BC06 /* Backup.swift in Sources */,
