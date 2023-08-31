@@ -22,7 +22,17 @@ extension Planning {
                     CountPills
                     Spacer()
                     if numJobs > 0 {
-                        HStack {
+                        HStack(spacing: 5) {
+                            FancyButtonv2(
+                                text: "Share",
+                                action: actionOnShare,
+                                icon: "square.and.arrow.up",
+                                showLabel: false,
+                                size: .small,
+                                type: .clear
+                            )
+                            .frame(width: 30)
+
                             FancyButtonv2(
                                 text: "Start over",
                                 action: actionResetPlan,
@@ -31,6 +41,7 @@ extension Planning {
                                 size: .small,
                                 type: .clear
                             )
+                            .frame(width: 30)
                         }
                         .frame(height: 30)
                     }
@@ -132,5 +143,37 @@ extension Planning.Menu {
         if numJobs == 0 {
             actionResetPlan()
         }
+    }
+
+    private func actionOnShare() -> Void {
+        var dailyPlan = ""
+
+        if let plan = nav.session.plan {
+            if let items = plan.tasks {
+                dailyPlan += "Tasks\n"
+                for item in items.allObjects as! [LogTask] {
+                    if let job = item.owner {
+                        dailyPlan += " - \(job.id_int()):"
+                    }
+
+                    dailyPlan += " \(item.content!)\n"
+                }
+            }
+
+            if let items = plan.jobs {
+                dailyPlan += "Jobs\n"
+                for item in items.allObjects as! [Job] {
+                    dailyPlan += " - \(item.id_int())"
+
+                    if let uri = item.uri {
+                        dailyPlan += " (\(uri.absoluteString))\n"
+                    } else {
+                        dailyPlan += "\n"
+                    }
+                }
+            }
+        }
+
+        ClipboardHelper.copy(dailyPlan)
     }
 }

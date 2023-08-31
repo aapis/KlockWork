@@ -23,7 +23,7 @@ struct FancyGenericToolbar: View {
     @State public var selectedTab: Int = 0
     
     var body: some View {
-        VStack(spacing: 9) {
+        VStack(spacing: 8) {
             GridRow {
                 Group {
                     ZStack(alignment: .leading) {

@@ -37,3 +37,7 @@ extension Planning {
         }
     }
 }
+
+extension Planning.Today {
+
+}
