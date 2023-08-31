@@ -410,13 +410,25 @@ extension ProjectView {
             ToolbarButton(
                 id: 0,
                 helpText: "Assign jobs to the project",
-                label: AnyView(Image(systemName: "square.grid.3x1.fill.below.line.grid.1x2")),
+                label: AnyView(
+                    HStack {
+                        Image(systemName: "square.grid.3x1.fill.below.line.grid.1x2")
+                            .font(.title2)
+                        Text("Jobs")
+                    }
+                ),
                 contents: AnyView(jobAssignment)
             ),
             ToolbarButton(
                 id: 1,
                 helpText: "Create/assign configurations to the project",
-                label: AnyView(Image(systemName: "circles.hexagongrid.fill")),
+                label: AnyView(
+                    HStack {
+                        Image(systemName: "circles.hexagongrid.fill")
+                            .font(.title2)
+                        Text("Configurations")
+                    }
+                ),
                 contents: AnyView(ProjectConfig(project: project))
             )
         ]
