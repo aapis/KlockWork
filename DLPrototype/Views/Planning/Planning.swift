@@ -10,6 +10,8 @@ import SwiftUI
 
 struct Planning: View {
     private let maxItems: Int = 6
+    private let title: String = "Planning"
+    private let description: String = "Use the daily plan to organize your day. Feature plans allow you to define projects of any scope!"
 
     static public let tooManyJobs: Int = 5
     static public let tooManyTasks: Int = 8
@@ -22,10 +24,12 @@ struct Planning: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                Title(text: "Planning")
+                Title(text: title)
                 Spacer()
             }
-            .padding(.bottom, 10)
+
+            Text(description)
+                .padding(.bottom, 10)
 
             FancyGenericToolbar(buttons: buttons, standalone: true)
         }
@@ -53,7 +57,7 @@ extension Planning {
                     HStack {
                         Image(systemName: "calendar")
                             .font(.title2)
-                        Text("Today")
+                        Text("Daily")
                     }
                 ),
                 contents: AnyView(Planning.Today())

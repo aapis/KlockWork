@@ -25,7 +25,7 @@ extension Planning {
                         }
                     } else {
                         HStack {
-                            Text("Add jobs using the sidebar widget then select the tasks you'd like to focus on. This list saves automatically.")
+                            Text("Add jobs using the sidebar widget then select the tasks you'd like to focus on (turn it on by clicking the sidebar's moon icon). This list saves automatically.")
                                 .foregroundColor(.gray)
                             Spacer()
                         }

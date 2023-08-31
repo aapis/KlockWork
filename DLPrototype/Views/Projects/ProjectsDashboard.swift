@@ -32,7 +32,7 @@ struct ProjectsDashboard: View {
     @ViewBuilder
     var create: some View {
         HStack {
-            Text("\(projects.count) Projects")
+            Title(text: "\(projects.count) Projects")
             Spacer()
             FancyButtonv2(
                 text: "New project",
