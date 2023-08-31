@@ -10,7 +10,9 @@ import SwiftUI
 
 extension Planning {
     struct Today: View {
+        @Environment(\.managedObjectContext) var moc
         @EnvironmentObject public var nav: Navigation
+        @EnvironmentObject public var updater: ViewUpdater
 
         var body: some View {
             VStack(alignment: .leading, spacing: 1) {
@@ -25,7 +27,7 @@ extension Planning {
                         }
                     } else {
                         HStack {
-                            Text("Add jobs using the sidebar widget then select the tasks you'd like to focus on (turn it on by clicking the sidebar's moon icon). This list saves automatically.")
+                            Text("Add jobs using the sidebar widget then select the tasks you'd like to focus. This list saves automatically.")
                                 .foregroundColor(.gray)
                             Spacer()
                         }
@@ -34,10 +36,14 @@ extension Planning {
                     }
                 }
             }
+            .onAppear(perform: actionOnAppear)
+            .id(updater.get("planning.daily"))
         }
     }
 }
 
 extension Planning.Today {
+    private func actionOnAppear() -> Void {
 
+    }
 }

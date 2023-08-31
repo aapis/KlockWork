@@ -169,34 +169,37 @@ extension Navigation {
             return count
         }
 
-        func finalize() -> Plan {
-            let plan = Plan(context: PersistenceController.shared.container.viewContext)
-            plan.id = id
-            plan.created = Date.now
-            plan.jobs = NSSet(set: jobs)
-            plan.tasks = NSSet(set: tasks)
-            plan.notes = NSSet(set: notes)
+        func finalize(_ date: Date) -> Plan {
+            if let existingPlan = CoreDataPlan(moc: moc).forDate(date).first {
+                return update(existingPlan)
+            }
 
-            PersistenceController.shared.save()
-
-            return plan
+            return create(for: date)
         }
 
-        func reset() -> Void {
-//            let moc = PersistenceController.shared.container.viewContext
-            let plans = CoreDataPlan(moc: moc).forToday()
-
-            if plans.count > 0 {
-                for plan in plans {
-                    moc.delete(plan)
-                }
+        func reset(_ date: Date) -> Void {
+            if let plan = CoreDataPlan(moc: moc).forDate(date).first {
+                moc.delete(plan)
             }
 
             PersistenceController.shared.save()
         }
 
-        func clean() -> Void {
-            let moc = PersistenceController.shared.container.viewContext
+        mutating func empty(_ date: Date) -> Void {
+            if let plan = CoreDataPlan(moc: moc).forDate(date).first {
+                plan.jobs = []
+                plan.tasks = []
+                plan.notes = []
+            } else {
+                jobs = []
+                tasks = []
+                notes = []
+            }
+
+            PersistenceController.shared.save()
+        }
+
+        mutating func clean() -> Void {
             let plans = CoreDataPlan(moc: moc).all()
 
             if plans.count > 0 {
@@ -205,7 +208,50 @@ extension Navigation {
                 }
             }
 
+            jobs = []
+            tasks = []
+            notes = []
+
             PersistenceController.shared.save()
+        }
+
+        mutating func load(_ plan: Plan?) -> Void {
+            if let pl = plan {
+                id = pl.id!
+                
+                var sJobs: Set<Job> = []
+                for o in pl.jobs!.allObjects as! [Job] {sJobs.insert(o)}
+                jobs = sJobs
+
+                var sTasks: Set<LogTask> = []
+                for o in pl.tasks!.allObjects as! [LogTask] {sTasks.insert(o)}
+                tasks = sTasks
+
+                var sNotes: Set<Note> = []
+                for o in pl.notes!.allObjects as! [Note] {sNotes.insert(o)}
+                notes = sNotes
+            }
+        }
+
+        private func create(for date: Date) -> Plan {
+            let plan = Plan(context: moc)
+            plan.id = id
+            plan.created = date
+            plan.jobs = NSSet(set: jobs)
+            plan.tasks = NSSet(set: tasks)
+            plan.notes = NSSet(set: notes)
+
+            PersistenceController.shared.save()
+            return plan
+        }
+
+        private func update(_ plan: Plan) -> Plan {
+            plan.jobs = NSSet(set: jobs)
+            plan.tasks = NSSet(set: tasks)
+            plan.notes = NSSet(set: notes)
+
+            PersistenceController.shared.save()
+            return plan
         }
     }
 }

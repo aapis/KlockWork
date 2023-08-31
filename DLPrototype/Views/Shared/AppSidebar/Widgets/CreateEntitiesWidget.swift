@@ -45,18 +45,18 @@ struct CreateEntitiesWidget: View {
                     Theme.base.opacity(0.5)
                     if doesPlanExist {
                         FancyButtonv2(
-                            text: gif == .focus ? "Disable planning focus" : "Enable global filter to only show you the things you need to see",
+                            text: gif == .focus ? "Disable the global filter, show all items" : "Show only the items in your daily plan",
                             action: actionOnChangeFocus,
-                            icon: gif == .focus ? "moon.fill" : "moon",
+                            icon: gif == .focus ? "circle.hexagongrid.fill" : "circle.hexagongrid",
                             showLabel: false,
                             size: .small,
-                            type: .tsWhite // TODO: don't use star!
+                            type: .tsWhite
                         )
                         .mask(Circle())
                     } else {
                         FancyButtonv2(
                             text: "You need to create a plan first, click here!",
-                            icon: "moon.zzz",
+                            icon: "hexagon",
                             showLabel: false,
                             size: .small,
                             type: nav.parent == .planning ? .secondary : .standard,
@@ -68,6 +68,10 @@ struct CreateEntitiesWidget: View {
                     }
                 }
                 .mask(Circle())
+                if !doesPlanExist && gif == .normal {
+                    Image(systemName: "questionmark.circle.fill")
+                        .position(x: 38, y: 38)
+                }
             }
             .frame(width: 46, height: 46)
 
@@ -199,7 +203,7 @@ extension CreateEntitiesWidget {
     }
 
     private func findPlan() -> Void {
-        let plans = CoreDataPlan(moc: moc).forToday()
+        let plans = CoreDataPlan(moc: moc).forDate(nav.session.date)
         if plans.count > 0 {
             if let plan = plans.first {
                 doesPlanExist = !plan.isEmpty()

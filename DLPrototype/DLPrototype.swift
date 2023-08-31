@@ -73,7 +73,7 @@ struct DLPrototype: App {
 //        NSApp.presentationOptions.remove(.titled)
 
         nav.title = "\(appName ?? "DLPrototype") \(version ?? "0").\(build ?? "0")"
-        nav.session.plan = CoreDataPlan(moc: persistenceController.container.viewContext).forToday().first
+        nav.session.plan = CoreDataPlan(moc: persistenceController.container.viewContext).forDate(nav.session.date).first
 
         if let plan = nav.session.plan {
             nav.planning.jobs = plan.jobs as! Set<Job>

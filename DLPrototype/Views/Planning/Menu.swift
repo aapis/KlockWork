@@ -53,6 +53,7 @@ extension Planning {
             .onChange(of: nav.planning.tasks, perform: actionOnChangeTasks)
             .onChange(of: nav.planning.jobs, perform: actionOnChangeJobs)
             .onChange(of: nav.planning.notes, perform: actionOnChangeNotes)
+            .onChange(of: nav.session.date, perform: actionOnChangeDate)
         }
 
         var CountPills: some View {
@@ -105,13 +106,13 @@ extension Planning {
 
 extension Planning.Menu {
     private func actionFinalizePlan() -> Void {
-        nav.planning.reset()
-        let plan = nav.planning.finalize()
+        nav.planning.empty(nav.session.date)
+        let plan = nav.planning.finalize(nav.session.date)
         nav.session.plan = plan
     }
 
     private func actionResetPlan() -> Void {
-        nav.planning.reset()
+        nav.planning.empty(nav.session.date)
         nav.planning = Navigation.Planning(moc: nav.planning.moc)
         nav.session.plan = nil
         nav.session.gif = .normal
@@ -175,5 +176,14 @@ extension Planning.Menu {
         }
 
         ClipboardHelper.copy(dailyPlan)
+    }
+
+    private func actionOnChangeDate(_ date: Date) -> Void {
+        if let plan = CoreDataPlan(moc: nav.planning.moc).forDate(date).first {
+            nav.session.plan = plan
+            nav.planning.load(nav.session.plan)
+        } else {
+            nav.planning.empty(nav.session.date)
+        }
     }
 }

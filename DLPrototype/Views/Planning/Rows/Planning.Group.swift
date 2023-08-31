@@ -38,11 +38,11 @@ extension Planning {
                         nav.planning.jobs.remove(job)
 
                         if nav.planning.jobs.count == 0 {
-                            nav.planning.reset()
+                            nav.planning.reset(nav.session.date)
                             nav.session.plan = nil
                             nav.session.gif = .normal
                         } else {
-                            let plan = nav.planning.finalize()
+                            let plan = nav.planning.finalize(nav.session.date)
                             nav.session.plan = plan
                         }
                     } label: {
