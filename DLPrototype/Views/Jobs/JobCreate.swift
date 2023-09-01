@@ -133,6 +133,7 @@ extension JobCreate {
             newJob.jid = Double(id)!
         }
 
+        newJob.id = UUID()
         newJob.alive = alive
         newJob.shredable = shredable
         newJob.colour = colourAsDouble
@@ -145,13 +146,13 @@ extension JobCreate {
         // TODO: workaround is to redirect to project instead
         if validProject {
             if let proj = project {
-                nav.setView(AnyView(ProjectView(project: proj)))
+                proj.addToJobs(newJob)
+                newJob.project = proj
+
+                nav.setView(AnyView(JobDashboard()))
                 nav.setId()
-                nav.setParent(.projects)
-                nav.setSidebar(AnyView(ProjectsDashboardSidebar()))
-                // TODO: for some reason this throws an "unrecognized selector" exception, investigate
-//                proj.addToJobs(newJob)
-//                newJob.project = proj
+                nav.setParent(.jobs)
+                nav.setSidebar(AnyView(JobDashboardSidebar()))
             }
         }
     }
