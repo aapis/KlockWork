@@ -38,6 +38,33 @@ extension Planning {
                     }
 
                     Spacer()
+                    if numChildren > 0 {
+                        if type == .tasks {
+                            FancyButtonv2(
+                                text: "Add a task to this job",
+                                icon: "plus",
+                                fgColour: colour.isBright() ? .black : .white,
+                                showLabel: false,
+                                size: .link,
+                                type: .clear,
+                                redirect: AnyView(TaskDashboard(defaultSelectedJob: job)),
+                                pageType: .tasks,
+                                sidebar: AnyView(TaskDashboardSidebar())
+                            )
+                        } else if type == .notes {
+                            FancyButtonv2(
+                                text: "Add a note to this job",
+                                icon: "plus",
+                                fgColour: colour.isBright() ? .black : .white,
+                                showLabel: false,
+                                size: .link,
+                                type: .clear,
+                                redirect: AnyView(NoteDashboard()),
+                                pageType: .notes,
+                                sidebar: AnyView(NoteDashboardSidebar())
+                            )
+                        }
+                    }
                 }
                 .padding(10)
             }
