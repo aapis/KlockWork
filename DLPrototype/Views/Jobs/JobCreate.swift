@@ -141,9 +141,6 @@ extension JobCreate {
         newJob.lastUpdate = newJob.created
         job = newJob
 
-        PersistenceController.shared.save()
-
-        // TODO: workaround is to redirect to project instead
         if validProject {
             if let proj = project {
                 proj.addToJobs(newJob)
@@ -155,6 +152,8 @@ extension JobCreate {
                 nav.setSidebar(AnyView(JobDashboardSidebar()))
             }
         }
+
+        PersistenceController.shared.save()
     }
 
     private func colourPickerChange(colour: [Double]) -> Void {
