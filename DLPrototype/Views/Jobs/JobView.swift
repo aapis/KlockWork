@@ -174,6 +174,10 @@ struct JobView: View {
             job.jid = Double(id)!
         }
 
+        if job.id == nil {
+            job.id = UUID()
+        }
+
         job.alive = alive
         job.shredable = shredable
 
