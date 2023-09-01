@@ -6,7 +6,6 @@
 //  Copyright © 2020 YegCollective. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
 
 @main
