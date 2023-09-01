@@ -132,6 +132,7 @@
 		53B0BE90297333C3007CB663 /* ManageProjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8F297333C3007CB663 /* ManageProjects.swift */; };
 		53B0DC122A79D7FC00DA1679 /* NoteVersionNavigationWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0DC112A79D7FC00DA1679 /* NoteVersionNavigationWidget.swift */; };
 		53B446B72A7D8CB100FA79E5 /* TaskGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B446B62A7D8CB100FA79E5 /* TaskGroup.swift */; };
+		53BED5B72AA262E100EF737C /* Summary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BED5B62AA262E100EF737C /* Summary.swift */; };
 		53C036EF29F8A59900539C3C /* DashboardSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C036EE29F8A59900539C3C /* DashboardSettings.swift */; };
 		53C3418C299960310071B855 /* JobDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418B299960310071B855 /* JobDashboard.swift */; };
 		53C3418E299968160071B855 /* JobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418D299968160071B855 /* JobView.swift */; };
@@ -328,6 +329,7 @@
 		53B0BE8F297333C3007CB663 /* ManageProjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageProjects.swift; sourceTree = "<group>"; };
 		53B0DC112A79D7FC00DA1679 /* NoteVersionNavigationWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteVersionNavigationWidget.swift; sourceTree = "<group>"; };
 		53B446B62A7D8CB100FA79E5 /* TaskGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskGroup.swift; sourceTree = "<group>"; };
+		53BED5B62AA262E100EF737C /* Summary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Summary.swift; sourceTree = "<group>"; };
 		53C036EE29F8A59900539C3C /* DashboardSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardSettings.swift; sourceTree = "<group>"; };
 		53C3418B299960310071B855 /* JobDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDashboard.swift; sourceTree = "<group>"; };
 		53C3418D299968160071B855 /* JobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobView.swift; sourceTree = "<group>"; };
@@ -914,6 +916,7 @@
 				5354C8E92AA03C77001C1779 /* Tasks.swift */,
 				5354C8EE2AA03CBF001C1779 /* Menu.swift */,
 				5354C8F02AA03CD4001C1779 /* Notes.swift */,
+				53BED5B62AA262E100EF737C /* Summary.swift */,
 			);
 			path = Planning;
 			sourceTree = "<group>";
@@ -1178,6 +1181,7 @@
 				5354C8E42AA03C1C001C1779 /* Planning.Row.swift in Sources */,
 				53790C0D2A74CB6000D3FFD4 /* UrlHelper.swift in Sources */,
 				53790C052A72F45900D3FFD4 /* EdgeBorder.swift in Sources */,
+				53BED5B72AA262E100EF737C /* Summary.swift in Sources */,
 				53814A8B2A95151000A5A015 /* CoreDataPlan.swift in Sources */,
 				5371BA3D2A7B7F1200DEEC21 /* TaskViewPlain.swift in Sources */,
 				533E40682970DD170007785A /* AutoFixJobs.swift in Sources */,

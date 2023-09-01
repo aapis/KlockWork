@@ -16,6 +16,7 @@ extension Planning {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 1) {
+                Summary()
                 Menu()
                 ScrollView(.vertical, showsIndicators: false) {
                     let jobs = Array(nav.planning.jobs).sorted(by: {$0.jid > $1.jid})
