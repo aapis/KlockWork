@@ -93,9 +93,6 @@ struct SidebarItem: View, Identifiable {
             }
         }
         .border(.black.opacity(0.2), width: (showBorder ? 1 : 0))
-        .mask(
-            RoundedRectangle(cornerRadius: 4)
-        )
         .onAppear(perform: actionOnAppear)
         .contextMenu {
             Button("Copy \(data)") {

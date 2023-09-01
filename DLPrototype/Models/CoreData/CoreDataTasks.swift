@@ -28,7 +28,6 @@ public class CoreDataTasks {
 
     static public func recentTasksWidgetData(limit: Int? = 1500) -> FetchRequest<LogTask> {
         let descriptors: [NSSortDescriptor] = [
-            NSSortDescriptor(keyPath: \LogTask.owner?.project, ascending: true),
             NSSortDescriptor(keyPath: \LogTask.owner?.jid, ascending: false)
         ]
 

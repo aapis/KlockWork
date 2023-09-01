@@ -16,6 +16,7 @@ struct TaskListView: View {
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
+    @EnvironmentObject public var nav: Navigation
     
     private var tasks: [LogTask] {
         let ordered = job.tasks!.sortedArray(using: [
@@ -92,10 +93,11 @@ struct TaskListView: View {
         task.id = UUID()
         task.content = entryText
         task.owner = job
+        task.lastUpdate = task.created
 
         entryText = ""
         updater.update()
-        
+
         PersistenceController.shared.save()
     }
 }
