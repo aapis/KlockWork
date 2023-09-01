@@ -34,7 +34,6 @@ public class CoreDataJob: ObservableObject {
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.predicate = NSPredicate(format: "alive == true && project != nil && project.alive == true")
         fetch.sortDescriptors = [
-            NSSortDescriptor(keyPath: \Job.project?, ascending: false),
             NSSortDescriptor(keyPath: \Job.lastUpdate?, ascending: false),
             NSSortDescriptor(keyPath: \Job.jid, ascending: false)
         ]
