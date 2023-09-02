@@ -185,6 +185,32 @@ extension Navigation {
             PersistenceController.shared.save()
         }
 
+        func export() -> Void {
+            var dailyPlan = ""
+
+            dailyPlan += "Tasks\n"
+            for item in tasks {
+                if let job = item.owner {
+                    dailyPlan += " - \(job.id_int()):"
+                }
+
+                dailyPlan += " \(item.content!)\n"
+            }
+
+            dailyPlan += "Jobs\n"
+            for item in jobs {
+                dailyPlan += " - \(item.id_int())"
+
+                if let uri = item.uri {
+                    dailyPlan += " (\(uri.absoluteString))\n"
+                } else {
+                    dailyPlan += "\n"
+                }
+            }
+
+            ClipboardHelper.copy(dailyPlan)
+        }
+
         mutating func empty(_ date: Date) -> Void {
             if let plan = CoreDataPlan(moc: moc).forDate(date).first {
                 plan.jobs = []

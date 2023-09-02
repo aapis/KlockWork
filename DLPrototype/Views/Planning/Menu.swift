@@ -25,7 +25,7 @@ extension Planning {
                         HStack(spacing: 5) {
                             FancyButtonv2(
                                 text: "Share",
-                                action: actionOnShare,
+                                action: {nav.planning.export()},
                                 icon: "square.and.arrow.up",
                                 showLabel: false,
                                 size: .small,
@@ -144,38 +144,6 @@ extension Planning.Menu {
         if numJobs == 0 {
             actionResetPlan()
         }
-    }
-
-    private func actionOnShare() -> Void {
-        var dailyPlan = ""
-
-        if let plan = nav.session.plan {
-            if let items = plan.tasks {
-                dailyPlan += "Tasks\n"
-                for item in items.allObjects as! [LogTask] {
-                    if let job = item.owner {
-                        dailyPlan += " - \(job.id_int()):"
-                    }
-
-                    dailyPlan += " \(item.content!)\n"
-                }
-            }
-
-            if let items = plan.jobs {
-                dailyPlan += "Jobs\n"
-                for item in items.allObjects as! [Job] {
-                    dailyPlan += " - \(item.id_int())"
-
-                    if let uri = item.uri {
-                        dailyPlan += " (\(uri.absoluteString))\n"
-                    } else {
-                        dailyPlan += "\n"
-                    }
-                }
-            }
-        }
-
-        ClipboardHelper.copy(dailyPlan)
     }
 
     private func actionOnChangeDate(_ date: Date) -> Void {
