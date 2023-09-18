@@ -51,28 +51,17 @@ struct TaskGroup: View {
                 }
                 .padding(8)
                 .background(minimized ? key.storedColour() : Theme.base.opacity(0.3))
-//                .background(key.storedColour())
                 .onAppear(perform: actionOnAppear)
 
                 if !minimized {
                     if let items = key.jobs {
                         ForEach(items.allObjects as! [Job]) { item in
-//                            if let jobTasks = item.tasks {
-//                                var tasks: [LogTask] = jobTasks.allObjects as! [LogTask]
-
-//                                if let plan = nav.session.plan {
-//                                    print("DERPO nav.session.plan.tasks=\(nav.session.plan.tasks)")
-////                                    if let planTasks = plan.tasks {
-////                                        tasks = planTasks.allObjects as! [LogTask] //filter {$0.completedDate == nil && $0.cancelledDate == nil}
-////                                    }
-//                                }
-//                                if tasks.filter({$0.completedDate == nil && $0.cancelledDate == nil}).count > 0 {
-                                    HStack {
-                                        Text("Tasks: \(tasks.count)")
-                                        TaskWidgetProjectGroup(job: item)
-                                    }
-//                                }
-//                            }
+                            if item.tasks!.count > 0 &&
+                                item.tasks?.filtered(using: NSPredicate(format: "completedDate == nil && cancelledDate == nil")).count ?? 0 > 0 {
+                                VStack {
+                                    TaskWidgetProjectGroup(job: item)
+                                }
+                            }
                         }
                     }
                 }

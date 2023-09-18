@@ -67,7 +67,6 @@ struct TaskWidgetProjectGroup: View {
             }
 
             if !minimized {
-//                if let st = self.tasks[key] {
                 ForEach(job.tasks!.allObjects as! [LogTask]) { task in
                     if task.completedDate == nil && task.cancelledDate == nil {
                         if nav.session.gif == .focus {
@@ -81,7 +80,6 @@ struct TaskWidgetProjectGroup: View {
                         }
                     }
                 }
-//                }
             }
         }
         .foregroundColor(job.storedColour().isBright() ? .black : .white)
