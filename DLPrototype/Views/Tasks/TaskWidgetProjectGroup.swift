@@ -23,10 +23,9 @@ struct TaskWidgetProjectGroup: View {
                     action: minimize,
                     icon: minimized ? "plus" : "minus",
                     fgColour: minimized ? (job.storedColour().isBright() ? .black : .white) : .white,
-                    showLabel: false,
+                    showBoth: true,
                     size: .link
                 )
-                Text("\(job.id_string())")
 
                 Spacer()
                 FancyButtonv2(

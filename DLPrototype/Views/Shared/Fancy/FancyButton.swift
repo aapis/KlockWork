@@ -74,6 +74,7 @@ public struct FancyButtonv2: View {
     public var transparent: Bool? = false
     public var showLabel: Bool? = true
     public var showIcon: Bool? = true
+    public var showBoth: Bool? = false
     public var size: ButtonSize = .small
     public var type: ButtonType = .standard
     public var redirect: AnyView? = nil
@@ -149,13 +150,20 @@ public struct FancyButtonv2: View {
             }
 
             HStack {
-                if showIcon! {
+                if !showBoth! {
+                    if showIcon! {
+                        Image(systemName: icon!)
+                            .symbolRenderingMode(.hierarchical)
+                            .font(.title2)
+                    }
+
+                    if showLabel! {
+                        Text(text)
+                    }
+                } else {
                     Image(systemName: icon!)
                         .symbolRenderingMode(.hierarchical)
                         .font(.title2)
-                }
-
-                if showLabel! {
                     Text(text)
                 }
             }
