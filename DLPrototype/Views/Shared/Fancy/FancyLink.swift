@@ -18,7 +18,7 @@ struct FancyLink: View {
     public var fgColour: Color = Color.white
     public var destination: AnyView?
     public var size: ButtonSize = .large
-    public var pageType: Page = .dashboard
+    public var pageType: Navigation.Page = .dashboard
     public var sidebar: AnyView? = nil
 
     @EnvironmentObject public var nav: Navigation

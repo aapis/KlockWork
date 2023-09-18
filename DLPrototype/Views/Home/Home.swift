@@ -20,12 +20,12 @@ struct Home: View {
     @StateObject public var pr: CoreDataProjects = CoreDataProjects(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var cvm: CoreDataNoteVersions = CoreDataNoteVersions(moc: PersistenceController.shared.container.viewContext)
     
-    @State public var selectedSidebarButton: Page = .dashboard
+    @State public var selectedSidebarButton: Navigation.Page = .dashboard
     @State public var selectedJob: Job?
 
     @AppStorage("home.isDatePickerPresented") public var isDatePickerPresented: Bool = false
 
-    private var buttons: [PageGroup: [SidebarButton]] {
+    private var buttons: [Navigation.PageGroup: [SidebarButton]] {
         [
             .views: [
                 SidebarButton(

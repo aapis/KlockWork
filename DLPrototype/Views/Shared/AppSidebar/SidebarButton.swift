@@ -12,7 +12,7 @@ import SwiftUI
 struct SidebarButton: View, Identifiable {
     public let id: UUID = UUID()
     public var destination: AnyView
-    public let pageType: Page
+    public let pageType: Navigation.Page
     public var icon: String
     public var label: String
     public var sidebar: AnyView?

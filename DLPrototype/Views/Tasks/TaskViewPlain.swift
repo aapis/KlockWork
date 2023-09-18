@@ -16,8 +16,8 @@ struct TaskViewPlain: View {
 
     var body: some View {
         SidebarItem(
-            data: task.content!,
-            help: task.content!,
+            data: task.content ?? "No content",
+            help: task.content ?? "No content",
             icon: "circle",
             type: .thin,
             action: completeAction

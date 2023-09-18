@@ -16,7 +16,7 @@ struct FancyTextLink: View {
     public var destination: AnyView?
     public var fgColour: Color? = Color.white
     public var bgColour: Color? = Color.black.opacity(0.2)
-    public var pageType: Page
+    public var pageType: Navigation.Page
     public var sidebar: AnyView? = nil
 
     @EnvironmentObject public var nav: Navigation

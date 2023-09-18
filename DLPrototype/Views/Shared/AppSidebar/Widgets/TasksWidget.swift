@@ -12,12 +12,12 @@ struct TasksWidget: View {
     public let title: String = "Tasks"
 
     @State private var minimized: Bool = false
-    @State private var grouped: Dictionary<Job, [LogTask]> = [:]
+    @State private var grouped: Dictionary<Project, [Job]> = [:]
     @State private var query: String = ""
     @State private var isSettingsPresented: Bool = false
-    @State private var sorted: [EnumeratedSequence<Dictionary<Job, [LogTask]>.Keys>.Element] = []
+    @State private var sorted: [EnumeratedSequence<Dictionary<Project, [Job]>.Keys>.Element] = []
 
-    @FetchRequest public var resource: FetchedResults<LogTask>
+    @FetchRequest public var resource: FetchedResults<Job>
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
@@ -83,10 +83,12 @@ struct TasksWidget: View {
                             }
                         }
 
-                        VStack(alignment: .leading, spacing: 0) {
+                        VStack {
                             if sorted.count > 0 {
-                                ForEach(sorted, id: \.element) { index, key in
-                                    TaskGroup(index: index, key: key, tasks: grouped)
+                                ForEach(sorted, id: \.element) { _, key in
+                                    if key.hasTasks(focus: nav.session.gif, using: nav.session.plan) {
+                                        TaskGroup(key: key, tasks: grouped)
+                                    }
                                 }
                             } else {
                                 if nav.session.gif == .normal {
@@ -132,13 +134,15 @@ struct TasksWidget: View {
 
 extension TasksWidget {
     public init() {
-        _resource = CoreDataTasks.recentTasksWidgetData()
+        _resource = CoreDataJob.fetchAll()
     }
 
     private func resetGroupedTasks() -> Void {
-        grouped = Dictionary(grouping: resource, by: {$0.owner!})
-        sorted = Array(grouped.keys.enumerated())
-            .sorted(by: ({$0.element.jid < $1.element.jid}))
+        grouped = Dictionary(grouping: resource, by: {$0.project!})
+
+        let withTasks = grouped.filter {$0.value.allSatisfy({$0.tasks!.count > 0})}
+        sorted = Array(withTasks.keys.enumerated())
+            .sorted(by: ({$0.element.pid < $1.element.pid}))
     }
 
     private func actionMinimize() -> Void {
@@ -160,14 +164,27 @@ extension TasksWidget {
                 }
 
                 if let setTasks = plan.tasks {
-                    let tasks = setTasks.allObjects as! [LogTask]
-                    grouped = Dictionary(grouping: tasks.filter {$0.completedDate == nil && $0.cancelledDate == nil}, by: {$0.owner!})
+                    var planJobs: Set<Job> = []
+
+                    for task in setTasks.allObjects as! [LogTask] {
+                        if let job = task.owner {
+                            if let jobSet = job.tasks {
+                                let jobTasks = jobSet.allObjects as! [LogTask]
+
+                                if jobTasks.filter({$0.completedDate == nil && $0.cancelledDate == nil}).contains(task) {
+                                    planJobs.insert(job)
+                                }
+                            }
+                        }
+                    }
+
+                    grouped = Dictionary(grouping: planJobs, by: {$0.project!})
                 }
             }
         }
 
         sorted = Array(grouped.keys.enumerated())
-            .sorted(by: ({$0.element.jid < $1.element.jid}))
+            .sorted(by: ({$0.element.pid < $1.element.pid}))
     }
 
     private func actionOnChangeJob(job: Job?) -> Void {
@@ -178,7 +195,7 @@ extension TasksWidget {
         if nav.session.gif != .focus {
             resetGroupedTasks()
 
-            let filtered = grouped.filter({searchCriteria(term: term, job: $0.key, tasks: $0.value)})
+            let filtered = grouped.filter({searchCriteria(term: term, project: $0.key, jobs: $0.value)})
 
             if filtered.count > 0 {
                 grouped = filtered
@@ -190,22 +207,22 @@ extension TasksWidget {
         }
     }
 
-    internal func searchCriteria(term: String, job: Job, tasks: [LogTask]) -> Bool {
-        if let projectName = job.project?.name {
+    internal func searchCriteria(term: String, project: Project, jobs: [Job]) -> Bool {
+        if let projectName = project.name {
             if projectName.contains(term) || projectName.caseInsensitiveCompare(term) == .orderedSame {
                 return true
             }
         }
 
-        if job.jid.string == term {
+//        if project.jid.string == term {
+//            return true
+//        }
+
+        if jobs.contains(where: {$0.jid.string.contains(term)}) {
             return true
         }
 
-        if tasks.contains(where: {$0.content?.contains(term) ?? false}) {
-            return true
-        }
-
-        if tasks.contains(where: {$0.content?.caseInsensitiveCompare(term) == .orderedSame}) {
+        if jobs.contains(where: {$0.jid.string.caseInsensitiveCompare(term) == .orderedSame}) {
             return true
         }
 

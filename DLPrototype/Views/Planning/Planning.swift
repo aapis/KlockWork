@@ -9,10 +9,9 @@
 import SwiftUI
 
 struct Planning: View {
-    private let maxItems: Int = 6
     private let title: String = "Planning"
     private let description: String = "Use the daily plan to organize your day. Feature plans allow you to define projects of any scope!"
-    private let buttons: [ToolbarButton] = [
+    private let tabs: [ToolbarButton] = [
         ToolbarButton(
             id: 0,
             helpText: "What are you working on today?",
@@ -56,7 +55,7 @@ struct Planning: View {
             Text(description)
                 .padding(.bottom, 10)
 
-            FancyGenericToolbar(buttons: buttons, standalone: true)
+            FancyGenericToolbar(buttons: tabs, standalone: true)
         }
         .onAppear(perform: actionOnAppear)
         .onChange(of: nav.planning.jobs, perform: actionOnChangeJobs)

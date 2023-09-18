@@ -77,7 +77,7 @@ public struct FancyButtonv2: View {
     public var size: ButtonSize = .small
     public var type: ButtonType = .standard
     public var redirect: AnyView? = nil
-    public var pageType: Page? = nil
+    public var pageType: Navigation.Page? = nil
     public var sidebar: AnyView? = nil
     public var twoStage: Bool = false
 
