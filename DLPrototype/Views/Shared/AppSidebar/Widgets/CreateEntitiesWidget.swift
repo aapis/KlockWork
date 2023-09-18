@@ -13,13 +13,10 @@ struct CreateEntitiesWidget: View {
 
     @State private var followingPlan: Bool = false
     @State private var gif: Navigation.Planning.GlobalInterfaceFilter = .normal
+    @State private var doesPlanExist: Bool = false
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
-
-    var doesPlanExist: Bool {
-        CoreDataPlan(moc: moc).countForToday() > 0
-    }
 
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
@@ -36,6 +33,9 @@ struct CreateEntitiesWidget: View {
             }
         }
         .onAppear(perform: actionOnAppear)
+        .onChange(of: nav.planning.tasks, perform: actionOnChangeOfTasks)
+        .onChange(of: nav.planning.jobs, perform: actionOnChangeOfJobs)
+        .onChange(of: nav.planning.notes, perform: actionOnChangeOfNotes)
     }
 
     private var Buttons: some View {
@@ -45,18 +45,18 @@ struct CreateEntitiesWidget: View {
                     Theme.base.opacity(0.5)
                     if doesPlanExist {
                         FancyButtonv2(
-                            text: gif == .focus ? "Disable planning focus" : "Enable global filter to only show you the things you need to see",
+                            text: gif == .focus ? "Disable the global filter, show all items" : "Show only the items in your daily plan",
                             action: actionOnChangeFocus,
-                            icon: gif == .focus ? "moon.fill" : "moon",
+                            icon: gif == .focus ? "circle.hexagongrid.fill" : "circle.hexagongrid",
                             showLabel: false,
                             size: .small,
-                            type: .tsWhite // TODO: don't use star!
+                            type: .tsWhite
                         )
                         .mask(Circle())
                     } else {
                         FancyButtonv2(
                             text: "You need to create a plan first, click here!",
-                            icon: "moon.zzz",
+                            icon: "hexagon",
                             showLabel: false,
                             size: .small,
                             type: nav.parent == .planning ? .secondary : .standard,
@@ -68,6 +68,10 @@ struct CreateEntitiesWidget: View {
                     }
                 }
                 .mask(Circle())
+                if !doesPlanExist && gif == .normal {
+                    Image(systemName: "questionmark.circle.fill")
+                        .position(x: 38, y: 38)
+                }
             }
             .frame(width: 46, height: 46)
 
@@ -170,6 +174,40 @@ extension CreateEntitiesWidget {
 
     private func actionOnAppear() -> Void {
         gif = nav.session.gif
+
+        findPlan()
+    }
+
+    private func actionOnChangeOfTasks(_ items: Set<LogTask>) -> Void {
+        if (items.count + nav.planning.jobs.count + nav.planning.notes.count) == 0 {
+            nav.planning = Navigation.Planning(moc: nav.planning.moc)
+        }
+
+        findPlan()
+    }
+
+    private func actionOnChangeOfJobs(_ items: Set<Job>) -> Void {
+        if (items.count + nav.planning.tasks.count + nav.planning.notes.count) == 0 {
+            nav.planning = Navigation.Planning(moc: nav.planning.moc)
+        }
+
+        findPlan()
+    }
+
+    private func actionOnChangeOfNotes(_ items: Set<Note>) -> Void {
+        if (items.count + nav.planning.jobs.count + nav.planning.tasks.count) == 0 {
+            nav.planning = Navigation.Planning(moc: nav.planning.moc)
+        }
+
+        findPlan()
+    }
+
+    private func findPlan() -> Void {
+        let plans = CoreDataPlan(moc: moc).forDate(nav.session.date)
+        if plans.count > 0 {
+            if let plan = plans.first {
+                doesPlanExist = !plan.isEmpty()
+            }
+        }
     }
 }
-
