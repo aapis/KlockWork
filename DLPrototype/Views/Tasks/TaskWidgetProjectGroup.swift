@@ -22,7 +22,7 @@ struct TaskWidgetProjectGroup: View {
                     text: job.id_string(),
                     action: minimize,
                     icon: minimized ? "plus" : "minus",
-                    fgColour: minimized ? (job.storedColour().isBright() ? .black : .white) : .white,
+                    fgColour: job.storedColour().isBright() ? .black : .white,
                     showBoth: true,
                     size: .link
                 )

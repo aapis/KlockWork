@@ -295,11 +295,15 @@ extension Navigation {
     public struct Score {
         var moc: NSManagedObjectContext
         var value: Int = 0
-        var book: RuleBook = RuleBook()
-        var rules: [RuleBook.Rule] = []
+        var book: RuleBook
+
+        init(moc: NSManagedObjectContext) {
+            self.moc = moc
+            self.book = RuleBook(moc: moc)
+        }
 
         mutating func calculate() -> Void {
-            for rule in rules {
+            for rule in book.rules {
                 value += rule.evaluate()
             }
         }
@@ -308,9 +312,21 @@ extension Navigation {
 
 extension Navigation.Score {
     struct RuleBook {
-        var rules: [Rule] = [
-            Rule(description: "+ 1: More than 1 job", action: .increment)
-        ]
+        var moc: NSManagedObjectContext
+        var plan: Plan?
+        var rules: [Rule] = []
+
+        init(moc: NSManagedObjectContext) {
+            self.moc = moc
+            self.plan = CoreDataPlan(moc: moc).forDate(Date.now).first
+
+            // Add default rules
+            add(Rule(description: "+ 1: More than 1 job", action: .increment, condition: !plan!.isEmpty()))
+        }
+
+        mutating func add(_ rule: Rule) -> Void {
+            rules.append(rule)
+        }
     }
 }
 
@@ -323,10 +339,13 @@ extension Navigation.Score.RuleBook {
         var condition: Bool = false
 
         func evaluate() -> Int {
+            print("DERPO evaluating rule=\(description) condition=\(condition)")
             if condition {
-                //change = data.apply(action)
-
-                return amount
+                if action == .increment {
+                    return amount
+                } else if action == .decrement {
+                    return amount * -1
+                }
             }
 
             return 0

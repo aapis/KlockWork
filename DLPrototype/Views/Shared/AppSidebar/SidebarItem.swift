@@ -94,11 +94,6 @@ struct SidebarItem: View, Identifiable {
         }
         .border(.black.opacity(0.2), width: (showBorder ? 1 : 0))
         .onAppear(perform: actionOnAppear)
-        .contextMenu {
-            Button("Copy \(data)") {
-                ClipboardHelper.copy(data)
-            }
-        }
     }
 
     @ViewBuilder private var ItemIcon: some View {

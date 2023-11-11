@@ -37,7 +37,7 @@ extension Planning {
                     }
 
                     VStack {
-                        ForEach(nav.score.rules) { rule in
+                        ForEach(nav.score.book.rules) { rule in
                             Text(rule.description)
                         }
                     }
@@ -46,6 +46,9 @@ extension Planning {
             .padding()
             .background(Theme.headerColour)
             .onAppear(perform: actionOnAppear)
+            .onChange(of: nav.planning.jobs) { _ in
+                actionOnAppear()
+            }
         }
     }
 }
@@ -61,11 +64,6 @@ extension Planning.Summary {
     }
 
     private func calculateScore() -> Void {
-//        nav.score.rules = [
-//            Navigation.Score.Rule(description: "+ 1: More than 1 job", action: .increment, condition: {nav.planning.jobs.count > 0}())
-//        ]
-//        nav.score.book
-
         nav.score.calculate()
     }
 }

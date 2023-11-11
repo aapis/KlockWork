@@ -62,15 +62,17 @@ struct NoteBlock: View {
             }
             .frame(width: 5)
 
-            ZStack {
+            ZStack(alignment: .leading) {
                 if note.mJob != nil {
                     let colour = Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble)
                     colour
                     Text(note.mJob!.jid.string)
                         .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                        .padding([.leading, .trailing], 5)
                 } else {
                     Color.white.opacity(0.1)
                     Text("No job assigned")
+                        .padding([.leading, .trailing], 5)
                 }
             }
 

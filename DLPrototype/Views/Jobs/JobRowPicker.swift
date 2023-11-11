@@ -37,6 +37,11 @@ struct JobRowPicker: View {
                         showBorder: false
                     )
                     .foregroundColor(job.colour != nil && Color.fromStored(job.colour!).isBright() ? .black : .white)
+                    .contextMenu {
+                        Button("Go to job") {
+                            actionGoTo()
+                        }
+                    }
                 }
             }
         }
@@ -77,5 +82,14 @@ extension JobRowPicker {
 
     private func actionUpdatePlanningStore() -> Void {
         nav.planning.jobs.insert(job)
+    }
+
+    private func actionGoTo() -> Void {
+        nav.reset()
+        nav.setId()
+        nav.setParent(.jobs)
+        nav.session.setJob(job)
+        nav.setView(AnyView(JobDashboard(defaultSelectedJob: job)))
+        nav.setSidebar(AnyView(JobDashboardSidebar()))
     }
 }

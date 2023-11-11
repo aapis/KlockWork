@@ -57,10 +57,9 @@ struct TaskGroup: View {
                     if let items = key.jobs {
                         ForEach(items.allObjects as! [Job]) { item in
                             if item.tasks!.count > 0 &&
-                                item.tasks?.filtered(using: NSPredicate(format: "completedDate == nil && cancelledDate == nil")).count ?? 0 > 0 {
-                                VStack {
-                                    TaskWidgetProjectGroup(job: item)
-                                }
+                                item.tasks?.filtered(using: NSPredicate(format: "completedDate == nil && cancelledDate == nil")).count ?? 0 > 0
+                            {
+                                TaskWidgetProjectGroup(job: item)
                             }
                         }
                     }
