@@ -116,6 +116,8 @@ extension Planning.Menu {
         nav.planning = Navigation.Planning(moc: nav.planning.moc)
         nav.session.plan = nil
         nav.session.gif = .normal
+        nav.score.book.reset()
+        nav.score.calculate() // TODO: if necessary to recalculate on reset, do so in reset()
     }
 
     private func actionOnChangeJobs(jobs: Set<Job>) -> Void {

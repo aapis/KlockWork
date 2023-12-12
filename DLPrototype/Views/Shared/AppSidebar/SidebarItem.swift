@@ -81,7 +81,9 @@ struct SidebarItem: View, Identifiable {
 
     @State private var highlighted: Bool = false
     @State private var altIcon: String?
-    
+
+    @EnvironmentObject public var nav: Navigation
+
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             if orientation == .left {
@@ -149,6 +151,15 @@ extension SidebarItem {
     private func doAction() -> Void {
         if let callback = action {
             callback()
+            
+            // TODO: move the following to some kind of "action trigger" pattern
+            print("DERPO nav.planning.jobs.count=\(nav.planning.jobs.count)")
+            if nav.planning.jobs.count == 1 {
+                nav.score.book.unlock(Navigation.Score.RuleBook.Rule.Identifier.OneJob)
+                nav.score.calculate()
+            }
+
+
         }
     }
 

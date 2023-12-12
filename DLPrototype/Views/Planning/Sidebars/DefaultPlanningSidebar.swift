@@ -25,6 +25,7 @@ struct DefaultPlanningSidebar: View {
 }
 
 extension TodaySidebar {
+    // TODO: use one of the date helpers instead!
     private func formattedDate() -> String {
         let df = DateFormatter()
         df.dateFormat = "MMM d, yyyy"

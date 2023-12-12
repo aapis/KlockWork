@@ -303,9 +303,13 @@ extension Navigation {
         }
 
         mutating func calculate() -> Void {
-            for rule in book.rules {
-                value += rule.evaluate()
+            for (index, _) in book.rules.enumerated() {
+                if !book.rules[index].locked {
+                    value += book.rules[index].evaluate()
+                }
             }
+
+            print("DERPO nav.score=\(value)")
         }
     }
 }
@@ -314,18 +318,38 @@ extension Navigation.Score {
     struct RuleBook {
         var moc: NSManagedObjectContext
         var plan: Plan?
-        var rules: [Rule] = []
+        var rules: [Rule] = [
+            Rule(description: "+ 1: More than 1 job", action: .increment)
+        ]
 
         init(moc: NSManagedObjectContext) {
             self.moc = moc
-            self.plan = CoreDataPlan(moc: moc).forDate(Date.now).first
+//            self.plan = CoreDataPlan(moc: moc).forDate(Date.now).first
 
             // Add default rules
-            add(Rule(description: "+ 1: More than 1 job", action: .increment, condition: !plan!.isEmpty()))
+//            add()
+            print("DERPO rules=\(rules)")
         }
 
-        mutating func add(_ rule: Rule) -> Void {
-            rules.append(rule)
+        mutating func unlock(_ identifier: Rule.Identifier) -> Void {
+            for (index, _) in rules.enumerated() {
+                if rules[index].identifier == identifier {
+                    rules[index].unlock()
+                }
+            }
+        }
+
+        mutating func reset() -> Void {
+            for (index, _) in rules.enumerated() {
+                rules[index].lock()
+            }
+        }
+
+        // TODO: this should be a shortcut for the enumeration loops
+        mutating func eachRule(_ cb: (RuleBook.Rule) -> Void) -> Void {
+            for (index, _) in rules.enumerated() {
+                cb(rules[index])
+            }
         }
     }
 }
@@ -333,20 +357,32 @@ extension Navigation.Score {
 extension Navigation.Score.RuleBook {
     struct Rule: Identifiable {
         var id: UUID = UUID()
+        var identifier: Identifier = Identifier.OneJob
         var description: String = ""
         var action: Action = .inert
         var amount: Int = 1
         var condition: Bool = false
+        public var locked: Bool = true
+        
+        mutating func lock() -> Void {
+            self.locked = true
+        }
+
+        mutating func unlock() -> Void {
+            self.locked = false
+
+            let _ = self.evaluate() // TODO: evaluate doesn't need to return now?
+        }
 
         func evaluate() -> Int {
             print("DERPO evaluating rule=\(description) condition=\(condition)")
-            if condition {
+//            if condition {
                 if action == .increment {
                     return amount
                 } else if action == .decrement {
                     return amount * -1
                 }
-            }
+//            }
 
             return 0
         }
@@ -356,5 +392,9 @@ extension Navigation.Score.RuleBook {
 extension Navigation.Score.RuleBook.Rule {
     public enum Action {
         case increment, decrement, inert
+    }
+
+    public enum Identifier {
+        case OneJob
     }
 }

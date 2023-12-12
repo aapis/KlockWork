@@ -12,7 +12,7 @@ extension Planning {
     struct Summary: View {
         @EnvironmentObject public var nav: Navigation
 
-        @State private var score: Int = 1
+        @State private var score: Int = 0
 
         @FetchRequest public var records: FetchedResults<LogRecord>
 
@@ -59,10 +59,13 @@ extension Planning.Summary {
     }
 
     private func actionOnAppear() -> Void {
-        calculateScore()
+//        calculateScore()
         score = nav.score.value
+        print("DERPO new score=\(score)")
     }
 
+    // TODO: calculate can't be called onLoad, we need to do something like "getScore" instead.
+    // TODO: calc should only fire when an achievement is unlocked, and as of 11/12 that doesn't exist yet
     private func calculateScore() -> Void {
         nav.score.calculate()
     }
