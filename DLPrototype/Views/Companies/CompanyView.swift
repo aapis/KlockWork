@@ -10,15 +10,56 @@ import SwiftUI
 
 struct CompanyView: View {
     public var company: Company
-     
+
+    @State private var name: String = ""
+    @State private var abbreviation: String = ""
+    @State private var isDeleteAlertShowing: Bool = false
+
+    @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var nav: Navigation
+
     var body: some View {
         VStack{}
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 13) {
+
                 HStack {
-                    Text("HI")
+                    Title(text: "Editing: \(company.name!)")
                     Spacer()
                 }
+
+                FancyTextField(placeholder: "Legal name", lineLimit: 1, onSubmit: {}, text: $name)
+                FancyTextField(placeholder: "Abbreviation (i.e. City of New York = CONY)", lineLimit: 1, onSubmit: {}, text: $abbreviation)
+                FancyDivider()
+
+                HStack {
+                    FancyButtonv2(
+                        text: "Delete",
+                        action: {isDeleteAlertShowing = true},
+                        icon: "trash",
+                        showLabel: false,
+                        type: .destructive
+                    )
+                    .alert("Are you sure you want to delete company \(company.name ?? "Invalid company name")?", isPresented: $isDeleteAlertShowing) {
+                        Button("Yes", role: .destructive) {
+                            actionSoftDelete()
+                        }
+                        Button("No", role: .cancel) {}
+                    }
+                    
+                    Spacer()
+                    FancyButtonv2(
+                        text: "Save",
+                        action: save,
+                        size: .medium,
+                        redirect: AnyView(CompanyDashboard()),
+                        pageType: .projects,
+                        sidebar: AnyView(DefaultCompanySidebar())
+                    )
+                }
+
+                Spacer()
+
             }
             .padding()
         }
@@ -29,6 +70,35 @@ struct CompanyView: View {
 
 extension CompanyView {
     private func actionOnAppear() -> Void {
+        name = company.name!
+        abbreviation = company.abbreviation!
+    }
+
+    private func save() -> Void {
+        company.name = name
+        company.abbreviation = abbreviation
+
+        PersistenceController.shared.save()
+    }
+
+    private func actionSoftDelete() -> Void {
+        company.alive = false
+        PersistenceController.shared.save()
+
+        nav.setId()
+        nav.setView(AnyView(CompanyDashboard()))
+        nav.setParent(.companies)
+        nav.setSidebar(AnyView(DefaultCompanySidebar()))
+    }
+
+    private func actionHardDelete() -> Void {
+        moc.delete(company)
+        PersistenceController.shared.save()
+
+        nav.setId()
+        nav.setView(AnyView(CompanyDashboard()))
+        nav.setParent(.companies)
+        nav.setSidebar(AnyView(DefaultCompanySidebar()))
     }
 }
 

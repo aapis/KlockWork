@@ -16,7 +16,7 @@ struct DefaultCompanySidebar: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 5) {
-                Text("Coming soon")
+                Outline()
             }
             Spacer()
         }

@@ -14,13 +14,12 @@ struct CompanyBlock: View {
     @State private var highlighted: Bool = false
 
     @EnvironmentObject public var nav: Navigation
-    @EnvironmentObject public var jm: CoreDataJob
-    @EnvironmentObject public var updater: ViewUpdater
 
     var body: some View {
         Button {
-            nav.view = AnyView(CompanyView(company: company))
-            nav.parent = .companies
+            nav.setView(AnyView(CompanyView(company: company)))
+            nav.setParent(.companies)
+            nav.setId()
         } label: {
             VStack(spacing: 0) {
                 ZStack(alignment: .topLeading) {
@@ -29,27 +28,24 @@ struct CompanyBlock: View {
                         .opacity(highlighted ? 0.2 : 0.1)
 
                     VStack(alignment: .leading, spacing: 10) {
-                        Text(company.name!)
-                            .font(.title3)
-                            .fontWeight(.bold)
+                        HStack {
+                            if company.isDefault {
+                                Image(systemName: "building.2")
+                                    .help("Default company")
+                            }
+                            Text(company.name!)
+                                .font(.title3)
+                                .fontWeight(.bold)
+                        }
 
                         Text("\(company.projects?.count ?? 0) Projects")
-                        Text("0 Jobs")
                         Spacer()
                     }
                     .padding([.leading, .trailing, .top])
                 }
             }
         }
-        .onHover { inside in
-            if inside {
-                NSCursor.pointingHand.push()
-            } else {
-                NSCursor.pop()
-            }
-
-            highlighted.toggle()
-        }
+        .useDefaultHover({inside in highlighted = inside})
         .buttonStyle(.plain)
     }
 }

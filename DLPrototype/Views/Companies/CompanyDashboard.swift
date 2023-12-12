@@ -49,6 +49,20 @@ struct CompanyDashboard: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
+                HStack {
+                    Title(text: "\(companies.count) Companies")
+                    Spacer()
+                    FancyButtonv2(
+                        text: "New company",
+                        action: {},
+                        icon: "plus",
+                        showLabel: false,
+                        redirect: AnyView(CompanyCreate()),
+                        pageType: .companies,
+                        sidebar: AnyView(DefaultCompanySidebar())
+                    )
+                }
+                
                 SearchBar(
                     text: $searchText,
                     disabled: false,
@@ -62,7 +76,6 @@ struct CompanyDashboard: View {
             .padding()
         }
         .background(Theme.toolbarColour)
-//        .onAppear(perform: load)
     }
 
     @ViewBuilder private var recent: some View {
@@ -88,7 +101,7 @@ struct CompanyDashboard: View {
         c.id = UUID()
         c.alive = true
         c.abbreviation = "IC"
-        c.pid = 1
+        c.pid = Int64.random(in: 1..<1000000000000001)
 
         PersistenceController.shared.save()
     }
