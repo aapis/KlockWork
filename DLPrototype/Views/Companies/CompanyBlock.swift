@@ -19,11 +19,7 @@ struct CompanyBlock: View {
 
     var body: some View {
         Button {
-            nav.view = AnyView(
-                CompanyView(company: company)
-                    .environmentObject(jm)
-                    .environmentObject(updater)
-                )
+            nav.view = AnyView(CompanyView(company: company))
             nav.parent = .companies
         } label: {
             VStack(spacing: 0) {
@@ -36,9 +32,12 @@ struct CompanyBlock: View {
                         Text(company.name!)
                             .font(.title3)
                             .fontWeight(.bold)
-                            .padding([.leading, .trailing, .top])
+
+                        Text("\(company.projects?.count ?? 0) Projects")
+                        Text("0 Jobs")
                         Spacer()
                     }
+                    .padding([.leading, .trailing, .top])
                 }
             }
         }

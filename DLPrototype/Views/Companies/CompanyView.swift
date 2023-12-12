@@ -9,35 +9,27 @@
 import SwiftUI
 
 struct CompanyView: View {
-    public var company: Company?
+    public var company: Company
      
     var body: some View {
         VStack{}
-//        VStack(alignment: .leading) {
-//            VStack(alignment: .leading, spacing: 13) {
-//                TopBar
-//
-//                HStack(alignment: .top, spacing: 5) {
-//                    VStack(alignment: .leading) {
-//                        FancyTextField(placeholder: "Title", lineLimit: 1, onSubmit: {}, disabled: revisionNotLatest(), text: $title)
-//                        FancyTextField(placeholder: "Content", lineLimit: 20, onSubmit: {}, transparent: true, disabled: revisionNotLatest(), text: $content)
-//                            .scrollIndicators(.never)
-//                    }
-//
-//                    if sidebarVisible {
-//                        SideBar
-//                    }
-//                }
-//
-//                HelpBar
-//            }
-//            .padding()
-//        }
-//        .background(Theme.toolbarColour)
-//        .onAppear(perform: {createBindings(note: note)})
-//        .onChange(of: note, perform: createBindings)
+        VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 13) {
+                HStack {
+                    Text("HI")
+                    Spacer()
+                }
+            }
+            .padding()
+        }
+        .background(Theme.toolbarColour)
+        .onAppear(perform: actionOnAppear)
     }
+}
 
+extension CompanyView {
+    private func actionOnAppear() -> Void {
+    }
 }
 
 //struct CompanyView_Previews: PreviewProvider {

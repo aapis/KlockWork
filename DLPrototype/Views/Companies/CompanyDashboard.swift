@@ -71,8 +71,6 @@ struct CompanyDashboard: View {
                 LazyVGrid(columns: columns, alignment: .leading) {
                     ForEach(filter(companies)) { company in
                         CompanyBlock(company: company)
-                            .environmentObject(jm)
-                            .environmentObject(updater)
                     }
                 }
             }
@@ -81,14 +79,16 @@ struct CompanyDashboard: View {
         }
     }
 
+    // TODO: remove
     private func load() -> Void {
         let c = Company(context: moc)
-        c.name = "YellowPencil"
+        c.name = "Independent Contracting"
         c.createdDate = Date()
         c.lastUpdate = Date()
         c.id = UUID()
         c.alive = true
-        c.abbreviation = "YP"
+        c.abbreviation = "IC"
+        c.pid = 1
 
         PersistenceController.shared.save()
     }
