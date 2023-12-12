@@ -1,14 +1,14 @@
 //
-//  DefaultPlanningSidebar.swift
+//  DefaultCompanySidebar.swift
 //  DLPrototype
 //
-//  Created by Ryan Priebe on 2023-08-24.
+//  Created by Ryan Priebe on 2023-12-11.
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
 import SwiftUI
 
-struct DefaultPlanningSidebar: View {
+struct DefaultCompanySidebar: View {
     @State public var date: Date = Date()
 
     @EnvironmentObject public var nav: Navigation
@@ -16,7 +16,7 @@ struct DefaultPlanningSidebar: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 5) {
-                AllJobsPickerWidget(location: .content)
+                Outline()
             }
             Spacer()
         }

@@ -23,6 +23,7 @@ struct ProjectView: View {
     @State private var selectAllToggleAssociated: Bool = false
     @State private var selectAllToggleUnassociated: Bool = false
     @State private var isDeleteAlertShowing: Bool = false
+    @State private var selectedCompany: Int = 0
     // for Toolbar
     @State private var isShowingAlert: Bool = false
     @State private var buttons: [ToolbarButton] = []
@@ -99,11 +100,16 @@ struct ProjectView: View {
                 deselectAll()
             }
         }
+        .onChange(of: selectedCompany) { _ in
+            update()
+        }
     }
     
     // MARK: form view
     @ViewBuilder
     var form: some View {
+        Title(text: "Editing: \($name.wrappedValue)")
+
         FancyTextField(placeholder: "Project name", lineLimit: 1, onSubmit: update, text: $name)
 
         HStack {
@@ -121,6 +127,14 @@ struct ProjectView: View {
                 })
         }
         FancyDivider()
+
+        HStack {
+            if let c = project.company {
+                CompanyPicker(onChange: {company,_ in selectedCompany = company}, selected: Int(c.pid))
+            } else {
+                CompanyPicker(onChange: {company,_ in selectedCompany = company})
+            }
+        }
 
         HStack(spacing: 0) {
             Rectangle()
@@ -439,6 +453,10 @@ extension ProjectView {
         project.jobs = []
         project.alive = alive
         project.lastUpdate = Date()
+
+        if let company = CoreDataCompanies(moc: moc).byPid(selectedCompany) {
+            project.company = company
+        }
 
         if colourChanged {
             project.colour = Color.randomStorable()

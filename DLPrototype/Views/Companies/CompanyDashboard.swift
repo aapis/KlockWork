@@ -49,6 +49,20 @@ struct CompanyDashboard: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
+                HStack {
+                    Title(text: "\(companies.count) Companies")
+                    Spacer()
+                    FancyButtonv2(
+                        text: "New company",
+                        action: {},
+                        icon: "plus",
+                        showLabel: false,
+                        redirect: AnyView(CompanyCreate()),
+                        pageType: .companies,
+                        sidebar: AnyView(DefaultCompanySidebar())
+                    )
+                }
+                
                 SearchBar(
                     text: $searchText,
                     disabled: false,
@@ -62,7 +76,6 @@ struct CompanyDashboard: View {
             .padding()
         }
         .background(Theme.toolbarColour)
-//        .onAppear(perform: load)
     }
 
     @ViewBuilder private var recent: some View {
@@ -71,8 +84,6 @@ struct CompanyDashboard: View {
                 LazyVGrid(columns: columns, alignment: .leading) {
                     ForEach(filter(companies)) { company in
                         CompanyBlock(company: company)
-                            .environmentObject(jm)
-                            .environmentObject(updater)
                     }
                 }
             }
@@ -81,14 +92,16 @@ struct CompanyDashboard: View {
         }
     }
 
+    // TODO: remove
     private func load() -> Void {
         let c = Company(context: moc)
-        c.name = "YellowPencil"
+        c.name = "Independent Contracting"
         c.createdDate = Date()
         c.lastUpdate = Date()
         c.id = UUID()
         c.alive = true
-        c.abbreviation = "YP"
+        c.abbreviation = "IC"
+        c.pid = Int64.random(in: 1..<1000000000000001)
 
         PersistenceController.shared.save()
     }
