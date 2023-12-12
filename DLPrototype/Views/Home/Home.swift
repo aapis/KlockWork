@@ -52,18 +52,11 @@ struct Home: View {
             ],
             .entities: [
                 SidebarButton(
-                    destination: AnyView(NoteDashboard()),
-                    pageType: .notes,
-                    icon: "note.text",
-                    label: "Notes",
-                    sidebar: AnyView(NoteDashboardSidebar())
-                ),
-                SidebarButton(
-                    destination: AnyView(TaskDashboard()),
-                    pageType: .tasks,
-                    icon: "checklist",
-                    label: "Tasks",
-                    sidebar: AnyView(TaskDashboardSidebar())
+                    destination: AnyView(CompanyDashboard()),
+                    pageType: .companies,
+                    icon: "building.2",
+                    label: "Companies",
+                    sidebar: AnyView(DefaultCompanySidebar())
                 ),
                 SidebarButton(
                     destination: AnyView(ProjectsDashboard()),
@@ -78,6 +71,20 @@ struct Home: View {
                     icon: "hammer",
                     label: "Jobs",
                     sidebar: AnyView(JobDashboardSidebar())
+                ),
+                SidebarButton(
+                    destination: AnyView(NoteDashboard()),
+                    pageType: .notes,
+                    icon: "note.text",
+                    label: "Notes",
+                    sidebar: AnyView(NoteDashboardSidebar())
+                ),
+                SidebarButton(
+                    destination: AnyView(TaskDashboard()),
+                    pageType: .tasks,
+                    icon: "checklist",
+                    label: "Tasks",
+                    sidebar: AnyView(TaskDashboardSidebar())
                 )
             ]
         ]
