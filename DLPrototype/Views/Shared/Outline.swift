@@ -16,24 +16,31 @@ struct Outline: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            ForEach(companies) { company in
-                Group {
-                    FancyTextLink(text: company.name!, destination: AnyView(CompanyView(company: company)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
-                    ProjectOutline(company: company)
+            VStack(alignment: .leading, spacing: 0) {
+                HStack {
+                    Spacer()
                 }
-            }
-            
-            if unowned.count > 0 {
-                Text("Unowned Projects")
-                ForEach(unowned) { project in
-                    HStack {
-                        Image(systemName: "arrow.turn.down.right")
-                        FancyTextLink(text: project.name!, destination: AnyView(ProjectView(project: project)), pageType: .projects, sidebar: AnyView(ProjectsDashboardSidebar()))
+                ForEach(companies) { company in
+                    Group {
+                        FancyTextLink(text: company.name!, destination: AnyView(CompanyView(company: company)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
+                        ProjectOutline(company: company)
                     }
-                    .padding([.leading], 10)
+                }
+
+                if unowned.count > 0 {
+                    Text("Unowned Projects")
+                    ForEach(unowned) { project in
+                        HStack {
+                            Image(systemName: "arrow.turn.down.right")
+                            FancyTextLink(text: project.name!, destination: AnyView(ProjectView(project: project)), pageType: .projects, sidebar: AnyView(ProjectsDashboardSidebar()))
+                        }
+                        .padding([.leading], 10)
+                    }
                 }
             }
+            .padding(5)
         }
+        .background(Theme.base.opacity(0.2))
     }
 }
 
