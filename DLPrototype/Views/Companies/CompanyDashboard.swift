@@ -9,8 +9,6 @@
 import SwiftUI
 
 struct CompanyDashboard: View {
-    public var defaultCompany: Company? = nil
-
     @State private var searchText: String = ""
     @State private var selected: Int = 0
 
@@ -18,7 +16,6 @@ struct CompanyDashboard: View {
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
-    @EnvironmentObject public var jm: CoreDataJob
 
     @FetchRequest public var companies: FetchedResults<Company>
 
@@ -27,21 +24,13 @@ struct CompanyDashboard: View {
     }
 
     public init(company: Company? = nil) {
-        self.defaultCompany = company
-
         let request: NSFetchRequest<Company> = Company.fetchRequest()
         request.sortDescriptors = [
             NSSortDescriptor(keyPath: \Company.lastUpdate?, ascending: false),
             NSSortDescriptor(keyPath: \Company.createdDate?, ascending: false)
         ]
 
-        if self.defaultCompany != nil {
-            let byJobPredicate = NSPredicate(format: "ANY id = %@", self.defaultCompany!.id!.uuidString)
-            let predicates = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: [byJobPredicate])
-            request.predicate = predicates
-        } else {
-            request.predicate = NSPredicate(format: "alive = true")
-        }
+        request.predicate = NSPredicate(format: "alive = true")
 
         _companies = FetchRequest(fetchRequest: request, animation: .easeInOut)
     }
@@ -58,6 +47,15 @@ struct CompanyDashboard: View {
                         icon: "plus",
                         showLabel: false,
                         redirect: AnyView(CompanyCreate()),
+                        pageType: .companies,
+                        sidebar: AnyView(DefaultCompanySidebar())
+                    )
+                    FancyButtonv2(
+                        text: "blergh",
+                        action: deleteAll,
+                        icon: "minus",
+                        showLabel: false,
+                        redirect: AnyView(CompanyDashboard()),
                         pageType: .companies,
                         sidebar: AnyView(DefaultCompanySidebar())
                     )
@@ -92,64 +90,18 @@ struct CompanyDashboard: View {
         }
     }
 
-    // TODO: remove
-    private func load() -> Void {
-        let c = Company(context: moc)
-        c.name = "Independent Contracting"
-        c.createdDate = Date()
-        c.lastUpdate = Date()
-        c.id = UUID()
-        c.alive = true
-        c.abbreviation = "IC"
-        c.pid = Int64.random(in: 1..<1000000000000001)
 
+}
+
+extension CompanyDashboard {
+    private func deleteAll() -> Void {
+        let comps = CoreDataCompanies(moc: moc).all()
+
+        for comp in comps {
+            moc.delete(comp)
+        }
         PersistenceController.shared.save()
     }
-
-    // TODO: keep this, but make it optional
-//    @ViewBuilder
-//    var allTable: some View {
-//        Grid(horizontalSpacing: 1, verticalSpacing: 1) {
-//            HStack(spacing: 0) {
-//                GridRow {
-//                    Group {
-//                        ZStack(alignment: .leading) {
-//                            Theme.headerColour
-//                            Text("Name")
-//                                .padding()
-//                        }
-//                    }
-//                    Group {
-//                        ZStack {
-//                            Theme.headerColour
-//                            Text("Versions")
-//                                .padding()
-//                        }
-//                    }
-//                    .frame(width: 100)
-//                }
-//            }
-//            .frame(height: 46)
-//
-//            allRows
-//        }
-//        .font(Theme.font)
-//    }
-//
-//    @ViewBuilder
-//    var allRows: some View {
-//        ScrollView(showsIndicators: false) {
-//            if companies .count > 0 {
-//                VStack(alignment: .leading, spacing: 1) {
-//                    ForEach(filter(companies)) { note in
-//                        NoteRow(note: note)
-//                    }
-//                }
-//            } else {
-//                Text("No notes for this query")
-//            }
-//        }
-//    }
 
     private func filter(_ companies: FetchedResults<Company>) -> [Company] {
         return SearchHelper(bucket: companies).findInCompanies($searchText)

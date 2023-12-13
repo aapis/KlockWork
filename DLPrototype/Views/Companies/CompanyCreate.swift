@@ -49,7 +49,7 @@ struct CompanyCreate: View {
 extension CompanyCreate {
     private func create() -> Void {
         let company = Company(context: moc)
-        company.pid = Int64.random(in: 1..<1000000000000001)
+        company.pid = CoreDataCompanies(moc: moc).nextPid
         company.name = name
         company.createdDate = Date()
         company.colour = Color.randomStorable()

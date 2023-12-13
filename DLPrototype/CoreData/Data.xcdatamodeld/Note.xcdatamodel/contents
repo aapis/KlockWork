@@ -19,7 +19,7 @@
     <entity name="Company" representedClassName="Company" syncable="YES" codeGenerationType="class">
         <attribute name="abbreviation" optional="YES" attributeType="String"/>
         <attribute name="alive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
-        <attribute name="colour" optional="YES" attributeType="Transformable" customClassName="[Double]"/>
+        <attribute name="colour" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[Double]"/>
         <attribute name="createdDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="isDefault" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>

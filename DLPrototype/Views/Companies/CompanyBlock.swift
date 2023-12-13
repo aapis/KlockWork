@@ -18,6 +18,7 @@ struct CompanyBlock: View {
     var body: some View {
         Button {
             nav.setView(AnyView(CompanyView(company: company)))
+            nav.setSidebar(AnyView(DefaultCompanySidebar()))
             nav.setParent(.companies)
             nav.setId()
         } label: {

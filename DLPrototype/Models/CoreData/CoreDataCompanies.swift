@@ -13,6 +13,10 @@ public class CoreDataCompanies: ObservableObject {
 
     private let lock = NSLock()
 
+    public var nextPid: Int64 {
+        return Int64(count(NSPredicate(format: "name != nil")) + 1)
+    }
+
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
     }
@@ -35,6 +39,14 @@ public class CoreDataCompanies: ObservableObject {
     public func alive() -> [Company] {
         let predicate = NSPredicate(
             format: "alive = true"
+        )
+
+        return query(predicate)
+    }
+
+    public func all() -> [Company] {
+        let predicate = NSPredicate(
+            format: "name != nil"
         )
 
         return query(predicate)

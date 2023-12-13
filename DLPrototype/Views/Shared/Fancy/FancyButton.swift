@@ -94,13 +94,13 @@ public struct FancyButtonv2: View {
                     if let ac = action {
                         ac()
                     }
-
-                    nav.view = destination
-                    nav.sidebar = sidebar
-                    nav.pageId = UUID()
+                    
+                    nav.setView(destination)
+                    nav.setSidebar(sidebar!)
+                    nav.setId()
 
                     if let pType = pageType {
-                        nav.parent = pType
+                        nav.setParent(pType)
                     }
                 }) {
                     button

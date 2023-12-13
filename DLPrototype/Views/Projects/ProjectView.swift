@@ -129,11 +129,7 @@ struct ProjectView: View {
         FancyDivider()
 
         HStack {
-            if let c = project.company {
-                CompanyPicker(onChange: {company,_ in selectedCompany = company}, selected: Int(c.pid))
-            } else {
-                CompanyPicker(onChange: {company,_ in selectedCompany = company})
-            }
+            CompanyPicker(onChange: {company,_ in selectedCompany = company}, selected: project.company != nil ? Int(project.company!.pid) : 0)
         }
 
         HStack(spacing: 0) {
@@ -453,10 +449,7 @@ extension ProjectView {
         project.jobs = []
         project.alive = alive
         project.lastUpdate = Date()
-
-        if let company = CoreDataCompanies(moc: moc).byPid(selectedCompany) {
-            project.company = company
-        }
+        project.company = CoreDataCompanies(moc: moc).byPid(selectedCompany)
 
         if colourChanged {
             project.colour = Color.randomStorable()
@@ -537,6 +530,10 @@ extension ProjectView {
         allUnOwned = jobModel.unowned()
         name = project.name!
         created = project.created!
+
+        if let company = project.company {
+            selectedCompany = Int(company.pid)
+        }
 
         if project.lastUpdate != nil {
             lastUpdate = project.lastUpdate!
