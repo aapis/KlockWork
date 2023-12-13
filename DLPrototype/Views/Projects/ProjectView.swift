@@ -549,6 +549,10 @@ extension ProjectView {
         if project.lastUpdate != nil {
             lastUpdate = project.lastUpdate!
         }
+        
+        if let abb = project.abbreviation {
+            abbreviation = abb
+        }
 
         if project.jobs!.count > 0 {
             let existingJobs = project.jobs?.allObjects as! [Job]
