@@ -24,10 +24,10 @@ struct FancyTextLink: View {
     var body: some View {
         VStack {
             Button {
-                nav.view = destination
-                nav.parent = pageType
-                nav.sidebar = sidebar
-                nav.pageId = UUID()
+                nav.setView(destination!)
+                nav.setParent(pageType)
+                nav.setSidebar(sidebar!)
+                nav.setId()
             } label: {
                 if showIcon! {
                     Image(systemName: "link")
