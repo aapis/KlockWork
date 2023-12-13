@@ -91,6 +91,7 @@
         <relationship name="tasks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LogTask" inverseName="plans" inverseEntity="LogTask"/>
     </entity>
     <entity name="Project" representedClassName="Project" syncable="YES" codeGenerationType="class">
+        <attribute name="abbreviation" optional="YES" attributeType="String"/>
         <attribute name="alive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="colour" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[Double]"/>
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

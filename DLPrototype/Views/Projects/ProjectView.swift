@@ -24,6 +24,7 @@ struct ProjectView: View {
     @State private var selectAllToggleUnassociated: Bool = false
     @State private var isDeleteAlertShowing: Bool = false
     @State private var selectedCompany: Int = 0
+    @State private var abbreviation: String = ""
     // for Toolbar
     @State private var isShowingAlert: Bool = false
     @State private var buttons: [ToolbarButton] = []
@@ -45,18 +46,6 @@ struct ProjectView: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
-                HStack {
-                    Spacer()
-                    
-                    if lastUpdate != nil {
-                        Text("Last updated: \(DateHelper.shortDateWithTime(lastUpdate!))")
-                            .font(Theme.font)
-                            .onChange(of: project.lastUpdate) { _ in
-                                lastUpdate = project.lastUpdate
-                            }
-                    }
-                }
-
                 form.id(updater.ids["pv.form"])
 
                 HStack {
@@ -75,7 +64,7 @@ struct ProjectView: View {
                     }
 
                     Spacer()
-                    FancyButton(text: "Update project", action: update)
+                    FancyButtonv2(text: "Update project", action: update)
                 }
                 
                 Spacer()
@@ -103,6 +92,17 @@ struct ProjectView: View {
         .onChange(of: selectedCompany) { _ in
             update()
         }
+        .onChange(of: name) { newName in
+            abbreviation = StringHelper.abbreviate(newName)
+
+            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { timer in
+                self.update()
+                timer.invalidate()
+            }
+        }
+        .onChange(of: project.lastUpdate) { _ in
+            lastUpdate = project.lastUpdate
+        }
     }
     
     // MARK: form view
@@ -110,31 +110,16 @@ struct ProjectView: View {
     var form: some View {
         Title(text: "Editing: \($name.wrappedValue)")
 
-        FancyTextField(placeholder: "Project name", lineLimit: 1, onSubmit: update, text: $name)
-
-        HStack {
-            Toggle("Project is active", isOn: $alive)
-                .onAppear(perform: {
-                    if project.alive {
-                        alive = true
-                    } else {
-                        alive = false
-                    }
-
-                    project.alive = alive
-
-                    PersistenceController.shared.save()
-                })
-        }
-        FancyDivider()
-
-        HStack {
-            CompanyPicker(onChange: {company,_ in selectedCompany = company}, selected: project.company != nil ? Int(project.company!.pid) : 0)
-        }
+        FancyTextField(placeholder: "Name", lineLimit: 1, onSubmit: update, showLabel: true, text: $name)
+        FancyTextField(placeholder: "Abbreviation", lineLimit: 1, onSubmit: {}, showLabel: true, text: $abbreviation)
+        CompanyPicker(onChange: {company,_ in selectedCompany = company}, selected: project.company != nil ? Int(project.company!.pid) : 0)
+        FancyToggle(entity: project)
 
         HStack(spacing: 0) {
+            FancyLabel(text: "Colour")
+                .padding([.trailing], 10)
             Rectangle()
-                .frame(width: 15)
+                .frame(width: 20)
                 .background(Color.fromStored(project.colour ?? Theme.rowColourAsDouble))
                 .foregroundColor(.clear)
             
@@ -152,10 +137,36 @@ struct ProjectView: View {
                 colour = Color.fromStored(project.colour ?? Theme.rowColourAsDouble).description.debugDescription
             })
             
-            FancyButton(text: "Regenerate colour", action: regenerateColour, icon: "arrow.counterclockwise", showLabel: false)
-                .padding(.leading)
+            FancyButtonv2(text: "Regenerate colour", action: regenerateColour, icon: "arrow.counterclockwise", showLabel: false)
+                .padding(.leading, 5)
         }.frame(height: 40)
         
+        if let createdAt = created {
+            HStack {
+                FancyLabel(text: "Created")
+                HStack {
+                    Text("\(DateHelper.shortDateWithTime(createdAt))")
+                        .padding()
+                        .help("Not editable")
+                    Spacer()
+                }
+                .background(Theme.textBackground)
+            }
+        }
+
+        if let updated = lastUpdate {
+            HStack {
+                FancyLabel(text: "Last updated")
+                HStack {
+                    Text("\(DateHelper.shortDateWithTime(updated))")
+                        .padding()
+                        .help("Not editable")
+                    Spacer()
+                }
+                .background(Theme.textBackground)
+            }
+        }
+
         FancyDivider()
         
         toolbar
@@ -537,6 +548,10 @@ extension ProjectView {
 
         if project.lastUpdate != nil {
             lastUpdate = project.lastUpdate!
+        }
+        
+        if let abb = project.abbreviation {
+            abbreviation = abb
         }
 
         if project.jobs!.count > 0 {

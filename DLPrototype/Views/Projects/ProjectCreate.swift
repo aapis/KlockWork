@@ -66,7 +66,7 @@ struct ProjectCreate: View {
     
     @ViewBuilder
     var form: some View {
-        FancyTextField(placeholder: "Project name", lineLimit: 1, onSubmit: {}, text: $name)
+        FancyTextField(placeholder: "Project name", lineLimit: 1, onSubmit: {}, showLabel: true, text: $name)
         CompanyPicker(onChange: {company,_ in selectedCompany = company})
         FancyDivider()
         
@@ -111,9 +111,7 @@ struct ProjectCreate: View {
                         Group {
                             ZStack {
                                 Theme.rowColour
-                                Button(action: {selectJob(job)}) {
-                                    Text("Add")
-                                }
+                                FancyButtonv2(text: "Associate job", action: {selectJob(job)}, icon: "plus", showLabel: false, size: .tiny, type: .clear)
                             }
                         }
                         .frame(width: 60)

@@ -45,14 +45,14 @@ struct Outline: View {
                     ForEach(unowned) { project in
                         HStack {
                             Image(systemName: "arrow.turn.down.right")
-                            FancyTextLink(text: project.name!.capitalized, destination: AnyView(ProjectView(project: project)), pageType: .projects, sidebar: AnyView(ProjectsDashboardSidebar()))
+                            FancyTextLink(text: project.name!.capitalized, destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
                                 .help("Edit project: \(project.name!.capitalized)")
                         }
                         .padding([.leading], 10)
                     }
                 }
             }
-            .padding(5)
+            .padding(10)
         }
         .background(Theme.base.opacity(0.2))
         .onAppear(perform: actionOnAppear)
@@ -99,7 +99,7 @@ struct ProjectOutline: View {
                 ForEach(projects) { project in
                     HStack {
                         Image(systemName: "arrow.turn.down.right")
-                        FancyTextLink(text: project.name!.capitalized, destination: AnyView(ProjectView(project: project)), pageType: .projects, sidebar: AnyView(ProjectsDashboardSidebar()))
+                        FancyTextLink(text: project.name!.capitalized, destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
                             .help("Edit project: \(project.name!.capitalized)")
                     }
                     .padding([.leading], 10)
