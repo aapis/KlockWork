@@ -24,6 +24,7 @@ struct ProjectView: View {
     @State private var selectAllToggleUnassociated: Bool = false
     @State private var isDeleteAlertShowing: Bool = false
     @State private var selectedCompany: Int = 0
+    @State private var abbreviation: String = ""
     // for Toolbar
     @State private var isShowingAlert: Bool = false
     @State private var buttons: [ToolbarButton] = []
@@ -103,6 +104,14 @@ struct ProjectView: View {
         .onChange(of: selectedCompany) { _ in
             update()
         }
+        .onChange(of: name) { newName in
+            abbreviation = StringHelper.abbreviate(newName)
+
+            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { timer in
+                self.update()
+                timer.invalidate()
+            }
+        }
     }
     
     // MARK: form view
@@ -110,29 +119,13 @@ struct ProjectView: View {
     var form: some View {
         Title(text: "Editing: \($name.wrappedValue)")
 
-        FancyTextField(placeholder: "Project name", lineLimit: 1, onSubmit: update, text: $name)
-
-        HStack {
-            Toggle("Project is active", isOn: $alive)
-                .onAppear(perform: {
-                    if project.alive {
-                        alive = true
-                    } else {
-                        alive = false
-                    }
-
-                    project.alive = alive
-
-                    PersistenceController.shared.save()
-                })
-        }
-        FancyDivider()
-
-        HStack {
-            CompanyPicker(onChange: {company,_ in selectedCompany = company}, selected: project.company != nil ? Int(project.company!.pid) : 0)
-        }
+        FancyTextField(placeholder: "Name", lineLimit: 1, onSubmit: update, showLabel: true, text: $name)
+        FancyTextField(placeholder: "Abbreviation", lineLimit: 1, onSubmit: {}, showLabel: true, text: $abbreviation)
+        CompanyPicker(onChange: {company,_ in selectedCompany = company}, selected: project.company != nil ? Int(project.company!.pid) : 0)
+        FancyToggle(entity: project)
 
         HStack(spacing: 0) {
+            FancyLabel(text: "Colour")
             Rectangle()
                 .frame(width: 15)
                 .background(Color.fromStored(project.colour ?? Theme.rowColourAsDouble))

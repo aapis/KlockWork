@@ -38,15 +38,23 @@ struct CompanyPicker: View {
 
     var body: some View {
         HStack(spacing: 5) {
-            Text("Company: ")
-            FancyPicker(
-                onChange: onChange,
-                items: pickerItems,
-                transparent: transparent,
-                labelText: labelText,
-                showLabel: showLabel,
-                defaultSelected: selected
-            )
+            VStack {
+                FancyLabel(text: "Company")
+            }
+
+            HStack {
+                FancyPicker(
+                    onChange: onChange,
+                    items: pickerItems,
+                    transparent: transparent,
+                    labelText: labelText,
+                    showLabel: showLabel,
+                    defaultSelected: selected
+                )
+                .padding()
+                Spacer()
+            }
+            .background(Theme.textBackground)
         }
     }
 }

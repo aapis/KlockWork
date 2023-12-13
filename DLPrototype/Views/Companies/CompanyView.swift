@@ -31,8 +31,8 @@ struct CompanyView: View {
                     }
                 }
 
-                FancyTextField(placeholder: "Legal name", lineLimit: 1, onSubmit: {}, text: $name)
-                FancyTextField(placeholder: "Abbreviation (i.e. City of New York = CONY)", lineLimit: 1, onSubmit: {}, text: $abbreviation)
+                FancyTextField(placeholder: "Legal name", lineLimit: 1, onSubmit: {}, showLabel: true, text: $name)
+                FancyTextField(placeholder: "Abbreviation", lineLimit: 1, onSubmit: {}, showLabel: true, text: $abbreviation)
                 FancyDivider()
 
                 ManageOwnedProjects(company: company)

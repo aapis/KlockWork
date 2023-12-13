@@ -12,7 +12,6 @@ import SwiftUI
 struct FancyTextField: View {
     public var placeholder: String
     public var lineLimit: Int
-//    public var onSubmit: () -> Void
     public var onSubmit: (() -> Void)? = nil
     public var transparent: Bool? = false
     public var disabled: Bool? = false
@@ -25,11 +24,13 @@ struct FancyTextField: View {
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
     
     var body: some View {
-        HStack {
+        HStack(spacing: 5) {
             if showLabel {
                 Text(placeholder)
+                    .padding([.trailing], 10)
                     .font(Theme.font)
-                    .frame(width: 100)
+                    .frame(width: 120, height: 45, alignment: .trailing)
+                    .background(Theme.textLabelBackground)
             }
             
             if lineLimit == 1 {
