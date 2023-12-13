@@ -50,15 +50,6 @@ struct CompanyDashboard: View {
                         pageType: .companies,
                         sidebar: AnyView(DefaultCompanySidebar())
                     )
-                    FancyButtonv2(
-                        text: "blergh",
-                        action: deleteAll,
-                        icon: "minus",
-                        showLabel: false,
-                        redirect: AnyView(CompanyDashboard()),
-                        pageType: .companies,
-                        sidebar: AnyView(DefaultCompanySidebar())
-                    )
                 }
                 
                 SearchBar(
@@ -79,7 +70,7 @@ struct CompanyDashboard: View {
     @ViewBuilder private var recent: some View {
         if companies.count > 0 {
             ScrollView(showsIndicators: false) {
-                LazyVGrid(columns: columns, alignment: .leading) {
+                LazyVGrid(columns: columns, alignment: .leading, spacing: 10) {
                     ForEach(filter(companies)) { company in
                         CompanyBlock(company: company)
                     }
@@ -89,20 +80,9 @@ struct CompanyDashboard: View {
             Text("No company names matched your query")
         }
     }
-
-
 }
 
 extension CompanyDashboard {
-    private func deleteAll() -> Void {
-        let comps = CoreDataCompanies(moc: moc).all()
-
-        for comp in comps {
-            moc.delete(comp)
-        }
-        PersistenceController.shared.save()
-    }
-
     private func filter(_ companies: FetchedResults<Company>) -> [Company] {
         return SearchHelper(bucket: companies).findInCompanies($searchText)
     }

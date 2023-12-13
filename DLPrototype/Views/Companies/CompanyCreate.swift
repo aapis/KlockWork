@@ -24,6 +24,10 @@ struct CompanyCreate: View {
                 
                 FancyTextField(placeholder: "Legal name", lineLimit: 1, onSubmit: {}, text: $name)
                 FancyTextField(placeholder: "Abbreviation (i.e. City of New York = CONY)", lineLimit: 1, onSubmit: {}, text: $abbreviation)
+                    .onChange(of: name) { newName in
+                        abbreviation = StringHelper.abbreviate(newName)
+                    }
+
                 FancyDivider()
 
                 HStack {

@@ -43,6 +43,7 @@
 		5333E7A12A0ECE0D00EE4A36 /* FancyTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5333E7A02A0ECE0D00EE4A36 /* FancyTab.swift */; };
 		5334F2642B28F14C0079D2E7 /* CompanyCreate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F2632B28F14C0079D2E7 /* CompanyCreate.swift */; };
 		5334F2662B28FA520079D2E7 /* Outline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F2652B28FA520079D2E7 /* Outline.swift */; };
+		5334F2682B2963B60079D2E7 /* StringHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F2672B2963B60079D2E7 /* StringHelper.swift */; };
 		5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5AD296CFF83000051B1 /* FileHelper.swift */; };
 		5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B2296D17EB000051B1 /* TaskDashboard.swift */; };
 		5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B4296D1FA7000051B1 /* TaskView.swift */; };
@@ -244,6 +245,7 @@
 		5333E7A02A0ECE0D00EE4A36 /* FancyTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyTab.swift; sourceTree = "<group>"; };
 		5334F2632B28F14C0079D2E7 /* CompanyCreate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyCreate.swift; sourceTree = "<group>"; };
 		5334F2652B28FA520079D2E7 /* Outline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Outline.swift; sourceTree = "<group>"; };
+		5334F2672B2963B60079D2E7 /* StringHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringHelper.swift; sourceTree = "<group>"; };
 		5335A5AD296CFF83000051B1 /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		5335A5B2296D17EB000051B1 /* TaskDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDashboard.swift; sourceTree = "<group>"; };
 		5335A5B4296D1FA7000051B1 /* TaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskView.swift; sourceTree = "<group>"; };
@@ -416,6 +418,7 @@
 				5335A5AD296CFF83000051B1 /* FileHelper.swift */,
 				533E40692970F5610007785A /* SearchHelper.swift */,
 				53790C0C2A74CB6000D3FFD4 /* UrlHelper.swift */,
+				5334F2672B2963B60079D2E7 /* StringHelper.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1243,6 +1246,7 @@
 				53790C032A72F18200D3FFD4 /* SidebarButton.swift in Sources */,
 				53F10FE0296E77BE0048D040 /* CoreDataJob.swift in Sources */,
 				533E40652970DA640007785A /* ViewUpdater.swift in Sources */,
+				5334F2682B2963B60079D2E7 /* StringHelper.swift in Sources */,
 				53F589682998437D00843B32 /* JobResult.swift in Sources */,
 				535DDE5E2A7982F3008350D4 /* SidebarItem.swift in Sources */,
 				53E202702A80984400B4DF70 /* DateSelectorWidget.swift in Sources */,
