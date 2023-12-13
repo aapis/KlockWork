@@ -19,18 +19,23 @@ struct CompanyView: View {
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {
-        VStack{}
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 13) {
-
                 HStack {
-                    Title(text: "Editing: \(company.name!)")
+                    Title(text: "Editing: \(company.name!.capitalized)")
                     Spacer()
+
+                    if company.isDefault {
+                        Image(systemName: "building.2")
+                            .help("This is your default company. Change it in Settings > General")
+                    }
                 }
 
                 FancyTextField(placeholder: "Legal name", lineLimit: 1, onSubmit: {}, text: $name)
                 FancyTextField(placeholder: "Abbreviation (i.e. City of New York = CONY)", lineLimit: 1, onSubmit: {}, text: $abbreviation)
                 FancyDivider()
+
+                ManageOwnedProjects(company: company)
 
                 HStack {
                     FancyButtonv2(
@@ -65,6 +70,18 @@ struct CompanyView: View {
         }
         .background(Theme.toolbarColour)
         .onAppear(perform: actionOnAppear)
+        .onChange(of: name) { newName in
+            abbreviation = StringHelper.abbreviate(newName)
+
+            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { timer in
+                self.save()
+                timer.invalidate()
+            }
+        }
+        .onChange(of: company) { newCompany in
+            name = newCompany.name!
+            abbreviation = newCompany.abbreviation!
+        }
     }
 }
 
@@ -83,6 +100,15 @@ extension CompanyView {
 
     private func actionSoftDelete() -> Void {
         company.alive = false
+        
+        if let projects = company.projects {
+            let pArr = projects.allObjects as! [Project]
+
+            for project in pArr {
+                project.company = nil
+            }
+        }
+
         PersistenceController.shared.save()
 
         nav.setId()

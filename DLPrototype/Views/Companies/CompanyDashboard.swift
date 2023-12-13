@@ -13,6 +13,7 @@ struct CompanyDashboard: View {
     @State private var selected: Int = 0
 
     @AppStorage("notes.columns") private var numColumns: Int = 3
+    @AppStorage("general.defaultCompany") public var defaultCompany: Int = 0
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
@@ -23,44 +24,32 @@ struct CompanyDashboard: View {
         Array(repeating: .init(.flexible(minimum: 100)), count: numColumns)
     }
 
-    public init(company: Company? = nil) {
-        let request: NSFetchRequest<Company> = Company.fetchRequest()
-        request.sortDescriptors = [
-            NSSortDescriptor(keyPath: \Company.lastUpdate?, ascending: false),
-            NSSortDescriptor(keyPath: \Company.createdDate?, ascending: false)
-        ]
-
-        request.predicate = NSPredicate(format: "alive = true")
-
-        _companies = FetchRequest(fetchRequest: request, animation: .easeInOut)
-    }
-
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
                 HStack {
-                    Title(text: "\(companies.count) Companies")
+                    Title(text: "Projects & Companies")
                     Spacer()
                     FancyButtonv2(
-                        text: "New company",
+                        text: "New Company",
                         action: {},
-                        icon: "plus",
-                        showLabel: false,
+                        icon: "building.2",
                         redirect: AnyView(CompanyCreate()),
                         pageType: .companies,
                         sidebar: AnyView(DefaultCompanySidebar())
                     )
                     FancyButtonv2(
-                        text: "blergh",
-                        action: deleteAll,
-                        icon: "minus",
-                        showLabel: false,
-                        redirect: AnyView(CompanyDashboard()),
+                        text: "New Project",
+                        action: {},
+                        icon: "folder.badge.plus",
+                        redirect: AnyView(ProjectCreate()),
                         pageType: .companies,
                         sidebar: AnyView(DefaultCompanySidebar())
                     )
                 }
-                
+
+                About()
+
                 SearchBar(
                     text: $searchText,
                     disabled: false,
@@ -72,14 +61,18 @@ struct CompanyDashboard: View {
                 Spacer()
             }
             .padding()
+            .id(updater.ids["companies.dashboard"])
         }
         .background(Theme.toolbarColour)
+        .onChange(of: defaultCompany) { _ in
+            actionOnAppear()
+        }
     }
 
     @ViewBuilder private var recent: some View {
         if companies.count > 0 {
             ScrollView(showsIndicators: false) {
-                LazyVGrid(columns: columns, alignment: .leading) {
+                LazyVGrid(columns: columns, alignment: .leading, spacing: 10) {
                     ForEach(filter(companies)) { company in
                         CompanyBlock(company: company)
                     }
@@ -89,22 +82,42 @@ struct CompanyDashboard: View {
             Text("No company names matched your query")
         }
     }
-
-
 }
 
 extension CompanyDashboard {
-    private func deleteAll() -> Void {
-        let comps = CoreDataCompanies(moc: moc).all()
+    init(company: Company? = nil) {
+        let request: NSFetchRequest<Company> = Company.fetchRequest()
+        request.sortDescriptors = [
+            NSSortDescriptor(keyPath: \Company.name?, ascending: false)
+        ]
 
-        for comp in comps {
-            moc.delete(comp)
-        }
-        PersistenceController.shared.save()
+        request.predicate = NSPredicate(format: "alive = true")
+
+        _companies = FetchRequest(fetchRequest: request, animation: .easeInOut)
     }
 
     private func filter(_ companies: FetchedResults<Company>) -> [Company] {
         return SearchHelper(bucket: companies).findInCompanies($searchText)
+    }
+
+    private func actionOnAppear() -> Void {
+        updater.updateOne("companies.dashboard")
+    }
+}
+
+extension CompanyDashboard {
+    struct About: View {
+        private let copy: String = "Build your data hierarchy by creating companies, which own projects. Projects own jobs, which define what needs to be done."
+
+        var body: some View {
+            VStack {
+                HStack {
+                    Text(copy).padding(15)
+                    Spacer()
+                }
+            }
+            .background(Theme.cOrange)
+        }
     }
 }
 

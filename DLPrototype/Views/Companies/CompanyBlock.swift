@@ -34,7 +34,7 @@ struct CompanyBlock: View {
                                 Image(systemName: "building.2")
                                     .help("Default company")
                             }
-                            Text(company.name!)
+                            Text(company.name!.capitalized)
                                 .font(.title3)
                                 .fontWeight(.bold)
                         }

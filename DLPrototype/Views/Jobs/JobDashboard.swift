@@ -35,11 +35,10 @@ struct JobDashboard: View {
                     )
                 }
 
+                About()
+
                 if let jerb = defaultSelectedJob {
                     JobView(job: jerb).environmentObject(jm)
-                }
-                else {
-                    Text("Perform a search using the sidebar widget or create a new job using the \"New Job\" (or +) button.")
                 }
 
                 Spacer()
@@ -60,5 +59,21 @@ extension JobDashboard {
 
     private func actionOnChange(job: Job?) -> Void {
 
+    }
+}
+
+extension JobDashboard {
+    struct About: View {
+        private let copy: String = "Perform a search using the sidebar widget or create a new job using the \"New Job\" (or +) button."
+
+        var body: some View {
+            VStack {
+                HStack {
+                    Text(copy).padding(15)
+                    Spacer()
+                }
+            }
+            .background(Theme.cOrange)
+        }
     }
 }

@@ -6,7 +6,6 @@
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
 
 struct GeneralSettings: View {
@@ -16,6 +15,7 @@ struct GeneralSettings: View {
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
     @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
     @AppStorage("general.syncColumns") public var syncColumns: Bool = false
+    @AppStorage("general.defaultCompany") public var defaultCompany: Int = 0
 
     var body: some View {
         Form {
@@ -38,8 +38,30 @@ struct GeneralSettings: View {
                 Toggle("Synchronize display and export columns", isOn: $syncColumns)
                     .help("Both table display and data exports will use the same columns set under 'Today > Display columns'")
             }
+
+            Group {
+                Text("Defaults")
+                CompanyPicker(onChange: self.companyPickerCallback, selected: defaultCompany)
+                    .padding([.leading], 10)
+            }
         }
         .padding(20)
+    }
+}
+
+extension GeneralSettings {
+    private func companyPickerCallback(_ cid: Int, _ sender: String?) -> Void {
+        defaultCompany = cid
+        let moc = PersistenceController.shared.container.viewContext
+
+        let companies = CoreDataCompanies(moc: moc).all()
+        for company in companies {
+            company.isDefault = false
+        }
+
+        if let company = CoreDataCompanies(moc: moc).byPid(cid) {
+            company.isDefault = true
+        }
     }
 }
 
