@@ -91,6 +91,15 @@ extension CompanyView {
 
     private func actionSoftDelete() -> Void {
         company.alive = false
+        
+        if let projects = company.projects {
+            let pArr = projects.allObjects as! [Project]
+
+            for project in pArr {
+                project.company = nil
+            }
+        }
+
         PersistenceController.shared.save()
 
         nav.setId()
