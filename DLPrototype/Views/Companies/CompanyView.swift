@@ -65,6 +65,14 @@ struct CompanyView: View {
         }
         .background(Theme.toolbarColour)
         .onAppear(perform: actionOnAppear)
+        .onChange(of: name) { newName in
+            abbreviation = StringHelper.abbreviate(newName)
+
+            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { timer in
+                self.save()
+                timer.invalidate()
+            }
+        }
     }
 }
 
