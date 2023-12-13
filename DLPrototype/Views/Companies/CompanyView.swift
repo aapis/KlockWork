@@ -22,8 +22,13 @@ struct CompanyView: View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 13) {
                 HStack {
-                    Title(text: "Editing: \(company.name!)")
+                    Title(text: "Editing: \(company.name!.capitalized)")
                     Spacer()
+
+                    if company.isDefault {
+                        Image(systemName: "building.2")
+                            .help("This is your default company. Change it in Settings > General")
+                    }
                 }
 
                 FancyTextField(placeholder: "Legal name", lineLimit: 1, onSubmit: {}, text: $name)
@@ -72,6 +77,10 @@ struct CompanyView: View {
                 self.save()
                 timer.invalidate()
             }
+        }
+        .onChange(of: company) { newCompany in
+            name = newCompany.name!
+            abbreviation = newCompany.abbreviation!
         }
     }
 }

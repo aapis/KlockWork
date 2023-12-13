@@ -55,16 +55,17 @@ struct Home: View {
                     destination: AnyView(CompanyDashboard()),
                     pageType: .companies,
                     icon: "building.2",
-                    label: "Companies",
+                    label: "Companies & Projects",
                     sidebar: AnyView(DefaultCompanySidebar())
                 ),
-                SidebarButton(
-                    destination: AnyView(ProjectsDashboard()),
-                    pageType: .projects,
-                    icon: "folder",
-                    label: "Projects",
-                    sidebar: AnyView(ProjectsDashboardSidebar())
-                ),
+                // TODO: hidden for UI/UX testing, remove or uncomment in the future
+//                SidebarButton(
+//                    destination: AnyView(ProjectsDashboard()),
+//                    pageType: .projects,
+//                    icon: "folder",
+//                    label: "Projects",
+//                    sidebar: AnyView(ProjectsDashboardSidebar())
+//                ),
                 SidebarButton(
                     destination: AnyView(JobDashboard()),
                     pageType: .jobs,

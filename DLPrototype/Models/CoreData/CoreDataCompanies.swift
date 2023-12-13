@@ -52,6 +52,20 @@ public class CoreDataCompanies: ObservableObject {
         return query(predicate)
     }
 
+    public func findDefault() -> Company? {
+        let predicate = NSPredicate(
+            format: "isDefault = true"
+        )
+
+        let results = query(predicate)
+
+        if results.isEmpty {
+            return nil
+        }
+
+        return results.first
+    }
+
     private func query(_ predicate: NSPredicate? = nil) -> [Company] {
         lock.lock()
 

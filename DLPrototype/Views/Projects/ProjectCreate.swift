@@ -18,7 +18,8 @@ struct ProjectCreate: View {
     @State private var allUnOwned: [Job] = []
     @State private var selectAllToggle: Bool = false
     @State private var colour: Color = Color.clear
-    
+    @State private var selectedCompany: Int = 0
+
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var jobModel: CoreDataJob
@@ -66,6 +67,7 @@ struct ProjectCreate: View {
     @ViewBuilder
     var form: some View {
         FancyTextField(placeholder: "Project name", lineLimit: 1, onSubmit: {}, text: $name)
+        CompanyPicker(onChange: {company,_ in selectedCompany = company})
         FancyDivider()
         
         HStack {
@@ -158,6 +160,12 @@ struct ProjectCreate: View {
         project.created = Date()
         project.id = UUID()
         project.colour = Color.randomStorable()
+
+        if selectedCompany > 0 {
+            project.company = CoreDataCompanies(moc: moc).byPid(selectedCompany)
+        } else {
+            project.company = CoreDataCompanies(moc: moc).findDefault()
+        }
 
         for job in selectedJobs {
             project.addToJobs(job)
