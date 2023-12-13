@@ -19,10 +19,8 @@ struct CompanyView: View {
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {
-        VStack{}
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 13) {
-
                 HStack {
                     Title(text: "Editing: \(company.name!)")
                     Spacer()
@@ -31,6 +29,8 @@ struct CompanyView: View {
                 FancyTextField(placeholder: "Legal name", lineLimit: 1, onSubmit: {}, text: $name)
                 FancyTextField(placeholder: "Abbreviation (i.e. City of New York = CONY)", lineLimit: 1, onSubmit: {}, text: $abbreviation)
                 FancyDivider()
+
+                ManageOwnedProjects(company: company)
 
                 HStack {
                     FancyButtonv2(

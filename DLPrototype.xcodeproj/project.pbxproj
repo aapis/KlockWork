@@ -44,6 +44,7 @@
 		5334F2642B28F14C0079D2E7 /* CompanyCreate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F2632B28F14C0079D2E7 /* CompanyCreate.swift */; };
 		5334F2662B28FA520079D2E7 /* Outline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F2652B28FA520079D2E7 /* Outline.swift */; };
 		5334F2682B2963B60079D2E7 /* StringHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F2672B2963B60079D2E7 /* StringHelper.swift */; };
+		5334F26A2B2A14F90079D2E7 /* ManageOwnedProjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F2692B2A14F90079D2E7 /* ManageOwnedProjects.swift */; };
 		5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5AD296CFF83000051B1 /* FileHelper.swift */; };
 		5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B2296D17EB000051B1 /* TaskDashboard.swift */; };
 		5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B4296D1FA7000051B1 /* TaskView.swift */; };
@@ -246,6 +247,7 @@
 		5334F2632B28F14C0079D2E7 /* CompanyCreate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyCreate.swift; sourceTree = "<group>"; };
 		5334F2652B28FA520079D2E7 /* Outline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Outline.swift; sourceTree = "<group>"; };
 		5334F2672B2963B60079D2E7 /* StringHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringHelper.swift; sourceTree = "<group>"; };
+		5334F2692B2A14F90079D2E7 /* ManageOwnedProjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageOwnedProjects.swift; sourceTree = "<group>"; };
 		5335A5AD296CFF83000051B1 /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		5335A5B2296D17EB000051B1 /* TaskDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDashboard.swift; sourceTree = "<group>"; };
 		5335A5B4296D1FA7000051B1 /* TaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskView.swift; sourceTree = "<group>"; };
@@ -675,6 +677,7 @@
 				5363B6792A6BB75F00C2FBB8 /* CompanyBlock.swift */,
 				5363B67B2A6BB78900C2FBB8 /* CompanyView.swift */,
 				5334F2632B28F14C0079D2E7 /* CompanyCreate.swift */,
+				5334F2692B2A14F90079D2E7 /* ManageOwnedProjects.swift */,
 			);
 			path = Companies;
 			sourceTree = "<group>";
@@ -1203,6 +1206,7 @@
 				5371BA342A7B2B8F00DEEC21 /* JobRowPlain.swift in Sources */,
 				533AB3F2296CA34600E91A9F /* ManageRecords.swift in Sources */,
 				53DFF075296F124E0051DA91 /* ManageTasks.swift in Sources */,
+				5334F26A2B2A14F90079D2E7 /* ManageOwnedProjects.swift in Sources */,
 				53790C102A74D54C00D3FFD4 /* JobFormValidator.swift in Sources */,
 				5354C8E42AA03C1C001C1779 /* Planning.Row.swift in Sources */,
 				53790C0D2A74CB6000D3FFD4 /* UrlHelper.swift in Sources */,

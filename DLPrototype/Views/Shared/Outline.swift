@@ -15,15 +15,25 @@ struct Outline: View {
     @Environment(\.managedObjectContext) var moc
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            VStack(alignment: .leading, spacing: 0) {
-                HStack {
-                    Spacer()
-                }
-                ForEach(companies) { company in
-                    Group {
-                        FancyTextLink(text: company.name!, destination: AnyView(CompanyView(company: company)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
-                        ProjectOutline(company: company)
+        VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 10) {
+                if companies.count > 0 {
+                    ForEach(companies) { company in
+                        Group {
+                            HStack {
+                                if company.isDefault {
+                                    Image(systemName: "building.2")
+                                }
+                                FancyTextLink(text: company.name!, destination: AnyView(CompanyView(company: company)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
+                                Spacer()
+                            }
+                            ProjectOutline(company: company)
+                        }
+                    }
+                } else {
+                    HStack {
+                        FancyTextLink(text: "No companies yet, create one!", destination: AnyView(CompanyCreate()), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
+                        Spacer()
                     }
                 }
 
@@ -73,12 +83,17 @@ struct ProjectOutline: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            ForEach(projects) { project in
-                HStack {
-                    Image(systemName: "arrow.turn.down.right")
-                    FancyTextLink(text: project.name!, destination: AnyView(ProjectView(project: project)), pageType: .projects, sidebar: AnyView(ProjectsDashboardSidebar()))
+            if projects.count > 0 {
+                ForEach(projects) { project in
+                    HStack {
+                        Image(systemName: "arrow.turn.down.right")
+                        FancyTextLink(text: project.name!, destination: AnyView(ProjectView(project: project)), pageType: .projects, sidebar: AnyView(ProjectsDashboardSidebar()))
+                    }
+                    .padding([.leading], 10)
                 }
-                .padding([.leading], 10)
+            } else {
+                Text("No projects")
+                    .padding([.leading], 10)
             }
         }
     }
