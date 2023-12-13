@@ -13,6 +13,8 @@ struct CompanyView: View {
 
     @State private var name: String = ""
     @State private var abbreviation: String = ""
+    @State private var created: Date? = nil
+    @State private var updated: Date? = nil
     @State private var isDeleteAlertShowing: Bool = false
 
     @Environment(\.managedObjectContext) var moc
@@ -33,6 +35,33 @@ struct CompanyView: View {
 
                 FancyTextField(placeholder: "Legal name", lineLimit: 1, onSubmit: {}, showLabel: true, text: $name)
                 FancyTextField(placeholder: "Abbreviation", lineLimit: 1, onSubmit: {}, showLabel: true, text: $abbreviation)
+                
+                if let created = created {
+                    HStack {
+                        FancyLabel(text: "Created")
+                        HStack {
+                            Text("\(DateHelper.shortDateWithTime(created))")
+                                .padding()
+                                .help("Not editable")
+                            Spacer()
+                        }
+                        .background(Theme.textBackground)
+                    }
+                }
+                
+                if let updated = updated {
+                    HStack {
+                        FancyLabel(text: "Last updated")
+                        HStack {
+                            Text("\(DateHelper.shortDateWithTime(updated))")
+                                .padding()
+                                .help("Not editable")
+                            Spacer()
+                        }
+                        .background(Theme.textBackground)
+                    }
+                }
+
                 FancyDivider()
 
                 ManageOwnedProjects(company: company)
@@ -81,6 +110,8 @@ struct CompanyView: View {
         .onChange(of: company) { newCompany in
             name = newCompany.name!
             abbreviation = newCompany.abbreviation!
+            created = newCompany.createdDate!
+            updated = newCompany.lastUpdate!
         }
     }
 }
@@ -89,11 +120,17 @@ extension CompanyView {
     private func actionOnAppear() -> Void {
         name = company.name!
         abbreviation = company.abbreviation!
+        created = company.createdDate!
+
+        if let updatedAt = company.lastUpdate {
+            updated = updatedAt
+        }
     }
 
     private func save() -> Void {
         company.name = name
         company.abbreviation = abbreviation
+        company.lastUpdate = Date()
 
         PersistenceController.shared.save()
     }

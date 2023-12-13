@@ -46,18 +46,6 @@ struct ProjectView: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
-                HStack {
-                    Spacer()
-                    
-                    if lastUpdate != nil {
-                        Text("Last updated: \(DateHelper.shortDateWithTime(lastUpdate!))")
-                            .font(Theme.font)
-                            .onChange(of: project.lastUpdate) { _ in
-                                lastUpdate = project.lastUpdate
-                            }
-                    }
-                }
-
                 form.id(updater.ids["pv.form"])
 
                 HStack {
@@ -76,7 +64,7 @@ struct ProjectView: View {
                     }
 
                     Spacer()
-                    FancyButton(text: "Update project", action: update)
+                    FancyButtonv2(text: "Update project", action: update)
                 }
                 
                 Spacer()
@@ -112,6 +100,9 @@ struct ProjectView: View {
                 timer.invalidate()
             }
         }
+        .onChange(of: project.lastUpdate) { _ in
+            lastUpdate = project.lastUpdate
+        }
     }
     
     // MARK: form view
@@ -126,8 +117,9 @@ struct ProjectView: View {
 
         HStack(spacing: 0) {
             FancyLabel(text: "Colour")
+                .padding([.trailing], 10)
             Rectangle()
-                .frame(width: 15)
+                .frame(width: 20)
                 .background(Color.fromStored(project.colour ?? Theme.rowColourAsDouble))
                 .foregroundColor(.clear)
             
@@ -145,10 +137,36 @@ struct ProjectView: View {
                 colour = Color.fromStored(project.colour ?? Theme.rowColourAsDouble).description.debugDescription
             })
             
-            FancyButton(text: "Regenerate colour", action: regenerateColour, icon: "arrow.counterclockwise", showLabel: false)
-                .padding(.leading)
+            FancyButtonv2(text: "Regenerate colour", action: regenerateColour, icon: "arrow.counterclockwise", showLabel: false)
+                .padding(.leading, 5)
         }.frame(height: 40)
         
+        if let createdAt = created {
+            HStack {
+                FancyLabel(text: "Created")
+                HStack {
+                    Text("\(DateHelper.shortDateWithTime(createdAt))")
+                        .padding()
+                        .help("Not editable")
+                    Spacer()
+                }
+                .background(Theme.textBackground)
+            }
+        }
+
+        if let updated = lastUpdate {
+            HStack {
+                FancyLabel(text: "Last updated")
+                HStack {
+                    Text("\(DateHelper.shortDateWithTime(updated))")
+                        .padding()
+                        .help("Not editable")
+                    Spacer()
+                }
+                .background(Theme.textBackground)
+            }
+        }
+
         FancyDivider()
         
         toolbar
