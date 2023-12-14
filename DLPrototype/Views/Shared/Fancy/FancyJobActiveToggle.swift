@@ -1,15 +1,15 @@
 //
-//  FancyToggle.swift
+//  FancyJobActiveToggle.swift
 //  DLPrototype
 //
-//  Created by Ryan Priebe on 2023-12-13.
+//  Created by Ryan Priebe on 2023-12-14.
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
 import SwiftUI
 
-struct FancyToggle: View {
-    public let entity: Project // TODO: should either be generic or not require a type
+struct FancyJobActiveToggle: View {
+    public let entity: Job // TODO: should either be generic or not require a type
     public var label: String = "Active"
 
     @State private var alive: Bool = true

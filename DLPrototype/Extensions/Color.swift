@@ -29,7 +29,7 @@ extension Color {
         
         return colour
     }
-    
+
     static func randomStorable() -> [Double] {
         return [Double.random(in: 0...1), Double.random(in: 0...1), Double.random(in: 0...1)]
     }
@@ -42,5 +42,17 @@ extension Color {
         guard let components = cgColor?.components, components.count > 2 else {return false}
         let brightness = ((components[0] * 299) + (components[1] * 587) + (components[2] * 114)) / 1000
         return (brightness > 0.5)
+    }
+
+    public func toStored() -> [Double] {
+        if let components = cgColor?.components {
+            let r = components[0] * 1.0
+            let g = components[1] * 1.0
+            let b = components[2] * 1.0
+
+            return [r,g,b]
+        }
+
+        return [0.0, 0.0, 0.0]
     }
 }

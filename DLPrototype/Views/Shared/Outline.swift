@@ -19,6 +19,12 @@ struct Outline: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Image(systemName: "menucard")
+                    Text("Outline view")
+                }
+                Divider()
+
                 if companies.count > 0 {
                     ForEach(companies) { company in
                         Group {
@@ -41,14 +47,17 @@ struct Outline: View {
                 }
 
                 if unowned.count > 0 {
-                    Text("Unowned Projects")
-                    ForEach(unowned) { project in
-                        HStack {
-                            Image(systemName: "arrow.turn.down.right")
-                            FancyTextLink(text: project.name!.capitalized, destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
-                                .help("Edit project: \(project.name!.capitalized)")
+                    Divider()
+                    VStack(alignment: .leading) {
+                        Text("Unowned Projects")
+                        ForEach(unowned) { project in
+                            HStack {
+                                Image(systemName: "arrow.turn.down.right")
+                                FancyTextLink(text: "[\(project.abbreviation != nil ? project.abbreviation!.uppercased() : "NOPE")] \(project.name!.capitalized)", destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
+                                    .help("Edit project: \(project.name!.capitalized)")
+                            }
+                            .padding([.leading], 10)
                         }
-                        .padding([.leading], 10)
                     }
                 }
             }
@@ -99,7 +108,7 @@ struct ProjectOutline: View {
                 ForEach(projects) { project in
                     HStack {
                         Image(systemName: "arrow.turn.down.right")
-                        FancyTextLink(text: project.name!.capitalized, destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
+                        FancyTextLink(text: "[\(project.abbreviation != nil ? project.abbreviation!.uppercased() : "NOPE")] \(project.name!.capitalized)", destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
                             .help("Edit project: \(project.name!.capitalized)")
                     }
                     .padding([.leading], 10)

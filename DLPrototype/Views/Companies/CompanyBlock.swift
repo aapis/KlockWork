@@ -24,9 +24,9 @@ struct CompanyBlock: View {
         } label: {
             VStack(spacing: 0) {
                 ZStack(alignment: .topLeading) {
-                    (company.alive ? Color.yellow : Color.white)
+                    (company.alive ? Color.fromStored(company.colour!) : Color.white)
                         .shadow(color: .black.opacity(1), radius: 3)
-                        .opacity(highlighted ? 0.2 : 0.1)
+                        .opacity(highlighted ? 0.4 : 0.3)
 
                     VStack(alignment: .leading, spacing: 10) {
                         HStack {
@@ -50,9 +50,3 @@ struct CompanyBlock: View {
         .buttonStyle(.plain)
     }
 }
-
-//struct CompanyBlock_Previews: PreviewProvider {
-//    static var previews: some View {
-//        CompanyBlock()
-//    }
-//}

@@ -88,7 +88,7 @@ extension CompanyDashboard {
     init(company: Company? = nil) {
         let request: NSFetchRequest<Company> = Company.fetchRequest()
         request.sortDescriptors = [
-            NSSortDescriptor(keyPath: \Company.name?, ascending: false)
+            NSSortDescriptor(keyPath: \Company.name, ascending: true)
         ]
 
         request.predicate = NSPredicate(format: "alive = true")
@@ -120,9 +120,3 @@ extension CompanyDashboard {
         }
     }
 }
-
-//struct CompanyDashboard_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Company()
-//    }
-//}

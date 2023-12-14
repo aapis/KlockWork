@@ -127,8 +127,8 @@ struct CreateEntitiesWidget: View {
                         size: .small,
                         type: nav.parent == .projects ? .secondary : .standard,
                         redirect: AnyView(ProjectCreate()),
-                        pageType: .projects,
-                        sidebar: AnyView(ProjectsDashboardSidebar())
+                        pageType: .companies,
+                        sidebar: AnyView(DefaultCompanySidebar())
                     )
                     .mask(Circle())
                  }

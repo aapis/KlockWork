@@ -27,17 +27,17 @@ struct MainMenu: Commands {
                     .keyboardShortcut("n", modifiers: .command)
                 Button("Note") {
                     nav.view = AnyView(NoteCreate())
-                    nav.parent = .today
+                    nav.parent = .notes
                 }
                     .keyboardShortcut("n", modifiers: [.command, .shift])
                 Button("Task") {
                     nav.view = AnyView(TaskDashboard())
-                    nav.parent = .today
+                    nav.parent = .tasks
                 }
                     .keyboardShortcut("t", modifiers: [.command, .shift])
                 Button("Project") {
                     nav.view = AnyView(ProjectCreate())
-                    nav.parent = .today
+                    nav.parent = .companies
                 }
                     .keyboardShortcut("p", modifiers: [.command, .shift])
                 Button("Job") {

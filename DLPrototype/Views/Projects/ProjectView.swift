@@ -13,7 +13,7 @@ struct ProjectView: View {
     public let project: Project
     
     @State private var name: String = ""
-    @State private var colour: String = ""
+    @State private var colour: Color = .clear
     @State private var colourChanged: Bool = false
     @State private var created: Date?
     @State private var lastUpdate: Date?
@@ -64,7 +64,7 @@ struct ProjectView: View {
                     }
 
                     Spacer()
-                    FancyButtonv2(text: "Update project", action: update)
+                    FancyButtonv2(text: "Save & Close", action: update, redirect: AnyView(CompanyDashboard()), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
                 }
                 
                 Spacer()
@@ -109,38 +109,12 @@ struct ProjectView: View {
     @ViewBuilder
     var form: some View {
         Title(text: "Editing: \($name.wrappedValue)")
-
         FancyTextField(placeholder: "Name", lineLimit: 1, onSubmit: update, showLabel: true, text: $name)
         FancyTextField(placeholder: "Abbreviation", lineLimit: 1, onSubmit: {}, showLabel: true, text: $abbreviation)
         CompanyPicker(onChange: {company,_ in selectedCompany = company}, selected: project.company != nil ? Int(project.company!.pid) : 0)
-        FancyToggle(entity: project)
+        FancyProjectActiveToggle(entity: project)
+        FancyColourPicker(initialColour: project.colour ?? Theme.rowColourAsDouble, onChange: {newColour in colour = newColour})
 
-        HStack(spacing: 0) {
-            FancyLabel(text: "Colour")
-                .padding([.trailing], 10)
-            Rectangle()
-                .frame(width: 20)
-                .background(Color.fromStored(project.colour ?? Theme.rowColourAsDouble))
-                .foregroundColor(.clear)
-            
-            FancyTextField(
-                placeholder: "Colour",
-                lineLimit: 1,
-                onSubmit: {},
-                disabled: true,
-                bgColour: Color.clear,
-                text: $colour
-            )
-            .border(Color.black.opacity(0.1), width: 2)
-            .frame(width: 200)
-            .onAppear(perform: {
-                colour = Color.fromStored(project.colour ?? Theme.rowColourAsDouble).description.debugDescription
-            })
-            
-            FancyButtonv2(text: "Regenerate colour", action: regenerateColour, icon: "arrow.counterclockwise", showLabel: false)
-                .padding(.leading, 5)
-        }.frame(height: 40)
-        
         if let createdAt = created {
             HStack {
                 FancyLabel(text: "Created")
@@ -415,15 +389,15 @@ struct ProjectView: View {
 }
 
 extension ProjectView {
-    private func regenerateColour() -> Void {
-        let rndColour = Color.randomStorable()
-        colour = Color.fromStored(rndColour).description.debugDescription
-        project.colour = rndColour
-        colourChanged = true
-
-        PersistenceController.shared.save()
-        updater.update()
-    }
+//    private func regenerateColour() -> Void {
+//        let rndColour = Color.randomStorable()
+//        colour = Color.fromStored(rndColour).description.debugDescription
+//        project.colour = rndColour
+//        colourChanged = true
+//
+//        PersistenceController.shared.save()
+//        updater.update()
+//    }
 
     private func createToolbar() -> Void {
         // TODO: apply this pattern to Today view
@@ -461,6 +435,7 @@ extension ProjectView {
         project.alive = alive
         project.lastUpdate = Date()
         project.company = CoreDataCompanies(moc: moc).byPid(selectedCompany)
+        project.abbreviation = StringHelper.abbreviate(name)
 
         if colourChanged {
             project.colour = Color.randomStorable()
