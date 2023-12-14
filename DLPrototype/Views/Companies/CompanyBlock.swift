@@ -50,9 +50,3 @@ struct CompanyBlock: View {
         .buttonStyle(.plain)
     }
 }
-
-//struct CompanyBlock_Previews: PreviewProvider {
-//    static var previews: some View {
-//        CompanyBlock()
-//    }
-//}

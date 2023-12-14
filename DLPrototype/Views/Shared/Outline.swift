@@ -41,14 +41,17 @@ struct Outline: View {
                 }
 
                 if unowned.count > 0 {
-                    Text("Unowned Projects")
-                    ForEach(unowned) { project in
-                        HStack {
-                            Image(systemName: "arrow.turn.down.right")
-                            FancyTextLink(text: project.name!.capitalized, destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
-                                .help("Edit project: \(project.name!.capitalized)")
+                    Divider()
+                    VStack(alignment: .leading) {
+                        Text("Unowned Projects")
+                        ForEach(unowned) { project in
+                            HStack {
+                                Image(systemName: "arrow.turn.down.right")
+                                FancyTextLink(text: project.name!.capitalized, destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
+                                    .help("Edit project: \(project.name!.capitalized)")
+                            }
+                            .padding([.leading], 10)
                         }
-                        .padding([.leading], 10)
                     }
                 }
             }
