@@ -36,7 +36,7 @@ struct CompanyView: View {
 
                 FancyTextField(placeholder: "Legal name", lineLimit: 1, onSubmit: {}, showLabel: true, text: $name)
                 FancyTextField(placeholder: "Abbreviation", lineLimit: 1, onSubmit: {}, showLabel: true, text: $abbreviation)
-                FancyColourPicker(initialColour: company.colour ?? Theme.rowColourAsDouble, onChange: {colourAsDouble in colour = Color.fromStored(colourAsDouble)})
+                FancyColourPicker(initialColour: company.colour ?? Theme.rowColourAsDouble, onChange: {newColour in colour = newColour})
 
                 if let created = created {
                     HStack {

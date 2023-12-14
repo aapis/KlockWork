@@ -13,7 +13,7 @@ struct ProjectView: View {
     public let project: Project
     
     @State private var name: String = ""
-    @State private var colour: String = ""
+    @State private var colour: Color = .clear
     @State private var colourChanged: Bool = false
     @State private var created: Date?
     @State private var lastUpdate: Date?
@@ -113,7 +113,7 @@ struct ProjectView: View {
         FancyTextField(placeholder: "Abbreviation", lineLimit: 1, onSubmit: {}, showLabel: true, text: $abbreviation)
         CompanyPicker(onChange: {company,_ in selectedCompany = company}, selected: project.company != nil ? Int(project.company!.pid) : 0)
         FancyToggle(entity: project)
-        FancyColourPicker(initialColour: project.colour ?? Theme.rowColourAsDouble, onChange: {colourAsDouble in colour = Color.fromStored(colourAsDouble).description})
+        FancyColourPicker(initialColour: project.colour ?? Theme.rowColourAsDouble, onChange: {newColour in colour = newColour})
 
         if let createdAt = created {
             HStack {
@@ -389,15 +389,15 @@ struct ProjectView: View {
 }
 
 extension ProjectView {
-    private func regenerateColour() -> Void {
-        let rndColour = Color.randomStorable()
-        colour = Color.fromStored(rndColour).description.debugDescription
-        project.colour = rndColour
-        colourChanged = true
-
-        PersistenceController.shared.save()
-        updater.update()
-    }
+//    private func regenerateColour() -> Void {
+//        let rndColour = Color.randomStorable()
+//        colour = Color.fromStored(rndColour).description.debugDescription
+//        project.colour = rndColour
+//        colourChanged = true
+//
+//        PersistenceController.shared.save()
+//        updater.update()
+//    }
 
     private func createToolbar() -> Void {
         // TODO: apply this pattern to Today view
