@@ -16,7 +16,7 @@ struct JobView: View {
     @State private var pName: String = ""
     @State private var pId: String = ""
     @State private var url: String = ""
-    @State private var colour: String = ""
+    @State private var colour: Color = .clear
     @State private var alive: Bool = true
     @State private var shredable: Bool = false
     @State private var validJob: Bool = false
@@ -33,19 +33,14 @@ struct JobView: View {
             topSpace
 
             fieldProjectLink
-            fieldIsOn
-            fieldIsShredable
 
             FancyTextField(placeholder: "URL", lineLimit: 1, onSubmit: {}, showLabel: true, text: $url)
                 .background(validUrl ? Color.clear : Color.red)
             FancyTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, showLabel: true, text: $id)
                 .background(validJob ? Color.clear : Color.red)
-
-
-            HStack {
-                FancyRandomJobColourPicker(job: job, colour: $colour)
-                Spacer()
-            }
+            FancyJobActiveToggle(entity: job)
+            FancyJobSredToggle(entity: job)
+            FancyColourPicker(initialColour: job.colour ?? Theme.rowColourAsDouble, onChange: {newColour in colour = newColour})
 
             buttonSubmit
         }
@@ -75,52 +70,21 @@ struct JobView: View {
     
     @ViewBuilder private var fieldProjectLink: some View {
         if let project = job.project {
-            FancyLink(
-                icon: "folder",
-                label: "Project: \(project.name!)",
-                showLabel: true,
-                colour: Color.fromStored(job.project!.colour ?? Theme.rowColourAsDouble),
-                destination: AnyView(ProjectView(project: project)),
-                pageType: .projects,
-                sidebar: AnyView(ProjectsDashboardSidebar())
-            )
+            HStack {
+                FancyLabel(text: "Project")
+                FancyLink(
+                    icon: "folder",
+                    label: project.name!,
+                    showLabel: true,
+                    colour: Color.fromStored(job.project!.colour ?? Theme.rowColourAsDouble),
+                    destination: AnyView(ProjectView(project: project)),
+                    pageType: .projects,
+                    sidebar: AnyView(ProjectsDashboardSidebar())
+                )
+            }
         }
     }
-    
-    @ViewBuilder private var fieldIsOn: some View {
-        FancyDivider()
-        
-        HStack {
-            Toggle("Job is active", isOn: $alive)
-//                .onAppear(perform: {
-//                    if job.alive {
-//                        alive = true
-//                    } else {
-//                        alive = false
-//                    }
-//
-//                    update()
-//                })
-            Spacer()
-        }
-    }
-    
-    @ViewBuilder private var fieldIsShredable: some View {
-        HStack {
-            Toggle("Eligible for SR&ED", isOn: $shredable)
-//                .onAppear(perform: {
-//                    if job.shredable {
-//                        shredable = true
-//                    } else {
-//                        shredable = false
-//                    }
-//
-//                    update()
-//                })
-            Spacer()
-        }
-    }
-    
+
     @ViewBuilder private var buttonSubmit: some View {
         HStack {
             FancyButtonv2(

@@ -112,7 +112,7 @@ struct ProjectView: View {
         FancyTextField(placeholder: "Name", lineLimit: 1, onSubmit: update, showLabel: true, text: $name)
         FancyTextField(placeholder: "Abbreviation", lineLimit: 1, onSubmit: {}, showLabel: true, text: $abbreviation)
         CompanyPicker(onChange: {company,_ in selectedCompany = company}, selected: project.company != nil ? Int(project.company!.pid) : 0)
-        FancyToggle(entity: project)
+        FancyProjectActiveToggle(entity: project)
         FancyColourPicker(initialColour: project.colour ?? Theme.rowColourAsDouble, onChange: {newColour in colour = newColour})
 
         if let createdAt = created {
