@@ -47,6 +47,7 @@
 		5334F26A2B2A14F90079D2E7 /* ManageOwnedProjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F2692B2A14F90079D2E7 /* ManageOwnedProjects.swift */; };
 		5334F26C2B2A5BD60079D2E7 /* FancyToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F26B2B2A5BD60079D2E7 /* FancyToggle.swift */; };
 		5334F26E2B2A5CC50079D2E7 /* FancyLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F26D2B2A5CC50079D2E7 /* FancyLabel.swift */; };
+		5334F2702B2B83190079D2E7 /* FancyColourPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F26F2B2B83190079D2E7 /* FancyColourPicker.swift */; };
 		5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5AD296CFF83000051B1 /* FileHelper.swift */; };
 		5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B2296D17EB000051B1 /* TaskDashboard.swift */; };
 		5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B4296D1FA7000051B1 /* TaskView.swift */; };
@@ -252,6 +253,7 @@
 		5334F2692B2A14F90079D2E7 /* ManageOwnedProjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageOwnedProjects.swift; sourceTree = "<group>"; };
 		5334F26B2B2A5BD60079D2E7 /* FancyToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyToggle.swift; sourceTree = "<group>"; };
 		5334F26D2B2A5CC50079D2E7 /* FancyLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyLabel.swift; sourceTree = "<group>"; };
+		5334F26F2B2B83190079D2E7 /* FancyColourPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyColourPicker.swift; sourceTree = "<group>"; };
 		5335A5AD296CFF83000051B1 /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		5335A5B2296D17EB000051B1 /* TaskDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDashboard.swift; sourceTree = "<group>"; };
 		5335A5B4296D1FA7000051B1 /* TaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskView.swift; sourceTree = "<group>"; };
@@ -852,6 +854,7 @@
 				53E202752A81F2E100B4DF70 /* FancyStar.swift */,
 				5334F26B2B2A5BD60079D2E7 /* FancyToggle.swift */,
 				5334F26D2B2A5CC50079D2E7 /* FancyLabel.swift */,
+				5334F26F2B2B83190079D2E7 /* FancyColourPicker.swift */,
 			);
 			path = Fancy;
 			sourceTree = "<group>";
@@ -1211,6 +1214,7 @@
 				53EDDFA22963502A008D34C7 /* LogRowEmpty.swift in Sources */,
 				5371BA342A7B2B8F00DEEC21 /* JobRowPlain.swift in Sources */,
 				533AB3F2296CA34600E91A9F /* ManageRecords.swift in Sources */,
+				5334F2702B2B83190079D2E7 /* FancyColourPicker.swift in Sources */,
 				53DFF075296F124E0051DA91 /* ManageTasks.swift in Sources */,
 				5334F26A2B2A14F90079D2E7 /* ManageOwnedProjects.swift in Sources */,
 				53790C102A74D54C00D3FFD4 /* JobFormValidator.swift in Sources */,

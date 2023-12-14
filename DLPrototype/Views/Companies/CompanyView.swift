@@ -15,6 +15,7 @@ struct CompanyView: View {
     @State private var abbreviation: String = ""
     @State private var created: Date? = nil
     @State private var updated: Date? = nil
+    @State private var colour: Color = .clear
     @State private var isDeleteAlertShowing: Bool = false
 
     @Environment(\.managedObjectContext) var moc
@@ -35,7 +36,8 @@ struct CompanyView: View {
 
                 FancyTextField(placeholder: "Legal name", lineLimit: 1, onSubmit: {}, showLabel: true, text: $name)
                 FancyTextField(placeholder: "Abbreviation", lineLimit: 1, onSubmit: {}, showLabel: true, text: $abbreviation)
-                
+                FancyColourPicker(initialColour: company.colour ?? Theme.rowColourAsDouble, onChange: {colourAsDouble in colour = Color.fromStored(colourAsDouble)})
+
                 if let created = created {
                     HStack {
                         FancyLabel(text: "Created")
@@ -83,7 +85,7 @@ struct CompanyView: View {
                     
                     Spacer()
                     FancyButtonv2(
-                        text: "Save",
+                        text: "Save & Close",
                         action: save,
                         size: .medium,
                         redirect: AnyView(CompanyDashboard()),
@@ -112,6 +114,13 @@ struct CompanyView: View {
             abbreviation = newCompany.abbreviation!
             created = newCompany.createdDate!
             updated = newCompany.lastUpdate!
+
+            if let c = newCompany.colour {
+                colour = Color.fromStored(c)
+            }
+        }
+        .onChange(of: colour) { newColour in
+            self.save()
         }
     }
 }
@@ -121,6 +130,7 @@ extension CompanyView {
         name = company.name!
         abbreviation = company.abbreviation!
         created = company.createdDate!
+        colour = Color.fromStored(company.colour ?? Theme.rowColourAsDouble)
 
         if let updatedAt = company.lastUpdate {
             updated = updatedAt
@@ -131,6 +141,7 @@ extension CompanyView {
         company.name = name
         company.abbreviation = abbreviation
         company.lastUpdate = Date()
+        company.colour = colour.toStored()
 
         PersistenceController.shared.save()
     }
@@ -164,9 +175,3 @@ extension CompanyView {
         nav.setSidebar(AnyView(DefaultCompanySidebar()))
     }
 }
-
-//struct CompanyView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        CompanyView()
-//    }
-//}

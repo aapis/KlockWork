@@ -109,38 +109,12 @@ struct ProjectView: View {
     @ViewBuilder
     var form: some View {
         Title(text: "Editing: \($name.wrappedValue)")
-
         FancyTextField(placeholder: "Name", lineLimit: 1, onSubmit: update, showLabel: true, text: $name)
         FancyTextField(placeholder: "Abbreviation", lineLimit: 1, onSubmit: {}, showLabel: true, text: $abbreviation)
         CompanyPicker(onChange: {company,_ in selectedCompany = company}, selected: project.company != nil ? Int(project.company!.pid) : 0)
         FancyToggle(entity: project)
+        FancyColourPicker(initialColour: project.colour ?? Theme.rowColourAsDouble, onChange: {colourAsDouble in colour = Color.fromStored(colourAsDouble).description})
 
-        HStack(spacing: 0) {
-            FancyLabel(text: "Colour")
-                .padding([.trailing], 10)
-            Rectangle()
-                .frame(width: 20)
-                .background(Color.fromStored(project.colour ?? Theme.rowColourAsDouble))
-                .foregroundColor(.clear)
-            
-            FancyTextField(
-                placeholder: "Colour",
-                lineLimit: 1,
-                onSubmit: {},
-                disabled: true,
-                bgColour: Color.clear,
-                text: $colour
-            )
-            .border(Color.black.opacity(0.1), width: 2)
-            .frame(width: 200)
-            .onAppear(perform: {
-                colour = Color.fromStored(project.colour ?? Theme.rowColourAsDouble).description.debugDescription
-            })
-            
-            FancyButtonv2(text: "Regenerate colour", action: regenerateColour, icon: "arrow.counterclockwise", showLabel: false)
-                .padding(.leading, 5)
-        }.frame(height: 40)
-        
         if let createdAt = created {
             HStack {
                 FancyLabel(text: "Created")
