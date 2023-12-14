@@ -64,7 +64,7 @@ struct ProjectView: View {
                     }
 
                     Spacer()
-                    FancyButtonv2(text: "Update project", action: update)
+                    FancyButtonv2(text: "Save & Close", action: update, redirect: AnyView(CompanyDashboard()), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
                 }
                 
                 Spacer()
@@ -461,6 +461,7 @@ extension ProjectView {
         project.alive = alive
         project.lastUpdate = Date()
         project.company = CoreDataCompanies(moc: moc).byPid(selectedCompany)
+        project.abbreviation = StringHelper.abbreviate(name)
 
         if colourChanged {
             project.colour = Color.randomStorable()

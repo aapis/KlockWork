@@ -10,6 +10,13 @@ import SwiftUI
 
 public final class StringHelper {
     static public func abbreviate(_ data: String) -> String {
-        return String(data.split(separator: " ").map {$0.first!}).uppercased()
+        let letters = data.split(separator: " ").map {$0.first!}
+
+        // get the first 3 characters if there's only one word
+        if letters.count == 1 {
+            return String(data.prefix(4)).uppercased()
+        }
+
+        return String(letters).uppercased()
     }
 }
