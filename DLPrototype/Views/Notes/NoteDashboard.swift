@@ -11,7 +11,8 @@ import SwiftUI
 
 struct NoteDashboard: View {
     public var defaultSelectedJob: Job? = nil
-    
+    public var project: Project? = nil
+
     @State private var searchText: String = ""
     @State private var selected: Int = 0
 
@@ -28,9 +29,10 @@ struct NoteDashboard: View {
         return Array(repeating: .init(.flexible(minimum: 100)), count: numColumns)
     }
 
-    public init(defaultSelectedJob: Job? = nil) {
+    public init(defaultSelectedJob: Job? = nil, project: Project? = nil) {
         self.defaultSelectedJob = defaultSelectedJob
-        
+        self.project = project
+
         let sharedDescriptors = [
             NSSortDescriptor(keyPath: \Note.lastUpdate?, ascending: false),
             NSSortDescriptor(keyPath: \Note.mJob?.project?.id, ascending: false),
@@ -43,6 +45,10 @@ struct NoteDashboard: View {
         
         if self.defaultSelectedJob != nil {
             let byJobPredicate = NSPredicate(format: "ANY mJob.jid = %f", self.defaultSelectedJob!.jid)
+            let predicates = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: [byJobPredicate])
+            request.predicate = predicates
+        } else if self.project != nil {
+            let byJobPredicate = NSPredicate(format: "ANY mJob.project = %@", self.project!)
             let predicates = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: [byJobPredicate])
             request.predicate = predicates
         } else {
