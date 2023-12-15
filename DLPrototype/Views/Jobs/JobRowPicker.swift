@@ -77,5 +77,11 @@ extension JobRowPicker {
 
     private func actionUpdatePlanningStore() -> Void {
         nav.planning.jobs.insert(job)
+        nav.planning.projects.insert(job.project!)
+
+        // projects are allowed to be unowned
+        if let company = job.project!.company {
+            nav.planning.companies.insert(company)
+        }
     }
 }
