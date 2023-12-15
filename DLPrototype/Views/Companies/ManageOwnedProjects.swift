@@ -97,7 +97,7 @@ extension ManageOwnedProjects {
         pRequest.sortDescriptors = [
             NSSortDescriptor(keyPath: \Project.name, ascending: true),
         ]
-        pRequest.predicate = NSPredicate(format: "alive = true && company.pid = %d", company.pid)
+        pRequest.predicate = NSPredicate(format: "alive = true && company = %@", company)
 
         _projects = FetchRequest(fetchRequest: pRequest, animation: .easeInOut)
 

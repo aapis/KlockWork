@@ -28,7 +28,7 @@ struct ManagePeople: View {
                 }
 
                 VStack(alignment: .leading, spacing: 20) {
-                    FancySubTitle(text: "Add a new person", image: "questionmark")
+                    FancySubTitle(text: "Add a new person", image: "plus")
                     Divider()
                     AddPerson(company: company)
                     Spacer()
@@ -67,11 +67,11 @@ extension ManagePeople {
         var body: some View {
             VStack(alignment: .leading) {
                 FancyTextField(placeholder: "Name", showLabel: true, text: $name)
-                FancyTextField(placeholder: "Job title", showLabel: true, text: $title)
+                FancyTextField(placeholder: "Job title", onSubmit: actionAddPerson, showLabel: true, text: $title)
 
                 HStack {
                     Spacer()
-                    FancyButtonv2(text: "Add Person", action: actionAddPerson, icon: "plus", showLabel: false)
+                    FancyButtonv2(text: "Add", action: actionAddPerson, icon: "plus")
                 }
             }
         }

@@ -19,6 +19,8 @@ struct CompanyView: View {
     @State private var isDeleteAlertShowing: Bool = false
     @State private var tabs: [ToolbarButton] = []
 
+    @FetchRequest private var projects: FetchedResults<Project>
+
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
 
@@ -26,13 +28,9 @@ struct CompanyView: View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 13) {
                 HStack {
+                    Image(systemName: "building.2").font(Theme.fontTitle)
                     Title(text: "Editing: \(company.name!.capitalized)")
                     Spacer()
-
-                    if company.isDefault {
-                        Image(systemName: "building.2")
-                            .help("This is your default company. Change it in Settings > General")
-                    }
                 }
 
                 FancyTextField(placeholder: "Legal name", lineLimit: 1, onSubmit: {}, showLabel: true, text: $name)
@@ -110,16 +108,6 @@ struct CompanyView: View {
                 timer.invalidate()
             }
         }
-        .onChange(of: company) { newCompany in
-            name = newCompany.name!
-            abbreviation = newCompany.abbreviation!
-            created = newCompany.createdDate!
-            updated = newCompany.lastUpdate!
-
-            if let c = newCompany.colour {
-                colour = Color.fromStored(c)
-            }
-        }
         .onChange(of: colour) { newColour in
             self.save()
         }
@@ -127,6 +115,18 @@ struct CompanyView: View {
 }
 
 extension CompanyView {
+    init(company: Company) {
+        self.company = company
+
+        let pRequest: NSFetchRequest<Project> = Project.fetchRequest()
+        pRequest.sortDescriptors = [
+            NSSortDescriptor(keyPath: \Project.name, ascending: true),
+        ]
+        pRequest.predicate = NSPredicate(format: "alive = true && company = %@", company)
+
+        _projects = FetchRequest(fetchRequest: pRequest, animation: .easeInOut)
+    }
+    
     private func actionOnAppear() -> Void {
         name = company.name!
         abbreviation = company.abbreviation!
@@ -145,6 +145,11 @@ extension CompanyView {
         company.abbreviation = abbreviation
         company.lastUpdate = Date()
         company.colour = colour.toStored()
+
+        // TODO: possibly unnecessary, but sometimes projects disown themselves and this may fix it
+        var projs: Set<Project> = []
+        for p in projects { projs.insert(p)}
+        company.projects = NSSet(set: projs)
 
         PersistenceController.shared.save()
     }
