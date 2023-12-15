@@ -50,6 +50,8 @@
 		5334F2702B2B83190079D2E7 /* FancyColourPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F26F2B2B83190079D2E7 /* FancyColourPicker.swift */; };
 		5334F2722B2B95240079D2E7 /* FancyJobActiveToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F2712B2B95240079D2E7 /* FancyJobActiveToggle.swift */; };
 		5334F2742B2B958D0079D2E7 /* FancyJobSredToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F2732B2B958D0079D2E7 /* FancyJobSredToggle.swift */; };
+		5334F2762B2CBF130079D2E7 /* ManagePeople.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F2752B2CBF130079D2E7 /* ManagePeople.swift */; };
+		5334F2782B2CC9EE0079D2E7 /* CoreDataPerson.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F2772B2CC9EE0079D2E7 /* CoreDataPerson.swift */; };
 		5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5AD296CFF83000051B1 /* FileHelper.swift */; };
 		5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B2296D17EB000051B1 /* TaskDashboard.swift */; };
 		5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B4296D1FA7000051B1 /* TaskView.swift */; };
@@ -258,6 +260,8 @@
 		5334F26F2B2B83190079D2E7 /* FancyColourPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyColourPicker.swift; sourceTree = "<group>"; };
 		5334F2712B2B95240079D2E7 /* FancyJobActiveToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyJobActiveToggle.swift; sourceTree = "<group>"; };
 		5334F2732B2B958D0079D2E7 /* FancyJobSredToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyJobSredToggle.swift; sourceTree = "<group>"; };
+		5334F2752B2CBF130079D2E7 /* ManagePeople.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagePeople.swift; sourceTree = "<group>"; };
+		5334F2772B2CC9EE0079D2E7 /* CoreDataPerson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPerson.swift; sourceTree = "<group>"; };
 		5335A5AD296CFF83000051B1 /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		5335A5B2296D17EB000051B1 /* TaskDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDashboard.swift; sourceTree = "<group>"; };
 		5335A5B4296D1FA7000051B1 /* TaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskView.swift; sourceTree = "<group>"; };
@@ -688,6 +692,7 @@
 				5363B67B2A6BB78900C2FBB8 /* CompanyView.swift */,
 				5334F2632B28F14C0079D2E7 /* CompanyCreate.swift */,
 				5334F2692B2A14F90079D2E7 /* ManageOwnedProjects.swift */,
+				5334F2752B2CBF130079D2E7 /* ManagePeople.swift */,
 			);
 			path = Companies;
 			sourceTree = "<group>";
@@ -769,6 +774,7 @@
 				530318462A11DD13009CA90B /* CoreDataCalendarEvent.swift */,
 				53814A8A2A95151000A5A015 /* CoreDataPlan.swift */,
 				5326AE9B2B27FFE2009F1349 /* CoreDataCompanies.swift */,
+				5334F2772B2CC9EE0079D2E7 /* CoreDataPerson.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -1210,6 +1216,7 @@
 				53B0BE8429726118007CB663 /* FancyLink.swift in Sources */,
 				53EFCE7629637CC6004E45EC /* Color.swift in Sources */,
 				53F5896629983FD100843B32 /* ProjectRow.swift in Sources */,
+				5334F2782B2CC9EE0079D2E7 /* CoreDataPerson.swift in Sources */,
 				53C3418E299968160071B855 /* JobView.swift in Sources */,
 				535C1AEA29F4913900CD95FD /* ThisYear.swift in Sources */,
 				5354C8F82AA045F5001C1779 /* Planning.Feature.swift in Sources */,
@@ -1227,6 +1234,7 @@
 				5354C8E42AA03C1C001C1779 /* Planning.Row.swift in Sources */,
 				53790C0D2A74CB6000D3FFD4 /* UrlHelper.swift in Sources */,
 				5334F2642B28F14C0079D2E7 /* CompanyCreate.swift in Sources */,
+				5334F2762B2CBF130079D2E7 /* ManagePeople.swift in Sources */,
 				53790C052A72F45900D3FFD4 /* EdgeBorder.swift in Sources */,
 				53814A8B2A95151000A5A015 /* CoreDataPlan.swift in Sources */,
 				5371BA3D2A7B7F1200DEEC21 /* TaskViewPlain.swift in Sources */,
@@ -1506,7 +1514,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 151;
+				CURRENT_PROJECT_VERSION = 152;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -1541,7 +1549,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 151;
+				CURRENT_PROJECT_VERSION = 152;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;

@@ -108,7 +108,11 @@ struct ProjectView: View {
     // MARK: form view
     @ViewBuilder
     var form: some View {
-        Title(text: "Editing: \($name.wrappedValue)")
+        HStack {
+            Image(systemName: "folder").font(Theme.fontTitle)
+            Title(text: "Editing: \($name.wrappedValue)")
+            Spacer()
+        }
         FancyTextField(placeholder: "Name", lineLimit: 1, onSubmit: update, showLabel: true, text: $name)
         FancyTextField(placeholder: "Abbreviation", lineLimit: 1, onSubmit: {}, showLabel: true, text: $abbreviation)
         CompanyPicker(onChange: {company,_ in selectedCompany = company}, selected: project.company != nil ? Int(project.company!.pid) : 0)

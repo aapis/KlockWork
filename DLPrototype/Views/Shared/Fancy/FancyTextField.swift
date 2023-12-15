@@ -11,7 +11,7 @@ import SwiftUI
 
 struct FancyTextField: View {
     public var placeholder: String
-    public var lineLimit: Int
+    public var lineLimit: Int = 1
     public var onSubmit: (() -> Void)? = nil
     public var transparent: Bool? = false
     public var disabled: Bool? = false
