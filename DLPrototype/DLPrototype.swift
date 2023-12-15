@@ -78,6 +78,8 @@ struct DLPrototype: App {
             nav.planning.jobs = plan.jobs as! Set<Job>
             nav.planning.tasks = plan.tasks as! Set<LogTask>
             nav.planning.notes = plan.notes as! Set<Note>
+            nav.planning.projects = plan.projects as! Set<Project>
+            nav.planning.companies = plan.companies as! Set<Company>
             nav.planning.id = plan.id!
         }
     }

@@ -26,6 +26,7 @@
         <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="pid" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="plans" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Plan" inverseName="companies" inverseEntity="Plan"/>
         <relationship name="projects" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Project" inverseName="company" inverseEntity="Project"/>
     </entity>
     <entity name="Job" representedClassName="Job" syncable="YES" codeGenerationType="class">
@@ -86,8 +87,10 @@
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="period" optional="YES" attributeType="String"/>
+        <relationship name="companies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Company" inverseName="plans" inverseEntity="Company"/>
         <relationship name="jobs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Job" inverseName="plans" inverseEntity="Job"/>
         <relationship name="notes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Note" inverseName="plans" inverseEntity="Note"/>
+        <relationship name="projects" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Project" inverseName="plans" inverseEntity="Project"/>
         <relationship name="tasks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LogTask" inverseName="plans" inverseEntity="LogTask"/>
     </entity>
     <entity name="Project" representedClassName="Project" syncable="YES" codeGenerationType="class">
@@ -102,6 +105,7 @@
         <relationship name="company" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Company" inverseName="projects" inverseEntity="Company"/>
         <relationship name="configuration" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ProjectConfiguration" inverseName="projects" inverseEntity="ProjectConfiguration"/>
         <relationship name="jobs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Job" inverseName="project" inverseEntity="Job"/>
+        <relationship name="plans" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Plan" inverseName="projects" inverseEntity="Plan"/>
     </entity>
     <entity name="ProjectConfiguration" representedClassName="ProjectConfiguration" syncable="YES" codeGenerationType="class">
         <attribute name="exportFormat" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>

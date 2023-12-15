@@ -13,6 +13,8 @@ extension Planning {
         @State private var numTasks: Int = 0
         @State private var numJobs: Int = 0
         @State private var numNotes: Int = 0
+        @State private var numProjects: Int = 0
+        @State private var numCompanies: Int = 0
 
         @EnvironmentObject public var nav: Navigation
 
@@ -53,6 +55,8 @@ extension Planning {
             .onChange(of: nav.planning.tasks, perform: actionOnChangeTasks)
             .onChange(of: nav.planning.jobs, perform: actionOnChangeJobs)
             .onChange(of: nav.planning.notes, perform: actionOnChangeNotes)
+            .onChange(of: nav.planning.companies, perform: actionOnChangeCompanies)
+            .onChange(of: nav.planning.projects, perform: actionOnChangeProjects)
             .onChange(of: nav.session.date, perform: actionOnChangeDate)
         }
 
@@ -61,6 +65,8 @@ extension Planning {
                 TaskPill
                 JobPill
                 NotePill
+                ProjectsPill
+                CompanyPill
             }
             .frame(height: 30)
             .mask {
@@ -101,6 +107,28 @@ extension Planning {
             .padding(8)
             .background(Theme.base.opacity(0.2))
         }
+
+        var ProjectsPill: some View {
+            HStack {
+                Text("\(numProjects)")
+                    .foregroundColor(numProjects > Planning.tooManyProjects ? .black : .white)
+                Image(systemName: "folder")
+                    .help(numProjects > Planning.tooManyProjects ? "This is probably too much work, consider removing some jobs" : "\(numProjects) projects selected")
+                    .foregroundColor(numProjects > Planning.tooManyProjects ? .black : .white)
+            }
+            .padding(8)
+            .background(numProjects > Planning.tooManyProjects ? .yellow : Theme.base.opacity(0.2))
+        }
+
+        var CompanyPill: some View {
+            HStack {
+                Text("\(numCompanies)")
+                Image(systemName: "building.2")
+                    .help("\(numCompanies) companies selected")
+            }
+            .padding(8)
+            .background(Theme.base.opacity(0.2))
+        }
     }
 }
 
@@ -136,10 +164,24 @@ extension Planning.Menu {
         actionOnAppear()
     }
 
+    private func actionOnChangeCompanies(companies: Set<Company>) -> Void {
+        nav.planning.companies = companies
+        actionFinalizePlan()
+        actionOnAppear()
+    }
+
+    private func actionOnChangeProjects(projects: Set<Project>) -> Void {
+        nav.planning.projects = projects
+        actionFinalizePlan()
+        actionOnAppear()
+    }
+
     private func actionOnAppear() -> Void {
         numTasks = nav.planning.tasks.count
         numJobs = nav.planning.jobs.count
         numNotes = nav.planning.notes.count
+        numProjects = nav.planning.projects.count
+        numCompanies = nav.planning.companies.count
 
         if numJobs == 0 {
             actionResetPlan()

@@ -161,6 +161,8 @@ extension Navigation {
         var jobs: Set<Job> = []
         var tasks: Set<LogTask> = []
         var notes: Set<Note> = []
+        var projects: Set<Project> = []
+        var companies: Set<Company> = []
         var moc: NSManagedObjectContext
 
         func taskCount() -> Int {
@@ -190,10 +192,14 @@ extension Navigation {
                 plan.jobs = []
                 plan.tasks = []
                 plan.notes = []
+                plan.projects = []
+                plan.companies = []
             } else {
                 jobs = []
                 tasks = []
                 notes = []
+                projects = []
+                companies = []
             }
 
             PersistenceController.shared.save()
@@ -211,6 +217,8 @@ extension Navigation {
             jobs = []
             tasks = []
             notes = []
+            projects = []
+            companies = []
 
             PersistenceController.shared.save()
         }
@@ -230,6 +238,14 @@ extension Navigation {
                 var sNotes: Set<Note> = []
                 for o in pl.notes!.allObjects as! [Note] {sNotes.insert(o)}
                 notes = sNotes
+
+                var sProjects: Set<Project> = []
+                for o in pl.projects!.allObjects as! [Project] {sProjects.insert(o)}
+                projects = sProjects
+
+                var sCompanies: Set<Company> = []
+                for o in pl.companies!.allObjects as! [Company] {sCompanies.insert(o)}
+                companies = sCompanies
             }
         }
 
@@ -240,6 +256,8 @@ extension Navigation {
             plan.jobs = NSSet(set: jobs)
             plan.tasks = NSSet(set: tasks)
             plan.notes = NSSet(set: notes)
+            plan.projects = NSSet(set: projects)
+            plan.companies = NSSet(set: companies)
 
             PersistenceController.shared.save()
             return plan
@@ -249,6 +267,8 @@ extension Navigation {
             plan.jobs = NSSet(set: jobs)
             plan.tasks = NSSet(set: tasks)
             plan.notes = NSSet(set: notes)
+            plan.projects = NSSet(set: projects)
+            plan.companies = NSSet(set: companies)
 
             PersistenceController.shared.save()
             return plan
