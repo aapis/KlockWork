@@ -15,71 +15,75 @@ struct ManageOwnedProjects: View {
     @FetchRequest private var unowned: FetchedResults<Project>
 
     var body: some View {
-        HStack(spacing: 5) {
-            VStack(alignment: .leading, spacing: 1) {
-                VStack(alignment: .leading, spacing: 20) {
-                    FancySubTitle(text: "Associated projects", image: "checkmark")
-                    Divider()
-                    HStack(spacing: 1) {
-                        Text("\(projects.count) selected")
-                            .font(Theme.fontCaption)
-                        Spacer()
+        VStack {
+            About()
 
-                        if projects.count > 0 {
-                            FancyButtonv2(text: "Deselect All", action: deselectAll, icon: "multiply", showLabel: false, size: .tiny)
-                                .padding([.trailing], 10)
-                        }
-                    }
-                }
-                FancyDivider()
+            HStack(spacing: 5) {
+                VStack(alignment: .leading, spacing: 1) {
+                    VStack(alignment: .leading, spacing: 20) {
+                        FancySubTitle(text: "Associated projects", image: "checkmark")
+                        Divider()
+                        HStack(spacing: 1) {
+                            Text("\(projects.count) selected")
+                                .font(Theme.fontCaption)
+                            Spacer()
 
-                ForEach(projects) { project in
-                    Grid(alignment: .leading, horizontalSpacing: 1, verticalSpacing: 1) {
-                        GridRow {
-                            HStack {
-                                FancyButton(text: "Remove project", action: {self.unown(project)}, icon: "multiply", transparent: true, showLabel: false)
-                                Text(project.name!)
-                                Spacer()
+                            if projects.count > 0 {
+                                FancyButtonv2(text: "Deselect All", action: deselectAll, icon: "multiply", showLabel: false, size: .tiny)
+                                    .padding([.trailing], 10)
                             }
                         }
-                        .background(Theme.rowColour)
                     }
-                }
+                    FancyDivider()
 
-                Spacer()
-            }
-
-            VStack(alignment: .leading, spacing: 1) {
-                VStack(alignment: .leading, spacing: 20) {
-                    FancySubTitle(text: "Unowned projects", image: "questionmark")
-                    Divider()
-                    HStack(spacing: 1) {
-                        Text("\(unowned.count) unselected")
-                            .font(Theme.fontCaption)
-                        Spacer()
-
-                        if unowned.count > 0 {
-                            FancyButtonv2(text: "Select All", action: selectAll, icon: "plus", showLabel: false, size: .tiny)
-                                .padding([.trailing], 10)
+                    ForEach(projects) { project in
+                        Grid(alignment: .leading, horizontalSpacing: 1, verticalSpacing: 1) {
+                            GridRow {
+                                HStack {
+                                    FancyButton(text: "Remove project", action: {self.unown(project)}, icon: "multiply", transparent: true, showLabel: false)
+                                    Text(project.name!)
+                                    Spacer()
+                                }
+                            }
+                            .background(Theme.rowColour)
                         }
                     }
-                }
-                FancyDivider()
 
-                ForEach(unowned) { project in
-                    Grid(alignment: .leading, horizontalSpacing: 1, verticalSpacing: 1) {
-                        GridRow {
-                            HStack {
-                                FancyButton(text: "Add project", action: {self.own(project)}, icon: "plus", transparent: true, showLabel: false)
-                                Text(project.name!)
-                                Spacer()
+                    Spacer()
+                }
+
+                VStack(alignment: .leading, spacing: 1) {
+                    VStack(alignment: .leading, spacing: 20) {
+                        FancySubTitle(text: "Unowned projects", image: "questionmark")
+                        Divider()
+                        HStack(spacing: 1) {
+                            Text("\(unowned.count) unselected")
+                                .font(Theme.fontCaption)
+                            Spacer()
+
+                            if unowned.count > 0 {
+                                FancyButtonv2(text: "Select All", action: selectAll, icon: "plus", showLabel: false, size: .tiny)
+                                    .padding([.trailing], 10)
                             }
                         }
-                        .background(Theme.rowColour)
                     }
-                }
+                    FancyDivider()
 
-                Spacer()
+                    ForEach(unowned) { project in
+                        Grid(alignment: .leading, horizontalSpacing: 1, verticalSpacing: 1) {
+                            GridRow {
+                                HStack {
+                                    FancyButton(text: "Add project", action: {self.own(project)}, icon: "plus", transparent: true, showLabel: false)
+                                    Text(project.name!)
+                                    Spacer()
+                                }
+                            }
+                            .background(Theme.rowColour)
+                        }
+                    }
+
+                    Spacer()
+                }
             }
         }
     }
@@ -125,6 +129,23 @@ extension ManageOwnedProjects {
     private func deselectAll() -> Void {
         for project in projects {
             self.unown(project)
+        }
+    }
+}
+
+extension ManageOwnedProjects {
+    struct About: View {
+        private let copy: String = "Choose projects from the right column to associate to this company."
+
+        var body: some View {
+            VStack {
+                HStack {
+                    Text(copy).padding(15)
+                    Spacer()
+                }
+            }
+            .background(Theme.cOrange)
+            FancyDivider()
         }
     }
 }
