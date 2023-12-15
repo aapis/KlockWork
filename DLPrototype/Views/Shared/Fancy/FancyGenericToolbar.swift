@@ -19,23 +19,24 @@ struct ToolbarButton {
 struct FancyGenericToolbar: View {
     public var buttons: [ToolbarButton]
     public var standalone: Bool = false
-    
+    public var location: WidgetLocation = .content
+
     @State public var selectedTab: Int = 0
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: location == .content ? 8 : 0) {
             GridRow {
                 Group {
                     ZStack(alignment: .leading) {
-                        Theme.toolbarColour
+                        (location == .sidebar ? .clear : Theme.toolbarColour)
 
                         HStack(spacing: 1) {
                             ForEach(buttons, id: \ToolbarButton.id) { button in
                                 Button(action: {setActive(button.id)}) {
                                     ZStack(alignment: .leading) {
-                                        (selectedTab == button.id ? Theme.tabActiveColour : Theme.tabColour)
+                                        (selectedTab == button.id ? (location == .sidebar ? Theme.base.opacity(0.2) : Theme.tabActiveColour) : Theme.tabColour)
                                         button.label
-                                            .padding()
+                                            .padding(location == .sidebar ? 0 : 16)
                                     }
                                 }
                                 .buttonStyle(.borderless)
