@@ -205,6 +205,27 @@ extension ProjectOutline {
                 }
                 .frame(height: 40)
                 .padding(10)
+                
+                VStack(alignment: .leading, spacing: 5) {
+                    HStack(spacing: 2) {
+                        FancyTextLink(text: "Show jobs", destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
+                        Image(systemName: "arrow.right.square.fill")
+                        Spacer()
+                    }
+
+                    HStack(spacing: 2) {
+                        FancyTextLink(text: "Show notes", destination: AnyView(NoteDashboard(project: project)), pageType: .notes, sidebar: AnyView(NoteDashboardSidebar()))
+                        Image(systemName: "arrow.right.square.fill")
+                        Spacer()
+                    }
+
+                    HStack(spacing: 2) {
+                        FancyTextLink(text: "Show tasks", destination: AnyView(TaskDashboard(project: project)), pageType: .tasks, sidebar: AnyView(TaskDashboardSidebar()))
+                        Image(systemName: "arrow.right.square.fill")
+                        Spacer()
+                    }
+                }
+                .padding([.leading, .trailing, .bottom], 10)
             }
             .background(Theme.darkBtnColour)
             .padding([.leading, .trailing], -10)
