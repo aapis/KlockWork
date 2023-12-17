@@ -50,7 +50,7 @@ struct TodayInHistoryWidget: View {
                 }
                 .frame(height: 30)
                 
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 1) {
                     ForEach(todayInHistory, id: \.year) { day in
                         SidebarItem(
                             data: day.linkLabel(),

@@ -110,32 +110,36 @@ struct SidebarItem: View, Identifiable {
                     role.colour
                 }
 
-                Button(action: doAction) {
-                    if let alt = altIcon {
-                        if highlighted {
-                            Image(systemName: alt)
-                                .font(.title2)
-                                .frame(maxWidth: 30, maxHeight: 30)
+                VStack {
+                    Button(action: doAction) {
+                        if let alt = altIcon {
+                            if highlighted {
+                                Image(systemName: alt)
+                                    .font(.title2)
+                                    .frame(maxWidth: 30, maxHeight: 30)
+                            } else {
+                                Image(systemName: ic)
+                                    .font(.title2)
+                                    .frame(maxWidth: 30, maxHeight: 30)
+                            }
                         } else {
                             Image(systemName: ic)
                                 .font(.title2)
                                 .frame(maxWidth: 30, maxHeight: 30)
                         }
-                    } else {
-                        Image(systemName: ic)
-                            .font(.title2)
-                            .frame(maxWidth: 30, maxHeight: 30)
                     }
+                    .buttonStyle(.plain)
+                    .useDefaultHover({ inside in highlighted = inside})
+                    .padding(.top, 5)
+                    Spacer()
                 }
-                .buttonStyle(.plain)
-                .useDefaultHover({ inside in highlighted = inside})
             }
             .frame(width: type.iconFrameSize)
         }
     }
 
     private var ItemLabel: some View {
-        ZStack(alignment: .leading) {
+        ZStack(alignment: .topLeading) {
             if ![.important, .action].contains(role) {
                 role.colour.opacity(0.02)
             } else {
