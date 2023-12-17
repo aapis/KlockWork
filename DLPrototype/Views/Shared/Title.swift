@@ -26,6 +26,7 @@ struct Title: View {
                     Text(text)
                         .font(Theme.fontTitle)
                 }
+                Spacer()
             }
             .padding(3)
         }
