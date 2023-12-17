@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct Outline: View {
+struct OutlineWidget: View {
     @AppStorage("general.defaultCompany") public var defaultCompany: Int = 0
 
     @FetchRequest public var companies: FetchedResults<Company>
@@ -19,12 +19,6 @@ struct Outline: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 10) {
-                HStack {
-                    Image(systemName: "menucard")
-                    Text("Outline view")
-                }
-                Divider()
-
                 if companies.count > 0 {
                     ForEach(companies) { company in
                         Group {
@@ -71,7 +65,7 @@ struct Outline: View {
     }
 }
 
-extension Outline {
+extension OutlineWidget {
     init(company: Company? = nil) {
         let request: NSFetchRequest<Company> = Company.fetchRequest()
         request.sortDescriptors = [
@@ -205,6 +199,35 @@ extension ProjectOutline {
                 }
                 .frame(height: 40)
                 .padding(10)
+                
+                if (notes + tasks + jobs) > 0 {
+                    VStack(alignment: .leading, spacing: 5) {
+                        if jobs > 0 {
+                            HStack(spacing: 2) {
+                                FancyTextLink(text: "Show jobs", destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
+                                Image(systemName: "arrow.right.square.fill")
+                                Spacer()
+                            }
+                        }
+
+                        if notes > 0 {
+                            HStack(spacing: 2) {
+                                FancyTextLink(text: "Show notes", destination: AnyView(NoteDashboard(project: project)), pageType: .notes, sidebar: AnyView(NoteDashboardSidebar()))
+                                Image(systemName: "arrow.right.square.fill")
+                                Spacer()
+                            }
+                        }
+
+                        if tasks > 0 {
+                            HStack(spacing: 2) {
+                                FancyTextLink(text: "Show tasks", destination: AnyView(TaskDashboardByProject(project: project)), pageType: .tasks, sidebar: AnyView(TaskDashboardSidebar()))
+                                Image(systemName: "arrow.right.square.fill")
+                                Spacer()
+                            }
+                        }
+                    }
+                    .padding([.leading, .trailing, .bottom], 10)
+                }
             }
             .background(Theme.darkBtnColour)
             .padding([.leading, .trailing], -10)
@@ -219,7 +242,23 @@ extension ProjectOutline.AboutPanel {
             let list = jerbs.allObjects as! [Job]
             jobs = list.count
             notes = list.map {$0.mNotes!.count}.reduce(0, +)
-            tasks = list.map {$0.tasks!.count}.reduce(0, +)
+
+            // tasks need to be prefiltered to remove cancelled and completed items
+            // TODO: do this somewhere else?
+            var onlyOpenTasks: Set<LogTask> = []
+
+            for job in list {
+                if let jobTasks = job.tasks {
+                    let ownedTasks = jobTasks.allObjects as! [LogTask]
+                    for task in ownedTasks {
+                        if task.completedDate == nil && task.cancelledDate == nil {
+                            onlyOpenTasks.insert(task)
+                        }
+                    }
+                }
+            }
+
+            tasks = onlyOpenTasks.count
         }
     }
 }

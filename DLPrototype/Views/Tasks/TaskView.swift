@@ -50,10 +50,15 @@ struct TaskView: View {
                     Group {
                         ZStack(alignment: .leading) {
                             colourize()
-                            
-                            Text(task.owner?.jid.string ?? "No Job")
-                                .padding(5)
-                                .foregroundColor(colourizeText())
+
+                            if let job = task.owner {
+                                FancyTextLink(text: job.jid.string, destination: AnyView(JobDashboard(defaultSelectedJob: job)), fgColour: colourizeText(), pageType: .jobs, sidebar: AnyView(JobDashboardSidebar()))
+                                    .padding(5)
+                                    .help("Job ID: \(job.jid.string)")
+                            } else {
+                                Text("No job associated")
+                                    .foregroundColor(colourizeText())
+                            }
                         }
                     }
                     .frame(width: 100)

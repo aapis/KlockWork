@@ -40,12 +40,14 @@ struct ManageOwnedProjects: View {
                         Grid(alignment: .leading, horizontalSpacing: 1, verticalSpacing: 1) {
                             GridRow {
                                 HStack {
-                                    FancyButton(text: "Remove project", action: {self.unown(project)}, icon: "multiply", transparent: true, showLabel: false)
-                                    Text(project.name!)
+                                    FancyButton(text: "Remove project", action: {self.unown(project)}, icon: "multiply", transparent: true, showLabel: false, fgColour: project.colour != nil ? Color.fromStored(project.colour!).isBright() ? .black : .white : .white)
+
+                                    FancyTextLink(text: project.name!, destination: AnyView(ProjectView(project: project)), fgColour: project.colour != nil ? Color.fromStored(project.colour!).isBright() ? .black : .white : .white, pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
                                     Spacer()
                                 }
                             }
-                            .background(Theme.rowColour)
+                            .background(project.colour != nil ? Color.fromStored(project.colour!) : Theme.rowColour)
+                            .foregroundColor(project.colour != nil ? Color.fromStored(project.colour!).isBright() ? .black : .white : .white)
                         }
                     }
 
@@ -73,12 +75,13 @@ struct ManageOwnedProjects: View {
                         Grid(alignment: .leading, horizontalSpacing: 1, verticalSpacing: 1) {
                             GridRow {
                                 HStack {
-                                    FancyButton(text: "Add project", action: {self.own(project)}, icon: "plus", transparent: true, showLabel: false)
-                                    Text(project.name!)
+                                    FancyButton(text: "Add project", action: {self.own(project)}, icon: "plus", transparent: true, showLabel: false, fgColour: project.colour != nil ? Color.fromStored(project.colour!).isBright() ? .black : .white : .white)
+                                    FancyTextLink(text: project.name!, destination: AnyView(ProjectView(project: project)), fgColour: project.colour != nil ? Color.fromStored(project.colour!).isBright() ? .black : .white : .white, pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
                                     Spacer()
                                 }
                             }
-                            .background(Theme.rowColour)
+                            .background(project.colour != nil ? Color.fromStored(project.colour!) : Theme.rowColour)
+                            .foregroundColor(project.colour != nil ? Color.fromStored(project.colour!).isBright() ? .black : .white : .white)
                         }
                     }
 
