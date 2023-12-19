@@ -24,7 +24,7 @@ struct CompanyBlock: View {
         } label: {
             VStack(spacing: 0) {
                 ZStack(alignment: .topLeading) {
-                    (company.alive ? Color.fromStored(company.colour!) : Color.white)
+                    (company.alive && company.colour != nil ? Color.fromStored(company.colour!) : Color.white)
                         .shadow(color: .black.opacity(1), radius: 3)
                         .opacity(highlighted ? 0.4 : 0.3)
 
