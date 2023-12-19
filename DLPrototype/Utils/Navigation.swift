@@ -168,6 +168,8 @@ extension Navigation.Session {
 extension Navigation.Session.Search {
     func update(_ raw: String) -> Void {
         let parser = SearchLanguage.Parser(with: raw)
+        let types = components.types
+        types.append(parser.types())
 //        self.components.set(parser.components)
 //        results.withComponents(components)
     }

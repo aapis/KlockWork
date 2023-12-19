@@ -10,9 +10,9 @@ import Foundation
 
 extension SearchLanguage {
     struct Components {
-        public var types: [SearchLanguage.Species] = []
-        public var columns: [SearchLanguage.Column] = []
-        public var values: [SearchLanguage.Value] = []
+        var types: [Species] = []
+        var columns: [Column] = []
+        var values: [Value] = []
         
         //    mutating func parse(_ raw: String) -> Self {
         //        let parser = SearchLanguageParser(with: raw)
