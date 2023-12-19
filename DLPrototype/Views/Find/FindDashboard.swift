@@ -29,6 +29,7 @@ struct FindDashboard: View {
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var jm: CoreDataJob
+    @EnvironmentObject public var nav: Navigation
     
     var body: some View {
         // TODO: commented out to experiment including this view on the dashboard
@@ -116,7 +117,8 @@ struct FindDashboard: View {
         } else {
             searching = false
         }
-
+        
+        nav.session.search.update(activeSearchText)
         searchText = activeSearchText
     }
 

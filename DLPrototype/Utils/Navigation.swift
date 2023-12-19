@@ -142,6 +142,7 @@ extension Navigation {
         var date: Date = Date()
         var idate: IdentifiableDay = IdentifiableDay()
         var gif: Planning.GlobalInterfaceFilter = .normal
+        var search: Search = Search()
     }
 }
 
@@ -152,6 +153,23 @@ extension Navigation.Session {
         } else {
             self.job = nil
         }
+    }
+}
+
+extension Navigation.Session {
+    public struct Search {
+        var id: UUID = UUID()
+        var text: String? = nil
+        var components: SearchLanguage.Components = SearchLanguage.Components()
+        var results: SearchLanguage.SearchResults = SearchLanguage.SearchResults()
+    }
+}
+
+extension Navigation.Session.Search {
+    func update(_ raw: String) -> Void {
+        let parser = SearchLanguage.Parser(with: raw)
+//        self.components.set(parser.components)
+//        results.withComponents(components)
     }
 }
 
