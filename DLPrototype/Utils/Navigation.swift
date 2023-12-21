@@ -166,14 +166,13 @@ extension Navigation.Session {
 }
 
 extension Navigation.Session.Search {
-    func results() -> [String]/*SearchLanguage.Results*/ {
-//        let parser = SearchLanguage.Parser(with: raw).parse()
-        
-//        print("DERPO components=\(parser.components)")
-//        print("DERPO parser.components.predicates\(parser.components.predicates)")
-        var results = SearchLanguage.Results(components: components, moc: moc)
-
-        return results.find()
+    func results() -> [String: [NSManagedObject]] {
+        return SearchLanguage.Results(components: components, moc: moc).find()
+    }
+    
+    mutating func reset() -> Void {
+        components = []
+        text = nil
     }
 }
 

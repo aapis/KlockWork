@@ -26,6 +26,7 @@ struct FindDashboard: View {
     @State private var showJobs: Bool = true
     @State private var allowAlive: Bool = true
     @State private var counts: (Int, Int, Int, Int) = (0, 0, 0, 0)
+    @State private var advancedSearchResults: [NSManagedObject] = []
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var jm: CoreDataJob
@@ -84,15 +85,19 @@ struct FindDashboard: View {
             if searching {
                 FancyDivider()
                 
-                Results(
-                    text: $searchText,
-                    showRecords: $showRecords,
-                    showNotes: $showNotes,
-                    showTasks: $showTasks,
-                    showProjects: $showProjects,
-                    showJobs: $showJobs,
-                    allowAlive: $allowAlive
-                )
+                if advancedSearchResults.isEmpty {
+                    Results(
+                        text: $searchText,
+                        showRecords: $showRecords,
+                        showNotes: $showNotes,
+                        showTasks: $showTasks,
+                        showProjects: $showProjects,
+                        showJobs: $showJobs,
+                        allowAlive: $allowAlive
+                    )
+                } else {
+                    AdvancedSearchResults(jobs: advancedSearchResults as! [Job])
+                }
             }
         }
         .onAppear(perform: actionOnAppear)
@@ -123,8 +128,15 @@ struct FindDashboard: View {
             if !parser.components.isEmpty {
                 nav.session.search.components = parser.components
             }
-            
-            let _ = nav.session.search.results()
+
+            for (group, results) in nav.session.search.results() {
+                switch group {
+                case "Jobs":
+                    advancedSearchResults = results as! [Job]
+                default:
+                    print("DERPO unknown")
+                }
+            }
 
 //            DispatchQueue.background(background: {
 //
@@ -140,6 +152,7 @@ struct FindDashboard: View {
 
     private func onReset() -> Void {
         searching = false
+        nav.session.search.reset()
     }
 
     private func actionOnAppear() -> Void {
@@ -149,5 +162,29 @@ struct FindDashboard: View {
             CoreDataTasks(moc: moc).countAll(),
             CoreDataProjects(moc: moc).countAll()
         )
+    }
+}
+
+extension FindDashboard {
+    struct AdvancedSearchResults: View {
+        public var jobs: [Job] = []
+        
+        var body: some View {
+            VStack(alignment: .leading) {
+                HStack(alignment: .top) {
+                    Text("Jobs")
+                    Spacer()
+                }
+
+                VStack {
+                    ForEach(jobs) { job in
+                        Text(String(job.jid.string))
+                        Text(String(job.records!.count))
+                    }
+                }
+
+                Spacer()
+            }
+        }
     }
 }

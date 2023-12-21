@@ -20,31 +20,35 @@ extension SearchLanguage {
             self.moc = moc
         }
         
-        func find() -> Array<String> {
-            var predicates: [NSPredicate] = []
-            var out: [String] = []
-            var data: [AnyHashable] = []
+        func find() -> [String: [NSManagedObject]] {
+            var data: [String: [NSManagedObject]] = [:]
+            var jobs: [Job] = []
 
             for component in components {
-//                let args = component.toPredicate()
-
                 switch component.species.name {
                 case "Job":
                     if let match = job(id: component.value) {
-                        data.append(match)
+                        jobs.append(match)
                     }
                 default:
                     print("DERPO unknown species \(component.species.name)")
                 }
-            }
-            print("DERPO data=\(data)")
-
-            for d in data {
-                let entity = d.base as! Job
-                print("DERPO data.item.jid=\(entity.records?.count ?? 0)")
+                
+                data["Jobs"] = jobs
             }
 
-            return out
+//            for (group, results) in data {
+//                switch group {
+//                case "Jobs":
+//                    for result in results as! [Job] {
+//                        print("DERPO result.jid=\(result.jid.string)")
+//                    }
+//                default:
+//                    print("DERPO unknown")
+//                }
+//            }
+
+            return data
         }
 
         private func job(id: SearchLanguage.Component.Value) -> Job? {
@@ -76,6 +80,7 @@ extension SearchLanguage {
                 let component = Component(
                     species: Component.Species(name: String(match.1).capitalized),
                     column: Component.Column(name: String(match.2)),
+                    command: Component.Command.equals,
                     value: Component.Value(int: Int(match.3)!)
                 )
 
@@ -108,10 +113,24 @@ extension SearchLanguage.Component {
     public struct Column {
         var name: String
     }
-
-    public struct Command {
-        var name: String
-        var symbol: String
+    
+    public enum Command {
+        case equals, add, sub, mult, div
+        
+        var symbol: String {
+            switch self {
+            case .equals:
+                return "="
+            case .add:
+                return "+"
+            case .sub:
+                return "-"
+            case .mult:
+                return "x"
+            case .div:
+                return "/"
+            }
+        }
     }
 
     public struct Value {
@@ -120,9 +139,10 @@ extension SearchLanguage.Component {
 }
 
 extension SearchLanguage.Component {
-    init(species: Species, column: Column, value: Value) {
+    init(species: Species, column: Column, command: Command, value: Value) {
         self.species = species
         self.column = column
+        self.command = command
         self.value = value
         
         if !self.species.name.isEmpty && !self.column.name.isEmpty && self.value.int != nil {
@@ -136,22 +156,5 @@ extension SearchLanguage.Component {
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(species.name)
-    }
-
-//    public func toPredicate() -> NSPredicate {
-//        return NSPredicate(
-//            format: "%K.%s = %d",
-//            species.name as NSObject,
-//            column.name as NSObject,
-//            value.int! as NSObject
-//        )
-//    }
-    func toPredicate() -> (String, NSObject, NSObject, NSObject) {
-        return (
-            "%K.%s = %d",
-            species.name as NSObject,
-            column.name as NSObject,
-            value.int! as NSObject
-        )
     }
 }
