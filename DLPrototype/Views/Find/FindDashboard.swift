@@ -93,7 +93,6 @@ struct FindDashboard: View {
                     showJobs: $showJobs,
                     allowAlive: $allowAlive
                 )
-                .environmentObject(jm)
             }
         }
         .onAppear(perform: actionOnAppear)
@@ -117,8 +116,25 @@ struct FindDashboard: View {
         } else {
             searching = false
         }
-        
-        nav.session.search.update(activeSearchText)
+
+        if searching {
+            let parser = SearchLanguage.Parser(with: activeSearchText).parse()
+
+            if !parser.components.isEmpty {
+                nav.session.search.components = parser.components
+            }
+            
+            let _ = nav.session.search.results()
+
+//            DispatchQueue.background(background: {
+//
+//            }, completion:{
+//                // when background job finished, do something in main thread
+//                print("DERPO DQ.finished")
+//
+//            })
+        }
+
         searchText = activeSearchText
     }
 

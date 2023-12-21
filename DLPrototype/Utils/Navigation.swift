@@ -142,7 +142,7 @@ extension Navigation {
         var date: Date = Date()
         var idate: IdentifiableDay = IdentifiableDay()
         var gif: Planning.GlobalInterfaceFilter = .normal
-        var search: Search = Search()
+        var search: Search = Search(moc: PersistenceController.shared.container.viewContext)
     }
 }
 
@@ -160,18 +160,20 @@ extension Navigation.Session {
     public struct Search {
         var id: UUID = UUID()
         var text: String? = nil
-        var components: SearchLanguage.Components = SearchLanguage.Components()
-        var results: SearchLanguage.SearchResults = SearchLanguage.SearchResults()
+        var components: Set<SearchLanguage.Component> = []
+        var moc: NSManagedObjectContext
     }
 }
 
 extension Navigation.Session.Search {
-    func update(_ raw: String) -> Void {
-        let parser = SearchLanguage.Parser(with: raw)
-        let types = components.types
-        types.append(parser.types())
-//        self.components.set(parser.components)
-//        results.withComponents(components)
+    func results() -> [String]/*SearchLanguage.Results*/ {
+//        let parser = SearchLanguage.Parser(with: raw).parse()
+        
+//        print("DERPO components=\(parser.components)")
+//        print("DERPO parser.components.predicates\(parser.components.predicates)")
+        var results = SearchLanguage.Results(components: components, moc: moc)
+
+        return results.find()
     }
 }
 
