@@ -26,7 +26,7 @@ extension SearchLanguage {
             var data: [AnyHashable] = []
 
             for component in components {
-                let args = component.toPredicate()
+//                let args = component.toPredicate()
 
                 switch component.species.name {
                 case "Job":
@@ -36,17 +36,6 @@ extension SearchLanguage {
                 default:
                     print("DERPO unknown species \(component.species.name)")
                 }
-
-                // TODO: WHY IS INSTANTIATING NSPREDICATE LITERALLY ANYWHERE HERE "BAD ACCESS" SWIFT? YOU COCK?
-//                let predicate = NSPredicate(format: args.0, args.1, args.2, args.3)
-//                let format: String = args.0
-//                let species: NSObject = args.1
-//                let column: NSObject = args.2
-//                let value: NSObject = args.3
-//                let predicate = NSPredicate(format: format, species, column, value)
-//                print("DERPO args=\(args)")
-
-//                predicates.append(predicate)
             }
             print("DERPO data=\(data)")
 
@@ -105,6 +94,7 @@ extension SearchLanguage {
         var id: UUID = UUID()
         var species: Species
         var column: Column
+        var command: Command
         var value: Value
         var isValid: Bool = false
     }
@@ -117,6 +107,11 @@ extension SearchLanguage.Component {
 
     public struct Column {
         var name: String
+    }
+
+    public struct Command {
+        var name: String
+        var symbol: String
     }
 
     public struct Value {
