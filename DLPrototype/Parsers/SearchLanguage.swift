@@ -8,93 +8,15 @@
 
 import SwiftUI
 
+// MARK: Structs
 public struct SearchLanguage {}
 
 extension SearchLanguage {
     public struct Results {
         var components: Set<SearchLanguage.Component> = []
         var moc: NSManagedObjectContext
-
-        init(components: Set<SearchLanguage.Component>, moc: NSManagedObjectContext) {
-            self.components = components
-            self.moc = moc
-        }
-        
-        func find() -> [String: [NSManagedObject]] {
-            var data: [String: [NSManagedObject]] = [:]
-            var jobs: [Job] = []
-
-            for component in components {
-                switch component.species.name {
-                case "Job":
-                    if let match = job(id: component.value) {
-                        jobs.append(match)
-                    }
-                default:
-                    print("DERPO unknown species \(component.species.name)")
-                }
-                
-                data["Jobs"] = jobs
-            }
-
-//            for (group, results) in data {
-//                switch group {
-//                case "Jobs":
-//                    for result in results as! [Job] {
-//                        print("DERPO result.jid=\(result.jid.string)")
-//                    }
-//                default:
-//                    print("DERPO unknown")
-//                }
-//            }
-
-            return data
-        }
-
-        private func job(id: SearchLanguage.Component.Value) -> Job? {
-            if let int = id.int {
-                if let species = CoreDataJob(moc: moc).byId(Double(int)) {
-                    return species
-                }
-            }
-
-            return nil
-        }
     }
-
-    public class Parser {
-        public var components: Set<SearchLanguage.Component> = []
-
-        private let pattern = /^@(.*?)\.(.*?)=(\d+)/
-        private var with: String
-
-        init(with: String) {
-            self.with = with
-        }
-        
-        //@job.id=412
-        public func parse() -> Self {
-            let matches = with.matches(of: pattern)
-
-            for match in matches {
-                let component = Component(
-                    species: Component.Species(name: String(match.1).capitalized),
-                    column: Component.Column(name: String(match.2)),
-                    command: Component.Command.equals,
-                    value: Component.Value(int: Int(match.3)!)
-                )
-
-                if component.isValid {
-                    components.insert(component)
-                }
-            }
-
-            return self
-        }
-    }
-}
-
-extension SearchLanguage {
+    
     public struct Component: Hashable, Equatable {
         var id: UUID = UUID()
         var species: Species
@@ -102,6 +24,12 @@ extension SearchLanguage {
         var command: Command
         var value: Value
         var isValid: Bool = false
+    }
+
+    public class Parser {
+        var components: Set<SearchLanguage.Component> = []
+        var with: String = ""
+        private let pattern = /^@(.*?)\.(.*?)=(\d+)/
     }
 }
 
@@ -135,6 +63,88 @@ extension SearchLanguage.Component {
 
     public struct Value {
         var int: Int? = 0
+    }
+}
+
+extension SearchLanguage.Results {
+    public enum SpeciesType {
+        case job, task, record, company, person, project
+    }
+}
+
+// MARK: Method definitions
+extension SearchLanguage.Parser {
+    convenience init(with: String) {
+        self.init()
+        self.with = with
+    }
+    
+    //@job.id=412
+    public func parse() -> Self {
+        let matches = with.matches(of: pattern)
+
+        for match in matches {
+            let component = SearchLanguage.Component(
+                species: SearchLanguage.Component.Species(name: String(match.1).capitalized),
+                column: SearchLanguage.Component.Column(name: String(match.2)),
+                command: SearchLanguage.Component.Command.equals,
+                value: SearchLanguage.Component.Value(int: Int(match.3)!)
+            )
+
+            if component.isValid {
+                components.insert(component)
+            }
+        }
+
+        return self
+    }
+}
+
+extension SearchLanguage.Results {
+    func find() -> [SpeciesType: [NSManagedObject]] {
+        var data: [SpeciesType: [NSManagedObject]] = [:]
+        var jobs: [Job] = []
+        var tasks: [LogTask] = []
+        var projects: [Project] = []
+        var companies: [Company] = []
+
+        for component in components {
+            switch component.species.name {
+            case "Job":
+                if let match = job(id: component.value) {
+                    jobs.append(match)
+                    
+                    tasks = match.tasks?.allObjects as! [LogTask]
+
+                    if let project = match.project {
+                        projects.append(project)
+                        
+                        if let company = project.company {
+                            companies.append(company)
+                        }
+                    }
+                }
+            default:
+                print("DERPO unknown species \(component.species.name)")
+            }
+            
+            data[.job] = jobs
+            data[.task] = tasks
+            data[.project] = projects
+            data[.company] = companies
+        }
+
+        return data
+    }
+
+    private func job(id: SearchLanguage.Component.Value) -> Job? {
+        if let int = id.int {
+            if let species = CoreDataJob(moc: moc).byId(Double(int)) {
+                return species
+            }
+        }
+
+        return nil
     }
 }
 

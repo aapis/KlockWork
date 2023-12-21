@@ -26,7 +26,7 @@ struct FindDashboard: View {
     @State private var showJobs: Bool = true
     @State private var allowAlive: Bool = true
     @State private var counts: (Int, Int, Int, Int) = (0, 0, 0, 0)
-    @State private var advancedSearchResults: [NSManagedObject] = []
+    @State private var advancedSearchResults: [SearchLanguage.Results.SpeciesType: [NSManagedObject]] = [:]
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var jm: CoreDataJob
@@ -96,7 +96,7 @@ struct FindDashboard: View {
                         allowAlive: $allowAlive
                     )
                 } else {
-                    AdvancedSearchResults(jobs: advancedSearchResults as! [Job])
+                    AdvancedSearchResults(results: advancedSearchResults)
                 }
             }
         }
@@ -128,23 +128,16 @@ struct FindDashboard: View {
             if !parser.components.isEmpty {
                 nav.session.search.components = parser.components
             }
-
-            for (group, results) in nav.session.search.results() {
-                switch group {
-                case "Jobs":
-                    advancedSearchResults = results as! [Job]
-                default:
-                    print("DERPO unknown")
-                }
-            }
-
-//            DispatchQueue.background(background: {
-//
-//            }, completion:{
-//                // when background job finished, do something in main thread
-//                print("DERPO DQ.finished")
-//
-//            })
+            
+            advancedSearchResults = nav.session.search.results()
+//            for (group, results) in nav.session.search.results() {
+//                switch group {
+//                case .job:
+//                    advancedSearchResults = results as! [Job]
+//                default:
+//                    print("DERPO unknown")
+//                }
+//            }
         }
 
         searchText = activeSearchText
@@ -167,7 +160,26 @@ struct FindDashboard: View {
 
 extension FindDashboard {
     struct AdvancedSearchResults: View {
-        public var jobs: [Job] = []
+        public var results: [SearchLanguage.Results.SpeciesType: [NSManagedObject]] = [:]
+        
+        @State private var jobs: [Job] = []
+        @State private var tasks: [LogTask] = []
+        @State private var projects: [Project] = []
+        @State private var companies: [Company] = []
+        
+        var body: some View {
+            VStack(alignment: .leading) {
+                Jobs(items: jobs)
+                Tasks(items: tasks)
+            }
+            .onAppear(perform: actionOnAppear)
+        }
+    }
+}
+
+extension FindDashboard.AdvancedSearchResults {
+    struct Jobs: View {
+        public var items: [Job]
         
         var body: some View {
             VStack(alignment: .leading) {
@@ -177,13 +189,52 @@ extension FindDashboard {
                 }
 
                 VStack {
-                    ForEach(jobs) { job in
-                        Text(String(job.jid.string))
-                        Text(String(job.records!.count))
+                    ForEach(items) { item in
+                        Text(String(item.jid.string))
+                        Text(String(item.records!.count))
                     }
                 }
 
                 Spacer()
+            }
+        }
+    }
+    
+    struct Tasks: View {
+        public var items: [LogTask]
+        
+        var body: some View {
+            VStack(alignment: .leading) {
+                HStack(alignment: .top) {
+                    Text("Tasks")
+                    Text(String(items.count))
+                    Spacer()
+                }
+
+                VStack {
+                    ForEach(items) { item in
+                        if let content = item.content {
+                            Text(String(content))
+                        }
+                    }
+                }
+
+                Spacer()
+            }
+        }
+    }
+}
+
+extension FindDashboard.AdvancedSearchResults {
+    private func actionOnAppear() -> Void {
+        for (type, typeResults) in results {
+            switch type {
+            case .job:
+                jobs = typeResults as! [Job]
+            case .task:
+                tasks = typeResults as! [LogTask]
+            default:
+                print("DERPO unknown")
             }
         }
     }

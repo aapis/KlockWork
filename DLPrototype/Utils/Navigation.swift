@@ -166,7 +166,7 @@ extension Navigation.Session {
 }
 
 extension Navigation.Session.Search {
-    func results() -> [String: [NSManagedObject]] {
+    func results() -> [SearchLanguage.Results.SpeciesType: [NSManagedObject]] {
         return SearchLanguage.Results(components: components, moc: moc).find()
     }
     
