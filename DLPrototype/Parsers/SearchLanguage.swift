@@ -80,6 +80,24 @@ extension SearchLanguage.Results {
             case .person: return Theme.rowColour
             }
         }
+        
+        var name: String {
+            switch self {
+            case .job: return "Jobs"
+            case .task: return "Tasks"
+            case .record: return "Records"
+            case .company: return "Companies"
+            case .project: return "Projects"
+            case .person: return "People"
+            }
+        }
+    }
+    
+    struct Result: Identifiable {
+        var id: UUID = UUID()
+        var label: SpeciesType
+        var set: [NSManagedObject]
+        var count: Int
     }
 }
 
@@ -89,8 +107,7 @@ extension SearchLanguage.Parser {
         self.init()
         self.with = with
     }
-    
-    //@job.id=412
+
     public func parse() -> Self {
         let matches = with.matches(of: pattern)
 
@@ -112,8 +129,8 @@ extension SearchLanguage.Parser {
 }
 
 extension SearchLanguage.Results {
-    func find() -> [SpeciesType: [NSManagedObject]] {
-        var data: [SpeciesType: [NSManagedObject]] = [:]
+    func find() -> [Result] {
+        var resultSet: [Result] = []
         var jobs: [Job] = []
         var tasks: [LogTask] = []
         var projects: [Project] = []
@@ -136,16 +153,27 @@ extension SearchLanguage.Results {
                     }
                 }
             default:
-                print("DERPO unknown species \(component.species.name)")
+                print("DERPO unimplemented Species \(component.species.name)")
             }
             
-            data[.job] = jobs
-            data[.task] = tasks
-            data[.project] = projects
-            data[.company] = companies
+            if jobs.count > 0 {
+                resultSet.append(Result(label: SpeciesType.job, set: jobs, count: jobs.count))
+            }
+            
+            if tasks.count > 0 {
+                resultSet.append(Result(label: SpeciesType.task, set: tasks, count: tasks.count))
+            }
+            
+            if projects.count > 0 {
+                resultSet.append(Result(label: SpeciesType.project, set: projects, count: projects.count))
+            }
+            
+            if companies.count > 0 {
+                resultSet.append(Result(label: SpeciesType.company, set: companies, count: companies.count))
+            }
         }
 
-        return data
+        return resultSet
     }
 
     private func job(id: SearchLanguage.Component.Value) -> Job? {

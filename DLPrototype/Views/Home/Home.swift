@@ -58,14 +58,6 @@ struct Home: View {
                     label: "Companies & Projects",
                     sidebar: AnyView(DefaultCompanySidebar())
                 ),
-                // TODO: hidden for UI/UX testing, remove or uncomment in the future
-//                SidebarButton(
-//                    destination: AnyView(ProjectsDashboard()),
-//                    pageType: .projects,
-//                    icon: "folder",
-//                    label: "Projects",
-//                    sidebar: AnyView(ProjectsDashboardSidebar())
-//                ),
                 SidebarButton(
                     destination: AnyView(JobDashboard()),
                     pageType: .jobs,

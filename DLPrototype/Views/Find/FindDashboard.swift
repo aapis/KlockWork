@@ -25,31 +25,15 @@ struct FindDashboard: View {
     @State private var showProjects: Bool = true
     @State private var showJobs: Bool = true
     @State private var allowAlive: Bool = true
-//    @State private var showSuggestions:
     @State private var counts: (Int, Int, Int, Int) = (0, 0, 0, 0)
-    @State private var advancedSearchResults: [SearchLanguage.Results.SpeciesType: [NSManagedObject]] = [:]
+    @State private var advancedSearchResults: [SearchLanguage.Results.Result] = []
+    @State private var buttons: [ToolbarButton] = []
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var jm: CoreDataJob
     @EnvironmentObject public var nav: Navigation
-    
+
     var body: some View {
-        // TODO: commented out to experiment including this view on the dashboard
-//        VStack(alignment: .leading) {
-//            VStack(alignment: .leading) {
-//                search
-//
-//                Spacer()
-//            }
-//            .font(Theme.font)
-//            .padding()
-//        }
-//        .background(Theme.toolbarColour)
-        search
-    }
-    
-    @ViewBuilder
-    var search: some View {
         Grid(horizontalSpacing: 0, verticalSpacing: 1) {
             GridRow {
                 SearchBar(
@@ -59,14 +43,25 @@ struct FindDashboard: View {
                     onSubmit: onSubmit,
                     onReset: onReset
                 )
-                .onChange(of: searchText) { _ in
-                    onSubmit()
+                .onChange(of: searchText) { searchQuery in
+                    if searchQuery.count >= 2 {
+                        onSubmit()
+                    } else {
+                        onReset()
+                    }
                 }
+//                .onChange(of: activeSearchText) { searchQuery in
+//                    if searchQuery.count >= 2 {
+//                        onSubmit()
+//                    } else {
+//                        onReset()
+//                    }
+//                }
             }
             
             if activeSearchText.filter({"0123456789".contains($0)}) != "" {
                 GridRow {
-                    AdvancedSearchResults.Suggestions(searchText: $activeSearchText)
+                    Suggestions(searchText: $activeSearchText)
                 }
             }
             
@@ -91,25 +86,14 @@ struct FindDashboard: View {
             
             if searching {
                 FancyDivider()
-                
-                if advancedSearchResults.isEmpty {
-                    Results(
-                        text: $searchText,
-                        showRecords: $showRecords,
-                        showNotes: $showNotes,
-                        showTasks: $showTasks,
-                        showProjects: $showProjects,
-                        showJobs: $showJobs,
-                        allowAlive: $allowAlive
-                    )
-                } else {
-                    AdvancedSearchResults(results: advancedSearchResults)
-                }
+                FancyGenericToolbar(buttons: buttons, standalone: true, location: .content)
             }
         }
         .onAppear(perform: actionOnAppear)
     }
+}
 
+extension FindDashboard {
     private func onSubmit() -> Void {
         if activeSearchText != "" {
             searching = true
@@ -126,11 +110,13 @@ struct FindDashboard: View {
             
             advancedSearchResults = nav.session.search.results()
         } else {
-            advancedSearchResults = [:]
+            advancedSearchResults = []
         }
         
         nav.session.search.text = activeSearchText
         searchText = activeSearchText
+        
+        createTabs()
     }
 
     private func onReset() -> Void {
@@ -146,97 +132,114 @@ struct FindDashboard: View {
             CoreDataProjects(moc: moc).countAll()
         )
     }
-}
+    
+    private func actionOnDisappear() -> Void {
+        
+    }
+    
+    private func createTabs() -> Void {
+        // @TODO: convert to set or otherwise mitigate requirement to clear buttons here
+        buttons = []
 
-extension FindDashboard {
-    public struct AdvancedSearchResults: View {
-        public var results: [SearchLanguage.Results.SpeciesType: [NSManagedObject]] = [:]
+        if showRecords {
+            buttons.append(
+                ToolbarButton(
+                    id: 0,
+                    helpText: "Records",
+                    label: AnyView(
+                        HStack {
+                            Image(systemName: "doc.plaintext")
+                                .font(.title2)
+                            Text("Records")
+                        }
+                    ),
+                    contents: AnyView(RecordsMatchingString(searchText))
+                )
+            )
+        }
         
-        @State private var jobs: [Job] = []
-        @State private var tasks: [LogTask] = []
-        @State private var projects: [Project] = []
-        @State private var companies: [Company] = []
+        if showNotes {
+            buttons.append(
+                ToolbarButton(
+                    id: 1,
+                    helpText: "Notes",
+                    label: AnyView(
+                        HStack {
+                            Image(systemName: "note.text")
+                                .font(.title2)
+                            Text("Notes")
+                        }
+                    ),
+                    contents: AnyView(EmptyView())
+                )
+            )
+        }
         
-        @EnvironmentObject public var nav: Navigation
+        if showTasks {
+            buttons.append(
+                ToolbarButton(
+                    id: 2,
+                    helpText: "Tasks",
+                    label: AnyView(
+                        HStack {
+                            Image(systemName: "checklist")
+                                .font(.title2)
+                            Text("Tasks")
+                        }
+                    ),
+                    contents: AnyView(EmptyView())
+                )
+            )
+        }
         
-        var body: some View {
-            VStack(alignment: .leading) {
-//                HStack(spacing: 5) {
-//                    HStack(spacing: 1) {
-//                        Text("Jobs")
-//                            .padding()
-//                            .background(Theme.rowColour)
-//                        Text(String(jobs.count))
-//                            .padding()
-//                            .background(Theme.rowColour)
-//                    }
-//
-//                    HStack(spacing: 1) {
-//                        Text("Tasks")
-//                            .padding()
-//                            .background(Theme.rowColour)
-//                        Text(String(tasks.count))
-//                            .padding()
-//                            .background(Theme.rowColour)
-//                    }
-//
-//                    HStack(spacing: 1) {
-//                        Text("Projects")
-//                            .padding()
-//                            .background(Theme.rowColour)
-//                        Text(String(projects.count))
-//                            .padding()
-//                            .background(Theme.rowColour)
-//                    }
-//
-//                    HStack(spacing: 1) {
-//                        Text("Companies")
-//                            .padding()
-//                            .background(Theme.rowColour)
-//                        Text(String(companies.count))
-//                            .padding()
-//                            .background(Theme.rowColour)
-//                    }
-//                }
-                OverviewBar(results: results)
-
-                ScrollView(showsIndicators: false) {
-                    Jobs(items: jobs)
-                    Tasks(items: tasks)
-                }
-            }
-            .onAppear(perform: actionOnAppear)
+        if showProjects {
+            buttons.append(
+                ToolbarButton(
+                    id: 3,
+                    helpText: "Projects",
+                    label: AnyView(
+                        HStack {
+                            Image(systemName: "folder")
+                                .font(.title2)
+                            Text("Projects")
+                        }
+                    ),
+                    contents: AnyView(EmptyView())
+                )
+            )
+        }
+        
+        if showJobs {
+            buttons.append(
+                ToolbarButton(
+                    id: 4,
+                    helpText: "Jobs",
+                    label: AnyView(
+                        HStack {
+                            Image(systemName: "hammer")
+                                .font(.title2)
+                            Text("Jobs")
+                        }
+                    ),
+                    contents: AnyView(EmptyView())
+                )
+            )
         }
     }
 }
 
-extension FindDashboard.AdvancedSearchResults {
-    struct OverviewBar: View {
-        public var results: [SearchLanguage.Results.SpeciesType: [NSManagedObject]] = [:]
-        private var keys: [String] = []
-//        private var values: [NSManagedObject] = []
-
+extension FindDashboard {
+    struct Loading: View {
         var body: some View {
-            Text("DERP")
-//            ForEach(keys) { type in
-//                HStack(spacing: 5) {
-//                    HStack(spacing: 1) {
-//                        Text(String(type))
-//                            .padding()
-//                            .background(Theme.rowColour)
-//                        Text(String(results[type].count))
-//                            .padding()
-//                            .background(Theme.rowColour)
-//                    }
-//                }
-//            }
-        }
-
-        init(results: [SearchLanguage.Results.SpeciesType: [NSManagedObject]]) {
-//            self.keys = results.keys
-//            for (key, _) in results {
-//                self.keys.append(String(key))
-//            }
+            VStack(alignment: .leading, spacing: 0) {
+                HStack {
+                    Spacer()
+                    ProgressView("Searching...")
+                    Spacer()
+                }
+                .padding([.top, .bottom], 20)
+//                .onDisappear(perform: actionOnDisappear)
+            }
         }
     }
     
@@ -247,7 +250,7 @@ extension FindDashboard.AdvancedSearchResults {
         @State private var jobs: [Job] = []
         
         private var columns: [GridItem] {
-            Array(repeating: .init(.flexible(minimum: 100)), count: 1)
+            Array(repeating: .init(.flexible(minimum: 100)), count: 2)
         }
         
         @Environment(\.managedObjectContext) var moc
@@ -256,11 +259,10 @@ extension FindDashboard.AdvancedSearchResults {
         var body: some View {
             VStack(alignment: .leading) {
                 Text("\(jobs.count) Suggestions for query \"\(searchText.filter {"0123456789".contains($0)})\"")
-                
-                
+
                 HStack(spacing: 1) {
                     ForEach(jobs) { job in
-                        FancyButtonv2(text: job.jid.string, icon: "hammer", fgColour: job.fgColour(), bgColour: job.colour_from_stored(), showIcon: true, size: .link)
+                        FancyButtonv2(text: job.jid.string, action: {choose(job.id_int())}, icon: "hammer", fgColour: job.fgColour(), bgColour: job.colour_from_stored(), showIcon: true, size: .link)
                                 .padding(3)
                                 .background(job.colour_from_stored())
                                 .frame(maxWidth: 100)
@@ -277,71 +279,109 @@ extension FindDashboard.AdvancedSearchResults {
         }
     }
     
-    struct Jobs: View {
-        // TODO: perform search in init() instead of passing through?
-        public var items: [Job]
+    struct RecordsMatchingString: View {
+        @State private var text: String = ""
+        @State private var loaded: Bool = false
+        @FetchRequest private var entities: FetchedResults<LogRecord>
+        
+        private let viewRequiresColumns: Set<RecordTableColumn> = [.extendedTimestamp, .job]
         
         var body: some View {
-            VStack(alignment: .leading) {
-                HStack(alignment: .top) {
-                    Text("Jobs")
-                    Spacer()
-                }
-
-                VStack {
-                    ForEach(items) { item in
-                        Text(String(item.jid.string))
-                        Text(String(item.records!.count))
-                    }
-                }
-
-                Spacer()
-            }
-        }
-    }
-    
-    struct Tasks: View {
-        // TODO: perform search in init() instead of passing through?
-        public var items: [LogTask]
-
-        var body: some View {
-            VStack(alignment: .leading) {
-                HStack(alignment: .top) {
-                    Text("Tasks")
-                    Text(String(items.count))
-                    Spacer()
-                }
-
-                VStack {
-                    ForEach(items) { item in
-                        if let content = item.content {
-                            Text(String(content))
+            VStack(alignment: .leading, spacing: 0) {
+                if !loaded {
+                    Loading()
+                } else {
+                    if entities.count > 0 {
+                        HStack {
+                            Text("\(entities.count) Records")
+                                .padding()
+                            Spacer()
+                        }
+                        .background(Theme.subHeaderColour)
+                        
+                        ScrollView(showsIndicators: false) {
+                            VStack(spacing: 1) {
+                                ForEach(entities) { item in
+                                    let entry = Entry(
+                                        timestamp: item.timestamp!,
+                                        job: item.job!,
+                                        message: item.message!
+                                    )
+                                    
+                                    LogRow(
+                                        entry: entry,
+                                        index: entities.firstIndex(of: item),
+                                        colour: Color.fromStored(item.job!.colour ?? Theme.rowColourAsDouble),
+                                        viewRequiresColumns: viewRequiresColumns,
+                                        selectedJob: $text
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        HStack {
+                            Text("No records for query")
+                                .padding()
+                            Spacer()
                         }
                     }
                 }
-
-                Spacer()
             }
+            .onAppear(perform: actionOnAppear)
+        }
+        
+        init(_ text: String) {
+            let rr: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
+            rr.predicate = NSPredicate(format: "message CONTAINS[c] %@", text)
+            rr.sortDescriptors = [
+                NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)
+            ]
+            _entities = FetchRequest(fetchRequest: rr, animation: .easeInOut)
+        }
+    }
+    
+    struct NotesMatchingString: View {
+        @FetchRequest private var entities: FetchedResults<Note>
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                if entities.count > 0 {
+                    HStack {
+                        Text("\(entities.count) Notes")
+                            .padding()
+                        Spacer()
+                    }
+                    .background(Theme.subHeaderColour)
+                    
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 1) {
+                            ForEach(entities) { item in
+                                NoteRow(note: item)
+                            }
+                        }
+                    }
+                } else {
+                    HStack {
+                        Text("No notes for query")
+                            .padding()
+                        Spacer()
+                    }
+                }
+            }
+        }
+        
+        init(_ text: String) {
+            let req: NSFetchRequest<Note> = Note.fetchRequest()
+            req.predicate = NSPredicate(format: "(body CONTAINS[c] %@ OR title CONTAINS[c] %@) AND alive = true", text, text)
+            req.sortDescriptors = [
+                NSSortDescriptor(keyPath: \Note.postedDate, ascending: false)
+            ]
+            _entities = FetchRequest(fetchRequest: req, animation: .easeInOut)
         }
     }
 }
 
-extension FindDashboard.AdvancedSearchResults {
-    private func actionOnAppear() -> Void {
-        for (type, typeResults) in results {
-            switch type {
-            case .job:
-                jobs = typeResults as! [Job]
-            case .task:
-                tasks = typeResults as! [LogTask]
-            default:
-                print("DERPO unknown species=\(type)")
-            }
-        }
-    }
-}
-
-extension FindDashboard.AdvancedSearchResults.Suggestions {
+extension FindDashboard.Suggestions {
     private func actionOnAppear() -> Void {
         let intsOnly = searchText.filter {"0123456789".contains($0)}
         
@@ -349,6 +389,18 @@ extension FindDashboard.AdvancedSearchResults.Suggestions {
             jobs = CoreDataJob(moc: moc)
                 .startsWith(intsOnly)
                 .sorted(by: {$0.jid < $1.jid})
+        }
+    }
+    
+    private func choose(_ jid: Int) -> Void {
+        searchText = String(jid)
+    }
+}
+
+extension FindDashboard.RecordsMatchingString {
+    private func actionOnAppear() -> Void {
+        if entities.count > 0 {
+            loaded = true
         }
     }
 }

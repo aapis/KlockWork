@@ -167,7 +167,7 @@ extension Navigation.Session {
 }
 
 extension Navigation.Session.Search {
-    mutating func results() -> [SearchLanguage.Results.SpeciesType: [NSManagedObject]] {
+    mutating func results() -> [SearchLanguage.Results.Result] {
         hasResults = true
         
         return SearchLanguage.Results(components: components, moc: moc).find()

@@ -6,19 +6,19 @@
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
 
 struct Results: View {
     @Binding public var text: String
-    @Binding private var showRecords: Bool
-    @Binding private var showNotes: Bool
-    @Binding private var showTasks: Bool
-    @Binding private var showProjects: Bool
-    @Binding private var showJobs: Bool
-    @Binding private var allowAlive: Bool
+    private var showRecords: Bool = false
+    private var showNotes: Bool = false
+    private var showTasks: Bool = false
+    private var showProjects: Bool = false
+    private var showJobs: Bool = false
+    private var allowAlive: Bool = false
     
     @State private var isLoading: Bool = false
+    @State private var tabs: [ToolbarButton] = []
     
     @FetchRequest private var records: FetchedResults<LogRecord>
     @FetchRequest private var notes: FetchedResults<Note>
@@ -57,8 +57,16 @@ struct Results: View {
         }
     }
     
-    public init(text: Binding<String>, showRecords: Binding<Bool>, showNotes: Binding<Bool>, showTasks: Binding<Bool>, showProjects: Binding<Bool>, showJobs: Binding<Bool>, allowAlive: Binding<Bool>) {
+    public init(text: Binding<String>, showRecords: Bool = false, showNotes: Bool = false, showTasks: Bool = false, showProjects: Bool = false, showJobs: Bool = false, allowAlive: Bool = false) {
         self._text = text
+        // show/hide values
+        self.showRecords = showRecords
+        self.showNotes = showNotes
+        self.showTasks = showTasks
+        self.showProjects = showProjects
+        self.showJobs = showJobs
+        // configuration options
+        self.allowAlive = allowAlive
         
         // all attempts to refactor this failed
         // fetch all records matching $text
@@ -68,6 +76,7 @@ struct Results: View {
             NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)
         ]
         self._records = FetchRequest(fetchRequest: rr, animation: .easeInOut)
+    
         
         // fetch all notes matching $text
         let nr: NSFetchRequest<Note> = Note.fetchRequest()
@@ -101,13 +110,6 @@ struct Results: View {
         ]
         self._jobs = FetchRequest(fetchRequest: jr, animation: .easeInOut)
         
-        // show/hide values
-        self._showRecords = showRecords
-        self._showNotes = showNotes
-        self._showTasks = showTasks
-        self._showProjects = showProjects
-        self._showJobs = showJobs
-        // configuration options
-        self._allowAlive = allowAlive
+        
     }
 }
