@@ -50,13 +50,17 @@ struct FindDashboard: View {
                         onReset()
                     }
                 }
-//                .onChange(of: activeSearchText) { searchQuery in
+                .onChange(of: activeSearchText) { searchQuery in
 //                    if searchQuery.count >= 2 {
 //                        onSubmit()
 //                    } else {
 //                        onReset()
 //                    }
-//                }
+                    
+                    if searchQuery.isEmpty {
+                        onReset()
+                    }
+                }
             }
             
             if activeSearchText.filter({"0123456789".contains($0)}) != "" {
@@ -170,7 +174,7 @@ extension FindDashboard {
                             Text("Notes")
                         }
                     ),
-                    contents: AnyView(EmptyView())
+                    contents: AnyView(NotesMatchingString(searchText))
                 )
             )
         }
@@ -187,7 +191,7 @@ extension FindDashboard {
                             Text("Tasks")
                         }
                     ),
-                    contents: AnyView(EmptyView())
+                    contents: AnyView(TasksMatchingString(searchText))
                 )
             )
         }
@@ -204,7 +208,7 @@ extension FindDashboard {
                             Text("Projects")
                         }
                     ),
-                    contents: AnyView(EmptyView())
+                    contents: AnyView(ProjectsMatchingString(searchText))
                 )
             )
         }
@@ -221,7 +225,7 @@ extension FindDashboard {
                             Text("Jobs")
                         }
                     ),
-                    contents: AnyView(EmptyView())
+                    contents: AnyView(JobsMatchingString(searchText))
                 )
             )
         }
@@ -320,10 +324,11 @@ extension FindDashboard {
                         }
                     } else {
                         HStack {
-                            Text("No records for query")
+                            Text("0 records")
                                 .padding()
                             Spacer()
                         }
+                        .background(Theme.subHeaderColour)
                     }
                 }
             }
@@ -362,10 +367,11 @@ extension FindDashboard {
                     }
                 } else {
                     HStack {
-                        Text("No notes for query")
+                        Text("0 Notes")
                             .padding()
                         Spacer()
                     }
+                    .background(Theme.subHeaderColour)
                 }
             }
         }
@@ -377,6 +383,129 @@ extension FindDashboard {
                 NSSortDescriptor(keyPath: \Note.postedDate, ascending: false)
             ]
             _entities = FetchRequest(fetchRequest: req, animation: .easeInOut)
+        }
+    }
+    
+    struct TasksMatchingString: View {
+        @FetchRequest private var entities: FetchedResults<LogTask>
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                if entities.count > 0 {
+                    HStack {
+                        Text("\(entities.count) Tasks")
+                            .padding()
+                        Spacer()
+                    }
+                    .background(Theme.subHeaderColour)
+                    
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 1) {
+                            ForEach(entities) { item in
+                                TaskView(task: item, showJobId: true, showCreated: true, showUpdated: true, showCompleted: true, colourizeRow: true)
+                            }
+                        }
+                    }
+                } else {
+                    HStack {
+                        Text("0 Tasks")
+                            .padding()
+                        Spacer()
+                    }
+                    .background(Theme.subHeaderColour)
+                }
+            }
+        }
+        
+        init(_ text: String) {
+            let tr: NSFetchRequest<LogTask> = LogTask.fetchRequest()
+            tr.predicate = NSPredicate(format: "content CONTAINS[c] %@", text)
+            tr.sortDescriptors = [
+                NSSortDescriptor(keyPath: \LogTask.created, ascending: false)
+            ]
+            _entities = FetchRequest(fetchRequest: tr, animation: .easeInOut)
+        }
+    }
+    
+    struct ProjectsMatchingString: View {
+        @FetchRequest private var entities: FetchedResults<Project>
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                if entities.count > 0 {
+                    HStack {
+                        Text("\(entities.count) Projects")
+                            .padding()
+                        Spacer()
+                    }
+                    .background(Theme.subHeaderColour)
+                    
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 1) {
+                            ForEach(entities) { item in
+                                ProjectRow(project: item)
+                            }
+                        }
+                    }
+                } else {
+                    HStack {
+                        Text("0 Projects")
+                            .padding()
+                        Spacer()
+                    }
+                    .background(Theme.subHeaderColour)
+                }
+            }
+        }
+        
+        init(_ text: String) {
+            let pr: NSFetchRequest<Project> = Project.fetchRequest()
+            pr.predicate = NSPredicate(format: "name CONTAINS[c] %@ AND alive = true", text)
+            pr.sortDescriptors = [
+                NSSortDescriptor(keyPath: \Project.created, ascending: false)
+            ]
+            _entities = FetchRequest(fetchRequest: pr, animation: .easeInOut)
+        }
+    }
+    
+    struct JobsMatchingString: View {
+        @FetchRequest private var entities: FetchedResults<Job>
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                if entities.count > 0 {
+                    HStack {
+                        Text("\(entities.count) Jobs")
+                            .padding()
+                        Spacer()
+                    }
+                    .background(Theme.subHeaderColour)
+                    
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 1) {
+                            ForEach(entities) { item in
+                                JobRow(job: item, colour: item.colour_from_stored())
+                            }
+                        }
+                    }
+                } else {
+                    HStack {
+                        Text("0 Jobs")
+                            .padding()
+                        Spacer()
+                    }
+                    .background(Theme.subHeaderColour)
+                }
+            }
+        }
+        
+        init(_ text: String) {
+            let jr: NSFetchRequest<Job> = Job.fetchRequest()
+            jr.predicate = NSPredicate(format: "(uri CONTAINS[c] %@ OR jid.string CONTAINS[c] %@) AND alive = true", text, text)
+            jr.sortDescriptors = [
+                NSSortDescriptor(keyPath: \Job.jid, ascending: false)
+            ]
+            _entities = FetchRequest(fetchRequest: jr, animation: .easeInOut)
         }
     }
 }
