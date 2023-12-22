@@ -162,17 +162,21 @@ extension Navigation.Session {
         var text: String? = nil
         var components: Set<SearchLanguage.Component> = []
         var moc: NSManagedObjectContext
+        var hasResults: Bool = false
     }
 }
 
 extension Navigation.Session.Search {
-    func results() -> [SearchLanguage.Results.SpeciesType: [NSManagedObject]] {
+    mutating func results() -> [SearchLanguage.Results.SpeciesType: [NSManagedObject]] {
+        hasResults = true
+        
         return SearchLanguage.Results(components: components, moc: moc).find()
     }
     
     mutating func reset() -> Void {
         components = []
         text = nil
+        hasResults = false
     }
 }
 

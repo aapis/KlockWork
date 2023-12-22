@@ -69,6 +69,17 @@ extension SearchLanguage.Component {
 extension SearchLanguage.Results {
     public enum SpeciesType {
         case job, task, record, company, person, project
+        
+        var colour: Color {
+            switch self {
+            case .job: return Theme.cGreen
+            case .task: return Theme.cRed
+            case .record: return Theme.cOrange
+            case .company: return Theme.cPurple
+            case .project: return Theme.cYellow
+            case .person: return Theme.rowColour
+            }
+        }
     }
 }
 

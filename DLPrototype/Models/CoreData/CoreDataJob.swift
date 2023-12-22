@@ -134,6 +134,24 @@ public class CoreDataJob: ObservableObject {
         return all
     }
     
+    public func startsWith(_ id: String) -> [Job] {
+//        var all: [Job] = []
+//        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+//        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.jid, ascending: false)]
+//        fetch.predicate = NSPredicate(format: "alive == true && jid.string BEGINSWITH[c] %s", id)
+//        
+//        do {
+//            all = try moc!.fetch(fetch)
+//        } catch {
+//            print("Couldn't retrieve all jobs starting with keyword id")
+//        }
+//        
+//        return all
+        return self.all().filter {$0.alive == true && $0.jid.string.starts(with: id)}
+        
+        
+    }
+    
     public func owned() -> [Job] {
         var all: [Job] = []
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()

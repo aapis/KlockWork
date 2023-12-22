@@ -25,6 +25,7 @@ struct FindDashboard: View {
     @State private var showProjects: Bool = true
     @State private var showJobs: Bool = true
     @State private var allowAlive: Bool = true
+//    @State private var showSuggestions:
     @State private var counts: (Int, Int, Int, Int) = (0, 0, 0, 0)
     @State private var advancedSearchResults: [SearchLanguage.Results.SpeciesType: [NSManagedObject]] = [:]
 
@@ -60,6 +61,12 @@ struct FindDashboard: View {
                 )
                 .onChange(of: searchText) { _ in
                     onSubmit()
+                }
+            }
+            
+            if activeSearchText.filter({"0123456789".contains($0)}) != "" {
+                GridRow {
+                    AdvancedSearchResults.Suggestions(searchText: $activeSearchText)
                 }
             }
             
@@ -102,19 +109,7 @@ struct FindDashboard: View {
         }
         .onAppear(perform: actionOnAppear)
     }
-    
-    @ViewBuilder
-    var loading: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                Spacer()
-                ProgressView("Searching...")
-                Spacer()
-            }
-            .padding([.top, .bottom], 20)
-        }
-    }
-    
+
     private func onSubmit() -> Void {
         if activeSearchText != "" {
             searching = true
@@ -130,14 +125,8 @@ struct FindDashboard: View {
             }
             
             advancedSearchResults = nav.session.search.results()
-//            for (group, results) in nav.session.search.results() {
-//                switch group {
-//                case .job:
-//                    advancedSearchResults = results as! [Job]
-//                default:
-//                    print("DERPO unknown")
-//                }
-//            }
+        } else {
+            advancedSearchResults = [:]
         }
 
         searchText = activeSearchText
@@ -159,7 +148,7 @@ struct FindDashboard: View {
 }
 
 extension FindDashboard {
-    struct AdvancedSearchResults: View {
+    public struct AdvancedSearchResults: View {
         public var results: [SearchLanguage.Results.SpeciesType: [NSManagedObject]] = [:]
         
         @State private var jobs: [Job] = []
@@ -167,10 +156,53 @@ extension FindDashboard {
         @State private var projects: [Project] = []
         @State private var companies: [Company] = []
         
+        @EnvironmentObject public var nav: Navigation
+        
         var body: some View {
             VStack(alignment: .leading) {
-                Jobs(items: jobs)
-                Tasks(items: tasks)
+//                HStack(spacing: 5) {
+//                    HStack(spacing: 1) {
+//                        Text("Jobs")
+//                            .padding()
+//                            .background(Theme.rowColour)
+//                        Text(String(jobs.count))
+//                            .padding()
+//                            .background(Theme.rowColour)
+//                    }
+//
+//                    HStack(spacing: 1) {
+//                        Text("Tasks")
+//                            .padding()
+//                            .background(Theme.rowColour)
+//                        Text(String(tasks.count))
+//                            .padding()
+//                            .background(Theme.rowColour)
+//                    }
+//
+//                    HStack(spacing: 1) {
+//                        Text("Projects")
+//                            .padding()
+//                            .background(Theme.rowColour)
+//                        Text(String(projects.count))
+//                            .padding()
+//                            .background(Theme.rowColour)
+//                    }
+//
+//                    HStack(spacing: 1) {
+//                        Text("Companies")
+//                            .padding()
+//                            .background(Theme.rowColour)
+//                        Text(String(companies.count))
+//                            .padding()
+//                            .background(Theme.rowColour)
+//                    }
+//                }
+                OverviewBar(results: results)
+
+                ScrollView(showsIndicators: false) {
+                    Jobs(items: jobs)
+                    Tasks(items: tasks)
+                }
             }
             .onAppear(perform: actionOnAppear)
         }
@@ -178,7 +210,67 @@ extension FindDashboard {
 }
 
 extension FindDashboard.AdvancedSearchResults {
+    struct OverviewBar: View {
+        public var results: [SearchLanguage.Results.SpeciesType: [NSManagedObject]] = [:]
+        private var keys: [String] = []
+//        private var values: [NSManagedObject] = []
+
+        var body: some View {
+            Text("DERP")
+//            ForEach(keys) { type in
+//                HStack(spacing: 5) {
+//                    HStack(spacing: 1) {
+//                        Text(String(type))
+//                            .padding()
+//                            .background(Theme.rowColour)
+//                        Text(String(results[type].count))
+//                            .padding()
+//                            .background(Theme.rowColour)
+//                    }
+//                }
+//            }
+        }
+
+        init(results: [SearchLanguage.Results.SpeciesType: [NSManagedObject]]) {
+//            self.keys = results.keys
+//            for (key, _) in results {
+//                self.keys.append(String(key))
+//            }
+        }
+    }
+    
+    struct Suggestions: View {
+        @Binding public var searchText: String
+
+        // @TODO: should support any NSManagedObject in the future so we can suggest projects, tasks, etc
+        @State private var jobs: [Job] = []
+        
+        @Environment(\.managedObjectContext) var moc
+        @EnvironmentObject public var nav: Navigation
+        
+        var body: some View {
+            VStack(alignment: .leading) {
+                Text("Suggestions for query \"\(searchText.filter {"0123456789".contains($0)})\"")
+                
+                
+                HStack(spacing: 1) {
+                    ForEach(jobs) { job in
+                        Text(job.jid.string)
+                    }
+                    Spacer()
+                }
+                .padding()
+            }
+            .background(Theme.rowColour)
+            .onAppear(perform: actionOnAppear)
+            .onChange(of: searchText) { query in
+                actionOnAppear()
+            }
+        }
+    }
+    
     struct Jobs: View {
+        // TODO: perform search in init() instead of passing through?
         public var items: [Job]
         
         var body: some View {
@@ -201,8 +293,9 @@ extension FindDashboard.AdvancedSearchResults {
     }
     
     struct Tasks: View {
+        // TODO: perform search in init() instead of passing through?
         public var items: [LogTask]
-        
+
         var body: some View {
             VStack(alignment: .leading) {
                 HStack(alignment: .top) {
@@ -234,8 +327,20 @@ extension FindDashboard.AdvancedSearchResults {
             case .task:
                 tasks = typeResults as! [LogTask]
             default:
-                print("DERPO unknown")
+                print("DERPO unknown species=\(type)")
             }
+        }
+    }
+}
+
+extension FindDashboard.AdvancedSearchResults.Suggestions {
+    private func actionOnAppear() -> Void {
+        let intsOnly = searchText.filter {"0123456789".contains($0)}
+        
+        if !intsOnly.isEmpty {
+            jobs = CoreDataJob(moc: moc)
+                .startsWith(intsOnly)
+                .sorted(by: {$0.jid < $1.jid})
         }
     }
 }
