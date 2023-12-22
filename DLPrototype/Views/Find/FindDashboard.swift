@@ -128,7 +128,8 @@ struct FindDashboard: View {
         } else {
             advancedSearchResults = [:]
         }
-
+        
+        nav.session.search.text = activeSearchText
         searchText = activeSearchText
     }
 
@@ -245,17 +246,24 @@ extension FindDashboard.AdvancedSearchResults {
         // @TODO: should support any NSManagedObject in the future so we can suggest projects, tasks, etc
         @State private var jobs: [Job] = []
         
+        private var columns: [GridItem] {
+            Array(repeating: .init(.flexible(minimum: 100)), count: 1)
+        }
+        
         @Environment(\.managedObjectContext) var moc
         @EnvironmentObject public var nav: Navigation
         
         var body: some View {
             VStack(alignment: .leading) {
-                Text("Suggestions for query \"\(searchText.filter {"0123456789".contains($0)})\"")
+                Text("\(jobs.count) Suggestions for query \"\(searchText.filter {"0123456789".contains($0)})\"")
                 
                 
                 HStack(spacing: 1) {
                     ForEach(jobs) { job in
-                        Text(job.jid.string)
+                        FancyButtonv2(text: job.jid.string, icon: "hammer", fgColour: job.fgColour(), bgColour: job.colour_from_stored(), showIcon: true, size: .link)
+                                .padding(3)
+                                .background(job.colour_from_stored())
+                                .frame(maxWidth: 100)
                     }
                     Spacer()
                 }

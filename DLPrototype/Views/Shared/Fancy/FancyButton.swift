@@ -70,6 +70,7 @@ public struct FancyButtonv2: View {
     public var action: (() -> Void)?
     public var icon: String? = "checkmark.circle"
     public var fgColour: Color?
+    public var bgColour: Color?
     public var highlightColour: Color?
     public var transparent: Bool? = false
     public var showLabel: Bool? = true
@@ -171,7 +172,7 @@ public struct FancyButtonv2: View {
 
     private var Background: some View {
         ZStack {
-            type.colours.first
+            bgColour ?? type.colours.first
         }
         .mask(
             RoundedRectangle(cornerRadius: 3)
@@ -180,7 +181,7 @@ public struct FancyButtonv2: View {
 
     private var HighlightedBackground: some View {
         ZStack {
-            type.colours.first
+            bgColour ?? type.colours.first
             LinearGradient(gradient: Gradient(colors: type.colours), startPoint: .top, endPoint: .bottom)
                 .blendMode(.softLight)
                 .opacity(0.3)
@@ -192,7 +193,7 @@ public struct FancyButtonv2: View {
 
     private var ActiveBackground: some View {
         ZStack {
-            type.activeColour
+            bgColour ?? type.activeColour
             LinearGradient(gradient: Gradient(colors: [type.activeColour, .black]), startPoint: .top, endPoint: .bottom)
                 .blendMode(.softLight)
                 .opacity(0.3)
