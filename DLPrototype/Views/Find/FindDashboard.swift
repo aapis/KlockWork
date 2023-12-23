@@ -275,35 +275,38 @@ extension FindDashboard {
 
         var body: some View {
             VStack(alignment: .leading) {
-                HStack(alignment: .top) {
-                    VStack(alignment: .leading) {
-                        HStack(alignment: .top) {
-                            FancySubTitle(text: "Inspector")
-                            Spacer()
-                        }
-                        Divider()
-                            .padding(.bottom, 10)
-                        
-                        if let job = job {
-                            InspectingJob(item: job)
-                        } else if let record = record {
-                            InspectingRecord(item: record)
-                        } else if let project = project {
-                            InspectingProject(item: project)
-                        } else if let company = company {
-                            InspectingCompany(item: company)
-                        } else if let person = person {
-                            InspectingPerson(item: person)
-                        } else if let note = note {
-                            InspectingNote(item: note)
-                        } else if let task = task {
-                            InspectingTask(item: task)
-                        }
-                    }
-
+                HStack {
+                    FancySubTitle(text: "Inspector")
                     Spacer()
-                    FancyButtonv2(text: "Close", action: {nav.session.search.inspectingEntity = nil}, icon: "xmark", showLabel: false, size: .tiny, type: .clear)
-                        .opacity(0.6)
+                    FancyButtonv2(
+                        text: "Close",
+                        action: {nav.session.search.inspectingEntity = nil},
+                        icon: "xmark",
+                        showLabel: false,
+                        size: .tiny,
+                        type: .clear
+                    )
+                    .opacity(0.6)
+                }
+                Divider()
+                    .padding(.bottom, 10)
+
+                HStack(alignment: .top) {
+                    if let job = job {
+                        InspectingJob(item: job)
+                    } else if let record = record {
+                        InspectingRecord(item: record)
+                    } else if let project = project {
+                        InspectingProject(item: project)
+                    } else if let company = company {
+                        InspectingCompany(item: company)
+                    } else if let person = person {
+                        InspectingPerson(item: person)
+                    } else if let note = note {
+                        InspectingNote(item: note)
+                    } else if let task = task {
+                        InspectingTask(item: task)
+                    }
                 }
                 Spacer()
             }
@@ -318,6 +321,8 @@ extension FindDashboard {
         
         struct InspectingJob: View {
             public var item: Job
+            
+            @EnvironmentObject public var nav: Navigation
             
             var body: some View {
                 VStack(alignment: .leading, spacing: 10) {
@@ -389,25 +394,27 @@ extension FindDashboard {
                     Divider()
 
                     Spacer()
-                    HStack(alignment: .top, spacing: 10) {
-                        // TODO: throws a "serious application error" on load, issue probably in JobDashboard tho
-                        FancyButtonv2(
-                            text: "Open",
-                            icon: "arrow.right.square.fill",
-                            showLabel: true,
-                            size: .link,
-                            type: .clear,
-                            redirect: AnyView(JobDashboard(defaultSelectedJob: item)),
-                            pageType: .jobs,
-                            sidebar: AnyView(JobDashboardSidebar())
-                        )
-                    }
+//                    HStack(alignment: .top, spacing: 10) {
+//                        // TODO: throws a "serious application error" on load, issue probably in JobDashboard tho
+//                        FancyButtonv2(
+//                            text: "Open",
+//                            icon: "arrow.right.square.fill",
+//                            showLabel: true,
+//                            size: .link,
+//                            type: .clear,
+//                            redirect: AnyView(JobDashboard(defaultSelectedJob: item)),
+//                            pageType: .jobs,
+//                            sidebar: AnyView(JobDashboardSidebar())
+//                        )
+//                    }
                 }
             }
         }
         
         struct InspectingRecord: View {
             public var item: LogRecord
+            
+            @EnvironmentObject public var nav: Navigation
             
             var body: some View {
                 VStack(alignment: .leading, spacing: 10) {
@@ -433,10 +440,14 @@ extension FindDashboard {
                     HStack(alignment: .top, spacing: 10) {
                         FancyButtonv2(
                             text: "Open day",
+                            action: {nav.session.date = item.timestamp ?? Date()},
                             icon: "arrow.right.square.fill",
                             showLabel: true,
                             size: .link,
-                            type: .clear
+                            type: .clear,
+                            redirect: AnyView(Today()),
+                            pageType: .today,
+                            sidebar: AnyView(TodaySidebar())
                         )
                     }
                 }
@@ -445,6 +456,8 @@ extension FindDashboard {
         
         struct InspectingProject: View {
             public var item: Project
+            
+            @EnvironmentObject public var nav: Navigation
             
             var body: some View {
                 VStack(alignment: .leading, spacing: 10) {
@@ -467,14 +480,19 @@ extension FindDashboard {
                     }
                     
                     Spacer()
-                    HStack(alignment: .top, spacing: 10) {
-                        FancyButtonv2(
-                            text: "Open project",
-                            icon: "arrow.right.square.fill",
-                            showLabel: true,
-                            size: .link,
-                            type: .clear
-                        )
+                    if let company = item.company {
+                        HStack(alignment: .top, spacing: 10) {
+                            FancyButtonv2(
+                                text: "Open project",
+                                icon: "arrow.right.square.fill",
+                                showLabel: true,
+                                size: .link,
+                                type: .clear,
+                                redirect: AnyView(CompanyDashboard(company: company)),
+                                pageType: .companies,
+                                sidebar: AnyView(DefaultCompanySidebar())
+                            )
+                        }
                     }
                 }
             }
@@ -482,6 +500,8 @@ extension FindDashboard {
         
         struct InspectingCompany: View {
             public var item: Company
+            
+            @EnvironmentObject public var nav: Navigation
             
             var body: some View {
                 VStack(alignment: .leading, spacing: 10) {
@@ -510,7 +530,10 @@ extension FindDashboard {
                             icon: "arrow.right.square.fill",
                             showLabel: true,
                             size: .link,
-                            type: .clear
+                            type: .clear,
+                            redirect: AnyView(CompanyDashboard(company: item)),
+                            pageType: .companies,
+                            sidebar: AnyView(DefaultCompanySidebar())
                         )
                     }
                 }
@@ -519,6 +542,8 @@ extension FindDashboard {
         
         struct InspectingPerson: View {
             public var item: Person
+            
+            @EnvironmentObject public var nav: Navigation
             
             var body: some View {
                 VStack(alignment: .leading, spacing: 10) {
@@ -551,14 +576,19 @@ extension FindDashboard {
                     }
                     
                     Spacer()
-                    HStack(alignment: .top, spacing: 10) {
-                        FancyButtonv2(
-                            text: "Open",
-                            icon: "arrow.right.square.fill",
-                            showLabel: true,
-                            size: .link,
-                            type: .clear
-                        )
+                    if let company = item.company {
+                        HStack(alignment: .top, spacing: 10) {
+                            FancyButtonv2(
+                                text: "Open",
+                                icon: "arrow.right.square.fill",
+                                showLabel: true,
+                                size: .link,
+                                type: .clear,
+                                redirect: AnyView(CompanyDashboard(company: company)),
+                                pageType: .companies,
+                                sidebar: AnyView(DefaultCompanySidebar())
+                            )
+                        }
                     }
                 }
             }
@@ -566,6 +596,8 @@ extension FindDashboard {
         
         struct InspectingNote: View {
             public var item: Note
+            
+            @EnvironmentObject public var nav: Navigation
             
             var body: some View {
                 VStack(alignment: .leading, spacing: 10) {
@@ -598,13 +630,17 @@ extension FindDashboard {
                     }
                     
                     Spacer()
+                    // @TODO: link to the specific note
                     HStack(alignment: .top, spacing: 10) {
                         FancyButtonv2(
                             text: "Open",
                             icon: "arrow.right.square.fill",
                             showLabel: true,
                             size: .link,
-                            type: .clear
+                            type: .clear,
+                            redirect: AnyView(NoteDashboard()),
+                            pageType: .notes,
+                            sidebar: AnyView(NoteDashboardSidebar())
                         )
                     }
                 }
@@ -613,6 +649,8 @@ extension FindDashboard {
         
         struct InspectingTask: View {
             public var item: LogTask
+            
+            @EnvironmentObject public var nav: Navigation
             
             var body: some View {
                 VStack(alignment: .leading, spacing: 10) {
@@ -665,14 +703,21 @@ extension FindDashboard {
                     }
                     
                     Spacer()
-                    HStack(alignment: .top, spacing: 10) {
-                        FancyButtonv2(
-                            text: "Open",
-                            icon: "arrow.right.square.fill",
-                            showLabel: true,
-                            size: .link,
-                            type: .clear
-                        )
+                    if let job = item.owner {
+                        if let project = job.project {
+                            HStack(alignment: .top, spacing: 10) {
+                                FancyButtonv2(
+                                    text: "Open",
+                                    icon: "arrow.right.square.fill",
+                                    showLabel: true,
+                                    size: .link,
+                                    type: .clear,
+                                    redirect: AnyView(TaskDashboardByProject(project: project)),
+                                    pageType: .companies,
+                                    sidebar: AnyView(DefaultCompanySidebar())
+                                )
+                            }
+                        }
                     }
                 }
             }
