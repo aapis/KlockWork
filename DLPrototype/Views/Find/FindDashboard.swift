@@ -28,13 +28,14 @@ struct FindDashboard: View {
     @State private var counts: (Int, Int, Int, Int) = (0, 0, 0, 0)
     @State private var advancedSearchResults: [SearchLanguage.Results.Result] = []
     @State private var buttons: [ToolbarButton] = []
+    @State private var loading: Bool = false
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var jm: CoreDataJob
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {
-        Grid(horizontalSpacing: 0, verticalSpacing: 1) {
+        Grid(alignment: .topLeading, horizontalSpacing: 0, verticalSpacing: 1) {
             GridRow {
                 SearchBar(
                     text: $activeSearchText,
@@ -51,19 +52,13 @@ struct FindDashboard: View {
                     }
                 }
                 .onChange(of: activeSearchText) { searchQuery in
-//                    if searchQuery.count >= 2 {
-//                        onSubmit()
-//                    } else {
-//                        onReset()
-//                    }
-                    
                     if searchQuery.isEmpty {
                         onReset()
                     }
                 }
             }
             
-            if activeSearchText.filter({"0123456789".contains($0)}) != "" {
+            if activeSearchText.count >= 2 {
                 GridRow {
                     Suggestions(searchText: $activeSearchText)
                 }
@@ -89,8 +84,12 @@ struct FindDashboard: View {
             .frame(height: 40)
             
             if searching {
-                FancyDivider()
-                FancyGenericToolbar(buttons: buttons, standalone: true, location: .content)
+                if loading {
+                    Loading()
+                } else {
+                    FancyDivider()
+                    FancyGenericToolbar(buttons: buttons, standalone: true, location: .content)
+                }
             }
         }
         .onAppear(perform: actionOnAppear)
@@ -99,7 +98,7 @@ struct FindDashboard: View {
 
 extension FindDashboard {
     private func onSubmit() -> Void {
-        if activeSearchText != "" {
+        if !activeSearchText.isEmpty {
             searching = true
         } else {
             searching = false
@@ -119,13 +118,21 @@ extension FindDashboard {
         
         nav.session.search.text = activeSearchText
         searchText = activeSearchText
+
+        // @TODO: find best place to call/construct tabs! This loads data but locks UI
+        DispatchQueue.background(background: {
+            loading = true
+            createTabs()
+        }, completion: {
+            loading = false
+        })
         
-        createTabs()
     }
 
     private func onReset() -> Void {
         searching = false
         nav.session.search.reset()
+        loading = false
     }
 
     private func actionOnAppear() -> Void {
@@ -236,12 +243,14 @@ extension FindDashboard {
     struct Loading: View {
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
+                Spacer()
                 HStack {
                     Spacer()
                     ProgressView("Searching...")
                     Spacer()
                 }
                 .padding([.top, .bottom], 20)
+                Spacer()
 //                .onDisappear(perform: actionOnDisappear)
             }
         }
@@ -250,35 +259,357 @@ extension FindDashboard {
     struct Suggestions: View {
         @Binding public var searchText: String
 
-        // @TODO: should support any NSManagedObject in the future so we can suggest projects, tasks, etc
-        @State private var jobs: [Job] = []
-        
         private var columns: [GridItem] {
-            Array(repeating: .init(.flexible(minimum: 100)), count: 2)
+            Array(repeating: .init(.flexible(minimum: 100)), count: 1)
         }
         
         @Environment(\.managedObjectContext) var moc
         @EnvironmentObject public var nav: Navigation
         
         var body: some View {
-            VStack(alignment: .leading) {
-                Text("\(jobs.count) Suggestions for query \"\(searchText.filter {"0123456789".contains($0)})\"")
-
-                HStack(spacing: 1) {
-                    ForEach(jobs) { job in
-                        FancyButtonv2(text: job.jid.string, action: {choose(job.id_int())}, icon: "hammer", fgColour: job.fgColour(), bgColour: job.colour_from_stored(), showIcon: true, size: .link)
-                                .padding(3)
-                                .background(job.colour_from_stored())
-                                .frame(maxWidth: 100)
+            VStack {
+                if searchText.count >= 2 {
+                    ScrollView(showsIndicators: false) {
+                        VStack {
+                            HStack {
+                                Text("Suggestions")
+                                Spacer()
+                            }
+                            
+                            SuggestedJobs(searchText: $searchText)
+                            SuggestedProjects(searchText: $searchText)
+                            SuggestedNotes(searchText: $searchText)
+                            SuggestedTasks(searchText: $searchText)
+                            SuggestedRecords(searchText: $searchText)
+                            SuggestedCompanies(searchText: $searchText)
+                            SuggestedPeople(searchText: $searchText)
+                        }
                     }
-                    Spacer()
+                    .padding()
                 }
-                .padding()
             }
             .background(Theme.rowColour)
-            .onAppear(perform: actionOnAppear)
-            .onChange(of: searchText) { query in
-                actionOnAppear()
+        }
+        
+        struct SuggestedJobs: View {
+            @Binding public var searchText: String
+            @State private var showChildren: Bool = false
+            @FetchRequest private var items: FetchedResults<Job>
+            
+            var body: some View {
+                if items.count > 0 {
+                    VStack(alignment: .leading) {
+                        HStack(spacing: 1) {
+                            Text("\(items.count) Jobs")
+                                .font(Theme.fontSubTitle)
+                            Spacer()
+                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                        }
+                        .padding()
+                        .background(Theme.rowColour)
+                        
+                        if showChildren {
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(items) { job in
+                                    VStack {
+                                        Divider()
+                                        HStack {
+                                            FancyButtonv2(text: job.jid.string, action: {choose(job.id_int())}, icon: "arrow.right.square.fill", showIcon: true, size: .link, type: .clear)
+                                            Spacer()
+                                        }
+                                    }
+                                    .padding(.bottom, 10)
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    EmptyView()
+                }
+            }
+            
+            init(searchText: Binding<String>) {
+                _searchText = searchText
+                
+                let req: NSFetchRequest<Job> = Job.fetchRequest()
+                req.sortDescriptors = [
+                    NSSortDescriptor(keyPath: \Job.jid, ascending: true),
+                ]
+                req.predicate = NSPredicate(format: "alive = true && jid.string BEGINSWITH %@", _searchText.wrappedValue)
+                
+                _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
+            }
+        }
+        
+        struct SuggestedProjects: View {
+            @Binding public var searchText: String
+            @State private var showChildren: Bool = false
+            @FetchRequest private var items: FetchedResults<Project>
+
+            var body: some View {
+                if items.count > 0 {
+                    VStack {
+                        HStack {
+                            Text("\(items.count) Projects")
+                                .font(Theme.fontSubTitle)
+                            Spacer()
+                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square", showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                        }
+                        .padding()
+                        .background(Theme.rowColour)
+                        
+                        if showChildren {
+                            ForEach(items) { item in
+                                FancyButtonv2(text: item.name ?? "", action: {choose(Int(item.pid))}, size: .link)
+                                    .padding(3)
+                            }
+                        }
+                    }
+                } else {
+                    EmptyView()
+                }
+            }
+            
+            init(searchText: Binding<String>) {
+                _searchText = searchText
+                
+                let req: NSFetchRequest<Project> = Project.fetchRequest()
+                req.sortDescriptors = [
+                    NSSortDescriptor(keyPath: \Project.name, ascending: true),
+                ]
+                req.predicate = NSPredicate(
+                    format: "alive = true && (name BEGINSWITH %@ || pid BEGINSWITH %@)",
+                    _searchText.wrappedValue,
+                    _searchText.wrappedValue
+                )
+                
+                _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
+            }
+        }
+        
+        struct SuggestedNotes: View {
+            @Binding public var searchText: String
+            @State private var showChildren: Bool = false
+            @FetchRequest private var items: FetchedResults<Note>
+
+            var body: some View {
+                if items.count > 0 {
+                    VStack {
+                        HStack {
+                            Text("\(items.count) Notes")
+                                .font(Theme.fontSubTitle)
+                            Spacer()
+                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                        }
+                        .padding()
+                        .background(Theme.rowColour)
+                        
+                        if showChildren {
+                            ForEach(items) { item in
+                                FancyButtonv2(text: item.title ?? "No title", action: {}, size: .link)
+                                    .padding(3)
+                            }
+                        }
+                    }
+                } else {
+                    EmptyView()
+                }
+            }
+            
+            init(searchText: Binding<String>) {
+                _searchText = searchText
+                
+                let req: NSFetchRequest<Note> = Note.fetchRequest()
+                req.sortDescriptors = [
+                    NSSortDescriptor(keyPath: \Note.title, ascending: true),
+                ]
+                req.predicate = NSPredicate(
+                    format: "alive = true && (body CONTAINS[cd] %@ || title CONTAINS[cd] %@)",
+                    _searchText.wrappedValue,
+                    _searchText.wrappedValue
+                )
+                
+                _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
+            }
+        }
+        
+        struct SuggestedTasks: View {
+            @Binding public var searchText: String
+            @State private var showChildren: Bool = false
+            @FetchRequest private var items: FetchedResults<LogTask>
+
+            var body: some View {
+                if items.count > 0 {
+                    VStack {
+                        HStack {
+                            Text("\(items.count) Tasks")
+                                .font(Theme.fontSubTitle)
+                            Spacer()
+                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                        }
+                        .padding()
+                        .background(Theme.rowColour)
+                        
+                        if showChildren {
+                            ForEach(items) { item in
+                                FancyButtonv2(text: item.content ?? "No content", action: {}, size: .link)
+                                    .padding(3)
+                            }
+                        }
+                    }
+                } else {
+                    EmptyView()
+                }
+            }
+            
+            init(searchText: Binding<String>) {
+                _searchText = searchText
+                
+                let req: NSFetchRequest<LogTask> = LogTask.fetchRequest()
+                req.sortDescriptors = [
+                    NSSortDescriptor(keyPath: \LogTask.created, ascending: true),
+                ]
+                req.predicate = NSPredicate(
+                    format: "content CONTAINS %@",
+                    _searchText.wrappedValue
+                )
+                
+                _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
+            }
+        }
+        
+        struct SuggestedRecords: View {
+            @Binding public var searchText: String
+            @State private var showChildren: Bool = false
+            @FetchRequest private var items: FetchedResults<LogRecord>
+
+            var body: some View {
+                if items.count > 0 {
+                    VStack {
+                        HStack {
+                            Text("\(items.count) Records")
+                                .font(Theme.fontSubTitle)
+                            Spacer()
+                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                        }
+                        .padding()
+                        .background(Theme.rowColour)
+                        
+                        if showChildren {
+                            ForEach(items) { item in
+                                FancyButtonv2(text: item.message ?? "No content", action: {}, size: .link)
+                                    .padding(3)
+                            }
+                        }
+                    }
+                } else {
+                    EmptyView()
+                }
+            }
+            
+            init(searchText: Binding<String>) {
+                _searchText = searchText
+                
+                let req: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
+                req.sortDescriptors = [
+                    NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: true),
+                ]
+                req.predicate = NSPredicate(
+                    format: "message CONTAINS[cd] %@",
+                    _searchText.wrappedValue
+                )
+                
+                _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
+            }
+        }
+        
+        struct SuggestedCompanies: View {
+            @Binding public var searchText: String
+            @State private var showChildren: Bool = false
+            @FetchRequest private var items: FetchedResults<Company>
+
+            var body: some View {
+                if items.count > 0 {
+                    VStack {
+                        HStack {
+                            Text("\(items.count) Companies")
+                                .font(Theme.fontSubTitle)
+                            Spacer()
+                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                        }
+                        .padding()
+                        .background(Theme.rowColour)
+                        
+                        if showChildren {
+                            ForEach(items) { item in
+                                FancyButtonv2(text: item.name ?? "No title", action: {}, size: .link)
+                                    .padding(3)
+                            }
+                        }
+                    }
+                } else {
+                    EmptyView()
+                }
+            }
+            
+            init(searchText: Binding<String>) {
+                _searchText = searchText
+                
+                let req: NSFetchRequest<Company> = Company.fetchRequest()
+                req.sortDescriptors = [
+                    NSSortDescriptor(keyPath: \Company.name, ascending: true),
+                ]
+                req.predicate = NSPredicate(
+                    format: "alive = true && name CONTAINS[cd] %@",
+                    _searchText.wrappedValue
+                )
+                
+                _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
+            }
+        }
+        
+        struct SuggestedPeople: View {
+            @Binding public var searchText: String
+            @State private var showChildren: Bool = false
+            @FetchRequest private var items: FetchedResults<Person>
+
+            var body: some View {
+                if items.count > 0 {
+                    VStack {
+                        HStack {
+                            Text("\(items.count) People")
+                                .font(Theme.fontSubTitle)
+                            Spacer()
+                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                        }
+                        .padding()
+                        .background(Theme.rowColour)
+                        
+                        if showChildren {
+                            ForEach(items) { item in
+                                FancyButtonv2(text: item.name ?? "No name", action: {}, size: .link)
+                                    .padding(3)
+                            }
+                        }
+                    }
+                } else {
+                    EmptyView()
+                }
+            }
+            
+            init(searchText: Binding<String>) {
+                _searchText = searchText
+                
+                let req: NSFetchRequest<Person> = Person.fetchRequest()
+                req.sortDescriptors = [
+                    NSSortDescriptor(keyPath: \Person.name, ascending: true),
+                ]
+                req.predicate = NSPredicate(
+                    format: "name CONTAINS[cd] %@",
+                    _searchText.wrappedValue
+                )
+                
+                _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
             }
         }
     }
@@ -287,49 +618,45 @@ extension FindDashboard {
         @State private var text: String = ""
         @State private var loaded: Bool = false
         @FetchRequest private var entities: FetchedResults<LogRecord>
-        
+
         private let viewRequiresColumns: Set<RecordTableColumn> = [.extendedTimestamp, .job]
-        
+
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                if !loaded {
-                    Loading()
-                } else {
-                    if entities.count > 0 {
-                        HStack {
-                            Text("\(entities.count) Records")
-                                .padding()
-                            Spacer()
-                        }
-                        .background(Theme.subHeaderColour)
-                        
-                        ScrollView(showsIndicators: false) {
-                            VStack(spacing: 1) {
-                                ForEach(entities) { item in
-                                    let entry = Entry(
-                                        timestamp: item.timestamp!,
-                                        job: item.job!,
-                                        message: item.message!
-                                    )
-                                    
-                                    LogRow(
-                                        entry: entry,
-                                        index: entities.firstIndex(of: item),
-                                        colour: Color.fromStored(item.job!.colour ?? Theme.rowColourAsDouble),
-                                        viewRequiresColumns: viewRequiresColumns,
-                                        selectedJob: $text
-                                    )
-                                }
+                if entities.count > 0 {
+                    HStack {
+                        Text("\(entities.count) Records")
+                            .padding()
+                        Spacer()
+                    }
+                    .background(Theme.subHeaderColour)
+                    
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 1) {
+                            ForEach(entities) { item in
+                                let entry = Entry(
+                                    timestamp: item.timestamp!,
+                                    job: item.job!,
+                                    message: item.message!
+                                )
+                                
+                                LogRow(
+                                    entry: entry,
+                                    index: entities.firstIndex(of: item),
+                                    colour: Color.fromStored(item.job!.colour ?? Theme.rowColourAsDouble),
+                                    viewRequiresColumns: viewRequiresColumns,
+                                    selectedJob: $text
+                                )
                             }
                         }
-                    } else {
-                        HStack {
-                            Text("0 records")
-                                .padding()
-                            Spacer()
-                        }
-                        .background(Theme.subHeaderColour)
                     }
+                } else {
+                    HStack {
+                        Text("0 records")
+                            .padding()
+                        Spacer()
+                    }
+                    .background(Theme.subHeaderColour)
                 }
             }
             .onAppear(perform: actionOnAppear)
@@ -510,17 +837,19 @@ extension FindDashboard {
     }
 }
 
-extension FindDashboard.Suggestions {
-    private func actionOnAppear() -> Void {
-        let intsOnly = searchText.filter {"0123456789".contains($0)}
-        
-        if !intsOnly.isEmpty {
-            jobs = CoreDataJob(moc: moc)
-                .startsWith(intsOnly)
-                .sorted(by: {$0.jid < $1.jid})
-        }
+extension FindDashboard.Suggestions.SuggestedJobs {
+    private func choose(_ jid: Int) -> Void {
+        searchText = String(jid)
     }
-    
+}
+
+extension FindDashboard.Suggestions.SuggestedProjects {
+    private func choose(_ jid: Int) -> Void {
+        searchText = String(jid)
+    }
+}
+
+extension FindDashboard.Suggestions.SuggestedNotes {
     private func choose(_ jid: Int) -> Void {
         searchText = String(jid)
     }
@@ -528,6 +857,7 @@ extension FindDashboard.Suggestions {
 
 extension FindDashboard.RecordsMatchingString {
     private func actionOnAppear() -> Void {
+        print("DERPO entities.count=\(entities.count)")
         if entities.count > 0 {
             loaded = true
         }
