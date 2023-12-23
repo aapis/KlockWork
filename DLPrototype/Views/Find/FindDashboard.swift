@@ -60,7 +60,13 @@ struct FindDashboard: View {
             
             if !searching && activeSearchText.count >= 2 {
                 GridRow {
-                    Suggestions(searchText: $activeSearchText)
+                    HStack(alignment: .top, spacing: 1) {
+                        Suggestions(searchText: $activeSearchText)
+                        
+                        if nav.session.search.inspectingEntity != nil {
+                            Inspector()
+                        }
+                    }
                 }
             }
             
@@ -256,6 +262,25 @@ extension FindDashboard {
         }
     }
     
+    struct Inspector: View {
+//        @FetchRequest private var entity:
+        @EnvironmentObject public var nav: Navigation
+
+        var body: some View {
+            VStack {
+                HStack {
+                    Text("Hi")
+                    Spacer()
+                    FancyButtonv2(text: "Close", action: {nav.session.search.inspectingEntity = nil}, icon: "xmark", showLabel: false, size: .tiny, type: .clear)
+                        .opacity(0.6)
+                }
+                Spacer()
+            }
+            .padding()
+            .background(Theme.rowColour.opacity(0.7))
+        }
+    }
+    
     struct Suggestions: View {
         @Binding public var searchText: String
 
@@ -298,6 +323,8 @@ extension FindDashboard {
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Job>
             
+            @EnvironmentObject public var nav: Navigation
+            
             var body: some View {
                 if items.count > 0 {
                     VStack(alignment: .leading) {
@@ -323,7 +350,7 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.jid.string, action: {choose(item.id_int())}, icon: "arrow.right.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(text: item.jid.string, action: {choose(item)}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
                                             Spacer()
                                         }
                                     }
@@ -355,6 +382,8 @@ extension FindDashboard {
             @State private var showChildren: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Project>
+            
+            @EnvironmentObject public var nav: Navigation
 
             var body: some View {
                 if items.count > 0 {
@@ -381,7 +410,7 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.name ?? "", action: {choose(Int(item.pid))}, icon: "arrow.right.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(text: item.name ?? "", action: {choose(Int(item.pid))}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
                                             Spacer()
                                         }
                                     }
@@ -417,6 +446,8 @@ extension FindDashboard {
             @State private var showChildren: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Note>
+            
+            @EnvironmentObject public var nav: Navigation
 
             var body: some View {
                 if items.count > 0 {
@@ -443,7 +474,8 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.title ?? "", action: {}, icon: "arrow.right.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(text: item.title ?? "", action: {}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                                .help("Inspect")
                                             Spacer()
                                         }
                                     }
@@ -479,6 +511,8 @@ extension FindDashboard {
             @State private var showChildren: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<LogTask>
+            
+            @EnvironmentObject public var nav: Navigation
 
             var body: some View {
                 if items.count > 0 {
@@ -505,7 +539,8 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.content ?? "", action: {}, icon: "arrow.right.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(text: item.content ?? "", action: {}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                                .help("Inspect")
                                             Spacer()
                                         }
                                     }
@@ -527,7 +562,7 @@ extension FindDashboard {
                     NSSortDescriptor(keyPath: \LogTask.created, ascending: true),
                 ]
                 req.predicate = NSPredicate(
-                    format: "content CONTAINS %@",
+                    format: "content CONTAINS[cd] %@",
                     _searchText.wrappedValue
                 )
                 
@@ -540,6 +575,8 @@ extension FindDashboard {
             @State private var showChildren: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<LogRecord>
+            
+            @EnvironmentObject public var nav: Navigation
 
             var body: some View {
                 if items.count > 0 {
@@ -566,7 +603,8 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.message ?? "", action: {}, icon: "arrow.right.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(text: item.message ?? "", action: {}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                                .help("Inspect")
                                             Spacer()
                                         }
                                     }
@@ -601,6 +639,8 @@ extension FindDashboard {
             @State private var showChildren: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Company>
+            
+            @EnvironmentObject public var nav: Navigation
 
             var body: some View {
                 if items.count > 0 {
@@ -627,7 +667,8 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.name ?? "", action: {}, icon: "arrow.right.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(text: item.name ?? "", action: {}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                                .help("Inspect")
                                             Spacer()
                                         }
                                     }
@@ -662,6 +703,8 @@ extension FindDashboard {
             @State private var showChildren: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Person>
+            
+            @EnvironmentObject public var nav: Navigation
 
             var body: some View {
                 if items.count > 0 {
@@ -688,7 +731,8 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.name ?? "", action: {}, icon: "arrow.right.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(text: item.name ?? "", action: {}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                                .help("Inspect")
                                             Spacer()
                                         }
                                     }
@@ -769,7 +813,7 @@ extension FindDashboard {
         
         init(_ text: String) {
             let rr: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
-            rr.predicate = NSPredicate(format: "message CONTAINS[c] %@", text)
+            rr.predicate = NSPredicate(format: "message CONTAINS[cd] %@", text)
             rr.sortDescriptors = [
                 NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)
             ]
@@ -810,7 +854,7 @@ extension FindDashboard {
         
         init(_ text: String) {
             let req: NSFetchRequest<Note> = Note.fetchRequest()
-            req.predicate = NSPredicate(format: "(body CONTAINS[c] %@ OR title CONTAINS[c] %@) AND alive = true", text, text)
+            req.predicate = NSPredicate(format: "(body CONTAINS[cd] %@ OR title CONTAINS[cd] %@) AND alive = true", text, text)
             req.sortDescriptors = [
                 NSSortDescriptor(keyPath: \Note.postedDate, ascending: false)
             ]
@@ -943,8 +987,9 @@ extension FindDashboard {
 }
 
 extension FindDashboard.Suggestions.SuggestedJobs {
-    private func choose(_ jid: Int) -> Void {
-        searchText = String(jid)
+    private func choose(_ job: Job) -> Void {
+//        searchText = String(job.jid)
+        nav.session.search.inspectingEntity = job
     }
 }
 
@@ -962,7 +1007,6 @@ extension FindDashboard.Suggestions.SuggestedNotes {
 
 extension FindDashboard.RecordsMatchingString {
     private func actionOnAppear() -> Void {
-        print("DERPO entities.count=\(entities.count)")
         if entities.count > 0 {
             loaded = true
         }

@@ -163,6 +163,7 @@ extension Navigation.Session {
         var components: Set<SearchLanguage.Component> = []
         var moc: NSManagedObjectContext
         var hasResults: Bool = false
+        var inspectingEntity: NSManagedObject? = nil
     }
 }
 
