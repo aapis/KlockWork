@@ -58,7 +58,7 @@ struct FindDashboard: View {
                 }
             }
             
-            if activeSearchText.count >= 2 {
+            if !searching && activeSearchText.count >= 2 {
                 GridRow {
                     Suggestions(searchText: $activeSearchText)
                 }
@@ -303,10 +303,10 @@ extension FindDashboard {
                             Text("\(items.count) Jobs")
                                 .font(Theme.fontSubTitle)
                             Spacer()
-                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square.fill", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
                         }
                         .padding()
-                        .background(Theme.rowColour)
+                        .background(Theme.subHeaderColour)
                         
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
@@ -314,7 +314,7 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: job.jid.string, action: {choose(job.id_int())}, icon: "arrow.right.square.fill", showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(text: job.jid.string, action: {choose(job.id_int())}, icon: "arrow.right.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
                                             Spacer()
                                         }
                                     }
@@ -353,15 +353,23 @@ extension FindDashboard {
                             Text("\(items.count) Projects")
                                 .font(Theme.fontSubTitle)
                             Spacer()
-                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square", showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square.fill", showLabel: false, showIcon: true, size: .tiny, type: .clear)
                         }
                         .padding()
-                        .background(Theme.rowColour)
-                        
+                        .background(Theme.subHeaderColour)
+
                         if showChildren {
-                            ForEach(items) { item in
-                                FancyButtonv2(text: item.name ?? "", action: {choose(Int(item.pid))}, size: .link)
-                                    .padding(3)
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(items) { item in
+                                    VStack {
+                                        Divider()
+                                        HStack {
+                                            FancyButtonv2(text: item.name ?? "", action: {choose(Int(item.pid))}, icon: "arrow.right.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            Spacer()
+                                        }
+                                    }
+                                    .padding(.bottom, 10)
+                                }
                             }
                         }
                     }
@@ -399,15 +407,23 @@ extension FindDashboard {
                             Text("\(items.count) Notes")
                                 .font(Theme.fontSubTitle)
                             Spacer()
-                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square.fill", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
                         }
                         .padding()
-                        .background(Theme.rowColour)
+                        .background(Theme.subHeaderColour)
                         
                         if showChildren {
-                            ForEach(items) { item in
-                                FancyButtonv2(text: item.title ?? "No title", action: {}, size: .link)
-                                    .padding(3)
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(items) { item in
+                                    VStack {
+                                        Divider()
+                                        HStack {
+                                            FancyButtonv2(text: item.title ?? "", action: {}, icon: "arrow.right.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            Spacer()
+                                        }
+                                    }
+                                    .padding(.bottom, 10)
+                                }
                             }
                         }
                     }
@@ -445,15 +461,23 @@ extension FindDashboard {
                             Text("\(items.count) Tasks")
                                 .font(Theme.fontSubTitle)
                             Spacer()
-                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square.fill", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
                         }
                         .padding()
-                        .background(Theme.rowColour)
-                        
+                        .background(Theme.subHeaderColour)
+
                         if showChildren {
-                            ForEach(items) { item in
-                                FancyButtonv2(text: item.content ?? "No content", action: {}, size: .link)
-                                    .padding(3)
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(items) { item in
+                                    VStack {
+                                        Divider()
+                                        HStack {
+                                            FancyButtonv2(text: item.content ?? "", action: {}, icon: "arrow.right.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            Spacer()
+                                        }
+                                    }
+                                    .padding(.bottom, 10)
+                                }
                             }
                         }
                     }
@@ -490,15 +514,23 @@ extension FindDashboard {
                             Text("\(items.count) Records")
                                 .font(Theme.fontSubTitle)
                             Spacer()
-                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square.fill", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
                         }
                         .padding()
-                        .background(Theme.rowColour)
-                        
+                        .background(Theme.subHeaderColour)
+
                         if showChildren {
-                            ForEach(items) { item in
-                                FancyButtonv2(text: item.message ?? "No content", action: {}, size: .link)
-                                    .padding(3)
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(items) { item in
+                                    VStack {
+                                        Divider()
+                                        HStack {
+                                            FancyButtonv2(text: item.message ?? "", action: {}, icon: "arrow.right.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            Spacer()
+                                        }
+                                    }
+                                    .padding(.bottom, 10)
+                                }
                             }
                         }
                     }
@@ -535,15 +567,23 @@ extension FindDashboard {
                             Text("\(items.count) Companies")
                                 .font(Theme.fontSubTitle)
                             Spacer()
-                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square.fill", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
                         }
                         .padding()
-                        .background(Theme.rowColour)
-                        
+                        .background(Theme.subHeaderColour)
+
                         if showChildren {
-                            ForEach(items) { item in
-                                FancyButtonv2(text: item.name ?? "No title", action: {}, size: .link)
-                                    .padding(3)
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(items) { item in
+                                    VStack {
+                                        Divider()
+                                        HStack {
+                                            FancyButtonv2(text: item.name ?? "", action: {}, icon: "arrow.right.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            Spacer()
+                                        }
+                                    }
+                                    .padding(.bottom, 10)
+                                }
                             }
                         }
                     }
@@ -580,15 +620,23 @@ extension FindDashboard {
                             Text("\(items.count) People")
                                 .font(Theme.fontSubTitle)
                             Spacer()
-                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square.fill", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
                         }
                         .padding()
-                        .background(Theme.rowColour)
-                        
+                        .background(Theme.subHeaderColour)
+
                         if showChildren {
-                            ForEach(items) { item in
-                                FancyButtonv2(text: item.name ?? "No name", action: {}, size: .link)
-                                    .padding(3)
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(items) { item in
+                                    VStack {
+                                        Divider()
+                                        HStack {
+                                            FancyButtonv2(text: item.name ?? "", action: {}, icon: "arrow.right.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            Spacer()
+                                        }
+                                    }
+                                    .padding(.bottom, 10)
+                                }
                             }
                         }
                     }
