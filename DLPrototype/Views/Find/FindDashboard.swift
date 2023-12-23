@@ -269,6 +269,7 @@ extension FindDashboard {
         @State private var company: Company? = nil
         @State private var person: Person? = nil
         @State private var note: Note? = nil
+        @State private var task: LogTask? = nil
 
         @EnvironmentObject public var nav: Navigation
 
@@ -295,6 +296,8 @@ extension FindDashboard {
                             InspectingPerson(item: person)
                         } else if let note = note {
                             InspectingNote(item: note)
+                        } else if let task = task {
+                            InspectingTask(item: task)
                         }
                     }
 
@@ -591,6 +594,73 @@ extension FindDashboard {
                             Spacer()
                         }
                         .help("Last update: \(date.description)")
+                        Divider()
+                    }
+                    
+                    Spacer()
+                    HStack(alignment: .top, spacing: 10) {
+                        FancyButtonv2(
+                            text: "Open",
+                            icon: "arrow.right.square.fill",
+                            showLabel: true,
+                            size: .link,
+                            type: .clear
+                        )
+                    }
+                }
+            }
+        }
+        
+        struct InspectingTask: View {
+            public var item: LogTask
+            
+            var body: some View {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                        Text("Type: Task")
+                        Spacer()
+                    }
+                    .help("Type: Task entity")
+                    Divider()
+                    
+                    if let date = item.created {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
+                            Text(date.description)
+                            Spacer()
+                        }
+                        .help("Created: \(date.description)")
+                        Divider()
+                    }
+                    
+                    if let date = item.lastUpdate {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
+                            Text(date.description)
+                            Spacer()
+                        }
+                        .help("Last update: \(date.description)")
+                        Divider()
+                    }
+                    
+                    if let date = item.completedDate {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
+                            Text(date.description)
+                            Spacer()
+                        }
+                        .help("Completed on \(date.description)")
+                        Divider()
+                    }
+                    
+                    if let date = item.cancelledDate {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
+                            Text(date.description)
+                            Spacer()
+                        }
+                        .help("Cancelled on \(date.description)")
                         Divider()
                     }
                     
@@ -1316,43 +1386,71 @@ extension FindDashboard {
 }
 
 extension FindDashboard.Suggestions.SuggestedJobs {
-    private func choose(_ job: Job) -> Void {
-        nav.session.search.inspectingEntity = job
+    private func choose(_ item: Job) -> Void {
+        if nav.session.search.inspectingEntity != nil {
+            nav.session.search.inspectingEntity = nil
+        }
+
+        nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedProjects {
     private func choose(_ item: Project) -> Void {
+        if nav.session.search.inspectingEntity != nil {
+            nav.session.search.inspectingEntity = nil
+        }
+
         nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedNotes {
     private func choose(_ item: Note) -> Void {
+        if nav.session.search.inspectingEntity != nil {
+            nav.session.search.inspectingEntity = nil
+        }
+
         nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedTasks {
     private func choose(_ item: LogTask) -> Void {
+        if nav.session.search.inspectingEntity != nil {
+            nav.session.search.inspectingEntity = nil
+        }
+
         nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedCompanies {
     private func choose(_ item: Company) -> Void {
+        if nav.session.search.inspectingEntity != nil {
+            nav.session.search.inspectingEntity = nil
+        }
+
         nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedPeople {
     private func choose(_ item: Person) -> Void {
+        if nav.session.search.inspectingEntity != nil {
+            nav.session.search.inspectingEntity = nil
+        }
+
         nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedRecords {
     private func choose(_ item: LogRecord) -> Void {
+        if nav.session.search.inspectingEntity != nil {
+            nav.session.search.inspectingEntity = nil
+        }
+
         nav.session.search.inspectingEntity = item
     }
 }
@@ -1369,6 +1467,7 @@ extension FindDashboard.Inspector {
             case let en as Company: company = en
             case let en as Person: person = en
             case let en as Note: note = en
+            case let en as LogTask: task = en
             default: print("[error] FindDashboard.Inspector Unknown entity type=\(e)")
             }
         }
