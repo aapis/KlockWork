@@ -52,6 +52,8 @@ struct FindDashboard: View {
                     }
                 }
                 .onChange(of: activeSearchText) { searchQuery in
+                    nav.session.search.inspectingEntity = nil
+
                     if searchQuery.isEmpty {
                         onReset()
                     }
@@ -148,10 +150,6 @@ extension FindDashboard {
             CoreDataTasks(moc: moc).countAll(),
             CoreDataProjects(moc: moc).countAll()
         )
-    }
-    
-    private func actionOnDisappear() -> Void {
-        
     }
     
     private func createTabs() -> Void {
@@ -257,24 +255,49 @@ extension FindDashboard {
                 }
                 .padding([.top, .bottom], 20)
                 Spacer()
-//                .onDisappear(perform: actionOnDisappear)
             }
         }
     }
     
     struct Inspector: View {
-        @State private var entity: NSManagedObject? = nil
-//        @FetchRequest private var entity:
+        private let panelWidth: CGFloat = 400
+
+        @State public var entity: NSManagedObject? = nil
+        @State private var job: Job? = nil
+        @State private var project: Project? = nil
+        @State private var record: LogRecord? = nil
+        @State private var company: Company? = nil
+        @State private var person: Person? = nil
+        @State private var note: Note? = nil
+
         @EnvironmentObject public var nav: Navigation
 
         var body: some View {
-            VStack {
-                HStack {
-                    if entity != nil {
-                        Text("Inspecting something")
-                    } else {
-                        Text("Hi")
+            VStack(alignment: .leading) {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading) {
+                        HStack(alignment: .top) {
+                            FancySubTitle(text: "Inspector")
+                            Spacer()
+                        }
+                        Divider()
+                            .padding(.bottom, 10)
+                        
+                        if let job = job {
+                            InspectingJob(item: job)
+                        } else if let record = record {
+                            InspectingRecord(item: record)
+                        } else if let project = project {
+                            InspectingProject(item: project)
+                        } else if let company = company {
+                            InspectingCompany(item: company)
+                        } else if let person = person {
+                            InspectingPerson(item: person)
+                        } else if let note = note {
+                            InspectingNote(item: note)
+                        }
                     }
+
                     Spacer()
                     FancyButtonv2(text: "Close", action: {nav.session.search.inspectingEntity = nil}, icon: "xmark", showLabel: false, size: .tiny, type: .clear)
                         .opacity(0.6)
@@ -283,12 +306,305 @@ extension FindDashboard {
             }
             .padding()
             .background(Theme.rowColour.opacity(0.7))
+            .frame(maxWidth: panelWidth)
             .onAppear(perform: actionOnAppear)
+            .onChange(of: nav.session.search.inspectingEntity) { newEntity in
+                actionOnAppear()
+            }
         }
         
-        private func actionOnAppear() -> Void {
-            if let e = nav.session.search.inspectingEntity {
-                self.entity = e
+        struct InspectingJob: View {
+            public var item: Job
+            
+            var body: some View {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                        Text("Type: Job")
+                        Spacer()
+                    }
+                    .help("Type: Job entity")
+                    Divider()
+
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "number").symbolRenderingMode(.hierarchical)
+                        Text(item.jid.string)
+                        Spacer()
+                    }
+                    .help("ID: \(item.jid.string)")
+                    Divider()
+                    
+                    if let date = item.created {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
+                            Text(date.description)
+                            Spacer()
+                        }
+                        .help("Created: \(date.description)")
+                        Divider()
+                    }
+                    
+                    if let date = item.lastUpdate {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
+                            Text(date.description)
+                            Spacer()
+                        }
+                        .help("Last updated: \(date.description)")
+                        Divider()
+                    }
+                    
+                    if let uri = item.uri {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "link").symbolRenderingMode(.hierarchical)
+                            Link(destination: uri, label: {
+                                Text(uri.absoluteString)
+                            })
+                            .help("Open in browser")
+                            .underline()
+                            .useDefaultHover({_ in})
+                            .contextMenu {
+                                Button {
+                                    ClipboardHelper.copy(uri.absoluteString)
+                                } label: {
+                                    Text("Copy to clipboard")
+                                }
+                            }
+                            Spacer()
+                        }
+                        Divider()
+                    }
+                    
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "camera.filters").symbolRenderingMode(.hierarchical)
+                        Rectangle()
+                            .frame(width: 15, height: 15)
+                            .background(item.colour_from_stored())
+                        Spacer()
+                    }
+                    .help("Colour: \(item.colour_from_stored().description)")
+                    Divider()
+
+                    Spacer()
+                    HStack(alignment: .top, spacing: 10) {
+                        // TODO: throws a "serious application error" on load, issue probably in JobDashboard tho
+                        FancyButtonv2(
+                            text: "Open",
+                            icon: "arrow.right.square.fill",
+                            showLabel: true,
+                            size: .link,
+                            type: .clear,
+                            redirect: AnyView(JobDashboard(defaultSelectedJob: item)),
+                            pageType: .jobs,
+                            sidebar: AnyView(JobDashboardSidebar())
+                        )
+                    }
+                }
+            }
+        }
+        
+        struct InspectingRecord: View {
+            public var item: LogRecord
+            
+            var body: some View {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                        Text("Type: Record")
+                        Spacer()
+                    }
+                    .help("Type: Record entity")
+                    Divider()
+                    
+                    if let date = item.timestamp {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
+                            Text(date.description)
+                            Spacer()
+                        }
+                        .help("Created: \(date.description)")
+                        Divider()
+                    }
+                    
+                    Spacer()
+                    HStack(alignment: .top, spacing: 10) {
+                        FancyButtonv2(
+                            text: "Open day",
+                            icon: "arrow.right.square.fill",
+                            showLabel: true,
+                            size: .link,
+                            type: .clear
+                        )
+                    }
+                }
+            }
+        }
+        
+        struct InspectingProject: View {
+            public var item: Project
+            
+            var body: some View {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                        Text("Type: Project")
+                        Spacer()
+                    }
+                    .help("Type: Project entity")
+                    Divider()
+                    
+                    if let date = item.created {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
+                            Text(date.description)
+                            Spacer()
+                        }
+                        .help("Created: \(date.description)")
+                        Divider()
+                    }
+                    
+                    Spacer()
+                    HStack(alignment: .top, spacing: 10) {
+                        FancyButtonv2(
+                            text: "Open project",
+                            icon: "arrow.right.square.fill",
+                            showLabel: true,
+                            size: .link,
+                            type: .clear
+                        )
+                    }
+                }
+            }
+        }
+        
+        struct InspectingCompany: View {
+            public var item: Company
+            
+            var body: some View {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                        Text("Type: Company")
+                        Spacer()
+                    }
+                    .help("Type: Company entity")
+                    Divider()
+                    
+                    if let date = item.createdDate {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
+                            Text(date.description)
+                            Spacer()
+                        }
+                        .help("Created: \(date.description)")
+                        Divider()
+                    }
+                    
+                    Spacer()
+                    HStack(alignment: .top, spacing: 10) {
+                        FancyButtonv2(
+                            text: "Open company",
+                            icon: "arrow.right.square.fill",
+                            showLabel: true,
+                            size: .link,
+                            type: .clear
+                        )
+                    }
+                }
+            }
+        }
+        
+        struct InspectingPerson: View {
+            public var item: Person
+            
+            var body: some View {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                        Text("Type: Person")
+                        Spacer()
+                    }
+                    .help("Type: Person entity")
+                    Divider()
+                    
+                    if let date = item.created {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
+                            Text(date.description)
+                            Spacer()
+                        }
+                        .help("Created: \(date.description)")
+                        Divider()
+                    }
+                    
+                    if let date = item.lastUpdate {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
+                            Text(date.description)
+                            Spacer()
+                        }
+                        .help("Last update: \(date.description)")
+                        Divider()
+                    }
+                    
+                    Spacer()
+                    HStack(alignment: .top, spacing: 10) {
+                        FancyButtonv2(
+                            text: "Open",
+                            icon: "arrow.right.square.fill",
+                            showLabel: true,
+                            size: .link,
+                            type: .clear
+                        )
+                    }
+                }
+            }
+        }
+        
+        struct InspectingNote: View {
+            public var item: Note
+            
+            var body: some View {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                        Text("Type: Note")
+                        Spacer()
+                    }
+                    .help("Type: Note entity")
+                    Divider()
+                    
+                    if let date = item.postedDate {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
+                            Text(date.description)
+                            Spacer()
+                        }
+                        .help("Created: \(date.description)")
+                        Divider()
+                    }
+                    
+                    if let date = item.lastUpdate {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
+                            Text(date.description)
+                            Spacer()
+                        }
+                        .help("Last update: \(date.description)")
+                        Divider()
+                    }
+                    
+                    Spacer()
+                    HStack(alignment: .top, spacing: 10) {
+                        FancyButtonv2(
+                            text: "Open",
+                            icon: "arrow.right.square.fill",
+                            showLabel: true,
+                            size: .link,
+                            type: .clear
+                        )
+                    }
+                }
             }
         }
     }
@@ -362,7 +678,8 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.jid.string, action: {choose(item)}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(text: item.jid.string, action: {choose(
+                                                item)}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
                                             Spacer()
                                         }
                                     }
@@ -381,7 +698,7 @@ extension FindDashboard {
                 
                 let req: NSFetchRequest<Job> = Job.fetchRequest()
                 req.sortDescriptors = [
-                    NSSortDescriptor(keyPath: \Job.jid, ascending: true),
+                    NSSortDescriptor(keyPath: \Job.created, ascending: false),
                 ]
                 req.predicate = NSPredicate(format: "alive = true && jid.string BEGINSWITH %@", _searchText.wrappedValue)
                 
@@ -422,7 +739,7 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.name ?? "", action: {choose(Int(item.pid))}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(text: item.name ?? "", action: {choose(item)}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
                                             Spacer()
                                         }
                                     }
@@ -486,7 +803,7 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.title ?? "", action: {}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(text: item.title ?? "", action: {choose(item)}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
                                                 .help("Inspect")
                                             Spacer()
                                         }
@@ -551,7 +868,7 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.content ?? "", action: {}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(text: item.content ?? "", action: {choose(item)}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
                                                 .help("Inspect")
                                             Spacer()
                                         }
@@ -615,7 +932,7 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.message ?? "", action: {}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(text: item.message ?? "", action: {choose(item)}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
                                                 .help("Inspect")
                                             Spacer()
                                         }
@@ -635,7 +952,7 @@ extension FindDashboard {
                 
                 let req: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
                 req.sortDescriptors = [
-                    NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: true),
+                    NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false),
                 ]
                 req.predicate = NSPredicate(
                     format: "message CONTAINS[cd] %@",
@@ -679,7 +996,7 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.name ?? "", action: {}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(text: item.name ?? "", action: {choose(item)}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
                                                 .help("Inspect")
                                             Spacer()
                                         }
@@ -743,7 +1060,7 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.name ?? "", action: {}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(text: item.name ?? "", action: {choose(item)}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
                                                 .help("Inspect")
                                             Spacer()
                                         }
@@ -763,7 +1080,7 @@ extension FindDashboard {
                 
                 let req: NSFetchRequest<Person> = Person.fetchRequest()
                 req.sortDescriptors = [
-                    NSSortDescriptor(keyPath: \Person.name, ascending: true),
+                    NSSortDescriptor(keyPath: \Person.created, ascending: false),
                 ]
                 req.predicate = NSPredicate(
                     format: "name CONTAINS[cd] %@",
@@ -991,7 +1308,7 @@ extension FindDashboard {
             let jr: NSFetchRequest<Job> = Job.fetchRequest()
             jr.predicate = NSPredicate(format: "(uri CONTAINS[c] %@ OR jid.string CONTAINS[c] %@) AND alive = true", text, text)
             jr.sortDescriptors = [
-                NSSortDescriptor(keyPath: \Job.jid, ascending: false)
+                NSSortDescriptor(keyPath: \Job.created, ascending: false)
             ]
             _entities = FetchRequest(fetchRequest: jr, animation: .easeInOut)
         }
@@ -1000,20 +1317,61 @@ extension FindDashboard {
 
 extension FindDashboard.Suggestions.SuggestedJobs {
     private func choose(_ job: Job) -> Void {
-//        searchText = String(job.jid)
         nav.session.search.inspectingEntity = job
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedProjects {
-    private func choose(_ jid: Int) -> Void {
-        searchText = String(jid)
+    private func choose(_ item: Project) -> Void {
+        nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedNotes {
-    private func choose(_ jid: Int) -> Void {
-        searchText = String(jid)
+    private func choose(_ item: Note) -> Void {
+        nav.session.search.inspectingEntity = item
+    }
+}
+
+extension FindDashboard.Suggestions.SuggestedTasks {
+    private func choose(_ item: LogTask) -> Void {
+        nav.session.search.inspectingEntity = item
+    }
+}
+
+extension FindDashboard.Suggestions.SuggestedCompanies {
+    private func choose(_ item: Company) -> Void {
+        nav.session.search.inspectingEntity = item
+    }
+}
+
+extension FindDashboard.Suggestions.SuggestedPeople {
+    private func choose(_ item: Person) -> Void {
+        nav.session.search.inspectingEntity = item
+    }
+}
+
+extension FindDashboard.Suggestions.SuggestedRecords {
+    private func choose(_ item: LogRecord) -> Void {
+        nav.session.search.inspectingEntity = item
+    }
+}
+
+extension FindDashboard.Inspector {
+    private func actionOnAppear() -> Void {
+        if let e = nav.session.search.inspectingEntity {
+            entity = e
+            
+            switch entity {
+            case let en as Job: job = en
+            case let en as Project: project = en
+            case let en as LogRecord: record = en
+            case let en as Company: company = en
+            case let en as Person: person = en
+            case let en as Note: note = en
+            default: print("[error] FindDashboard.Inspector Unknown entity type=\(e)")
+            }
+        }
     }
 }
 

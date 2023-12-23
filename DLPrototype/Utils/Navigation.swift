@@ -178,6 +178,7 @@ extension Navigation.Session.Search {
         components = []
         text = nil
         hasResults = false
+        inspectingEntity = nil
     }
 }
 

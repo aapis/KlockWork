@@ -13,6 +13,7 @@ extension Job {
         return Int(exactly: jid.rounded(.toNearestOrEven)) ?? 0
     }
 
+    // @TODO: this seems to return a much lighter shade of the actual colour, fix that
     func colour_from_stored() -> Color {
         if let c = colour {
             return Color.fromStored(c)
