@@ -263,13 +263,18 @@ extension FindDashboard {
     }
     
     struct Inspector: View {
+        @State private var entity: NSManagedObject? = nil
 //        @FetchRequest private var entity:
         @EnvironmentObject public var nav: Navigation
 
         var body: some View {
             VStack {
                 HStack {
-                    Text("Hi")
+                    if entity != nil {
+                        Text("Inspecting something")
+                    } else {
+                        Text("Hi")
+                    }
                     Spacer()
                     FancyButtonv2(text: "Close", action: {nav.session.search.inspectingEntity = nil}, icon: "xmark", showLabel: false, size: .tiny, type: .clear)
                         .opacity(0.6)
@@ -278,6 +283,13 @@ extension FindDashboard {
             }
             .padding()
             .background(Theme.rowColour.opacity(0.7))
+            .onAppear(perform: actionOnAppear)
+        }
+        
+        private func actionOnAppear() -> Void {
+            if let e = nav.session.search.inspectingEntity {
+                self.entity = e
+            }
         }
     }
     
