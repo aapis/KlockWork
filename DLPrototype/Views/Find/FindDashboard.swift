@@ -272,10 +272,11 @@ extension FindDashboard {
                     ScrollView(showsIndicators: false) {
                         VStack {
                             HStack {
-                                Text("Suggestions")
+                                Text("Hit \"return\" to perform a search and see all results")
                                 Spacer()
                             }
                             
+                            // @TODO: reduce this with a loop, each view is basically identical...
                             SuggestedJobs(searchText: $searchText)
                             SuggestedProjects(searchText: $searchText)
                             SuggestedNotes(searchText: $searchText)
@@ -294,27 +295,35 @@ extension FindDashboard {
         struct SuggestedJobs: View {
             @Binding public var searchText: String
             @State private var showChildren: Bool = false
+            @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Job>
             
             var body: some View {
                 if items.count > 0 {
                     VStack(alignment: .leading) {
-                        HStack(spacing: 1) {
-                            Text("\(items.count) Jobs")
-                                .font(Theme.fontSubTitle)
-                            Spacer()
-                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square.fill", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                        Button {
+                            showChildren.toggle()
+                        } label: {
+                            HStack(spacing: 1) {
+                                Text("Showing \(items.prefix(5).count)/\(items.count) Jobs")
+                                    .font(Theme.fontSubTitle)
+                                Spacer()
+                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                    .font(.title2)
+                            }
+                            .padding()
+                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
-                        .padding()
-                        .background(Theme.subHeaderColour)
+                        .buttonStyle(.plain)
+                        .useDefaultHover({inside in hover = inside})
                         
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items) { job in
+                                ForEach(items.prefix(5)) { item in
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: job.jid.string, action: {choose(job.id_int())}, icon: "arrow.right.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(text: item.jid.string, action: {choose(item.id_int())}, icon: "arrow.right.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
                                             Spacer()
                                         }
                                     }
@@ -344,23 +353,31 @@ extension FindDashboard {
         struct SuggestedProjects: View {
             @Binding public var searchText: String
             @State private var showChildren: Bool = false
+            @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Project>
 
             var body: some View {
                 if items.count > 0 {
                     VStack {
-                        HStack {
-                            Text("\(items.count) Projects")
-                                .font(Theme.fontSubTitle)
-                            Spacer()
-                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square.fill", showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                        Button {
+                            showChildren.toggle()
+                        } label: {
+                            HStack(spacing: 1) {
+                                Text("Showing \(items.prefix(5).count)/\(items.count) Projects")
+                                    .font(Theme.fontSubTitle)
+                                Spacer()
+                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                    .font(.title2)
+                            }
+                            .padding()
+                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
-                        .padding()
-                        .background(Theme.subHeaderColour)
+                        .buttonStyle(.plain)
+                        .useDefaultHover({inside in hover = inside})
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items) { item in
+                                ForEach(items.prefix(5)) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -398,23 +415,31 @@ extension FindDashboard {
         struct SuggestedNotes: View {
             @Binding public var searchText: String
             @State private var showChildren: Bool = false
+            @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Note>
 
             var body: some View {
                 if items.count > 0 {
                     VStack {
-                        HStack {
-                            Text("\(items.count) Notes")
-                                .font(Theme.fontSubTitle)
-                            Spacer()
-                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square.fill", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                        Button {
+                            showChildren.toggle()
+                        } label: {
+                            HStack(spacing: 1) {
+                                Text("Showing \(items.prefix(5).count)/\(items.count) Notes")
+                                    .font(Theme.fontSubTitle)
+                                Spacer()
+                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                    .font(.title2)
+                            }
+                            .padding()
+                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
-                        .padding()
-                        .background(Theme.subHeaderColour)
+                        .buttonStyle(.plain)
+                        .useDefaultHover({inside in hover = inside})
                         
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items) { item in
+                                ForEach(items.prefix(5)) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -452,23 +477,31 @@ extension FindDashboard {
         struct SuggestedTasks: View {
             @Binding public var searchText: String
             @State private var showChildren: Bool = false
+            @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<LogTask>
 
             var body: some View {
                 if items.count > 0 {
                     VStack {
-                        HStack {
-                            Text("\(items.count) Tasks")
-                                .font(Theme.fontSubTitle)
-                            Spacer()
-                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square.fill", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                        Button {
+                            showChildren.toggle()
+                        } label: {
+                            HStack(spacing: 1) {
+                                Text("Showing \(items.prefix(5).count)/\(items.count) Tasks")
+                                    .font(Theme.fontSubTitle)
+                                Spacer()
+                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                    .font(.title2)
+                            }
+                            .padding()
+                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
-                        .padding()
-                        .background(Theme.subHeaderColour)
+                        .buttonStyle(.plain)
+                        .useDefaultHover({inside in hover = inside})
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items) { item in
+                                ForEach(items.prefix(5)) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -505,23 +538,31 @@ extension FindDashboard {
         struct SuggestedRecords: View {
             @Binding public var searchText: String
             @State private var showChildren: Bool = false
+            @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<LogRecord>
 
             var body: some View {
                 if items.count > 0 {
                     VStack {
-                        HStack {
-                            Text("\(items.count) Records")
-                                .font(Theme.fontSubTitle)
-                            Spacer()
-                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square.fill", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                        Button {
+                            showChildren.toggle()
+                        } label: {
+                            HStack(spacing: 1) {
+                                Text("Showing \(items.prefix(5).count)/\(items.count) Records")
+                                    .font(Theme.fontSubTitle)
+                                Spacer()
+                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                    .font(.title2)
+                            }
+                            .padding()
+                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
-                        .padding()
-                        .background(Theme.subHeaderColour)
+                        .buttonStyle(.plain)
+                        .useDefaultHover({inside in hover = inside})
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items) { item in
+                                ForEach(items.prefix(5)) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -558,23 +599,31 @@ extension FindDashboard {
         struct SuggestedCompanies: View {
             @Binding public var searchText: String
             @State private var showChildren: Bool = false
+            @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Company>
 
             var body: some View {
                 if items.count > 0 {
                     VStack {
-                        HStack {
-                            Text("\(items.count) Companies")
-                                .font(Theme.fontSubTitle)
-                            Spacer()
-                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square.fill", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                        Button {
+                            showChildren.toggle()
+                        } label: {
+                            HStack(spacing: 1) {
+                                Text("Showing \(items.prefix(5).count)/\(items.count) Companies")
+                                    .font(Theme.fontSubTitle)
+                                Spacer()
+                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                    .font(.title2)
+                            }
+                            .padding()
+                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
-                        .padding()
-                        .background(Theme.subHeaderColour)
+                        .buttonStyle(.plain)
+                        .useDefaultHover({inside in hover = inside})
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items) { item in
+                                ForEach(items.prefix(5)) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -611,23 +660,31 @@ extension FindDashboard {
         struct SuggestedPeople: View {
             @Binding public var searchText: String
             @State private var showChildren: Bool = false
+            @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Person>
 
             var body: some View {
                 if items.count > 0 {
                     VStack {
-                        HStack {
-                            Text("\(items.count) People")
-                                .font(Theme.fontSubTitle)
-                            Spacer()
-                            FancyButtonv2(text: "Open group", action: {showChildren.toggle()}, icon: showChildren ? "minus.square" : "plus.square.fill", transparent: true, showLabel: false, showIcon: true, size: .tiny, type: .clear)
+                        Button {
+                            showChildren.toggle()
+                        } label: {
+                            HStack(spacing: 1) {
+                                Text("Showing \(items.prefix(5).count)/\(items.count) People")
+                                    .font(Theme.fontSubTitle)
+                                Spacer()
+                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                    .font(.title2)
+                            }
+                            .padding()
+                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
-                        .padding()
-                        .background(Theme.subHeaderColour)
+                        .buttonStyle(.plain)
+                        .useDefaultHover({inside in hover = inside})
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items) { item in
+                                ForEach(items.prefix(5)) { item in
                                     VStack {
                                         Divider()
                                         HStack {

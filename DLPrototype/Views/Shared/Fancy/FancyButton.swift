@@ -23,34 +23,32 @@ struct FancyButton: View {
     @State private var padding: CGFloat = 10
     
     var body: some View {
-        VStack {
-            Button(action: action, label: {
-                HStack {
-                    if showIcon! {
-                        Image(systemName: icon!)
-                            .foregroundColor(fgColour != nil ? fgColour : .white)
-                    }
-                    
-                    if showLabel! {
-                        Text(text)
-                    }
+        Button(action: action, label: {
+            HStack {
+                if showIcon! {
+                    Image(systemName: icon!)
+                        .foregroundColor(fgColour != nil ? fgColour : .white)
                 }
-                .foregroundColor(Color.white)
-                .font(.title3)
-                .padding(padding)
-                .help(text)
-                .onHover { inside in
-                    if inside {
-                        NSCursor.pointingHand.push()
-                    } else {
-                        NSCursor.pop()
-                    }
+                
+                if showLabel! {
+                    Text(text)
                 }
-            })
-            .buttonStyle(.borderless)
-            .background(transparent! ? Color.clear : Color.black.opacity(0.2))
-            .onAppear(perform: onAppear)
-        }
+            }
+            .foregroundColor(Color.white)
+            .font(.title3)
+            .padding(padding)
+            .help(text)
+            .onHover { inside in
+                if inside {
+                    NSCursor.pointingHand.push()
+                } else {
+                    NSCursor.pop()
+                }
+            }
+        })
+        .buttonStyle(.borderless)
+        .background(transparent! ? Color.clear : Color.black.opacity(0.2))
+        .onAppear(perform: onAppear)
     }
     
     private func onAppear() -> Void {
@@ -89,38 +87,36 @@ public struct FancyButtonv2: View {
     @State private var active: Bool = false
 
     public var body: some View {
-        VStack {
-            if let destination = redirect {
-                Button(action: {
-                    if let ac = action {
-                        ac()
-                    }
-                    
-                    nav.setView(destination)
-                    nav.setSidebar(sidebar!)
-                    nav.setId()
-
-                    if let pType = pageType {
-                        nav.setParent(pType)
-                    }
-                }) {
-                    button
+        if let destination = redirect {
+            Button(action: {
+                if let ac = action {
+                    ac()
                 }
-                .buttonStyle(.plain)
-            } else {
-                Button(action: {
-                    if let ac = action {
-                        ac()
-                    }
+                
+                nav.setView(destination)
+                nav.setSidebar(sidebar!)
+                nav.setId()
 
-                    if twoStage {
-                        active.toggle()
-                    }
-                }) {
-                    button
+                if let pType = pageType {
+                    nav.setParent(pType)
                 }
-                .buttonStyle(.plain)
+            }) {
+                button
             }
+            .buttonStyle(.plain)
+        } else {
+            Button(action: {
+                if let ac = action {
+                    ac()
+                }
+
+                if twoStage {
+                    active.toggle()
+                }
+            }) {
+                button
+            }
+            .buttonStyle(.plain)
         }
     }
 
