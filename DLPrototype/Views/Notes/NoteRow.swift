@@ -47,7 +47,7 @@ struct NoteRow: View {
             HStack(spacing: 0) {
                 ZStack(alignment: .leading) {
                     if note.mJob != nil {
-                        Color.fromStored(note.mJob!.project!.colour ?? Theme.rowColourAsDouble)
+                        Color.fromStored(note.mJob?.project?.colour ?? Theme.rowColourAsDouble)
                     } else {
                         Theme.rowColour
                     }

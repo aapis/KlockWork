@@ -142,6 +142,7 @@ extension Navigation {
         var date: Date = Date()
         var idate: IdentifiableDay = IdentifiableDay()
         var gif: Planning.GlobalInterfaceFilter = .normal
+        var search: Search = Search(moc: PersistenceController.shared.container.viewContext)
     }
 }
 
@@ -152,6 +153,32 @@ extension Navigation.Session {
         } else {
             self.job = nil
         }
+    }
+}
+
+extension Navigation.Session {
+    public struct Search {
+        var id: UUID = UUID()
+        var text: String? = nil
+        var components: Set<SearchLanguage.Component> = []
+        var moc: NSManagedObjectContext
+        var hasResults: Bool = false
+        var inspectingEntity: NSManagedObject? = nil
+    }
+}
+
+extension Navigation.Session.Search {
+    mutating func results() -> [SearchLanguage.Results.Result] {
+        hasResults = true
+        
+        return SearchLanguage.Results(components: components, moc: moc).find()
+    }
+    
+    mutating func reset() -> Void {
+        components = []
+        text = nil
+        hasResults = false
+        inspectingEntity = nil
     }
 }
 

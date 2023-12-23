@@ -40,6 +40,11 @@ struct MainMenu: Commands {
                     nav.parent = .companies
                 }
                     .keyboardShortcut("p", modifiers: [.command, .shift])
+                Button("Company") {
+                    nav.view = AnyView(CompanyCreate())
+                    nav.parent = .companies
+                }
+                    .keyboardShortcut("c", modifiers: [.command, .shift])
                 Button("Job") {
                     nav.view = AnyView(JobCreate())
                     nav.parent = .jobs
