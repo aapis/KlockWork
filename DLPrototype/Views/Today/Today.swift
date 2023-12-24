@@ -5,7 +5,6 @@
 //  Created by Ryan Priebe on 2020-07-10.
 //  Copyright © 2020 YegCollective. All rights reserved.
 //
-import Foundation
 import SwiftUI
 import Combine
 import EventKit
@@ -17,6 +16,8 @@ struct Today: View {
     @State private var jobId: String = ""
     @State private var taskUrl: String = "" // only treated as a string, no need to be URL-type
     @State private var isUrl: Bool = true
+    
+    @FetchRequest private var todaysRecords: FetchedResults<LogRecord>
 
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
@@ -131,30 +132,44 @@ struct Today: View {
             .environmentObject(ce)
             .environmentObject(nav)
     }
+    
+    init(defaultSelectedDate: Date? = nil) {
+        self.defaultSelectedDate = defaultSelectedDate
+        var date = Date()
+        
+        if let dDate = defaultSelectedDate {
+            date = dDate
+        }
+        
+        let (before, after) = DateHelper.startAndEndOf(date)
+        
+        let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)]
+        fetch.predicate = NSPredicate(
+            format: "alive = true && (timestamp > %@ && timestamp <= %@)",
+            before as CVarArg,
+            after as CVarArg
+        )
+        
+        _todaysRecords = FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
 }
 
 extension Today {
     private func onAppear() -> Void {
-        let todaysRecords = LogRecords(moc: moc).forDate(Date())
         if let record = todaysRecords.first {
             if let firstRecordJob = record.job {
                 jobId = String(firstRecordJob.id_int())
-                nav.session.setJob(CoreDataJob(moc: moc).byId(firstRecordJob.jid))
+                nav.session.setJob(firstRecordJob)
             }
         } else {
-            if jobId == "" && nav.session.job != nil {
+            if jobId.isEmpty && nav.session.job != nil {
                 jobId = String(nav.session.job!.id_int())
             }
         }
 
         if let date = defaultSelectedDate {
             nav.session.date = date
-        }
-
-        if showExperimentalFeatures {
-            if autoFixJobs {
-                AutoFixJobs.run(records: todaysRecords, context: moc)
-            }
         }
     }
 
