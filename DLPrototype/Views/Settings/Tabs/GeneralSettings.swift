@@ -12,7 +12,6 @@ struct GeneralSettings: View {
     @AppStorage("tigerStriped") private var tigerStriped: Bool = false
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures: Bool = false
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
-    @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
     @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
     @AppStorage("general.syncColumns") public var syncColumns: Bool = false
     @AppStorage("general.defaultCompany") public var defaultCompany: Int = 0
@@ -29,7 +28,7 @@ struct GeneralSettings: View {
                 Toggle("Enable experimental features (EXERCISE CAUTION)", isOn: $showExperimentalFeatures)
 
                 if showExperimentalFeatures {
-                    Toggle("Auto-fix records with bad jobs", isOn: $autoFixJobs)
+                    Text("There are no experimental features at this time")
                 }
             }
 

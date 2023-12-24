@@ -34,7 +34,7 @@ struct SidebarButton: View, Identifiable {
             button.frame(width: 40, height: 40)
         case .small:
             button.frame(width: 20, height: 20)
-        case .link, .tiny, .titleLink, .none:
+        case .link, .tiny, .titleLink, .tinyLink, .none:
             button
         }
     }

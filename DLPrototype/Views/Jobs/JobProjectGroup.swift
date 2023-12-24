@@ -47,7 +47,8 @@ struct JobProjectGroup: View {
                     icon: minimized ? "plus" : "minus",
                     fgColour: minimized ? (colour.isBright() ? .black : .white) : .white,
                     showLabel: false,
-                    size: .link
+                    size: .tinyLink,
+                    type: .clear
                 )
             }
             .padding(8)

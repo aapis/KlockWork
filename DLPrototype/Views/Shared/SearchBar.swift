@@ -26,8 +26,15 @@ struct SearchBar: View {
                     Spacer()
                     
                     if text.count > 0 {
-                        FancyButtonv2(text: "Reset", action: reset, icon: "xmark", showLabel: false, size: .tiny, type: .white)
-                            .padding([.trailing])
+                        FancyButtonv2(
+                            text: "Reset",
+                            action: reset,
+                            icon: "xmark",
+                            showLabel: false,
+                            size: .tiny,
+                            type: .white
+                        )
+                        .padding([.trailing])
                     }
                 }
             }
