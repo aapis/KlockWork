@@ -9,7 +9,15 @@
 import Foundation
 import SwiftUI
 
-struct ToolbarButton {
+struct ToolbarButton: Hashable, Equatable {
+    static func == (lhs: ToolbarButton, rhs: ToolbarButton) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
     public var id: Int
     public var helpText: String
     public var label: AnyView?
@@ -20,6 +28,8 @@ struct FancyGenericToolbar: View {
     public var buttons: [ToolbarButton]
     public var standalone: Bool = false
     public var location: WidgetLocation = .content
+    
+    private let gradient: LinearGradient = LinearGradient(gradient: Gradient(colors: [.clear, .black]), startPoint: .top, endPoint: .bottom)
 
     @State public var selectedTab: Int = 0
     
@@ -35,6 +45,17 @@ struct FancyGenericToolbar: View {
                                 Button(action: {setActive(button.id)}) {
                                     ZStack(alignment: .leading) {
                                         (selectedTab == button.id ? (location == .sidebar ? Theme.base.opacity(0.2) : Theme.tabActiveColour) : Theme.tabColour)
+                                        
+                                        if selectedTab != button.id && location == .content {
+                                            VStack {
+                                                Spacer()
+                                                gradient
+                                                    .opacity(0.6)
+                                                    .blendMode(.softLight)
+                                                    .frame(height: 12)
+                                            }
+                                        }
+                                        
                                         button.label
                                             .padding(location == .sidebar ? 0 : 16)
                                     }

@@ -17,7 +17,7 @@ struct Today: View {
     @State private var taskUrl: String = "" // only treated as a string, no need to be URL-type
     @State private var isUrl: Bool = true
     
-    @FetchRequest private var todaysRecords: FetchedResults<LogRecord>
+    @FetchRequest private var record: FetchedResults<LogRecord>
 
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
     @AppStorage("autoFixJobs") public var autoFixJobs: Bool = false
@@ -127,8 +127,6 @@ struct Today: View {
     // MARK: Table view
     var table: some View {
         LogTableRedux(date: defaultSelectedDate)
-            .id(updater.get("today.table"))
-            .environmentObject(updater)
             .environmentObject(ce)
             .environmentObject(nav)
     }
@@ -136,24 +134,11 @@ struct Today: View {
     init(defaultSelectedDate: Date? = nil) {
         self.defaultSelectedDate = defaultSelectedDate
         var date = Date()
-        
         if let dDate = defaultSelectedDate {
             date = dDate
         }
-        
-        let (before, after) = DateHelper.startAndEndOf(date)
-        
-        let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)]
-        fetch.predicate = NSPredicate(
-            format: "alive = true && (timestamp > %@ && timestamp <= %@)",
-            before as CVarArg,
-            after as CVarArg
-        )
-        fetch.fetchLimit = 1
 
-        // @TODO: rename to firstRecord, refactor Today.onAppear
-        _todaysRecords = FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+        _record = CoreDataRecords.fetchForDate(date, limit: 1)
     }
 }
 
@@ -163,10 +148,12 @@ extension Today {
             nav.session.date = dDate
         }
 
-        if let record = todaysRecords.first {
-            if let firstRecordJob = record.job {
-                jobId = String(firstRecordJob.id_int())
-                nav.session.setJob(firstRecordJob)
+        if record.count == 1 {
+            if let first = record.first {
+                if let firstRecordJob = first.job {
+                    jobId = String(firstRecordJob.id_int())
+                    nav.session.setJob(firstRecordJob)
+                }
             }
         } else {
             if jobId.isEmpty && nav.session.job != nil {
@@ -187,11 +174,6 @@ extension Today {
     }
 
     private func actionOnChangeDate(date: Date) -> Void {}
-
-    private func reloadUi() -> Void {
-        updater.updateOne("today.table")
-        updater.updateOne("today.picker")
-    }
 
     private func submitAction() -> Void {
         if !text.isEmpty && (!jobId.isEmpty || !taskUrl.isEmpty) {
@@ -234,7 +216,6 @@ extension Today {
 
             text = ""
             taskUrl = ""
-            reloadUi()
 
             PersistenceController.shared.save()
         } else {

@@ -375,50 +375,66 @@ extension LogTable {
 
 struct LogTableRedux: View {
     public var date: Date? = nil
+    private var buttons: [ToolbarButton] = []
     
     @EnvironmentObject public var nav: Navigation
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            TabBar()
-            Rows(date: date)
+            FancyDivider()
+            FancyGenericToolbar(buttons: buttons, standalone: true, location: .content)
+        }
+    }
+    
+    init(date: Date? = nil) {
+        self.date = date
+
+        Tab.allCases.forEach { tab in
+            buttons.append(tab.button)
         }
     }
 }
 
 // MARK: structs
 extension LogTableRedux {
-    struct TabBar: View {
-        @EnvironmentObject public var nav: Navigation
+    /// Table row headers
+    struct Headers: View {
+        static public let required: Set<RecordTableColumn> = [.job, .message]
         
         var body: some View {
             GridRow {
-                Group {
-                    HStack(spacing: 0) {
+                // project colour block
+                HStack(spacing: 0) {
+                    Group {
                         ZStack {
-                            Color.clear
+                            Theme.headerColour
                         }
-                        .frame(width: 6)
-                        
-                        ZStack(alignment: .leading) {
-                            Theme.toolbarColour
-                            
-                            HStack {
-                                ToolbarTabs()
-                                ToolbarButtons()
+                    }
+                    .frame(width: 5)
+                    
+                    ForEach(RecordTableColumn.allCases, id: \.self) { column in
+                        if Headers.required.contains(column) {
+                            Group {
+                                ZStack(alignment: column.alignment) {
+                                    Theme.headerColour
+                                    Text(column.name)
+                                        .padding(10)
+                                }
                             }
+                            .frame(width: column.width)
                         }
                     }
                 }
-            }.frame(height: 36)
+            }
+            .frame(height: 40)
         }
     }
-    
-    struct Rows: View {
+
+    /// A list of rows in reverse-chronologic order for a given day
+    public struct Chronologic: View {
         public var date: Date? = nil
         
         @State private var searchText: String = ""
-        
 
         @Environment(\.managedObjectContext) var moc
         @EnvironmentObject public var nav: Navigation
@@ -427,11 +443,18 @@ extension LogTableRedux {
         
         var body: some View {
             VStack(spacing: 1) {
-                if nav.session.toolbar.showSearch {
-                    SearchBar(text: $searchText, disabled: (records.count == 0))
+                Grid(alignment: .top, horizontalSpacing: 0, verticalSpacing: 1) {
+                    if nav.session.toolbar.showSearch {
+                        SearchBar(text: $searchText, disabled: (records.count == 0))
+                    }
+                    
+                    Headers()
+                    if nav.session.toolbar.mode == .plain {
+                        Plain(date: date, records: records)
+                    } else if nav.session.toolbar.mode == .full {
+                        Full(date: date, records: records)
+                    }
                 }
-                
-                Plain(date: date, records: records)
             }
         }
         
@@ -440,20 +463,11 @@ extension LogTableRedux {
             if let date = date {
                 chosenDate = date
             }
-            
-            let (before, after) = DateHelper.startAndEndOf(chosenDate)
-            
-            let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
-            fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)]
-            fetch.predicate = NSPredicate(
-                format: "alive = true && (timestamp > %@ && timestamp <= %@)",
-                before as CVarArg,
-                after as CVarArg
-            )
 
-            _records = FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+            _records = CoreDataRecords.fetchForDate(chosenDate)
         }
         
+        /// Plaintext conversion of the standard display
         struct Plain: View {
             public var date: Date? = nil
             public var records: FetchedResults<LogRecord>
@@ -464,27 +478,171 @@ extension LogTableRedux {
             @EnvironmentObject public var nav: Navigation
 
             var body: some View {
-                if records.count > 0 {
-                    if nav.session.toolbar.selected == .grouped {
-                        FancyTextField(placeholder: "Records...", lineLimit: 10, text: $recordsAsString)
-                    } else {
-                        // TODO: shouldn't instantiate CDR here
-                        let groupedByJob = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(records)
-                        ForEach(groupedByJob) { group in group }
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 1) {
+                        if records.count > 0 {
+                            if nav.session.toolbar.selected == .grouped {
+                                FancyTextField(placeholder: "Records...", lineLimit: 10, text: $recordsAsString)
+                            } else {
+                                // TODO: shouldn't instantiate CDR here
+                                let groupedByJob = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(records)
+                                ForEach(groupedByJob) { group in group }
+                            }
+                        } else {
+                            if let date = date {
+                                LogRowEmpty(message: "No records found for date \(date.formatted())", index: 0, colour: Theme.rowColour)
+                            } else {
+                                LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
+                            }
+                        }
                     }
-                } else {
-                    if let date = date {
-                        LogRowEmpty(message: "No records found for date \(date.formatted())", index: 0, colour: Theme.rowColour)
-                    } else {
-                        LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
+                }
+            }
+        }
+        
+        /// Standard display, colour coded list of records
+        struct Full: View {
+            public var date: Date? = nil
+            public var records: FetchedResults<LogRecord>
+            
+            @Environment(\.managedObjectContext) var moc
+            @EnvironmentObject public var nav: Navigation
+            
+            var body: some View {
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 1) {
+                        if records.count > 0 {
+                            ForEach(records) { record in
+                                if record.job != nil {
+                                    let entry = Entry(
+                                        timestamp: DateHelper.longDate(record.timestamp!),
+                                        job: record.job!,
+                                        message: record.message!
+                                    )
+                                    
+                                    LogRow(
+                                        entry: entry,
+                                        index: records.firstIndex(of: record),
+                                        colour: Color.fromStored((record.job?.colour) ?? Theme.rowColourAsDouble),
+                                        record: record,
+                                        viewRequiresColumns: Headers.required
+                                    )
+                                }
+                            }
+                        } else {
+                            if let date = date {
+                                LogRowEmpty(message: "No records found for date \(date.formatted())", index: 0, colour: Theme.rowColour)
+                            } else {
+                                LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
+                            }
+                        }
                     }
                 }
             }
         }
     }
+    
+    /// A list of rows that are grouped by Job
+    public struct Grouped: View {
+        public var date: Date? = nil
+        
+        // @TODO: needed?
+        @State private var searchText: String = ""
+        @State private var plain: String = ""
+        @State private var grouped: [FancyStaticTextField] = []
+
+        @Environment(\.managedObjectContext) var moc
+        @EnvironmentObject public var nav: Navigation
+
+        @FetchRequest private var records: FetchedResults<LogRecord>
+
+        var body: some View {
+            VStack {
+                if nav.session.toolbar.mode == .plain {
+                    FancyTextField(placeholder: "Records...", lineLimit: 10, text: $plain)
+                } else {
+                    ForEach(grouped) { group in group }
+                }
+            }
+            .onAppear(perform: actionOnAppear)
+        }
+        
+        init(date: Date? = nil) {
+            self.date = date
+            
+            var chosenDate = Date()
+            if let date = date {
+                chosenDate = date
+            }
+
+            _records = CoreDataRecords.fetchForDate(chosenDate)
+        }
+    }
+    
+    /// A list of rows summarized by AI
+    public struct Summarized: View {
+        public var date: Date? = nil
+        
+        // @TODO: needed?
+        @State private var searchText: String = ""
+
+        @Environment(\.managedObjectContext) var moc
+        @EnvironmentObject public var nav: Navigation
+
+        @FetchRequest private var records: FetchedResults<LogRecord>
+
+        var body: some View {
+            VStack {
+                Headers()
+                Text("Summarized")
+                Spacer()
+            }
+        }
+        
+        init(date: Date? = nil) {
+            self.date = date
+            
+            var chosenDate = Date()
+            if let date = date {
+                chosenDate = date
+            }
+
+            _records = CoreDataRecords.fetchForDate(chosenDate)
+        }
+    }
+    
+    /// A list of events pulled from the user's connected calendar
+    public struct Calendar: View {
+        public var date: Date? = nil
+        
+        // @TODO: needed?
+        @State private var searchText: String = ""
+
+        @Environment(\.managedObjectContext) var moc
+        @EnvironmentObject public var nav: Navigation
+
+        var body: some View {
+            VStack {
+                Headers()
+                Text("Calendar")
+                Spacer()
+            }
+        }
+        
+        init(date: Date? = nil) {
+            self.date = date
+        }
+    }
 }
 
 // MARK: method definitions
-extension LogTableRedux {
-    
+extension LogTableRedux {}
+
+extension LogTableRedux.Grouped {
+    private func actionOnAppear() -> Void {
+        let model = CoreDataRecords(moc: moc)
+        
+        grouped = model.createExportableGroupedRecordsAsViews(records)
+        plain = model.createExportableRecordsFrom(records, grouped: true)
+    }
 }

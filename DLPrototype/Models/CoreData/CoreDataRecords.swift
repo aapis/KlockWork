@@ -58,7 +58,7 @@ public class CoreDataRecords: ObservableObject {
 
     static public func fetchForDate(_ date: Date, limit: Int? = 10) -> FetchRequest<LogRecord> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: true)
+            NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)
         ]
 
         let (start, end) = DateHelper.startAndEndOf(date)
@@ -76,6 +76,8 @@ public class CoreDataRecords: ObservableObject {
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
+    
+//    static 
 
     static public func fetchRecent() -> FetchRequest<LogRecord> {
         let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()

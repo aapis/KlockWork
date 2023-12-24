@@ -41,13 +41,22 @@ public enum Tab: CaseIterable {
     var help: String {
         switch self {
         case .chronologic:
-            return "Chronologic"
+            return "Sorted by time, ascending"
         case .grouped:
             return "Grouped by job ID"
         case .summarized:
-            return "Summarized"
+            return "Summarized results"
         case .calendar:
             return "Today's events"
+        }
+    }
+    
+    var title: String {
+        switch self {
+        case .chronologic: return "Chronologic"
+        case .grouped: return "Grouped"
+        case .summarized: return "Summarized"
+        case .calendar: return "Events"
         }
     }
     
@@ -62,6 +71,35 @@ public enum Tab: CaseIterable {
         case .calendar:
             return "Events happening today"
         }
+    }
+    
+    var view: AnyView {
+        switch self {
+        case .chronologic:
+            return AnyView(LogTableRedux.Chronologic())
+        case .grouped:
+            return AnyView(LogTableRedux.Grouped())
+        case .summarized:
+            return AnyView(LogTableRedux.Summarized())
+        case .calendar:
+            return AnyView(LogTableRedux.Calendar())
+        }
+    }
+    
+    var button: ToolbarButton {
+        ToolbarButton(
+            id: self.id,
+            helpText: self.help,
+            label: AnyView(
+                HStack {
+                    Image(systemName: self.icon)
+                        .font(.title2)
+                    Text(self.title)
+                }
+                
+            ),
+            contents: self.view
+        )
     }
 }
 
