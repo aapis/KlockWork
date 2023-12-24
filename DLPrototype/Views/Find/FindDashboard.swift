@@ -1308,8 +1308,7 @@ extension FindDashboard {
                                     entry: entry,
                                     index: entities.firstIndex(of: item),
                                     colour: Color.fromStored(item.job!.colour ?? Theme.rowColourAsDouble),
-                                    viewRequiresColumns: viewRequiresColumns,
-                                    selectedJob: $text
+                                    viewRequiresColumns: viewRequiresColumns
                                 )
                             }
                         }
