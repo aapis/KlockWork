@@ -202,14 +202,10 @@ public struct FancyButtonv2: View {
 
 extension FancyButtonv2 {
     private func buttonFrameWidth() -> CGFloat {
-        if showLabel! {
-            if size == .titleLink {
+        if let showingLabel = showLabel {
+            if showingLabel {
                 return 200
             }
-        }
-        
-        if size == .link {
-            return .infinity
         }
 
         return size.width

@@ -15,7 +15,9 @@ public enum ButtonSize {
         switch self {
         case .tiny:
             return 10
-        case .link, .titleLink:
+        case .link:
+            return .infinity
+        case .titleLink:
             return 20
         case .small:
             return 40
