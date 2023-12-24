@@ -83,8 +83,7 @@ struct RecordResult: View {
                                         entry: entry,
                                         index: bucket.firstIndex(of: item),
                                         colour: Color.fromStored(item.job!.colour ?? Theme.rowColourAsDouble),
-                                        viewRequiresColumns: viewRequiresColumns,
-                                        selectedJob: $text
+                                        viewRequiresColumns: viewRequiresColumns
                                     )
                                 }
                             }

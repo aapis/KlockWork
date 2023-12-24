@@ -14,7 +14,7 @@ public enum ViewMode: Hashable {
 }
 
 public struct ViewModeSelector: View {
-    @Binding public var mode: ViewMode
+    @EnvironmentObject public var nav: Navigation
     
     @AppStorage("today.viewMode") public var index: Int = 0
     
@@ -36,9 +36,9 @@ public struct ViewModeSelector: View {
     
     private func change(selected: Int, sender: String?) -> Void {
         if selected == 1 || selected == 0 {
-            mode = .full
+            nav.session.toolbar.mode = .full
         } else if selected == 2 {
-            mode = .plain
+            nav.session.toolbar.mode = .plain
         }
         
         index = selected

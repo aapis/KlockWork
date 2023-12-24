@@ -10,13 +10,13 @@ import Foundation
 import SwiftUI
 
 struct ToolbarButtons: View {
-    @Binding public var selectedTab: Int
-    @Binding public var isShowingAlert: Bool
-    @Binding public var showSearch: Bool
-    @Binding public var searchText: String
-    @Binding public var selectedDate: Date
-    @Binding public var records: [LogRecord]
-    @Binding public var viewMode: ViewMode
+//    @Binding public var selectedTab: Int
+//    @Binding public var isShowingAlert: Bool
+//    @Binding public var showSearch: Bool
+//    @Binding public var searchText: String
+//    @Binding public var selectedDate: Date
+//    @Binding public var records: [LogRecord]
+//    @Binding public var viewMode: ViewMode
     
     @State private var datePickerItems: [CustomPickerItem] = []
     @State private var pickerSelection: Int = 0
@@ -25,10 +25,11 @@ struct ToolbarButtons: View {
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
+    @EnvironmentObject public var nav: Navigation
     
     var body: some View {
         HStack {
-            ViewModeSelector(mode: $viewMode)
+            ViewModeSelector()
             
             Button(action: export, label: {
                 Image(systemName: "arrow.down.to.line")
@@ -55,44 +56,24 @@ struct ToolbarButtons: View {
         let item = datePickerItems[selected].title
         
         pickerSelection = selected
-        selectedDate = DateHelper.date(item) ?? Date()
+        nav.session.date = DateHelper.date(item) ?? Date()
     }
     
     private func toggleSearch() -> Void {
         withAnimation(.easeInOut) {
-            showSearch.toggle()
-        }
-    }
-    
-    private func previous() -> Void {
-        if pickerSelection <= numPastDates {
-            pickerSelection += 1
-            
-            let item = datePickerItems[pickerSelection].title
-
-            print("Fancy::prev.selection \(selectedDate)")
-            selectedDate = DateHelper.date(item) ?? Date()
-        }
-    }
-    
-    private func next() -> Void {
-        if pickerSelection > 0 {
-            pickerSelection -= 1
-            let item = datePickerItems[pickerSelection].title
-                
-            print("Fancy::next.selection \(selectedDate)")
-            selectedDate = DateHelper.date(item) ?? Date()
+            nav.session.toolbar.showSearch.toggle()
         }
     }
     
     private func export() -> Void {
-        ClipboardHelper.copy(
-            CoreDataRecords(moc: moc).createExportableRecordsFrom(records)
-        )
+        // @TODO: fix
+//        ClipboardHelper.copy(
+//            CoreDataRecords(moc: moc).createExportableRecordsFrom(records)
+//        )
     }
     
     private func viewAsPlain() -> Void {
-        viewMode = .plain
+        nav.session.toolbar.mode = .plain
     }
     
     private func toStringList(_ items: [Entry]) -> String {

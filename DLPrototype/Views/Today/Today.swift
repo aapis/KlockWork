@@ -10,7 +10,7 @@ import Combine
 import EventKit
 
 struct Today: View {
-    public var defaultSelectedDate: Date?
+    public var defaultSelectedDate: Date? = nil
     
     @State private var text: String = ""
     @State private var jobId: String = ""
@@ -126,7 +126,7 @@ struct Today: View {
     
     // MARK: Table view
     var table: some View {
-        LogTable(job: $jobId, defaultSelectedDate: defaultSelectedDate)
+        LogTableRedux(date: defaultSelectedDate)
             .id(updater.get("today.table"))
             .environmentObject(updater)
             .environmentObject(ce)
@@ -150,13 +150,19 @@ struct Today: View {
             before as CVarArg,
             after as CVarArg
         )
-        
+        fetch.fetchLimit = 1
+
+        // @TODO: rename to firstRecord, refactor Today.onAppear
         _todaysRecords = FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 }
 
 extension Today {
     private func onAppear() -> Void {
+        if let dDate = defaultSelectedDate {
+            nav.session.date = dDate
+        }
+
         if let record = todaysRecords.first {
             if let firstRecordJob = record.job {
                 jobId = String(firstRecordJob.id_int())

@@ -143,6 +143,7 @@ extension Navigation {
         var idate: IdentifiableDay = IdentifiableDay()
         var gif: Planning.GlobalInterfaceFilter = .normal
         var search: Search = Search(moc: PersistenceController.shared.container.viewContext)
+        var toolbar: Toolbar = Toolbar()
     }
 }
 
@@ -164,6 +165,14 @@ extension Navigation.Session {
         var moc: NSManagedObjectContext
         var hasResults: Bool = false
         var inspectingEntity: NSManagedObject? = nil
+    }
+    
+    public struct Toolbar: Identifiable {
+        public var id: UUID = UUID()
+        var selected: Tab = .chronologic
+        var mode: ViewMode = .full
+        var showSearch: Bool = false
+        var searchText: String = ""
     }
 }
 

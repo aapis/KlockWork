@@ -9,11 +9,10 @@
 import Foundation
 import SwiftUI
 
-struct LogTable: View, Identifiable {
-    public var id = UUID()
-    @Binding public var job: String
-    public var defaultSelectedDate: Date?
-    
+struct LogTable: View {
+    public var date: Date? = nil
+
+    @State private var job: String = ""
     @State private var records: [LogRecord] = []
     @State private var recordsAsString: String = ""
     @State private var wordCount: Int = 0
@@ -128,17 +127,17 @@ struct LogTable: View, Identifiable {
                         Theme.toolbarColour
                         
                         HStack {
-                            ToolbarTabs(selectedTab: $recordGrouping)
-                            ToolbarButtons(
-                                selectedTab: $recordGrouping,
-                                isShowingAlert: $isShowingAlert,
-                                showSearch: $showSearch,
-                                searchText: $searchText,
-                                selectedDate: $selectedDate,
-                                records: $records,
-                                viewMode: $viewMode
-                            )
-                                .id(updater.ids["today.dayList"])
+//                            ToolbarTabs(selectedTab: $recordGrouping)
+//                            ToolbarButtons(
+//                                selectedTab: $recordGrouping,
+//                                isShowingAlert: $isShowingAlert,
+//                                showSearch: $showSearch,
+//                                searchText: $searchText,
+//                                selectedDate: $selectedDate,
+//                                records: $records,
+//                                viewMode: $viewMode
+//                            )
+//                                .id(updater.ids["today.dayList"])
                         }
                     }
                 }
@@ -224,8 +223,8 @@ struct LogTable: View, Identifiable {
                 if selectedTab == .grouped {
                     // custom UI for grouped results
                     // TODO: shouldn't instantiate CDR here
-                    let groupedByJob = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(records)
-                    ForEach(groupedByJob) { group in group }
+//                    let groupedByJob = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(records)
+//                    ForEach(groupedByJob) { group in group }
                 } else {
                     ForEach(records) { record in
                         if record.job != nil {
@@ -240,8 +239,7 @@ struct LogTable: View, Identifiable {
                                 index: records.firstIndex(of: record),
                                 colour: Color.fromStored((record.job?.colour) ?? Theme.rowColourAsDouble),
                                 record: record,
-                                viewRequiresColumns: viewRequiresColumns,
-                                selectedJob: $job
+                                viewRequiresColumns: viewRequiresColumns
                             )
                             .environmentObject(updater)
                         }
@@ -270,8 +268,8 @@ struct LogTable: View, Identifiable {
                 if selectedTab == .grouped {
                     // custom UI for grouped results
                     // TODO: shouldn't instantiate CDR here
-                    let groupedByJob = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(records)
-                    ForEach(groupedByJob) { group in group }
+//                    let groupedByJob = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(records)
+//                    ForEach(groupedByJob) { group in group }
                 } else {
                     // standard UI
                     FancyTextField(placeholder: "Records...", lineLimit: 10, text: $recordsAsString)
@@ -284,7 +282,11 @@ struct LogTable: View, Identifiable {
             changeSort()
         })
     }
-    
+}
+
+// MARK: function definitions
+
+extension LogTable {
     // TODO: move this func to CoreDataRecords model
     private func changeSort() -> Void {
         if records.count > 0 {
@@ -294,10 +296,10 @@ struct LogTable: View, Identifiable {
                 records = summarized()
             }
             
-            recordsAsString = CoreDataRecords(moc: moc).createExportableRecordsFrom(
-                records,
-                grouped: selectedTab == .grouped
-            )
+//            recordsAsString = CoreDataRecords(moc: moc).createExportableRecordsFrom(
+//                records,
+//                grouped: selectedTab == .grouped
+//            )
         }
     }
     
@@ -369,4 +371,120 @@ struct LogTable: View, Identifiable {
     private func redrawTable(_ changedValue: Bool) -> Void {
         updater.updateOne("today.table")
     }
+}
+
+struct LogTableRedux: View {
+    public var date: Date? = nil
+    
+    @EnvironmentObject public var nav: Navigation
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            TabBar()
+            Rows(date: date)
+        }
+    }
+}
+
+// MARK: structs
+extension LogTableRedux {
+    struct TabBar: View {
+        @EnvironmentObject public var nav: Navigation
+        
+        var body: some View {
+            GridRow {
+                Group {
+                    HStack(spacing: 0) {
+                        ZStack {
+                            Color.clear
+                        }
+                        .frame(width: 6)
+                        
+                        ZStack(alignment: .leading) {
+                            Theme.toolbarColour
+                            
+                            HStack {
+                                ToolbarTabs()
+                                ToolbarButtons()
+                            }
+                        }
+                    }
+                }
+            }.frame(height: 36)
+        }
+    }
+    
+    struct Rows: View {
+        public var date: Date? = nil
+        
+        @State private var searchText: String = ""
+        
+
+        @Environment(\.managedObjectContext) var moc
+        @EnvironmentObject public var nav: Navigation
+
+        @FetchRequest private var records: FetchedResults<LogRecord>
+        
+        var body: some View {
+            VStack(spacing: 1) {
+                if nav.session.toolbar.showSearch {
+                    SearchBar(text: $searchText, disabled: (records.count == 0))
+                }
+                
+                Plain(date: date, records: records)
+            }
+        }
+        
+        init(date: Date? = nil) {
+            var chosenDate = Date()
+            if let date = date {
+                chosenDate = date
+            }
+            
+            let (before, after) = DateHelper.startAndEndOf(chosenDate)
+            
+            let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
+            fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)]
+            fetch.predicate = NSPredicate(
+                format: "alive = true && (timestamp > %@ && timestamp <= %@)",
+                before as CVarArg,
+                after as CVarArg
+            )
+
+            _records = FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+        }
+        
+        struct Plain: View {
+            public var date: Date? = nil
+            public var records: FetchedResults<LogRecord>
+            
+            @State private var recordsAsString: String = ""
+            
+            @Environment(\.managedObjectContext) var moc
+            @EnvironmentObject public var nav: Navigation
+
+            var body: some View {
+                if records.count > 0 {
+                    if nav.session.toolbar.selected == .grouped {
+                        FancyTextField(placeholder: "Records...", lineLimit: 10, text: $recordsAsString)
+                    } else {
+                        // TODO: shouldn't instantiate CDR here
+                        let groupedByJob = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(records)
+                        ForEach(groupedByJob) { group in group }
+                    }
+                } else {
+                    if let date = date {
+                        LogRowEmpty(message: "No records found for date \(date.formatted())", index: 0, colour: Theme.rowColour)
+                    } else {
+                        LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
+                    }
+                }
+            }
+        }
+    }
+}
+
+// MARK: method definitions
+extension LogTableRedux {
+    
 }
