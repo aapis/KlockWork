@@ -24,6 +24,8 @@ struct FindDashboard: View {
     @State private var showTasks: Bool = true
     @State private var showProjects: Bool = true
     @State private var showJobs: Bool = true
+    @State private var showCompanies: Bool = true
+    @State private var showPeople: Bool = true
     @State private var allowAlive: Bool = true
     @State private var counts: (Int, Int, Int, Int) = (0, 0, 0, 0)
     @State private var advancedSearchResults: [SearchLanguage.Results.Result] = []
@@ -63,7 +65,17 @@ struct FindDashboard: View {
             if !searching && activeSearchText.count >= 2 {
                 GridRow {
                     HStack(alignment: .top, spacing: 1) {
-                        Suggestions(searchText: $activeSearchText)
+                        Suggestions(
+                            searchText: $activeSearchText,
+                            publishedOnly: $allowAlive,
+                            showRecords: $showRecords,
+                            showNotes: $showJobs,
+                            showTasks: $showNotes,
+                            showProjects: $showProjects,
+                            showJobs: $showJobs,
+                            showCompanies: $showCompanies,
+                            showPeople: $showPeople
+                        )
                         
                         if nav.session.search.inspectingEntity != nil {
                             Inspector()
@@ -82,9 +94,10 @@ struct FindDashboard: View {
                         Toggle("Tasks", isOn: $showTasks)
                         Toggle("Projects", isOn: $showProjects)
                         Toggle("Jobs", isOn: $showJobs)
-                        // TODO: re-add at some point
-//                        Spacer()
-//                        Toggle("Show alive", isOn: $allowAlive)
+                        Toggle("Companies", isOn: $showCompanies)
+                        Toggle("People", isOn: $showPeople)
+                        Spacer()
+                        Toggle("Published Only", isOn: $allowAlive)
                     }
                     .padding([.leading, .trailing], 10)
                 }
@@ -726,6 +739,14 @@ extension FindDashboard {
     
     struct Suggestions: View {
         @Binding public var searchText: String
+        @Binding public var publishedOnly: Bool
+        @Binding public var showRecords: Bool
+        @Binding public var showNotes: Bool
+        @Binding public var showTasks: Bool
+        @Binding public var showProjects: Bool
+        @Binding public var showJobs: Bool
+        @Binding public var showCompanies: Bool
+        @Binding public var showPeople: Bool
 
         private var columns: [GridItem] {
             Array(repeating: .init(.flexible(minimum: 100)), count: 1)
@@ -745,13 +766,13 @@ extension FindDashboard {
                             }
                             
                             // @TODO: reduce this with a loop, each view is basically identical...
-                            SuggestedJobs(searchText: $searchText)
-                            SuggestedProjects(searchText: $searchText)
-                            SuggestedNotes(searchText: $searchText)
-                            SuggestedTasks(searchText: $searchText)
-                            SuggestedRecords(searchText: $searchText)
-                            SuggestedCompanies(searchText: $searchText)
-                            SuggestedPeople(searchText: $searchText)
+                            if showJobs {SuggestedJobs(searchText: $searchText, publishedOnly: $publishedOnly)}
+                            if showProjects {SuggestedProjects(searchText: $searchText, publishedOnly: $publishedOnly)}
+                            if showNotes {SuggestedNotes(searchText: $searchText, publishedOnly: $publishedOnly)}
+                            if showTasks {SuggestedTasks(searchText: $searchText)}
+                            if showRecords {SuggestedRecords(searchText: $searchText, publishedOnly: $publishedOnly)}
+                            if showCompanies {SuggestedCompanies(searchText: $searchText, publishedOnly: $publishedOnly)}
+                            if showPeople {SuggestedPeople(searchText: $searchText)}
                         }
                     }
                     .padding()
@@ -762,6 +783,7 @@ extension FindDashboard {
         
         struct SuggestedJobs: View {
             @Binding public var searchText: String
+            @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Job>
@@ -808,14 +830,20 @@ extension FindDashboard {
                 }
             }
             
-            init(searchText: Binding<String>) {
+            init(searchText: Binding<String>, publishedOnly: Binding<Bool>) {
                 _searchText = searchText
+                _publishedOnly = publishedOnly
                 
                 let req: NSFetchRequest<Job> = Job.fetchRequest()
                 req.sortDescriptors = [
                     NSSortDescriptor(keyPath: \Job.created, ascending: false),
                 ]
-                req.predicate = NSPredicate(format: "alive = true && jid.string BEGINSWITH %@", _searchText.wrappedValue)
+
+                if publishedOnly.wrappedValue {
+                    req.predicate = NSPredicate(format: "alive = true && jid.string BEGINSWITH %@", _searchText.wrappedValue)
+                } else {
+                    req.predicate = NSPredicate(format: "jid.string BEGINSWITH %@", _searchText.wrappedValue)
+                }
                 
                 _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
             }
@@ -823,6 +851,7 @@ extension FindDashboard {
         
         struct SuggestedProjects: View {
             @Binding public var searchText: String
+            @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Project>
@@ -868,18 +897,28 @@ extension FindDashboard {
                 }
             }
             
-            init(searchText: Binding<String>) {
+            init(searchText: Binding<String>, publishedOnly: Binding<Bool>) {
                 _searchText = searchText
+                _publishedOnly = publishedOnly
                 
                 let req: NSFetchRequest<Project> = Project.fetchRequest()
                 req.sortDescriptors = [
                     NSSortDescriptor(keyPath: \Project.name, ascending: true),
                 ]
-                req.predicate = NSPredicate(
-                    format: "alive = true && (name BEGINSWITH %@ || pid BEGINSWITH %@)",
-                    _searchText.wrappedValue,
-                    _searchText.wrappedValue
-                )
+                
+                if publishedOnly.wrappedValue {
+                    req.predicate = NSPredicate(
+                        format: "alive = true && (name BEGINSWITH %@ || pid BEGINSWITH %@)",
+                        _searchText.wrappedValue,
+                        _searchText.wrappedValue
+                    )
+                } else {
+                    req.predicate = NSPredicate(
+                        format: "name BEGINSWITH %@ || pid BEGINSWITH %@",
+                        _searchText.wrappedValue,
+                        _searchText.wrappedValue
+                    )
+                }
                 
                 _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
             }
@@ -887,6 +926,7 @@ extension FindDashboard {
         
         struct SuggestedNotes: View {
             @Binding public var searchText: String
+            @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Note>
@@ -933,18 +973,28 @@ extension FindDashboard {
                 }
             }
             
-            init(searchText: Binding<String>) {
+            init(searchText: Binding<String>, publishedOnly: Binding<Bool>) {
                 _searchText = searchText
+                _publishedOnly = publishedOnly
                 
                 let req: NSFetchRequest<Note> = Note.fetchRequest()
                 req.sortDescriptors = [
-                    NSSortDescriptor(keyPath: \Note.title, ascending: true),
+                    NSSortDescriptor(keyPath: \Note.postedDate, ascending: false),
                 ]
-                req.predicate = NSPredicate(
-                    format: "alive = true && (body CONTAINS[cd] %@ || title CONTAINS[cd] %@)",
-                    _searchText.wrappedValue,
-                    _searchText.wrappedValue
-                )
+                
+                if publishedOnly.wrappedValue {
+                    req.predicate = NSPredicate(
+                        format: "alive = true && (body CONTAINS[cd] %@ || title CONTAINS[cd] %@)",
+                        _searchText.wrappedValue,
+                        _searchText.wrappedValue
+                    )
+                } else {
+                    req.predicate = NSPredicate(
+                        format: "body CONTAINS[cd] %@ || title CONTAINS[cd] %@",
+                        _searchText.wrappedValue,
+                        _searchText.wrappedValue
+                    )
+                }
                 
                 _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
             }
@@ -1000,11 +1050,12 @@ extension FindDashboard {
             
             init(searchText: Binding<String>) {
                 _searchText = searchText
-                
+
                 let req: NSFetchRequest<LogTask> = LogTask.fetchRequest()
                 req.sortDescriptors = [
                     NSSortDescriptor(keyPath: \LogTask.created, ascending: true),
                 ]
+
                 req.predicate = NSPredicate(
                     format: "content CONTAINS[cd] %@",
                     _searchText.wrappedValue
@@ -1016,6 +1067,7 @@ extension FindDashboard {
         
         struct SuggestedRecords: View {
             @Binding public var searchText: String
+            @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<LogRecord>
@@ -1062,17 +1114,26 @@ extension FindDashboard {
                 }
             }
             
-            init(searchText: Binding<String>) {
+            init(searchText: Binding<String>, publishedOnly: Binding<Bool>) {
                 _searchText = searchText
+                _publishedOnly = publishedOnly
                 
                 let req: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
                 req.sortDescriptors = [
                     NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false),
                 ]
-                req.predicate = NSPredicate(
-                    format: "message CONTAINS[cd] %@",
-                    _searchText.wrappedValue
-                )
+                
+                if publishedOnly.wrappedValue {
+                    req.predicate = NSPredicate(
+                        format: "alive = true && message CONTAINS[cd] %@",
+                        _searchText.wrappedValue
+                    )
+                } else {
+                    req.predicate = NSPredicate(
+                        format: "message CONTAINS[cd] %@",
+                        _searchText.wrappedValue
+                    )
+                }
                 
                 _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
             }
@@ -1080,6 +1141,7 @@ extension FindDashboard {
         
         struct SuggestedCompanies: View {
             @Binding public var searchText: String
+            @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Company>
@@ -1126,17 +1188,26 @@ extension FindDashboard {
                 }
             }
             
-            init(searchText: Binding<String>) {
+            init(searchText: Binding<String>, publishedOnly: Binding<Bool>) {
                 _searchText = searchText
+                _publishedOnly = publishedOnly
                 
                 let req: NSFetchRequest<Company> = Company.fetchRequest()
                 req.sortDescriptors = [
                     NSSortDescriptor(keyPath: \Company.name, ascending: true),
                 ]
-                req.predicate = NSPredicate(
-                    format: "alive = true && name CONTAINS[cd] %@",
-                    _searchText.wrappedValue
-                )
+                
+                if publishedOnly.wrappedValue {
+                    req.predicate = NSPredicate(
+                        format: "alive = true && name CONTAINS[cd] %@",
+                        _searchText.wrappedValue
+                    )
+                } else {
+                    req.predicate = NSPredicate(
+                        format: "name CONTAINS[cd] %@",
+                        _searchText.wrappedValue
+                    )
+                }
                 
                 _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
             }
