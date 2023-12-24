@@ -38,14 +38,14 @@ struct Home: View {
                 SidebarButton(
                     destination: AnyView(Planning()),
                     pageType: .planning,
-                    icon: "circle.hexagongrid.fill",
+                    icon: "circle.hexagongrid",
                     label: "Planning",
                     sidebar: AnyView(DefaultPlanningSidebar())
                 ),
                 SidebarButton(
                     destination: AnyView(Today()),
                     pageType: .today,
-                    icon: "doc.append.fill",
+                    icon: "doc.append",
                     label: "Today",
                     sidebar: AnyView(TodaySidebar())
                 )
