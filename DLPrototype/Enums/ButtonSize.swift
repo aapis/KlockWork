@@ -9,7 +9,7 @@
 import SwiftUI
 
 public enum ButtonSize {
-    case small, medium, large, link, titleLink, tiny
+    case small, medium, large, link, titleLink, tiny, tinyLink
 
     var width: CGFloat {
         switch self {
@@ -17,7 +17,7 @@ public enum ButtonSize {
             return 10
         case .link:
             return .infinity
-        case .titleLink:
+        case .titleLink, .tinyLink:
             return 20
         case .small:
             return 40
@@ -28,7 +28,7 @@ public enum ButtonSize {
 
     var padding: CGFloat {
         switch self {
-        case .tiny, .link:
+        case .tiny, .link, .tinyLink:
             return 3
         case .small, .medium, .large, .titleLink:
             return 5
@@ -39,7 +39,7 @@ public enum ButtonSize {
         switch self {
         case .tiny:
             return 10
-        case .link:
+        case .link, .tinyLink:
             return 20
         case .small, .medium, .large, .titleLink:
             return 40
@@ -48,7 +48,7 @@ public enum ButtonSize {
 
     var font: Font {
         switch self {
-        case .tiny, .link, .small:
+        case .tiny, .link, .small, .tinyLink:
             return .body
         case .medium, .large:
             return .title3

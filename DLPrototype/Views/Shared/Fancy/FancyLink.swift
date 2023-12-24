@@ -69,8 +69,9 @@ struct FancyLink: View {
     }
     
     private func onAppear() -> Void {
+        // @TODO: remove this shit wow
         switch size {
-        case .small, .link, .tiny:
+        case .small, .link, .tiny, .tinyLink:
             padding = 0
         case .medium:
             padding = 5
