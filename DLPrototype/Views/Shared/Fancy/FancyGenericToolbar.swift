@@ -35,7 +35,7 @@ struct ToolbarButton: Hashable, Equatable {
     init(id: Int, helpText: String, icon: String, labelText: String, contents: AnyView?) {
         self.id = id
         self.helpText = helpText
-        self.icon = AnyView(Image(systemName: icon).font(.title2))
+        self.icon = AnyView(Image(systemName: icon))
         self.label = AnyView(
             HStack {
                 self.icon
@@ -72,7 +72,7 @@ struct FancyGenericToolbar: View {
                     }
                 }
             }
-            .frame(height: 35)
+            .frame(height: 33)
             
         
             GridRow {
@@ -127,7 +127,7 @@ struct FancyGenericToolbar: View {
                         .buttonStyle(.borderless)
                         .foregroundColor(Color.white)
                         .help(button.helpText)
-                        .frame(width: 70)
+                        .frame(width: 60)
                         .useDefaultHover({_ in})
                     }
                 }
