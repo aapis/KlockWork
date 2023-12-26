@@ -103,15 +103,15 @@ struct SidebarItem: View, Identifiable {
 
     @ViewBuilder private var ItemIcon: some View {
         if let ic = icon {
-            ZStack(alignment: .center) {
-                if ![.important, .action].contains(role) {
-                    role.colour.opacity(highlighted ? 0.15 : 0.08)
-                } else {
-                    role.colour
-                }
-
-                VStack {
-                    Button(action: doAction) {
+            Button(action: doAction) {
+                ZStack(alignment: .center) {
+                    if ![.important, .action].contains(role) {
+                        role.colour.opacity(highlighted ? 0.15 : 0.08)
+                    } else {
+                        role.colour
+                    }
+                    
+                    VStack {
                         if let alt = altIcon {
                             if highlighted {
                                 Image(systemName: alt)
@@ -128,13 +128,11 @@ struct SidebarItem: View, Identifiable {
                                 .frame(maxWidth: 30, maxHeight: 30)
                         }
                     }
-                    .buttonStyle(.plain)
-                    .useDefaultHover({ inside in highlighted = inside})
-                    .padding(.top, 5)
-                    Spacer()
                 }
+                .frame(width: type.iconFrameSize)
             }
-            .frame(width: type.iconFrameSize)
+            .buttonStyle(.plain)
+            .useDefaultHover({ inside in highlighted = inside})
         }
     }
 

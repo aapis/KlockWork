@@ -105,6 +105,7 @@ public struct FancyButtonv2: View {
                 button
             }
             .buttonStyle(.plain)
+            .useDefaultHover({ inside in highlighted = inside})
         } else {
             Button(action: {
                 if let ac = action {
@@ -118,6 +119,7 @@ public struct FancyButtonv2: View {
                 button
             }
             .buttonStyle(.plain)
+            .useDefaultHover({ inside in highlighted = inside})
         }
     }
 
@@ -164,7 +166,6 @@ public struct FancyButtonv2: View {
         .font(size.font)
         .help(text)
         .underline((size == .link || size == .titleLink) && highlighted)
-        .useDefaultHover({ inside in highlighted = inside})
     }
 
     private var Background: some View {
