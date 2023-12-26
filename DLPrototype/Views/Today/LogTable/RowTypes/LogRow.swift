@@ -16,9 +16,7 @@ struct LogRow: View, Identifiable {
     public var colour: Color
     public var record: LogRecord?
     public var viewRequiresColumns: Set<RecordTableColumn> = []
-    
-    @Binding public var selectedJob: String
-    
+
     @State public var isEditing: Bool = false
     @State public var message: String = ""
     @State public var job: String = ""
@@ -258,15 +256,16 @@ struct LogRow: View, Identifiable {
     }
     
     private func setJob(_ job: String) -> Void {
-        let dotIndex = (job.range(of: ".")?.lowerBound)
+//        let dotIndex = (job.range(of: ".")?.lowerBound)
         
-        if dotIndex != nil {
-            selectedJob = String(job.prefix(upTo: dotIndex!))
+//        if dotIndex != nil {
+//            selectedJob = String(job.prefix(upTo: dotIndex!))
+//            nav.session.setJob()
             
             if let jobIdDbl = Double(job) {
                 nav.session.setJob(CoreDataJob(moc: moc).byId(jobIdDbl))
             }
-        }
+//        }
     }
 
     // TODO: remove?
@@ -353,8 +352,8 @@ struct LogTableRowPreview: PreviewProvider {
     
     static var previews: some View {
         VStack {
-            LogRow(entry: Entry(timestamp: "2023-01-01 19:48", job: "88888", message: "Hello, world"), index: 0, colour: Theme.rowColour, selectedJob: $sj)
-            LogRow(entry: Entry(timestamp: "2023-01-01 19:49", job: "11", message: "Hello, world"), index: 1, colour: Theme.rowColour, selectedJob: $sj)
+            LogRow(entry: Entry(timestamp: "2023-01-01 19:48", job: "88888", message: "Hello, world"), index: 0, colour: Theme.rowColour)
+            LogRow(entry: Entry(timestamp: "2023-01-01 19:49", job: "11", message: "Hello, world"), index: 1, colour: Theme.rowColour)
         }
     }
 }

@@ -38,14 +38,14 @@ struct Home: View {
                 SidebarButton(
                     destination: AnyView(Planning()),
                     pageType: .planning,
-                    icon: "circle.hexagongrid.fill",
+                    icon: "circle.hexagongrid",
                     label: "Planning",
                     sidebar: AnyView(DefaultPlanningSidebar())
                 ),
                 SidebarButton(
                     destination: AnyView(Today()),
                     pageType: .today,
-                    icon: "doc.append.fill",
+                    icon: "doc.append",
                     label: "Today",
                     sidebar: AnyView(TodaySidebar())
                 )
@@ -123,7 +123,6 @@ struct Home: View {
                         }
                         .frame(width: 320)
                         .background(nav.parent != nil ? nav.parent!.colour : Theme.tabActiveColour)
-                        .id(updater.get("sidebar"))
                     } else {
                         HorizontalSeparator // TODO: maybe remove?
                     }
@@ -163,16 +162,6 @@ struct Home: View {
         .onChange(of: nav.pageId!) { newUuid in
             updater.setOne(nav.parent!.ViewUpdaterKey, newUuid)
         }
-        .onChange(of: nav.session.date) { newDate in
-            if let page = nav.parent {
-                if page == .today {
-                    updater.updateOne("today.table")
-                }
-            }
-        }
-        .onChange(of: nav.session.gif) { _ in
-            updater.updateOne("sidebar")
-        }
     }
 
     var HorizontalSeparator: some View {
@@ -181,10 +170,6 @@ struct Home: View {
             Theme.headerColour
         }
         .frame(width: 3)
-    }
-    
-    private func redraw() -> Void {
-        updater.update()
     }
 
     private func onAppear() -> Void {

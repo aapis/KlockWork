@@ -10,17 +10,17 @@ import Foundation
 import SwiftUI
 
 struct FancyTab: View {
-    @State public var tab: Tab
+    @State public var tab: TodayViewTab
     @State public var highlighted: Bool = false
-
-    @Binding public var selected: Int
+    
+    @EnvironmentObject public var nav: Navigation
 
     var body: some View {
-        Button(action: {setActive(tab.id)}, label: {
+        Button(action: {nav.session.toolbar.selected = tab}, label: {
             ZStack {
                 Theme.toolbarColour
 
-                if selected == tab.id {
+                if nav.session.toolbar.selected.id == tab.id {
                     Theme.tabActiveColour
                 } else {
                     Theme.tabColour
@@ -33,7 +33,7 @@ struct FancyTab: View {
                     }
                 }
                 Image(systemName: tab.icon)
-                    .foregroundColor(highlighted || selected == tab.id ? .white : .white.opacity(0.8))
+                    .foregroundColor(highlighted || nav.session.toolbar.selected.id == tab.id ? .white : .white.opacity(0.8))
             }
         })
         .buttonStyle(.borderless)
@@ -41,11 +41,5 @@ struct FancyTab: View {
         .help(tab.help)
         .frame(width: 50)
         .useDefaultHover({ inside in highlighted = inside})
-    }
-}
-
-extension FancyTab {
-    private func setActive(_ index: Int) -> Void {
-        selected = index
     }
 }

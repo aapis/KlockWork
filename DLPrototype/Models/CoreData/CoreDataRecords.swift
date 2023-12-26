@@ -58,13 +58,34 @@ public class CoreDataRecords: ObservableObject {
 
     static public func fetchForDate(_ date: Date, limit: Int? = 10) -> FetchRequest<LogRecord> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: true)
+            NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)
         ]
 
         let (start, end) = DateHelper.startAndEndOf(date)
         let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
         fetch.predicate = NSPredicate(
             format: "alive == true && (timestamp > %@ && timestamp <= %@)",
+            start as CVarArg,
+            end as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        if let lim = limit {
+            fetch.fetchLimit = lim
+        }
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+    
+    static public func fetchSummarizedForDate(_ date: Date, limit: Int? = 10) -> FetchRequest<LogRecord> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)
+        ]
+
+        let (start, end) = DateHelper.startAndEndOf(date)
+        let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "@message.count > 0 && alive == true && (timestamp > %@ && timestamp <= %@)",
             start as CVarArg,
             end as CVarArg
         )
@@ -189,11 +210,11 @@ public class CoreDataRecords: ObservableObject {
     }
     
     public func forDate(_ date: Date) -> [LogRecord] {
-        let endDate = date - 86400
+        let (start, end) = DateHelper.startAndEndOf(date)
         let predicate = NSPredicate(
-            format: "timestamp > %@ && timestamp < %@",
-            date as CVarArg,
-            endDate as CVarArg
+            format: "alive == true && timestamp > %@ && timestamp <= %@",
+            start as CVarArg,
+            end as CVarArg
         )
         
         return query(predicate)

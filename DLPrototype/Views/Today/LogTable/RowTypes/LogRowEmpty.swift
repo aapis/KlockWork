@@ -41,7 +41,7 @@ struct LogTableRowEmptyPreview: PreviewProvider {
     static var previews: some View {
         VStack {
             LogRowEmpty(message: "Nothing to see here", index: 0, colour: Theme.rowColour)
-            LogRow(entry: Entry(timestamp: "2023-01-01 19:49", job: "11", message: "Hello, world"), index: 1, colour: Theme.rowColour, selectedJob: $sj)
+            LogRow(entry: Entry(timestamp: "2023-01-01 19:49", job: "11", message: "Hello, world"), index: 1, colour: Theme.rowColour)
         }
     }
 }

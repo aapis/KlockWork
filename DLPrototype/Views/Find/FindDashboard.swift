@@ -141,13 +141,8 @@ extension FindDashboard {
         searchText = activeSearchText
 
         // @TODO: find best place to call/construct tabs! This loads data but locks UI
-        DispatchQueue.background(background: {
-            loading = true
-            createTabs()
-        }, completion: {
-            loading = false
-        })
-        
+        createTabs()
+        loading = false
     }
 
     private func onReset() -> Void {
@@ -1308,8 +1303,7 @@ extension FindDashboard {
                                     entry: entry,
                                     index: entities.firstIndex(of: item),
                                     colour: Color.fromStored(item.job!.colour ?? Theme.rowColourAsDouble),
-                                    viewRequiresColumns: viewRequiresColumns,
-                                    selectedJob: $text
+                                    viewRequiresColumns: viewRequiresColumns
                                 )
                             }
                         }

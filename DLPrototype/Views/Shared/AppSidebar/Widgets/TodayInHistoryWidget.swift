@@ -36,7 +36,7 @@ struct TodayInHistoryWidget: View {
                             FancyTextLink(
                                 text: "\(selectedDate)",
                                 transparent: true,
-                                destination: AnyView(Today(defaultSelectedDate: currentDate)),
+                                destination: AnyView(Today(defaultSelectedDate: currentDate).environmentObject(nav)),
                                 pageType: .today,
                                 sidebar: AnyView(TodaySidebar())
                             )
@@ -129,7 +129,7 @@ extension TodayInHistoryWidget {
 
     private func actionTodayInHistory(_ day: DayInHistory) -> Void {
         nav.parent = .today
-        nav.view = AnyView(Today(defaultSelectedDate: day.date))
+        nav.view = AnyView(Today(defaultSelectedDate: day.date).environmentObject(nav))
         nav.sidebar = AnyView(TodaySidebar(date: day.date))
         nav.pageId = UUID()
     }
