@@ -51,6 +51,12 @@ struct MainMenu: Commands {
                 }
                     .keyboardShortcut("j", modifiers: [.command, .shift])
             }
+            
+            Divider()
+            Button("Previous day") {nav.session.date -= 86400}
+                .keyboardShortcut(.leftArrow, modifiers: [.command])
+            Button("Next day") {nav.session.date += 86400}
+                .keyboardShortcut(.rightArrow, modifiers: [.command])
         }
     }
 }
