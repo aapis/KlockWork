@@ -262,41 +262,41 @@ extension Today.LogTable {
 // MARK: method definitions
 extension Today.LogTable.TabContent.Chronologic {
     private func findRecords(for date: Date) -> Void {
-        DispatchQueue.backgroundList(background: {
+        DispatchQueue.with(background: {
             return CoreDataRecords(moc: moc).forDate(date)
             
         }, completion: { recordsForToday in
-            self.records = recordsForToday as! [LogRecord]
+            self.records = recordsForToday!
         })
     }
     
     private func findRecords() -> Void {
-        DispatchQueue.backgroundList(background: {
+        DispatchQueue.with(background: {
             return CoreDataRecords(moc: moc).forDate(nav.session.date)
             
         }, completion: { recordsForToday in
-            self.records = recordsForToday as! [LogRecord]
+            self.records = recordsForToday!
         })
     }
 }
 
 extension Today.LogTable.TabContent.Grouped {
     private func findRecords(for date: Date) -> Void {
-        DispatchQueue.backgroundList(background: {
+        DispatchQueue.with(background: {
             return CoreDataRecords(moc: moc).forDate(date)
             
         }, completion: { recordsForToday in
-            self.records = recordsForToday as! [LogRecord]
+            self.records = recordsForToday!
             grouped = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(self.records)
         })
     }
     
     private func findRecords() -> Void {
-        DispatchQueue.backgroundList(background: {
+        DispatchQueue.with(background: {
             return CoreDataRecords(moc: moc).forDate(nav.session.date)
             
         }, completion: { recordsForToday in
-            self.records = recordsForToday as! [LogRecord]
+            self.records = recordsForToday!
             grouped = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(self.records)
         })
     }
@@ -304,20 +304,20 @@ extension Today.LogTable.TabContent.Grouped {
 
 extension Today.LogTable.TabContent.Summarized {
     private func findRecords(for date: Date) -> Void {
-        DispatchQueue.backgroundList(background: {
+        DispatchQueue.with(background: {
             return CoreDataRecords(moc: moc).forDate(date)
             
         }, completion: { recordsForToday in
-            self.records = recordsForToday as! [LogRecord]
+            self.records = recordsForToday!
         })
     }
     
     private func findRecords() -> Void {
-        DispatchQueue.backgroundList(background: {
+        DispatchQueue.with(background: {
             return CoreDataRecords(moc: moc).forDate(nav.session.date)
             
         }, completion: { recordsForToday in
-            self.records = recordsForToday as! [LogRecord]
+            self.records = recordsForToday!
         })
     }
 }

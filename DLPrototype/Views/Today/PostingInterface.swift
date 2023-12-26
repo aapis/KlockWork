@@ -66,7 +66,6 @@ extension Today {
 extension Today.PostingInterface {
     private func submitAction() -> Void {
         if !text.isEmpty && nav.session.job != nil {
-        
             let record = LogRecord(context: moc)
             record.timestamp = Date()
             record.message = text
