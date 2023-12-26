@@ -77,7 +77,26 @@ public class CoreDataRecords: ObservableObject {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
     
-//    static 
+    static public func fetchSummarizedForDate(_ date: Date, limit: Int? = 10) -> FetchRequest<LogRecord> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)
+        ]
+
+        let (start, end) = DateHelper.startAndEndOf(date)
+        let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "@message.count > 0 && alive == true && (timestamp > %@ && timestamp <= %@)",
+            start as CVarArg,
+            end as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        if let lim = limit {
+            fetch.fetchLimit = lim
+        }
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
 
     static public func fetchRecent() -> FetchRequest<LogRecord> {
         let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()

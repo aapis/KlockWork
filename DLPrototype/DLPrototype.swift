@@ -27,6 +27,7 @@ struct DLPrototype: App {
                 .environmentObject(nav)
                 .environmentObject(ce)
                 .onAppear(perform: onAppear)
+                .defaultAppStorage(.standard)
                 .onChange(of: scenePhase) { phase in
                     if phase == .background || phase == .inactive{
                         persistenceController.save()

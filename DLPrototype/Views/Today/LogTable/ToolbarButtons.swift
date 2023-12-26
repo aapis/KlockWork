@@ -30,9 +30,12 @@ struct ToolbarButtons: View {
     var body: some View {
         HStack {
             ViewModeSelector()
-            
             Button(action: export, label: {
-                Image(systemName: "arrow.down.to.line")
+                HStack(spacing: 5) {
+                    Image(systemName: "arrow.down.to.line")
+                    Text("Export")
+                }
+                
             })
             .buttonStyle(.borderless)
             .keyboardShortcut("c", modifiers: [.command, .shift])
@@ -42,13 +45,14 @@ struct ToolbarButtons: View {
             
             Spacer()
             
-            Button(action: toggleSearch, label: {
-                Image(systemName: "magnifyingglass")
-            })
-            .help("Toggle search")
-            .buttonStyle(.borderless)
-            .foregroundColor(Color.white)
-            .useDefaultHover({_ in})
+            // TODO: fix search
+//            Button(action: toggleSearch, label: {
+//                Image(systemName: "magnifyingglass")
+//            })
+//            .help("Toggle search")
+//            .buttonStyle(.borderless)
+//            .foregroundColor(Color.white)
+//            .useDefaultHover({_ in})
         }.padding(8)
     }
     
@@ -60,9 +64,7 @@ struct ToolbarButtons: View {
     }
     
     private func toggleSearch() -> Void {
-        withAnimation(.easeInOut) {
-            nav.session.toolbar.showSearch.toggle()
-        }
+        nav.session.toolbar.showSearch.toggle()
     }
     
     private func export() -> Void {

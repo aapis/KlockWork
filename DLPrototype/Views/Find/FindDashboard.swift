@@ -144,7 +144,8 @@ extension FindDashboard {
         DispatchQueue.background(background: {
             loading = true
             createTabs()
-        }, completion: {
+            return nil
+        }, completion: { _ in
             loading = false
         })
         

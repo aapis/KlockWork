@@ -169,10 +169,10 @@ extension Navigation.Session {
     
     public struct Toolbar: Identifiable {
         public var id: UUID = UUID()
-        var selected: Tab = .chronologic
+        var selected: TodayViewTab = .chronologic
         var mode: ViewMode = .full
         var showSearch: Bool = false
-        var searchText: String = ""
+        var searchText: String = "" // @TODO: remove
     }
 }
 

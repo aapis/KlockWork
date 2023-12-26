@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 struct FancyTab: View {
-    @State public var tab: Tab
+    @State public var tab: TodayViewTab
     @State public var highlighted: Bool = false
     
     @EnvironmentObject public var nav: Navigation

@@ -128,6 +128,7 @@ struct JobPickerUsing: View {
         jobId = ""
         jobIdFieldColour = Color.clear
         jobIdFieldTextColour = Color.white
+        nav.session.job = nil
     }
     
     private func applyStyle() -> Void {
