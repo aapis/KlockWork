@@ -85,6 +85,8 @@ struct DateSelectorWidget: View {
                             }
                         }
                     }
+
+                    ResetDateButton(isDatePickerPresented: $isDatePickerPresented)
                 }
                 .background(.white)
             }
@@ -180,9 +182,38 @@ extension DateSelectorWidget {
             .mask {
                 (current ? Image(systemName: "seal.fill") : Image(systemName: "circle.fill"))
 
-
             }
             .frame(width: 30, height: 30)
+        }
+    }
+    
+    struct ResetDateButton: View {
+        @Binding public var isDatePickerPresented: Bool
+        
+        private let date: Date = Date()
+        
+        @State private var highlighted: Bool = false
+        
+        @EnvironmentObject public var nav: Navigation
+        
+        var body: some View {
+            HStack(alignment: .top) {
+                Button {
+                    nav.session.date = date
+                    isDatePickerPresented.toggle()
+                } label: {
+                    Text("Reset to today")
+                        .help(date.formatted(date: .abbreviated, time: .omitted).description)
+                        .foregroundColor(.black)
+                        .font(Theme.fontTitle)
+                        .padding()
+                        .underline(highlighted)
+                }
+                .buttonStyle(.plain)
+                .useDefaultHover({ inside in highlighted = inside})
+                Spacer()
+            }
+            .background(Color.lightGray())
         }
     }
 }
@@ -280,4 +311,8 @@ extension DateSelectorWidget.DateSelectorRow {
 
         return day.string
     }
+}
+
+extension DateSelectorWidget.ResetDateButton {
+    
 }

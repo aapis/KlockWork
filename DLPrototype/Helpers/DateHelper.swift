@@ -171,19 +171,19 @@ final public class DateHelper {
     }
     
     static public func startAndEndOf(_ date: Date) -> (Date, Date) {
-        let start = Calendar.current.startOfDay(for: date)
+        let start = Calendar.autoupdatingCurrent.startOfDay(for: date)
         var components = DateComponents()
         components.day = 1
         components.second = -1
 
         return (
             start,
-            Calendar.current.date(byAdding: components, to: start)!
+            Calendar.autoupdatingCurrent.date(byAdding: components, to: start)!
         )
     }
     
     static public func dayAtStartAndEndOfMonth() -> (CVarArg, CVarArg)? {
-        let calendar = Calendar.current
+        let calendar = Calendar.autoupdatingCurrent
         let today = Date()
         let components = calendar.dateComponents([.year, .month], from: today)
         let startOfMonth = calendar.date(from: components)

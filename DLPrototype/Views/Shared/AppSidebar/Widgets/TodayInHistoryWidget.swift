@@ -67,9 +67,6 @@ struct TodayInHistoryWidget: View {
             .background(Theme.base.opacity(0.2))
         }
         .onAppear(perform: loadWidgetData)
-        .onChange(of: currentDate) { _ in
-            loadWidgetData()
-        }
         .onChange(of: nav.session.date) { _ in
             loadWidgetData()
         }
@@ -128,6 +125,7 @@ extension TodayInHistoryWidget {
     }
 
     private func actionTodayInHistory(_ day: DayInHistory) -> Void {
+        nav.session.date = day.date
         nav.parent = .today
         nav.view = AnyView(Today(defaultSelectedDate: day.date).environmentObject(nav))
         nav.sidebar = AnyView(TodaySidebar(date: day.date))
