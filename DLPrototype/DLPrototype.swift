@@ -29,7 +29,8 @@ struct DLPrototype: App {
                 .onAppear(perform: onAppear)
                 .defaultAppStorage(.standard)
                 .onChange(of: scenePhase) { phase in
-                    if phase == .background || phase == .inactive{
+                    if phase == .background || phase == .inactive {
+                        // @TODO: serialize/deserialize previous session data here
                         persistenceController.save()
                     }
                 }

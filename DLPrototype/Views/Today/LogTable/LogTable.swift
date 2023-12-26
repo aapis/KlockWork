@@ -10,8 +10,7 @@ import SwiftUI
 
 /// Table which displays all the records
 extension Today {
-    struct LogTableRedux: View {
-        public var date: Date? = nil
+    struct LogTable: View {
         private var buttons: [ToolbarButton] = []
         
         @EnvironmentObject public var nav: Navigation
@@ -28,9 +27,7 @@ extension Today {
             }
         }
         
-        init(date: Date? = nil) {
-            self.date = date
-            
+        init() {
             TodayViewTab.allCases.forEach { tab in
                 buttons.append(tab.button)
             }
@@ -39,7 +36,7 @@ extension Today {
 }
 
 // MARK: structs
-extension Today.LogTableRedux {
+extension Today.LogTable {
     /// Table row headers
     struct Headers: View {
         static public let required: Set<RecordTableColumn> = [.job, .message]
@@ -75,8 +72,7 @@ extension Today.LogTableRedux {
     
     /// Plaintext conversion of the standard display
     struct Plain: View {
-        public var date: Date? = nil
-        public var records: FetchedResults<LogRecord>
+        public var records: [LogRecord]
 
         @State private var plain: String = ""
         @State private var grouped: [FancyStaticTextField] = []
@@ -90,11 +86,7 @@ extension Today.LogTableRedux {
                     if records.count > 0 {
                         FancyTextField(placeholder: "Records...", lineLimit: 10, text: $plain)
                     } else {
-                        if let date = date {
-                            LogRowEmpty(message: "No records found for date \(date.formatted())", index: 0, colour: Theme.rowColour)
-                        } else {
-                            LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
-                        }
+                        LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: Theme.rowColour)
                     }
                 }
             }
@@ -104,8 +96,7 @@ extension Today.LogTableRedux {
     
     /// Standard display, colour coded list of records
     struct Full: View {
-        public var date: Date? = nil
-        public var records: FetchedResults<LogRecord>
+        public var records: [LogRecord]
 
         @EnvironmentObject public var nav: Navigation
         
@@ -131,11 +122,7 @@ extension Today.LogTableRedux {
                             }
                         }
                     } else {
-                        if let date = date {
-                            LogRowEmpty(message: "No records found for date \(date.formatted())", index: 0, colour: Theme.rowColour)
-                        } else {
-                            LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
-                        }
+                        LogRowEmpty(message: "No records found for \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: Theme.rowColour)
                     }
                 }
             }
@@ -145,15 +132,14 @@ extension Today.LogTableRedux {
     public struct TabContent {
         /// A list of rows in reverse-chronologic order for a given day
         public struct Chronologic: View {
-            public var date: Date? = nil
+            public var date: Date? = Date()
             
             @State private var searchText: String = ""
 //            @State private var loading: Bool = false
+            @State private var records: [LogRecord] = []
             
             @Environment(\.managedObjectContext) var moc
             @EnvironmentObject public var nav: Navigation
-            
-            @FetchRequest private var records: FetchedResults<LogRecord>
             
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
@@ -164,6 +150,8 @@ extension Today.LogTableRedux {
                         Content
 //                    }
                 }
+                .onAppear(perform: findRecords)
+                .onChange(of: nav.session.date) { newDate in self.findRecords(for: newDate)}
             }
             
             var Content: some View {
@@ -179,37 +167,25 @@ extension Today.LogTableRedux {
                     //                }
                     
                     if nav.session.toolbar.mode == .plain {
-                        Plain(date: date, records: records)
+                        Plain(records: records)
                     } else {
                         Headers()
-                        Full(date: date, records: records)
+                        Full(records: records)
                     }
                 }
-            }
-            
-            init(date: Date? = nil) {
-                self.date = date
-                var chosenDate = Date()
-                if let date = date {
-                    chosenDate = date
-                }
-
-                _records = CoreDataRecords.fetchForDate(chosenDate)
             }
         }
         
         /// A list of rows that are grouped by Job
         public struct Grouped: View {
-            public var date: Date? = nil
-            
+//            public var date: Date = Date()
             // @TODO: needed?
             //        @State private var searchText: String = ""
             @State private var grouped: [FancyStaticTextField] = []
+            @State private var records: [LogRecord] = []
             
             @Environment(\.managedObjectContext) var moc
             @EnvironmentObject public var nav: Navigation
-            
-            @FetchRequest private var records: FetchedResults<LogRecord>
             
             var body: some View {
                 ScrollView(showsIndicators: false) {
@@ -218,32 +194,17 @@ extension Today.LogTableRedux {
                             ToolbarButtons()
                         }
                         .background(Theme.headerColour)
-                        
-                        Headers()
+
                         if records.count > 0 {
                             ForEach(grouped) {group in group}
                         } else {
-                            if let date = date {
-                                LogRowEmpty(message: "No records found for date \(date.formatted())", index: 0, colour: Theme.rowColour)
-                            } else {
-                                LogRowEmpty(message: "No records found for today", index: 0, colour: Theme.rowColour)
-                            }
+                            LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: Theme.rowColour)
                         }
                         Spacer()
                     }
                 }
-                .onAppear(perform: actionOnAppear)
-            }
-            
-            init(date: Date? = nil) {
-                self.date = date
-                
-                var chosenDate = Date()
-                if let date = date {
-                    chosenDate = date
-                }
-                
-                _records = CoreDataRecords.fetchForDate(chosenDate)
+                .onAppear(perform: findRecords)
+                .onChange(of: nav.session.date) { newDate in self.findRecords(for: newDate)}
             }
         }
         
@@ -255,11 +216,11 @@ extension Today.LogTableRedux {
             
             // @TODO: needed?
             @State private var searchText: String = ""
-            
+            @State private var records: [LogRecord] = []
+
+            @Environment(\.managedObjectContext) var moc
             @EnvironmentObject public var nav: Navigation
-            
-            @FetchRequest private var records: FetchedResults<LogRecord>
-            
+
             var body: some View {
                 VStack(spacing: 1) {
                     Group {
@@ -273,25 +234,14 @@ extension Today.LogTableRedux {
                     //                }
                     
                     if nav.session.toolbar.mode == .plain {
-                        Plain(date: date, records: records)
+                        Plain(records: records)
                     } else {
                         Headers()
-                        Full(date: date, records: records)
+                        Full(records: records)
                     }
                 }
-            }
-            
-            init(date: Date? = nil) {
-                self.date = date
-                
-                var chosenDate = Date()
-                if let date = date {
-                    chosenDate = date
-                }
-                
-                // @TODO: this seems to either crash or otherwise break the app
-                //            _records = CoreDataRecords.fetchSummarizedForDate(chosenDate)
-                _records = CoreDataRecords.fetchForDate(chosenDate)
+                .onAppear(perform: findRecords)
+                .onChange(of: nav.session.date) { newDate in self.findRecords(for: newDate)}
             }
         }
         
@@ -310,28 +260,69 @@ extension Today.LogTableRedux {
 }
 
 // MARK: method definitions
-extension Today.LogTableRedux.TabContent.Chronologic {
-    private func actionOnAppear() -> Void {
-        if let date = date {
-            nav.session.date = date
-        }
-        
-        if let first = records.first {
-            if let firstRecordJob = first.job {
-                nav.session.setJob(firstRecordJob)
-            }
-        }
+extension Today.LogTable.TabContent.Chronologic {
+    private func findRecords(for date: Date) -> Void {
+        DispatchQueue.backgroundList(background: {
+            return CoreDataRecords(moc: moc).forDate(date)
+            
+        }, completion: { recordsForToday in
+            self.records = recordsForToday as! [LogRecord]
+        })
+    }
+    
+    private func findRecords() -> Void {
+        DispatchQueue.backgroundList(background: {
+            return CoreDataRecords(moc: moc).forDate(nav.session.date)
+            
+        }, completion: { recordsForToday in
+            self.records = recordsForToday as! [LogRecord]
+        })
     }
 }
 
-extension Today.LogTableRedux.TabContent.Grouped {
-    private func actionOnAppear() -> Void {
-        grouped = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(records)
+extension Today.LogTable.TabContent.Grouped {
+    private func findRecords(for date: Date) -> Void {
+        DispatchQueue.backgroundList(background: {
+            return CoreDataRecords(moc: moc).forDate(date)
+            
+        }, completion: { recordsForToday in
+            self.records = recordsForToday as! [LogRecord]
+            grouped = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(self.records)
+        })
+    }
+    
+    private func findRecords() -> Void {
+        DispatchQueue.backgroundList(background: {
+            return CoreDataRecords(moc: moc).forDate(nav.session.date)
+            
+        }, completion: { recordsForToday in
+            self.records = recordsForToday as! [LogRecord]
+            grouped = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(self.records)
+        })
     }
 }
 
+extension Today.LogTable.TabContent.Summarized {
+    private func findRecords(for date: Date) -> Void {
+        DispatchQueue.backgroundList(background: {
+            return CoreDataRecords(moc: moc).forDate(date)
+            
+        }, completion: { recordsForToday in
+            self.records = recordsForToday as! [LogRecord]
+        })
+    }
+    
+    private func findRecords() -> Void {
+        DispatchQueue.backgroundList(background: {
+            return CoreDataRecords(moc: moc).forDate(nav.session.date)
+            
+        }, completion: { recordsForToday in
+            self.records = recordsForToday as! [LogRecord]
+        })
+    }
+}
 
-extension Today.LogTableRedux.Plain {
+extension Today.LogTable.Plain {
     private func actionOnAppear() -> Void {
         let model = CoreDataRecords(moc: moc)
 

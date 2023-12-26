@@ -210,11 +210,11 @@ public class CoreDataRecords: ObservableObject {
     }
     
     public func forDate(_ date: Date) -> [LogRecord] {
-        let endDate = date - 86400
+        let (start, end) = DateHelper.startAndEndOf(date)
         let predicate = NSPredicate(
-            format: "timestamp > %@ && timestamp < %@",
-            date as CVarArg,
-            endDate as CVarArg
+            format: "alive == true && timestamp > %@ && timestamp <= %@",
+            start as CVarArg,
+            end as CVarArg
         )
         
         return query(predicate)
@@ -300,7 +300,7 @@ public class CoreDataRecords: ObservableObject {
         return intersections
     }
 
-    public func createExportableRecordsFrom(_ records: FetchedResults<LogRecord>, grouped: Bool? = false) -> String {
+    public func createExportableRecordsFrom(_ records: [LogRecord], grouped: Bool? = false) -> String {
         if grouped! {
             return exportableGroupedRecordsAsString(records).0
         }
@@ -308,7 +308,7 @@ public class CoreDataRecords: ObservableObject {
         return exportableRecords(records)
     }
 
-    public func createExportableGroupedRecordsAsViews(_ records: FetchedResults<LogRecord>) -> [FancyStaticTextField] {
+    public func createExportableGroupedRecordsAsViews(_ records: [LogRecord]) -> [FancyStaticTextField] {
         var views: [FancyStaticTextField] = []
 
         let gr = exportableGroupedRecordsAsString(records)
@@ -335,7 +335,7 @@ public class CoreDataRecords: ObservableObject {
         return views
     }
 
-    private func exportableGroupedRecordsAsString(_ records: FetchedResults<LogRecord>) -> (String, [Intersection], [Project], [Job]) {
+    private func exportableGroupedRecordsAsString(_ records: [LogRecord]) -> (String, [Intersection], [Project], [Job]) {
         var buffer = ""
         let groupedRecords = Dictionary(grouping: records, by: {$0.job}).sorted(by: {$0.key!.jid > $1.key!.jid})
         var projects: [Project] = []
@@ -377,7 +377,7 @@ public class CoreDataRecords: ObservableObject {
         )
     }
 
-    private func exportableRecords(_ records: FetchedResults<LogRecord>) -> String {
+    private func exportableRecords(_ records: [LogRecord]) -> String {
         if records.count == 0 {
             return ""
         }

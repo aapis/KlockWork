@@ -141,14 +141,8 @@ extension FindDashboard {
         searchText = activeSearchText
 
         // @TODO: find best place to call/construct tabs! This loads data but locks UI
-        DispatchQueue.background(background: {
-            loading = true
-            createTabs()
-            return nil
-        }, completion: { _ in
-            loading = false
-        })
-        
+        createTabs()
+        loading = false
     }
 
     private func onReset() -> Void {

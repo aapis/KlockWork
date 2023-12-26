@@ -75,13 +75,13 @@ public enum TodayViewTab: CaseIterable {
     var view: AnyView {
         switch self {
         case .chronologic:
-            return AnyView(Today.LogTableRedux.TabContent.Chronologic())
+            return AnyView(Today.LogTable.TabContent.Chronologic())
         case .grouped:
-            return AnyView(Today.LogTableRedux.TabContent.Grouped())
+            return AnyView(Today.LogTable.TabContent.Grouped())
         case .summarized:
-            return AnyView(Today.LogTableRedux.TabContent.Summarized())
+            return AnyView(Today.LogTable.TabContent.Summarized())
         case .calendar:
-            return AnyView(Today.LogTableRedux.TabContent.Calendar())
+            return AnyView(Today.LogTable.TabContent.Calendar())
         }
     }
     
