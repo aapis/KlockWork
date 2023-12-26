@@ -53,10 +53,15 @@ struct MainMenu: Commands {
             }
             
             Divider()
-            Button("Previous day") {nav.session.date -= 86400}
-                .keyboardShortcut(.leftArrow, modifiers: [.command])
-            Button("Next day") {nav.session.date += 86400}
-                .keyboardShortcut(.rightArrow, modifiers: [.command])
+            Menu("Timeline navigation") {
+                Button("Previous day") {nav.session.date -= 86400}
+                    .keyboardShortcut(.leftArrow, modifiers: [.command])
+                Button("Next day") {nav.session.date += 86400}
+                    .keyboardShortcut(.rightArrow, modifiers: [.command])
+                Divider()
+                Button("Reset to today") {nav.session.date = Date()}
+                    .keyboardShortcut("d", modifiers: [.command, .shift])
+            }
         }
     }
 }
