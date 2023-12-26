@@ -78,10 +78,6 @@ extension TodayInHistoryWidget {
         minimized.toggle()
     }
 
-    private func actionSettings() -> Void {
-//        isSettingsPresented.toggle()
-    }
-
     private func findHistoricalDataForToday() async -> Void {
         let calendar = Calendar.autoupdatingCurrent
         let current = calendar.dateComponents([.year, .month, .day], from: currentDate)
