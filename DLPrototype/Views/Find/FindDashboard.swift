@@ -166,6 +166,8 @@ extension FindDashboard {
     private func onReset() -> Void {
         searching = false
         nav.session.search.reset()
+        nav.session.search.inspectingEntity = nil
+        nav.setInspector()
         loading = false
     }
 
