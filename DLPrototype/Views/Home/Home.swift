@@ -192,6 +192,7 @@ struct Home: View {
         NSEvent.addLocalMonitorForEvents(matching: .keyDown) {
             if self.isEscapeKey(with: $0) {
                 isDatePickerPresented = false
+                nav.setInspector()
                 return nil
             } else {
                 return $0
