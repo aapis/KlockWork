@@ -55,6 +55,17 @@ struct FindDashboard: View {
                         onReset()
                     }
                 }
+                .onChange(of: nav.session.search.inspectingEntity) { entity in
+                    if location == .sidebar {
+                        if entity != nil {
+                            if nav.session.search.inspectingEntity != nil {
+                                nav.setInspector(AnyView(Inspector()))
+                            }
+                        } else {
+                            nav.setInspector()
+                        }
+                    }
+                }
             }
             
             if !searching && activeSearchText.count >= 2 {
@@ -78,23 +89,17 @@ struct FindDashboard: View {
                             }
                         }
                     } else if location == .sidebar {
-                        VStack(alignment: .leading, spacing: 1) {
-                            Suggestions(
-                                searchText: $activeSearchText,
-                                publishedOnly: $allowAlive,
-                                showRecords: $showRecords,
-                                showNotes: $showJobs,
-                                showTasks: $showNotes,
-                                showProjects: $showProjects,
-                                showJobs: $showJobs,
-                                showCompanies: $showCompanies,
-                                showPeople: $showPeople
-                            )
-                            
-                            if nav.session.search.inspectingEntity != nil {
-                                Inspector()
-                            }
-                        }
+                        Suggestions(
+                            searchText: $activeSearchText,
+                            publishedOnly: $allowAlive,
+                            showRecords: $showRecords,
+                            showNotes: $showJobs,
+                            showTasks: $showNotes,
+                            showProjects: $showProjects,
+                            showJobs: $showJobs,
+                            showCompanies: $showCompanies,
+                            showPeople: $showPeople
+                        )
                     }
                 }
             }

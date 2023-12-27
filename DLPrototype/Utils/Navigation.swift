@@ -86,6 +86,7 @@ public class Navigation: Identifiable, ObservableObject {
     @Published public var view: AnyView? = AnyView(Dashboard())
     @Published public var parent: Page? = .dashboard
     @Published public var sidebar: AnyView? = AnyView(DashboardSidebar())
+    @Published public var inspector: AnyView? = nil
     @Published public var title: String? = ""
     @Published public var pageId: UUID? = UUID()
     @Published public var session: Session = Session()
@@ -123,12 +124,18 @@ public class Navigation: Identifiable, ObservableObject {
         pageId = nil
         pageId = UUID()
     }
+    
+    public func setInspector(_ newInspector: AnyView? = nil) -> Void {
+        inspector = nil
+        inspector = newInspector
+    }
 
     public func reset() -> Void {
         parent = .dashboard
         view = nil
         sidebar = nil
         setId()
+        inspector = nil
         session = Session()
     }
 }

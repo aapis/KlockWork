@@ -126,6 +126,19 @@ struct Home: View {
                     } else {
                         HorizontalSeparator // TODO: maybe remove?
                     }
+                    
+                    if nav.inspector != nil {
+                        ZStack(alignment: .topLeading) {
+                            LinearGradient(gradient: Gradient(colors: [Color.clear, Color.black]), startPoint: .topTrailing, endPoint: .topLeading)
+                                .opacity(0.25)
+                                .frame(width: 20)
+                            
+                            nav.inspector
+                                .environmentObject(nav)
+                        }
+                        .background(Theme.subHeaderColour)
+                        .frame(width: 320)
+                    }
 
                     if isDatePickerPresented{
                         ZStack {
