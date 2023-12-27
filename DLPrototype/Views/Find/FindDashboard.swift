@@ -58,11 +58,7 @@ struct FindDashboard: View {
                 .onChange(of: nav.session.search.inspectingEntity) { entity in
                     if location == .sidebar {
                         if entity != nil {
-                            if nav.session.search.inspectingEntity != nil {
-                                nav.setInspector(AnyView(Inspector()))
-                            }
-                        } else {
-                            nav.setInspector()
+                            nav.setInspector(AnyView(Inspector()))
                         }
                     }
                 }
@@ -174,12 +170,14 @@ extension FindDashboard {
     }
 
     private func actionOnAppear() -> Void {
-        counts = (
-            CoreDataRecords(moc: moc).countAll(),
-            CoreDataJob(moc: moc).countAll(),
-            CoreDataTasks(moc: moc).countAll(),
-            CoreDataProjects(moc: moc).countAll()
-        )
+        if location == .content {
+            counts = (
+                CoreDataRecords(moc: moc).countAll(),
+                CoreDataJob(moc: moc).countAll(),
+                CoreDataTasks(moc: moc).countAll(),
+                CoreDataProjects(moc: moc).countAll()
+            )
+        }
     }
     
     private func createTabs() -> Void {
@@ -310,7 +308,7 @@ extension FindDashboard {
                     Spacer()
                     FancyButtonv2(
                         text: "Close",
-                        action: {nav.session.search.inspectingEntity = nil},
+                        action: actionChangeEntity,
                         icon: "xmark",
                         showLabel: false,
                         size: .tiny,
@@ -1519,70 +1517,42 @@ extension FindDashboard {
 
 extension FindDashboard.Suggestions.SuggestedJobs {
     private func choose(_ item: Job) -> Void {
-        if nav.session.search.inspectingEntity != nil {
-            nav.session.search.inspectingEntity = nil
-        }
-
         nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedProjects {
     private func choose(_ item: Project) -> Void {
-        if nav.session.search.inspectingEntity != nil {
-            nav.session.search.inspectingEntity = nil
-        }
-
         nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedNotes {
     private func choose(_ item: Note) -> Void {
-        if nav.session.search.inspectingEntity != nil {
-            nav.session.search.inspectingEntity = nil
-        }
-
         nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedTasks {
     private func choose(_ item: LogTask) -> Void {
-        if nav.session.search.inspectingEntity != nil {
-            nav.session.search.inspectingEntity = nil
-        }
-
         nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedCompanies {
     private func choose(_ item: Company) -> Void {
-        if nav.session.search.inspectingEntity != nil {
-            nav.session.search.inspectingEntity = nil
-        }
-
         nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedPeople {
     private func choose(_ item: Person) -> Void {
-        if nav.session.search.inspectingEntity != nil {
-            nav.session.search.inspectingEntity = nil
-        }
-
         nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedRecords {
     private func choose(_ item: LogRecord) -> Void {
-        if nav.session.search.inspectingEntity != nil {
-            nav.session.search.inspectingEntity = nil
-        }
-
         nav.session.search.inspectingEntity = item
     }
 }
@@ -1603,6 +1573,10 @@ extension FindDashboard.Inspector {
             default: print("[error] FindDashboard.Inspector Unknown entity type=\(e)")
             }
         }
+    }
+    
+    private func actionChangeEntity() -> Void {
+        nav.session.search.inspectingEntity = nil
     }
 }
 

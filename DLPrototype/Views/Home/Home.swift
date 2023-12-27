@@ -137,7 +137,7 @@ struct Home: View {
                                 .environmentObject(nav)
                         }
                         .background(Theme.subHeaderColour)
-                        .frame(width: 320)
+                        .frame(width: 340)
                     }
 
                     if isDatePickerPresented{
@@ -192,6 +192,7 @@ struct Home: View {
         NSEvent.addLocalMonitorForEvents(matching: .keyDown) {
             if self.isEscapeKey(with: $0) {
                 isDatePickerPresented = false
+                nav.session.search.inspectingEntity = nil
                 nav.setInspector()
                 return nil
             } else {
