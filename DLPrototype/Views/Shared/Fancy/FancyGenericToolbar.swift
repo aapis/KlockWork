@@ -127,7 +127,7 @@ struct FancyGenericToolbar: View {
                         .buttonStyle(.borderless)
                         .foregroundColor(Color.white)
                         .help(button.helpText)
-                        .frame(width: 60)
+                        .frame(width: location == .sidebar ? 40 : 60)
                         .useDefaultHover({_ in})
                     }
                 }

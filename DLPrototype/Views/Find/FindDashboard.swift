@@ -6,16 +6,11 @@
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
-
-struct RecentSearch: Identifiable {
-    let id: UUID = UUID()
-    var term: String
-}
 
 struct FindDashboard: View {
     @Binding public var searching: Bool
+    public var location: WidgetLocation = .content
 
     @State private var searchText: String = ""
     @State private var activeSearchText: String = ""
@@ -42,7 +37,7 @@ struct FindDashboard: View {
                 SearchBar(
                     text: $activeSearchText,
                     disabled: false,
-                    placeholder: "Search \(counts.0) records, \(counts.1) jobs, \(counts.2) tasks and \(counts.3) projects",
+                    placeholder: location == .content ? "Search \(counts.0) records, \(counts.1) jobs, \(counts.2) tasks and \(counts.3) projects" : "Search for anything",
                     onSubmit: onSubmit,
                     onReset: onReset
                 )
@@ -64,45 +59,67 @@ struct FindDashboard: View {
             
             if !searching && activeSearchText.count >= 2 {
                 GridRow {
-                    HStack(alignment: .top, spacing: 1) {
-                        Suggestions(
-                            searchText: $activeSearchText,
-                            publishedOnly: $allowAlive,
-                            showRecords: $showRecords,
-                            showNotes: $showJobs,
-                            showTasks: $showNotes,
-                            showProjects: $showProjects,
-                            showJobs: $showJobs,
-                            showCompanies: $showCompanies,
-                            showPeople: $showPeople
-                        )
-                        
-                        if nav.session.search.inspectingEntity != nil {
-                            Inspector()
+                    if location == .content {
+                        HStack(alignment: .top, spacing: 1) {
+                            Suggestions(
+                                searchText: $activeSearchText,
+                                publishedOnly: $allowAlive,
+                                showRecords: $showRecords,
+                                showNotes: $showJobs,
+                                showTasks: $showNotes,
+                                showProjects: $showProjects,
+                                showJobs: $showJobs,
+                                showCompanies: $showCompanies,
+                                showPeople: $showPeople
+                            )
+                            
+                            if nav.session.search.inspectingEntity != nil {
+                                Inspector()
+                            }
+                        }
+                    } else if location == .sidebar {
+                        VStack(alignment: .leading, spacing: 1) {
+                            Suggestions(
+                                searchText: $activeSearchText,
+                                publishedOnly: $allowAlive,
+                                showRecords: $showRecords,
+                                showNotes: $showJobs,
+                                showTasks: $showNotes,
+                                showProjects: $showProjects,
+                                showJobs: $showJobs,
+                                showCompanies: $showCompanies,
+                                showPeople: $showPeople
+                            )
+                            
+                            if nav.session.search.inspectingEntity != nil {
+                                Inspector()
+                            }
                         }
                     }
                 }
             }
             
-            GridRow {
-                ZStack(alignment: .leading) {
-                    Theme.subHeaderColour
-                    
-                    HStack {
-                        Toggle("Records", isOn: $showRecords)
-                        Toggle("Notes", isOn: $showNotes)
-                        Toggle("Tasks", isOn: $showTasks)
-                        Toggle("Projects", isOn: $showProjects)
-                        Toggle("Jobs", isOn: $showJobs)
-                        Toggle("Companies", isOn: $showCompanies)
-                        Toggle("People", isOn: $showPeople)
-                        Spacer()
-                        Toggle("Published Only", isOn: $allowAlive)
+            if location == .content {
+                GridRow {
+                    ZStack(alignment: .leading) {
+                        Theme.subHeaderColour
+                        
+                        HStack {
+                            Toggle("Records", isOn: $showRecords)
+                            Toggle("Notes", isOn: $showNotes)
+                            Toggle("Tasks", isOn: $showTasks)
+                            Toggle("Projects", isOn: $showProjects)
+                            Toggle("Jobs", isOn: $showJobs)
+                            Toggle("Companies", isOn: $showCompanies)
+                            Toggle("People", isOn: $showPeople)
+                            Spacer()
+                            Toggle("Published Only", isOn: $allowAlive)
+                        }
+                        .padding([.leading, .trailing], 10)
                     }
-                    .padding([.leading, .trailing], 10)
                 }
+                .frame(height: 40)
             }
-            .frame(height: 40)
             
             if searching {
                 if loading {
