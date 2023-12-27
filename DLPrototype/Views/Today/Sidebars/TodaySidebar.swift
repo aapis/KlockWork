@@ -11,13 +11,19 @@ import SwiftUI
 struct TodaySidebar: View {
     @State public var date: Date = Date()
     @State private var tabs: [ToolbarButton] = []
+    @State private var searching: Bool = false
 
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 5) {
-                FancyGenericToolbar(buttons: tabs, standalone: true, location: .sidebar)
+                FancyGenericToolbar(
+                    buttons: tabs,
+                    standalone: true,
+                    location: .sidebar,
+                    mode: .compact
+                )
             }
             Spacer()
         }
@@ -32,35 +38,36 @@ extension TodaySidebar {
             ToolbarButton(
                 id: 0,
                 helpText: "Jobs",
-                label: AnyView(
-                    HStack {
-                        Image(systemName: "hammer").padding(.leading)
-                        Text("Jobs")
-                    }
-                ),
+                icon: "hammer",
+                labelText: "Jobs",
                 contents: AnyView(JobPickerWidget())
             ),
             ToolbarButton(
                 id: 1,
                 helpText: "Tasks",
-                label: AnyView(
-                    HStack {
-                        Image(systemName: "checklist").padding(.leading)
-                        Text("Tasks")
-                    }
-                ),
+                icon: "checklist",
+                labelText: "Tasks",
                 contents: AnyView(TasksWidget())
             ),
             ToolbarButton(
                 id: 2,
                 helpText: "Notes",
-                label: AnyView(
-                    HStack {
-                        Image(systemName: "note.text").padding(.leading)
-                        Text("Notes")
-                    }
-                ),
+                icon: "note.text",
+                labelText: "Notes",
                 contents: AnyView(NoteSearchWidget())
+            ),
+            ToolbarButton(
+                id: 3,
+                helpText: "Search",
+                icon: "magnifyingglass",
+                labelText: "Search",
+                contents: AnyView(
+                    VStack(alignment: .leading) {
+                        FindDashboard(searching: $searching, location: .sidebar)
+                    }
+                    .padding(8)
+                    .background(Theme.base.opacity(0.2))
+                )
             )
         ]
     }

@@ -126,6 +126,19 @@ struct Home: View {
                     } else {
                         HorizontalSeparator // TODO: maybe remove?
                     }
+                    
+                    if nav.inspector != nil {
+                        ZStack(alignment: .topLeading) {
+                            LinearGradient(gradient: Gradient(colors: [Color.clear, Color.black]), startPoint: .topTrailing, endPoint: .topLeading)
+                                .opacity(0.25)
+                                .frame(width: 20)
+                            
+                            nav.inspector
+                                .environmentObject(nav)
+                        }
+                        .background(Theme.subHeaderColour)
+                        .frame(width: 340)
+                    }
 
                     if isDatePickerPresented{
                         ZStack {
@@ -179,6 +192,8 @@ struct Home: View {
         NSEvent.addLocalMonitorForEvents(matching: .keyDown) {
             if self.isEscapeKey(with: $0) {
                 isDatePickerPresented = false
+                nav.session.search.inspectingEntity = nil
+                nav.setInspector()
                 return nil
             } else {
                 return $0

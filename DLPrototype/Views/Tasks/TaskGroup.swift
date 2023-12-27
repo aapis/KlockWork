@@ -63,11 +63,11 @@ struct TaskGroup: View {
                         Spacer()
                         FancyButtonv2(
                             text: "See all tasks",
-                            action: {},
                             icon: "checklist",
                             fgColour: colour.isBright() ? .black : .white,
                             showLabel: false,
-                            size: .link,
+                            size: .small,
+                            type: .clear,
                             redirect: AnyView(TaskDashboard(defaultSelectedJob: key)),
                             pageType: .tasks,
                             sidebar: AnyView(TaskDashboardSidebar())
@@ -75,11 +75,11 @@ struct TaskGroup: View {
 
                         FancyButtonv2(
                             text: "Go to project: \(project.name!)",
-                            action: {},
                             icon: "folder",
                             fgColour: colour.isBright() ? .black : .white,
                             showLabel: false,
-                            size: .link,
+                            size: .small,
+                            type: .clear,
                             redirect: AnyView(ProjectsDashboard()),
                             pageType: .projects,
                             sidebar: AnyView(ProjectsDashboardSidebar())
@@ -87,11 +87,11 @@ struct TaskGroup: View {
 
                         FancyButtonv2(
                             text: "Go to job: \(key.jid.string)",
-                            action: {},
                             icon: "hammer",
                             fgColour: colour.isBright() ? .black : .white,
                             showLabel: false,
-                            size: .link,
+                            size: .small,
+                            type: .clear,
                             redirect: AnyView(JobDashboard(defaultSelectedJob: key)),
                             pageType: .jobs,
                             sidebar: AnyView(JobDashboardSidebar())

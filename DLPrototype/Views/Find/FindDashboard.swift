@@ -6,16 +6,11 @@
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
-
-struct RecentSearch: Identifiable {
-    let id: UUID = UUID()
-    var term: String
-}
 
 struct FindDashboard: View {
     @Binding public var searching: Bool
+    public var location: WidgetLocation = .content
 
     @State private var searchText: String = ""
     @State private var activeSearchText: String = ""
@@ -42,7 +37,7 @@ struct FindDashboard: View {
                 SearchBar(
                     text: $activeSearchText,
                     disabled: false,
-                    placeholder: "Search \(counts.0) records, \(counts.1) jobs, \(counts.2) tasks and \(counts.3) projects",
+                    placeholder: location == .content ? "Search \(counts.0) records, \(counts.1) jobs, \(counts.2) tasks and \(counts.3) projects" : "Search for anything",
                     onSubmit: onSubmit,
                     onReset: onReset
                 )
@@ -60,11 +55,36 @@ struct FindDashboard: View {
                         onReset()
                     }
                 }
+                .onChange(of: nav.session.search.inspectingEntity) { entity in
+                    if location == .sidebar {
+                        if entity != nil {
+                            nav.setInspector(AnyView(Inspector()))
+                        }
+                    }
+                }
             }
             
             if !searching && activeSearchText.count >= 2 {
                 GridRow {
-                    HStack(alignment: .top, spacing: 1) {
+                    if location == .content {
+                        HStack(alignment: .top, spacing: 1) {
+                            Suggestions(
+                                searchText: $activeSearchText,
+                                publishedOnly: $allowAlive,
+                                showRecords: $showRecords,
+                                showNotes: $showJobs,
+                                showTasks: $showNotes,
+                                showProjects: $showProjects,
+                                showJobs: $showJobs,
+                                showCompanies: $showCompanies,
+                                showPeople: $showPeople
+                            )
+                            
+                            if nav.session.search.inspectingEntity != nil {
+                                Inspector()
+                            }
+                        }
+                    } else if location == .sidebar {
                         Suggestions(
                             searchText: $activeSearchText,
                             publishedOnly: $allowAlive,
@@ -76,33 +96,31 @@ struct FindDashboard: View {
                             showCompanies: $showCompanies,
                             showPeople: $showPeople
                         )
-                        
-                        if nav.session.search.inspectingEntity != nil {
-                            Inspector()
-                        }
                     }
                 }
             }
             
-            GridRow {
-                ZStack(alignment: .leading) {
-                    Theme.subHeaderColour
-                    
-                    HStack {
-                        Toggle("Records", isOn: $showRecords)
-                        Toggle("Notes", isOn: $showNotes)
-                        Toggle("Tasks", isOn: $showTasks)
-                        Toggle("Projects", isOn: $showProjects)
-                        Toggle("Jobs", isOn: $showJobs)
-                        Toggle("Companies", isOn: $showCompanies)
-                        Toggle("People", isOn: $showPeople)
-                        Spacer()
-                        Toggle("Published Only", isOn: $allowAlive)
+            if location == .content {
+                GridRow {
+                    ZStack(alignment: .leading) {
+                        Theme.subHeaderColour
+                        
+                        HStack {
+                            Toggle("Records", isOn: $showRecords)
+                            Toggle("Notes", isOn: $showNotes)
+                            Toggle("Tasks", isOn: $showTasks)
+                            Toggle("Projects", isOn: $showProjects)
+                            Toggle("Jobs", isOn: $showJobs)
+                            Toggle("Companies", isOn: $showCompanies)
+                            Toggle("People", isOn: $showPeople)
+                            Spacer()
+                            Toggle("Published Only", isOn: $allowAlive)
+                        }
+                        .padding([.leading, .trailing], 10)
                     }
-                    .padding([.leading, .trailing], 10)
                 }
+                .frame(height: 40)
             }
-            .frame(height: 40)
             
             if searching {
                 if loading {
@@ -148,16 +166,20 @@ extension FindDashboard {
     private func onReset() -> Void {
         searching = false
         nav.session.search.reset()
+        nav.session.search.inspectingEntity = nil
+        nav.setInspector()
         loading = false
     }
 
     private func actionOnAppear() -> Void {
-        counts = (
-            CoreDataRecords(moc: moc).countAll(),
-            CoreDataJob(moc: moc).countAll(),
-            CoreDataTasks(moc: moc).countAll(),
-            CoreDataProjects(moc: moc).countAll()
-        )
+        if location == .content {
+            counts = (
+                CoreDataRecords(moc: moc).countAll(),
+                CoreDataJob(moc: moc).countAll(),
+                CoreDataTasks(moc: moc).countAll(),
+                CoreDataProjects(moc: moc).countAll()
+            )
+        }
     }
     
     private func createTabs() -> Void {
@@ -288,7 +310,7 @@ extension FindDashboard {
                     Spacer()
                     FancyButtonv2(
                         text: "Close",
-                        action: {nav.session.search.inspectingEntity = nil},
+                        action: actionChangeEntity,
                         icon: "xmark",
                         showLabel: false,
                         size: .tiny,
@@ -1497,70 +1519,42 @@ extension FindDashboard {
 
 extension FindDashboard.Suggestions.SuggestedJobs {
     private func choose(_ item: Job) -> Void {
-        if nav.session.search.inspectingEntity != nil {
-            nav.session.search.inspectingEntity = nil
-        }
-
         nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedProjects {
     private func choose(_ item: Project) -> Void {
-        if nav.session.search.inspectingEntity != nil {
-            nav.session.search.inspectingEntity = nil
-        }
-
         nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedNotes {
     private func choose(_ item: Note) -> Void {
-        if nav.session.search.inspectingEntity != nil {
-            nav.session.search.inspectingEntity = nil
-        }
-
         nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedTasks {
     private func choose(_ item: LogTask) -> Void {
-        if nav.session.search.inspectingEntity != nil {
-            nav.session.search.inspectingEntity = nil
-        }
-
         nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedCompanies {
     private func choose(_ item: Company) -> Void {
-        if nav.session.search.inspectingEntity != nil {
-            nav.session.search.inspectingEntity = nil
-        }
-
         nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedPeople {
     private func choose(_ item: Person) -> Void {
-        if nav.session.search.inspectingEntity != nil {
-            nav.session.search.inspectingEntity = nil
-        }
-
         nav.session.search.inspectingEntity = item
     }
 }
 
 extension FindDashboard.Suggestions.SuggestedRecords {
     private func choose(_ item: LogRecord) -> Void {
-        if nav.session.search.inspectingEntity != nil {
-            nav.session.search.inspectingEntity = nil
-        }
-
         nav.session.search.inspectingEntity = item
     }
 }
@@ -1581,6 +1575,10 @@ extension FindDashboard.Inspector {
             default: print("[error] FindDashboard.Inspector Unknown entity type=\(e)")
             }
         }
+    }
+    
+    private func actionChangeEntity() -> Void {
+        nav.session.search.inspectingEntity = nil
     }
 }
 
