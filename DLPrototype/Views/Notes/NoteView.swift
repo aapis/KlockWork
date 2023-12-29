@@ -178,6 +178,7 @@ extension NoteView {
                         showLabel: false,
                         type: .destructive,
                         redirect: AnyView(NoteDashboard()),
+                        pageType: .notes,
                         sidebar: AnyView(NoteDashboardSidebar())
                     )
                     
@@ -188,6 +189,7 @@ extension NoteView {
                         icon: "xmark",
                         showLabel: false,
                         redirect: AnyView(NoteDashboard()),
+                        pageType: .notes,
                         sidebar: AnyView(NoteDashboardSidebar())
                     )
                     if ref.revisionNotLatest() {

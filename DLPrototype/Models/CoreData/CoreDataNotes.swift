@@ -98,7 +98,7 @@ public class CoreDataNotes {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
-    static public func fetchNotes() -> FetchRequest<Note> {
+    static public func fetchNotes(favouritesOnly: Bool = false) -> FetchRequest<Note> {
         let descriptors = [
             NSSortDescriptor(keyPath: \Note.mJob?.project?.id, ascending: false),
             NSSortDescriptor(keyPath: \Note.mJob?.id, ascending: false),
@@ -106,11 +106,11 @@ public class CoreDataNotes {
         ]
 
         let fetch: NSFetchRequest<Note> = Note.fetchRequest()
-//        if let txt = text {
-//            fetch.predicate = NSPredicate(format: "alive == true && title CONTAINS[c] %s", txt.wrappedValue)
-//        } else {
+        if favouritesOnly {
+            fetch.predicate = NSPredicate(format: "alive == true && starred == true")
+        } else {
             fetch.predicate = NSPredicate(format: "alive == true && mJob != nil")
-//        }
+        }
         fetch.sortDescriptors = descriptors
         fetch.fetchLimit = 1000
 

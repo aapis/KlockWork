@@ -328,6 +328,14 @@ extension Navigation.Session {
         var moc: NSManagedObjectContext
         var hasResults: Bool = false
         var inspectingEntity: NSManagedObject? = nil
+        
+        mutating func inspect(_ obj: NSManagedObject) -> Void {
+            inspectingEntity = obj
+        }
+        
+        mutating func cancel() -> Void {
+            inspectingEntity = nil
+        }
     }
     
     public struct Toolbar: Identifiable {

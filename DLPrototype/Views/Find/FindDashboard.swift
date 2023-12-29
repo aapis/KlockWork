@@ -708,17 +708,17 @@ extension FindDashboard {
                     }
                     
                     Spacer()
-                    // @TODO: link to the specific note
                     HStack(alignment: .top, spacing: 10) {
                         FancyButtonv2(
                             text: "Open",
+                            action: {nav.session.search.cancel()},
                             icon: "arrow.right.square.fill",
                             showLabel: true,
                             size: .link,
                             type: .clear,
-                            redirect: AnyView(NoteDashboard()),
+                            redirect: AnyView(NoteView(note: item, moc: PersistenceController.shared.container.viewContext)),
                             pageType: .notes,
-                            sidebar: AnyView(NoteDashboardSidebar())
+                            sidebar: AnyView(NoteViewSidebar(note: item, moc: PersistenceController.shared.container.viewContext))
                         )
                     }
                 }
@@ -1066,17 +1066,6 @@ extension FindDashboard {
                                                 type: .clear
                                             )
                                             .help("Inspect")
-                                            FancyButtonv2(
-                                                text: item.title ?? "",
-                                                action: {nav.session.setJob(item.mJob)},
-                                                icon: "arrow.right.square.fill",
-                                                fgColour: .white,
-                                                showLabel: false,
-                                                showIcon: true,
-                                                size: .tinyLink,
-                                                type: .clear
-                                            )
-                                            .help("Set as Active Job")
                                             Spacer()
                                         }
                                     }
@@ -1163,17 +1152,6 @@ extension FindDashboard {
                                                 type: .clear
                                             )
                                             .help("Inspect")
-                                            FancyButtonv2(
-                                                text: "",
-                                                action: {nav.session.setJob(item.owner)},
-                                                icon: "arrow.right.square.fill",
-                                                fgColour: .white,
-                                                showLabel: false,
-                                                showIcon: true,
-                                                size: .tinyLink,
-                                                type: .clear
-                                            )
-                                            .help("Set as Active Job")
                                             Spacer()
                                         }
                                     }
