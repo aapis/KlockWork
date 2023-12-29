@@ -126,24 +126,10 @@ struct Home: View {
                     } else {
                         HorizontalSeparator // TODO: maybe remove?
                     }
-                    
-                    if nav.inspector != nil {
-                        ZStack(alignment: .topLeading) {
-                            LinearGradient(gradient: Gradient(colors: [Color.clear, Color.black]), startPoint: .topTrailing, endPoint: .topLeading)
-                                .opacity(0.25)
-                                .frame(width: 20)
-                            
-                            nav.inspector
-                                .environmentObject(nav)
-                        }
-                        .background(Theme.subHeaderColour)
-                        .frame(width: 340)
-                    }
 
                     if isDatePickerPresented{
                         ZStack {
                             nav.view
-                                .navigationTitle(nav.pageTitle())
                                 .environmentObject(nav)
                                 .environmentObject(rm)
                                 .environmentObject(crm)
@@ -151,18 +137,73 @@ struct Home: View {
                                 .environmentObject(ce)
                                 .environmentObject(cvm)
                                 .environmentObject(updater)
+                                .disabled(true)
                             Color.black.opacity(0.7)
                         }
                     } else {
-                        nav.view
-                            .navigationTitle(nav.pageTitle())
-                            .environmentObject(nav)
-                            .environmentObject(rm)
-                            .environmentObject(crm)
-                            .environmentObject(jm)
-                            .environmentObject(ce)
-                            .environmentObject(cvm)
-                            .environmentObject(updater)
+                        if nav.inspector != nil {
+                            ZStack(alignment: .topLeading) {
+                                nav.view
+                                    .disabled(true)
+                                
+                                Color.black.opacity(0.7)
+
+                                ZStack(alignment: .topLeading) {
+                                    LinearGradient(gradient: Gradient(colors: [Color.clear, Color.black]), startPoint: .topTrailing, endPoint: .topLeading)
+                                        .opacity(0.25)
+                                        .frame(width: 20)
+                                    
+                                    Theme.subHeaderColour
+                                    
+                                    nav.inspector
+                                        .environmentObject(nav)
+                                }
+                                .background(Theme.base)
+                                .frame(width: 340)
+                            }
+                            
+                        } else {
+                            VStack {
+                                if nav.history.recent.count > 0 {
+                                    HStack {
+                                        Button {
+                                            if let previous = nav.history.previous() {
+                                                nav.to(previous.page)
+                                            }
+                                        } label: {
+                                            HStack(spacing: 5) {
+                                                Image(systemName: "arrow.left")
+                                                Text("Back")
+                                            }
+                                        }
+                                        .buttonStyle(.plain)
+                                        
+                                        Spacer()
+                                        Button {
+                                            if let next = nav.history.next() {
+                                                nav.to(next.page)
+                                            }
+                                        } label: {
+                                            HStack(spacing: 5) {
+                                                Text("Next")
+                                                Image(systemName: "arrow.right")
+                                            }
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                                
+                                nav.view
+                                    .navigationTitle(nav.pageTitle())
+                                    .environmentObject(nav)
+                                    .environmentObject(rm)
+                                    .environmentObject(crm)
+                                    .environmentObject(jm)
+                                    .environmentObject(ce)
+                                    .environmentObject(cvm)
+                                    .environmentObject(updater)
+                            }
+                        }
                     }
                 }
             }
@@ -171,9 +212,6 @@ struct Home: View {
         .onAppear(perform: onAppear)
         .onChange(of: nav.parent!) { buttonToHighlight in
             selectedSidebarButton = buttonToHighlight
-        }
-        .onChange(of: nav.pageId!) { newUuid in
-            updater.setOne(nav.parent!.ViewUpdaterKey, newUuid)
         }
     }
 

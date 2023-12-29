@@ -18,11 +18,11 @@ extension Today {
         @EnvironmentObject public var nav: Navigation
 
         var body: some View {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 0) {
                 ZStack(alignment: .topLeading) {
                     FancyTextField(
                         placeholder: "What are you working on?",
-                        lineLimit: 6,
+                        lineLimit: 11,
                         onSubmit: submitAction,
                         fgColour: nav.session.job != nil ? nav.session.job!.colour_from_stored().isBright() ? .black : .white : .white,
                         text: $text
@@ -38,8 +38,22 @@ extension Today {
 
                     VStack(alignment: .trailing) {
                         Spacer()
-                        HStack {
+                        HStack(spacing: 5) {
                             Spacer()
+                            FancyButtonv2(
+                                text: nav.session.job != nil ? "Log to job \(nav.session.job!.jid.string)" : "Log",
+                                action: clearAction,
+                                icon: "arrow.clockwise",
+                                fgColour: nav.session.job != nil ? Color.fromStored(nav.session.job!.colour!).isBright() ? .black : .white : .white,
+                                showLabel: false,
+                                size: .tiny,
+                                type: .clear
+                            )
+                            .help("Reset interface to default state")
+                            .frame(width: 30, height: 30)
+                            .background(nav.session.job != nil ? nav.session.job!.colour_from_stored() : Theme.toolbarColour)
+                            .disabled(nav.session.job == nil)
+
                             FancyButtonv2(
                                 text: nav.session.job != nil ? "Log to job \(nav.session.job!.jid.string)" : "Log",
                                 action: submitAction,
@@ -49,15 +63,26 @@ extension Today {
                                 size: .tiny,
                                 type: .clear
                             )
+                            .help("Create a new record (alternatively, press Return!)")
                             .frame(width: 30, height: 30)
                             .background(nav.session.job != nil ? nav.session.job!.colour_from_stored() : Theme.toolbarColour)
                             .disabled(nav.session.job == nil)
                         }
                     }
                 }
-                .frame(height: 130)
+                .frame(height: 215)
 
                 FancyHelpText(text: "Choose a job from the sidebar, then type into the field above and hit enter (or click the + icon at the bottom-right) to create a new record in the table below.")
+            }
+            .onChange(of: text) { newText in
+                if newText.isEmpty {
+                    nav.save()
+//                    nav.state.on(.ready, { _ in
+//                        nav.save()
+//                    })
+//                    let _ = nav.state.advance()
+//                    nav.save()
+                }
             }
         }
     }
@@ -79,5 +104,10 @@ extension Today.PostingInterface {
         } else {
             print("[error] Message, job ID OR task URL are required to submit")
         }
+    }
+    
+    private func clearAction() -> Void {
+        text = ""
+        nav.session.job = nil
     }
 }

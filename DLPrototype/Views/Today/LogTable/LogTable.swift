@@ -39,8 +39,8 @@ extension Today {
 extension Today.LogTable {
     /// Table row headers
     struct Headers: View {
-        static public let required: Set<RecordTableColumn> = [.job, .message]
-        
+        static public var required: Set<RecordTableColumn> = [.job, .message]
+
         var body: some View {
             GridRow {
                 // project colour block
@@ -57,8 +57,7 @@ extension Today.LogTable {
                             Group {
                                 ZStack(alignment: column.alignment) {
                                     Theme.subHeaderColour
-                                    Text(column.name)
-                                        .padding(10)
+                                    Text(column.name).padding(10)
                                 }
                             }
                             .frame(width: column.width)
@@ -152,6 +151,11 @@ extension Today.LogTable {
                 }
                 .onAppear(perform: findRecords)
                 .onChange(of: nav.session.date) { newDate in self.findRecords(for: newDate)}
+                .onChange(of: nav.saved) { status in
+                    if status {
+                        self.findRecords(for: nav.session.date)
+                    }
+                }
             }
             
             var Content: some View {

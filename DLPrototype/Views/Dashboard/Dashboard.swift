@@ -28,6 +28,14 @@ struct Dashboard: View {
             VStack(alignment: .leading, spacing: 0) {
                 FindDashboard(searching: $searching)
                 FancyDivider()
+//                Button("State test") {
+//                    print("DERPO state.phase=\(nav.state.get())")
+////                    nav.state.set(.transitioning)
+//                    nav.state.advance()
+//                    print("DERPO state.phase=\(nav.state.get())")
+//                    nav.state.advance()
+//                    print("DERPO state.phase=\(nav.state.get())")
+//                }
 
                 if !searching {
                     Widgets()
