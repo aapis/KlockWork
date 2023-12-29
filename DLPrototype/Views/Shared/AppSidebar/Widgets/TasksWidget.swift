@@ -29,29 +29,8 @@ struct TasksWidget: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                HStack {
-                    if let parent = nav.parent {
-                        FancyButtonv2(
-                            text: "Minimize",
-                            action: actionMinimize,
-                            icon: minimized ? "plus" : "minus",
-                            showLabel: false,
-                            type: .clear
-                        )
-                        .frame(width: 30, height: 30)
-                        
-                        if parent != .tasks {
-                            Text(title)
-                                .padding(.trailing, 10)
-                        } else {
-                            Text("Search all tasks")
-                        }
-                    }
-                }
-                .padding(5)
-
+                Text(title)
                 Spacer()
-
                 HStack {
                     FancyButtonv2(
                         text: "Settings",
@@ -63,61 +42,39 @@ struct TasksWidget: View {
                     )
                     .frame(width: 30, height: 30)
                 }
-                .padding(5)
             }
+            .padding(10)
             .background(Theme.base.opacity(0.2))
 
             VStack {
-                if !minimized {
-                    if isSettingsPresented {
-                        Settings(
-                            showSearch: $showSearch,
-                            minimizeAll: $minimizeAll
-                        )
-                    } else {
-                        if showSearch && nav.session.gif != .focus {
-                            VStack {
-                                SearchBar(text: $query, disabled: minimized, placeholder: "Search tasks...")
-                                    .onChange(of: query, perform: actionOnSearch)
-                                    .onChange(of: nav.session.job, perform: actionOnChangeJob)
-                            }
-                        }
-
-                        VStack(alignment: .leading, spacing: 0) {
-                            if sorted.count > 0 {
-                                ForEach(sorted, id: \.element) { index, key in
-                                    TaskGroup(index: index, key: key, tasks: grouped)
-                                }
-                            } else {
-                                if nav.session.gif == .normal {
-                                    SidebarItem(
-                                        data: "No results for query \(query)",
-                                        help: "No results for query \(query)",
-                                        role: .important
-                                    )
-                                } else if nav.session.gif == .focus {
-                                    Button {
-                                        nav.setView(AnyView(Planning()))
-                                        nav.setId()
-                                        nav.setTitle("Update your plan")
-                                        nav.setParent(.planning)
-                                        nav.setSidebar(AnyView(DefaultPlanningSidebar()))
-                                    } label: {
-                                        SidebarItem(
-                                            data: "Add tasks to your plan...",
-                                            help: "Add tasks to your plan",
-                                            role: .action
-                                        )
-                                    }
-                                    .buttonStyle(.plain)
-                                }
-                            }
-                        }
-                    }
+                if isSettingsPresented {
+                    Settings(
+                        minimizeAll: $minimizeAll
+                    )
                 } else {
-                    HStack {
-                        Text("\(sorted.count) jobs")
-                        Spacer()
+                    VStack(alignment: .leading, spacing: 0) {
+                        if sorted.count > 0 {
+                            ForEach(sorted, id: \.element) { index, key in
+                                TaskGroup(index: index, key: key, tasks: grouped)
+                            }
+                        } else {
+                            if nav.session.gif == .focus {
+                                Button {
+                                    nav.setView(AnyView(Planning()))
+                                    nav.setId()
+                                    nav.setTitle("Update your plan")
+                                    nav.setParent(.planning)
+                                    nav.setSidebar(AnyView(DefaultPlanningSidebar()))
+                                } label: {
+                                    SidebarItem(
+                                        data: "Add tasks to your plan...",
+                                        help: "Add tasks to your plan",
+                                        role: .action
+                                    )
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
                     }
                 }
             }
@@ -125,7 +82,6 @@ struct TasksWidget: View {
             .background(Theme.base.opacity(0.2))
         }
         .onAppear(perform: actionOnAppear)
-        .id(updater.get("sidebar.today.incompleteTasksWidget"))
         .font(Theme.font)
     }
 }
@@ -173,51 +129,12 @@ extension TasksWidget {
     private func actionOnChangeJob(job: Job?) -> Void {
         resetGroupedTasks()
     }
-
-    private func actionOnSearch(term: String) -> Void {
-        if nav.session.gif != .focus {
-            resetGroupedTasks()
-
-            let filtered = grouped.filter({searchCriteria(term: term, job: $0.key, tasks: $0.value)})
-
-            if filtered.count > 0 {
-                grouped = filtered
-            }
-        }
-
-        if query.isEmpty {
-            resetGroupedTasks()
-        }
-    }
-
-    internal func searchCriteria(term: String, job: Job, tasks: [LogTask]) -> Bool {
-        if let projectName = job.project?.name {
-            if projectName.contains(term) || projectName.caseInsensitiveCompare(term) == .orderedSame {
-                return true
-            }
-        }
-
-        if job.jid.string == term {
-            return true
-        }
-
-        if tasks.contains(where: {$0.content?.contains(term) ?? false}) {
-            return true
-        }
-
-        if tasks.contains(where: {$0.content?.caseInsensitiveCompare(term) == .orderedSame}) {
-            return true
-        }
-
-        return false
-    }
 }
 
 extension TasksWidget {
     struct Settings: View {
         private let title: String = "Widget Settings"
-        
-        @Binding public var showSearch: Bool
+
         @Binding public var minimizeAll: Bool
 
         var body: some View {
@@ -226,7 +143,6 @@ extension TasksWidget {
                 
                 VStack(alignment: .leading) {
                     FancySubTitle(text: title)
-                    Toggle("Show search bar", isOn: $showSearch)
                     Toggle("Minimize all groups", isOn: $minimizeAll)
                     Spacer()
                     FancyDivider()
