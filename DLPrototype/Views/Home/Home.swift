@@ -14,6 +14,7 @@ struct Home: View {
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var ce: CoreDataCalendarEvent
     
+    // @TODO: don't set these here, set them on the individual views directly
     @StateObject public var rm: LogRecords = LogRecords(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
