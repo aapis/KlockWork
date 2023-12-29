@@ -79,7 +79,8 @@ struct FindDashboard: View {
                                 showProjects: $showProjects,
                                 showJobs: $showJobs,
                                 showCompanies: $showCompanies,
-                                showPeople: $showPeople
+                                showPeople: $showPeople,
+                                location: location
                             )
                             
                             if nav.session.search.inspectingEntity != nil {
@@ -96,7 +97,8 @@ struct FindDashboard: View {
                             showProjects: $showProjects,
                             showJobs: $showJobs,
                             showCompanies: $showCompanies,
-                            showPeople: $showPeople
+                            showPeople: $showPeople,
+                            location: location
                         )
                     }
                 }
@@ -810,14 +812,11 @@ extension FindDashboard {
         @Binding public var showJobs: Bool
         @Binding public var showCompanies: Bool
         @Binding public var showPeople: Bool
+        public var location: WidgetLocation
 
-        private var columns: [GridItem] {
-            Array(repeating: .init(.flexible(minimum: 100)), count: 1)
-        }
-        
         @Environment(\.managedObjectContext) var moc
         @EnvironmentObject public var nav: Navigation
-        
+
         var body: some View {
             VStack {
                 if searchText.count >= 2 {
@@ -841,7 +840,7 @@ extension FindDashboard {
                     .padding()
                 }
             }
-            .background(Theme.rowColour)
+            .background(location == .content ? Theme.rowColour : Color.clear)
         }
         
         struct SuggestedJobs: View {
@@ -859,15 +858,18 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            HStack(spacing: 1) {
-                                Text("Showing \(items.prefix(5).count)/\(items.count) Jobs")
-                                    .font(Theme.fontSubTitle)
-                                Spacer()
-                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                    .font(.title2)
+                            ZStack {
+                                Theme.base
+                                HStack(spacing: 1) {
+                                    Text("Showing \(items.prefix(5).count)/\(items.count) Jobs")
+                                        .font(Theme.fontSubTitle)
+                                    Spacer()
+                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                        .font(.title2)
+                                }
+                                .padding()
+                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                             }
-                            .padding()
-                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
@@ -945,15 +947,18 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            HStack(spacing: 1) {
-                                Text("Showing \(items.prefix(5).count)/\(items.count) Projects")
-                                    .font(Theme.fontSubTitle)
-                                Spacer()
-                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                    .font(.title2)
+                            ZStack {
+                                Theme.base
+                                HStack(spacing: 1) {
+                                    Text("Showing \(items.prefix(5).count)/\(items.count) Projects")
+                                        .font(Theme.fontSubTitle)
+                                    Spacer()
+                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                        .font(.title2)
+                                }
+                                .padding()
+                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                             }
-                            .padding()
-                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
@@ -1029,15 +1034,18 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            HStack(spacing: 1) {
-                                Text("Showing \(items.prefix(5).count)/\(items.count) Notes")
-                                    .font(Theme.fontSubTitle)
-                                Spacer()
-                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                    .font(.title2)
+                            ZStack {
+                                Theme.base
+                                HStack(spacing: 1) {
+                                    Text("Showing \(items.prefix(5).count)/\(items.count) Notes")
+                                        .font(Theme.fontSubTitle)
+                                    Spacer()
+                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                        .font(.title2)
+                                }
+                                .padding()
+                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                             }
-                            .padding()
-                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
@@ -1123,15 +1131,18 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            HStack(spacing: 1) {
-                                Text("Showing \(items.prefix(5).count)/\(items.count) Tasks")
-                                    .font(Theme.fontSubTitle)
-                                Spacer()
-                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                    .font(.title2)
+                            ZStack {
+                                Theme.base
+                                HStack(spacing: 1) {
+                                    Text("Showing \(items.prefix(5).count)/\(items.count) Tasks")
+                                        .font(Theme.fontSubTitle)
+                                    Spacer()
+                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                        .font(.title2)
+                                }
+                                .padding()
+                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                             }
-                            .padding()
-                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
@@ -1208,15 +1219,18 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            HStack(spacing: 1) {
-                                Text("Showing \(items.prefix(5).count)/\(items.count) Records")
-                                    .font(Theme.fontSubTitle)
-                                Spacer()
-                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                    .font(.title2)
+                            ZStack {
+                                Theme.base
+                                HStack(spacing: 1) {
+                                    Text("Showing \(items.prefix(5).count)/\(items.count) Records")
+                                        .font(Theme.fontSubTitle)
+                                    Spacer()
+                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                        .font(.title2)
+                                }
+                                .padding()
+                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                             }
-                            .padding()
-                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
@@ -1290,15 +1304,18 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            HStack(spacing: 1) {
-                                Text("Showing \(items.prefix(5).count)/\(items.count) Companies")
-                                    .font(Theme.fontSubTitle)
-                                Spacer()
-                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                    .font(.title2)
+                            ZStack {
+                                Theme.base
+                                HStack(spacing: 1) {
+                                    Text("Showing \(items.prefix(5).count)/\(items.count) Companies")
+                                        .font(Theme.fontSubTitle)
+                                    Spacer()
+                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                        .font(.title2)
+                                }
+                                .padding()
+                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                             }
-                            .padding()
-                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
@@ -1371,15 +1388,18 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            HStack(spacing: 1) {
-                                Text("Showing \(items.prefix(5).count)/\(items.count) People")
-                                    .font(Theme.fontSubTitle)
-                                Spacer()
-                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                    .font(.title2)
+                            ZStack {
+                                Theme.base
+                                HStack(spacing: 1) {
+                                    Text("Showing \(items.prefix(5).count)/\(items.count) People")
+                                        .font(Theme.fontSubTitle)
+                                    Spacer()
+                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                        .font(.title2)
+                                }
+                                .padding()
+                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                             }
-                            .padding()
-                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})

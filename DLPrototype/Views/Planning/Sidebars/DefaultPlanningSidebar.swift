@@ -9,14 +9,12 @@
 import SwiftUI
 
 struct DefaultPlanningSidebar: View {
-    @State public var date: Date = Date()
-
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 5) {
-                AllJobsPickerWidget(location: .content)
+                AllJobsPickerWidget(location: .sidebar)
             }
             Spacer()
         }

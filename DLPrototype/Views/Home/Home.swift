@@ -164,34 +164,38 @@ struct Home: View {
                             
                         } else {
                             VStack {
-                                if nav.history.recent.count > 0 {
-                                    HStack {
-                                        Button {
-                                            if let previous = nav.history.previous() {
-                                                nav.to(previous.page)
-                                            }
-                                        } label: {
-                                            HStack(spacing: 5) {
-                                                Image(systemName: "arrow.left")
-                                                Text("Back")
-                                            }
-                                        }
-                                        .buttonStyle(.plain)
-                                        
-                                        Spacer()
-                                        Button {
-                                            if let next = nav.history.next() {
-                                                nav.to(next.page)
-                                            }
-                                        } label: {
-                                            HStack(spacing: 5) {
-                                                Text("Next")
-                                                Image(systemName: "arrow.right")
-                                            }
-                                        }
-                                        .buttonStyle(.plain)
-                                    }
-                                }
+//                                if nav.history.recent.count > 0 {
+//                                    HStack {
+//                                        Button {
+//                                            if let previous = nav.history.previous() {
+//                                                nav.to(previous.page)
+//                                            }
+//                                        } label: {
+//                                            HStack(spacing: 5) {
+//                                                Image(systemName: "arrow.left")
+//                                                Text("Back")
+//                                            }
+//                                        }
+//                                        .buttonStyle(.plain)
+//                                        .background(Theme.subHeaderColour)
+//                                        
+//                                        Spacer()
+//                                        Button {
+//                                            if let next = nav.history.next() {
+//                                                nav.to(next.page)
+//                                            }
+//                                        } label: {
+//                                            HStack(spacing: 5) {
+//                                                Text("Next")
+//                                                Image(systemName: "arrow.right")
+//                                            }
+//                                        }
+//                                        .buttonStyle(.plain)
+//                                        .background(Theme.subHeaderColour)
+//                                    }
+//                                    .background(Theme.base)
+//                                    .frame(height: 70)
+//                                }
                                 
                                 nav.view
                                     .navigationTitle(nav.pageTitle())
