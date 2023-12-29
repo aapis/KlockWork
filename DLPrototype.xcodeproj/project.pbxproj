@@ -153,6 +153,7 @@
 		53C000962B3A7BD500D5EC04 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C000952B3A7BD500D5EC04 /* String.swift */; };
 		53C000982B3A821D00D5EC04 /* FancyHelpText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C000972B3A821D00D5EC04 /* FancyHelpText.swift */; };
 		53C0009A2B3A90DF00D5EC04 /* PostingInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C000992B3A90DF00D5EC04 /* PostingInterface.swift */; };
+		53C0009E2B3F6B5200D5EC04 /* TabbedWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C0009D2B3F6B5200D5EC04 /* TabbedWidget.swift */; };
 		53C036EF29F8A59900539C3C /* DashboardSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C036EE29F8A59900539C3C /* DashboardSettings.swift */; };
 		53C3418C299960310071B855 /* JobDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418B299960310071B855 /* JobDashboard.swift */; };
 		53C3418E299968160071B855 /* JobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418D299968160071B855 /* JobView.swift */; };
@@ -370,6 +371,7 @@
 		53C000952B3A7BD500D5EC04 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		53C000972B3A821D00D5EC04 /* FancyHelpText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyHelpText.swift; sourceTree = "<group>"; };
 		53C000992B3A90DF00D5EC04 /* PostingInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostingInterface.swift; sourceTree = "<group>"; };
+		53C0009D2B3F6B5200D5EC04 /* TabbedWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabbedWidget.swift; sourceTree = "<group>"; };
 		53C036EE29F8A59900539C3C /* DashboardSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardSettings.swift; sourceTree = "<group>"; };
 		53C3418B299960310071B855 /* JobDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDashboard.swift; sourceTree = "<group>"; };
 		53C3418D299968160071B855 /* JobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobView.swift; sourceTree = "<group>"; };
@@ -913,6 +915,7 @@
 				532C5FE42A83024900F2AAD4 /* CreateEntitiesWidget.swift */,
 				530168162A887B0A000AF4FD /* AllJobsPickerWidget.swift */,
 				5334F2652B28FA520079D2E7 /* OutlineWidget.swift */,
+				53C0009D2B3F6B5200D5EC04 /* TabbedWidget.swift */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -1235,6 +1238,7 @@
 				5326AE9C2B27FFE2009F1349 /* CoreDataCompanies.swift in Sources */,
 				53E2026A2A80389500B4DF70 /* JobPickerWidget.swift in Sources */,
 				53152CE4296BC8A100A14E43 /* NoteDashboard.swift in Sources */,
+				53C0009E2B3F6B5200D5EC04 /* TabbedWidget.swift in Sources */,
 				536FBF6E2A68F77100F00CE4 /* NoteBlock.swift in Sources */,
 				5334F2662B28FA520079D2E7 /* OutlineWidget.swift in Sources */,
 				53B0BE86297261A3007CB663 /* ProjectCreate.swift in Sources */,
