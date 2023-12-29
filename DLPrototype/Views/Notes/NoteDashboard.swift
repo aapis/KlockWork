@@ -12,6 +12,8 @@ import SwiftUI
 struct NoteDashboard: View {
     public var defaultSelectedJob: Job? = nil
     public var project: Project? = nil
+    
+    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
 
     @State private var searchText: String = ""
     @State private var selected: Int = 0
@@ -21,7 +23,6 @@ struct NoteDashboard: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
-    @EnvironmentObject public var jm: CoreDataJob
     
     @FetchRequest public var notes: FetchedResults<Note>
 

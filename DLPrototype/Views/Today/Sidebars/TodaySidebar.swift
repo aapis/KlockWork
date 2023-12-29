@@ -54,7 +54,7 @@ extension TodaySidebar {
                 helpText: "Notes",
                 icon: "note.text",
                 labelText: "Notes",
-                contents: AnyView(NoteSearchWidget())
+                contents: AnyView(NotesWidget())
             ),
             ToolbarButton(
                 id: 3,

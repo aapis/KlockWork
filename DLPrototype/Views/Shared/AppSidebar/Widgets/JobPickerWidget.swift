@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct JobPickerWidget: View {
-    public let title: String = "Recently Used Jobs"
+    public var title: String = "Recent Jobs"
     public var location: WidgetLocation = .sidebar
 
     @State private var minimized: Bool = false
@@ -42,33 +42,8 @@ struct JobPickerWidget: View {
             HStack {
                 HStack {
                     if location == .sidebar {
-                        if let parent = nav.parent {
-                            FancyButtonv2(
-                                text: "Minimize",
-                                action: actionMinimize,
-                                icon: minimized ? "plus" : "minus",
-                                showLabel: false,
-                                type: .clear
-                            )
-                            .frame(width: 30, height: 30)
-                            .padding(5)
-
-                            if parent != .jobs {
-                                if nav.session.gif == .focus {
-                                    Text("Jobs")
-                                        .padding(.trailing, 10)
-                                } else {
-                                    Text(title)
-                                        .padding(.trailing, 10)
-                                }
-                            } else {
-                                Text("Recently used jobs")
-                                    .padding(5)
-                            }
-                        }
-
+                        Text(title)
                         Spacer()
-
                         HStack {
                             FancyButtonv2(
                                 text: "Settings",
@@ -80,7 +55,7 @@ struct JobPickerWidget: View {
                             )
                             .frame(width: 30, height: 30)
                         }
-                        .padding(5)
+                        
                     } else {
                         Text(title)
                             .padding(10)
@@ -88,24 +63,15 @@ struct JobPickerWidget: View {
                     }
                 }
             }
+            .padding(10)
             .background(Theme.base.opacity(0.2))
 
             VStack {
-                if !minimized {
                     if isSettingsPresented {
                         Settings(
-                            showSearch: $showSearch,
                             minimizeAll: $minimizeAll
                         )
                     } else {
-                        if showSearch && nav.session.gif != .focus {
-                            VStack {
-                                SearchBar(text: $query, disabled: minimized, placeholder: "Job ID or URL")
-                                    .onChange(of: query, perform: actionOnSearch)
-                                    .onChange(of: nav.session.job, perform: actionOnChangeJob)
-                            }
-                        }
-
                         VStack(alignment: .leading, spacing: 0) {
                             if sorted.count > 0 {
                                 ForEach(sorted, id: \.element) { index, key in
@@ -120,12 +86,6 @@ struct JobPickerWidget: View {
                             }
                         }
                     }
-                } else {
-                    HStack {
-                        Text("\(sorted.count) jobs")
-                        Spacer()
-                    }
-                }
             }
             .padding(8)
             .background(Theme.base.opacity(0.2))
@@ -175,45 +135,6 @@ extension JobPickerWidget {
         }
     }
 
-    private func actionOnSearch(term: String) -> Void {
-        guard nav.session.gif != .focus else {
-            return actionOnAppear()
-        }
-
-        if term.count > 1 {
-            var filtered: Dictionary<Project, [Job]> = [:]
-
-            filtered = grouped.filter {
-                (
-                    $0.value.contains(where: {$0.jid.string.caseInsensitiveCompare(term) == .orderedSame})
-                    ||
-                    (
-                        $0.value.contains(where: {$0.jid.string.starts(with: term)})
-                    )
-                )
-            }
-
-            if term.starts(with: "https://") {
-                filtered = grouped.filter {
-                    (
-                        $0.value.contains(where: {$0.uri?.absoluteString.caseInsensitiveCompare(term) == .orderedSame})
-                        ||
-                        (
-                            $0.value.contains(where: {$0.uri?.absoluteString.contains(term) ?? false})
-                            ||
-                            $0.value.contains(where: {$0.uri?.absoluteString.starts(with: term) ?? false})
-                        )
-                    )
-                }
-            }
-
-            grouped = filtered
-        } else {
-            actionOnAppear()
-            nav.session.setJob(nil)
-        }
-    }
-
     private func actionOnChangeJob(job: Job?) -> Void {
         actionOnAppear()
     }
@@ -223,7 +144,6 @@ extension JobPickerWidget {
     struct Settings: View {
         private let title: String = "Widget Settings"
 
-        @Binding public var showSearch: Bool
         @Binding public var minimizeAll: Bool
 
         var body: some View {
@@ -232,7 +152,6 @@ extension JobPickerWidget {
 
                 VStack(alignment: .leading) {
                     FancySubTitle(text: title)
-                    Toggle("Show search bar", isOn: $showSearch)
                     Toggle("Minimize all groups", isOn: $minimizeAll)
                     Spacer()
                     FancyDivider()

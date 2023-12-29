@@ -18,30 +18,33 @@ struct NoteRowPlain: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .firstTextBaseline, spacing: 0) {
-                Image(systemName: icon)
-                    .padding(.trailing, 10)
-                    .opacity(0.4)
+                if let job = note.mJob {
+                    Image(systemName: icon)
+                        .padding(.trailing, 10)
+                        .opacity(0.4)
+                        .foregroundColor(job.colour_from_stored().isBright() ? .black : .white)
 
-                FancyButtonv2(
-                    text: note.title!,
-                    action: actionOpenNote,
-                    fgColour: note.mJob != nil && Color.fromStored(note.mJob!.colour!).isBright() ? .black : .white,
-                    showIcon: false,
-                    size: .link,
-                    redirect: AnyView(NoteView(note: note, moc: moc)),
-                    pageType: .notes,
-                    sidebar: AnyView(NoteViewSidebar(note: note, moc: moc))
-                )
+                    FancyButtonv2(
+                        text: note.title!,
+                        action: actionOpenNote,
+                        fgColour: job.colour_from_stored().isBright() ? .black : .white,
+                        showIcon: false,
+                        size: .link,
+                        redirect: AnyView(NoteView(note: note, moc: moc)),
+                        pageType: .notes,
+                        sidebar: AnyView(NoteViewSidebar(note: note, moc: moc))
+                    )
+                }
                 Spacer()
             }
             .padding(5)
+            .background(note.mJob != nil ? note.mJob!.colour_from_stored() : .clear)
         }
     }
 }
 
 extension NoteRowPlain {
     private func actionOpenNote() -> Void {
-        nav.reset()
         nav.setId()
         nav.setParent(.today)
         nav.session.note = note
