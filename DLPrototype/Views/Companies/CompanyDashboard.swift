@@ -16,7 +16,6 @@ struct CompanyDashboard: View {
     @AppStorage("general.defaultCompany") public var defaultCompany: Int = 0
 
     @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var updater: ViewUpdater
 
     @FetchRequest public var companies: FetchedResults<Company>
 
@@ -61,12 +60,8 @@ struct CompanyDashboard: View {
                 Spacer()
             }
             .padding()
-            .id(updater.ids["companies.dashboard"])
         }
         .background(Theme.toolbarColour)
-        .onChange(of: defaultCompany) { _ in
-            actionOnAppear()
-        }
     }
 
     @ViewBuilder private var recent: some View {
@@ -98,10 +93,6 @@ extension CompanyDashboard {
 
     private func filter(_ companies: FetchedResults<Company>) -> [Company] {
         return SearchHelper(bucket: companies).findInCompanies($searchText)
-    }
-
-    private func actionOnAppear() -> Void {
-        updater.updateOne("companies.dashboard")
     }
 }
 
