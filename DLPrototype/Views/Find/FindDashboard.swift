@@ -58,7 +58,9 @@ struct FindDashboard: View {
                 .onChange(of: nav.session.search.inspectingEntity) { entity in
                     if location == .sidebar {
                         if entity != nil {
-                            nav.setInspector(AnyView(Inspector()))
+                            nav.setInspector(AnyView(Inspector(entity: entity!)))
+                        } else {
+                            nav.setInspector()
                         }
                     }
                 }
@@ -77,11 +79,12 @@ struct FindDashboard: View {
                                 showProjects: $showProjects,
                                 showJobs: $showJobs,
                                 showCompanies: $showCompanies,
-                                showPeople: $showPeople
+                                showPeople: $showPeople,
+                                location: location
                             )
                             
                             if nav.session.search.inspectingEntity != nil {
-                                Inspector()
+                                Inspector(entity: nav.session.search.inspectingEntity!)
                             }
                         }
                     } else if location == .sidebar {
@@ -94,7 +97,8 @@ struct FindDashboard: View {
                             showProjects: $showProjects,
                             showJobs: $showJobs,
                             showCompanies: $showCompanies,
-                            showPeople: $showPeople
+                            showPeople: $showPeople,
+                            location: location
                         )
                     }
                 }
@@ -289,17 +293,18 @@ extension FindDashboard {
         }
     }
     
-    struct Inspector: View {
+    struct Inspector: View, Identifiable {
+        public let id: UUID = UUID()
+        public var entity: NSManagedObject
+        
         private let panelWidth: CGFloat = 400
-
-        @State public var entity: NSManagedObject? = nil
-        @State private var job: Job? = nil
-        @State private var project: Project? = nil
-        @State private var record: LogRecord? = nil
-        @State private var company: Company? = nil
-        @State private var person: Person? = nil
-        @State private var note: Note? = nil
-        @State private var task: LogTask? = nil
+        private var job: Job? = nil
+        private var project: Project? = nil
+        private var record: LogRecord? = nil
+        private var company: Company? = nil
+        private var person: Person? = nil
+        private var note: Note? = nil
+        private var task: LogTask? = nil
 
         @EnvironmentObject public var nav: Navigation
 
@@ -310,42 +315,52 @@ extension FindDashboard {
                     Spacer()
                     FancyButtonv2(
                         text: "Close",
-                        action: actionChangeEntity,
+                        action: {nav.session.search.inspectingEntity = nil},
                         icon: "xmark",
                         showLabel: false,
                         size: .tiny,
                         type: .clear
                     )
-                    .opacity(0.6)
                 }
                 Divider()
                     .padding(.bottom, 10)
 
-                HStack(alignment: .top) {
-                    if let job = job {
-                        InspectingJob(item: job)
-                    } else if let record = record {
-                        InspectingRecord(item: record)
-                    } else if let project = project {
-                        InspectingProject(item: project)
-                    } else if let company = company {
-                        InspectingCompany(item: company)
-                    } else if let person = person {
-                        InspectingPerson(item: person)
-                    } else if let note = note {
-                        InspectingNote(item: note)
-                    } else if let task = task {
-                        InspectingTask(item: task)
-                    }
+                if let job = job {
+                    InspectingJob(item: job)
+                } else if let record = record {
+                    InspectingRecord(item: record)
+                } else if let project = project {
+                    InspectingProject(item: project)
+                } else if let company = company {
+                    InspectingCompany(item: company)
+                } else if let person = person {
+                    InspectingPerson(item: person)
+                } else if let note = note {
+                    InspectingNote(item: note)
+                } else if let task = task {
+                    InspectingTask(item: task)
+                } else {
+                    Text("Unable to inspect this item")
                 }
+
                 Spacer()
             }
             .padding()
-            .background(Theme.rowColour.opacity(0.7))
             .frame(maxWidth: panelWidth)
-            .onAppear(perform: actionOnAppear)
-            .onChange(of: nav.session.search.inspectingEntity) { newEntity in
-                actionOnAppear()
+        }
+        
+        init(entity: NSManagedObject) {
+            self.entity = entity
+            
+            switch self.entity {
+            case let en as Job: self.job = en
+            case let en as Project: self.project = en
+            case let en as LogRecord: self.record = en
+            case let en as Company: self.company = en
+            case let en as Person: self.person = en
+            case let en as Note: self.note = en
+            case let en as LogTask: self.task = en
+            default: print("[error] FindDashboard.Inspector Unknown entity type=\(self.entity)")
             }
         }
         
@@ -424,7 +439,7 @@ extension FindDashboard {
                     Divider()
 
                     Spacer()
-//                    HStack(alignment: .top, spacing: 10) {
+                    HStack(alignment: .top, spacing: 10) {
 //                        // TODO: throws a "serious application error" on load, issue probably in JobDashboard tho
 //                        FancyButtonv2(
 //                            text: "Open",
@@ -436,7 +451,21 @@ extension FindDashboard {
 //                            pageType: .jobs,
 //                            sidebar: AnyView(JobDashboardSidebar())
 //                        )
-//                    }
+                        FancyButtonv2(
+                            text: nav.session.job != nil ?
+                                (
+                                    nav.session.job == item ? "Current job" : "Overwrite Active Job"
+                                ):
+                                "Set to Active Job",
+                            action: {nav.session.job = item},
+                            icon: "arrow.right.square.fill",
+                            showLabel: true,
+                            size: .link,
+                            type: .clear
+                        )
+                        .disabled(nav.session.job == item)
+                        .help(nav.session.job != nil ? "Current: \(nav.session.job!.jid)" : "Flags this as the current job on other pages and in widgets.")
+                    }
                 }
             }
         }
@@ -465,6 +494,25 @@ extension FindDashboard {
                         .help("Created: \(date.description)")
                         Divider()
                     }
+                    
+                    if let message = item.message {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "doc.text.fill").symbolRenderingMode(.hierarchical)
+                            Text("Full message:")
+                            Spacer()
+                        }
+                        Divider()
+                        Text(message)
+                            .padding(.leading, 25)
+                            .contextMenu {
+                                Button("Copy") {
+                                    ClipboardHelper.copy(message)
+                                }
+                            }
+                        .help("Full contents of this message")
+                    }
+                    
+                    Divider()
                     
                     Spacer()
                     HStack(alignment: .top, spacing: 10) {
@@ -764,14 +812,11 @@ extension FindDashboard {
         @Binding public var showJobs: Bool
         @Binding public var showCompanies: Bool
         @Binding public var showPeople: Bool
+        public var location: WidgetLocation
 
-        private var columns: [GridItem] {
-            Array(repeating: .init(.flexible(minimum: 100)), count: 1)
-        }
-        
         @Environment(\.managedObjectContext) var moc
         @EnvironmentObject public var nav: Navigation
-        
+
         var body: some View {
             VStack {
                 if searchText.count >= 2 {
@@ -795,7 +840,7 @@ extension FindDashboard {
                     .padding()
                 }
             }
-            .background(Theme.rowColour)
+            .background(location == .content ? Theme.rowColour : Color.clear)
         }
         
         struct SuggestedJobs: View {
@@ -813,31 +858,52 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            HStack(spacing: 1) {
-                                Text("Showing \(items.prefix(5).count)/\(items.count) Jobs")
-                                    .font(Theme.fontSubTitle)
-                                Spacer()
-                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                    .font(.title2)
+                            ZStack {
+                                Theme.base
+                                HStack(spacing: 1) {
+                                    Text("Showing \(items.prefix(5).count)/\(items.count) Jobs")
+                                        .font(Theme.fontSubTitle)
+                                    Spacer()
+                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                        .font(.title2)
+                                }
+                                .padding()
+                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                             }
-                            .padding()
-                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
                         
                         if showChildren {
-                            VStack(alignment: .leading, spacing: 0) {
+                            VStack(alignment: .leading) {
                                 ForEach(items.prefix(5)) { item in
-                                    VStack {
+                                    VStack(alignment: .leading, spacing: 10) {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.jid.string, action: {choose(
-                                                item)}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(
+                                                text: item.jid.string,
+                                                action: {choose(item)},
+                                                icon: "questionmark.square.fill", 
+                                                fgColour: .white,
+                                                showIcon: true,
+                                                size: .link,
+                                                type: .clear
+                                            )
+                                            .help("Inspect")
                                             Spacer()
+                                            FancyButtonv2(
+                                                text: item.jid.string,
+                                                action: {nav.session.setJob(item)},
+                                                icon: "arrow.right.square.fill",
+                                                fgColour: .white,
+                                                showLabel: false,
+                                                showIcon: true,
+                                                size: .tinyLink,
+                                                type: .clear
+                                            )
+                                            .help("Set as Active Job")
                                         }
                                     }
-                                    .padding(.bottom, 10)
                                 }
                             }
                         }
@@ -881,15 +947,18 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            HStack(spacing: 1) {
-                                Text("Showing \(items.prefix(5).count)/\(items.count) Projects")
-                                    .font(Theme.fontSubTitle)
-                                Spacer()
-                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                    .font(.title2)
+                            ZStack {
+                                Theme.base
+                                HStack(spacing: 1) {
+                                    Text("Showing \(items.prefix(5).count)/\(items.count) Projects")
+                                        .font(Theme.fontSubTitle)
+                                    Spacer()
+                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                        .font(.title2)
+                                }
+                                .padding()
+                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                             }
-                            .padding()
-                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
@@ -900,7 +969,16 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.name ?? "", action: {choose(item)}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
+                                            FancyButtonv2(
+                                                text: item.name ?? "",
+                                                action: {choose(item)},
+                                                icon: "questionmark.square.fill",
+                                                fgColour: .white,
+                                                showIcon: true,
+                                                size: .link,
+                                                type: .clear
+                                            )
+                                            .help("Inspect")
                                             Spacer()
                                         }
                                     }
@@ -956,15 +1034,18 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            HStack(spacing: 1) {
-                                Text("Showing \(items.prefix(5).count)/\(items.count) Notes")
-                                    .font(Theme.fontSubTitle)
-                                Spacer()
-                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                    .font(.title2)
+                            ZStack {
+                                Theme.base
+                                HStack(spacing: 1) {
+                                    Text("Showing \(items.prefix(5).count)/\(items.count) Notes")
+                                        .font(Theme.fontSubTitle)
+                                    Spacer()
+                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                        .font(.title2)
+                                }
+                                .padding()
+                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                             }
-                            .padding()
-                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
@@ -975,8 +1056,27 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.title ?? "", action: {choose(item)}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
-                                                .help("Inspect")
+                                            FancyButtonv2(
+                                                text: item.title ?? "",
+                                                action: {choose(item)},
+                                                icon: "questionmark.square.fill",
+                                                fgColour: .white,
+                                                showIcon: true,
+                                                size: .link,
+                                                type: .clear
+                                            )
+                                            .help("Inspect")
+                                            FancyButtonv2(
+                                                text: item.title ?? "",
+                                                action: {nav.session.setJob(item.mJob)},
+                                                icon: "arrow.right.square.fill",
+                                                fgColour: .white,
+                                                showLabel: false,
+                                                showIcon: true,
+                                                size: .tinyLink,
+                                                type: .clear
+                                            )
+                                            .help("Set as Active Job")
                                             Spacer()
                                         }
                                     }
@@ -1031,15 +1131,18 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            HStack(spacing: 1) {
-                                Text("Showing \(items.prefix(5).count)/\(items.count) Tasks")
-                                    .font(Theme.fontSubTitle)
-                                Spacer()
-                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                    .font(.title2)
+                            ZStack {
+                                Theme.base
+                                HStack(spacing: 1) {
+                                    Text("Showing \(items.prefix(5).count)/\(items.count) Tasks")
+                                        .font(Theme.fontSubTitle)
+                                    Spacer()
+                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                        .font(.title2)
+                                }
+                                .padding()
+                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                             }
-                            .padding()
-                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
@@ -1050,8 +1153,27 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.content ?? "", action: {choose(item)}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
-                                                .help("Inspect")
+                                            FancyButtonv2(
+                                                text: item.content ?? "",
+                                                action: {choose(item)},
+                                                icon: "questionmark.square.fill",
+                                                fgColour: .white,
+                                                showIcon: true,
+                                                size: .link,
+                                                type: .clear
+                                            )
+                                            .help("Inspect")
+                                            FancyButtonv2(
+                                                text: "",
+                                                action: {nav.session.setJob(item.owner)},
+                                                icon: "arrow.right.square.fill",
+                                                fgColour: .white,
+                                                showLabel: false,
+                                                showIcon: true,
+                                                size: .tinyLink,
+                                                type: .clear
+                                            )
+                                            .help("Set as Active Job")
                                             Spacer()
                                         }
                                     }
@@ -1097,15 +1219,18 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            HStack(spacing: 1) {
-                                Text("Showing \(items.prefix(5).count)/\(items.count) Records")
-                                    .font(Theme.fontSubTitle)
-                                Spacer()
-                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                    .font(.title2)
+                            ZStack {
+                                Theme.base
+                                HStack(spacing: 1) {
+                                    Text("Showing \(items.prefix(5).count)/\(items.count) Records")
+                                        .font(Theme.fontSubTitle)
+                                    Spacer()
+                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                        .font(.title2)
+                                }
+                                .padding()
+                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                             }
-                            .padding()
-                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
@@ -1116,8 +1241,16 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.message ?? "", action: {choose(item)}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
-                                                .help("Inspect")
+                                            FancyButtonv2(
+                                                text: item.message ?? "",
+                                                action: {choose(item)},
+                                                icon: "questionmark.square.fill",
+                                                fgColour: .white,
+                                                showIcon: true,
+                                                size: .link,
+                                                type: .clear
+                                            )
+                                            .help("Inspect")
                                             Spacer()
                                         }
                                     }
@@ -1171,15 +1304,18 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            HStack(spacing: 1) {
-                                Text("Showing \(items.prefix(5).count)/\(items.count) Companies")
-                                    .font(Theme.fontSubTitle)
-                                Spacer()
-                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                    .font(.title2)
+                            ZStack {
+                                Theme.base
+                                HStack(spacing: 1) {
+                                    Text("Showing \(items.prefix(5).count)/\(items.count) Companies")
+                                        .font(Theme.fontSubTitle)
+                                    Spacer()
+                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                        .font(.title2)
+                                }
+                                .padding()
+                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                             }
-                            .padding()
-                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
@@ -1190,8 +1326,16 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.name ?? "", action: {choose(item)}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
-                                                .help("Inspect")
+                                            FancyButtonv2(
+                                                text: item.name ?? "",
+                                                action: {choose(item)},
+                                                icon: "questionmark.square.fill",
+                                                fgColour: .white,
+                                                showIcon: true,
+                                                size: .link,
+                                                type: .clear
+                                            )
+                                            .help("Inspect")
                                             Spacer()
                                         }
                                     }
@@ -1244,15 +1388,18 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            HStack(spacing: 1) {
-                                Text("Showing \(items.prefix(5).count)/\(items.count) People")
-                                    .font(Theme.fontSubTitle)
-                                Spacer()
-                                Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                    .font(.title2)
+                            ZStack {
+                                Theme.base
+                                HStack(spacing: 1) {
+                                    Text("Showing \(items.prefix(5).count)/\(items.count) People")
+                                        .font(Theme.fontSubTitle)
+                                    Spacer()
+                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                        .font(.title2)
+                                }
+                                .padding()
+                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                             }
-                            .padding()
-                            .background(hover ? Theme.rowColour : Theme.subHeaderColour)
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
@@ -1263,8 +1410,16 @@ extension FindDashboard {
                                     VStack {
                                         Divider()
                                         HStack {
-                                            FancyButtonv2(text: item.name ?? "", action: {choose(item)}, icon: "questionmark.square.fill", fgColour: .white, showIcon: true, size: .link, type: .clear)
-                                                .help("Inspect")
+                                            FancyButtonv2(
+                                                text: item.name ?? "",
+                                                action: {choose(item)},
+                                                icon: "questionmark.square.fill",
+                                                fgColour: .white,
+                                                showIcon: true,
+                                                size: .link,
+                                                type: .clear
+                                            )
+                                            .help("Inspect")
                                             Spacer()
                                         }
                                     }
@@ -1556,29 +1711,6 @@ extension FindDashboard.Suggestions.SuggestedPeople {
 extension FindDashboard.Suggestions.SuggestedRecords {
     private func choose(_ item: LogRecord) -> Void {
         nav.session.search.inspectingEntity = item
-    }
-}
-
-extension FindDashboard.Inspector {
-    private func actionOnAppear() -> Void {
-        if let e = nav.session.search.inspectingEntity {
-            entity = e
-            
-            switch entity {
-            case let en as Job: job = en
-            case let en as Project: project = en
-            case let en as LogRecord: record = en
-            case let en as Company: company = en
-            case let en as Person: person = en
-            case let en as Note: note = en
-            case let en as LogTask: task = en
-            default: print("[error] FindDashboard.Inspector Unknown entity type=\(e)")
-            }
-        }
-    }
-    
-    private func actionChangeEntity() -> Void {
-        nav.session.search.inspectingEntity = nil
     }
 }
 

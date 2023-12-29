@@ -51,7 +51,7 @@ struct MainMenu: Commands {
                 }
                     .keyboardShortcut("j", modifiers: [.command, .shift])
             }
-            
+
             Divider()
             Menu("Timeline navigation") {
                 Button("Previous day") {nav.session.date -= 86400}

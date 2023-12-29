@@ -35,7 +35,7 @@ struct FancyTextField: View {
             
             if lineLimit == 1 {
                 oneLine
-            } else if lineLimit < 9 {
+            } else if lineLimit < 15 {
                 oneBigLine
             } else {
                 multiLine

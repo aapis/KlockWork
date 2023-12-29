@@ -12,7 +12,9 @@ struct FancyHelpText: View {
     public var text: String = "Some help text"
     var body: some View {
         Text(text)
-            .foregroundColor(.gray)
-            .font(.caption)
+            .padding(8)
+            .foregroundColor(.white)
+            .font(.callout)
+            .background(Theme.cOrange)
     }
 }

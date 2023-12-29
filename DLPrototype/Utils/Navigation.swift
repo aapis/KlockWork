@@ -90,7 +90,10 @@ public class Navigation: Identifiable, ObservableObject {
     @Published public var title: String? = ""
     @Published public var pageId: UUID? = UUID()
     @Published public var session: Session = Session()
-    @Published public var planning: Planning = Planning(moc: PersistenceController.shared.container.viewContext)
+    @Published public var planning: PlanningState = PlanningState(moc: PersistenceController.shared.container.viewContext)
+    @Published public var saved: Bool = false
+    @Published public var state: State = State()
+    @Published public var history: History = History()
 
     public func pageTitle() -> String {
         if title!.isEmpty {
@@ -101,8 +104,15 @@ public class Navigation: Identifiable, ObservableObject {
     }
 
     public func setView(_ newView: AnyView) -> Void {
-        view = nil
-        view = newView
+//        view = AnyView(WidgetLoading())
+//        state.on(.complete, { _ in
+            view = newView
+//        })
+//        if state.phase == .complete {
+//            
+//        } else {
+//            
+//        }
     }
 
     public func setParent(_ newParent: Page) -> Void {
@@ -110,9 +120,10 @@ public class Navigation: Identifiable, ObservableObject {
         parent = newParent
     }
 
-    public func setSidebar(_ newView: AnyView) -> Void {
-        sidebar = nil
-        sidebar = newView
+    public func setSidebar(_ newView: AnyView?) -> Void {
+        if let view = newView {
+            sidebar = view
+        }
     }
 
     public func setTitle(_ newTitle: String) -> Void {
@@ -130,6 +141,27 @@ public class Navigation: Identifiable, ObservableObject {
         inspector = newInspector
     }
 
+    public func save() -> Void {
+        self.saved = true
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+            self.saved = false
+        }
+    }
+    
+    // @TODO: this doesn't really work yet
+    public func to(_ page: Page) -> Void {
+        let hp = self.history.get(page: page)
+
+        self.setId()
+        self.setView(hp.view)
+        self.setParent(page)
+        self.setSidebar(hp.sidebar)
+        self.setTitle(hp.title)
+
+        self.history.push(hp: hp)
+    }
+
     public func reset() -> Void {
         parent = .dashboard
         view = nil
@@ -137,6 +169,8 @@ public class Navigation: Identifiable, ObservableObject {
         setId()
         inspector = nil
         session = Session()
+        state = State()
+        history = History()
     }
 }
 
@@ -148,9 +182,131 @@ extension Navigation {
         var plan: Plan?
         var date: Date = Date()
         var idate: IdentifiableDay = IdentifiableDay()
-        var gif: Planning.GlobalInterfaceFilter = .normal
+        var gif: PlanningState.GlobalInterfaceFilter = .normal
         var search: Search = Search(moc: PersistenceController.shared.container.viewContext)
         var toolbar: Toolbar = Toolbar()
+    }
+    
+    public struct State {
+        private var phase: Phase = .ready
+        private var hierarchy: [Phase] = [.ready, .transitioning, .complete]
+
+        mutating func advance() -> Phase {
+            if let index = hierarchy.firstIndex(of: self.phase) {
+//                let x = hierarchy.indices
+                print("DERPO advance.phase.index=\(index)")
+                if hierarchy.indices.count <= index {
+                    var hIndex = hierarchy.indices[index]
+                    hIndex += 1
+                    self.phase = hierarchy[hIndex]
+//                    let next = Int(hIndex += 1)
+                } else {
+                    self.phase = .ready
+                }
+            }
+            
+            return .error
+        }
+        
+        mutating func on(_ phase: Phase, _ callback: (_ phase: Phase) -> Void) -> Void {
+            if phase == self.phase {
+                let nextPhase = advance()
+                callback(nextPhase)
+                let _ = advance()
+            }
+        }
+        
+        mutating func set(_ phase: Phase) -> Void {
+            self.phase = phase
+        }
+        
+        mutating func get() -> Phase {
+            return self.phase
+        }
+
+        enum Phase {
+            case ready, transitioning, complete, error
+        }
+    }
+    
+    public struct History {
+        // How far back you can go by clicking "back". Max: 10
+        var recent: [HistoryPage] = []
+        
+        private let defaultHistoryPage: HistoryPage = HistoryPage(
+            page: .dashboard,
+            view: AnyView(Dashboard()),
+            sidebar: AnyView(DashboardSidebar()),
+            title: "Dashboard"
+        )
+        
+        public let all: [HistoryPage] = [
+            HistoryPage(page: .dashboard, view: AnyView(Dashboard()), sidebar: AnyView(DashboardSidebar()), title: "Dashboard"),
+            HistoryPage(page: .planning, view: AnyView(Planning()), sidebar: AnyView(DefaultPlanningSidebar()), title: "Planning"),
+            HistoryPage(page: .today, view: AnyView(Today()), sidebar: AnyView(TodaySidebar()), title: "Today"),
+            HistoryPage(page: .companies, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Companies & Projects"),
+            HistoryPage(page: .jobs, view: AnyView(JobDashboard()), sidebar: AnyView(JobDashboardSidebar()), title: "Jobs"),
+            HistoryPage(page: .notes, view: AnyView(NoteDashboard()), sidebar: AnyView(NoteDashboardSidebar()), title: "Notes"),
+            HistoryPage(page: .tasks, view: AnyView(TaskDashboard()), sidebar: AnyView(TaskDashboardSidebar()), title: "Tasks"),
+        ]
+        
+        /// A single page representing a page the user navigated to
+        public struct HistoryPage {
+            var id: UUID = UUID()
+            var page: Page
+            var view: AnyView
+            var sidebar: AnyView
+            var title: String
+        }
+    }
+}
+
+extension Navigation.History {
+    func get(page: Page) -> HistoryPage {
+        return all.first(where: {$0.page == page}) ?? defaultHistoryPage
+    }
+    
+    mutating func push(hp: HistoryPage) -> Void {
+        recent.append(hp)
+        
+        if recent.count > 10 {
+            let _ = recent.popLast()
+        }
+    }
+
+    func previous() -> HistoryPage? {
+        print("DERPO recent=\(recent.count)")
+        var index = recent.endIndex
+        index -= 1
+        
+        if index <= 10 {
+            print("DERPO previousIndex=\(index)")
+            
+            if recent.indices.contains(index) {
+                return recent[index]
+            }
+        } else {
+            index = recent.startIndex
+        }
+
+        return nil
+    }
+    
+    func next() -> HistoryPage? {
+        var index = recent.endIndex
+        index -= 1
+
+        if index <= 10 {
+            print("DERPO nextIndex=\(index)")
+            
+            if recent.indices.contains(index) {
+                return recent[index]
+            }
+        } else {
+            index = recent.endIndex
+        }
+        
+        return nil
     }
 }
 
@@ -199,7 +355,7 @@ extension Navigation.Session.Search {
 }
 
 extension Navigation {
-    public struct Planning {
+    public struct PlanningState {
         var id: UUID = UUID()
         var jobs: Set<Job> = []
         var tasks: Set<LogTask> = []
@@ -319,7 +475,7 @@ extension Navigation {
     }
 }
 
-extension Navigation.Planning {
+extension Navigation.PlanningState {
     enum GlobalInterfaceFilter {
         case normal, focus
     }

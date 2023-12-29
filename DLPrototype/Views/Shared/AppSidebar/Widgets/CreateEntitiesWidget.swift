@@ -12,7 +12,7 @@ struct CreateEntitiesWidget: View {
     @Binding public var isDatePickerPresented: Bool
 
     @State private var followingPlan: Bool = false
-    @State private var gif: Navigation.Planning.GlobalInterfaceFilter = .normal
+    @State private var gif: Navigation.PlanningState.GlobalInterfaceFilter = .normal
     @State private var doesPlanExist: Bool = false
 
     @Environment(\.managedObjectContext) var moc
@@ -180,7 +180,7 @@ extension CreateEntitiesWidget {
 
     private func actionOnChangeOfTasks(_ items: Set<LogTask>) -> Void {
         if (items.count + nav.planning.jobs.count + nav.planning.notes.count) == 0 {
-            nav.planning = Navigation.Planning(moc: nav.planning.moc)
+            nav.planning = Navigation.PlanningState(moc: nav.planning.moc)
         }
 
         findPlan()
@@ -188,7 +188,7 @@ extension CreateEntitiesWidget {
 
     private func actionOnChangeOfJobs(_ items: Set<Job>) -> Void {
         if (items.count + nav.planning.tasks.count + nav.planning.notes.count) == 0 {
-            nav.planning = Navigation.Planning(moc: nav.planning.moc)
+            nav.planning = Navigation.PlanningState(moc: nav.planning.moc)
         }
 
         findPlan()
@@ -196,7 +196,7 @@ extension CreateEntitiesWidget {
 
     private func actionOnChangeOfNotes(_ items: Set<Note>) -> Void {
         if (items.count + nav.planning.jobs.count + nav.planning.tasks.count) == 0 {
-            nav.planning = Navigation.Planning(moc: nav.planning.moc)
+            nav.planning = Navigation.PlanningState(moc: nav.planning.moc)
         }
 
         findPlan()

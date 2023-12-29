@@ -41,28 +41,7 @@ struct AllJobsPickerWidget: View {
             HStack {
                 HStack {
                     if location == .sidebar {
-                        if let parent = nav.parent {
-                            FancyButtonv2(
-                                text: "Minimize",
-                                action: actionMinimize,
-                                icon: minimized ? "plus" : "minus",
-                                showLabel: false,
-                                type: .clear
-                            )
-                            .frame(width: 30, height: 30)
-                            .padding(5)
-
-                            if parent != .jobs {
-                                Text(title)
-                                    .padding(.trailing, 10)
-                            } else {
-                                Text("Recently used jobs")
-                                    .padding(5)
-                            }
-                        }
-
                         Spacer()
-
                         HStack {
                             FancyButtonv2(
                                 text: "Settings",

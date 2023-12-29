@@ -41,15 +41,11 @@ struct SidebarButton: View, Identifiable {
 
     private var FancyButton: some View {
         Button(action: {
-            nav.parent = pageType
-            nav.view = destination
-            nav.pageId = UUID()
-
-            if sidebar != nil {
-                nav.sidebar = sidebar
-            } else {
-                nav.sidebar = nil
+            if isDatePickerPresented {
+                isDatePickerPresented = false
             }
+
+            nav.to(pageType)
         }, label: {
             ZStack {
                 backgroundColour
@@ -71,7 +67,7 @@ struct SidebarButton: View, Identifiable {
                     .opacity(0.1)
                 }
 
-                Image(systemName: icon)
+                Image(systemName: isDatePickerPresented && nav.parent == pageType ? "xmark" : icon)
                     .font(.title)
                     .symbolRenderingMode(.hierarchical)
                     .foregroundColor(isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
