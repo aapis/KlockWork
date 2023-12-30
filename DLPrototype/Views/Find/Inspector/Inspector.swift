@@ -147,9 +147,19 @@ extension FindDashboard {
                     
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: "camera.filters").symbolRenderingMode(.hierarchical)
-                        Rectangle()
-                            .frame(width: 15, height: 15)
-                            .background(item.colour_from_stored())
+                        ZStack {
+                            Theme.base
+                            item.colour_from_stored()
+                        }
+                        .frame(width: 15, height: 15)
+                        Text(item.colour_from_stored().description)
+                            .contextMenu {
+                                Button {
+                                    ClipboardHelper.copy(item.colour_from_stored().description)
+                                } label: {
+                                    Text("Copy colour HEX to clipboard")
+                                }
+                            }
                         Spacer()
                     }
                     .help("Colour: \(item.colour_from_stored().description)")
@@ -158,32 +168,35 @@ extension FindDashboard {
                     Context(item: item)
                     
                     Spacer()
-                    HStack(alignment: .top, spacing: 10) {
-                        //                        // TODO: throws a "serious application error" on load, issue probably in JobDashboard tho
-                        //                        FancyButtonv2(
-                        //                            text: "Open",
-                        //                            icon: "arrow.right.square.fill",
-                        //                            showLabel: true,
-                        //                            size: .link,
-                        //                            type: .clear,
-                        //                            redirect: AnyView(JobDashboard(defaultSelectedJob: item)),
-                        //                            pageType: .jobs,
-                        //                            sidebar: AnyView(JobDashboardSidebar())
-                        //                        )
-                        FancyButtonv2(
-                            text: nav.session.job != nil ?
-                            (
-                                nav.session.job == item ? "Current job" : "Overwrite Active Job"
-                            ):
-                                "Set to Active Job",
-                            action: {nav.session.job = item},
-                            icon: "arrow.right.square.fill",
-                            showLabel: true,
-                            size: .link,
-                            type: .clear
-                        )
-                        .disabled(nav.session.job == item)
-                        .help(nav.session.job != nil ? "Current: \(nav.session.job!.jid)" : "Flags this as the current job on other pages and in widgets.")
+                    VStack(alignment: .leading) {
+                        HStack(alignment: .top, spacing: 10) {
+                            FancyButtonv2(
+                                text: "Open",
+                                action: {nav.session.search.cancel()},
+                                icon: "arrow.right.square.fill",
+                                showLabel: true,
+                                size: .link,
+                                type: .clear,
+                                redirect: AnyView(JobDashboard(defaultSelectedJob: item)),
+                                pageType: .jobs,
+                                sidebar: AnyView(JobDashboardSidebar())
+                            )
+
+                            FancyButtonv2(
+                                text: nav.session.job != nil ?
+                                (
+                                    nav.session.job == item ? "Current job" : "Overwrite Active Job"
+                                ):
+                                    "Set to Active Job",
+                                action: {nav.session.job = item},
+                                icon: "arrow.right.square.fill",
+                                showLabel: true,
+                                size: .link,
+                                type: .clear
+                            )
+                            .disabled(nav.session.job == item)
+                            .help(nav.session.job != nil ? "Current: \(nav.session.job!.jid)" : "Flags this as the current job on other pages and in widgets.")
+                        }
                     }
                 }
             }

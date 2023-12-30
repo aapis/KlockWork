@@ -134,9 +134,9 @@ extension FindDashboard {
                 ]
 
                 if publishedOnly.wrappedValue {
-                    req.predicate = NSPredicate(format: "alive == true && jid.stringValue BEGINSWITH %@", _searchText.wrappedValue)
+                    req.predicate = NSPredicate(format: "alive == true && (jid.stringValue BEGINSWITH %@ || jid.stringValue == %@)", _searchText.wrappedValue)
                 } else {
-                    req.predicate = NSPredicate(format: "jid.stringValue BEGINSWITH %@", _searchText.wrappedValue)
+                    req.predicate = NSPredicate(format: "(jid.stringValue BEGINSWITH %@ || jid.stringValue == %@)", _searchText.wrappedValue)
                 }
 
                 _items = FetchRequest(fetchRequest: req, animation: .easeInOut)

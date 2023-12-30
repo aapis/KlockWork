@@ -114,7 +114,6 @@ extension Today.PostingInterface {
                 PersistenceController.shared.save()
                 text = ""
                 nav.session.idate = DateHelper.identifiedDate(for: Date(), moc: moc)
-                nav.session.search.reset()
             } catch {
                 print("[error] Save error \(error)")
             }

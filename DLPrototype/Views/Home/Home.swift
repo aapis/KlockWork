@@ -200,7 +200,6 @@ struct Home: View {
                                     .navigationTitle(nav.pageTitle())
                                     .environmentObject(nav)
                                     .environmentObject(crm)
-                                    .environmentObject(jm)
                                     .environmentObject(ce)
                                     .environmentObject(cvm)
                                     .environmentObject(updater)

@@ -188,7 +188,6 @@ struct FindDashboard: View {
 
 extension FindDashboard {
     private func onSubmit() -> Void {
-        print("DERPO submit")
         if !activeSearchText.isEmpty {
             searching = true
         } else {

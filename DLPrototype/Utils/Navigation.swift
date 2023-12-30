@@ -160,6 +160,7 @@ public class Navigation: Identifiable, ObservableObject {
         self.setTitle(hp.title)
 
         self.history.push(hp: hp)
+        self.session.search.cancel()
     }
 
     public func reset() -> Void {
