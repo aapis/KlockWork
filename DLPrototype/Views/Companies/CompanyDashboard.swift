@@ -46,15 +46,8 @@ struct CompanyDashboard: View {
                         sidebar: AnyView(DefaultCompanySidebar())
                     )
                 }
-
                 About()
-
-                SearchBar(
-                    text: $searchText,
-                    disabled: false,
-                    placeholder: companies.count > 1 ? "Search \(companies.count) companies" : "Search 1 company"
-                )
-
+                FancyDivider()
                 recent
 
                 Spacer()

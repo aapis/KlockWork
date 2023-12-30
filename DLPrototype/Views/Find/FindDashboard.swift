@@ -68,29 +68,6 @@ struct FindDashboard: View {
                         .frame(height: 28)
                     }
                 }
-                .onChange(of: searchText) { searchQuery in
-                    if searchQuery.count >= 2 {
-                        onSubmit()
-                    } else {
-                        onReset()
-                    }
-                }
-                .onChange(of: activeSearchText) { searchQuery in
-                    nav.session.search.inspectingEntity = nil
-
-                    if searchQuery.isEmpty {
-                        onReset()
-                    }
-                }
-                .onChange(of: nav.session.search.inspectingEntity) { entity in
-                    if location == .sidebar {
-                        if entity != nil {
-                            nav.setInspector(AnyView(Inspector(entity: entity!)))
-                        } else {
-                            nav.setInspector()
-                        }
-                    }
-                }
             }
             
             if !searching && activeSearchText.count >= 2 {
@@ -176,38 +153,67 @@ struct FindDashboard: View {
                 } else {
                     FancyDivider()
                     FancyGenericToolbar(buttons: buttons, standalone: true, location: .content)
+                    Spacer()
                 }
             }
         }
         .onAppear(perform: actionOnAppear)
+        .onChange(of: searchText) { searchQuery in
+            if searchText != searchQuery {
+                if searchQuery.count >= 2 {
+                    onSubmit()
+                } else {
+                    onReset()
+                }
+            }
+        }
+        .onChange(of: activeSearchText) { searchQuery in
+            nav.session.search.inspectingEntity = nil
+
+            if searchQuery.isEmpty {
+                onReset()
+            }
+        }
+        .onChange(of: nav.session.search.inspectingEntity) { entity in
+            if location == .sidebar {
+                if entity != nil {
+                    nav.setInspector(AnyView(Inspector(entity: entity!)))
+                } else {
+                    nav.setInspector()
+                }
+            }
+        }
     }
 }
 
 extension FindDashboard {
     private func onSubmit() -> Void {
+        print("DERPO submit")
         if !activeSearchText.isEmpty {
             searching = true
         } else {
             searching = false
         }
-
-        if searching {
-            let parser = SearchLanguage.Parser(with: activeSearchText).parse()
-
-            if !parser.components.isEmpty {
-                nav.session.search.components = parser.components
+        
+        // Search appearing in other views should only provide suggestions due to lack of visual space
+        if location == .content {
+            if searching {
+                let parser = SearchLanguage.Parser(with: activeSearchText).parse()
+                
+                if !parser.components.isEmpty {
+                    nav.session.search.components = parser.components
+                }
+                
+                advancedSearchResults = nav.session.search.results()
+            } else {
+                advancedSearchResults = []
             }
             
-            advancedSearchResults = nav.session.search.results()
-        } else {
-            advancedSearchResults = []
+            nav.session.search.text = activeSearchText
+            createTabs()
         }
-        
-        nav.session.search.text = activeSearchText
-        searchText = activeSearchText
 
-        // @TODO: find best place to call/construct tabs! This loads data but locks UI
-        createTabs()
+        searchText = activeSearchText
         loading = false
     }
 
@@ -554,7 +560,7 @@ extension FindDashboard {
         
         init(_ text: String) {
             let jr: NSFetchRequest<Job> = Job.fetchRequest()
-            jr.predicate = NSPredicate(format: "(uri CONTAINS[c] %@ OR jid.string CONTAINS[c] %@) AND alive = true", text, text)
+            jr.predicate = NSPredicate(format: "(uri CONTAINS[c] %@ OR jid.stringValue BEGINSWITH %@) AND alive = true", text, text)
             jr.sortDescriptors = [
                 NSSortDescriptor(keyPath: \Job.created, ascending: false)
             ]

@@ -105,7 +105,6 @@
 		5372C02A2A105AA1008CB120 /* FancyChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5372C0292A105AA1008CB120 /* FancyChip.swift */; };
 		537368D124B93DB600193E88 /* Today.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537368D024B93DB600193E88 /* Today.swift */; };
 		53759E0829678DC700DCDC4B /* Import.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53759E0729678DC700DCDC4B /* Import.swift */; };
-		53759E0D2967ECAE00DCDC4B /* LogRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53759E0C2967ECAE00DCDC4B /* LogRecords.swift */; };
 		5376289B2966467100DE8ECF /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376289A2966467100DE8ECF /* SearchBar.swift */; };
 		5376289E29664F8C00DE8ECF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376289D29664F8C00DE8ECF /* Theme.swift */; };
 		537628A02966518B00DE8ECF /* ToolbarTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376289F2966518B00DE8ECF /* ToolbarTabs.swift */; };
@@ -319,7 +318,6 @@
 		5372C0292A105AA1008CB120 /* FancyChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyChip.swift; sourceTree = "<group>"; };
 		537368D024B93DB600193E88 /* Today.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Today.swift; sourceTree = "<group>"; };
 		53759E0729678DC700DCDC4B /* Import.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Import.swift; sourceTree = "<group>"; };
-		53759E0C2967ECAE00DCDC4B /* LogRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRecords.swift; sourceTree = "<group>"; };
 		5376289A2966467100DE8ECF /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		5376289D29664F8C00DE8ECF /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		5376289F2966518B00DE8ECF /* ToolbarTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarTabs.swift; sourceTree = "<group>"; };
@@ -902,7 +900,6 @@
 		53B940D72800A9CC0024AA5F /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				53759E0C2967ECAE00DCDC4B /* LogRecords.swift */,
 				53759E0B2967EC9600DCDC4B /* CoreData */,
 			);
 			path = Models;
@@ -1296,7 +1293,6 @@
 				53D5E29A2A85E38A00FE293A /* WidgetLocation.swift in Sources */,
 				53999C1F29669C4E00125E65 /* NoteCreate.swift in Sources */,
 				53E202682A802D0900B4DF70 /* ButtonSize.swift in Sources */,
-				53759E0D2967ECAE00DCDC4B /* LogRecords.swift in Sources */,
 				53959A212973D3E5007A2549 /* CoreDataProjectConfiguration.swift in Sources */,
 				5371BA402A7B866300DEEC21 /* TaskDashboardSidebar.swift in Sources */,
 				5330EEB7298B6418004FC38A /* JobRow.swift in Sources */,
