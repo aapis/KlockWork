@@ -9,11 +9,16 @@
 import Foundation
 import SwiftUI
 
-public struct IdentifiableDay: Identifiable, Equatable {
+public struct IdentifiableDay: Identifiable, Equatable, Hashable {
     public var id: UUID = UUID()
     public var string: String = ""
     public var date: Date?
     public var recordCount: Int = 0
+}
+
+public struct DateBounds {
+    public var upper: Date
+    public var lower: Date
 }
 
 final public class DateHelper {
@@ -99,8 +104,8 @@ final public class DateHelper {
         for i in 0...numDays {
             var components = DateComponents()
             components.day = -(1*i)
-            let computedDay = Calendar.current.date(byAdding: components, to: Date())
-            
+            let computedDay = Calendar.autoupdatingCurrent.date(byAdding: components, to: Date())
+
             if computedDay != nil {
                 let fmt = DateFormatter()
                 fmt.dateFormat = dateFormat
@@ -126,7 +131,7 @@ final public class DateHelper {
             components.day = -(1*i)
 
 
-            if let computedDay = Calendar.current.date(byAdding: components, to: Date()) {
+            if let computedDay = Calendar.autoupdatingCurrent.date(byAdding: components, to: Date()) {
                 let fmt = DateFormatter()
                 fmt.dateFormat = dateFormat
                 fmt.timeZone = TimeZone.autoupdatingCurrent
@@ -181,7 +186,22 @@ final public class DateHelper {
             Calendar.autoupdatingCurrent.date(byAdding: components, to: start)!
         )
     }
-    
+
+    static public func bounds(_ date: Date) -> DateBounds {
+        let start = Calendar.autoupdatingCurrent.startOfDay(for: date)
+        var sComponents = DateComponents()
+        sComponents.day = -7
+
+        let end = Calendar.autoupdatingCurrent.startOfDay(for: date)
+        var eComponents = DateComponents()
+        sComponents.day = +7
+
+        return DateBounds(
+            upper: Calendar.autoupdatingCurrent.date(byAdding: sComponents, to: start)!,
+            lower: Calendar.autoupdatingCurrent.date(byAdding: eComponents, to: end)!
+        )
+    }
+
     static public func dayAtStartAndEndOfMonth() -> (CVarArg, CVarArg)? {
         let calendar = Calendar.autoupdatingCurrent
         let today = Date()

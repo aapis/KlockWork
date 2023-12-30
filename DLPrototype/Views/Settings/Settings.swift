@@ -14,8 +14,9 @@ struct SettingsView: View {
         case general, today, advanced, dashboard, notedashboard
     }
 
+    @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
+
     @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var ce: CoreDataCalendarEvent
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {

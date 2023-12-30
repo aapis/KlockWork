@@ -65,16 +65,24 @@ struct FancyGenericToolbar: View {
         VStack(spacing: location == .content ? 8 : 0) {
             GridRow {
                 Group {
-                    if mode == .full {
-                        Full(buttons: buttons, location: location, selected: $selected)
-                    } else {
-                        Compact(buttons: buttons, location: location, selected: $selected)
+                    ZStack(alignment: .topLeading) {
+                        (location == .sidebar ? .clear : Theme.toolbarColour)
+
+                        HStack(spacing: 1) {
+                            ForEach(buttons, id: \ToolbarButton.id) { button in
+                                TabView(
+                                    button: button,
+                                    location: location,
+                                    selected: $selected,
+                                    mode: mode
+                                )
+                            }
+                        }
                     }
                 }
             }
             .frame(height: 33)
-            
-        
+
             GridRow {
                 Group {
                     ZStack(alignment: .leading) {
@@ -96,83 +104,73 @@ struct FancyGenericToolbar: View {
         }
     }
 
-    struct Compact: View {
-        public var buttons: [ToolbarButton]
+    struct TabView: View {
+        public var button: ToolbarButton
         public var location: WidgetLocation
         @Binding public var selected: Int
-        
-        @EnvironmentObject public var nav: Navigation
+        public var mode: ToolbarMode
 
+        @State private var highlighted: Bool = false
+        
         var body: some View {
-            ZStack(alignment: .leading) {
-                (location == .sidebar ? .clear : Theme.toolbarColour)
-                
-                HStack(spacing: 1) {
-                    ForEach(buttons, id: \ToolbarButton.id) { button in
-                        Button(action: {setActive(button)}) {
-                            ZStack(alignment: .center) {
-                                (selected == button.id ? (location == .sidebar ? Theme.base.opacity(0.2) : Theme.tabActiveColour) : Theme.tabColour)
-                                
-                                if selected != button.id && location == .content {
-                                    VStack {
-                                        Spacer()
-                                        UIGradient()
-                                    }
-                                }
-                                
-                                button.icon
-                                    .padding(location == .sidebar ? 0 : 16)
-                            }
-                        }
-                        .buttonStyle(.borderless)
-                        .foregroundColor(Color.white)
-                        .help(button.helpText)
-                        .frame(width: location == .sidebar ? 40 : 60)
-                        .useDefaultHover({_ in})
-                    }
+            if location == .sidebar {
+                if mode == .compact {
+                    ButtonView.frame(width: 40)
+                } else {
+                    ButtonView
+                }
+            } else {
+                if mode == .compact {
+                    ButtonView.frame(width: 60)
+                } else {
+                    ButtonView
                 }
             }
         }
-    }
-    
-    struct Full: View {
-        public var buttons: [ToolbarButton]
-        public var location: WidgetLocation
-        @Binding public var selected: Int
-        
-        @EnvironmentObject public var nav: Navigation
 
-        var body: some View {
-            ZStack(alignment: .leading) {
-                (location == .sidebar ? .clear : Theme.toolbarColour)
-                
-                HStack(spacing: 1) {
-                    ForEach(buttons, id: \ToolbarButton.id) { button in
-                        Button(action: {setActive(button)}) {
-                            ZStack(alignment: .leading) {
-                                (selected == button.id ? (location == .sidebar ? Theme.base.opacity(0.2) : Theme.tabActiveColour) : Theme.tabColour)
-                                
-                                if selected != button.id && location == .content {
-                                    VStack {
-                                        Spacer()
-                                        UIGradient()
-                                    }
-                                }
-                                
-                                button.label
-                                    .padding(location == .sidebar ? 0 : 16)
-                            }
+        var ButtonView: some View {
+            Button(action: {setActive(button)}) {
+                ZStack(alignment: mode == .compact ? .center : .leading) {
+                    (
+                        selected == button.id ?
+                        (
+                            location == .sidebar ? Theme.base.opacity(0.2) : Theme.tabActiveColour
+                        )
+                        :
+                        (
+                            highlighted ? Theme.base.opacity(0.2) : Theme.tabColour
+                        )
+                    )
+
+                    if selected != button.id && location == .content {
+                        VStack {
+                            Spacer()
+                            UIGradient()
                         }
-                        .buttonStyle(.borderless)
-                        .foregroundColor(Color.white)
-                        .help(button.helpText)
-                        .useDefaultHover({_ in})
+                    }
+                    
+                    if location == .sidebar {
+                        if mode == .compact {
+                            button.icon.padding(0)
+                        } else {
+                            button.label.padding(0)
+                        }
+                    } else {
+                        if mode == .compact {
+                            button.icon.padding(16)
+                        } else {
+                            button.label.padding(16)
+                        }
                     }
                 }
             }
+            .buttonStyle(.borderless)
+            .foregroundColor(Color.white)
+            .help(button.helpText)
+            .useDefaultHover({ hover in highlighted = hover})
         }
     }
-    
+
     struct UIGradient: View {
         var body: some View {
             LinearGradient(gradient: Gradient(colors: [.clear, .black]), startPoint: .top, endPoint: .bottom)
@@ -183,13 +181,7 @@ struct FancyGenericToolbar: View {
     }
 }
 
-extension FancyGenericToolbar.Full {
-    private func setActive(_ button: ToolbarButton) -> Void {
-        selected = button.id
-    }
-}
-
-extension FancyGenericToolbar.Compact {
+extension FancyGenericToolbar.TabView {
     private func setActive(_ button: ToolbarButton) -> Void {
         selected = button.id
     }

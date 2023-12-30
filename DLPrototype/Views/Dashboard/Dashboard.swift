@@ -17,12 +17,13 @@ struct Dashboard: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var crm: CoreDataRecords
-    @EnvironmentObject public var ce: CoreDataCalendarEvent
+    @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
     @EnvironmentObject public var updater: ViewUpdater
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Header()
+                .environmentObject(ce)
                 .environmentObject(updater)
 
             VStack(alignment: .leading, spacing: 0) {
@@ -40,7 +41,6 @@ struct Dashboard: View {
                 if !searching {
                     Widgets()
                         .environmentObject(crm)
-                        .environmentObject(ce)
                 }
             }
             .font(Theme.font)

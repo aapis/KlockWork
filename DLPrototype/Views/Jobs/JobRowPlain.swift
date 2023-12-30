@@ -15,18 +15,31 @@ struct JobRowPlain: View {
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
 
+    // @TODO: this view and JobRowPicker are basically identical. Prune the duplicate
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             project
             ZStack(alignment: .topLeading) {
-                Color.fromStored(job.colour ?? Theme.rowColourAsDouble)
-                SidebarItem(
-                    data: job.jid.string,
-                    help: "Edit job \(job.jid.string)",
-                    icon: "arrowshape.right",
-                    orientation: .right,
-                    action: action
-                )
+                job.colour_from_stored()
+                HStack(spacing: 0) {
+                    if let sessionJob = nav.session.job {
+                        if job == sessionJob {
+                            FancyStar(background: sessionJob.colour_from_stored())
+                                .padding(.leading, 10)
+                                .help("Records you create will be associated with this job (#\(job.jid.string))")
+                        }
+                    }
+                    
+                    SidebarItem(
+                        data: job.jid.string,
+                        help: "Edit job \(job.jid.string)",
+                        icon: "arrowshape.right",
+                        orientation: .right,
+                        action: action,
+                        showBorder: false
+                    )
+                    .foregroundColor(job.colour != nil && job.colour_from_stored().isBright() ? .black : .white)
+                }
             }
         }
     }
@@ -50,7 +63,7 @@ struct JobRowPlain: View {
 extension JobRowPlain {
     private func action() -> Void {
         switch location {
-        case .sidebar, .header, .taskbar:
+        case .sidebar, .header, .taskbar, .inspector:
             actionOpenJob()
         case .content:
             actionUpdatePlanningStore()
@@ -58,12 +71,23 @@ extension JobRowPlain {
     }
 
     private func actionOpenJob() -> Void {
-        nav.reset()
         nav.setId()
-        nav.setParent(.jobs)
-        nav.session.setJob(job)
-        nav.setView(AnyView(JobDashboard(defaultSelectedJob: job)))
-        nav.setSidebar(AnyView(JobDashboardSidebar()))
+
+        if let parent = nav.parent {
+            if parent == .jobs {
+                nav.setParent(.jobs)
+                nav.session.setJob(job)
+                nav.setView(AnyView(JobDashboard(defaultSelectedJob: job)))
+                nav.setSidebar(AnyView(JobDashboardSidebar()))
+            } else if parent == .planning {
+                actionUpdatePlanningStore()
+            } else {
+                nav.setParent(.today)
+                nav.session.setJob(job)
+                nav.setView(AnyView(Today()))
+                nav.setSidebar(AnyView(TodaySidebar()))
+            }
+        }
     }
 
     private func actionUpdatePlanningStore() -> Void {

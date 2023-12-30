@@ -251,10 +251,9 @@ extension Today.LogTable {
         
         /// A list of events pulled from the user's connected calendar
         public struct Calendar: View {
+            @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
             // @TODO: needed?
             //        @State private var searchText: String = ""
-            
-            @EnvironmentObject public var ce: CoreDataCalendarEvent
             
             var body: some View {
                 CalendarToday().environmentObject(ce)
@@ -268,7 +267,6 @@ extension Today.LogTable.TabContent.Chronologic {
     private func findRecords(for date: Date) -> Void {
         DispatchQueue.with(background: {
             return CoreDataRecords(moc: moc).forDate(date)
-            
         }, completion: { recordsForToday in
             self.records = recordsForToday!
         })
@@ -277,7 +275,6 @@ extension Today.LogTable.TabContent.Chronologic {
     private func findRecords() -> Void {
         DispatchQueue.with(background: {
             return CoreDataRecords(moc: moc).forDate(nav.session.date)
-            
         }, completion: { recordsForToday in
             self.records = recordsForToday!
         })
@@ -288,7 +285,6 @@ extension Today.LogTable.TabContent.Grouped {
     private func findRecords(for date: Date) -> Void {
         DispatchQueue.with(background: {
             return CoreDataRecords(moc: moc).forDate(date)
-            
         }, completion: { recordsForToday in
             self.records = recordsForToday!
             grouped = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(self.records)
@@ -298,7 +294,6 @@ extension Today.LogTable.TabContent.Grouped {
     private func findRecords() -> Void {
         DispatchQueue.with(background: {
             return CoreDataRecords(moc: moc).forDate(nav.session.date)
-            
         }, completion: { recordsForToday in
             self.records = recordsForToday!
             grouped = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(self.records)
@@ -310,7 +305,6 @@ extension Today.LogTable.TabContent.Summarized {
     private func findRecords(for date: Date) -> Void {
         DispatchQueue.with(background: {
             return CoreDataRecords(moc: moc).forDate(date)
-            
         }, completion: { recordsForToday in
             self.records = recordsForToday!
         })
@@ -319,7 +313,6 @@ extension Today.LogTable.TabContent.Summarized {
     private func findRecords() -> Void {
         DispatchQueue.with(background: {
             return CoreDataRecords(moc: moc).forDate(nav.session.date)
-            
         }, completion: { recordsForToday in
             self.records = recordsForToday!
         })

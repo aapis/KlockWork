@@ -41,7 +41,7 @@ extension Today {
                         HStack(spacing: 5) {
                             Spacer()
                             FancyButtonv2(
-                                text: nav.session.job != nil ? "Log to job \(nav.session.job!.jid.string)" : "Log",
+                                text: "Reset interface to default state",
                                 action: clearAction,
                                 icon: "arrow.clockwise",
                                 fgColour: nav.session.job != nil ? Color.fromStored(nav.session.job!.colour!).isBright() ? .black : .white : .white,
@@ -91,21 +91,35 @@ extension Today {
 extension Today.PostingInterface {
     private func submitAction() -> Void {
         if !text.isEmpty && nav.session.job != nil {
+            Task {
+                await self.save()
+            }
+        } else {
+            print("[error] Message, job ID OR task URL are required to submit")
+        }
+    }
+
+    private func save() async -> Void {
+        if let job = nav.session.job {
             let record = LogRecord(context: moc)
             record.timestamp = Date()
             record.message = text
             record.alive = true
             record.id = UUID()
-            record.job = nav.session.job
+            record.job = job
+            
+            do {
+                try record.validateForInsert()
 
-            nav.session.idate = DateHelper.identifiedDate(for: record.timestamp!, moc: moc)
-            text = ""
-            PersistenceController.shared.save()
-        } else {
-            print("[error] Message, job ID OR task URL are required to submit")
+                PersistenceController.shared.save()
+                text = ""
+                nav.session.idate = DateHelper.identifiedDate(for: Date(), moc: moc)
+            } catch {
+                print("[error] Save error \(error)")
+            }
         }
     }
-    
+
     private func clearAction() -> Void {
         text = ""
         nav.session.job = nil

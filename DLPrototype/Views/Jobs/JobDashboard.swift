@@ -11,8 +11,9 @@ import SwiftUI
 struct JobDashboard: View {
     var defaultSelectedJob: Job?
 
+    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
+
     @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var jm: CoreDataJob
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
 

@@ -92,9 +92,6 @@ struct DateSelectorWidget: View {
             }
         }
         .onAppear(perform: actionOnAppear)
-        .onChange(of: nav.session.idate) { _ in
-            actionOnAppear()
-        }
     }
 
     @ViewBuilder private var SecondaryOpenButton: some View {

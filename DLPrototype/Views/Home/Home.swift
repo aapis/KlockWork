@@ -12,9 +12,8 @@ struct Home: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var nav: Navigation
-    @EnvironmentObject public var ce: CoreDataCalendarEvent
     
-    @StateObject public var rm: LogRecords = LogRecords(moc: PersistenceController.shared.container.viewContext)
+    // @TODO: don't set these here, set them on the individual views directly
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
     @StateObject public var pr: CoreDataProjects = CoreDataProjects(moc: PersistenceController.shared.container.viewContext)
@@ -131,10 +130,8 @@ struct Home: View {
                         ZStack {
                             nav.view
                                 .environmentObject(nav)
-                                .environmentObject(rm)
                                 .environmentObject(crm)
                                 .environmentObject(jm)
-                                .environmentObject(ce)
                                 .environmentObject(cvm)
                                 .environmentObject(updater)
                                 .disabled(true)
@@ -200,10 +197,7 @@ struct Home: View {
                                 nav.view
                                     .navigationTitle(nav.pageTitle())
                                     .environmentObject(nav)
-                                    .environmentObject(rm)
                                     .environmentObject(crm)
-                                    .environmentObject(jm)
-                                    .environmentObject(ce)
                                     .environmentObject(cvm)
                                     .environmentObject(updater)
                             }

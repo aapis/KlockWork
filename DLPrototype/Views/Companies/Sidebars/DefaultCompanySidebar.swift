@@ -10,6 +10,7 @@ import SwiftUI
 
 struct DefaultCompanySidebar: View {
     @State private var tabs: [ToolbarButton] = []
+    @State private var searching: Bool = false
 
     @EnvironmentObject public var nav: Navigation
 
@@ -39,6 +40,23 @@ extension DefaultCompanySidebar {
                 ),
                 contents: AnyView(OutlineWidget())
             ),
+            ToolbarButton(
+                id: 1,
+                helpText: "Search",
+                label: AnyView(
+                    HStack {
+                        Image(systemName: "magnifyingglass").padding(.leading)
+                        Text("Search")
+                    }
+                ),
+                contents: AnyView(
+                    VStack(alignment: .leading) {
+                        FindDashboard(searching: $searching, location: .sidebar)
+                    }
+                    .padding(8)
+                    .background(Theme.base.opacity(0.2))
+                )
+            )
         ]
     }
 }

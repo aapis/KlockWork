@@ -80,7 +80,7 @@ public enum PageGroup: Hashable {
 }
 
 public class Navigation: Identifiable, ObservableObject {
-    public var id: UUID = UUID()
+    public let id: UUID = UUID()
 
     @Published public var moc: NSManagedObjectContext = PersistenceController.shared.container.viewContext
     @Published public var view: AnyView? = AnyView(Dashboard())
@@ -157,9 +157,9 @@ public class Navigation: Identifiable, ObservableObject {
         self.setView(hp.view)
         self.setParent(page)
         self.setSidebar(hp.sidebar)
-        self.setTitle(hp.title)
 
         self.history.push(hp: hp)
+        self.session.search.cancel()
     }
 
     public func reset() -> Void {
