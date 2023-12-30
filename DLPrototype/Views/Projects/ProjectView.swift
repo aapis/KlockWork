@@ -31,15 +31,15 @@ struct ProjectView: View {
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
-    @EnvironmentObject public var jobModel: CoreDataJob
+    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @EnvironmentObject public var nav: Navigation
     
     private var all: [Job] {
-        jobModel.all()
+        jm.all()
     }
     
     private var unownedJobs: [Job] {
-        jobModel.unowned()
+        jm.unowned()
     }
     
     // MARK: body view
@@ -517,7 +517,7 @@ extension ProjectView {
     }
 
     public func onAppear() -> Void {
-        allUnOwned = jobModel.unowned()
+        allUnOwned = jm.unowned()
         name = project.name!
         created = project.created!
 
