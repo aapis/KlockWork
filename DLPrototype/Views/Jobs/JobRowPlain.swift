@@ -19,7 +19,13 @@ struct JobRowPlain: View {
         HStack(alignment: .top, spacing: 0) {
             project
             ZStack(alignment: .topLeading) {
-                Color.fromStored(job.colour ?? Theme.rowColourAsDouble)
+                job.colour_from_stored()
+                if let sessionJob = nav.session.job {
+                    if job == sessionJob {
+                        FancyStar()
+                    }
+                }
+
                 SidebarItem(
                     data: job.jid.string,
                     help: "Edit job \(job.jid.string)",
