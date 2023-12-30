@@ -13,7 +13,6 @@ struct DLPrototype: App {
     private let persistenceController = PersistenceController.shared
     @StateObject public var updater: ViewUpdater = ViewUpdater()
     @StateObject public var nav: Navigation = Navigation()
-    @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
     
     @State private var searching: Bool = false
     
@@ -25,7 +24,6 @@ struct DLPrototype: App {
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(updater)
                 .environmentObject(nav)
-                .environmentObject(ce)
                 .onAppear(perform: onAppear)
                 .defaultAppStorage(.standard)
                 .onChange(of: scenePhase) { phase in
@@ -46,7 +44,6 @@ struct DLPrototype: App {
         Settings {
             SettingsView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                .environmentObject(ce)
                 .environmentObject(nav)
         }
         

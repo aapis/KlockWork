@@ -12,7 +12,6 @@ struct Home: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var nav: Navigation
-    @EnvironmentObject public var ce: CoreDataCalendarEvent
     
     // @TODO: don't set these here, set them on the individual views directly
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
@@ -133,7 +132,6 @@ struct Home: View {
                                 .environmentObject(nav)
                                 .environmentObject(crm)
                                 .environmentObject(jm)
-                                .environmentObject(ce)
                                 .environmentObject(cvm)
                                 .environmentObject(updater)
                                 .disabled(true)
@@ -200,7 +198,6 @@ struct Home: View {
                                     .navigationTitle(nav.pageTitle())
                                     .environmentObject(nav)
                                     .environmentObject(crm)
-                                    .environmentObject(ce)
                                     .environmentObject(cvm)
                                     .environmentObject(updater)
                             }

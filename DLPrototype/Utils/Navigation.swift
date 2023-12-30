@@ -157,7 +157,6 @@ public class Navigation: Identifiable, ObservableObject {
         self.setView(hp.view)
         self.setParent(page)
         self.setSidebar(hp.sidebar)
-        self.setTitle(hp.title)
 
         self.history.push(hp: hp)
         self.session.search.cancel()
