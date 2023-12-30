@@ -159,7 +159,7 @@ struct FancyGenericToolbar: View {
                         if mode == .compact {
                             button.icon.padding(16)
                         } else {
-                            button.label.padding(0)
+                            button.label.padding(16)
                         }
                     }
                 }
