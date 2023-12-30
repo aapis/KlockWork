@@ -123,24 +123,26 @@ extension FindDashboard {
                     }
                     
                     if let uri = item.uri {
-                        HStack(alignment: .top, spacing: 10) {
-                            Image(systemName: "link").symbolRenderingMode(.hierarchical)
-                            Link(destination: uri, label: {
-                                Text(uri.absoluteString)
-                            })
-                            .help("Open in browser")
-                            .underline()
-                            .useDefaultHover({_ in})
-                            .contextMenu {
-                                Button {
-                                    ClipboardHelper.copy(uri.absoluteString)
-                                } label: {
-                                    Text("Copy to clipboard")
+                        VStack(alignment: .leading) {
+                            HStack(alignment: .top, spacing: 10) {
+                                Image(systemName: "link").symbolRenderingMode(.hierarchical)
+                                Link(destination: uri, label: {
+                                    Text(uri.absoluteString)
+                                })
+                                .help("Open in browser")
+                                .underline()
+                                .useDefaultHover({_ in})
+                                .contextMenu {
+                                    Button {
+                                        ClipboardHelper.copy(uri.absoluteString)
+                                    } label: {
+                                        Text("Copy to clipboard")
+                                    }
                                 }
+                                Spacer()
                             }
-                            Spacer()
+                            Divider()
                         }
-                        Divider()
                     }
                     
                     HStack(alignment: .top, spacing: 10) {

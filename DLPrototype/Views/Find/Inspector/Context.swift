@@ -11,9 +11,10 @@ import SwiftUI
 extension FindDashboard.Inspector {
     public struct Context<T>: View {
         public var item: T
-        private var days: [IdentifiableDay] = []
-        
+        private var references: Set<Date> = []
+
         @Environment(\.managedObjectContext) var moc
+        @EnvironmentObject private var nav: Navigation
 
         var body: some View {
             VStack(alignment: .leading) {
@@ -23,12 +24,31 @@ extension FindDashboard.Inspector {
                     Spacer()
                 }
                 
-                VStack(alignment: .leading) {
-                    Divider()
-                    Text("\(days.count) Days containing entries")
-                    
-                    ForEach(days) { day in
-                        Text(day.string)
+                if references.count > 0 {
+                    VStack(alignment: .leading) {
+                        Divider()
+                        HStack {
+                            Text("\(references.count) reference(s) in Records")
+                                .padding(5)
+                        }
+                        Divider()
+                        ForEach(Array(references).sorted(by: {$0 >= $1}).prefix(10), id: \.self) { day in
+                            FancyButtonv2(
+                                text: day.formatted(date: .complete, time: .omitted),
+                                action: {actionOnClick(day)},
+                                icon: "arrow.right.square.fill",
+                                fgColour: .white,
+                                showIcon: true,
+                                size: .link
+                            )
+                            .help("Open day")
+                        }
+                        Divider()
+                    }
+                } else {
+                    HStack {
+                        Text("No references in Records")
+                            .padding(5)
                     }
                 }
             }
@@ -36,32 +56,36 @@ extension FindDashboard.Inspector {
         
         init(item: T) {
             self.item = item
-            var days: [IdentifiableDay] = []
-            
+
             switch item {
             case is Job:
-                if let records = (item as! Job).records {
-//                    let sequence = Array(records)
-//                    let groupedRecords = Dictionary(grouping: sequence, by: {($0 as! LogRecord).job!})
+                let job = (item as! Job)
+                if let records = job.records {
                     for record in records {
                         let tRecord = record as! LogRecord
-                        //                    print("DERPO record=\(tRecord)")
-                        
+
                         if let timestamp = tRecord.timestamp {
-                            days.append(
-                                IdentifiableDay(
-                                    string: timestamp.formatted(),
-                                    date: timestamp,
-                                    recordCount: 0
-                                )
-                            )
+                            let calendar = Calendar.autoupdatingCurrent
+                            let components = calendar.dateComponents([.day], from: timestamp)
+
+                            if !references.contains(where: {
+                                let co = calendar.dateComponents([.day], from: $0)
+                                return co.day == components.day
+                            }) {
+                                references.insert(timestamp)
+                            }
                         }
                     }
                 }
             default: print("DERPO failure")
             }
-            
-            print("DERPO days.count=\(days.count)")
         }
+    }
+}
+
+extension FindDashboard.Inspector.Context {
+    private func actionOnClick(_ day: Date) -> Void {
+        nav.session.date = day
+        nav.session.search.cancel()
     }
 }
