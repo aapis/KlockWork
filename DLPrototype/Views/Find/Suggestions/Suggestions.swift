@@ -100,7 +100,7 @@ extension FindDashboard {
                                             Spacer()
                                             FancyButtonv2(
                                                 text: item.jid.string,
-                                                action: {nav.session.setJob(item)},
+                                                action: {nav.session.job = item},
                                                 icon: "arrow.right.square.fill",
                                                 fgColour: .white,
                                                 showLabel: false,
@@ -130,9 +130,9 @@ extension FindDashboard {
                 ]
 
                 if publishedOnly.wrappedValue {
-                    req.predicate = NSPredicate(format: "alive = true && jid.string BEGINSWITH %@", _searchText.wrappedValue)
+                    req.predicate = NSPredicate(format: "alive = true && jid == %@", _searchText.wrappedValue)
                 } else {
-                    req.predicate = NSPredicate(format: "jid.string BEGINSWITH %@", _searchText.wrappedValue)
+                    req.predicate = NSPredicate(format: "jid == %@", _searchText.wrappedValue)
                 }
                 
                 _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
