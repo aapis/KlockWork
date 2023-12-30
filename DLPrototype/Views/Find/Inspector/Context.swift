@@ -27,87 +27,91 @@ extension FindDashboard.Inspector {
                     Spacer()
                 }
                 
-                if recordReferences.count > 0 {
+                ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading) {
-                        Divider()
-                        HStack {
-                            Text("\(recordReferences.count) reference(s) in Records")
-                                .padding(5)
+                        if recordReferences.count > 0 {
+                            VStack(alignment: .leading) {
+                                Divider()
+                                HStack {
+                                    Text("\(recordReferences.count) reference(s) in Records")
+                                        .padding(5)
+                                }
+                                Divider()
+                                ForEach(Array(recordReferences).sorted(by: {$0 >= $1}).prefix(10), id: \.self) { day in
+                                    FancyButtonv2(
+                                        text: day.formatted(date: .complete, time: .omitted),
+                                        action: {actionOnClick(day)},
+                                        icon: "arrow.right.square.fill",
+                                        fgColour: .white,
+                                        showIcon: true,
+                                        size: .link
+                                    )
+                                    .help("Open day")
+                                }
+                            }
+                        } else {
+                            Divider()
+                            HStack {
+                                Text("No referenced Records")
+                                    .padding(5)
+                            }
                         }
-                        Divider()
-                        ForEach(Array(recordReferences).sorted(by: {$0 >= $1}).prefix(10), id: \.self) { day in
-                            FancyButtonv2(
-                                text: day.formatted(date: .complete, time: .omitted),
-                                action: {actionOnClick(day)},
-                                icon: "arrow.right.square.fill",
-                                fgColour: .white,
-                                showIcon: true,
-                                size: .link
-                            )
-                            .help("Open day")
+                        
+                        if planReferences.count > 0 {
+                            VStack(alignment: .leading) {
+                                Divider()
+                                HStack {
+                                    Text("\(planReferences.count) referenced Plan(s)")
+                                        .padding(5)
+                                }
+                                Divider()
+                                ForEach(Array(planReferences).sorted(by: {$0 >= $1}).prefix(10), id: \.self) { day in
+                                    FancyButtonv2(
+                                        text: day.formatted(date: .complete, time: .omitted),
+                                        action: {actionShowPlan(day)},
+                                        icon: "arrow.right.square.fill",
+                                        fgColour: .white,
+                                        showIcon: true,
+                                        size: .link
+                                    )
+                                    .help("Show plan")
+                                }
+                            }
+                        } else {
+                            Divider()
+                            HStack {
+                                Text("No referenced Plans")
+                                    .padding(5)
+                            }
                         }
-                    }
-                } else {
-                    Divider()
-                    HStack {
-                        Text("No referenced Records")
-                            .padding(5)
-                    }
-                }
-
-                if planReferences.count > 0 {
-                    VStack(alignment: .leading) {
-                        Divider()
-                        HStack {
-                            Text("\(planReferences.count) referenced Plan(s)")
-                                .padding(5)
+                        
+                        if noteReferences.count > 0 {
+                            VStack(alignment: .leading) {
+                                Divider()
+                                HStack {
+                                    Text("\(noteReferences.count) referenced Note(s)")
+                                        .padding(5)
+                                }
+                                Divider()
+                                ForEach(Array(noteReferences).prefix(10), id: \.self) { note in
+                                    FancyButtonv2(
+                                        text: note.title ?? "No title",
+                                        action: {actionShowNote(note)},
+                                        icon: "arrow.right.square.fill",
+                                        fgColour: .white,
+                                        showIcon: true,
+                                        size: .link
+                                    )
+                                    .help("Open note")
+                                }
+                            }
+                        } else {
+                            Divider()
+                            HStack {
+                                Text("No referenced Notes")
+                                    .padding(5)
+                            }
                         }
-                        Divider()
-                        ForEach(Array(planReferences).sorted(by: {$0 >= $1}).prefix(10), id: \.self) { day in
-                            FancyButtonv2(
-                                text: day.formatted(date: .complete, time: .omitted),
-                                action: {actionShowPlan(day)},
-                                icon: "arrow.right.square.fill",
-                                fgColour: .white,
-                                showIcon: true,
-                                size: .link
-                            )
-                            .help("Show plan")
-                        }
-                    }
-                } else {
-                    Divider()
-                    HStack {
-                        Text("No referenced Plans")
-                            .padding(5)
-                    }
-                }
-
-                if noteReferences.count > 0 {
-                    VStack(alignment: .leading) {
-                        Divider()
-                        HStack {
-                            Text("\(noteReferences.count) referenced Note(s)")
-                                .padding(5)
-                        }
-                        Divider()
-                        ForEach(Array(noteReferences).prefix(10), id: \.self) { note in
-                            FancyButtonv2(
-                                text: note.title ?? "No title",
-                                action: {actionShowNote(note)},
-                                icon: "arrow.right.square.fill",
-                                fgColour: .white,
-                                showIcon: true,
-                                size: .link
-                            )
-                            .help("Open note")
-                        }
-                    }
-                } else {
-                    Divider()
-                    HStack {
-                        Text("No referenced Notes")
-                            .padding(5)
                     }
                 }
             }
