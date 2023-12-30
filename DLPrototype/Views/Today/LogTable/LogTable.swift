@@ -251,10 +251,9 @@ extension Today.LogTable {
         
         /// A list of events pulled from the user's connected calendar
         public struct Calendar: View {
+            @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
             // @TODO: needed?
             //        @State private var searchText: String = ""
-            
-            @EnvironmentObject public var ce: CoreDataCalendarEvent
             
             var body: some View {
                 CalendarToday().environmentObject(ce)

@@ -9,5 +9,5 @@
 import SwiftUI
 
 public enum WidgetLocation {
-    case sidebar, content, header, taskbar
+    case sidebar, content, header, taskbar, inspector
 }

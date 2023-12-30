@@ -12,7 +12,6 @@ struct Today: View {
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
-    @EnvironmentObject public var ce: CoreDataCalendarEvent
 
     @FocusState private var primaryTextFieldInFocus: Bool
     
@@ -21,8 +20,6 @@ struct Today: View {
         VStack(alignment: .leading) {
             PostingInterface()
             LogTable()
-                .environmentObject(ce)
-                .environmentObject(nav)
         }
         .padding()
         .background(Theme.toolbarColour)

@@ -18,11 +18,11 @@ struct JobRowPicker: View {
         HStack(alignment: .top, spacing: 0) {
             project
             ZStack(alignment: .topLeading) {
-                Color.fromStored(job.colour ?? Theme.rowColourAsDouble)
-                HStack {
+                job.colour_from_stored()
+                HStack(spacing: 0) {
                     if let jerb = nav.session.job {
                         if jerb == job {
-                            FancyStar(background: Color.fromStored(jerb.colour ?? Theme.rowColourAsDouble))
+                            FancyStar(background: jerb.colour_from_stored())
                                 .padding(.leading, 10)
                                 .help("Records you create will be associated with this job (#\(job.jid.string))")
                         }
@@ -36,7 +36,7 @@ struct JobRowPicker: View {
                         action: action,
                         showBorder: false
                     )
-                    .foregroundColor(job.colour != nil && Color.fromStored(job.colour!).isBright() ? .black : .white)
+                    .foregroundColor(job.colour != nil && job.colour_from_stored().isBright() ? .black : .white)
                 }
             }
         }
@@ -61,7 +61,7 @@ struct JobRowPicker: View {
 extension JobRowPicker {
     private func action() -> Void {
         switch location {
-        case .sidebar, .header, .taskbar:
+        case .sidebar, .header, .taskbar, .inspector:
             actionOpenJob()
         case .content:
             actionUpdatePlanningStore()
@@ -69,10 +69,23 @@ extension JobRowPicker {
     }
 
     private func actionOpenJob() -> Void {
-        nav.setParent(.today)
-        nav.session.setJob(job)
-        nav.setView(AnyView(Today()))
-        nav.setSidebar(AnyView(TodaySidebar()))
+        nav.setId()
+
+        if let parent = nav.parent {
+            if parent == .jobs {
+                nav.setParent(.jobs)
+                nav.session.setJob(job)
+                nav.setView(AnyView(JobDashboard(defaultSelectedJob: job)))
+                nav.setSidebar(AnyView(JobDashboardSidebar()))
+            } else if parent == .planning {
+                actionUpdatePlanningStore()
+            } else {
+                nav.setParent(.today)
+                nav.session.setJob(job)
+                nav.setView(AnyView(Today()))
+                nav.setSidebar(AnyView(TodaySidebar()))
+            }
+        }
     }
 
     private func actionUpdatePlanningStore() -> Void {

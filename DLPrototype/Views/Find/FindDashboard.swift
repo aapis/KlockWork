@@ -26,21 +26,48 @@ struct FindDashboard: View {
     @State private var advancedSearchResults: [SearchLanguage.Results.Result] = []
     @State private var buttons: [ToolbarButton] = []
     @State private var loading: Bool = false
+    @State private var showingTypes: Bool = false
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var jm: CoreDataJob
     @EnvironmentObject public var nav: Navigation
 
+    private var columns: [GridItem] {
+        Array(repeating: .init(.flexible(minimum: 100)), count: 2)
+    }
+
     var body: some View {
         Grid(alignment: .topLeading, horizontalSpacing: 0, verticalSpacing: 1) {
             GridRow {
-                SearchBar(
-                    text: $activeSearchText,
-                    disabled: false,
-                    placeholder: location == .content ? "Search \(counts.0) records, \(counts.1) jobs, \(counts.2) tasks and \(counts.3) projects" : "Search for anything",
-                    onSubmit: onSubmit,
-                    onReset: onReset
-                )
+                ZStack(alignment: .topLeading) {
+                    SearchBar(
+                        text: $activeSearchText,
+                        disabled: false,
+                        placeholder: location == .content ? "Search \(counts.0) records, \(counts.1) jobs, \(counts.2) tasks and \(counts.3) projects" : "Search for anything",
+                        onSubmit: onSubmit,
+                        onReset: onReset
+                    )
+
+                    if activeSearchText.count == 0 {
+                        VStack(alignment: .trailing) {
+                            Spacer()
+                            HStack(spacing: 5) {
+                                Spacer()
+                                FancyButtonv2(
+                                    text: "Entities",
+                                    action: {showingTypes.toggle()},
+                                    icon: showingTypes ? "arrow.up.square.fill" : "arrow.down.square.fill",
+                                    showLabel: false,
+                                    size: .tiny,
+                                    type: .clear
+                                )
+                                .help("Choose the entities you want to search")
+                                .padding(.trailing, 15)
+                            }
+                        }
+                        .frame(height: 28)
+                    }
+                }
                 .onChange(of: searchText) { searchQuery in
                     if searchQuery.count >= 2 {
                         onSubmit()
@@ -74,8 +101,8 @@ struct FindDashboard: View {
                                 searchText: $activeSearchText,
                                 publishedOnly: $allowAlive,
                                 showRecords: $showRecords,
-                                showNotes: $showJobs,
-                                showTasks: $showNotes,
+                                showNotes: $showNotes,
+                                showTasks: $showTasks,
                                 showProjects: $showProjects,
                                 showJobs: $showJobs,
                                 showCompanies: $showCompanies,
@@ -92,8 +119,8 @@ struct FindDashboard: View {
                             searchText: $activeSearchText,
                             publishedOnly: $allowAlive,
                             showRecords: $showRecords,
-                            showNotes: $showJobs,
-                            showTasks: $showNotes,
+                            showNotes: $showNotes,
+                            showTasks: $showTasks,
                             showProjects: $showProjects,
                             showJobs: $showJobs,
                             showCompanies: $showCompanies,
@@ -104,12 +131,30 @@ struct FindDashboard: View {
                 }
             }
             
-            if location == .content {
-                GridRow {
-                    ZStack(alignment: .leading) {
-                        Theme.subHeaderColour
-                        
-                        HStack {
+            if showingTypes {
+                if location == .content {
+                    GridRow {
+                        ZStack(alignment: .leading) {
+                            Theme.subHeaderColour
+
+                            HStack {
+                                Toggle("Records", isOn: $showRecords)
+                                Toggle("Notes", isOn: $showNotes)
+                                Toggle("Tasks", isOn: $showTasks)
+                                Toggle("Projects", isOn: $showProjects)
+                                Toggle("Jobs", isOn: $showJobs)
+                                Toggle("Companies", isOn: $showCompanies)
+                                Toggle("People", isOn: $showPeople)
+                                Spacer()
+                                Toggle("Published Only", isOn: $allowAlive)
+                            }
+                            .padding([.leading, .trailing], 10)
+                        }
+                    }
+                    .frame(height: 40)
+                } else if location == .sidebar {
+                    GridRow {
+                        LazyVGrid(columns: columns, alignment: .leading) {
                             Toggle("Records", isOn: $showRecords)
                             Toggle("Notes", isOn: $showNotes)
                             Toggle("Tasks", isOn: $showTasks)
@@ -117,15 +162,14 @@ struct FindDashboard: View {
                             Toggle("Jobs", isOn: $showJobs)
                             Toggle("Companies", isOn: $showCompanies)
                             Toggle("People", isOn: $showPeople)
-                            Spacer()
                             Toggle("Published Only", isOn: $allowAlive)
                         }
-                        .padding([.leading, .trailing], 10)
+                        .padding(10)
                     }
+                    .background(location == .sidebar ? Theme.rowColour : Theme.subHeaderColour)
                 }
-                .frame(height: 40)
             }
-            
+
             if searching {
                 if loading {
                     Loading()
@@ -183,6 +227,10 @@ extension FindDashboard {
                 CoreDataTasks(moc: moc).countAll(),
                 CoreDataProjects(moc: moc).countAll()
             )
+        }
+
+        if location == .content {
+            showingTypes = true
         }
     }
     
