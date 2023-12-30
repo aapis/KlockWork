@@ -80,7 +80,7 @@ public enum PageGroup: Hashable {
 }
 
 public class Navigation: Identifiable, ObservableObject {
-    public var id: UUID = UUID()
+    public let id: UUID = UUID()
 
     @Published public var moc: NSManagedObjectContext = PersistenceController.shared.container.viewContext
     @Published public var view: AnyView? = AnyView(Dashboard())

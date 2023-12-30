@@ -30,10 +30,14 @@ extension FindDashboard {
                     ScrollView(showsIndicators: false) {
                         VStack {
                             HStack {
-                                Text("Hit \"return\" to perform a search and see all results")
+                                if location == .content {
+                                    Text("Hit \"return\" to perform a search and see all results")
+                                } else {
+                                    Text("Suggestions for your query")
+                                }
                                 Spacer()
                             }
-                            
+
                             // @TODO: reduce this with a loop, each view is basically identical...
                             if showJobs {SuggestedJobs(searchText: $searchText, publishedOnly: $publishedOnly)}
                             if showProjects {SuggestedProjects(searchText: $searchText, publishedOnly: $publishedOnly)}
@@ -123,18 +127,18 @@ extension FindDashboard {
             init(searchText: Binding<String>, publishedOnly: Binding<Bool>) {
                 _searchText = searchText
                 _publishedOnly = publishedOnly
-                
+
                 let req: NSFetchRequest<Job> = Job.fetchRequest()
                 req.sortDescriptors = [
                     NSSortDescriptor(keyPath: \Job.created, ascending: false),
                 ]
 
                 if publishedOnly.wrappedValue {
-                    req.predicate = NSPredicate(format: "alive = true && jid == %@", _searchText.wrappedValue)
+                    req.predicate = NSPredicate(format: "alive == true && jid.stringValue BEGINSWITH %@", _searchText.wrappedValue)
                 } else {
-                    req.predicate = NSPredicate(format: "jid == %@", _searchText.wrappedValue)
+                    req.predicate = NSPredicate(format: "jid.stringValue BEGINSWITH %@", _searchText.wrappedValue)
                 }
-                
+
                 _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
             }
         }

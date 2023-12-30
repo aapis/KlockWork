@@ -18,7 +18,7 @@ struct Import: View {
     
     @Environment(\.managedObjectContext) var moc
     
-    @EnvironmentObject public var recordsModel: LogRecords
+//    @EnvironmentObject public var recordsModel: LogRecords
     
     @State private var importText: String = "4/14/2020 - joining weekly team meeting\n4/14/2020 - weekly meeting done\n2018-12-09 12:44 - 11 - lunch done\n2018-12-09 12:45 - 44829 - back on this\n2018-12-09 14:10 - 13 - some things (1hr)\n=========================\n2018-12-12 09:45\n=========================\n2018-12-12 09:45 - 12 - met with people to discuss training session #3 slide deck and document content.  I have several TODOs for this\n2023-01-05 12:05 - 11 - lunching\n2023-01-05 13:05 - 11 - back"
     @State private var importRun: Bool = false

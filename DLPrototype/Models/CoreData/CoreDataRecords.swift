@@ -337,7 +337,12 @@ public class CoreDataRecords: ObservableObject {
 
     private func exportableGroupedRecordsAsString(_ records: [LogRecord]) -> (String, [Intersection], [Project], [Job]) {
         var buffer = ""
-        let groupedRecords = Dictionary(grouping: records, by: {$0.job}).sorted(by: {$0.key!.jid > $1.key!.jid})
+        let groupedRecords = Dictionary(grouping: records, by: {$0.job}).sorted(by: {
+            if $0.key != nil && $1.key != nil {
+                return $0.key!.jid > $1.key!.jid
+            }
+            return false
+        })
         var projects: [Project] = []
         var jobs: [Job] = []
 
@@ -440,7 +445,7 @@ public class CoreDataRecords: ObservableObject {
 
         var results: [LogRecord] = []
         let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: true)]
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)]
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
         
@@ -460,7 +465,7 @@ public class CoreDataRecords: ObservableObject {
         
         var count = 0
         let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: true)]
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)]
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
         
