@@ -189,7 +189,7 @@ extension Navigation {
         var note: NoteForm = NoteForm()
 
         struct NoteForm {
-            var template: String = ""
+            var template: NoteTemplates.Template? = nil
             var job: Job? = nil
         }
     }

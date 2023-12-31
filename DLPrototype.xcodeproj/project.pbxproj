@@ -390,6 +390,7 @@
 		53E202712A80BAD500B4DF70 /* ButtonType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonType.swift; sourceTree = "<group>"; };
 		53E202752A81F2E100B4DF70 /* FancyStar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyStar.swift; sourceTree = "<group>"; };
 		53E24C402A844BC800EB21FD /* EKEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKEvent.swift; sourceTree = "<group>"; };
+		53E9186C2B4226CA00912C6F /* Meeting.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Meeting.md; sourceTree = "<group>"; };
 		53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataRecords.swift; sourceTree = "<group>"; };
 		53EDDF9D29634852008D34C7 /* Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entry.swift; sourceTree = "<group>"; };
 		53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPickerItem.swift; sourceTree = "<group>"; };
@@ -781,6 +782,7 @@
 		537628AD29665B7B00DE8ECF /* Notes */ = {
 			isa = PBXGroup;
 			children = (
+				53E9186B2B4226AC00912C6F /* Templates */,
 				5371BA292A7B278D00DEEC21 /* Sidebars */,
 				537628AB29665B4E00DE8ECF /* NoteView.swift */,
 				53999C1E29669C4E00125E65 /* NoteCreate.swift */,
@@ -790,7 +792,6 @@
 				5371BA272A7B264900DEEC21 /* NoteRowPlain.swift */,
 				531B8DF12A847BE8005D911B /* NoteGroup.swift */,
 				53C000A92B41447600D5EC04 /* NoteFormWidget.swift */,
-				53C000AC2B41490F00D5EC04 /* NoteTemplates.swift */,
 			);
 			path = Notes;
 			sourceTree = "<group>";
@@ -1033,6 +1034,15 @@
 				53C000932B38E5C500D5EC04 /* TodayViewTab.swift */,
 			);
 			path = Enums;
+			sourceTree = "<group>";
+		};
+		53E9186B2B4226AC00912C6F /* Templates */ = {
+			isa = PBXGroup;
+			children = (
+				53C000AC2B41490F00D5EC04 /* NoteTemplates.swift */,
+				53E9186C2B4226CA00912C6F /* Meeting.md */,
+			);
+			path = Templates;
 			sourceTree = "<group>";
 		};
 		53EDDF9C29634840008D34C7 /* Shared */ = {

@@ -56,7 +56,7 @@ struct FancySimpleButton: View {
         .buttonStyle(.plain)
         .background(highlighted ? type.highlightColour : type.colours.first)
         .foregroundColor(type.textColour)
-        .mask(RoundedRectangle(cornerRadius: 5))
+        .mask(RoundedRectangle(cornerRadius: 3)) // @TODO: make configurable
         .useDefaultHover({ inside in highlighted = inside})
     }
 }

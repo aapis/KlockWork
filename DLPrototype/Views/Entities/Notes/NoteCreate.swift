@@ -121,7 +121,9 @@ struct NoteCreatev2: View {
         }
         .background(Theme.toolbarColour)
         .onChange(of: nav.forms.note.template) { newTemplate in
-            content = nav.forms.note.template
+            if let def = nav.forms.note.template {
+                content = def.template
+            }
         }
         .onChange(of: nav.forms.note.job) { newJob in
             job = newJob
