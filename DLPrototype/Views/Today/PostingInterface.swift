@@ -11,6 +11,9 @@ import SwiftUI
 extension Today {
     struct PostingInterface: View {
         @State private var text: String = ""
+        
+        @State private var errorNoJob: Bool = false
+        @State private var errorNoContent: Bool = false
 
         @FocusState private var primaryTextFieldInFocus: Bool
 
@@ -34,6 +37,12 @@ extension Today {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
                             self.primaryTextFieldInFocus = true
                         }
+                    }
+                    .alert("Please select a job from the sidebar", isPresented: $errorNoJob) {
+                        Button("Ok", role: .cancel) {}
+                    }
+                    .alert("You need to write a message too. What are you working on?", isPresented: $errorNoContent) {
+                        Button("Ok", role: .cancel) {}
                     }
 
                     VStack(alignment: .trailing) {
@@ -95,7 +104,13 @@ extension Today.PostingInterface {
                 await self.save()
             }
         } else {
-            print("[error] Message, job ID OR task URL are required to submit")
+            if text.isEmpty {
+                errorNoContent = true
+            }
+            
+            if nav.session.job == nil {
+                errorNoJob = true
+            }
         }
     }
 
