@@ -116,7 +116,6 @@ public class Navigation: Identifiable, ObservableObject {
     }
 
     public func setParent(_ newParent: Page) -> Void {
-        parent = nil
         parent = newParent
     }
 
@@ -127,17 +126,14 @@ public class Navigation: Identifiable, ObservableObject {
     }
 
     public func setTitle(_ newTitle: String) -> Void {
-        title = nil
         title = newTitle
     }
 
     public func setId() -> Void {
-        pageId = nil
         pageId = UUID()
     }
     
     public func setInspector(_ newInspector: AnyView? = nil) -> Void {
-        inspector = nil
         inspector = newInspector
     }
 

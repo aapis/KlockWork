@@ -9,8 +9,6 @@
 import SwiftUI
 
 struct DateSelectorWidget: View {
-    @Binding public var isDatePickerPresented: Bool
-
     @State private var days: [IdentifiableDay] = []
 
     @Environment(\.managedObjectContext) var moc
@@ -18,7 +16,8 @@ struct DateSelectorWidget: View {
     @EnvironmentObject private var updater: ViewUpdater
 
     @AppStorage("today.numPastDates") public var numPastDates: Int = 20
-    
+    @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center) {

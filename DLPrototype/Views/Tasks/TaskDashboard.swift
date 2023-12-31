@@ -18,7 +18,7 @@ struct TaskDashboard: View {
     @State private var job: Job?
     
     @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var jm: CoreDataJob
+    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @EnvironmentObject public var updater: ViewUpdater
     
     @FetchRequest(sortDescriptors: [SortDescriptor(\.jid, order: .reverse)]) public var jobs: FetchedResults<Job>

@@ -18,7 +18,7 @@ struct NoteRow: View {
     @State private var jobId: String = ""
 
     @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var jm: CoreDataJob
+    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @EnvironmentObject public var updater: ViewUpdater
     
     var body: some View {

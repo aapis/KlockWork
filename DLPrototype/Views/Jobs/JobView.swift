@@ -26,7 +26,7 @@ struct JobView: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
-    @EnvironmentObject public var jm: CoreDataJob
+    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     
     var body: some View {
         VStack(alignment: .leading) {

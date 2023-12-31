@@ -22,10 +22,10 @@ struct ProjectCreate: View {
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
-    @EnvironmentObject public var jobModel: CoreDataJob
-    
+    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
+
     private var unownedJobs: [Job] {
-        jobModel.unowned()
+        jm.unowned()
     }
     
     var body: some View {
@@ -147,7 +147,7 @@ struct ProjectCreate: View {
     }
     
     public func onAppear() -> Void {
-        allUnOwned = jobModel.unowned()
+        allUnOwned = jm.unowned()
     }
     
     private func create() -> Void {

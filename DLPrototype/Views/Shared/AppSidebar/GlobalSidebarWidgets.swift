@@ -9,22 +9,13 @@
 import SwiftUI
 
 struct GlobalSidebarWidgets: View {
-    @Binding public var isDatePickerPresented: Bool
-    
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            DateSelectorWidget(isDatePickerPresented: $isDatePickerPresented)
-            CreateEntitiesWidget(isDatePickerPresented: $isDatePickerPresented)
+        ZStack(alignment: .topLeading) {
+            CreateEntitiesWidget()
+                .padding(.top, 90)
+            DateSelectorWidget()
         }
-    }
-}
-
-extension GlobalSidebarWidgets {
-    private func formattedDate() -> String {
-        let df = DateFormatter()
-        df.dateFormat = "MMM d, yyyy"
-        return df.string(from: nav.session.date)
     }
 }

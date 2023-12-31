@@ -10,19 +10,11 @@ import SwiftUI
 
 struct Home: View {
     @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var nav: Navigation
-    
-    // @TODO: don't set these here, set them on the individual views directly
-    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
-    @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
-    @StateObject public var pr: CoreDataProjects = CoreDataProjects(moc: PersistenceController.shared.container.viewContext)
-    @StateObject public var cvm: CoreDataNoteVersions = CoreDataNoteVersions(moc: PersistenceController.shared.container.viewContext)
-    
-    @State public var selectedSidebarButton: Page = .dashboard
-    @State public var selectedJob: Job?
 
-    @AppStorage("home.isDatePickerPresented") public var isDatePickerPresented: Bool = false
+    @State public var selectedSidebarButton: Page = .dashboard
+
+    @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
 
     private var buttons: [PageGroup: [SidebarButton]] {
         [
@@ -105,19 +97,15 @@ struct Home: View {
                 HStack(alignment: .top, spacing: 0) {
                     if nav.sidebar != nil {
                         VStack(alignment: .leading, spacing: 0) {
-                            GlobalSidebarWidgets(isDatePickerPresented: $isDatePickerPresented)
+                            GlobalSidebarWidgets()
 
-                            if isDatePickerPresented{
+                            if isDatePickerPresented {
                                 ZStack {
                                     nav.sidebar
-                                        .environmentObject(cvm)
-                                        .environmentObject(nav)
                                     Color.black.opacity(0.7)
                                 }
                             } else {
                                 nav.sidebar
-                                    .environmentObject(cvm)
-                                    .environmentObject(nav)
                             }
                         }
                         .frame(width: 320)
@@ -126,41 +114,31 @@ struct Home: View {
                         HorizontalSeparator // TODO: maybe remove?
                     }
 
-                    if isDatePickerPresented{
-                        ZStack {
+                    if nav.inspector != nil {
+                        ZStack(alignment: .topLeading) {
                             nav.view
-                                .environmentObject(nav)
-                                .environmentObject(crm)
-                                .environmentObject(jm)
-                                .environmentObject(cvm)
-                                .environmentObject(updater)
-                                .disabled(true)
+                                .navigationTitle(nav.pageTitle())
+                                .disabled(isDatePickerPresented)
                             Color.black.opacity(0.7)
+
+                            ZStack(alignment: .topLeading) {
+                                LinearGradient(gradient: Gradient(colors: [Color.clear, Color.black]), startPoint: .topTrailing, endPoint: .topLeading)
+                                    .opacity(0.25)
+                                    .frame(width: 20)
+
+                                Theme.subHeaderColour
+
+                                nav.inspector
+
+                                if isDatePickerPresented {
+                                    Color.black.opacity(0.7)
+                                }
+                            }
+                            .background(Theme.base)
+                            .frame(width: 340)
                         }
                     } else {
-                        if nav.inspector != nil {
-                            ZStack(alignment: .topLeading) {
-                                nav.view
-                                    .disabled(true)
-                                
-                                Color.black.opacity(0.7)
-
-                                ZStack(alignment: .topLeading) {
-                                    LinearGradient(gradient: Gradient(colors: [Color.clear, Color.black]), startPoint: .topTrailing, endPoint: .topLeading)
-                                        .opacity(0.25)
-                                        .frame(width: 20)
-                                    
-                                    Theme.subHeaderColour
-                                    
-                                    nav.inspector
-                                        .environmentObject(nav)
-                                }
-                                .background(Theme.base)
-                                .frame(width: 340)
-                            }
-                            
-                        } else {
-                            VStack {
+                        VStack {
 //                                if nav.history.recent.count > 0 {
 //                                    HStack {
 //                                        Button {
@@ -175,7 +153,7 @@ struct Home: View {
 //                                        }
 //                                        .buttonStyle(.plain)
 //                                        .background(Theme.subHeaderColour)
-//                                        
+//
 //                                        Spacer()
 //                                        Button {
 //                                            if let next = nav.history.next() {
@@ -193,13 +171,12 @@ struct Home: View {
 //                                    .background(Theme.base)
 //                                    .frame(height: 70)
 //                                }
-                                
+
+                            ZStack {
                                 nav.view
                                     .navigationTitle(nav.pageTitle())
-                                    .environmentObject(nav)
-                                    .environmentObject(crm)
-                                    .environmentObject(cvm)
-                                    .environmentObject(updater)
+                                    .disabled(isDatePickerPresented)
+                                (isDatePickerPresented ? Color.black.opacity(0.7) : .clear)
                             }
                         }
                     }
@@ -240,11 +217,3 @@ struct Home: View {
         return Int(event.keyCode) == 53
     }
 }
-
-//struct HomePreview: PreviewProvider {
-//    static var previews: some View {
-//        Home(rm: LogRecords(moc: PersistenceController.preview.container.viewContext))
-//            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-//            .environmentObject(LogRecords(moc: PersistenceController.preview.container.viewContext))
-//    }
-//}

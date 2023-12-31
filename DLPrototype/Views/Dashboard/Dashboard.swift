@@ -16,42 +16,34 @@ struct Dashboard: View {
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
-    @EnvironmentObject public var crm: CoreDataRecords
-    @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
     @EnvironmentObject public var updater: ViewUpdater
     
+    @FocusState private var primaryTextFieldInFocus: Bool
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Header()
-                .environmentObject(ce)
                 .environmentObject(updater)
 
             VStack(alignment: .leading, spacing: 0) {
-                FindDashboard(searching: $searching)
+                FindDashboard(searching: $searching, location: .content)
                 FancyDivider()
-//                Button("State test") {
-//                    print("DERPO state.phase=\(nav.state.get())")
-////                    nav.state.set(.transitioning)
-//                    nav.state.advance()
-//                    print("DERPO state.phase=\(nav.state.get())")
-//                    nav.state.advance()
-//                    print("DERPO state.phase=\(nav.state.get())")
-//                }
 
                 if !searching {
                     Widgets()
-                        .environmentObject(crm)
                 }
             }
             .font(Theme.font)
             .padding()
+            .focused($primaryTextFieldInFocus)
             .background(Theme.toolbarColour)
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                    self.primaryTextFieldInFocus = true
+                }
+            }
         }
     }
-}
-
-extension Dashboard {
-
 }
 
 extension Dashboard {
@@ -61,7 +53,7 @@ extension Dashboard {
 
         @Environment(\.managedObjectContext) var moc
         @EnvironmentObject public var nav: Navigation
-        @EnvironmentObject public var ce: CoreDataCalendarEvent
+        @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
         @EnvironmentObject public var updater: ViewUpdater
 
         @AppStorage("today.calendar") public var calendar: Int = -1

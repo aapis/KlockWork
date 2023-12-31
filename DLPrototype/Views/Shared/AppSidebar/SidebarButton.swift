@@ -23,7 +23,7 @@ struct SidebarButton: View, Identifiable {
 
     @EnvironmentObject public var nav: Navigation
 
-    @AppStorage("home.isDatePickerPresented") public var isDatePickerPresented: Bool = false
+    @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
 
     var body: some View {
         let button = FancyButton

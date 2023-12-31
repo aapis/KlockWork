@@ -45,19 +45,6 @@ extension JobDashboardSidebar {
                 icon: "hammer",
                 labelText: "All Jobs",
                 contents: AnyView(JobsWidget())
-            ),
-            ToolbarButton(
-                id: 2,
-                helpText: "Search",
-                icon: "magnifyingglass",
-                labelText: "Search",
-                contents: AnyView(
-                    VStack(alignment: .leading) {
-                        FindDashboard(searching: $searching, location: .sidebar)
-                    }
-                    .padding(8)
-                    .background(Theme.base.opacity(0.2))
-                )
             )
         ]
     }
