@@ -24,15 +24,17 @@ struct CreateEntitiesWidget: View {
             Buttons
 
             if isSearchStackShowing || isCreateStackShowing {
-                FancyDivider(height: 10)
+                FancyDivider(height: 20)
                 VStack(alignment: .leading) {
                     if isSearchStackShowing {
                         FindDashboard(searching: $searching, location: .sidebar)
+                        Spacer()
                     } else if isCreateStackShowing {
                         CreateStack()
                     }
                 }
-                .padding(10)
+                .padding([.top, .bottom])
+                .padding([.leading, .trailing], 10)
                 .background(Theme.base.opacity(0.5))
             }
         }
@@ -48,7 +50,6 @@ struct CreateEntitiesWidget: View {
             CreateButton(active: $isCreateStackShowing)
             FindButton(active: $isSearchStackShowing)
                 .disabled(nav.parent == .dashboard)
-
             Spacer()
         }
         .padding([.leading, .trailing], 15)

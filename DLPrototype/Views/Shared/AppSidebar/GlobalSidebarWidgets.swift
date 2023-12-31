@@ -14,7 +14,7 @@ struct GlobalSidebarWidgets: View {
     var body: some View {
         ZStack(alignment: .topLeading) {
             CreateEntitiesWidget()
-                .padding(.top, 90)
+                .padding(.top, 98)
             DateSelectorWidget()
         }
     }
