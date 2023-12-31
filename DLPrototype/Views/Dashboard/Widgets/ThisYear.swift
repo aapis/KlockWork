@@ -17,7 +17,7 @@ struct ThisYear: View {
     @State private var recordCount: Int = 0
     
     @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var crm: CoreDataRecords
+    @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
     
     var body: some View {
         VStack(alignment: .leading) {

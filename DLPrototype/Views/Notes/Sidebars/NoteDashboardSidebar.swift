@@ -45,19 +45,6 @@ extension NoteDashboardSidebar {
                 icon: "star.fill",
                 labelText: "Favourite Notes",
                 contents: AnyView(NotesWidget(favouritesOnly: true))
-            ),
-            ToolbarButton(
-                id: 3,
-                helpText: "Search",
-                icon: "magnifyingglass",
-                labelText: "Search",
-                contents: AnyView(
-                    VStack(alignment: .leading) {
-                        FindDashboard(searching: $searching, location: .sidebar)
-                    }
-                    .padding(8)
-                    .background(Theme.base.opacity(0.2))
-                )
             )
         ]
     }

@@ -15,7 +15,7 @@ struct NoteBlock: View {
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
-    @EnvironmentObject public var jm: CoreDataJob
+    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @EnvironmentObject public var updater: ViewUpdater
 
     var body: some View {

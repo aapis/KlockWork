@@ -28,10 +28,6 @@ struct Widgets: View {
     @AppStorage("dashboard.widget.thismonth") public var showWidgetThisMonth: Bool = true
     @AppStorage("dashboard.widget.thisyear") public var showWidgetThisYear: Bool = true
 
-    @EnvironmentObject public var crm: CoreDataRecords
-    @EnvironmentObject public var ce: CoreDataCalendarEvent
-    @EnvironmentObject public var jm: CoreDataJob
-
     private var columns: [GridItem] = Array(repeating: .init(.flexible(minimum: 100)), count: 3)
 
     var body: some View {
@@ -40,20 +36,14 @@ struct Widgets: View {
                 LazyVGrid(columns: columns, alignment: .leading) {
                     if showWidgetThisWeek {
                         ThisWeek()
-                            .environmentObject(crm)
-                            .environmentObject(ce)
                     }
 
                     if showWidgetThisMonth {
                         ThisMonth()
-                            .environmentObject(crm)
-                            .environmentObject(ce)
                     }
 
                     if showWidgetThisYear {
                         ThisYear()
-                            .environmentObject(crm)
-                            .environmentObject(ce)
                     }
                 }
 

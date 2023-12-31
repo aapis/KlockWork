@@ -21,7 +21,7 @@ struct JobPickerUsing: View {
     @State private var jobIdFieldTextColour: Color = Color.white
     
     @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var jm: CoreDataJob
+    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @EnvironmentObject public var nav: Navigation
     
     @AppStorage("today.relativeJobList") public var allowRelativeJobList: Bool = false

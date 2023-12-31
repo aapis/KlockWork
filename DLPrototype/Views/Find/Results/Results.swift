@@ -26,7 +26,7 @@ struct Results: View {
     @FetchRequest private var projects: FetchedResults<Project>
     @FetchRequest private var jobs: FetchedResults<Job>
     
-    @EnvironmentObject public var jm: CoreDataJob
+    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @EnvironmentObject public var updater: ViewUpdater
     
     var body: some View {

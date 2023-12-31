@@ -31,7 +31,7 @@ struct LogRow: View, Identifiable {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
-    @EnvironmentObject public var jm: CoreDataJob
+    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     
     @AppStorage("tigerStriped") private var tigerStriped = false
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false

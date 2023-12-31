@@ -95,7 +95,6 @@ extension FindDashboard {
                                                 text: item.jid.string,
                                                 action: {choose(item)},
                                                 icon: "questionmark.square.fill",
-                                                fgColour: .white,
                                                 showIcon: true,
                                                 size: .link,
                                                 type: .clear
@@ -106,7 +105,6 @@ extension FindDashboard {
                                                 text: item.jid.string,
                                                 action: {nav.session.job = item},
                                                 icon: "arrow.right.square.fill",
-                                                fgColour: .white,
                                                 showLabel: false,
                                                 showIcon: true,
                                                 size: .tinyLink,

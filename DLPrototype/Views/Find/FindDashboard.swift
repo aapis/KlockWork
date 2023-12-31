@@ -29,7 +29,7 @@ struct FindDashboard: View {
     @State private var showingTypes: Bool = false
 
     @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var jm: CoreDataJob
+    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @EnvironmentObject public var nav: Navigation
 
     private var columns: [GridItem] {
@@ -152,7 +152,7 @@ struct FindDashboard: View {
                     Loading()
                 } else {
                     FancyDivider()
-                    FancyGenericToolbar(buttons: buttons, standalone: true, location: .content)
+                    FancyGenericToolbar(buttons: buttons, standalone: true, location: location)
                     Spacer()
                 }
             }

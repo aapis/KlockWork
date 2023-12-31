@@ -21,7 +21,7 @@ struct Column: View {
     @Binding public var text: String
 
     @EnvironmentObject public var nav: Navigation
-    @EnvironmentObject public var jm: CoreDataJob
+    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     
     @AppStorage("tigerStriped") private var tigerStriped = false
 

@@ -12,7 +12,7 @@ import SwiftUI
 struct ProjectRow: View {
     public var project: Project
     
-    @EnvironmentObject public var jm: CoreDataJob
+    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     
     var body: some View {
         GridRow {
