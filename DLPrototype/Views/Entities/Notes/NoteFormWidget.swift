@@ -29,18 +29,22 @@ struct NoteFormWidget: View {
             }
             Divider()
 
-            Picker("Template", selection: $selection) {
-                ForEach(NoteTemplates.Template.allCases, id: \.id) { config in
-                    Text(config.definition.name)
-                }
+            ForEach(NoteTemplates.Template.allCases, id: \.id) { config in
+                Text(config.definition.name)
             }
-            .alert("Changing templates will override your existing note content.\n\nAre you sure?", isPresented: $allowChangeTemplate) {
-                Button("Yes", role: .destructive) {
-                    nav.forms.note.template = NoteTemplates.Template.allCases[selection].definition.template
-                }
-                Button("No", role: .cancel) {}
-            }
-            Divider()
+
+//            Picker("Template:", selection: $selection) {
+//                ForEach(NoteTemplates.Template.allCases, id: \.id) { config in
+//                    Text(config.definition.name)
+//                }
+//            }
+//            .alert("Changing templates will override your existing note content.\n\nAre you sure?", isPresented: $allowChangeTemplate) {
+//                Button("Yes", role: .destructive) {
+//                    nav.forms.note.template = NoteTemplates.Template.allCases[selection].definition.template
+//                }
+//                Button("No", role: .cancel) {}
+//            }
+//            Divider()
 
             HStack(alignment: .top) {
                 Text("Date:")
@@ -53,8 +57,21 @@ struct NoteFormWidget: View {
                 HStack(alignment: .top) {
                     if let job = nav.forms.note.job {
                         FancyButtonv2(
-                            text: "Selected job: \(job.jid.string)",
+                            text: "Last selected job: \(job.jid.string)",
                             action: {nav.forms.note.job = nil},
+                            fgColour: job.foregroundColor,
+                            showLabel: true,
+                            showIcon: false,
+                            size: .link,
+                            type: .clear
+                        )
+                        .help("Click to deselect this job, then show the Active Job prompt (if available)")
+                        .padding(5)
+                        .background(job.backgroundColor)
+                    } else if let job = nav.session.job {
+                        FancyButtonv2(
+                            text: "Active job: \(job.jid.string)",
+                            action: {nav.session.job = nil},
                             fgColour: job.foregroundColor,
                             showLabel: true,
                             showIcon: false,
@@ -65,7 +82,14 @@ struct NoteFormWidget: View {
                         .padding(5)
                         .background(job.backgroundColor)
                     } else {
-                        Text("No job selected")
+                        HStack {
+                            Text("No job selected")
+                                .padding(3)
+                                .opacity(0.4)
+                            Spacer()
+                        }
+                        .padding(5)
+                        .background(Theme.cRed)
                     }
                 }
                 SearchBar(text: $jobSearchText, placeholder: "Find jobs by ID...")

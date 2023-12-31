@@ -147,6 +147,7 @@ extension NoteCreatev2 {
             let note = Note(context: moc)
             // Title is pulled directly from note content now
             note.title = title.starts(with: "#") ? title.replacingOccurrences(of: "# ", with: "") : "Generic note title"
+            // Remove title from content
             note.body = title.isEmpty ? content : content.replacingOccurrences(of: title, with: "").lines[1...].joined()
             note.postedDate = nav.session.date
             note.lastUpdate = nav.session.date
@@ -159,8 +160,8 @@ extension NoteCreatev2 {
 
             let version = NoteVersion(context: moc)
             version.id = UUID()
-            version.title = title
-            version.content = content
+            version.title = note.title
+            version.content = note.body
             version.starred = false
             version.created = note.postedDate
 
