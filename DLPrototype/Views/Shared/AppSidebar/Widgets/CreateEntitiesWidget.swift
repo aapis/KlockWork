@@ -47,6 +47,7 @@ struct CreateEntitiesWidget: View {
             PlanButton(doesPlanExist: $doesPlanExist)
             CreateButton(active: $isCreateStackShowing)
             FindButton(active: $isSearchStackShowing)
+                .disabled(nav.parent == .dashboard)
 
             Spacer()
         }
@@ -106,6 +107,8 @@ struct CreateEntitiesWidget: View {
         @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
 
         @Binding public var active: Bool
+        
+        @EnvironmentObject public var nav: Navigation
 
         var body: some View {
             VStack(alignment: .center) {
@@ -138,6 +141,8 @@ struct CreateEntitiesWidget: View {
         @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
 
         @Binding public var active: Bool
+        
+        @EnvironmentObject public var nav: Navigation
 
         var body: some View {
             VStack(alignment: .center) {
@@ -146,7 +151,7 @@ struct CreateEntitiesWidget: View {
                         Theme.base.opacity(0.5)
                         FancyButtonv2(
                             text: "Search",
-                            action: {active.toggle() ; isCreateStackShowing = false},
+                            action: {active.toggle() ; isCreateStackShowing = false ; nav.session.search.cancel()},
                             icon: "magnifyingglass",
                             showLabel: false,
                             size: .small,
