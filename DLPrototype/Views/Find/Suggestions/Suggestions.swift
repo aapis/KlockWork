@@ -671,7 +671,6 @@ extension FindDashboard.Suggestions.SuggestedJobs {
         case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today:
             nav.session.job = item
         case .planning:
-            nav.session.job = item
             nav.planning.jobs.insert(item)
             // @TODO: this throws "Can't do a substring operation with something that isn't a string (lhs = 870732407166554 rhs = 55)"
 //            nav.planning.projects.insert(item.project!)
