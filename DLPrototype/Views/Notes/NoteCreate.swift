@@ -17,7 +17,9 @@ struct NoteCreate: View {
     
     @Environment(\.managedObjectContext) var moc
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
+    @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
+    
     
     private var jobs: [Job] {
         CoreDataJob(moc: moc).all()
@@ -102,10 +104,43 @@ struct NoteCreate: View {
     }
 }
 
-struct NoteCreatePreview: PreviewProvider {
-    static var previews: some View {
-        NoteCreate()
-            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-            .frame(width: 800, height: 800)
+struct NoteCreatev2: View {
+    @State private var title: String = ""
+    @State private var content: String = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sit amet libero eu..."
+    
+    @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var nav: Navigation
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            ZStack(alignment: .topLeading) {
+                FancyTextField(placeholder: "Placeholder content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
+            }
+            Spacer()
+        }
+        .background(Theme.toolbarColour)
+    }
+}
+
+extension NoteCreatev2 {
+    private func save() -> Void {
+        
+        let note = Note(context: moc)
+        note.title = title
+        note.body = content
+        note.postedDate = nav.session.date
+        note.lastUpdate = nav.session.date
+        note.id = UUID()
+        note.mJob = nav.session.job
+        note.alive = true
+        
+        let version = NoteVersion(context: moc)
+        version.id = UUID()
+        version.title = title
+        version.content = content
+        version.starred = false
+        version.created = note.postedDate
+
+        PersistenceController.shared.save()
     }
 }

@@ -186,7 +186,7 @@ struct CreateEntitiesWidget: View {
                         size: .link,
                         type: nav.parent == .notes ? .secondary : .standard,
                         redirect: AnyView(CompanyCreate()),
-                        pageType: .today,
+                        pageType: .companies,
                         sidebar: AnyView(DefaultCompanySidebar())
                     )
                     Spacer()
@@ -211,8 +211,8 @@ struct CreateEntitiesWidget: View {
                                     size: .link,
                                     type: nav.parent == .projects ? .secondary : .standard,
                                     redirect: AnyView(ProjectCreate()),
-                                    pageType: .companies,
-                                    sidebar: AnyView(DefaultCompanySidebar())
+                                    pageType: .projects,
+                                    sidebar: AnyView(ProjectsDashboardSidebar())
                                 )
                             }
                             Spacer()
@@ -250,9 +250,9 @@ struct CreateEntitiesWidget: View {
                                     fgColour: .white,
                                     size: .link,
                                     type: nav.parent == .notes ? .secondary : .standard,
-                                    redirect: AnyView(NoteCreate()),
-                                    pageType: .today,
-                                    sidebar: AnyView(NoteDashboardSidebar())
+                                    redirect: AnyView(NoteCreatev2()),
+                                    pageType: .notes,
+                                    sidebar: AnyView(NoteCreateSidebar())
                                 )
                             }
                             Spacer()

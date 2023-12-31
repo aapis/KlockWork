@@ -18,6 +18,7 @@ struct FancyTextField: View {
     public var fgColour: Color? = Color.white
     public var bgColour: Color? = Theme.textBackground
     public var showLabel: Bool = false
+    public var font: Font = Theme.fontTextField
     
     @Binding public var text: String
     
@@ -28,7 +29,7 @@ struct FancyTextField: View {
             if showLabel {
                 Text(placeholder)
                     .padding([.trailing], 10)
-                    .font(Theme.font)
+                    .font(font)
                     .frame(width: 120, height: 45, alignment: .trailing)
                     .background(Theme.textLabelBackground)
             }
@@ -47,7 +48,7 @@ struct FancyTextField: View {
         TextField(placeholder, text: $text)
             .font(Theme.fontTextField)
             .textFieldStyle(.plain)
-            .disableAutocorrection(enableAutoCorrection)
+            .disableAutocorrection(!enableAutoCorrection)
             .padding()
             .onSubmit(onSubmit ?? {})
             .background(transparent! ? Color.clear : bgColour)
@@ -62,7 +63,7 @@ struct FancyTextField: View {
         TextField(placeholder, text: $text, axis: .vertical)
             .font(Theme.fontTextField)
             .textFieldStyle(.plain)
-            .disableAutocorrection(enableAutoCorrection)
+            .disableAutocorrection(!enableAutoCorrection)
             .padding()
             .onSubmit(onSubmit ?? {})
             .background(transparent! ? Color.clear : bgColour)
@@ -74,9 +75,9 @@ struct FancyTextField: View {
     
     private var multiLine: some View {
         TextEditor(text: $text)
-            .font(Theme.fontTextField)
+            .font(Theme.fontSubTitle)
             .textFieldStyle(.plain)
-            .disableAutocorrection(enableAutoCorrection)
+            .disableAutocorrection(!enableAutoCorrection)
             .padding()
             .onSubmit(onSubmit ?? {})
             .background(transparent! ? Theme.textBackground : bgColour)
