@@ -29,7 +29,7 @@ public final class UrlHelper {
                 jobId = String(identifier.suffix(6))
             }
         } else {
-            jobId = String(url.absoluteString.ints().suffix(6))
+            jobId = String(url.absoluteString.integers.suffix(6))
         }
 
         let defaultJid = 11.0

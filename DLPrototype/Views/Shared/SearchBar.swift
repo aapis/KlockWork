@@ -12,7 +12,7 @@ import SwiftUI
 struct SearchBar: View {
     @Binding public var text: String
     
-    public var disabled: Bool
+    public var disabled: Bool = false
     public var placeholder: String? = "Search..."
     public var onSubmit: (() -> Void)? = nil
     public var onReset: (() -> Void)? = nil

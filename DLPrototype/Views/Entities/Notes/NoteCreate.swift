@@ -106,8 +106,9 @@ struct NoteCreate: View {
 
 struct NoteCreatev2: View {
     @State private var title: String = ""
-    @State private var content: String = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sit amet libero eu..."
-    
+    @State private var content: String = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sit amet libero eu...\n\n"
+    @State private var job: Job? = nil
+
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
 
@@ -119,28 +120,55 @@ struct NoteCreatev2: View {
             Spacer()
         }
         .background(Theme.toolbarColour)
+        .onChange(of: nav.forms.note.template) { newTemplate in
+            content = nav.forms.note.template
+        }
+        .onChange(of: nav.forms.note.job) { newJob in
+            job = newJob
+        }
+        .onChange(of: nav.saved) { status in
+            if status {
+                self.save()
+                nav.to(.notes)
+            }
+        }
     }
 }
 
 extension NoteCreatev2 {
     private func save() -> Void {
-        
-        let note = Note(context: moc)
-        note.title = title
-        note.body = content
-        note.postedDate = nav.session.date
-        note.lastUpdate = nav.session.date
-        note.id = UUID()
-        note.mJob = nav.session.job
-        note.alive = true
-        
-        let version = NoteVersion(context: moc)
-        version.id = UUID()
-        version.title = title
-        version.content = content
-        version.starred = false
-        version.created = note.postedDate
+        // Allow saving if there's at least one line and a job
+        if job == nil {
+            print("[error][note.create] A job is required to save")
+            return
+        }
 
-        PersistenceController.shared.save()
+        if let title = content.lines.first {
+            let note = Note(context: moc)
+            // Title is pulled directly from note content now
+            note.title = title.starts(with: "#") ? title.replacingOccurrences(of: "# ", with: "") : "Generic note title"
+            note.body = title.isEmpty ? content : content.replacingOccurrences(of: title, with: "").lines[1...].joined()
+            note.postedDate = nav.session.date
+            note.lastUpdate = nav.session.date
+            note.id = UUID()
+            note.alive = true
+
+            if let job = job {
+                note.mJob = job
+            }
+
+            let version = NoteVersion(context: moc)
+            version.id = UUID()
+            version.title = title
+            version.content = content
+            version.starred = false
+            version.created = note.postedDate
+
+            PersistenceController.shared.save()
+
+            nav.session.note = note
+        } else {
+            print("[error][note.create] A title is required to save")
+        }
     }
 }

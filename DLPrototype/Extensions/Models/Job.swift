@@ -9,6 +9,19 @@
 import SwiftUI
 
 extension Job {
+    var idInt: Int { Int(exactly: jid.rounded(.toNearestOrEven)) ?? 0 }
+
+    var backgroundColor: Color {
+        if let c = colour {
+            return Color.fromStored(c)
+        }
+
+        return Color.clear
+    }
+
+    var foregroundColor: Color { self.backgroundColor.isBright() ? .black : .white }
+
+    // @TODO: the following are dupes and should be deprecated then removed
     func id_int() -> Int {
         return Int(exactly: jid.rounded(.toNearestOrEven)) ?? 0
     }
