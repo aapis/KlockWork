@@ -103,7 +103,7 @@ extension FindDashboard {
                                             Spacer()
                                             FancyButtonv2(
                                                 text: item.jid.string,
-                                                action: {nav.session.job = item},
+                                                action: {setContext(item)},
                                                 icon: "arrow.right.square.fill",
                                                 showLabel: false,
                                                 showIcon: true,
@@ -276,6 +276,16 @@ extension FindDashboard {
                                             )
                                             .help("Inspect")
                                             Spacer()
+                                            FancyButtonv2(
+                                                text: item.title ?? "",
+                                                action: {setContext(item)},
+                                                icon: "arrow.right.square.fill",
+                                                showLabel: false,
+                                                showIcon: true,
+                                                size: .tinyLink,
+                                                type: .clear
+                                            )
+                                            .help("Set associated job as Active Job")
                                         }
                                     }
                                     .padding(.bottom, 10)
@@ -646,8 +656,28 @@ extension FindDashboard {
 //}
 
 extension FindDashboard.Suggestions.SuggestedJobs {
+    /// Inspects an individual item
+    /// - Parameter item: A single Job
+    /// - Returns: Void
     private func choose(_ item: Job) -> Void {
         nav.session.search.inspect(item)
+    }
+    
+    /// Set a different Navigation value based on the current page
+    /// - Parameter item: A single Job
+    /// - Returns: Void
+    private func setContext(_ item: Job) -> Void {
+        switch nav.parent {
+        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today:
+            nav.session.job = item
+        case .planning:
+            nav.session.job = item
+            nav.planning.jobs.insert(item)
+            // @TODO: this throws "Can't do a substring operation with something that isn't a string (lhs = 870732407166554 rhs = 55)"
+//            nav.planning.projects.insert(item.project!)
+        case .none:
+            print("no op")
+        }
     }
 }
 
@@ -658,8 +688,31 @@ extension FindDashboard.Suggestions.SuggestedProjects {
 }
 
 extension FindDashboard.Suggestions.SuggestedNotes {
+    /// Inspects an individual item
+    /// - Parameter item: A single Note
+    /// - Returns: Void
     private func choose(_ item: Note) -> Void {
         nav.session.search.inspect(item)
+    }
+    
+    /// Set a different Navigation value based on the current page
+    /// - Parameter item: A single Note
+    /// - Returns: Void
+    private func setContext(_ item: Note) -> Void {
+        switch nav.parent {
+        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today:
+            nav.session.job = item.mJob
+        case .planning:
+            if let job = item.mJob {
+                nav.planning.jobs.insert(job)
+            }
+            
+            nav.planning.notes.insert(item)
+            // @TODO: this throws "Can't do a substring operation with something that isn't a string (lhs = 870732407166554 rhs = 55)"
+//            nav.planning.projects.insert(item.project!)
+        case .none:
+            print("no op")
+        }
     }
 }
 
