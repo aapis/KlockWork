@@ -76,6 +76,11 @@ struct FancyGenericToolbar: View {
                                     selected: $selected,
                                     mode: mode
                                 )
+                                
+                                if buttons.count == 1 {
+                                    Text(buttons.first!.helpText)
+                                        .padding(.leading, 10)
+                                }
                             }
                         }
                     }

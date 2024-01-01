@@ -28,8 +28,10 @@ struct FancySimpleButton: View {
                 action()
             }
 
-            if let href = href {
-                nav.to(href)
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
+                if let href = href {
+                    nav.to(href)
+                }
             }
         } label: {
             VStack(alignment: .center) {

@@ -9,42 +9,60 @@
 import SwiftUI
 
 struct NoteFormWidget: View {
+    public var note: Note? = nil
+    private var isCreating: Bool { note == nil }
+
     @EnvironmentObject private var nav: Navigation
 
     var body: some View {
         VStack(alignment: .leading, spacing: 1) {
             HStack {
-                Text("Form: New note")
+                Text(isCreating ? "Creating" : "Editing")
                     .font(Theme.fontTitle)
                     .padding([.top, .bottom])
                 Spacer()
             }
             Divider()
             
-            TemplateChooser()
-            Divider()
-            FancyDivider()
+            if isCreating {
+                TemplateChooser()
+                Divider()
+                FancyDivider()
+            }
 
             JobChooser()
             Divider()
             FancyDivider()
 
             HStack {
-                FancySimpleButton(text: "Cancel", type: .clear, href: .notes)
+                FancySimpleButton(text: "Close", type: .clear, href: .notes)
                 Spacer()
-                FancySimpleButton(text: "Create", action: {nav.saved = true}, type: nav.forms.note.job == nil || nav.forms.note.template == nil ? .error : .primary)
+                
+                if !isCreating {
+                    FancySimpleButton(
+                        text: "Save & Close",
+                        action: {nav.save()},
+                        type: nav.forms.note.job == nil ? .error : .standard,
+                        href: .notes
+                    )
+                    .disabled(nav.forms.note.job == nil)
+                }
+                
+                FancySimpleButton(text: note == nil ? "Create" : "Save", action: {nav.save()}, type: nav.forms.note.job == nil ? .error : .primary)
                     .keyboardShortcut("s", modifiers: .command)
-                    .disabled(nav.forms.note.job == nil || nav.forms.note.template == nil)
+                    .disabled(nav.forms.note.job == nil)
             }
 
         }
         .padding(8)
         .background(Theme.base.opacity(0.2))
+        .onAppear(perform: actionOnAppear)
     }
-    
+
     struct TemplateChooser: View {
         @State private var showTemplates: Bool = false
         @State private var allowChangeTemplate: Bool = false
+        @State private var selectedTemplate: NoteTemplates.Template? = nil
         @EnvironmentObject private var nav: Navigation
 
         var body: some View {
@@ -71,6 +89,12 @@ struct NoteFormWidget: View {
                         .padding(5)
                         .foregroundColor(.black)
                         .background(Color.lightGray())
+                        .alert("Changing templates will override your existing note content.\n\nAre you sure?", isPresented: $allowChangeTemplate) {
+                            Button("Yes", role: .destructive) {
+                                nav.forms.note.template = selectedTemplate
+                            }
+                            Button("No", role: .cancel) {}
+                        }
                     }
                     
                     if let template = nav.forms.note.template {
@@ -104,7 +128,7 @@ struct NoteFormWidget: View {
                     ForEach(NoteTemplates.DefaultTemplateConfiguration.allCases, id: \.id) { config in
                         FancyButtonv2(
                             text: config.definition.name,
-                            action: {nav.forms.note.template = config.definition ; showTemplates.toggle()},
+                            action: {showTemplates.toggle() ; selectedTemplate = config.definition},
                             showLabel: true,
                             showIcon: false,
                             size: .link
@@ -112,13 +136,13 @@ struct NoteFormWidget: View {
                         .help("Deselect this job, then show the Active Job prompt (if available)")
                         .padding(5)
                         .background(Color.lightGray().opacity(0.4))
-                        .alert("Changing templates will override your existing note content.\n\nAre you sure?", isPresented: $allowChangeTemplate) {
-                            Button("Yes", role: .destructive) {
-                                nav.forms.note.template = config.definition
-                            }
-                            Button("No", role: .cancel) {}
-                        }
+                        
                     }
+                }
+            }
+            .onChange(of: selectedTemplate) { tmpl in
+                if tmpl != nil {
+                    allowChangeTemplate = true
                 }
             }
         }
@@ -224,6 +248,14 @@ struct NoteFormWidget: View {
     }
     
     
+}
+
+extension NoteFormWidget {
+    private func actionOnAppear() -> Void {
+        if let n = note {
+            nav.forms.note.job = n.mJob
+        }
+    }
 }
 
 extension NoteFormWidget.JobChooser {

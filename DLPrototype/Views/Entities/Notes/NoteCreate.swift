@@ -62,7 +62,7 @@ struct NoteCreate: View {
                         pageType: .notes,
                         sidebar: AnyView(NoteDashboardSidebar())
                     )
-                        .keyboardShortcut("s", modifiers: .command)
+                    .keyboardShortcut("s", modifiers: [.command, .shift])
 
                 }
                 .frame(width: 300, height: 30)
@@ -105,6 +105,9 @@ struct NoteCreate: View {
 }
 
 struct NoteCreatev2: View {
+    public var note: Note? = nil
+    private var isCreating: Bool { note == nil }
+
     @State private var title: String = ""
     @State private var content: String = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sit amet libero eu...\n\n"
     @State private var job: Job? = nil
@@ -120,6 +123,7 @@ struct NoteCreatev2: View {
             Spacer()
         }
         .background(Theme.toolbarColour)
+        .onAppear(perform: actionOnAppear)
         .onChange(of: nav.forms.note.template) { newTemplate in
             if let def = nav.forms.note.template {
                 content = def.template
@@ -131,13 +135,24 @@ struct NoteCreatev2: View {
         .onChange(of: nav.saved) { status in
             if status {
                 self.save()
-                nav.to(.notes)
             }
         }
     }
 }
 
 extension NoteCreatev2 {
+    private func actionOnAppear() -> Void {
+        if !isCreating {
+            if let n = note {
+                if let body = n.body {
+                    content = body
+                    title = StringHelper.titleFromContent(from: body)
+                }
+                job = n.mJob
+            }
+        }
+    }
+
     private func save() -> Void {
         // Allow saving if there's at least one line and a job
         if job == nil {
@@ -146,32 +161,42 @@ extension NoteCreatev2 {
         }
 
         if let title = content.lines.first {
-            let note = Note(context: moc)
-            // Title is pulled directly from note content now
-            note.title = title.starts(with: "#") ? title.replacingOccurrences(of: "# ", with: "") : "Generic note title"
-            // Remove title from content
-            note.body = title.isEmpty ? content : content.replacingOccurrences(of: title, with: "").lines[1...].joined()
-            note.postedDate = nav.session.date
-            note.lastUpdate = nav.session.date
-            note.id = UUID()
-            note.alive = true
+            var note = note
+            if isCreating {
+                note = Note(context: moc)
+                note!.postedDate = nav.session.date
+                note!.lastUpdate = nav.session.date
+                note!.id = UUID()
+                note!.alive = true
 
-            if let job = job {
-                note.mJob = job
+                if let job = job {
+                    note!.mJob = job
+                }
+            } else {
+                note!.lastUpdate = Date()
             }
+
+            // Title is pulled directly from note content now
+            note!.title = StringHelper.titleFromContent(from: title)
+            self.title = note!.title ?? "Unnamed note"
+            note!.body = content
 
             let version = NoteVersion(context: moc)
             version.id = UUID()
-            version.title = note.title
-            version.content = note.body
+            version.title = note!.title
+            version.content = note!.body
             version.starred = false
-            version.created = note.postedDate
-
+            version.created = note!.postedDate
+            
             PersistenceController.shared.save()
-
+            
+            // the last note you interacted with
             nav.session.note = note
+            nav.save()
         } else {
             print("[error][note.create] A title is required to save")
         }
+        
+        print("[error][note.create] should be ok")
     }
 }

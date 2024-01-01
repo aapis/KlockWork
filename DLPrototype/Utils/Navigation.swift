@@ -138,8 +138,12 @@ public class Navigation: Identifiable, ObservableObject {
         inspector = newInspector
     }
 
-    public func save() -> Void {
+    public func save(callback:(() -> Void)? = nil) -> Void {
         self.saved = true
+
+        if let cb = callback {
+            cb()
+        }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
             self.saved = false

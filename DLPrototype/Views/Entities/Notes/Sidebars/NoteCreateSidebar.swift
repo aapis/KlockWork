@@ -9,6 +9,8 @@
 import SwiftUI
 
 struct NoteCreateSidebar: View {
+    public var note: Note? = nil
+
     @State private var tabs: [ToolbarButton] = []
     @State private var searching: Bool = false
 
@@ -34,10 +36,10 @@ extension NoteCreateSidebar {
         tabs = [
             ToolbarButton(
                 id: 0,
-                helpText: "Form",
+                helpText: "Canvas: Note",
                 icon: "doc.text",
                 labelText: "Notes",
-                contents: AnyView(NoteFormWidget())
+                contents: AnyView(NoteFormWidget(note: note))
             )
         ]
     }

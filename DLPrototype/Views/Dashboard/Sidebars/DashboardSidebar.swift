@@ -39,7 +39,7 @@ extension DashboardSidebar {
             ),
             ToolbarButton(
                 id: 1,
-                helpText: "Data outline",
+                helpText: "Data hierarchy",
                 label: AnyView(
                     HStack {
                         Image(systemName: "menucard").padding(.leading)
