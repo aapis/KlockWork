@@ -119,6 +119,10 @@ struct NoteCreatev2: View {
         VStack(alignment: .leading) {
             ZStack(alignment: .topLeading) {
                 FancyTextField(placeholder: "Placeholder content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
+                HStack {
+                    Spacer()
+                    NoteVersionExplorer(note: note)
+                }
             }
             Spacer()
         }
@@ -135,6 +139,29 @@ struct NoteCreatev2: View {
         .onChange(of: nav.saved) { status in
             if status {
                 self.save()
+            }
+        }
+    }
+    
+    struct NoteVersionExplorer: View {
+        public var note: Note? = nil
+        private var versions: [NoteVersion] = []
+
+        var body: some View {
+            VStack(alignment: .leading) {
+                if note != nil  {
+                    ForEach(versions) { version in
+                        Text(version.created!.description)
+                    }
+                }
+            }
+        }
+        
+        init(note: Note? = nil) {
+            self.note = note
+            
+            if let note = self.note {
+                self.versions = note.versions!.allObjects as! [NoteVersion]
             }
         }
     }
