@@ -10,6 +10,7 @@ import SwiftUI
 
 struct NoteFormWidget: View {
     public var note: Note? = nil
+    private var currentVersion: NoteVersion? = nil
     private var mode: EntityViewMode = .ready
     
     @State private var isDeleteAlertShowing: Bool = false
@@ -52,7 +53,7 @@ struct NoteFormWidget: View {
                         showIcon: true,
                         type: .destructive
                     )
-                    .alert("Delete note", isPresented: $isDeleteAlertShowing) {
+                    .alert("Delete note titled \(note!.title!)", isPresented: $isDeleteAlertShowing) {
                         Button("Yes", role: .destructive) {
                             if let n = note {
                                 n.alive = false
@@ -93,8 +94,11 @@ struct NoteFormWidget: View {
     init(note: Note? = nil) {
         self.note = note
         
-        if self.note != nil {
+        if let note = self.note {
             self.mode = .update
+            
+            let versions = note.versions?.allObjects as! [NoteVersion]
+            self.currentVersion = versions.last
         } else {
             self.mode = .create
         }

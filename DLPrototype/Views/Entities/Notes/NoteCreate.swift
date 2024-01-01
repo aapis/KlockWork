@@ -8,10 +8,6 @@
 
 import SwiftUI
 
-enum EntityViewMode {
-    case ready, create, update
-}
-
 struct NoteCreate: View {
     public var note: Note? = nil
     private var mode: EntityViewMode = .ready
@@ -127,7 +123,7 @@ extension NoteCreate {
 
         if let title = content.lines.first {
             var note = note
-            if note == nil {
+            if mode == .create {
                 note = Note(context: moc)
                 note!.postedDate = nav.session.date
                 note!.lastUpdate = nav.session.date
@@ -137,7 +133,7 @@ extension NoteCreate {
                 if let job = job {
                     note!.mJob = job
                 }
-            } else {
+            } else if mode == .update {
                 note!.lastUpdate = Date()
             }
 
@@ -146,13 +142,7 @@ extension NoteCreate {
             self.title = note!.title ?? "Unnamed note"
             note!.body = content
 
-            let version = NoteVersion(context: moc)
-            version.id = UUID()
-            version.title = note!.title
-            version.content = note!.body
-            version.starred = note!.starred
-            version.created = note!.postedDate
-            
+            CoreDataNoteVersions(moc: moc).from(note!)
             PersistenceController.shared.save()
             
             // the last note you interacted with
