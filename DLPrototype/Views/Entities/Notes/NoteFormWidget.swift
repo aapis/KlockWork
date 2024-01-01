@@ -33,13 +33,14 @@ struct NoteFormWidget: View {
             
             if mode == .create {
                 TemplateChooser()
-                Divider()
-                FancyDivider()
+            }
+            
+            if mode == .update {
+                VersionChooser(note: note)
+                
             }
 
             JobChooser()
-            Divider()
-            FancyDivider()
 
             HStack {
                 if mode == .create {
@@ -112,13 +113,7 @@ struct NoteFormWidget: View {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 1) {
-                HStack {
-                    Text("Template")
-                        .padding(3)
-                    Spacer()
-                }
-                .padding(5)
-                .background(Theme.base.opacity(0.4))
+                ModuleHeader(text: "Template")
                 
                 HStack(alignment: .top, spacing: 1) {
                     VStack {
@@ -184,6 +179,8 @@ struct NoteFormWidget: View {
                         
                     }
                 }
+                
+                FancyDivider()
             }
             .onChange(of: selectedTemplate) { tmpl in
                 if tmpl != nil {
@@ -203,13 +200,7 @@ struct NoteFormWidget: View {
         
         var body: some View {
             VStack(alignment: .leading, spacing: 1) {
-                HStack {
-                    Text("Job")
-                        .padding(3)
-                    Spacer()
-                }
-                .padding(5)
-                .background(Theme.base.opacity(0.4))
+                ModuleHeader(text: "Job")
                 
                 HStack(alignment: .top, spacing: 1) {
                     HStack {
@@ -277,6 +268,8 @@ struct NoteFormWidget: View {
                         .background(job.backgroundColor)
                     }
                 }
+                
+                FancyDivider()
             }
             .onChange(of: jobSearchText) { query in
                 if query.count >= 2 {
@@ -292,7 +285,86 @@ struct NoteFormWidget: View {
         }
     }
     
+    struct VersionChooser: View {
+        public var note: Note? = nil
+        private var mode: EntityViewMode = .ready
+        private var versions: [NoteVersion] = []
+        
+        @State private var showVersions: Bool = false
+        
+        @EnvironmentObject private var nav: Navigation
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 1) {
+                ModuleHeader(text: "Version history")
+                
+                HStack(alignment: .top, spacing: 1) {
+                    HStack {
+                        Text(nav.forms.note.version != nil ? "Selected" : "")
+                            .padding(3)
+                            .foregroundColor(.black)
+                            .opacity(0.6)
+                        Spacer()
+                    }
+                    .padding(5)
+                    .background(Color.lightGray())
+                    
+                    HStack {
+                        Text("None")
+                            .padding(3)
+                            .foregroundColor(.black)
+                            .opacity(0.6)
+                        Spacer()
+                    }
+                    .padding(4)
+                    .background(Color.accentColor)
+                }
+                
+                ScrollView(showsIndicators: false) {
+                    ForEach(versions) { version in
+                        if let date = version.created {
+                            FancyButtonv2(
+                                text: date.formatted(date: .complete, time: .shortened),
+                                action: {},
+                                showIcon: false,
+                                size: .link,
+                                type: .clear
+                            )
+                            .padding(5)
+                            .background(Color.lightGray().opacity(0.4))
+                        }
+                    }
+                }
+                
+                FancyDivider()
+            }
+        }
+        
+        init(note: Note? = nil) {
+            self.note = note
+            
+            if let note = self.note {
+                self.versions = note.versions!.allObjects as! [NoteVersion]
+                self.mode = .update
+            } else {
+                self.mode = .create
+            }
+        }
+    }
     
+    private struct ModuleHeader: View {
+        public var text: String
+        
+        var body: some View {
+            HStack {
+                Text(text)
+                    .padding(3)
+                Spacer()
+            }
+            .padding(5)
+            .background(Theme.base.opacity(0.4))
+        }
+    }
 }
 
 extension NoteFormWidget {

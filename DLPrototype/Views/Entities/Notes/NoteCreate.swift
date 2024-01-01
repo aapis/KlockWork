@@ -23,10 +23,6 @@ struct NoteCreate: View {
         VStack(alignment: .leading) {
             ZStack(alignment: .topLeading) {
                 FancyTextField(placeholder: "Placeholder content", lineLimit: 20, onSubmit: {}, transparent: true, text: $content)
-                HStack {
-                    Spacer()
-                    NoteVersionExplorer(note: note)
-                }
             }
             Spacer()
         }
@@ -56,39 +52,6 @@ struct NoteCreate: View {
             self.mode = .update
         } else {
             self.mode = .create
-        }
-    }
-    
-    struct NoteVersionExplorer: View {
-        public var note: Note? = nil
-        private var mode: EntityViewMode = .ready
-        private var versions: [NoteVersion] = []
-
-        var body: some View {
-            VStack(alignment: .leading) {
-                if note != nil  {
-                    if versions.count > 0 {
-                        ForEach(versions) { version in
-                            if let date = version.created {
-                                Text(date.description)
-                            }
-                        }
-                    } else {
-                        Text("No Versions")
-                    }
-                }
-            }
-        }
-        
-        init(note: Note? = nil) {
-            self.note = note
-            
-            if let note = self.note {
-                self.versions = note.versions!.allObjects as! [NoteVersion]
-                self.mode = .update
-            } else {
-                self.mode = .create
-            }
         }
     }
 }
