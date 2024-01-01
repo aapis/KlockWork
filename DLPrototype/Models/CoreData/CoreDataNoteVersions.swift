@@ -38,7 +38,7 @@ public class CoreDataNoteVersions: ObservableObject {
         version.title = note.title
         version.content = note.body
         version.starred = note.starred
-        version.created = note.postedDate
+        version.created = Date()
         
         do {
             try moc!.save()
@@ -46,8 +46,4 @@ public class CoreDataNoteVersions: ObservableObject {
             print("Couldn't create note version for note \(note.id?.uuidString ?? "unknown")")
         }
     }
-    
-//    private func query(_ format: String) -> [NoteVersion]? {
-//
-//    }
 }
