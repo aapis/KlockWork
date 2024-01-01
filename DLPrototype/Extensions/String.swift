@@ -9,7 +9,11 @@
 import Foundation
 
 extension String {
-    func ints() -> String {
+    var lines: [String] {
+        return self.components(separatedBy: .newlines)
+    }
+
+    var integers: String {
         return self.filter { "0123456789".contains($0) }
     }
 }

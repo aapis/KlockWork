@@ -31,7 +31,7 @@ extension DefaultCompanySidebar {
         tabs = [
             ToolbarButton(
                 id: 0,
-                helpText: "Data outline",
+                helpText: "Data hierarchy",
                 label: AnyView(
                     HStack {
                         Image(systemName: "menucard").padding(.leading)

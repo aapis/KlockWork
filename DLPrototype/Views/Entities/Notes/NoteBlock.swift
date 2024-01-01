@@ -20,9 +20,9 @@ struct NoteBlock: View {
 
     var body: some View {
         Button {
-            nav.view = AnyView(NoteView(note: note, moc: moc))
+            nav.view = AnyView(NoteCreatev2(note: note))
             nav.parent = .notes
-            nav.sidebar = AnyView(NoteViewSidebar(note: note, moc: moc))
+            nav.sidebar = AnyView(NoteCreateSidebar(note: note))
             nav.pageId = UUID()
         } label: {
             VStack(spacing: 0) {

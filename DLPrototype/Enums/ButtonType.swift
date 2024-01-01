@@ -9,7 +9,7 @@
 import SwiftUI
 
 public enum ButtonType {
-    case destructive, standard, primary, secondary, star, white, tsWhite, titleLink, clear
+    case destructive, standard, primary, secondary, star, white, tsWhite, titleLink, clear, error
 
     var colours: [Color] {
         switch self {
@@ -27,6 +27,8 @@ public enum ButtonType {
             return [Color.white, Color.gray]
         case .titleLink, .clear:
             return [.clear, .clear]
+        case .error:
+            return [.red, .black]
         }
     }
 
@@ -40,7 +42,7 @@ public enum ButtonType {
             return Color.black
         case .standard, .secondary:
             return Color.white
-        case .white, .tsWhite:
+        case .white, .tsWhite, .error:
             return Color.black
         case .titleLink, .clear:
             return Color.white
@@ -59,7 +61,7 @@ public enum ButtonType {
             return Color.black.opacity(0.2)
         case .white, .tsWhite:
             return Color.black.opacity(0.2)
-        case .titleLink, .clear:
+        case .titleLink, .clear, .error:
             return Color.black.opacity(0.2)
         }
     }
@@ -80,7 +82,7 @@ public enum ButtonType {
             return Theme.secondary
         case .clear:
             return Theme.secondary
-        case .secondary:
+        case .secondary, .error:
             return Theme.secondary
         }
     }

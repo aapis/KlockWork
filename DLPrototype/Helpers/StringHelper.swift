@@ -19,4 +19,12 @@ public final class StringHelper {
 
         return String(letters).uppercased()
     }
+    
+    static func titleFromContent(from raw: String) -> String {
+        if raw.starts(with: "#") {
+            return raw.replacingOccurrences(of: "# ", with: "")
+        }
+        
+        return ""
+    }
 }

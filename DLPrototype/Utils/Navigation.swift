@@ -94,6 +94,7 @@ public class Navigation: Identifiable, ObservableObject {
     @Published public var saved: Bool = false
     @Published public var state: State = State()
     @Published public var history: History = History()
+    @Published public var forms: Forms = Forms()
 
     public func pageTitle() -> String {
         if title!.isEmpty {
@@ -137,8 +138,12 @@ public class Navigation: Identifiable, ObservableObject {
         inspector = newInspector
     }
 
-    public func save() -> Void {
+    public func save(callback:(() -> Void)? = nil) -> Void {
         self.saved = true
+
+        if let cb = callback {
+            cb()
+        }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
             self.saved = false
@@ -167,6 +172,7 @@ public class Navigation: Identifiable, ObservableObject {
         session = Session()
         state = State()
         history = History()
+        forms = Forms()
     }
 }
 
@@ -182,7 +188,16 @@ extension Navigation {
         var search: Search = Search(moc: PersistenceController.shared.container.viewContext)
         var toolbar: Toolbar = Toolbar()
     }
-    
+
+    public struct Forms {
+        var note: NoteForm = NoteForm()
+
+        struct NoteForm {
+            var template: NoteTemplates.Template? = nil
+            var job: Job? = nil
+        }
+    }
+
     public struct State {
         private var phase: Phase = .ready
         private var hierarchy: [Phase] = [.ready, .transitioning, .complete]

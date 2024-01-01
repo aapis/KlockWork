@@ -15,6 +15,7 @@ struct Home: View {
     @State public var selectedSidebarButton: Page = .dashboard
 
     @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
 
     private var buttons: [PageGroup: [SidebarButton]] {
         [
@@ -98,14 +99,16 @@ struct Home: View {
                     if nav.sidebar != nil {
                         VStack(alignment: .leading, spacing: 0) {
                             GlobalSidebarWidgets()
-
-                            if isDatePickerPresented {
-                                ZStack {
+                            
+                            if !isSearchStackShowing {
+                                if isDatePickerPresented {
+                                    ZStack {
+                                        nav.sidebar
+                                        Color.black.opacity(0.7)
+                                    }
+                                } else {
                                     nav.sidebar
-                                    Color.black.opacity(0.7)
                                 }
-                            } else {
-                                nav.sidebar
                             }
                         }
                         .frame(width: 320)

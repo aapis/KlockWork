@@ -12,10 +12,12 @@ import SwiftUI
 struct SearchBar: View {
     @Binding public var text: String
     
-    public var disabled: Bool
+    public var disabled: Bool = false
     public var placeholder: String? = "Search..."
     public var onSubmit: (() -> Void)? = nil
     public var onReset: (() -> Void)? = nil
+    // @TODO: this will remember the search text between pages, but I think instead I need some kind of search history
+//    @AppStorage("shared.searchbar") private var text: String = ""
     
     var body: some View {
         GridRow {
@@ -40,7 +42,9 @@ struct SearchBar: View {
             }
         }
     }
-    
+}
+
+extension SearchBar {
     private func reset() -> Void {
         text = ""
 

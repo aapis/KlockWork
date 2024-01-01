@@ -24,15 +24,17 @@ struct CreateEntitiesWidget: View {
             Buttons
 
             if isSearchStackShowing || isCreateStackShowing {
-                FancyDivider(height: 10)
+                FancyDivider(height: 20)
                 VStack(alignment: .leading) {
                     if isSearchStackShowing {
                         FindDashboard(searching: $searching, location: .sidebar)
+                        Spacer()
                     } else if isCreateStackShowing {
                         CreateStack()
                     }
                 }
-                .padding(10)
+                .padding([.top, .bottom])
+                .padding([.leading, .trailing], 10)
                 .background(Theme.base.opacity(0.5))
             }
         }
@@ -47,7 +49,7 @@ struct CreateEntitiesWidget: View {
             PlanButton(doesPlanExist: $doesPlanExist)
             CreateButton(active: $isCreateStackShowing)
             FindButton(active: $isSearchStackShowing)
-
+                .disabled(nav.parent == .dashboard)
             Spacer()
         }
         .padding([.leading, .trailing], 15)
@@ -106,6 +108,8 @@ struct CreateEntitiesWidget: View {
         @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
 
         @Binding public var active: Bool
+        
+        @EnvironmentObject public var nav: Navigation
 
         var body: some View {
             VStack(alignment: .center) {
@@ -138,6 +142,8 @@ struct CreateEntitiesWidget: View {
         @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
 
         @Binding public var active: Bool
+        
+        @EnvironmentObject public var nav: Navigation
 
         var body: some View {
             VStack(alignment: .center) {
@@ -146,7 +152,7 @@ struct CreateEntitiesWidget: View {
                         Theme.base.opacity(0.5)
                         FancyButtonv2(
                             text: "Search",
-                            action: {active.toggle() ; isCreateStackShowing = false},
+                            action: {active.toggle() ; isCreateStackShowing = false ; nav.session.search.cancel()},
                             icon: "magnifyingglass",
                             showLabel: false,
                             size: .small,
@@ -180,7 +186,7 @@ struct CreateEntitiesWidget: View {
                         size: .link,
                         type: nav.parent == .notes ? .secondary : .standard,
                         redirect: AnyView(CompanyCreate()),
-                        pageType: .today,
+                        pageType: .companies,
                         sidebar: AnyView(DefaultCompanySidebar())
                     )
                     Spacer()
@@ -205,8 +211,8 @@ struct CreateEntitiesWidget: View {
                                     size: .link,
                                     type: nav.parent == .projects ? .secondary : .standard,
                                     redirect: AnyView(ProjectCreate()),
-                                    pageType: .companies,
-                                    sidebar: AnyView(DefaultCompanySidebar())
+                                    pageType: .projects,
+                                    sidebar: AnyView(ProjectsDashboardSidebar())
                                 )
                             }
                             Spacer()
@@ -244,9 +250,9 @@ struct CreateEntitiesWidget: View {
                                     fgColour: .white,
                                     size: .link,
                                     type: nav.parent == .notes ? .secondary : .standard,
-                                    redirect: AnyView(NoteCreate()),
-                                    pageType: .today,
-                                    sidebar: AnyView(NoteDashboardSidebar())
+                                    redirect: AnyView(NoteCreatev2()),
+                                    pageType: .notes,
+                                    sidebar: AnyView(NoteCreateSidebar())
                                 )
                             }
                             Spacer()

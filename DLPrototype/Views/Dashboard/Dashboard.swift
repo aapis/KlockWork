@@ -18,6 +18,8 @@ struct Dashboard: View {
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
     
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+    
     @FocusState private var primaryTextFieldInFocus: Bool
 
     var body: some View {
@@ -41,6 +43,8 @@ struct Dashboard: View {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
                     self.primaryTextFieldInFocus = true
                 }
+                
+                isSearchStackShowing = false
             }
         }
     }

@@ -130,7 +130,6 @@
 		53967D8429EC6D14006616A0 /* TodaySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53967D8329EC6D14006616A0 /* TodaySettings.swift */; };
 		53967D8629EC7DEB006616A0 /* ViewModeSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53967D8529EC7DEB006616A0 /* ViewModeSelector.swift */; };
 		53999C1F29669C4E00125E65 /* NoteCreate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53999C1E29669C4E00125E65 /* NoteCreate.swift */; };
-		539C96EA27EE7AFF007DA058 /* CalendarThisWeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539C96E927EE7AFF007DA058 /* CalendarThisWeek.swift */; };
 		53B0BE7F2972542A007CB663 /* ProjectsDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE7E2972542A007CB663 /* ProjectsDashboard.swift */; };
 		53B0BE8129725B52007CB663 /* CoreDataProjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8029725B52007CB663 /* CoreDataProjects.swift */; };
 		53B0BE8429726118007CB663 /* FancyLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8329726118007CB663 /* FancyLink.swift */; };
@@ -141,15 +140,18 @@
 		53B0BE8E29731D41007CB663 /* FancyTextLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8D29731D41007CB663 /* FancyTextLink.swift */; };
 		53B0DC122A79D7FC00DA1679 /* NoteVersionNavigationWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0DC112A79D7FC00DA1679 /* NoteVersionNavigationWidget.swift */; };
 		53B446B72A7D8CB100FA79E5 /* TaskGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B446B62A7D8CB100FA79E5 /* TaskGroup.swift */; };
+		53BDA6972B41CA1C00A61BE8 /* FancySimpleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BDA6962B41CA1C00A61BE8 /* FancySimpleButton.swift */; };
 		53C000922B38E34C00D5EC04 /* FancyLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C000912B38E34C00D5EC04 /* FancyLoader.swift */; };
 		53C000942B38E5C500D5EC04 /* TodayViewTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C000932B38E5C500D5EC04 /* TodayViewTab.swift */; };
 		53C000962B3A7BD500D5EC04 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C000952B3A7BD500D5EC04 /* String.swift */; };
 		53C000982B3A821D00D5EC04 /* FancyHelpText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C000972B3A821D00D5EC04 /* FancyHelpText.swift */; };
 		53C0009A2B3A90DF00D5EC04 /* PostingInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C000992B3A90DF00D5EC04 /* PostingInterface.swift */; };
-		53C0009E2B3F6B5200D5EC04 /* TabbedWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C0009D2B3F6B5200D5EC04 /* TabbedWidget.swift */; };
 		53C000A02B3F736F00D5EC04 /* Inspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C0009F2B3F736F00D5EC04 /* Inspector.swift */; };
 		53C000A32B3F73CC00D5EC04 /* Context.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C000A22B3F73CC00D5EC04 /* Context.swift */; };
 		53C000A62B3F746800D5EC04 /* Suggestions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C000A52B3F746800D5EC04 /* Suggestions.swift */; };
+		53C000A82B41438C00D5EC04 /* NoteCreateSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C000A72B41438C00D5EC04 /* NoteCreateSidebar.swift */; };
+		53C000AA2B41447600D5EC04 /* NoteFormWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C000A92B41447600D5EC04 /* NoteFormWidget.swift */; };
+		53C000AD2B41490F00D5EC04 /* NoteTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C000AC2B41490F00D5EC04 /* NoteTemplates.swift */; };
 		53C036EF29F8A59900539C3C /* DashboardSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C036EE29F8A59900539C3C /* DashboardSettings.swift */; };
 		53C3418C299960310071B855 /* JobDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418B299960310071B855 /* JobDashboard.swift */; };
 		53C3418E299968160071B855 /* JobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418D299968160071B855 /* JobView.swift */; };
@@ -158,7 +160,6 @@
 		53C6D0912965044C00EA6129 /* DetailsColumn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C6D0902965044C00EA6129 /* DetailsColumn.swift */; };
 		53D5E2982A85A75C00FE293A /* Planning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D5E2972A85A75C00FE293A /* Planning.swift */; };
 		53D5E29A2A85E38A00FE293A /* WidgetLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D5E2992A85E38A00FE293A /* WidgetLocation.swift */; };
-		53DCA3422803BBBF0032FD60 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DCA3412803BBBF0032FD60 /* CalendarView.swift */; };
 		53E202562A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202552A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift */; };
 		53E202582A7E19B900B4DF70 /* NotesWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202572A7E19B900B4DF70 /* NotesWidget.swift */; };
 		53E2025A2A7EAE5B00B4DF70 /* ProjectsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202592A7EAE5B00B4DF70 /* ProjectsWidget.swift */; };
@@ -343,7 +344,6 @@
 		53967D8329EC6D14006616A0 /* TodaySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaySettings.swift; sourceTree = "<group>"; };
 		53967D8529EC7DEB006616A0 /* ViewModeSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModeSelector.swift; sourceTree = "<group>"; };
 		53999C1E29669C4E00125E65 /* NoteCreate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteCreate.swift; sourceTree = "<group>"; };
-		539C96E927EE7AFF007DA058 /* CalendarThisWeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarThisWeek.swift; sourceTree = "<group>"; };
 		53B0BE7E2972542A007CB663 /* ProjectsDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsDashboard.swift; sourceTree = "<group>"; };
 		53B0BE8029725B52007CB663 /* CoreDataProjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataProjects.swift; sourceTree = "<group>"; };
 		53B0BE8329726118007CB663 /* FancyLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyLink.swift; sourceTree = "<group>"; };
@@ -354,15 +354,18 @@
 		53B0BE8D29731D41007CB663 /* FancyTextLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyTextLink.swift; sourceTree = "<group>"; };
 		53B0DC112A79D7FC00DA1679 /* NoteVersionNavigationWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteVersionNavigationWidget.swift; sourceTree = "<group>"; };
 		53B446B62A7D8CB100FA79E5 /* TaskGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskGroup.swift; sourceTree = "<group>"; };
+		53BDA6962B41CA1C00A61BE8 /* FancySimpleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancySimpleButton.swift; sourceTree = "<group>"; };
 		53C000912B38E34C00D5EC04 /* FancyLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyLoader.swift; sourceTree = "<group>"; };
 		53C000932B38E5C500D5EC04 /* TodayViewTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayViewTab.swift; sourceTree = "<group>"; };
 		53C000952B3A7BD500D5EC04 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		53C000972B3A821D00D5EC04 /* FancyHelpText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyHelpText.swift; sourceTree = "<group>"; };
 		53C000992B3A90DF00D5EC04 /* PostingInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostingInterface.swift; sourceTree = "<group>"; };
-		53C0009D2B3F6B5200D5EC04 /* TabbedWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabbedWidget.swift; sourceTree = "<group>"; };
 		53C0009F2B3F736F00D5EC04 /* Inspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Inspector.swift; sourceTree = "<group>"; };
 		53C000A22B3F73CC00D5EC04 /* Context.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Context.swift; sourceTree = "<group>"; };
 		53C000A52B3F746800D5EC04 /* Suggestions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Suggestions.swift; sourceTree = "<group>"; };
+		53C000A72B41438C00D5EC04 /* NoteCreateSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteCreateSidebar.swift; sourceTree = "<group>"; };
+		53C000A92B41447600D5EC04 /* NoteFormWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteFormWidget.swift; sourceTree = "<group>"; };
+		53C000AC2B41490F00D5EC04 /* NoteTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteTemplates.swift; sourceTree = "<group>"; };
 		53C036EE29F8A59900539C3C /* DashboardSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardSettings.swift; sourceTree = "<group>"; };
 		53C3418B299960310071B855 /* JobDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDashboard.swift; sourceTree = "<group>"; };
 		53C3418D299968160071B855 /* JobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobView.swift; sourceTree = "<group>"; };
@@ -371,7 +374,6 @@
 		53C6D0902965044C00EA6129 /* DetailsColumn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsColumn.swift; sourceTree = "<group>"; };
 		53D5E2972A85A75C00FE293A /* Planning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Planning.swift; sourceTree = "<group>"; };
 		53D5E2992A85E38A00FE293A /* WidgetLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLocation.swift; sourceTree = "<group>"; };
-		53DCA3412803BBBF0032FD60 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		53E202552A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsDashboardSidebar.swift; sourceTree = "<group>"; };
 		53E202572A7E19B900B4DF70 /* NotesWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesWidget.swift; sourceTree = "<group>"; };
 		53E202592A7EAE5B00B4DF70 /* ProjectsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsWidget.swift; sourceTree = "<group>"; };
@@ -388,6 +390,7 @@
 		53E202712A80BAD500B4DF70 /* ButtonType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonType.swift; sourceTree = "<group>"; };
 		53E202752A81F2E100B4DF70 /* FancyStar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyStar.swift; sourceTree = "<group>"; };
 		53E24C402A844BC800EB21FD /* EKEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKEvent.swift; sourceTree = "<group>"; };
+		53E9186C2B4226CA00912C6F /* Meeting.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Meeting.md; sourceTree = "<group>"; };
 		53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataRecords.swift; sourceTree = "<group>"; };
 		53EDDF9D29634852008D34C7 /* Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entry.swift; sourceTree = "<group>"; };
 		53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPickerItem.swift; sourceTree = "<group>"; };
@@ -448,6 +451,7 @@
 		53152CDF296BC74900A14E43 /* Today */ = {
 			isa = PBXGroup;
 			children = (
+				53BDA6932B41BBE400A61BE8 /* Calendar */,
 				5371BA352A7B410D00DEEC21 /* Sidebars */,
 				53EFCE7729637EA0004E45EC /* LogTable */,
 				537368D024B93DB600193E88 /* Today.swift */,
@@ -471,17 +475,6 @@
 				53218D4924B7F6EB0088ABE9 /* Home.swift */,
 			);
 			path = Home;
-			sourceTree = "<group>";
-		};
-		53152CE2296BC76E00A14E43 /* Calendar */ = {
-			isa = PBXGroup;
-			children = (
-				539C96E927EE7AFF007DA058 /* CalendarThisWeek.swift */,
-				53DCA3412803BBBF0032FD60 /* CalendarView.swift */,
-				531E2F742A140533009CA230 /* CalendarToday.swift */,
-				53196AC82A168E7200FE49FC /* CalendarIndividualEvent.swift */,
-			);
-			path = Calendar;
 			sourceTree = "<group>";
 		};
 		531EB6E62A9FDA5000B3059C /* Models */ = {
@@ -707,6 +700,7 @@
 			children = (
 				5371BA2A2A7B279800DEEC21 /* NoteViewSidebar.swift */,
 				5371BA2C2A7B27BB00DEEC21 /* NoteDashboardSidebar.swift */,
+				53C000A72B41438C00D5EC04 /* NoteCreateSidebar.swift */,
 			);
 			path = Sidebars;
 			sourceTree = "<group>";
@@ -738,21 +732,14 @@
 		537368D224B93DF700193E88 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				53BDA6942B41BC2800A61BE8 /* Entities */,
 				53D5E2962A85A75000FE293A /* Planning */,
-				5363B6762A6BB2B300C2FBB8 /* Companies */,
 				535C1ADF29F48EE600CD95FD /* Dashboard */,
-				53C3418A299960080071B855 /* Jobs */,
 				532A7226298EE9DA0038C18B /* Find */,
 				53EDDF9C29634840008D34C7 /* Shared */,
-				53B0BE7D29725413007CB663 /* Projects */,
-				5335A5AF296D164F000051B1 /* Tasks */,
-				53152CE2296BC76E00A14E43 /* Calendar */,
 				53152CE1296BC76700A14E43 /* Home */,
 				53152CE0296BC75A00A14E43 /* Settings */,
-				53152CDF296BC74900A14E43 /* Today */,
-				53759E0929678DD000DCDC4B /* Import */,
-				537628AD29665B7B00DE8ECF /* Notes */,
-				5309EE3C25619A6D00B3BC06 /* Backup.swift */,
+				53BDA6952B41BC6F00A61BE8 /* Legacy */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -795,6 +782,7 @@
 		537628AD29665B7B00DE8ECF /* Notes */ = {
 			isa = PBXGroup;
 			children = (
+				53E9186B2B4226AC00912C6F /* Templates */,
 				5371BA292A7B278D00DEEC21 /* Sidebars */,
 				537628AB29665B4E00DE8ECF /* NoteView.swift */,
 				53999C1E29669C4E00125E65 /* NoteCreate.swift */,
@@ -803,6 +791,7 @@
 				536FBF6D2A68F77100F00CE4 /* NoteBlock.swift */,
 				5371BA272A7B264900DEEC21 /* NoteRowPlain.swift */,
 				531B8DF12A847BE8005D911B /* NoteGroup.swift */,
+				53C000A92B41447600D5EC04 /* NoteFormWidget.swift */,
 			);
 			path = Notes;
 			sourceTree = "<group>";
@@ -873,6 +862,7 @@
 				5334F2712B2B95240079D2E7 /* FancyJobActiveToggle.swift */,
 				5334F2732B2B958D0079D2E7 /* FancyJobSredToggle.swift */,
 				53C000972B3A821D00D5EC04 /* FancyHelpText.swift */,
+				53BDA6962B41CA1C00A61BE8 /* FancySimpleButton.swift */,
 			);
 			path = Fancy;
 			sourceTree = "<group>";
@@ -892,7 +882,6 @@
 				532C5FE42A83024900F2AAD4 /* CreateEntitiesWidget.swift */,
 				530168162A887B0A000AF4FD /* AllJobsPickerWidget.swift */,
 				5334F2652B28FA520079D2E7 /* OutlineWidget.swift */,
-				53C0009D2B3F6B5200D5EC04 /* TabbedWidget.swift */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -903,6 +892,37 @@
 				53759E0B2967EC9600DCDC4B /* CoreData */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		53BDA6932B41BBE400A61BE8 /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				531E2F742A140533009CA230 /* CalendarToday.swift */,
+				53196AC82A168E7200FE49FC /* CalendarIndividualEvent.swift */,
+			);
+			path = Calendar;
+			sourceTree = "<group>";
+		};
+		53BDA6942B41BC2800A61BE8 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				53C3418A299960080071B855 /* Jobs */,
+				5335A5AF296D164F000051B1 /* Tasks */,
+				537628AD29665B7B00DE8ECF /* Notes */,
+				53152CDF296BC74900A14E43 /* Today */,
+				5363B6762A6BB2B300C2FBB8 /* Companies */,
+				53B0BE7D29725413007CB663 /* Projects */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		53BDA6952B41BC6F00A61BE8 /* Legacy */ = {
+			isa = PBXGroup;
+			children = (
+				53759E0929678DD000DCDC4B /* Import */,
+				5309EE3C25619A6D00B3BC06 /* Backup.swift */,
+			);
+			path = Legacy;
 			sourceTree = "<group>";
 		};
 		53C000A12B3F73BD00D5EC04 /* Inspector */ = {
@@ -1014,6 +1034,15 @@
 				53C000932B38E5C500D5EC04 /* TodayViewTab.swift */,
 			);
 			path = Enums;
+			sourceTree = "<group>";
+		};
+		53E9186B2B4226AC00912C6F /* Templates */ = {
+			isa = PBXGroup;
+			children = (
+				53C000AC2B41490F00D5EC04 /* NoteTemplates.swift */,
+				53E9186C2B4226CA00912C6F /* Meeting.md */,
+			);
+			path = Templates;
 			sourceTree = "<group>";
 		};
 		53EDDF9C29634840008D34C7 /* Shared */ = {
@@ -1207,6 +1236,7 @@
 				537628B429665F4E00DE8ECF /* Data.xcdatamodeld in Sources */,
 				53F5896429983FA300843B32 /* ProjectResult.swift in Sources */,
 				53EDDF9E29634852008D34C7 /* Entry.swift in Sources */,
+				53C000A82B41438C00D5EC04 /* NoteCreateSidebar.swift in Sources */,
 				53C6D0912965044C00EA6129 /* DetailsColumn.swift in Sources */,
 				53E202632A7ECC6500B4DF70 /* TodayInHistoryWidget.swift in Sources */,
 				53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */,
@@ -1220,6 +1250,7 @@
 				53561F8529F1FC7900D828AD /* ProjectPickerUsing.swift in Sources */,
 				5354C8EA2AA03C77001C1779 /* Tasks.swift in Sources */,
 				5371BA222A7B1C9D00DEEC21 /* RecentNotesWidget.swift in Sources */,
+				53C000AA2B41447600D5EC04 /* NoteFormWidget.swift in Sources */,
 				5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */,
 				53E202652A7ECE7A00B4DF70 /* DayInHistory.swift in Sources */,
 				5334F27A2B2F4E8B0079D2E7 /* TaskDashboardByProject.swift in Sources */,
@@ -1230,7 +1261,6 @@
 				5326AE9C2B27FFE2009F1349 /* CoreDataCompanies.swift in Sources */,
 				53E2026A2A80389500B4DF70 /* JobPickerWidget.swift in Sources */,
 				53152CE4296BC8A100A14E43 /* NoteDashboard.swift in Sources */,
-				53C0009E2B3F6B5200D5EC04 /* TabbedWidget.swift in Sources */,
 				536FBF6E2A68F77100F00CE4 /* NoteBlock.swift in Sources */,
 				5334F2662B28FA520079D2E7 /* OutlineWidget.swift in Sources */,
 				53B0BE86297261A3007CB663 /* ProjectCreate.swift in Sources */,
@@ -1286,6 +1316,7 @@
 				537AEBA1296287B900385787 /* LogRow.swift in Sources */,
 				53C3419029996C070071B855 /* FancyRandomJobColourPicker.swift in Sources */,
 				537368D124B93DB600193E88 /* Today.swift in Sources */,
+				53C000AD2B41490F00D5EC04 /* NoteTemplates.swift in Sources */,
 				537628AC29665B4E00DE8ECF /* NoteView.swift in Sources */,
 				53B0BE8829726400007CB663 /* GenericToolbar.swift in Sources */,
 				53E24C412A844BC800EB21FD /* EKEvent.swift in Sources */,
@@ -1340,8 +1371,8 @@
 				53152CCC2969453000A14E43 /* DateHelper.swift in Sources */,
 				53C3418C299960310071B855 /* JobDashboard.swift in Sources */,
 				53C000A02B3F736F00D5EC04 /* Inspector.swift in Sources */,
-				539C96EA27EE7AFF007DA058 /* CalendarThisWeek.swift in Sources */,
 				5334F26E2B2A5CC50079D2E7 /* FancyLabel.swift in Sources */,
+				53BDA6972B41CA1C00A61BE8 /* FancySimpleButton.swift in Sources */,
 				534B7C2B2B3220E40017C155 /* DispatchQueue.swift in Sources */,
 				535C0E3529F729320053AD6A /* Keywords.swift in Sources */,
 				53F5896229983EEB00843B32 /* TaskResult.swift in Sources */,
@@ -1365,7 +1396,6 @@
 				53152CD4296A296A00A14E43 /* FancyButton.swift in Sources */,
 				5354C8E62AA03C40001C1779 /* Planning.Group.swift in Sources */,
 				5371BA372A7B412300DEEC21 /* TodaySidebar.swift in Sources */,
-				53DCA3422803BBBF0032FD60 /* CalendarView.swift in Sources */,
 				5363B6782A6BB2CC00C2FBB8 /* CompanyDashboard.swift in Sources */,
 				53E202562A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift in Sources */,
 				532A722B298F1CB70038C18B /* Results.swift in Sources */,
