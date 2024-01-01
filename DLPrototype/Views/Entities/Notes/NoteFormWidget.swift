@@ -118,7 +118,7 @@ struct NoteFormWidget: View {
                 HStack(alignment: .top, spacing: 1) {
                     VStack {
                         FancyButtonv2(
-                            text: nav.forms.note.template != nil ? "Selected" : "Choose a template",
+                            text: nav.forms.note.template != nil ? "Selected" : "Choose",
                             action: {showTemplates.toggle()},
                             fgColour: .white,
                             showLabel: true,
@@ -291,6 +291,8 @@ struct NoteFormWidget: View {
         private var versions: [NoteVersion] = []
         
         @State private var showVersions: Bool = false
+        @State private var allowChangeVersions: Bool = false
+        @State private var selectedVersion: NoteVersion? = nil
         
         @EnvironmentObject private var nav: Navigation
 
@@ -300,43 +302,81 @@ struct NoteFormWidget: View {
                 
                 HStack(alignment: .top, spacing: 1) {
                     HStack {
-                        Text(nav.forms.note.version != nil ? "Selected" : "")
-                            .padding(3)
-                            .foregroundColor(.black)
-                            .opacity(0.6)
+                        FancyButtonv2(
+                            text: nav.forms.note.version != nil ? "Selected" : "Choose",
+                            action: {showVersions.toggle()},
+                            fgColour: .white,
+                            showLabel: true,
+                            showIcon: false,
+                            size: .link
+                        )
+                        .help("Choose a version of this note")
+                        .foregroundColor(.black)
+                        .background(Color.lightGray())
+                        // @TODO: not sure we want to prompt, test more
+//                        .alert("Loading a different version will override your existing note content.\n\nAre you sure?", isPresented: $allowChangeVersions) {
+//                            Button("Yes", role: .destructive) {
+//                                nav.forms.note.version = selectedVersion
+//                            }
+//                            Button("No", role: .cancel) {}
+//                        }
                         Spacer()
                     }
                     .padding(5)
                     .background(Color.lightGray())
                     
-                    HStack {
-                        Text("None")
-                            .padding(3)
-                            .foregroundColor(.black)
-                            .opacity(0.6)
-                        Spacer()
+                    if let version = nav.forms.note.version {
+                        FancyButtonv2(
+                            text: version.created!.formatted(date: .complete, time: .shortened),
+                            action: {nav.forms.note.version = nil ; showVersions = false},
+                            fgColour: .black,
+                            showLabel: true,
+                            showIcon: false,
+                            size: .link,
+                            type: .clear
+                        )
+                        .help(version.created!.formatted(date: .complete, time: .shortened))
+                        .padding(5)
+                        .background(.orange)
+                    } else {
+                        HStack {
+                            Text("None")
+                                .padding(3)
+                                .foregroundColor(.black)
+                                .opacity(0.6)
+                            Spacer()
+                        }
+                        .padding(4)
+                        .background(Color.accentColor)
                     }
-                    .padding(4)
-                    .background(Color.accentColor)
                 }
                 
-                ScrollView(showsIndicators: false) {
-                    ForEach(versions) { version in
-                        if let date = version.created {
-                            FancyButtonv2(
-                                text: date.formatted(date: .complete, time: .shortened),
-                                action: {},
-                                showIcon: false,
-                                size: .link,
-                                type: .clear
-                            )
-                            .padding(5)
-                            .background(Color.lightGray().opacity(0.4))
+                if showVersions {
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 1) {
+                            ForEach(versions) { version in
+                                if let date = version.created {
+                                    FancyButtonv2(
+                                        text: date.formatted(date: .complete, time: .shortened),
+                                        action: {showVersions.toggle() ; selectedVersion = version},
+                                        showIcon: false,
+                                        size: .link,
+                                        type: .clear
+                                    )
+                                    .padding(5)
+                                    .background(Color.lightGray().opacity(0.4))
+                                }
+                            }
                         }
                     }
                 }
                 
                 FancyDivider()
+            }
+            .onChange(of: selectedVersion) { version in
+                if version != nil {
+                    allowChangeVersions = true
+                }
             }
         }
         
@@ -345,6 +385,7 @@ struct NoteFormWidget: View {
             
             if let note = self.note {
                 self.versions = note.versions!.allObjects as! [NoteVersion]
+                self.versions = self.versions.sorted(by: {$0.created! > $1.created!})
                 self.mode = .update
             } else {
                 self.mode = .create
