@@ -10,21 +10,27 @@ import SwiftUI
 
 struct NoteFormWidget: View {
     public var note: Note? = nil
-    private var isCreating: Bool { note == nil }
+    private var mode: EntityViewMode = .ready
+    
+    @State private var isDeleteAlertShowing: Bool = false
 
     @EnvironmentObject private var nav: Navigation
 
     var body: some View {
         VStack(alignment: .leading, spacing: 1) {
-            HStack {
-                Text(isCreating ? "Creating" : "Editing")
-                    .font(Theme.fontTitle)
-                    .padding([.top, .bottom])
-                Spacer()
+            VStack(alignment: .leading) {
+                HStack {
+                    Text(mode == .create ? "Creating" : "Editing")
+                        .font(Theme.fontSubTitle)
+                    
+                    Spacer()
+                }
+                Divider()
             }
-            Divider()
+            .padding(.bottom, 5)
             
-            if isCreating {
+            
+            if mode == .create {
                 TemplateChooser()
                 Divider()
                 FancyDivider()
@@ -35,10 +41,31 @@ struct NoteFormWidget: View {
             FancyDivider()
 
             HStack {
-                FancySimpleButton(text: "Close", type: .clear, href: .notes)
+                if mode == .create {
+                    FancySimpleButton(text: "Close", type: .clear, href: .notes)
+                } else {
+                    FancySimpleButton(
+                        text: "Delete",
+                        action: {isDeleteAlertShowing = true},
+                        icon: "trash",
+                        showLabel: false,
+                        showIcon: true,
+                        type: .destructive
+                    )
+                    .alert("Delete note", isPresented: $isDeleteAlertShowing) {
+                        Button("Yes", role: .destructive) {
+                            if let n = note {
+                                n.alive = false
+                                PersistenceController.shared.save()
+                                nav.to(.notes)
+                            }
+                        }
+                        Button("No", role: .cancel) {}
+                    }
+                }
                 Spacer()
                 
-                if !isCreating {
+                if mode == .update {
                     FancySimpleButton(
                         text: "Save & Close",
                         action: {nav.save()},
@@ -48,14 +75,29 @@ struct NoteFormWidget: View {
                     .disabled(nav.forms.note.job == nil)
                 }
                 
-                FancySimpleButton(text: note == nil ? "Create" : "Save", action: {nav.save()}, type: nav.forms.note.job == nil ? .error : .primary)
-                    .keyboardShortcut("s", modifiers: .command)
-                    .disabled(nav.forms.note.job == nil)
+                FancySimpleButton(
+                    text: note == nil ? "Create" : "Save",
+                    action: {nav.save()},
+                    type: nav.forms.note.job == nil ? .error : .primary,
+                    href: note == nil ? .notes : nil
+                )
+                .keyboardShortcut("s", modifiers: .command)
+                .disabled(nav.forms.note.job == nil)
             }
         }
         .padding(8)
         .background(Theme.base.opacity(0.2))
         .onAppear(perform: actionOnAppear)
+    }
+    
+    init(note: Note? = nil) {
+        self.note = note
+        
+        if self.note != nil {
+            self.mode = .update
+        } else {
+            self.mode = .create
+        }
     }
 
     struct TemplateChooser: View {

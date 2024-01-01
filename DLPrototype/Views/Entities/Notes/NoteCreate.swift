@@ -8,9 +8,13 @@
 
 import SwiftUI
 
+enum EntityViewMode {
+    case ready, create, update
+}
+
 struct NoteCreate: View {
     public var note: Note? = nil
-    private var isCreating: Bool { note == nil }
+    private var mode: EntityViewMode = .ready
 
     @State private var title: String = ""
     @State private var content: String = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sit amet libero eu...\n\n"
@@ -33,8 +37,10 @@ struct NoteCreate: View {
         .background(Theme.toolbarColour)
         .onAppear(perform: actionOnAppear)
         .onChange(of: nav.forms.note.template) { newTemplate in
-            if let def = nav.forms.note.template {
-                content = def.template
+            if mode == .update {
+                if let def = nav.forms.note.template {
+                    content = def.template
+                }
             }
         }
         .onChange(of: nav.forms.note.job) { newJob in
@@ -47,8 +53,19 @@ struct NoteCreate: View {
         }
     }
     
+    init(note: Note? = nil) {
+        self.note = note
+        
+        if let note = self.note {
+            self.mode = .update
+        } else {
+            self.mode = .create
+        }
+    }
+    
     struct NoteVersionExplorer: View {
         public var note: Note? = nil
+        private var mode: EntityViewMode = .ready
         private var versions: [NoteVersion] = []
 
         var body: some View {
@@ -66,6 +83,9 @@ struct NoteCreate: View {
             
             if let note = self.note {
                 self.versions = note.versions!.allObjects as! [NoteVersion]
+                self.mode = .update
+            } else {
+                self.mode = .create
             }
         }
     }
@@ -73,14 +93,20 @@ struct NoteCreate: View {
 
 extension NoteCreate {
     private func actionOnAppear() -> Void {
-        if !isCreating {
-            if let n = note {
-                if let body = n.body {
+        if note != nil {
+            if let body = note!.body {
+                let versions = note!.versions!.allObjects as! [NoteVersion]
+                if let mostRecentVersion = versions.last {
+                    if mostRecentVersion.content != nil {
+                        content = mostRecentVersion.content!
+                    }
+                } else {
                     content = body
-                    title = StringHelper.titleFromContent(from: body)
                 }
-                job = n.mJob
+
+                title = StringHelper.titleFromContent(from: body)
             }
+            job = note!.mJob
         }
     }
 
@@ -93,7 +119,7 @@ extension NoteCreate {
 
         if let title = content.lines.first {
             var note = note
-            if isCreating {
+            if note == nil {
                 note = Note(context: moc)
                 note!.postedDate = nav.session.date
                 note!.lastUpdate = nav.session.date
