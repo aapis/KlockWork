@@ -52,7 +52,6 @@ struct NoteFormWidget: View {
                     .keyboardShortcut("s", modifiers: .command)
                     .disabled(nav.forms.note.job == nil)
             }
-
         }
         .padding(8)
         .background(Theme.base.opacity(0.2))

@@ -12,3 +12,11 @@
 * Person two
 * ...
 
+## Notes
+
+* ...
+
+
+## Assignments/Follow ups
+
+* ...
