@@ -37,7 +37,7 @@ struct NoteCreate: View {
         .background(Theme.toolbarColour)
         .onAppear(perform: actionOnAppear)
         .onChange(of: nav.forms.note.template) { newTemplate in
-            if mode == .update {
+            if mode == .create {
                 if let def = nav.forms.note.template {
                     content = def.template
                 }
@@ -56,7 +56,7 @@ struct NoteCreate: View {
     init(note: Note? = nil) {
         self.note = note
         
-        if let note = self.note {
+        if self.note != nil {
             self.mode = .update
         } else {
             self.mode = .create
@@ -71,8 +71,14 @@ struct NoteCreate: View {
         var body: some View {
             VStack(alignment: .leading) {
                 if note != nil  {
-                    ForEach(versions) { version in
-                        Text(version.created!.description)
+                    if versions.count > 0 {
+                        ForEach(versions) { version in
+                            if let date = version.created {
+                                Text(date.description)
+                            }
+                        }
+                    } else {
+                        Text("No Versions")
                     }
                 }
             }
@@ -97,7 +103,9 @@ extension NoteCreate {
             if let body = note!.body {
                 let versions = note!.versions!.allObjects as! [NoteVersion]
                 if let mostRecentVersion = versions.last {
-                    if mostRecentVersion.content != nil {
+                    // @TODO: some notes most recent version is empty, this is a data problem. The additional
+                    // @TODO: check here doesn't fix that, but it does help in the short term (AKA: remove this)
+                    if mostRecentVersion.content != nil && !mostRecentVersion.content!.isEmpty {
                         content = mostRecentVersion.content!
                     }
                 } else {
@@ -142,7 +150,7 @@ extension NoteCreate {
             version.id = UUID()
             version.title = note!.title
             version.content = note!.body
-            version.starred = false
+            version.starred = note!.starred
             version.created = note!.postedDate
             
             PersistenceController.shared.save()
