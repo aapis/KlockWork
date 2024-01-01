@@ -68,10 +68,10 @@ struct NoteRow: View {
                 
                 FancyTextLink(
                     text: note.title!,
-                    destination: AnyView(NoteView(note: note, moc: moc)),
+                    destination: AnyView(NoteCreate(note: note)),
                     fgColour: (note.mJob != nil ? (Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white) : Color.white),
                     pageType: .notes,
-                    sidebar: AnyView(NoteViewSidebar(note: note, moc: moc))
+                    sidebar: AnyView(NoteCreateSidebar(note: note))
                 )
                 .padding(10)
             }

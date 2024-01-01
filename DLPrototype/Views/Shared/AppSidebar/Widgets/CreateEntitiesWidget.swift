@@ -250,7 +250,7 @@ struct CreateEntitiesWidget: View {
                                     fgColour: .white,
                                     size: .link,
                                     type: nav.parent == .notes ? .secondary : .standard,
-                                    redirect: AnyView(NoteCreatev2()),
+                                    redirect: AnyView(NoteCreate()),
                                     pageType: .notes,
                                     sidebar: AnyView(NoteCreateSidebar())
                                 )

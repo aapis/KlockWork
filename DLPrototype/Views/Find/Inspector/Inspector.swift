@@ -448,9 +448,9 @@ extension FindDashboard {
                             showLabel: true,
                             size: .link,
                             type: .clear,
-                            redirect: AnyView(NoteView(note: item, moc: PersistenceController.shared.container.viewContext)),
+                            redirect: AnyView(NoteCreate(note: item)),
                             pageType: .notes,
-                            sidebar: AnyView(NoteViewSidebar(note: item, moc: PersistenceController.shared.container.viewContext))
+                            sidebar: AnyView(NoteCreateSidebar(note: item))
                         )
                     }
                 }
