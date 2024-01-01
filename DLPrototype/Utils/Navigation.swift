@@ -195,6 +195,7 @@ extension Navigation {
         struct NoteForm {
             var template: NoteTemplates.Template? = nil
             var job: Job? = nil
+            var version: NoteVersion? = nil
         }
     }
 
