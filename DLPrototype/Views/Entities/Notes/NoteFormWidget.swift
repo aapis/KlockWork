@@ -205,7 +205,7 @@ struct NoteFormWidget: View {
                 HStack(alignment: .top, spacing: 1) {
                     HStack {
                         Text(nav.forms.note.job != nil ? "Selected" : "")
-                            .padding(3)
+                            .padding(2)
                             .foregroundColor(.black)
                             .opacity(0.6)
                         Spacer()
@@ -352,20 +352,18 @@ struct NoteFormWidget: View {
                 }
                 
                 if showVersions {
-                    ScrollView(showsIndicators: false) {
-                        VStack(spacing: 1) {
-                            ForEach(versions) { version in
-                                if let date = version.created {
-                                    FancyButtonv2(
-                                        text: date.formatted(date: .complete, time: .shortened),
-                                        action: {showVersions.toggle() ; selectedVersion = version},
-                                        showIcon: false,
-                                        size: .link,
-                                        type: .clear
-                                    )
-                                    .padding(5)
-                                    .background(Color.lightGray().opacity(0.4))
-                                }
+                    VStack(spacing: 1) {
+                        ForEach(versions) { version in
+                            if let date = version.created {
+                                FancyButtonv2(
+                                    text: date.formatted(date: .complete, time: .shortened),
+                                    action: {showVersions.toggle() ; selectedVersion = version},
+                                    showIcon: false,
+                                    size: .link,
+                                    type: .clear
+                                )
+                                .padding(5)
+                                .background(Color.lightGray().opacity(0.4))
                             }
                         }
                     }
