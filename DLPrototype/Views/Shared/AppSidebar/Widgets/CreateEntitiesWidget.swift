@@ -211,7 +211,7 @@ struct CreateEntitiesWidget: View {
                                     size: .link,
                                     type: nav.parent == .projects ? .secondary : .standard,
                                     redirect: AnyView(ProjectCreate()),
-                                    pageType: .projects,
+                                    pageType: .companies,
                                     sidebar: AnyView(ProjectsDashboardSidebar())
                                 )
                             }
