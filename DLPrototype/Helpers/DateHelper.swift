@@ -194,7 +194,7 @@ final public class DateHelper {
 
         let end = Calendar.autoupdatingCurrent.startOfDay(for: date)
         var eComponents = DateComponents()
-        sComponents.day = +7
+        eComponents.day = +7
 
         return DateBounds(
             upper: Calendar.autoupdatingCurrent.date(byAdding: sComponents, to: start)!,
