@@ -176,6 +176,9 @@
 		53E202722A80BAD500B4DF70 /* ButtonType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202712A80BAD500B4DF70 /* ButtonType.swift */; };
 		53E202762A81F2E100B4DF70 /* FancyStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202752A81F2E100B4DF70 /* FancyStar.swift */; };
 		53E24C412A844BC800EB21FD /* EKEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E24C402A844BC800EB21FD /* EKEvent.swift */; };
+		53E918702B43671E00912C6F /* EntityViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E9186F2B43671E00912C6F /* EntityViewMode.swift */; };
+		53E918772B43DB2F00912C6F /* Meeting.md in Resources */ = {isa = PBXBuildFile; fileRef = 53E918762B43DB0D00912C6F /* Meeting.md */; };
+		53E918792B43DD4200912C6F /* List.md in Resources */ = {isa = PBXBuildFile; fileRef = 53E918782B43DCB600912C6F /* List.md */; };
 		53ECD0572971F8F400A09AAB /* CoreDataRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */; };
 		53EDDF9E29634852008D34C7 /* Entry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDF9D29634852008D34C7 /* Entry.swift */; };
 		53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */; };
@@ -390,7 +393,9 @@
 		53E202712A80BAD500B4DF70 /* ButtonType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonType.swift; sourceTree = "<group>"; };
 		53E202752A81F2E100B4DF70 /* FancyStar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyStar.swift; sourceTree = "<group>"; };
 		53E24C402A844BC800EB21FD /* EKEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKEvent.swift; sourceTree = "<group>"; };
-		53E9186C2B4226CA00912C6F /* Meeting.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Meeting.md; sourceTree = "<group>"; };
+		53E9186F2B43671E00912C6F /* EntityViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityViewMode.swift; sourceTree = "<group>"; };
+		53E918762B43DB0D00912C6F /* Meeting.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Meeting.md; sourceTree = "<group>"; };
+		53E918782B43DCB600912C6F /* List.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = List.md; sourceTree = "<group>"; };
 		53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataRecords.swift; sourceTree = "<group>"; };
 		53EDDF9D29634852008D34C7 /* Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entry.swift; sourceTree = "<group>"; };
 		53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPickerItem.swift; sourceTree = "<group>"; };
@@ -782,7 +787,7 @@
 		537628AD29665B7B00DE8ECF /* Notes */ = {
 			isa = PBXGroup;
 			children = (
-				53E9186B2B4226AC00912C6F /* Templates */,
+				53E918752B43DB0000912C6F /* Templates */,
 				5371BA292A7B278D00DEEC21 /* Sidebars */,
 				537628AB29665B4E00DE8ECF /* NoteView.swift */,
 				53999C1E29669C4E00125E65 /* NoteCreate.swift */,
@@ -792,6 +797,7 @@
 				5371BA272A7B264900DEEC21 /* NoteRowPlain.swift */,
 				531B8DF12A847BE8005D911B /* NoteGroup.swift */,
 				53C000A92B41447600D5EC04 /* NoteFormWidget.swift */,
+				53C000AC2B41490F00D5EC04 /* NoteTemplates.swift */,
 			);
 			path = Notes;
 			sourceTree = "<group>";
@@ -1032,15 +1038,16 @@
 				53E202712A80BAD500B4DF70 /* ButtonType.swift */,
 				53D5E2992A85E38A00FE293A /* WidgetLocation.swift */,
 				53C000932B38E5C500D5EC04 /* TodayViewTab.swift */,
+				53E9186F2B43671E00912C6F /* EntityViewMode.swift */,
 			);
 			path = Enums;
 			sourceTree = "<group>";
 		};
-		53E9186B2B4226AC00912C6F /* Templates */ = {
+		53E918752B43DB0000912C6F /* Templates */ = {
 			isa = PBXGroup;
 			children = (
-				53C000AC2B41490F00D5EC04 /* NoteTemplates.swift */,
-				53E9186C2B4226CA00912C6F /* Meeting.md */,
+				53E918762B43DB0D00912C6F /* Meeting.md */,
+				53E918782B43DCB600912C6F /* List.md */,
 			);
 			path = Templates;
 			sourceTree = "<group>";
@@ -1157,6 +1164,9 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
+				KnownAssetTags = (
+					New,
+				);
 				LastSwiftUpdateCheck = 1150;
 				LastUpgradeCheck = 1510;
 				ORGANIZATIONNAME = YegCollective;
@@ -1201,6 +1211,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53E918792B43DD4200912C6F /* List.md in Resources */,
+				53E918772B43DB2F00912C6F /* Meeting.md in Resources */,
 				53218D5224B7F6EC0088ABE9 /* Preview Assets.xcassets in Resources */,
 				53218D8224B8195D0088ABE9 /* Screenshots in Resources */,
 				53218D4F24B7F6EC0088ABE9 /* Assets.xcassets in Resources */,
@@ -1328,6 +1340,7 @@
 				5371BA402A7B866300DEEC21 /* TaskDashboardSidebar.swift in Sources */,
 				5330EEB7298B6418004FC38A /* JobRow.swift in Sources */,
 				5354C8F62AA045CA001C1779 /* Planning.Today.swift in Sources */,
+				53E918702B43671E00912C6F /* EntityViewMode.swift in Sources */,
 				53790C032A72F18200D3FFD4 /* SidebarButton.swift in Sources */,
 				53F10FE0296E77BE0048D040 /* CoreDataJob.swift in Sources */,
 				533E40652970DA640007785A /* ViewUpdater.swift in Sources */,

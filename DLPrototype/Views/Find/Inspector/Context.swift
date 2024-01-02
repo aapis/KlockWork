@@ -187,8 +187,8 @@ extension FindDashboard.Inspector.Context {
 
     private func actionShowNote(_ note: Note) -> Void {
         nav.session.search.cancel()
-        nav.setView(AnyView(NoteView(note: note, moc: moc)))
+        nav.setView(AnyView(NoteCreate(note: note)))
         nav.setParent(.notes)
-        nav.setSidebar(AnyView(NoteViewSidebar(note: note, moc: moc)))
+        nav.setSidebar(AnyView(NoteCreateSidebar(note: note)))
     }
 }

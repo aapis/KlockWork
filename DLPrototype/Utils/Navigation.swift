@@ -138,7 +138,7 @@ public class Navigation: Identifiable, ObservableObject {
         inspector = newInspector
     }
 
-    public func save(callback:(() -> Void)? = nil) -> Void {
+    public func save(callback: (() -> Void)? = nil) -> Void {
         self.saved = true
 
         if let cb = callback {
@@ -195,6 +195,8 @@ extension Navigation {
         struct NoteForm {
             var template: NoteTemplates.Template? = nil
             var job: Job? = nil
+            var version: NoteVersion? = nil
+            var star: Bool = false
         }
     }
 

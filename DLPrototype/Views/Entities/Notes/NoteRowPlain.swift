@@ -30,9 +30,9 @@ struct NoteRowPlain: View {
                         fgColour: job.colour_from_stored().isBright() ? .black : .white,
                         showIcon: false,
                         size: .link,
-                        redirect: AnyView(NoteView(note: note, moc: moc)),
+                        redirect: AnyView(NoteCreate(note: note)),
                         pageType: .notes,
-                        sidebar: AnyView(NoteViewSidebar(note: note, moc: moc))
+                        sidebar: AnyView(NoteCreateSidebar(note: note))
                     )
                 }
                 Spacer()
@@ -46,10 +46,10 @@ struct NoteRowPlain: View {
 extension NoteRowPlain {
     private func actionOpenNote() -> Void {
         nav.setId()
-        nav.setParent(.today)
+        nav.setParent(.notes)
         nav.session.note = note
-        nav.setView(AnyView(NoteView(note: note, moc: moc)))
-        nav.setSidebar(AnyView(NoteViewSidebar(note: note, moc: moc)))
+        nav.setView(AnyView(NoteCreate(note: note)))
+        nav.setSidebar(AnyView(NoteCreateSidebar(note: note)))
     }
 }
 

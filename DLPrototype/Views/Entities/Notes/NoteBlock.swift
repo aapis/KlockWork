@@ -20,7 +20,7 @@ struct NoteBlock: View {
 
     var body: some View {
         Button {
-            nav.view = AnyView(NoteCreatev2(note: note))
+            nav.view = AnyView(NoteCreate(note: note))
             nav.parent = .notes
             nav.sidebar = AnyView(NoteCreateSidebar(note: note))
             nav.pageId = UUID()
