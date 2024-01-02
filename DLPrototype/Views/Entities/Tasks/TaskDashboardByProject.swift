@@ -83,7 +83,7 @@ extension TaskDashboardByProject {
                 Text("Owned Jobs")
                     .padding()
                     .background(Theme.rowColour)
-                
+
                 ForEach(jobs, id: \.self) { job in
                     FancyTextLink(text: String(job.id_int()), destination: AnyView(JobDashboard(defaultSelectedJob: job)), fgColour: job.fgColour(), pageType: .jobs, sidebar: AnyView(JobDashboardSidebar()))
                         .padding()
