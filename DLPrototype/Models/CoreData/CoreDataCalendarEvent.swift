@@ -96,10 +96,11 @@ public class CoreDataCalendarEvent: ObservableObject {
         switch (status) {
         case .notDetermined:
             requestAccess()
-        case .authorized:
+        case .authorized, .fullAccess, .writeOnly:
             events = callback(calendar)
             break
-        case .restricted, .denied: break
+        case .restricted, .denied:
+            break
 
         @unknown default:
             fatalError()
@@ -120,7 +121,7 @@ public class CoreDataCalendarEvent: ObservableObject {
         switch (status) {
         case .notDetermined:
             requestAccess()
-        case .authorized:
+        case .authorized, .fullAccess, .writeOnly:
             events = callback(ekCalendar!)
             break
         case .restricted, .denied: break
