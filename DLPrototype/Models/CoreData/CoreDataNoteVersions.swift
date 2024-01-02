@@ -31,7 +31,7 @@ public class CoreDataNoteVersions: ObservableObject {
         return results
     }
     
-    public func from(_ note: Note) -> Void {
+    public func from(_ note: Note, source: SaveSource = .manual) -> Void {
         let version = NoteVersion(context: moc!)
         version.id = UUID()
         version.note = note
@@ -39,6 +39,7 @@ public class CoreDataNoteVersions: ObservableObject {
         version.content = note.body
         version.starred = note.starred
         version.created = Date()
+        version.source = source.name
         
         do {
             try moc!.save()

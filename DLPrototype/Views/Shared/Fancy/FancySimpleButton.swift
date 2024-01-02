@@ -55,7 +55,7 @@ struct FancySimpleButton: View {
             }
         }
         .help(text)
-        .buttonStyle(.plain)
+        .buttonStyle(.borderless)
         .background(highlighted ? type.highlightColour : type.colours.first)
         .foregroundColor(type.textColour)
         .mask(RoundedRectangle(cornerRadius: 3)) // @TODO: make configurable

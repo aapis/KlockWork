@@ -8,6 +8,17 @@
 
 import SwiftUI
 
+public enum SaveSource {
+    case auto, manual
+    
+    var name: String {
+        return switch self {
+        case .auto: "Automatic"
+        case .manual: ""
+        }
+    }
+}
+
 struct NoteFormWidget: View {
     public var note: Note? = nil
     private var currentVersion: NoteVersion? = nil
@@ -20,11 +31,18 @@ struct NoteFormWidget: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 1) {
             VStack(alignment: .leading) {
-                HStack {
+                HStack(alignment: .bottom, spacing: 2) {
                     Text(mode == .create ? "Creating" : "Editing")
                         .font(Theme.fontSubTitle)
-                    
                     Spacer()
+                    if let version = nav.forms.note.version {
+                        if let uuid = version.id?.uuidString.prefix(6) {
+                            Text("#" + uuid)
+                                .foregroundStyle(.white)
+                                .font(Theme.fontSubTitle)
+                                .opacity(0.5)
+                        }
+                    }
                 }
                 Divider()
             }
@@ -35,9 +53,10 @@ struct NoteFormWidget: View {
                 TemplateChooser()
             }
             
+            StarChooser(note: note)
+            
             if mode == .update {
                 VersionChooser(note: note)
-                
             }
 
             JobChooser()
@@ -99,9 +118,55 @@ struct NoteFormWidget: View {
             self.mode = .update
             
             let versions = note.versions?.allObjects as! [NoteVersion]
-            self.currentVersion = versions.last
+            self.currentVersion = versions.sorted(by: {$0.created! > $1.created!}).first
         } else {
             self.mode = .create
+        }
+    }
+    
+    struct StarChooser: View {
+        public var note: Note?
+
+        @State private var starred: Bool = false
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 1) {
+                ModuleHeader(text: "Starred?")
+
+                HStack(alignment: .top, spacing: 1) {
+                    FancyButtonv2(
+                        text: "Toggle",
+                        action: {starred.toggle()},
+                        fgColour: .white,
+                        showLabel: true,
+                        showIcon: false,
+                        size: .link
+                    )
+                    .help("Change whether this note is favourited")
+                    .padding(5)
+                    .background(Color.lightGray())
+                    
+                    HStack {
+                        Text(starred ? "Yes" : "No")
+                            .padding(2)
+                        Spacer()
+                    }
+                    .padding(5)
+                    .foregroundColor(.black)
+                    .background(starred ? .orange : .gray)
+                }
+                FancyDivider()
+            }
+            .onAppear(perform: {
+                if let n = note {
+                    starred = n.starred
+                }
+            })
+            .onChange(of: starred) { newStatus in
+                if let n = note {
+                    n.starred = newStatus
+                }
+            }
         }
     }
 
@@ -253,20 +318,25 @@ struct NoteFormWidget: View {
                 }
                 SearchBar(text: $jobSearchText, placeholder: "Find jobs by ID...")
 
-                VStack(spacing: 1) {
-                    ForEach(filteredJobs) { job in
-                        FancyButtonv2(
-                            text: job.jid.string,
-                            action: {choose(job)},
-                            fgColour: job.foregroundColor,
-                            showLabel: true,
-                            showIcon: false,
-                            size: .link,
-                            type: .clear
-                        )
-                        .padding(5)
-                        .background(job.backgroundColor)
+                if filteredJobs.count > 0 {
+                    ScrollView {
+                        VStack(spacing: 1) {
+                            ForEach(filteredJobs) { job in
+                                FancyButtonv2(
+                                    text: job.jid.string,
+                                    action: {choose(job)},
+                                    fgColour: job.foregroundColor,
+                                    showLabel: true,
+                                    showIcon: false,
+                                    size: .link,
+                                    type: .clear
+                                )
+                                .padding(5)
+                                .background(job.backgroundColor)
+                            }
+                        }
                     }
+                    .frame(maxHeight: 250)
                 }
                 
                 FancyDivider()
@@ -292,13 +362,12 @@ struct NoteFormWidget: View {
         
         @State private var showVersions: Bool = false
         @State private var allowChangeVersions: Bool = false
-        @State private var selectedVersion: NoteVersion? = nil
         
         @EnvironmentObject private var nav: Navigation
 
         var body: some View {
             VStack(alignment: .leading, spacing: 1) {
-                ModuleHeader(text: "Version history")
+                ModuleHeader(text: "Content revision history")
                 
                 HStack(alignment: .top, spacing: 1) {
                     HStack {
@@ -313,13 +382,6 @@ struct NoteFormWidget: View {
                         .help("Choose a version of this note")
                         .foregroundColor(.black)
                         .background(Color.lightGray())
-                        // @TODO: not sure we want to prompt, test more
-//                        .alert("Loading a different version will override your existing note content.\n\nAre you sure?", isPresented: $allowChangeVersions) {
-//                            Button("Yes", role: .destructive) {
-//                                nav.forms.note.version = selectedVersion
-//                            }
-//                            Button("No", role: .cancel) {}
-//                        }
                         Spacer()
                     }
                     .padding(5)
@@ -327,7 +389,7 @@ struct NoteFormWidget: View {
                     
                     if let version = nav.forms.note.version {
                         FancyButtonv2(
-                            text: version.created!.formatted(date: .complete, time: .shortened),
+                            text: version.created!.formatted(date: .omitted, time: .shortened),
                             action: {nav.forms.note.version = nil ; showVersions = false},
                             fgColour: .black,
                             showLabel: true,
@@ -335,7 +397,7 @@ struct NoteFormWidget: View {
                             size: .link,
                             type: .clear
                         )
-                        .help(version.created!.formatted(date: .complete, time: .shortened))
+                        .help(version.created!.formatted(date: .numeric, time: .shortened))
                         .padding(5)
                         .background(.orange)
                     } else {
@@ -352,29 +414,28 @@ struct NoteFormWidget: View {
                 }
                 
                 if showVersions {
-                    VStack(spacing: 1) {
-                        ForEach(versions) { version in
-                            if let date = version.created {
-                                FancyButtonv2(
-                                    text: date.formatted(date: .complete, time: .shortened),
-                                    action: {showVersions.toggle() ; selectedVersion = version},
-                                    showIcon: false,
-                                    size: .link,
-                                    type: .clear
-                                )
-                                .padding(5)
-                                .background(Color.lightGray().opacity(0.4))
+                    ScrollView {
+                        VStack(spacing: 1) {
+                            ForEach(versions) { version in
+                                if let date = version.created {
+                                    FancyButtonv2(
+                                        text: self.labelText(date: date, version: version),
+                                        action: {showVersions.toggle() ; nav.forms.note.version = version},
+                                        fgColour: nav.forms.note.version == version ? .black : .white,
+                                        showIcon: false,
+                                        size: .link,
+                                        type: .clear
+                                    )
+                                    .padding(5)
+                                    .background(nav.forms.note.version == version ? Color.orange : Color.lightGray().opacity(0.4))
+                                }
                             }
                         }
                     }
+                    .frame(maxHeight: 250)
                 }
                 
                 FancyDivider()
-            }
-            .onChange(of: selectedVersion) { version in
-                if version != nil {
-                    allowChangeVersions = true
-                }
             }
         }
         
@@ -411,6 +472,7 @@ extension NoteFormWidget {
         if let n = note {
             nav.forms.note.job = n.mJob
         }
+        nav.forms.note.version = currentVersion
     }
 }
 
@@ -418,5 +480,21 @@ extension NoteFormWidget.JobChooser {
     private func choose(_ job: Job) -> Void {
         nav.forms.note.job = job
         jobSearchText = ""
+    }
+}
+
+extension NoteFormWidget.VersionChooser {
+    private func labelText(date: Date, version: NoteVersion) -> String {
+        var label = ""
+
+        if let source = version.source {
+            if source == "Automatic" {
+                label += "[Auto] "
+            }
+        }
+        
+        label += date.formatted(date: .numeric, time: .shortened)
+        
+        return label
     }
 }

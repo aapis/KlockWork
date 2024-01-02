@@ -14,7 +14,6 @@ struct NoteCreate: View {
 
     @State private var title: String = ""
     @State private var content: String = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sit amet libero eu...\n\n"
-    @State private var job: Job? = nil
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
@@ -35,8 +34,14 @@ struct NoteCreate: View {
                 }
             }
         }
-        .onChange(of: nav.forms.note.job) { newJob in
-            job = newJob
+        .onChange(of: nav.forms.note.version) {newVersion in
+            if mode == .update {
+                if let version = nav.forms.note.version {
+                    if let vContent = version.content {
+                        content = vContent
+                    }
+                }
+            }
         }
         .onChange(of: nav.saved) { status in
             if status {
@@ -62,28 +67,19 @@ extension NoteCreate {
             if let body = note!.body {
                 let versions = note!.versions!.allObjects as! [NoteVersion]
                 if let mostRecentVersion = versions.last {
-                    // @TODO: some notes most recent version is empty, this is a data problem. The additional
-                    // @TODO: check here doesn't fix that, but it does help in the short term (AKA: remove this)
-                    if mostRecentVersion.content != nil && !mostRecentVersion.content!.isEmpty {
+                    if mostRecentVersion.content != nil {
                         content = mostRecentVersion.content!
                     }
                 } else {
                     content = body
                 }
 
-                title = StringHelper.titleFromContent(from: body)
+                title = StringHelper.titleFromContent(from: content)
             }
-            job = note!.mJob
         }
     }
 
-    private func save() -> Void {
-        // Allow saving if there's at least one line and a job
-        if job == nil {
-            print("[error][note.create] A job is required to save")
-            return
-        }
-
+    private func save(source: SaveSource = .manual) -> Void {
         if let title = content.lines.first {
             var note = note
             if mode == .create {
@@ -93,8 +89,8 @@ extension NoteCreate {
                 note!.id = UUID()
                 note!.alive = true
 
-                if let job = job {
-                    note!.mJob = job
+                if let job = nav.forms.note.job {
+                    job.addToMNotes(note!)
                 }
             } else if mode == .update {
                 note!.lastUpdate = Date()
@@ -105,7 +101,7 @@ extension NoteCreate {
             self.title = note!.title ?? "Unnamed note"
             note!.body = content
 
-            CoreDataNoteVersions(moc: moc).from(note!)
+            CoreDataNoteVersions(moc: moc).from(note!, source: source)
             PersistenceController.shared.save()
             
             // the last note you interacted with

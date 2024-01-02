@@ -21,23 +21,21 @@ struct SearchBar: View {
     
     var body: some View {
         GridRow {
-            HStack {
-                ZStack(alignment: .trailing) {
-                    FancyTextField(placeholder: placeholder!, lineLimit: 1, onSubmit: onSubmit, disabled: disabled, text: $text)
-                    
-                    Spacer()
-                    
-                    if text.count > 0 {
-                        FancyButtonv2(
-                            text: "Reset",
-                            action: reset,
-                            icon: "xmark",
-                            showLabel: false,
-                            size: .tiny,
-                            type: .white
-                        )
-                        .padding([.trailing])
-                    }
+            ZStack(alignment: .trailing) {
+                FancyTextField(placeholder: placeholder!, lineLimit: 1, onSubmit: onSubmit, disabled: disabled, text: $text)
+                
+                Spacer()
+                
+                if text.count > 0 {
+                    FancySimpleButton(
+                        text: "Reset",
+                        action: reset,
+                        icon: "xmark",
+                        showLabel: false,
+                        showIcon: true,
+                        type: .white
+                    )
+                    .padding([.trailing])
                 }
             }
         }

@@ -55,9 +55,9 @@ struct MainMenu: Commands {
             Divider()
             Menu("Timeline navigation") {
                 Button("Previous day") {nav.session.date -= 86400}
-                    .keyboardShortcut(.leftArrow, modifiers: [.command])
+                    .keyboardShortcut(.leftArrow, modifiers: [.command, .shift])
                 Button("Next day") {nav.session.date += 86400}
-                    .keyboardShortcut(.rightArrow, modifiers: [.command])
+                    .keyboardShortcut(.rightArrow, modifiers: [.command, .shift])
                 Divider()
                 Button("Reset to today") {nav.session.date = Date()}
                     .keyboardShortcut("d", modifiers: [.command, .shift])
