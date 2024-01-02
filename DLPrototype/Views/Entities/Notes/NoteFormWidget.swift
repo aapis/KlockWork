@@ -268,7 +268,7 @@ struct NoteFormWidget: View {
                 
                 HStack(alignment: .top, spacing: 1) {
                     HStack {
-                        Text(nav.forms.note.job != nil ? "Selected" : "")
+                        Text(nav.forms.note.job != nil ? "Selected" : "Choose")
                             .padding(2)
                             .foregroundColor(.black)
                             .opacity(0.6)
@@ -281,19 +281,6 @@ struct NoteFormWidget: View {
                         FancyButtonv2(
                             text: job.jid.string,
                             action: {nav.forms.note.job = nil},
-                            fgColour: job.foregroundColor,
-                            showLabel: true,
-                            showIcon: false,
-                            size: .link,
-                            type: .clear
-                        )
-                        .help("Click to deselect this job, then show the Active Job prompt (if available)")
-                        .padding(5)
-                        .background(job.backgroundColor)
-                    } else if let job = nav.session.job {
-                        FancyButtonv2(
-                            text: "Active job: \(job.jid.string)",
-                            action: {nav.session.job = nil},
                             fgColour: job.foregroundColor,
                             showLabel: true,
                             showIcon: false,
@@ -470,7 +457,10 @@ extension NoteFormWidget {
     private func actionOnAppear() -> Void {
         if let n = note {
             nav.forms.note.job = n.mJob
+        } else if nav.session.job != nil {
+            nav.forms.note.job = nav.session.job!
         }
+
         nav.forms.note.version = currentVersion
     }
 }
