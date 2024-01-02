@@ -241,7 +241,6 @@ struct NoteFormWidget: View {
                         .help("Deselect this job, then show the Active Job prompt (if available)")
                         .padding(5)
                         .background(Color.lightGray().opacity(0.4))
-                        
                     }
                 }
                 

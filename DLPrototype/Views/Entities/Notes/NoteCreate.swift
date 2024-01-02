@@ -30,7 +30,9 @@ struct NoteCreate: View {
         .onChange(of: nav.forms.note.template) { newTemplate in
             if mode == .create {
                 if let def = nav.forms.note.template {
-                    content = def.template
+                    if let tmpl = def.template {
+                        content = tmpl
+                    }
                 }
             }
         }
@@ -52,7 +54,7 @@ struct NoteCreate: View {
     
     init(note: Note? = nil) {
         self.note = note
-        
+
         if self.note != nil {
             self.mode = .update
         } else {
