@@ -85,117 +85,119 @@ extension FindDashboard {
             @EnvironmentObject public var nav: Navigation
             
             var body: some View {
-                VStack(alignment: .leading, spacing: 10) {
-                    HStack(alignment: .top, spacing: 10) {
-                        Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
-                        Text("Type: Job")
-                        Spacer()
-                    }
-                    .help("Type: Job entity")
-                    Divider()
-                    
-                    HStack(alignment: .top, spacing: 10) {
-                        Image(systemName: "number").symbolRenderingMode(.hierarchical)
-                        Text(item.jid.string)
-                        Spacer()
-                    }
-                    .help("ID: \(item.jid.string)")
-                    Divider()
-                    
-                    if let date = item.created {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 10) {
                         HStack(alignment: .top, spacing: 10) {
-                            Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
-                            Text(date.description)
+                            Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                            Text("Type: Job")
                             Spacer()
                         }
-                        .help("Created: \(date.description)")
+                        .help("Type: Job entity")
                         Divider()
-                    }
-                    
-                    if let date = item.lastUpdate {
+                        
                         HStack(alignment: .top, spacing: 10) {
-                            Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
-                            Text(date.description)
+                            Image(systemName: "number").symbolRenderingMode(.hierarchical)
+                            Text(item.jid.string)
                             Spacer()
                         }
-                        .help("Last updated: \(date.description)")
+                        .help("ID: \(item.jid.string)")
                         Divider()
-                    }
-                    
-                    if let uri = item.uri {
-                        VStack(alignment: .leading) {
+                        
+                        if let date = item.created {
                             HStack(alignment: .top, spacing: 10) {
-                                Image(systemName: "link").symbolRenderingMode(.hierarchical)
-                                Link(destination: uri, label: {
-                                    Text(uri.absoluteString)
-                                })
-                                .help("Open in browser")
-                                .underline()
-                                .useDefaultHover({_ in})
-                                .contextMenu {
-                                    Button {
-                                        ClipboardHelper.copy(uri.absoluteString)
-                                    } label: {
-                                        Text("Copy to clipboard")
-                                    }
-                                }
+                                Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
+                                Text(date.description)
                                 Spacer()
                             }
+                            .help("Created: \(date.description)")
                             Divider()
                         }
-                    }
-                    
-                    HStack(alignment: .top, spacing: 10) {
-                        Image(systemName: "camera.filters").symbolRenderingMode(.hierarchical)
-                        ZStack {
-                            Theme.base
-                            item.colour_from_stored()
-                        }
-                        .frame(width: 15, height: 15)
-                        Text(item.colour_from_stored().description)
-                            .contextMenu {
-                                Button {
-                                    ClipboardHelper.copy(item.colour_from_stored().description)
-                                } label: {
-                                    Text("Copy colour HEX to clipboard")
-                                }
+                        
+                        if let date = item.lastUpdate {
+                            HStack(alignment: .top, spacing: 10) {
+                                Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
+                                Text(date.description)
+                                Spacer()
                             }
-                        Spacer()
-                    }
-                    .help("Colour: \(item.colour_from_stored().description)")
-                    Divider()
-                    
-                    Context(item: item)
-                    
-                    Spacer()
-                    VStack(alignment: .leading) {
+                            .help("Last updated: \(date.description)")
+                            Divider()
+                        }
+                        
+                        if let uri = item.uri {
+                            VStack(alignment: .leading) {
+                                HStack(alignment: .top, spacing: 10) {
+                                    Image(systemName: "link").symbolRenderingMode(.hierarchical)
+                                    Link(destination: uri, label: {
+                                        Text(uri.absoluteString)
+                                    })
+                                    .help("Open in browser")
+                                    .underline()
+                                    .useDefaultHover({_ in})
+                                    .contextMenu {
+                                        Button {
+                                            ClipboardHelper.copy(uri.absoluteString)
+                                        } label: {
+                                            Text("Copy to clipboard")
+                                        }
+                                    }
+                                    Spacer()
+                                }
+                                Divider()
+                            }
+                        }
+                        
                         HStack(alignment: .top, spacing: 10) {
-                            FancyButtonv2(
-                                text: "Open",
-                                action: {nav.session.search.cancel()},
-                                icon: "arrow.right.square.fill",
-                                showLabel: true,
-                                size: .link,
-                                type: .clear,
-                                redirect: AnyView(JobDashboard(defaultSelectedJob: item)),
-                                pageType: .jobs,
-                                sidebar: AnyView(JobDashboardSidebar())
-                            )
-
-                            FancyButtonv2(
-                                text: nav.session.job != nil ?
-                                (
-                                    nav.session.job == item ? "Current job" : "Overwrite Active Job"
-                                ):
-                                    "Set to Active Job",
-                                action: {nav.session.job = item},
-                                icon: "arrow.right.square.fill",
-                                showLabel: true,
-                                size: .link,
-                                type: .clear
-                            )
-                            .disabled(nav.session.job == item)
-                            .help(nav.session.job != nil ? "Current: \(nav.session.job!.jid)" : "Flags this as the current job on other pages and in widgets.")
+                            Image(systemName: "camera.filters").symbolRenderingMode(.hierarchical)
+                            ZStack {
+                                Theme.base
+                                item.colour_from_stored()
+                            }
+                            .frame(width: 15, height: 15)
+                            Text(item.colour_from_stored().description)
+                                .contextMenu {
+                                    Button {
+                                        ClipboardHelper.copy(item.colour_from_stored().description)
+                                    } label: {
+                                        Text("Copy colour HEX to clipboard")
+                                    }
+                                }
+                            Spacer()
+                        }
+                        .help("Colour: \(item.colour_from_stored().description)")
+                        Divider()
+                        
+                        Context(item: item)
+                        
+                        Spacer()
+                        VStack(alignment: .leading) {
+                            HStack(alignment: .top, spacing: 10) {
+                                FancyButtonv2(
+                                    text: "Open",
+                                    action: {nav.session.search.cancel()},
+                                    icon: "arrow.right.square.fill",
+                                    showLabel: true,
+                                    size: .link,
+                                    type: .clear,
+                                    redirect: AnyView(JobDashboard(defaultSelectedJob: item)),
+                                    pageType: .jobs,
+                                    sidebar: AnyView(JobDashboardSidebar())
+                                )
+                                
+                                FancyButtonv2(
+                                    text: nav.session.job != nil ?
+                                    (
+                                        nav.session.job == item ? "Current job" : "Overwrite Active Job"
+                                    ):
+                                        "Set to Active Job",
+                                    action: {nav.session.job = item},
+                                    icon: "arrow.right.square.fill",
+                                    showLabel: true,
+                                    size: .link,
+                                    type: .clear
+                                )
+                                .disabled(nav.session.job == item)
+                                .help(nav.session.job != nil ? "Current: \(nav.session.job!.jid)" : "Flags this as the current job on other pages and in widgets.")
+                            }
                         }
                     }
                 }
