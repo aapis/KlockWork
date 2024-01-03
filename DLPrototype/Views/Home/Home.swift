@@ -6,6 +6,7 @@
 //  Copyright © 2020 YegCollective. All rights reserved.
 //
 
+import EventKit
 import SwiftUI
 
 struct Home: View {
@@ -13,6 +14,7 @@ struct Home: View {
     @EnvironmentObject public var nav: Navigation
 
     @State public var selectedSidebarButton: Page = .dashboard
+    @State private var timer: Timer? = nil
 
     @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
@@ -30,7 +32,7 @@ struct Home: View {
                 SidebarButton(
                     destination: AnyView(Planning()),
                     pageType: .planning,
-                    icon: "circle.hexagongrid",
+                    icon: nav.planning.jobs.count == 0 ? "hexagon" : (nav.session.gif == .focus ? "circle.hexagongrid.fill" : "circle.hexagongrid"),
                     label: "Planning",
                     sidebar: AnyView(DefaultPlanningSidebar())
                 ),
@@ -191,6 +193,9 @@ struct Home: View {
         .onChange(of: nav.parent!) { buttonToHighlight in
             selectedSidebarButton = buttonToHighlight
         }
+        .onChange(of: nav.session.eventStatus) { status in
+
+        }
     }
 
     var HorizontalSeparator: some View {
@@ -203,6 +208,7 @@ struct Home: View {
 
     private func onAppear() -> Void {
         nav.parent = selectedSidebarButton
+        checkForEvents()
 
         // Thank you https://blog.rampatra.com/how-to-detect-escape-key-pressed-in-macos-apps
         NSEvent.addLocalMonitorForEvents(matching: .keyDown) {
@@ -216,7 +222,51 @@ struct Home: View {
             }
         }
     }
+
     private func isEscapeKey(with event: NSEvent) -> Bool {
         return Int(event.keyCode) == 53
+    }
+
+    private func checkForEvents() -> Void {
+        timer?.invalidate()
+
+        nav.session.eventStatus = updateIndicator()
+
+        timer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { _ in
+            nav.session.eventStatus = updateIndicator()
+        }
+    }
+    
+    /// Updates the dashboard icon upcoming event indicator 
+    /// - Returns: EventIndicatorStatus
+    private func updateIndicator() -> EventIndicatorStatus {
+        let ce = CoreDataCalendarEvent(moc: moc)
+        var upcoming: [EKEvent] = []
+        var inProgress: [EKEvent] = []
+
+        if let chosenCalendar = ce.selectedCalendar() {
+            inProgress = ce.eventsInProgress(chosenCalendar)
+            upcoming = ce.eventsUpcoming(chosenCalendar)
+        }
+
+        if let next = upcoming.first {
+            if let evStart = next.startDate {
+                let now = Date.now
+
+                if evStart - now <= 600 {
+                    return .imminent
+                } else if evStart - now <= 1800 {
+                    return .upcoming
+                }
+            }
+        } else if let current = inProgress.first {
+            if let evEnd = current.endDate {
+                if Date.now <= evEnd {
+                    return .inProgress
+                }
+            }
+        }
+
+        return .ready
     }
 }

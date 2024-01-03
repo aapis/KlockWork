@@ -9,8 +9,6 @@
 import SwiftUI
 
 struct TasksWidget: View {
-    public let title: String = "Tasks"
-
     @State private var minimized: Bool = false
     @State private var grouped: Dictionary<Job, [LogTask]> = [:]
     @State private var query: String = ""
@@ -29,7 +27,7 @@ struct TasksWidget: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                Text(title)
+                Text("Tasks")
                 Spacer()
                 HStack {
                     FancyButtonv2(

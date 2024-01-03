@@ -17,7 +17,7 @@ struct DefaultCompanySidebar: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 5) {
-                FancyGenericToolbar(buttons: tabs, standalone: true, location: .sidebar)
+                FancyGenericToolbar(buttons: tabs, standalone: true, location: .sidebar, mode: .compact)
             }
             Spacer()
         }
@@ -32,12 +32,8 @@ extension DefaultCompanySidebar {
             ToolbarButton(
                 id: 0,
                 helpText: "Data hierarchy",
-                label: AnyView(
-                    HStack {
-                        Image(systemName: "menucard").padding(.leading)
-                        Text("Outline")
-                    }
-                ),
+                icon: "menucard",
+                labelText: "Outline",
                 contents: AnyView(OutlineWidget())
             )
         ]

@@ -29,7 +29,35 @@ struct SidebarButton: View, Identifiable {
         let button = FancyButton
         switch(size) {
         case .large:
-            button.frame(width: 50, height: 50)
+            switch pageType {
+            case .dashboard:
+                HStack(alignment: .top, spacing: 0) {
+                    if nav.session.eventStatus == .upcoming {
+                        ActiveIndicator(colour: .gray, href: .dashboard)
+                    } else if nav.session.eventStatus == .imminent {
+                        ActiveIndicator(colour: .orange, href: .dashboard)
+                    } else if nav.session.eventStatus == .inProgress {
+                        ActiveIndicator(colour: .green, href: .dashboard)
+                    }
+
+                    button.frame(width: 50, height: 50)
+                }
+            case .planning:
+                HStack(alignment: .top, spacing: 0) {
+                    if nav.session.gif == .focus {
+                        ActiveIndicator(href: .planning)
+                    }
+                    button.frame(width: 50, height: 50)
+                }
+            case .jobs:
+                HStack(alignment: .top, spacing: 0) {
+                    if nav.session.job != nil {
+                        ActiveIndicator(colour: nav.session.job!.colour_from_stored(), href: .jobs)
+                    }
+                    button.frame(width: 50, height: 50)
+                }
+            default: button.frame(width: 50, height: 50)
+            }
         case .medium:
             button.frame(width: 40, height: 40)
         case .small:
@@ -101,6 +129,33 @@ struct SidebarButton: View, Identifiable {
             }
         } else {
             Theme.tabColour
+        }
+    }
+
+    struct ActiveIndicator: View {
+        public var colour: Color = .white
+        public var action: (() -> Void)? = nil
+        public var href: Page? = nil
+
+        @EnvironmentObject private var nav: Navigation
+
+        var body: some View {
+            Button {
+                if let callback = action {
+                    callback()
+                } else {
+                    if let href = href {
+                        nav.to(href)
+                    }
+                }
+            } label: {
+                ZStack {
+                    Theme.base
+                    colour
+                }
+            }
+            .buttonStyle(.borderless)
+            .frame(width: 6, height: 50)
         }
     }
 }

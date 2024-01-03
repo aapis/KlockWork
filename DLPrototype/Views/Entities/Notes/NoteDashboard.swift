@@ -79,7 +79,6 @@ struct NoteDashboard: View {
             .padding()
         }
         .background(Theme.toolbarColour)
-        .id(updater.get("note.dashboard"))
     }
 
     @ViewBuilder private var recentNotes: some View {
@@ -143,15 +142,10 @@ struct NoteDashboard: View {
             }
         }
     }
-    
-    private func filter(_ notes: FetchedResults<Note>) -> [Note] {
-        return SearchHelper(bucket: notes).findInNotes($searchText)
-    }
 }
 
-struct NoteDashboardPreview: PreviewProvider {
-    static var previews: some View {
-        NoteDashboard()
-            .environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+extension NoteDashboard {
+    private func filter(_ notes: FetchedResults<Note>) -> [Note] {
+        return SearchHelper(bucket: notes).findInNotes($searchText)
     }
 }

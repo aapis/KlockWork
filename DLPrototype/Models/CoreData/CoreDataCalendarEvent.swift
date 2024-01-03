@@ -95,11 +95,16 @@ public class CoreDataCalendarEvent: ObservableObject {
 
         switch (status) {
         case .notDetermined:
-            requestAccess()
-        case .authorized:
+            if #available(macOS 14.0, *) {
+                requestFullAccessToEvents()
+            } else {
+                requestAccess()
+            }
+        case .authorized, .fullAccess, .writeOnly:
             events = callback(calendar)
             break
-        case .restricted, .denied: break
+        case .restricted, .denied:
+            break
 
         @unknown default:
             fatalError()
@@ -119,8 +124,12 @@ public class CoreDataCalendarEvent: ObservableObject {
 
         switch (status) {
         case .notDetermined:
-            requestAccess()
-        case .authorized:
+            if #available(macOS 14.0, *) {
+                requestFullAccessToEvents()
+            } else {
+                requestAccess()
+            }
+        case .authorized, .fullAccess, .writeOnly:
             events = callback(ekCalendar!)
             break
         case .restricted, .denied: break
@@ -218,11 +227,25 @@ public class CoreDataCalendarEvent: ObservableObject {
         return pickerItems
     }
 
+    @available(macOS, deprecated: 13.4, obsoleted: 13.5, message: "EK API changed in macOS 14")
     public func requestAccess(_ callback: EKEventStoreRequestAccessCompletionHandler? = nil) -> Void {
         if callback != nil {
             store.requestAccess(to: EKEntityType.event, completion: callback!)
         } else {
             store.requestAccess(to: EKEntityType.event) { (accessGranted, error) in
+                if !accessGranted {
+                    print("[warning] User denied/ignored calendar permission prompt")
+                }
+            }
+        }
+    }
+
+    @available(macOS 14.0, *)
+    public func requestFullAccessToEvents(_ callback: EKEventStoreRequestAccessCompletionHandler? = nil) -> Void {
+        if callback != nil {
+            store.requestFullAccessToEvents(completion: callback!)
+        } else {
+            store.requestFullAccessToEvents { (accessGranted, error) in
                 if !accessGranted {
                     print("[warning] User denied/ignored calendar permission prompt")
                 }

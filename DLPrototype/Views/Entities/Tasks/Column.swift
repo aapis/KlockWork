@@ -6,7 +6,6 @@
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
 
 struct Column: View {
@@ -17,12 +16,12 @@ struct Column: View {
     public var alignment: Alignment = .leading
     public var url: URL?
     public var job: Job?
-    
+
     @Binding public var text: String
 
     @EnvironmentObject public var nav: Navigation
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
-    
+
     @AppStorage("tigerStriped") private var tigerStriped = false
 
     var body: some View {
