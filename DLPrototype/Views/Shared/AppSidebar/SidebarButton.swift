@@ -30,6 +30,18 @@ struct SidebarButton: View, Identifiable {
         switch(size) {
         case .large:
             switch pageType {
+            case .dashboard:
+                HStack(alignment: .top, spacing: 0) {
+                    if nav.session.eventStatus == .upcoming {
+                        ActiveIndicator(colour: .gray, href: .dashboard)
+                    } else if nav.session.eventStatus == .imminent {
+                        ActiveIndicator(colour: .orange, href: .dashboard)
+                    } else if nav.session.eventStatus == .inProgress {
+                        ActiveIndicator(colour: .green, href: .dashboard)
+                    }
+
+                    button.frame(width: 50, height: 50)
+                }
             case .planning:
                 HStack(alignment: .top, spacing: 0) {
                     if nav.session.gif == .focus {

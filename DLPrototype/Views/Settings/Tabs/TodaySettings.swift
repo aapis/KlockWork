@@ -132,10 +132,17 @@ struct TodaySettings: View {
                         }
                     } else {
                         Button("Request access to calendar") {
-                            ce.requestAccess({(granted, error) in
-                                hasAccess = granted
-                                onAppear()
-                            })
+                            if #available(macOS 14.0, *) {
+                                ce.requestFullAccessToEvents({(granted, error) in
+                                    hasAccess = granted
+                                    onAppear()
+                                })
+                            } else {
+                                ce.requestAccess({(granted, error) in
+                                    hasAccess = granted
+                                    onAppear()
+                                })
+                            }
                         }
                     }
                 }
@@ -146,14 +153,25 @@ struct TodaySettings: View {
     }
     
     private func onAppear() -> Void {
-        ce.requestAccess({(granted, error) in
-            if granted {
-                calendars = CoreDataCalendarEvent(moc: moc).getCalendarsForPicker()
-            } else {
-                print("[error][calendar] No calendar access")
-                print("[error][calendar] \(error.debugDescription)")
-            }
-        })
+        if #available(macOS 14.0, *) {
+            ce.requestFullAccessToEvents({(granted, error) in
+                if granted {
+                    calendars = CoreDataCalendarEvent(moc: moc).getCalendarsForPicker()
+                } else {
+                    print("[error][calendar] m14 No calendar access")
+                    print("[error][calendar] \(error.debugDescription)")
+                }
+            })
+        } else {
+            ce.requestAccess({(granted, error) in
+                if granted {
+                    calendars = CoreDataCalendarEvent(moc: moc).getCalendarsForPicker()
+                } else {
+                    print("[error][calendar] No calendar access")
+                    print("[error][calendar] \(error.debugDescription)")
+                }
+            })
+        }
     }
 }
 

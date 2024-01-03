@@ -187,6 +187,7 @@ extension Navigation {
         var gif: PlanningState.GlobalInterfaceFilter = .normal
         var search: Search = Search(moc: PersistenceController.shared.container.viewContext)
         var toolbar: Toolbar = Toolbar()
+        var eventStatus: EventIndicatorStatus = .ready
     }
 
     public struct Forms {

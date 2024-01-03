@@ -114,6 +114,7 @@
 		537885742B44CB3300825B78 /* TaskDashboardByProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537885732B44CB3300825B78 /* TaskDashboardByProject.swift */; };
 		537885762B44CBAF00825B78 /* Column.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537885752B44CBAF00825B78 /* Column.swift */; };
 		537885782B44CBD200825B78 /* DetailsColumn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537885772B44CBD200825B78 /* DetailsColumn.swift */; };
+		5378857A2B45055600825B78 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537885792B45055600825B78 /* Date.swift */; };
 		53790C032A72F18200D3FFD4 /* SidebarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53790C022A72F18200D3FFD4 /* SidebarButton.swift */; };
 		53790C052A72F45900D3FFD4 /* EdgeBorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53790C042A72F45900D3FFD4 /* EdgeBorder.swift */; };
 		53790C072A74408D00D3FFD4 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53790C062A74408D00D3FFD4 /* Navigation.swift */; };
@@ -331,6 +332,7 @@
 		537885732B44CB3300825B78 /* TaskDashboardByProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDashboardByProject.swift; sourceTree = "<group>"; };
 		537885752B44CBAF00825B78 /* Column.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Column.swift; path = DLPrototype/Views/Entities/Tasks/Column.swift; sourceTree = SOURCE_ROOT; };
 		537885772B44CBD200825B78 /* DetailsColumn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DetailsColumn.swift; path = DLPrototype/Views/Entities/Tasks/DetailsColumn.swift; sourceTree = SOURCE_ROOT; };
+		537885792B45055600825B78 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		53790C022A72F18200D3FFD4 /* SidebarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarButton.swift; sourceTree = "<group>"; };
 		53790C042A72F45900D3FFD4 /* EdgeBorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeBorder.swift; sourceTree = "<group>"; };
 		53790C062A74408D00D3FFD4 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
@@ -1081,6 +1083,7 @@
 				53E24C402A844BC800EB21FD /* EKEvent.swift */,
 				534B7C2A2B3220E40017C155 /* DispatchQueue.swift */,
 				53C000952B3A7BD500D5EC04 /* String.swift */,
+				537885792B45055600825B78 /* Date.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1295,6 +1298,7 @@
 				5371BA342A7B2B8F00DEEC21 /* JobRowPlain.swift in Sources */,
 				5334F2702B2B83190079D2E7 /* FancyColourPicker.swift in Sources */,
 				5334F26A2B2A14F90079D2E7 /* ManageOwnedProjects.swift in Sources */,
+				5378857A2B45055600825B78 /* Date.swift in Sources */,
 				53790C102A74D54C00D3FFD4 /* JobFormValidator.swift in Sources */,
 				5354C8E42AA03C1C001C1779 /* Planning.Row.swift in Sources */,
 				53790C0D2A74CB6000D3FFD4 /* UrlHelper.swift in Sources */,
