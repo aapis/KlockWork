@@ -29,15 +29,22 @@ struct SidebarButton: View, Identifiable {
         let button = FancyButton
         switch(size) {
         case .large:
-            if pageType == .planning {
+            switch pageType {
+            case .planning:
                 HStack(alignment: .top, spacing: 0) {
                     if nav.session.gif == .focus {
-                        ActiveIndicator.frame(width: 5, height: 50)
+                        ActiveIndicator(href: .planning)
                     }
                     button.frame(width: 50, height: 50)
                 }
-            } else {
-                button.frame(width: 50, height: 50)
+            case .jobs:
+                HStack(alignment: .top, spacing: 0) {
+                    if nav.session.job != nil {
+                        ActiveIndicator(colour: nav.session.job!.colour_from_stored(), href: .jobs)
+                    }
+                    button.frame(width: 50, height: 50)
+                }
+            default: button.frame(width: 50, height: 50)
             }
         case .medium:
             button.frame(width: 40, height: 40)
@@ -95,12 +102,6 @@ struct SidebarButton: View, Identifiable {
         }
     }
 
-    private var ActiveIndicator: some View {
-        Rectangle()
-            .background(.white)
-            .frame(width: 5)
-    }
-
     @ViewBuilder private var backgroundColour: some View {
         Theme.toolbarColour
         if nav.parent == pageType {
@@ -116,6 +117,33 @@ struct SidebarButton: View, Identifiable {
             }
         } else {
             Theme.tabColour
+        }
+    }
+
+    struct ActiveIndicator: View {
+        public var colour: Color = .white
+        public var action: (() -> Void)? = nil
+        public var href: Page? = nil
+
+        @EnvironmentObject private var nav: Navigation
+
+        var body: some View {
+            Button {
+                if let callback = action {
+                    callback()
+                } else {
+                    if let href = href {
+                        nav.to(href)
+                    }
+                }
+            } label: {
+                ZStack {
+                    Theme.base
+                    colour
+                }
+            }
+            .buttonStyle(.borderless)
+            .frame(width: 6, height: 50)
         }
     }
 }
