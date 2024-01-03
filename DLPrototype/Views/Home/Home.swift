@@ -9,10 +9,6 @@
 import EventKit
 import SwiftUI
 
-enum EventIndicatorStatus {
-    case upcoming, imminent, inProgress, clear, ready
-}
-
 struct Home: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
@@ -236,13 +232,13 @@ struct Home: View {
 
         nav.session.eventStatus = updateIndicator()
 
-        timer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { _ in
             nav.session.eventStatus = updateIndicator()
         }
     }
     
     /// Updates the dashboard icon upcoming event indicator 
-    /// - Returns: <#description#>
+    /// - Returns: EventIndicatorStatus
     private func updateIndicator() -> EventIndicatorStatus {
         let ce = CoreDataCalendarEvent(moc: moc)
         var upcoming: [EKEvent] = []
@@ -265,9 +261,7 @@ struct Home: View {
             }
         } else if let current = inProgress.first {
             if let evEnd = current.endDate {
-                if Date.now >= evEnd {
-                    return .clear
-                } else {
+                if Date.now <= evEnd {
                     return .inProgress
                 }
             }

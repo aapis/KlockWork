@@ -115,6 +115,7 @@
 		537885762B44CBAF00825B78 /* Column.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537885752B44CBAF00825B78 /* Column.swift */; };
 		537885782B44CBD200825B78 /* DetailsColumn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537885772B44CBD200825B78 /* DetailsColumn.swift */; };
 		5378857A2B45055600825B78 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537885792B45055600825B78 /* Date.swift */; };
+		5378857C2B450F2800825B78 /* EventIndicatorStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5378857B2B450F2800825B78 /* EventIndicatorStatus.swift */; };
 		53790C032A72F18200D3FFD4 /* SidebarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53790C022A72F18200D3FFD4 /* SidebarButton.swift */; };
 		53790C052A72F45900D3FFD4 /* EdgeBorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53790C042A72F45900D3FFD4 /* EdgeBorder.swift */; };
 		53790C072A74408D00D3FFD4 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53790C062A74408D00D3FFD4 /* Navigation.swift */; };
@@ -333,6 +334,7 @@
 		537885752B44CBAF00825B78 /* Column.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Column.swift; path = DLPrototype/Views/Entities/Tasks/Column.swift; sourceTree = SOURCE_ROOT; };
 		537885772B44CBD200825B78 /* DetailsColumn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DetailsColumn.swift; path = DLPrototype/Views/Entities/Tasks/DetailsColumn.swift; sourceTree = SOURCE_ROOT; };
 		537885792B45055600825B78 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
+		5378857B2B450F2800825B78 /* EventIndicatorStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventIndicatorStatus.swift; sourceTree = "<group>"; };
 		53790C022A72F18200D3FFD4 /* SidebarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarButton.swift; sourceTree = "<group>"; };
 		53790C042A72F45900D3FFD4 /* EdgeBorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeBorder.swift; sourceTree = "<group>"; };
 		53790C062A74408D00D3FFD4 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
@@ -1041,6 +1043,7 @@
 				53D5E2992A85E38A00FE293A /* WidgetLocation.swift */,
 				53C000932B38E5C500D5EC04 /* TodayViewTab.swift */,
 				53E9186F2B43671E00912C6F /* EntityViewMode.swift */,
+				5378857B2B450F2800825B78 /* EventIndicatorStatus.swift */,
 			);
 			path = Enums;
 			sourceTree = "<group>";
@@ -1259,6 +1262,7 @@
 				53ECD0572971F8F400A09AAB /* CoreDataRecords.swift in Sources */,
 				53EFCE7929637F35004E45EC /* GeneralSettings.swift in Sources */,
 				5335A5B7296D2089000051B1 /* TaskListView.swift in Sources */,
+				5378857C2B450F2800825B78 /* EventIndicatorStatus.swift in Sources */,
 				53814A8E2A9821C800A5A015 /* DefaultPlanningSidebar.swift in Sources */,
 				53E2025C2A7EAF6100B4DF70 /* ProjectRowPlain.swift in Sources */,
 				53561F8529F1FC7900D828AD /* ProjectPickerUsing.swift in Sources */,
