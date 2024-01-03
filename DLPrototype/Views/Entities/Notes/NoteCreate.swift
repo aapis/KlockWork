@@ -112,7 +112,5 @@ extension NoteCreate {
         } else {
             print("[error][note.create] A title is required to save")
         }
-        
-        print("[error][note.create] should be ok")
     }
 }

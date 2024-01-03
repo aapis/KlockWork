@@ -30,7 +30,7 @@ struct Home: View {
                 SidebarButton(
                     destination: AnyView(Planning()),
                     pageType: .planning,
-                    icon: nav.session.plan == nil ? "hexagon" : (nav.session.gif == .focus ? "circle.hexagongrid.fill" : "circle.hexagongrid"),
+                    icon: nav.planning.jobs.count == 0 ? "hexagon" : (nav.session.gif == .focus ? "circle.hexagongrid.fill" : "circle.hexagongrid"),
                     label: "Planning",
                     sidebar: AnyView(DefaultPlanningSidebar())
                 ),

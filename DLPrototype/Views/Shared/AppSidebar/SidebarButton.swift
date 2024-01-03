@@ -29,7 +29,16 @@ struct SidebarButton: View, Identifiable {
         let button = FancyButton
         switch(size) {
         case .large:
-            button.frame(width: 50, height: 50)
+            if pageType == .planning {
+                HStack(alignment: .top, spacing: 0) {
+                    if nav.session.gif == .focus {
+                        ActiveIndicator.frame(width: 5, height: 50)
+                    }
+                    button.frame(width: 50, height: 50)
+                }
+            } else {
+                button.frame(width: 50, height: 50)
+            }
         case .medium:
             button.frame(width: 40, height: 40)
         case .small:
@@ -84,6 +93,12 @@ struct SidebarButton: View, Identifiable {
 
             highlighted.toggle()
         }
+    }
+
+    private var ActiveIndicator: some View {
+        Rectangle()
+            .background(.white)
+            .frame(width: 5)
     }
 
     @ViewBuilder private var backgroundColour: some View {
