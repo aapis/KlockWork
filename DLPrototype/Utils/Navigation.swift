@@ -192,12 +192,20 @@ extension Navigation {
 
     public struct Forms {
         var note: NoteForm = NoteForm()
+        var jobSelector: JobSelectorForm = JobSelectorForm()
 
         struct NoteForm {
             var template: NoteTemplates.Template? = nil
             var job: Job? = nil
             var version: NoteVersion? = nil
             var star: Bool = false
+        }
+        
+        struct JobSelectorForm {
+            var currentPosition: Panel.Position = .first
+            var first: FetchedResults<Company>? = nil
+            var middle: [Project] = []
+            var last: [Job] = []
         }
     }
 
@@ -259,7 +267,7 @@ extension Navigation {
             HistoryPage(page: .planning, view: AnyView(Planning()), sidebar: AnyView(DefaultPlanningSidebar()), title: "Planning"),
             HistoryPage(page: .today, view: AnyView(Today()), sidebar: AnyView(TodaySidebar()), title: "Today"),
             HistoryPage(page: .companies, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Companies & Projects"),
-            HistoryPage(page: .jobs, view: AnyView(JobDashboard()), sidebar: AnyView(JobDashboardSidebar()), title: "Jobs"),
+            HistoryPage(page: .jobs, view: AnyView(JobDashboardRedux()), sidebar: AnyView(JobDashboardSidebar()), title: "Jobs"),
             HistoryPage(page: .notes, view: AnyView(NoteDashboard()), sidebar: AnyView(NoteDashboardSidebar()), title: "Notes"),
             HistoryPage(page: .tasks, view: AnyView(TaskDashboard()), sidebar: AnyView(TaskDashboardSidebar()), title: "Tasks"),
         ]
@@ -271,6 +279,14 @@ extension Navigation {
             var view: AnyView
             var sidebar: AnyView
             var title: String
+        }
+        
+        public struct Breadcrumb {
+            var id: UUID = UUID()
+            var current: Page
+            var history: [HistoryPage] = []
+            
+            
         }
     }
 }

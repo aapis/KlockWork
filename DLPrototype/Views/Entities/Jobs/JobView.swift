@@ -41,7 +41,7 @@ struct JobView: View {
             FancyJobActiveToggle(entity: job)
             FancyJobSredToggle(entity: job)
             FancyColourPicker(initialColour: job.colour ?? Theme.rowColourAsDouble, onChange: {newColour in colour = newColour})
-
+            Spacer()
             buttonSubmit
         }
         .onAppear(perform: setEditableValues)

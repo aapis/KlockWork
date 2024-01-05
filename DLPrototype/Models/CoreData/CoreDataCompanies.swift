@@ -20,6 +20,18 @@ public class CoreDataCompanies: ObservableObject {
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
     }
+    
+    static public func all() -> FetchRequest<Company> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Company.createdDate?, ascending: false)
+        ]
+
+        let fetch: NSFetchRequest<Company> = Company.fetchRequest()
+        fetch.predicate = NSPredicate(format: "alive == true")
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
 
     public func byPid(_ id: Int) -> Company? {
         let predicate = NSPredicate(

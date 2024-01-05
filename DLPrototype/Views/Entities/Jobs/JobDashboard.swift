@@ -11,8 +11,6 @@ import SwiftUI
 struct JobDashboard: View {
     var defaultSelectedJob: Job?
 
-    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
-
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
@@ -39,7 +37,7 @@ struct JobDashboard: View {
                 About()
 
                 if let jerb = defaultSelectedJob {
-                    JobView(job: jerb).environmentObject(jm)
+                    JobView(job: jerb)
                 }
 
                 Spacer()
@@ -49,7 +47,6 @@ struct JobDashboard: View {
         .background(Theme.toolbarColour)
         .onAppear(perform: actionOnAppear)
         .onChange(of: defaultSelectedJob, perform: actionOnChange)
-        .id(updater.get("job.dashboard"))
     }
 }
 
@@ -76,5 +73,56 @@ extension JobDashboard {
             }
             .background(Theme.cOrange)
         }
+    }
+}
+
+struct JobDashboardRedux: View {
+    var body: some View {
+        VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    FancyButtonv2(
+                        text: "New job",
+                        action: {},
+                        icon: "plus",
+                        showLabel: true,
+                        redirect: AnyView(JobCreate()),
+                        pageType: .jobs,
+                        sidebar: AnyView(JobDashboardSidebar())
+                    )
+                }
+                
+                FancyDivider()
+                
+                JobExplorer()
+
+                Spacer()
+            }
+            .padding()
+        }
+        .background(Theme.toolbarColour)
+    }
+}
+
+struct JobExplorer: View {
+    @EnvironmentObject private var nav: Navigation
+
+    @FetchRequest private var companies: FetchedResults<Company>
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            HStack {
+                Title(text: "Job Explorer")
+            }
+
+            ThreePanelGroup(orientation: .horizontal, data: companies)
+
+//            JobView(job: nav.session.job!)
+        }
+//        .background(Theme.toolbarColour)
+    }
+    
+    init() {
+        _companies = CoreDataCompanies.all()
     }
 }
