@@ -23,7 +23,7 @@ public class CoreDataCompanies: ObservableObject {
     
     static public func all() -> FetchRequest<Company> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \Company.createdDate?, ascending: false)
+            NSSortDescriptor(keyPath: \Company.name, ascending: true)
         ]
 
         let fetch: NSFetchRequest<Company> = Company.fetchRequest()
