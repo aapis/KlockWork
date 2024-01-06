@@ -14,6 +14,7 @@ struct FancySimpleButton: View {
     public var icon: String = "checkmark.circle"
     public var showLabel: Bool = true
     public var showIcon: Bool = false
+    public var labelView: AnyView? = nil
     public var size: ButtonSize = .large
     public var type: ButtonType = .standard
     public var href: Page? = nil
@@ -34,24 +35,28 @@ struct FancySimpleButton: View {
                 }
             }
         } label: {
-            VStack(alignment: .center) {
-                HStack(alignment: .top, spacing: 5) {
-                    if showIcon {
-                        VStack(alignment: .leading) {
-                            Image(systemName: icon)
-                                .padding(size.padding)
+            if let labelView = labelView {
+                labelView
+            } else {
+                VStack(alignment: .center) {
+                    HStack(alignment: .top, spacing: 5) {
+                        if showIcon {
+                            VStack(alignment: .leading) {
+                                Image(systemName: icon)
+                                    .padding(size.padding)
+                            }
+                        }
+                        
+                        if showLabel {
+                            VStack(alignment: .leading) {
+                                Text(text)
+                                    .font(.title3)
+                                    .padding(size.padding)
+                            }
                         }
                     }
-
-                    if showLabel {
-                        VStack(alignment: .leading) {
-                            Text(text)
-                                .font(.title3)
-                                .padding(size.padding)
-                        }
-                    }
+                    .font(.title3)
                 }
-                .font(.title3)
             }
         }
         .help(text)

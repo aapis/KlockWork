@@ -206,6 +206,7 @@ extension Navigation {
             var first: FetchedResults<Company>? = nil
             var middle: [Project] = []
             var last: [Job] = []
+            var selected: Panel.SelectedValueCoordinates? = nil
         }
     }
 

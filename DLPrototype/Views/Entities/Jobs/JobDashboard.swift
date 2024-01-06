@@ -110,7 +110,7 @@ struct JobExplorer: View {
     @FetchRequest private var companies: FetchedResults<Company>
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Title(text: "Job Explorer")
             }

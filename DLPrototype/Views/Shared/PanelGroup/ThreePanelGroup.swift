@@ -20,21 +20,25 @@ struct ThreePanelGroup: View {
     @EnvironmentObject private var nav: Navigation
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 1) {
             HStack {
                 // Icons
             }
             if orientation == .horizontal {
                 LazyVGrid(columns: columns, alignment: .leading) {
-                    Panel(position: .first)
-                    Panel(position: .middle)
-                    Panel(position: .last)
+                    CompanyPanel(position: .first)
+                    ProjectPanel(position: .middle)
+                    JobPanel(position: .last)
                 }
+                .background(
+                    .white.opacity(0.05)
+                )
+                .frame(minHeight: 300)
             } else {
                 LazyHGrid(rows: columns, alignment: .top) {
-                    Panel(position: .first)
-                    Panel(position: .middle)
-                    Panel(position: .last)
+                    CompanyPanel(position: .first)
+                    ProjectPanel(position: .middle)
+                    JobPanel(position: .last)
                 }
             }
         }
