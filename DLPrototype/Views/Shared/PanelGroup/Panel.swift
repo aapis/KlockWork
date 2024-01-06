@@ -38,24 +38,23 @@ public struct Panel {
         @EnvironmentObject private var nav: Navigation
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 1) {
-                FancySimpleButton(
-                    text: config.text,
-                    action: fireCallback,
-                    labelView: AnyView(
-                        HStack {
-                            Text(config.text)
-                            Spacer()
-                            Image(systemName: config.position == .last ? "hammer" : "arrow.right")
-                        }
-                        .padding(10)
-                        .background(nav.forms.jobSelector.selected != nil ? nav.forms.jobSelector.selected!.item == config.entity ? .orange : .clear : .clear)
-                        .foregroundStyle(nav.forms.jobSelector.selected != nil ? nav.forms.jobSelector.selected!.item == config.entity ? .black : .white : .white)
-                    ),
-                    size: .link,
-                    type: .clear
-                )
-            }
+            FancySimpleButton(
+                text: config.text,
+                action: fireCallback,
+                labelView: AnyView(
+                    HStack {
+                        Text(config.text)
+                        Spacer()
+                        Image(systemName: config.position == .last ? "hammer" : "arrow.right")
+                    }
+                    .padding(10)
+                    .background(nav.forms.jobSelector.selected != nil ? nav.forms.jobSelector.selected!.item == config.entity ? .orange : .clear : .clear)
+                    .foregroundStyle(nav.forms.jobSelector.selected != nil ? nav.forms.jobSelector.selected!.item == config.entity ? .black : .white : .white)
+                ),
+                size: .link,
+                type: .clear
+            )
+            .border(width: 1, edges: [.top], color: Theme.rowColour)
         }
     }
 }
@@ -78,26 +77,28 @@ struct CompanyPanel: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 1) {
-            HStack(alignment: .top) {
-                    Text("Companies").font(.title3)
-                    Spacer()
-                    FancySimpleButton(
-                        text: "Search",
-                        action: {showSearch.toggle()},
-                        icon: "magnifyingglass",
-                        showLabel: false,
-                        showIcon: true,
-                        type: .clear
-                    )
-                    FancySimpleButton(
-                        text: "Close",
-                        action: closePanel,
-                        icon: "xmark",
-                        showLabel: false,
-                        showIcon: true
-                    )
-                    .disabled(nav.forms.jobSelector.selected == nil)
-                    .opacity(nav.forms.jobSelector.selected == nil ? 0.4 : 1)
+            HStack(alignment: .center) {
+                Text("Companies").font(.title3)
+                Spacer()
+                FancySimpleButton(
+                    text: "Search",
+                    action: {showSearch.toggle()},
+                    icon: "magnifyingglass",
+                    showLabel: false,
+                    showIcon: true,
+                    type: .clear
+                )
+                .disabled(nav.forms.jobSelector.selected == nil)
+                .opacity(nav.forms.jobSelector.selected == nil ? 0.4 : 1)
+                FancySimpleButton(
+                    text: "Close",
+                    action: closePanel,
+                    icon: "xmark",
+                    showLabel: false,
+                    showIcon: true
+                )
+                .disabled(nav.forms.jobSelector.selected == nil)
+                .opacity(nav.forms.jobSelector.selected == nil ? 0.4 : 1)
             }
             .padding(10)
             
@@ -109,15 +110,19 @@ struct CompanyPanel: View {
                 if position == .first {
                     VStack(alignment: .leading, spacing: 1) {
                         if !firstColData.isEmpty {
-                            ForEach(firstColData) { company in
-                                Panel.Row(
-                                    config: Panel.RowConfiguration(
-                                        text: company.name!,
-                                        action: {setMiddlePanel(data: company.projects!.allObjects)},
-                                        entity: company,
-                                        position: position
-                                    )
-                                )
+                            ScrollView {
+                                VStack(alignment: .leading, spacing: 1) {
+                                    ForEach(firstColData) { company in
+                                        Panel.Row(
+                                            config: Panel.RowConfiguration(
+                                                text: company.name!,
+                                                action: {setMiddlePanel(data: company.projects!.allObjects)},
+                                                entity: company,
+                                                position: position
+                                            )
+                                        )
+                                    }
+                                }
                             }
                         } else {
                             Text("No companies found")
@@ -128,15 +133,19 @@ struct CompanyPanel: View {
                 } else if position == .middle {
                     VStack(alignment: .leading, spacing: 1) {
                         if !nav.forms.jobSelector.middle.isEmpty {
-                            ForEach(nav.forms.jobSelector.middle) { project in
-                                Panel.Row(
-                                    config: Panel.RowConfiguration(
-                                        text: project.name!,
-                                        action: {setLastPanel(data: project.jobs!.allObjects)},
-                                        entity: project,
-                                        position: position
-                                    )
-                                )
+                            ScrollView {
+                                VStack(alignment: .leading, spacing: 1) {
+                                    ForEach(nav.forms.jobSelector.middle) { project in
+                                        Panel.Row(
+                                            config: Panel.RowConfiguration(
+                                                text: project.name!,
+                                                action: {setLastPanel(data: project.jobs!.allObjects)},
+                                                entity: project,
+                                                position: position
+                                            )
+                                        )
+                                    }
+                                }
                             }
                         } else {
                             Text("No company selected, or company has no projects")
@@ -147,15 +156,19 @@ struct CompanyPanel: View {
                 } else if position == .last {
                     VStack(alignment: .leading, spacing: 1) {
                         if !nav.forms.jobSelector.last.isEmpty {
-                            ForEach(nav.forms.jobSelector.last) { job in
-                                Panel.Row(
-                                    config: Panel.RowConfiguration(
-                                        text: job.name ?? job.jid.string,
-                                        action: {nav.session.job = job},
-                                        entity: job,
-                                        position: position
-                                    )
-                                )
+                            ScrollView {
+                                VStack(alignment: .leading, spacing: 1) {
+                                    ForEach(nav.forms.jobSelector.last) { job in
+                                        Panel.Row(
+                                            config: Panel.RowConfiguration(
+                                                text: job.name ?? job.jid.string,
+                                                action: {nav.session.job = job},
+                                                entity: job,
+                                                position: position
+                                            )
+                                        )
+                                    }
+                                }
                             }
                         } else {
                             Text("No job selected, or project has no jobs")
@@ -166,9 +179,7 @@ struct CompanyPanel: View {
                 }
             }
         }
-        .background(
-            .white.opacity(0.05)
-        )
+        .background(Theme.rowColour)
         .frame(minHeight: 300)
     }
 }
@@ -212,7 +223,7 @@ struct ProjectPanel: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 1) {
-            HStack(alignment: .top) {
+            HStack(alignment: .center) {
                 Text("Projects").font(.title3)
                 Spacer()
                 FancySimpleButton(
@@ -223,6 +234,8 @@ struct ProjectPanel: View {
                     showIcon: true,
                     type: .clear
                 )
+                .disabled(nav.forms.jobSelector.middle.isEmpty)
+                .opacity(nav.forms.jobSelector.middle.isEmpty ? 0.4 : 1)
                 FancySimpleButton(
                     text: "Close",
                     action: closePanel,
@@ -242,15 +255,19 @@ struct ProjectPanel: View {
             if let _ = nav.forms.jobSelector.first {
                 VStack(alignment: .leading, spacing: 1) {
                     if !nav.forms.jobSelector.middle.isEmpty {
-                        ForEach(nav.forms.jobSelector.middle) { project in
-                            Panel.Row(
-                                config: Panel.RowConfiguration(
-                                    text: project.name!,
-                                    action: {setLastPanel(data: project.jobs!.allObjects)},
-                                    entity: project,
-                                    position: position
-                                )
-                            )
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 1) {
+                                ForEach(nav.forms.jobSelector.middle) { project in
+                                    Panel.Row(
+                                        config: Panel.RowConfiguration(
+                                            text: project.name!,
+                                            action: {setLastPanel(data: project.jobs!.allObjects)},
+                                            entity: project,
+                                            position: position
+                                        )
+                                    )
+                                }
+                            }
                         }
                     } else {
                         Text("No company selected, or company has no projects")
@@ -260,9 +277,8 @@ struct ProjectPanel: View {
                 }
             }
         }
-        .background(
-            .white.opacity(0.05)
-        )
+        .background(nav.forms.jobSelector.middle.isEmpty ? .black.opacity(0.1) : Theme.rowColour)
+        .foregroundStyle(nav.forms.jobSelector.middle.isEmpty ? .white.opacity(0.4) : .white)
         .frame(minHeight: 300)
     }
 }
@@ -270,7 +286,7 @@ struct ProjectPanel: View {
 extension ProjectPanel {
     private func setLastPanel(data: [Any]) -> Void {
         nav.forms.jobSelector.currentPosition = position
-        nav.forms.jobSelector.last = data as! [Job]
+        nav.forms.jobSelector.last = (data as! [Job]).sorted(by: {$0.jid < $1.jid})
     }
 
     private func closePanel() -> Void {
@@ -300,7 +316,7 @@ public struct JobPanel: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 1) {
-            HStack(alignment: .top) {
+            HStack(alignment: .center) {
                 Text("Jobs").font(.title3)
                 Spacer()
                 FancySimpleButton(
@@ -311,6 +327,8 @@ public struct JobPanel: View {
                     showIcon: true,
                     type: .clear
                 )
+                .disabled(nav.forms.jobSelector.last.isEmpty)
+                .opacity(nav.forms.jobSelector.last.isEmpty ? 0.4 : 1)
                 FancySimpleButton(
                     text: "Close",
                     action: closePanel,
@@ -330,15 +348,19 @@ public struct JobPanel: View {
             if let _ = nav.forms.jobSelector.first {
                 VStack(alignment: .leading, spacing: 1) {
                     if !nav.forms.jobSelector.last.isEmpty {
-                        ForEach(nav.forms.jobSelector.last) { job in
-                            Panel.Row(
-                                config: Panel.RowConfiguration(
-                                    text: job.name ?? job.jid.string,
-                                    action: {nav.session.job = job},
-                                    entity: job,
-                                    position: position
-                                )
-                            )
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 1) {
+                                ForEach(nav.forms.jobSelector.last) { job in
+                                    Panel.Row(
+                                        config: Panel.RowConfiguration(
+                                            text: job.name ?? job.jid.string,
+                                            action: {nav.session.job = job},
+                                            entity: job,
+                                            position: position
+                                        )
+                                    )
+                                }
+                            }
                         }
                     } else {
                         Text("No job selected, or project has no jobs")
@@ -348,19 +370,13 @@ public struct JobPanel: View {
                 }
             }
         }
-        .background(
-            .white.opacity(0.05)
-        )
+        .background(nav.forms.jobSelector.last.isEmpty ? .black.opacity(0.1) : Theme.rowColour)
+        .foregroundStyle(nav.forms.jobSelector.last.isEmpty ? .white.opacity(0.4) : .white)
         .frame(minHeight: 300)
     }
 }
 
 extension JobPanel {
-    private func setLastPanel(data: [Any]) -> Void {
-        nav.forms.jobSelector.currentPosition = position
-        nav.forms.jobSelector.last = data as! [Job]
-    }
-
     private func closePanel() -> Void {
         if position == .first {
             nav.forms.jobSelector.middle = []

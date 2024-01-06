@@ -79,13 +79,19 @@ extension JobDashboard {
 struct JobDashboardRedux: View {
     var body: some View {
         VStack(alignment: .leading) {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 1) {
                 HStack {
+                    HStack(spacing: 10) {
+                        Image(systemName: "hammer")
+                        Text("Jobs")
+                    }
+                    .font(.title2)
+                    Spacer()
                     FancyButtonv2(
-                        text: "New job",
+                        text: "Create",
                         action: {},
                         icon: "plus",
-                        showLabel: true,
+                        showLabel: false,
                         redirect: AnyView(JobCreate()),
                         pageType: .jobs,
                         sidebar: AnyView(JobDashboardSidebar())
@@ -105,21 +111,93 @@ struct JobDashboardRedux: View {
 }
 
 struct JobExplorer: View {
+    @AppStorage("jobdashboard.explorerVisible") private var explorerVisible: Bool = true
+    @AppStorage("jobdashboard.editorVisible") private var editorVisible: Bool = true
+
     @EnvironmentObject private var nav: Navigation
 
     @FetchRequest private var companies: FetchedResults<Company>
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Title(text: "Job Explorer")
+        VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: 1) {
+                HStack {
+                    Text("Explorer").font(.title2)
+                    Spacer()
+                    FancySimpleButton(
+                        text: explorerVisible ? "Close" : "Open",
+                        action: {explorerVisible.toggle()},
+                        icon: explorerVisible ? "minus.square.fill" : "plus.square.fill",
+                        showLabel: false,
+                        showIcon: true,
+                        size: .tiny,
+                        type: .clear
+                    )
+                }
+                
+                HStack {
+                    Text("Choose a job by first selecting the company, then project, it is associated with.")
+                        .font(.caption)
+                    Spacer()
+                }
             }
+            .padding(5)
+            .background(.white.opacity(0.2))
+            .foregroundStyle(.white)
 
-            ThreePanelGroup(orientation: .horizontal, data: companies)
+            if explorerVisible {
+                ThreePanelGroup(orientation: .horizontal, data: companies)
+            }
+            
+            VStack(alignment: .leading, spacing: 1) {
+                HStack {
+                    Text("Editor").font(.title2)
+                    Spacer()
+                    FancySimpleButton(
+                        text: editorVisible ? "Close" : "Open",
+                        action: {editorVisible.toggle()},
+                        icon: editorVisible ? "minus.square.fill" : "plus.square.fill",
+                        showLabel: false,
+                        showIcon: true,
+                        size: .tiny,
+                        type: .clear
+                    )
+                }
 
-//            JobView(job: nav.session.job!)
+                HStack {
+                    Text("Modify the Active job.")
+                        .font(.caption)
+                    Spacer()
+                }
+                
+            }
+            .padding(5)
+            .background(.white.opacity(0.2))
+            .foregroundStyle(.white)
+            
+            if editorVisible {
+                if let job = nav.session.job {
+                    VStack {
+                        JobView(job: job)
+                    }
+                    .padding(5)
+                    .background(Theme.rowColour)
+                    .foregroundStyle(.white)
+                } else {
+                    VStack(alignment: .leading, spacing: 1) {
+                        HStack {
+                            Text("No job selected")
+                                .foregroundColor(.gray)
+                            Spacer()
+                        }
+                        .padding()
+                        .background(Theme.rowColour)
+                        
+                        Spacer()
+                    }
+                }
+            }
         }
-//        .background(Theme.toolbarColour)
     }
     
     init() {

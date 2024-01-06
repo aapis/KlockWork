@@ -120,6 +120,7 @@ public class Navigation: Identifiable, ObservableObject {
         parent = newParent
     }
 
+    // @TODO: Should attempt to set content with "@ViewBuilder content: () -> Content" instead of wrapping in AnyView
     public func setSidebar(_ newView: AnyView?) -> Void {
         if let view = newView {
             sidebar = view

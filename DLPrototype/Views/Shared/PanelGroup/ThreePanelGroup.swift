@@ -14,28 +14,25 @@ struct ThreePanelGroup: View {
     public var data: any Collection
     
     private var columns: [GridItem] {
-        return Array(repeating: .init(.flexible(minimum: 100)), count: 3)
+        return Array(repeating: .init(.flexible(minimum: 100), spacing: 1), count: 3)
     }
 
     @EnvironmentObject private var nav: Navigation
 
     var body: some View {
         VStack(alignment: .leading, spacing: 1) {
-            HStack {
-                // Icons
-            }
+//            HStack {
+//                // Icons
+//            }
             if orientation == .horizontal {
-                LazyVGrid(columns: columns, alignment: .leading) {
+                LazyVGrid(columns: columns, alignment: .leading, spacing: 1) {
                     CompanyPanel(position: .first)
                     ProjectPanel(position: .middle)
                     JobPanel(position: .last)
                 }
-                .background(
-                    .white.opacity(0.05)
-                )
-                .frame(minHeight: 300)
+                .frame(height: 300)
             } else {
-                LazyHGrid(rows: columns, alignment: .top) {
+                LazyHGrid(rows: columns, alignment: .top, spacing: 1) {
                     CompanyPanel(position: .first)
                     ProjectPanel(position: .middle)
                     JobPanel(position: .last)

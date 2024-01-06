@@ -26,12 +26,9 @@ struct JobView: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
-    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
-    
+
     var body: some View {
         VStack(alignment: .leading) {
-            topSpace
-
             fieldProjectLink
 
             FancyTextField(placeholder: "URL", lineLimit: 1, onSubmit: {}, showLabel: true, text: $url)
@@ -44,6 +41,7 @@ struct JobView: View {
             Spacer()
             buttonSubmit
         }
+        .padding(5)
         .onAppear(perform: setEditableValues)
         .onChange(of: job) { _ in
             setEditableValues()
@@ -63,11 +61,7 @@ struct JobView: View {
             )
         }
     }
-    
-    @ViewBuilder private var topSpace: some View {
-        FancyDivider()
-    }
-    
+
     @ViewBuilder private var fieldProjectLink: some View {
         if let project = job.project {
             HStack {

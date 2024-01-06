@@ -29,7 +29,7 @@ struct FancySimpleButton: View {
                 action()
             }
 
-            DispatchQueue.main.asyncAfter(deadline: .now()) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 if let href = href {
                     nav.to(href)
                 }
@@ -38,21 +38,17 @@ struct FancySimpleButton: View {
             if let labelView = labelView {
                 labelView
             } else {
-                VStack(alignment: .center) {
+                VStack(alignment: .center, spacing: 0) {
                     HStack(alignment: .top, spacing: 5) {
                         if showIcon {
-                            VStack(alignment: .leading) {
-                                Image(systemName: icon)
-                                    .padding(size.padding)
-                            }
+                            Image(systemName: icon)
+                                .padding(size.padding)
                         }
                         
                         if showLabel {
-                            VStack(alignment: .leading) {
-                                Text(text)
-                                    .font(.title3)
-                                    .padding(size.padding)
-                            }
+                            Text(text)
+                                .font(.title3)
+                                .padding(size.padding)
                         }
                     }
                     .font(.title3)
