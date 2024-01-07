@@ -28,6 +28,8 @@ struct JobView: View {
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
 
+    @FocusState private var focused: Bool
+
     var body: some View {
         VStack(alignment: .leading) {
             fieldProjectLink
@@ -44,7 +46,7 @@ struct JobView: View {
         }
         .padding(5)
         .onAppear(perform: setEditableValues)
-        .onChange(of: job) { _ in
+        .onChange(of: nav.session.job) { _ in
             setEditableValues()
         }
         .onChange(of: id) { jobId in
@@ -53,6 +55,11 @@ struct JobView: View {
                 valid: $validJob,
                 id: $id
             )
+
+            if validJob {
+                job.jid = Double(jobId) ?? 0.0
+                PersistenceController.shared.save()
+            }
         }
         .onChange(of: url) { newUrl in
             JobFormValidator(moc: moc).onChangeCallback(
@@ -60,6 +67,24 @@ struct JobView: View {
                 valid: $validUrl,
                 id: $id
             )
+
+            if validUrl {
+                job.uri = URL(string: newUrl)
+                PersistenceController.shared.save()
+            }
+        }
+        .onChange(of: alive) { status in
+            job.alive = status
+            PersistenceController.shared.save()
+        }
+        .onChange(of: shredable) { status in
+            job.shredable = status
+            PersistenceController.shared.save()
+        }
+        .onChange(of: nav.saved) { status in
+            if status {
+                self.update()
+            }
         }
     }
 
@@ -90,48 +115,61 @@ struct JobView: View {
     }
 
     @ViewBuilder private var buttonSubmit: some View {
-        HStack {
-            FancyButtonv2(
-                text: "Delete",
-                action: {isDeleteAlertShowing = true},
-                icon: "trash",
-                showLabel: false,
-                type: .destructive
-            )
-            .alert("Are you sure you want to delete job ID \(job.jid.string)?", isPresented: $isDeleteAlertShowing) {
-                Button("Yes", role: .destructive) {
-                    hardDelete()
+        ZStack {
+            HStack {
+                FancyButtonv2(
+                    text: "Delete",
+                    action: {isDeleteAlertShowing = true},
+                    icon: "trash",
+                    showLabel: false,
+                    type: .destructive
+                )
+                .alert("Are you sure you want to delete job ID \(job.jid.string)?", isPresented: $isDeleteAlertShowing) {
+                    Button("Yes", role: .destructive) {
+                        hardDelete()
+                    }
+                    Button("No", role: .cancel) {}
                 }
-                Button("No", role: .cancel) {}
+
+                Spacer()
+                FancyButtonv2(
+                    text: "Update",
+                    action: update,
+                    size: .medium,
+                    type: .primary
+                )
+                .keyboardShortcut("s", modifiers: .command)
             }
-            
-            Spacer()
-            FancyButtonv2(
-                text: "Update",
-                action: update,
-                size: .medium,
-                type: .primary,
-                redirect: AnyView(JobDashboard()),
-                pageType: .jobs,
-                sidebar: AnyView(JobDashboardSidebar())
-            )
-            .keyboardShortcut("s", modifiers: .command)
         }
     }
 }
 
 extension JobView {
     private func setEditableValues() -> Void {
-        id = job.jid.string
-        if job.project != nil {
-            pName = job.project!.name!
-            pId = String(job.project!.pid)
-        }
+        if let job = nav.session.job {
+            id = job.jid.string
+            if job.project != nil {
+                pName = job.project!.name!
+                pId = String(job.project!.pid)
+            }
 
-        if job.uri != nil {
-            url = job.uri!.description
+            if job.uri != nil {
+                url = job.uri!.description
+            } else {
+                url = ""
+            }
         } else {
-            url = ""
+            id = job.jid.string
+            if job.project != nil {
+                pName = job.project!.name!
+                pId = String(job.project!.pid)
+            }
+
+            if job.uri != nil {
+                url = job.uri!.description
+            } else {
+                url = ""
+            }
         }
     }
     
@@ -153,6 +191,7 @@ extension JobView {
 
         PersistenceController.shared.save()
         updater.update()
+        nav.save()
     }
 
     private func softDelete() -> Void {

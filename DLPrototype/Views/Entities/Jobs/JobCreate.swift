@@ -27,7 +27,6 @@ struct JobCreate: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
-//    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -154,6 +153,7 @@ extension JobCreate {
         }
 
         PersistenceController.shared.save()
+        nav.session.job = job
     }
 
     private func colourPickerChange(colour: [Double]) -> Void {

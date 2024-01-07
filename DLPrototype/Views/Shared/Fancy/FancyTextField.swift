@@ -23,7 +23,9 @@ struct FancyTextField: View {
     @Binding public var text: String
     
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
-    
+
+    @FocusState public var focused: Bool
+
     var body: some View {
         HStack(spacing: 5) {
             if showLabel {
@@ -57,6 +59,7 @@ struct FancyTextField: View {
             .disabled(disabled ?? false)
             .foregroundColor(disabled ?? false ? Color.gray : fgColour)
             .textSelection(.enabled)
+            .focused($focused)
     }
     
     private var oneBigLine: some View {
@@ -71,6 +74,7 @@ struct FancyTextField: View {
             .disabled(disabled ?? false)
             .foregroundColor(disabled ?? false ? Color.gray : fgColour)
             .textSelection(.enabled)
+            .focused($focused)
     }
     
     private var multiLine: some View {
@@ -86,6 +90,7 @@ struct FancyTextField: View {
             .disabled(disabled ?? false)
             .foregroundColor(disabled ?? false ? Color.gray : fgColour)
             .textSelection(.enabled)
+            .focused($focused)
     }
     
     private func reset() -> Void {

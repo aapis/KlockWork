@@ -176,9 +176,9 @@ struct JobExplorer: View {
             .foregroundStyle(.white)
             
             if editorVisible {
-                if let job = nav.session.job {
+                if nav.session.job != nil {
                     VStack {
-                        JobView(job: job)
+                        JobView(job: nav.session.job!)
                     }
                     .padding(5)
                     .background(Theme.rowColour)
@@ -197,6 +197,9 @@ struct JobExplorer: View {
                     }
                 }
             }
+        }
+        .onChange(of: nav.saved) { status in
+            editorVisible = status
         }
     }
     

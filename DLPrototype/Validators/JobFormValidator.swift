@@ -47,7 +47,6 @@ public final class JobFormValidator {
 
     public func onChangeCallback(jobFieldValue: String, valid: Binding<Bool>?, id: Binding<String>?) -> Void {
         let filtered = jobFieldValue.filter { "0123456789\\.".contains($0) }
-
         let (jobValid, isCurrent) = JobFormValidator(moc: moc).validateJobId(filtered)
 
         if isCurrent {

@@ -13,9 +13,6 @@ struct Today: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
 
-    @FocusState private var primaryTextFieldInFocus: Bool
-    
-    // MARK: body view
     var body: some View {
         VStack(alignment: .leading) {
             PostingInterface()
