@@ -208,6 +208,7 @@ extension Navigation {
             var middle: [Project] = []
             var last: [Job] = []
             var selected: Panel.SelectedValueCoordinates? = nil
+            var selectedItems: [Panel.SelectedValueCoordinates] = []
         }
     }
 

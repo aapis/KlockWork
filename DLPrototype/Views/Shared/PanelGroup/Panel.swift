@@ -18,7 +18,7 @@ public struct Panel {
         case first, middle, last
     }
     
-    public struct SelectedValueCoordinates {
+    public struct SelectedValueCoordinates: Equatable {
         var position: Position
         var item: NSManagedObject
     }
@@ -32,9 +32,7 @@ public struct Panel {
     
     struct Row: View {
         public var config: RowConfiguration
-        
-        @State private var highlighted: Bool = false
-        
+
         @EnvironmentObject private var nav: Navigation
 
         var body: some View {
@@ -48,8 +46,8 @@ public struct Panel {
                         Image(systemName: config.position == .last ? "hammer" : "arrow.right")
                     }
                     .padding(10)
-                    .background(nav.forms.jobSelector.selected != nil ? nav.forms.jobSelector.selected!.item == config.entity ? .orange : .clear : .clear)
-                    .foregroundStyle(nav.forms.jobSelector.selected != nil ? nav.forms.jobSelector.selected!.item == config.entity ? .black : .white : .white)
+                    .background(nav.forms.jobSelector.selectedItems.contains(where: {$0.item == config.entity}) ? .orange : .clear)
+                    .foregroundStyle(nav.forms.jobSelector.selectedItems.contains(where: {$0.item == config.entity}) ? .black : .white)
                 ),
                 size: .link,
                 type: .clear
@@ -61,8 +59,25 @@ public struct Panel {
 
 extension Panel.Row {
     private func fireCallback() -> Void {
-        highlighted = true
         nav.forms.jobSelector.selected = Panel.SelectedValueCoordinates(position: config.position, item: config.entity)
+        
+        // changes which entity is highlighted in each column
+        var items = nav.forms.jobSelector.selectedItems
+        if items.isEmpty {
+            items.append(nav.forms.jobSelector.selected!)
+        } else {
+            if !items.contains(where: {$0.position == config.position}) {
+                items.append(nav.forms.jobSelector.selected!)
+            } else {
+                for (offset, _) in items.enumerated() {
+                    if items[offset].position == config.position {
+                        items[offset].item = config.entity
+                    }
+                }
+            }
+        }
+        nav.forms.jobSelector.selectedItems = items
+        
         config.action()
     }
 }
@@ -188,13 +203,13 @@ struct CompanyPanel: View {
 extension CompanyPanel {
     private func setMiddlePanel(data: [Any]) -> Void {
         nav.forms.jobSelector.currentPosition = position
-        nav.forms.jobSelector.middle = data as! [Project]
+        nav.forms.jobSelector.middle = (data as! [Project]).sorted(by: {$0.name! < $1.name!})
         nav.forms.jobSelector.last = []
     }
     
     private func setLastPanel(data: [Any]) -> Void {
         nav.forms.jobSelector.currentPosition = position
-        nav.forms.jobSelector.last = data as! [Job]
+        nav.forms.jobSelector.last = (data as! [Job]).sorted(by: {$0.jid < $1.jid})
     }
     
     private func closePanel() -> Void {

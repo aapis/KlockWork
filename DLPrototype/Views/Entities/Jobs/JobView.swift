@@ -35,11 +35,13 @@ struct JobView: View {
             fieldProjectLink
 
             FancyTextField(placeholder: "URL", lineLimit: 1, onSubmit: {}, showLabel: true, text: $url)
-                .background(validUrl ? Color.clear : Color.red)
+                .background(validUrl ? .clear : .red)
             FancyTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, showLabel: true, text: $id)
-                .background(validJob ? Color.clear : Color.red)
+                .background(validJob ? .clear : .red)
             FancyJobActiveToggle(entity: job)
+                .background(job.alive ? .green : .clear)
             FancyJobSredToggle(entity: job)
+                .background(job.shredable ? .green : .clear)
             FancyColourPicker(initialColour: job.colour ?? Theme.rowColourAsDouble, onChange: {newColour in colour = newColour})
             Spacer()
             buttonSubmit
@@ -75,10 +77,6 @@ struct JobView: View {
         }
         .onChange(of: alive) { status in
             job.alive = status
-            PersistenceController.shared.save()
-        }
-        .onChange(of: shredable) { status in
-            job.shredable = status
             PersistenceController.shared.save()
         }
         .onChange(of: nav.saved) { status in
