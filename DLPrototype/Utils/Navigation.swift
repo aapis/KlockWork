@@ -207,8 +207,8 @@ extension Navigation {
             var first: FetchedResults<Company>? = nil
             var middle: [Project] = []
             var last: [Job] = []
-            var selected: Panel.SelectedValueCoordinates? = nil
-            var selectedItems: [Panel.SelectedValueCoordinates] = []
+            var tmp: Panel.SelectedValueCoordinates? = nil
+            var selected: [Panel.SelectedValueCoordinates] = []
         }
     }
 

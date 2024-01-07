@@ -35,13 +35,13 @@ struct JobView: View {
             fieldProjectLink
 
             FancyTextField(placeholder: "URL", lineLimit: 1, onSubmit: {}, showLabel: true, text: $url)
-                .background(validUrl ? .clear : .red)
+                .background(validUrl ? .clear : .red) // @TODO: remove, this looks terrible
             FancyTextField(placeholder: "Job ID", lineLimit: 1, onSubmit: {}, showLabel: true, text: $id)
-                .background(validJob ? .clear : .red)
+                .background(validJob ? .clear : .red) // @TODO: remove, this looks terrible
             FancyJobActiveToggle(entity: job)
-                .background(job.alive ? .green : .clear)
+                .background(job.alive ? .green : .clear) // @TODO: remove, this looks terrible
             FancyJobSredToggle(entity: job)
-                .background(job.shredable ? .green : .clear)
+                .background(job.shredable ? .green : .clear) // @TODO: remove, this looks terrible
             FancyColourPicker(initialColour: job.colour ?? Theme.rowColourAsDouble, onChange: {newColour in colour = newColour})
             Spacer()
             buttonSubmit

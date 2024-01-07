@@ -144,7 +144,7 @@ struct JobExplorer: View {
             .padding(5)
             .background(.white.opacity(0.2))
             .foregroundStyle(.white)
-
+            
             if explorerVisible {
                 ThreePanelGroup(orientation: .horizontal, data: companies)
             }

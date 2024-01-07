@@ -17,7 +17,7 @@ struct SessionInspector: View {
         VStack(alignment: .leading) {
             ScrollView {
                 if form != nil {
-                    Text("Panel: selected items: \(form!.selectedItems.count)")
+                    Text("Panel: selected items: \(form!.selected.count)")
                 }
                 
                 Text(form.debugDescription)

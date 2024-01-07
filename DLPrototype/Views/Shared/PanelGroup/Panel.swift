@@ -28,6 +28,8 @@ public struct Panel {
         var action: () -> Void
         var entity: NSManagedObject
         var position: Panel.Position
+        var special: Bool = false
+        var specialIcon: String = ""
     }
     
     struct Row: View {
@@ -41,13 +43,17 @@ public struct Panel {
                 action: fireCallback,
                 labelView: AnyView(
                     HStack {
+                        if config.special {
+                            Image(systemName: config.specialIcon)
+                                .help("This is your default company. Change this in Settings")
+                        }
                         Text(config.text)
                         Spacer()
                         Image(systemName: config.position == .last ? "hammer" : "arrow.right")
                     }
                     .padding(10)
-                    .background(nav.forms.jobSelector.selectedItems.contains(where: {$0.item == config.entity}) ? .orange : .clear)
-                    .foregroundStyle(nav.forms.jobSelector.selectedItems.contains(where: {$0.item == config.entity}) ? .black : .white)
+                    .background(nav.forms.jobSelector.selected.contains(where: {$0.item == config.entity}) ? .orange : .clear)
+                    .foregroundStyle(nav.forms.jobSelector.selected.contains(where: {$0.item == config.entity}) ? .black : .white)
                 ),
                 size: .link,
                 type: .clear
@@ -59,15 +65,15 @@ public struct Panel {
 
 extension Panel.Row {
     private func fireCallback() -> Void {
-        nav.forms.jobSelector.selected = Panel.SelectedValueCoordinates(position: config.position, item: config.entity)
+        let selected = Panel.SelectedValueCoordinates(position: config.position, item: config.entity)
         
         // changes which entity is highlighted in each column
-        var items = nav.forms.jobSelector.selectedItems
+        var items = nav.forms.jobSelector.selected
         if items.isEmpty {
-            items.append(nav.forms.jobSelector.selected!)
+            items.append(selected)
         } else {
             if !items.contains(where: {$0.position == config.position}) {
-                items.append(nav.forms.jobSelector.selected!)
+                items.append(selected)
             } else {
                 for (offset, _) in items.enumerated() {
                     if items[offset].position == config.position {
@@ -76,7 +82,7 @@ extension Panel.Row {
                 }
             }
         }
-        nav.forms.jobSelector.selectedItems = items
+        nav.forms.jobSelector.selected = items
         
         config.action()
     }
@@ -104,8 +110,6 @@ struct CompanyPanel: View {
 //                    showIcon: true,
 //                    type: .clear
 //                )
-//                .disabled(nav.forms.jobSelector.selected == nil)
-//                .opacity(nav.forms.jobSelector.selected == nil ? 0.4 : 1)
                 FancySimpleButton(
                     text: "Close",
                     action: closePanel,
@@ -113,8 +117,6 @@ struct CompanyPanel: View {
                     showLabel: false,
                     showIcon: true
                 )
-                .disabled(nav.forms.jobSelector.selected == nil)
-                .opacity(nav.forms.jobSelector.selected == nil ? 0.4 : 1)
             }
             .padding(10)
             
@@ -134,7 +136,9 @@ struct CompanyPanel: View {
                                                 text: company.name!,
                                                 action: {setMiddlePanel(data: company.projects!.allObjects)},
                                                 entity: company,
-                                                position: position
+                                                position: position,
+                                                special: company.isDefault,
+                                                specialIcon: "building.2"
                                             )
                                         )
                                     }
@@ -216,7 +220,7 @@ extension CompanyPanel {
         if position == .first {
             nav.forms.jobSelector.middle = []
             nav.forms.jobSelector.last = []
-            nav.forms.jobSelector.selected = nil
+            nav.forms.jobSelector.selected = []
         } else if position == .middle {
             nav.forms.jobSelector.middle = []
             nav.forms.jobSelector.last = []
@@ -314,7 +318,7 @@ extension ProjectPanel {
         if position == .first {
             nav.forms.jobSelector.middle = []
             nav.forms.jobSelector.last = []
-            nav.forms.jobSelector.selected = nil
+            nav.forms.jobSelector.selected = []
         } else if position == .middle {
             nav.forms.jobSelector.middle = []
             nav.forms.jobSelector.last = []
@@ -403,7 +407,7 @@ extension JobPanel {
         if position == .first {
             nav.forms.jobSelector.middle = []
             nav.forms.jobSelector.last = []
-            nav.forms.jobSelector.selected = nil
+            nav.forms.jobSelector.selected = []
         } else if position == .middle {
             nav.forms.jobSelector.middle = []
             nav.forms.jobSelector.last = []
