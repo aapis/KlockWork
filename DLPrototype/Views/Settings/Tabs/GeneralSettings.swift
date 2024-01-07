@@ -15,6 +15,7 @@ struct GeneralSettings: View {
     @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
     @AppStorage("general.syncColumns") public var syncColumns: Bool = false
     @AppStorage("general.defaultCompany") public var defaultCompany: Int = 0
+    @AppStorage("general.showSessionInspector") public var showSessionInspector: Bool = false
 
     var body: some View {
         Form {
@@ -28,7 +29,7 @@ struct GeneralSettings: View {
                 Toggle("Enable experimental features (EXERCISE CAUTION)", isOn: $showExperimentalFeatures)
 
                 if showExperimentalFeatures {
-                    Text("There are no experimental features at this time")
+                    Toggle("Enable SessionInspector panel", isOn: $showSessionInspector)
                 }
             }
 
