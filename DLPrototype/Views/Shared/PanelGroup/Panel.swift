@@ -80,16 +80,17 @@ struct CompanyPanel: View {
             HStack(alignment: .center) {
                 Text("Companies").font(.title3)
                 Spacer()
-                FancySimpleButton(
-                    text: "Search",
-                    action: {showSearch.toggle()},
-                    icon: "magnifyingglass",
-                    showLabel: false,
-                    showIcon: true,
-                    type: .clear
-                )
-                .disabled(nav.forms.jobSelector.selected == nil)
-                .opacity(nav.forms.jobSelector.selected == nil ? 0.4 : 1)
+                // @TODO: uncomment and implement search
+//                FancySimpleButton(
+//                    text: "Search",
+//                    action: {showSearch.toggle()},
+//                    icon: "magnifyingglass",
+//                    showLabel: false,
+//                    showIcon: true,
+//                    type: .clear
+//                )
+//                .disabled(nav.forms.jobSelector.selected == nil)
+//                .opacity(nav.forms.jobSelector.selected == nil ? 0.4 : 1)
                 FancySimpleButton(
                     text: "Close",
                     action: closePanel,
@@ -103,7 +104,7 @@ struct CompanyPanel: View {
             .padding(10)
             
             if showSearch {
-                SearchBar(text: $searchText)
+                SearchBar(text: $searchText, onSubmit: search)
             }
 
             if let firstColData = nav.forms.jobSelector.first {
@@ -180,7 +181,7 @@ struct CompanyPanel: View {
             }
         }
         .background(Theme.rowColour)
-        .frame(minHeight: 300)
+        .frame(height: 300)
     }
 }
 
@@ -211,6 +212,10 @@ extension CompanyPanel {
         
         showSearch = false
     }
+    
+    private func search() -> Void {
+        
+    }
 }
 
 struct ProjectPanel: View {
@@ -226,16 +231,17 @@ struct ProjectPanel: View {
             HStack(alignment: .center) {
                 Text("Projects").font(.title3)
                 Spacer()
-                FancySimpleButton(
-                    text: "Search",
-                    action: {showSearch.toggle()},
-                    icon: "magnifyingglass",
-                    showLabel: false,
-                    showIcon: true,
-                    type: .clear
-                )
-                .disabled(nav.forms.jobSelector.middle.isEmpty)
-                .opacity(nav.forms.jobSelector.middle.isEmpty ? 0.4 : 1)
+                // @TODO: uncomment and implement search
+//                FancySimpleButton(
+//                    text: "Search",
+//                    action: {showSearch.toggle()},
+//                    icon: "magnifyingglass",
+//                    showLabel: false,
+//                    showIcon: true,
+//                    type: .clear
+//                )
+//                .disabled(nav.forms.jobSelector.middle.isEmpty)
+//                .opacity(nav.forms.jobSelector.middle.isEmpty ? 0.4 : 1)
                 FancySimpleButton(
                     text: "Close",
                     action: closePanel,
@@ -279,7 +285,7 @@ struct ProjectPanel: View {
         }
         .background(nav.forms.jobSelector.middle.isEmpty ? .black.opacity(0.1) : Theme.rowColour)
         .foregroundStyle(nav.forms.jobSelector.middle.isEmpty ? .white.opacity(0.4) : .white)
-        .frame(minHeight: 300)
+        .frame(height: 300)
     }
 }
 
@@ -319,16 +325,17 @@ public struct JobPanel: View {
             HStack(alignment: .center) {
                 Text("Jobs").font(.title3)
                 Spacer()
-                FancySimpleButton(
-                    text: "Search",
-                    action: {showSearch.toggle()},
-                    icon: "magnifyingglass",
-                    showLabel: false,
-                    showIcon: true,
-                    type: .clear
-                )
-                .disabled(nav.forms.jobSelector.last.isEmpty)
-                .opacity(nav.forms.jobSelector.last.isEmpty ? 0.4 : 1)
+                // @TODO: uncomment and implement search
+//                FancySimpleButton(
+//                    text: "Search",
+//                    action: {showSearch.toggle()},
+//                    icon: "magnifyingglass",
+//                    showLabel: false,
+//                    showIcon: true,
+//                    type: .clear
+//                )
+//                .disabled(nav.forms.jobSelector.last.isEmpty)
+//                .opacity(nav.forms.jobSelector.last.isEmpty ? 0.4 : 1)
                 FancySimpleButton(
                     text: "Close",
                     action: closePanel,
@@ -372,7 +379,7 @@ public struct JobPanel: View {
         }
         .background(nav.forms.jobSelector.last.isEmpty ? .black.opacity(0.1) : Theme.rowColour)
         .foregroundStyle(nav.forms.jobSelector.last.isEmpty ? .white.opacity(0.4) : .white)
-        .frame(minHeight: 300)
+        .frame(height: 300)
     }
 }
 

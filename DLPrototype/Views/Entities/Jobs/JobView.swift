@@ -22,6 +22,7 @@ struct JobView: View {
     @State private var validJob: Bool = false
     @State private var validUrl: Bool = false
     @State private var isDeleteAlertShowing: Bool = false
+    @State private var projectPickerDisplayName: String = "Hello"
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
@@ -75,7 +76,16 @@ struct JobView: View {
                     pageType: .projects,
                     sidebar: AnyView(ProjectsDashboardSidebar())
                 )
+                FancySimpleButton(
+                    text: project.name!,
+                    action: actionClearProject,
+                    icon: "xmark",
+                    showLabel: false,
+                    showIcon: true
+                )
             }
+        } else {
+            ProjectPickerUsing(onChange: {_, _ in}, displayName: $projectPickerDisplayName)
         }
     }
 
@@ -108,7 +118,9 @@ struct JobView: View {
             .keyboardShortcut("s", modifiers: .command)
         }
     }
-    
+}
+
+extension JobView {
     private func setEditableValues() -> Void {
         id = job.jid.string
         if job.project != nil {
@@ -157,5 +169,12 @@ struct JobView: View {
         nav.setId()
         nav.setParent(.jobs)
         nav.setSidebar(AnyView(JobDashboardSidebar()))
+    }
+    
+    private func actionClearProject() -> Void {
+        if let project = job.project {
+            project.removeFromJobs(job)
+            PersistenceController.shared.save()
+        }
     }
 }
