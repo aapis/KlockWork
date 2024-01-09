@@ -207,7 +207,7 @@ struct JobExplorer: View {
     init() {
         _companies = CoreDataCompanies.all()
     }
-
+    
     public struct JobViewRedux: View {
         public var job: Job
         private var fields: [Navigation.Forms.Field] { job.fields() }
@@ -217,27 +217,25 @@ struct JobExplorer: View {
         var body: some View {
             Grid(alignment: .topLeading, horizontalSpacing: 1, verticalSpacing: 10) {
                 VStack {
-                    ForEach(fields) { field in
-                        field.body
+                    ScrollView {
+                        ForEach(fields) { field in
+                            field.body
+                        }
                     }
+                    Spacer()
+
+//                    FancySimpleButton(
+//                        text: "Save",
+//                        action: {nav.save()},
+//                        type: .primary
+//                    )
+//                    .keyboardShortcut("s", modifiers: .command)
                 }
                 .padding([.top, .bottom], 8)
             }
             .background(Theme.toolbarColour)
             .border(width: 1, edges: [.top, .bottom, .leading, .trailing], color: Theme.rowColour)
             .padding(8)
-            .onChange(of: nav.saved) { status in
-                if status {
-//                    job.title = nav.forms.jobSelector.editor.title
-//                    job.setValuesForKeys([String: Any]) // @TODO: this is promising
-//                    for field in fields {
-//                        if field.label == "Title" {
-//                            job.value(forKeyPath: "title")
-//                            job.value
-//                        }
-//                    }
-                }
-            }
         }
     }
 }

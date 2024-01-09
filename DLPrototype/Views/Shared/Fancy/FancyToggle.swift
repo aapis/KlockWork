@@ -12,6 +12,7 @@ struct FancyToggle: View {
     public let label: String
     public let value: Bool
     public let showLabel: Bool = false
+    public let onChange: (Bool) -> Void
 
     @State private var alive: Bool = false
 
@@ -27,5 +28,8 @@ struct FancyToggle: View {
         .onAppear(perform: {
             alive = value
         })
+        .onChange(of: alive) { status in
+            self.onChange(status)
+        }
     }
 }

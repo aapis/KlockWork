@@ -50,13 +50,16 @@ extension Job {
     func fields() -> [Field] {
         var fields: [Field] = []
 
-        fields.append(Field(type: .text, label: "Job ID", value: self.jid.string, keyPath: \Job.title))
-        fields.append(Field(type: .text, label: "Title", value: self.title, keyPath: \Job.title))
-        fields.append(Field(type: .boolean, label: "Published", value: self.alive, keyPath: \Job.title))
-        fields.append(Field(type: .text, label: "Last update", value: self.lastUpdate?.formatted(date: .abbreviated, time: .omitted), keyPath: \Job.title))
-        fields.append(Field(type: .text, label: "Created", value: self.created?.formatted(date: .abbreviated, time: .omitted), keyPath: \Job.title))
-        fields.append(Field(type: .colour, label: "Colour", value: self.colour, keyPath: \Job.title))
-        fields.append(Field(type: .editor, label: "Description", value: self.overview, keyPath: \Job.title))
+        fields.append(Field(type: .text, label: "Job ID", value: self.jid.string, entity: self, keyPath: "jid"))
+        fields.append(Field(type: .text, label: "Title", value: self.title, entity: self, keyPath: "title"))
+        fields.append(Field(type: .boolean, label: "Published", value: self.alive, entity: self, keyPath: "alive"))
+        fields.append(Field(type: .boolean, label: "SRED Qualified", value: self.shredable, entity: self, keyPath: "shredable"))
+        // @TODO: make this a sidebar calendar selector
+        fields.append(Field(type: .text, label: "Last update", value: self.lastUpdate?.formatted(date: .abbreviated, time: .omitted), entity: self, keyPath: "lastUpdate"))
+        // @TODO: make this a sidebar calendar selector
+        fields.append(Field(type: .text, label: "Created", value: self.created?.formatted(date: .abbreviated, time: .omitted), entity: self, keyPath: "created"))
+        fields.append(Field(type: .colour, label: "Colour", value: self.colour, entity: self, keyPath: "colour"))
+        fields.append(Field(type: .editor, label: "Description", value: self.overview, entity: self, keyPath: "overview"))
 
         return fields
     }

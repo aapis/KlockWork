@@ -95,6 +95,7 @@ public class Navigation: Identifiable, ObservableObject {
 //    @Published public var state: State = State()
     @Published public var history: History = History()
     @Published public var forms: Forms = Forms()
+    @Published public var events: SysEvents = SysEvents()
 
     public func pageTitle() -> String {
         if title!.isEmpty {
@@ -233,13 +234,15 @@ extension Navigation {
             public var body: some View { Layout(field: self) }
             public var label: String = ""
             public var value: Any? = nil
-            public var keyPath: AnyKeyPath
+            public var entity: NSManagedObject? = nil
+            public var keyPath: String
             private var type: LayoutType = .text
 
-            init(type: LayoutType, label: String, value: Any? = nil, keyPath: AnyKeyPath) {
+            init(type: LayoutType, label: String, value: Any? = nil, entity: NSManagedObject? = nil, keyPath: String) {
                 self.type = type
                 self.label = label
                 self.value = value
+                self.entity = entity
                 self.keyPath = keyPath
             }
 
@@ -263,17 +266,23 @@ extension Navigation {
                                     // @TODO: convert to button which changes focus state
                                     Text(field.label)
                                         .padding(5)
+//                                    if field.value as? String != bValue {
+//                                        Image(systemName: "exclamationmark.triangle.fill")
+//                                            .symbolRenderingMode(.hierarchical)
+//                                            .font(.title2)
+//                                            .padding([.trailing], 8)
+//                                    }
                                 }
                             }
                             .frame(width: 130)
-
+                            
                             VStack {
                                 switch field.type {
-                                case .boolean: FancyToggle(label: self.field.label, value: self.field.value as! Bool)
+                                case .boolean: FancyToggle(label: self.field.label, value: self.field.value as! Bool, onChange: self.onChangeToggle)
                                 case .colour: FancyColourPicker(initialColour: self.field.value as! [Double], onChange: self.onChange, showLabel: false)
                                 case .editor: FancyTextField(placeholder: self.field.label, lineLimit: 10, text: $bValue)
                                 default:
-                                    FancyTextField(placeholder: self.field.label, text: $bValue)
+                                    FancyTextField(placeholder: self.field.label, onSubmit: onSubmit, text: $bValue)
                                 }
                             }
                             Spacer()
@@ -287,10 +296,65 @@ extension Navigation {
                         bValue = value
                     }
                 }
+                
+                private func onChangeToggle(status: Bool) -> Void {
+                    if status {
+                        if let entity = field.entity {
+                            entity.setValue(status, forKey: self.field.keyPath)
+                            PersistenceController.shared.save()
+                        }
+                    }
+                }
 
                 private func onChange(colour: Color) -> Void {
-
+                    if let entity = field.entity {
+                        entity.setValue(colour, forKey: self.field.keyPath)
+                        PersistenceController.shared.save()
+                    }
                 }
+                
+                private func onSubmit() -> Void {
+                    if let entity = field.entity {
+                        entity.setValue(bValue, forKey: self.field.keyPath)
+                        PersistenceController.shared.save()
+                    }
+                }
+            }
+        }
+    }
+    
+    public struct SysEvents: Equatable {
+        var id: UUID = UUID()
+        var stack: [SysEvent] = []
+
+        mutating func on(_ type: SysEvent.Types, _ callback: @escaping () -> Void) -> Void {
+            stack.insert(SysEvent(type: type, data: nil, callback: callback), at: 0)
+//            print("DERPO nav.events.stack.count=\(stack.count)")
+        }
+        
+        mutating func trigger(_ type: SysEvent.Types) -> Void {
+            if let event = stack.first(where: {$0.type == type}) {
+                event.callback()
+                stack.removeAll(where: {$0 == event})
+            }
+        }
+        
+        public static func == (lhs: Navigation.SysEvents, rhs: Navigation.SysEvents) -> Bool {
+            lhs.id == rhs.id
+        }
+        
+        public struct SysEvent: Equatable {
+            var id: UUID = UUID()
+            var type: SysEvent.Types
+            var data: Any?
+            var callback: () -> Void
+            
+            public static func == (lhs: Navigation.SysEvents.SysEvent, rhs: Navigation.SysEvents.SysEvent) -> Bool {
+                lhs.id == rhs.id
+            }
+            
+            public enum Types {
+                case focusStateChange
             }
         }
     }

@@ -62,11 +62,6 @@ struct FancyTextField: View {
             .foregroundColor(disabled ?? false ? Color.gray : fgColour)
             .textSelection(.enabled)
             .focused($focused)
-            .onChange(of: focused) { state in
-                if !state {
-                    nav.save(callback: setValues)
-                }
-            }
     }
     
     private var oneBigLine: some View {
@@ -104,12 +99,6 @@ struct FancyTextField: View {
 extension FancyTextField {
     private func reset() -> Void {
         text = ""
-    }
-
-    private func setValues() -> Void {
-        if placeholder == "Title" {
-            nav.forms.jobSelector.editor.title = text
-        }
     }
 }
 
