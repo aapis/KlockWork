@@ -127,6 +127,8 @@
 		537AEBA1296287B900385787 /* LogRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA0296287B900385787 /* LogRow.swift */; };
 		53814A8B2A95151000A5A015 /* CoreDataPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53814A8A2A95151000A5A015 /* CoreDataPlan.swift */; };
 		53814A8E2A9821C800A5A015 /* DefaultPlanningSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53814A8D2A9821C800A5A015 /* DefaultPlanningSidebar.swift */; };
+		53842B272B4C82B20029AC73 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53842B262B4C82B20029AC73 /* Project.swift */; };
+		53842B2A2B4C9B100029AC73 /* FancyToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53842B292B4C9B100029AC73 /* FancyToggle.swift */; };
 		53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A19297377A7007A2549 /* FancyGenericToolbar.swift */; };
 		53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1C2973897F007A2549 /* ProjectConfig.swift */; };
 		53959A1F29738AAA007A2549 /* FancySubTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1E29738AAA007A2549 /* FancySubTitle.swift */; };
@@ -349,6 +351,8 @@
 		537AEBA0296287B900385787 /* LogRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRow.swift; sourceTree = "<group>"; };
 		53814A8A2A95151000A5A015 /* CoreDataPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPlan.swift; sourceTree = "<group>"; };
 		53814A8D2A9821C800A5A015 /* DefaultPlanningSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultPlanningSidebar.swift; sourceTree = "<group>"; };
+		53842B262B4C82B20029AC73 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
+		53842B292B4C9B100029AC73 /* FancyToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyToggle.swift; sourceTree = "<group>"; };
 		53959A19297377A7007A2549 /* FancyGenericToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyGenericToolbar.swift; sourceTree = "<group>"; };
 		53959A1C2973897F007A2549 /* ProjectConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfig.swift; sourceTree = "<group>"; };
 		53959A1E29738AAA007A2549 /* FancySubTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancySubTitle.swift; sourceTree = "<group>"; };
@@ -497,6 +501,7 @@
 			children = (
 				5331FCB22A9E6ECE005CDE0E /* Plan.swift */,
 				531EB6E72A9FDA5A00B3059C /* Job.swift */,
+				53842B262B4C82B20029AC73 /* Project.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -879,6 +884,7 @@
 				5334F2732B2B958D0079D2E7 /* FancyJobSredToggle.swift */,
 				53C000972B3A821D00D5EC04 /* FancyHelpText.swift */,
 				53BDA6962B41CA1C00A61BE8 /* FancySimpleButton.swift */,
+				53842B292B4C9B100029AC73 /* FancyToggle.swift */,
 			);
 			path = Fancy;
 			sourceTree = "<group>";
@@ -1270,6 +1276,7 @@
 				5372C02A2A105AA1008CB120 /* FancyChip.swift in Sources */,
 				537628B429665F4E00DE8ECF /* Data.xcdatamodeld in Sources */,
 				53F5896429983FA300843B32 /* ProjectResult.swift in Sources */,
+				53842B272B4C82B20029AC73 /* Project.swift in Sources */,
 				53EDDF9E29634852008D34C7 /* Entry.swift in Sources */,
 				53C000A82B41438C00D5EC04 /* NoteCreateSidebar.swift in Sources */,
 				53E202632A7ECC6500B4DF70 /* TodayInHistoryWidget.swift in Sources */,
@@ -1437,6 +1444,7 @@
 				53152CD4296A296A00A14E43 /* FancyButton.swift in Sources */,
 				5354C8E62AA03C40001C1779 /* Planning.Group.swift in Sources */,
 				5371BA372A7B412300DEEC21 /* TodaySidebar.swift in Sources */,
+				53842B2A2B4C9B100029AC73 /* FancyToggle.swift in Sources */,
 				5363B6782A6BB2CC00C2FBB8 /* CompanyDashboard.swift in Sources */,
 				53E202562A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift in Sources */,
 				532A722B298F1CB70038C18B /* Results.swift in Sources */,

@@ -92,7 +92,7 @@ public class Navigation: Identifiable, ObservableObject {
     @Published public var session: Session = Session()
     @Published public var planning: PlanningState = PlanningState(moc: PersistenceController.shared.container.viewContext)
     @Published public var saved: Bool = false
-    @Published public var state: State = State()
+//    @Published public var state: State = State()
     @Published public var history: History = History()
     @Published public var forms: Forms = Forms()
 
@@ -150,7 +150,19 @@ public class Navigation: Identifiable, ObservableObject {
             self.saved = false
         }
     }
-    
+
+    public func save(updatedValue: String, callback: ((String) -> Void)? = nil) -> Void {
+        self.saved = true
+
+        if let cb = callback {
+            cb(updatedValue)
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+            self.saved = false
+        }
+    }
+
     // @TODO: this doesn't really work yet
     public func to(_ page: Page) -> Void {
         let hp = self.history.get(page: page)
@@ -171,7 +183,7 @@ public class Navigation: Identifiable, ObservableObject {
         setId()
         inspector = nil
         session = Session()
-        state = State()
+//        state = State()
         history = History()
         forms = Forms()
     }
@@ -207,12 +219,83 @@ extension Navigation {
             var first: FetchedResults<Company>? = nil
             var middle: [Project] = []
             var last: [Job] = []
-            var tmp: Panel.SelectedValueCoordinates? = nil
             var selected: [Panel.SelectedValueCoordinates] = []
+            var editor: Editor = Editor()
+
+            struct Editor {
+                var jid: String? = ""
+                var title: String? = ""
+            }
+        }
+
+        public class Field: Identifiable {
+            public let id: UUID = UUID()
+            public var body: some View { Layout(field: self) }
+            public var label: String = ""
+            public var value: Any? = nil
+            public var keyPath: AnyKeyPath
+            private var type: LayoutType = .text
+
+            init(type: LayoutType, label: String, value: Any? = nil, keyPath: AnyKeyPath) {
+                self.type = type
+                self.label = label
+                self.value = value
+                self.keyPath = keyPath
+            }
+
+            public enum LayoutType {
+                case text, dropdown, date, boolean, colour, editor
+            }
+
+            struct Layout: View {
+                public var field: Field
+
+                @State private var bValue: String = ""
+
+                @EnvironmentObject private var nav: Navigation
+
+                var body: some View {
+                    GridRow(alignment: field.type == .editor ? .top : .center) {
+                        HStack {
+                            VStack(alignment: .trailing) {
+                                HStack(alignment: .top) {
+                                    Spacer()
+                                    // @TODO: convert to button which changes focus state
+                                    Text(field.label)
+                                        .padding(5)
+                                }
+                            }
+                            .frame(width: 130)
+
+                            VStack {
+                                switch field.type {
+                                case .boolean: FancyToggle(label: self.field.label, value: self.field.value as! Bool)
+                                case .colour: FancyColourPicker(initialColour: self.field.value as! [Double], onChange: self.onChange, showLabel: false)
+                                case .editor: FancyTextField(placeholder: self.field.label, lineLimit: 10, text: $bValue)
+                                default:
+                                    FancyTextField(placeholder: self.field.label, text: $bValue)
+                                }
+                            }
+                            Spacer()
+                        }
+                    }
+                    .onAppear(perform: onLoad)
+                }
+
+                private func onLoad() -> Void {
+                    if let value = self.field.value as? String {
+                        bValue = value
+                    }
+                }
+
+                private func onChange(colour: Color) -> Void {
+
+                }
+            }
         }
     }
 
-    public struct State {
+    public struct ApplicationViewState {
         private var phase: Phase = .ready
         private var hierarchy: [Phase] = [.ready, .transitioning, .complete]
 

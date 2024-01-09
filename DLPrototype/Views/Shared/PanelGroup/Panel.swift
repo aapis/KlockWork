@@ -133,7 +133,7 @@ struct CompanyPanel: View {
                                     ForEach(firstColData) { company in
                                         Panel.Row(
                                             config: Panel.RowConfiguration(
-                                                text: company.name!,
+                                                text: company.name!.capitalized,
                                                 action: {setMiddlePanel(data: company.projects!.allObjects)},
                                                 entity: company,
                                                 position: position,
@@ -158,7 +158,7 @@ struct CompanyPanel: View {
                                     ForEach(nav.forms.jobSelector.middle) { project in
                                         Panel.Row(
                                             config: Panel.RowConfiguration(
-                                                text: project.name!,
+                                                text: project.name!.capitalized,
                                                 action: {setLastPanel(data: project.jobs!.allObjects)},
                                                 entity: project,
                                                 position: position
@@ -181,7 +181,7 @@ struct CompanyPanel: View {
                                     ForEach(nav.forms.jobSelector.last) { job in
                                         Panel.Row(
                                             config: Panel.RowConfiguration(
-                                                text: job.name ?? job.jid.string,
+                                                text: job.title?.capitalized ?? job.jid.string,
                                                 action: {nav.session.job = job},
                                                 entity: job,
                                                 position: position
@@ -209,6 +209,7 @@ extension CompanyPanel {
         nav.forms.jobSelector.currentPosition = position
         nav.forms.jobSelector.middle = (data as! [Project]).sorted(by: {$0.name! < $1.name!})
         nav.forms.jobSelector.last = []
+        nav.session.job = nil
     }
     
     private func setLastPanel(data: [Any]) -> Void {
@@ -226,9 +227,9 @@ extension CompanyPanel {
             nav.forms.jobSelector.last = []
         } else if position == .last {
             nav.forms.jobSelector.last = []
-            nav.session.job = nil
         }
         
+        nav.session.job = nil
         showSearch = false
     }
     
@@ -324,9 +325,9 @@ extension ProjectPanel {
             nav.forms.jobSelector.last = []
         } else if position == .last {
             nav.forms.jobSelector.last = []
-            nav.session.job = nil
         }
         
+        nav.session.job = nil
         showSearch = false
     }
 }
@@ -379,7 +380,7 @@ public struct JobPanel: View {
                                 ForEach(nav.forms.jobSelector.last) { job in
                                     Panel.Row(
                                         config: Panel.RowConfiguration(
-                                            text: job.name ?? job.jid.string,
+                                            text: job.title?.capitalized ?? job.jid.string,
                                             action: {nav.session.job = job},
                                             entity: job,
                                             position: position
@@ -413,9 +414,9 @@ extension JobPanel {
             nav.forms.jobSelector.last = []
         } else if position == .last {
             nav.forms.jobSelector.last = []
-            nav.session.job = nil
         }
         
+        nav.session.job = nil
         showSearch = false
     }
 }

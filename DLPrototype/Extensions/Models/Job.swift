@@ -9,6 +9,8 @@
 import SwiftUI
 
 extension Job {
+    typealias Field = Navigation.Forms.Field
+
     var idInt: Int { Int(exactly: jid.rounded(.toNearestOrEven)) ?? 0 }
 
     var backgroundColor: Color {
@@ -20,6 +22,10 @@ extension Job {
     }
 
     var foregroundColor: Color { self.backgroundColor.isBright() ? .black : .white }
+
+//    public static let attributes : [KeyPath<Job, Any>] = [
+//        \.name!, \.created!
+//    ]
 
     // @TODO: the following are dupes and should be deprecated then removed
     func id_int() -> Int {
@@ -37,5 +43,21 @@ extension Job {
 
     func fgColour() -> Color {
         return self.colour_from_stored().isBright() ? .black : .white
+    }
+    
+    /// Create form fields for the important properties and relationships
+    /// - Returns: [Field]
+    func fields() -> [Field] {
+        var fields: [Field] = []
+
+        fields.append(Field(type: .text, label: "Job ID", value: self.jid.string, keyPath: \Job.title))
+        fields.append(Field(type: .text, label: "Title", value: self.title, keyPath: \Job.title))
+        fields.append(Field(type: .boolean, label: "Published", value: self.alive, keyPath: \Job.title))
+        fields.append(Field(type: .text, label: "Last update", value: self.lastUpdate?.formatted(date: .abbreviated, time: .omitted), keyPath: \Job.title))
+        fields.append(Field(type: .text, label: "Created", value: self.created?.formatted(date: .abbreviated, time: .omitted), keyPath: \Job.title))
+        fields.append(Field(type: .colour, label: "Colour", value: self.colour, keyPath: \Job.title))
+        fields.append(Field(type: .editor, label: "Description", value: self.overview, keyPath: \Job.title))
+
+        return fields
     }
 }

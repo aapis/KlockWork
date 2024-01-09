@@ -11,14 +11,17 @@ import SwiftUI
 struct FancyColourPicker: View {
     public let initialColour: [Double]
     public let onChange: ((Color) -> Void)
+    public let showLabel: Bool
 
     @State private var asColor: Color
     @State private var asString: String = ""
 
     var body: some View {
         HStack(spacing: 0) {
-            FancyLabel(text: "Colour")
-                .padding([.trailing], 10)
+            if showLabel {
+                FancyLabel(text: "Colour")
+                    .padding([.trailing], 10)
+            }
 
             ColorPicker("", selection: $asColor)
                 .rotationEffect(.degrees(90))
@@ -46,9 +49,16 @@ struct FancyColourPicker: View {
 }
 
 extension FancyColourPicker {
-    init(initialColour: [Double], onChange: @escaping ((Color) -> Void)) {
+    init(initialColour: [Double], onChange: @escaping ((Color) -> Void), showLabel: Bool? = true) {
         self.initialColour = initialColour
         self.onChange = onChange
+
+        if let shouldShowLabel = showLabel {
+            self.showLabel = shouldShowLabel
+        } else {
+            self.showLabel = true
+        }
+
         asColor = Color.fromStored(initialColour)
     }
 

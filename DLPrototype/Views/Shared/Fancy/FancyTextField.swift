@@ -19,10 +19,12 @@ struct FancyTextField: View {
     public var bgColour: Color? = Theme.textBackground
     public var showLabel: Bool = false
     public var font: Font = Theme.fontTextField
-    
+
     @Binding public var text: String
     
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
+
+    @EnvironmentObject private var nav: Navigation
 
     @FocusState public var focused: Bool
 
@@ -60,6 +62,11 @@ struct FancyTextField: View {
             .foregroundColor(disabled ?? false ? Color.gray : fgColour)
             .textSelection(.enabled)
             .focused($focused)
+            .onChange(of: focused) { state in
+                if !state {
+                    nav.save(callback: setValues)
+                }
+            }
     }
     
     private var oneBigLine: some View {
@@ -92,9 +99,17 @@ struct FancyTextField: View {
             .textSelection(.enabled)
             .focused($focused)
     }
-    
+}
+
+extension FancyTextField {
     private func reset() -> Void {
         text = ""
+    }
+
+    private func setValues() -> Void {
+        if placeholder == "Title" {
+            nav.forms.jobSelector.editor.title = text
+        }
     }
 }
 
