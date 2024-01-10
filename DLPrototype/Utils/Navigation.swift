@@ -231,12 +231,12 @@ extension Navigation {
 
         public class Field: Identifiable {
             public let id: UUID = UUID()
+            public var type: LayoutType = .text
             public var body: some View { Layout(field: self) }
             public var label: String = ""
             public var value: Any? = nil
             public var entity: NSManagedObject? = nil
             public var keyPath: String
-            private var type: LayoutType = .text
 
             init(type: LayoutType, label: String, value: Any? = nil, entity: NSManagedObject? = nil, keyPath: String) {
                 self.type = type
@@ -259,33 +259,17 @@ extension Navigation {
 
                 var body: some View {
                     GridRow(alignment: field.type == .editor ? .top : .center) {
-                        HStack {
-                            VStack(alignment: .trailing) {
-                                HStack(alignment: .top) {
-                                    Spacer()
-                                    // @TODO: convert to button which changes focus state
-                                    Text(field.label)
-                                        .padding(5)
-//                                    if field.value as? String != bValue {
-//                                        Image(systemName: "exclamationmark.triangle.fill")
-//                                            .symbolRenderingMode(.hierarchical)
-//                                            .font(.title2)
-//                                            .padding([.trailing], 8)
-//                                    }
-                                }
+                        VStack(alignment: .leading) {
+                            Text(field.label)
+                                .padding(5)
+
+                            switch field.type {
+                            case .boolean: FancyToggle(label: self.field.label, value: self.field.value as! Bool, onChange: self.onChangeToggle)
+                            case .colour: FancyColourPicker(initialColour: self.field.value as! [Double], onChange: self.onChange, showLabel: false)
+                            case .editor: FancyTextField(placeholder: self.field.label, lineLimit: 10, text: $bValue)
+                            default:
+                                FancyTextField(placeholder: self.field.label, onSubmit: onSubmit, text: $bValue)
                             }
-                            .frame(width: 130)
-                            
-                            VStack {
-                                switch field.type {
-                                case .boolean: FancyToggle(label: self.field.label, value: self.field.value as! Bool, onChange: self.onChangeToggle)
-                                case .colour: FancyColourPicker(initialColour: self.field.value as! [Double], onChange: self.onChange, showLabel: false)
-                                case .editor: FancyTextField(placeholder: self.field.label, lineLimit: 10, text: $bValue)
-                                default:
-                                    FancyTextField(placeholder: self.field.label, onSubmit: onSubmit, text: $bValue)
-                                }
-                            }
-                            Spacer()
                         }
                     }
                     .onAppear(perform: onLoad)

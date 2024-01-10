@@ -178,7 +178,6 @@ struct JobExplorer: View {
             if editorVisible {
                 if nav.session.job != nil {
                     VStack {
-//                        JobView(job: nav.session.job!)
                         JobViewRedux(job: nav.session.job!)
                     }
                     .padding(5)
@@ -211,31 +210,37 @@ struct JobExplorer: View {
     public struct JobViewRedux: View {
         public var job: Job
         private var fields: [Navigation.Forms.Field] { job.fields() }
+        private var columns: [GridItem] {
+            Array(repeating: .init(.flexible(minimum: 300)), count: 2)
+        }
 
         @EnvironmentObject private var nav: Navigation
 
         var body: some View {
-            Grid(alignment: .topLeading, horizontalSpacing: 1, verticalSpacing: 10) {
-                VStack {
-                    ScrollView {
-                        ForEach(fields) { field in
-                            field.body
+            ScrollView {
+                Grid(alignment: .topLeading, horizontalSpacing: 8, verticalSpacing: 10) {
+                    LazyVGrid(columns: columns) {
+                        VStack {
+                            ForEach(fields.filter({$0.type != .date})) { field in
+                                field.body
+                            }
                         }
+                        .padding([.top, .leading], 8)
+                        
+                        VStack {
+                            ForEach(fields.filter({$0.type == .date})) { field in
+                                field.body
+                            }
+                        }
+                        .padding([.top, .trailing], 8)
                     }
-                    Spacer()
 
-//                    FancySimpleButton(
-//                        text: "Save",
-//                        action: {nav.save()},
-//                        type: .primary
-//                    )
-//                    .keyboardShortcut("s", modifiers: .command)
+                    FancyButtonv2(text: "Hello")
                 }
-                .padding([.top, .bottom], 8)
+                .background(Theme.toolbarColour)
+                .border(width: 1, edges: [.top, .bottom, .leading, .trailing], color: Theme.rowColour)
+                .padding(8)
             }
-            .background(Theme.toolbarColour)
-            .border(width: 1, edges: [.top, .bottom, .leading, .trailing], color: Theme.rowColour)
-            .padding(8)
         }
     }
 }
