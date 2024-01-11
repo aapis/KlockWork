@@ -15,6 +15,7 @@ enum PickerSize {
 
 struct ProjectPickerUsing: View {
     public var onChange: (String, String?) -> Void
+    public var onChangeLarge: ((Int, String?) -> Void)? = nil // @TODO: refactor
     public var transparent: Bool? = false
     public var labelText: String?
     public var showLabel: Bool? = false
@@ -92,31 +93,33 @@ struct ProjectPickerUsing: View {
 
 extension ProjectPickerUsing {
     private func onLoad() -> Void {
-        print("DERPO defaultSelection=\(defaultSelection)")
-        if let idx = pickerItems.first(where: {$0.tag == defaultSelection}) {
-            selectedId = idx.tag
-            print("DERPO selectedId=\(selectedId)")
-        } else {
-            print("DERPO no id")
+        if let item = pickerItems.first(where: {$0.tag == defaultSelection}) {
+            selectedId = item.tag
         }
     }
     
     private func pickerChange(selected: Int, sender: String?) -> Void {
-        if let item = pickerItems.filter({$0.tag == selected}).first {
-            projectName = item.title.replacingOccurrences(of: " - ", with: "")
+        if size == .small {
+            if let item = pickerItems.filter({$0.tag == selected}).first {
+                projectName = item.title.replacingOccurrences(of: " - ", with: "")
+            }
+            
+            selectedId = selected
+            
+            if let selectedJob = CoreDataProjects(moc: moc).byId(Int(exactly: selected)!) {
+                idFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
+                idFieldTextColour = idFieldColour.isBright() ? Color.black : Color.white
+            } else {
+                idFieldColour = Color.clear
+                idFieldTextColour = Color.white
+            }
+            
+            onChange(projectName, sender)
+        } else if size == .large {
+            if let ocl = onChangeLarge {
+                ocl(selected, sender)
+            }
         }
-
-        selectedId = selected
-        
-        if let selectedJob = CoreDataProjects(moc: moc).byId(Int(exactly: selected)!) {
-            idFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
-            idFieldTextColour = idFieldColour.isBright() ? Color.black : Color.white
-        } else {
-            idFieldColour = Color.clear
-            idFieldTextColour = Color.white
-        }
-        
-        onChange(projectName, sender)
     }
 
     private func resetUi() -> Void {
