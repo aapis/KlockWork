@@ -38,6 +38,8 @@ struct FancyColourPicker: View {
             .border(Color.black.opacity(0.1), width: 2)
             .frame(width: 200)
 
+            Spacer()
+
         }.frame(height: 40)
         .onAppear(perform: {
             asString = asColor.description
