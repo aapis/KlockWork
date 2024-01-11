@@ -42,7 +42,7 @@ public class CoreDataProjects: ObservableObject {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
     
-    public func byId(_ id: Int) -> Project? {
+    public func byId(_ id: Int64) -> Project? {
         let predicate = NSPredicate(
             format: "pid = %d",
             id as CVarArg
@@ -90,6 +90,24 @@ public class CoreDataProjects: ObservableObject {
         return results.first
     }
     
+    /// Find projects by UUID (aka, by id)
+    /// - Parameter term: A project's UUID
+    /// - Returns: Optional(Project)
+    public func byUuid(_ term: UUID) -> Project? {
+        let predicate = NSPredicate(
+            format: "name = %@",
+            term.uuidString
+        )
+
+        let results = query(predicate)
+
+        if results.isEmpty {
+            return nil
+        }
+
+        return results.first
+    }
+
     public func all() -> [Project] {
         return query()
     }
@@ -147,7 +165,7 @@ public class CoreDataProjects: ObservableObject {
                 print("[error] CoreDataProjects.query Unable to find records for query")
             }
 
-            print(error)
+            print("[error] \(error)")
         }
 
         lock.unlock()
