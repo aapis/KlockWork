@@ -6,14 +6,15 @@
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
-import Foundation
+import SwiftUI
 
 public struct CustomPickerItem: Identifiable, Hashable {
     public var id = UUID()
     public var title: String
     public var tag: Int
     public var disabled: Bool = false
-    
+    public var project: Project? = nil
+
     static public func listFrom(_ records: [String]) -> [CustomPickerItem] {
         var list: [CustomPickerItem] = []
         
