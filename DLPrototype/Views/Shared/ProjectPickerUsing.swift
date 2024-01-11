@@ -31,18 +31,30 @@ struct ProjectPickerUsing: View {
     @Environment(\.managedObjectContext) var moc
     
     private var pickerItems: [CustomPickerItem] {
-        var items: [CustomPickerItem] = [CustomPickerItem(title: "Choose a project", tag: 0)]
-        let projects = CoreDataProjects(moc: moc).alive()
-        
-        for project in projects {
-            if project.name != nil {
+        var items: [CustomPickerItem] = [CustomPickerItem(title: "Choose from Projects", tag: 0)]
+        let companies = CoreDataCompanies(moc: moc).alive()
+
+        for company in companies.sorted(by: {$0.name! < $1.name!}) {
+            if company.name != nil && company.projects?.count ?? 0 > 0 {
                 items.append(
                     CustomPickerItem(
-                        title: project.name!.capitalized,
-                        tag: Int(project.pid),
-                        project: project
+                        title: company.name!.capitalized,
+                        tag: Int(company.pid),
+                        disabled: true
                     )
                 )
+
+                if let projects = company.projects {
+                    for project in (projects.allObjects as! [Project]).sorted(by: {$0.name! < $1.name!}) {
+                        items.append(
+                            CustomPickerItem(
+                                title: " - \(project.name!.capitalized)",
+                                tag: Int(project.pid),
+                                project: project
+                            )
+                        )
+                    }
+                }
             }
         }
         
