@@ -232,6 +232,7 @@ struct JobExplorer: View {
         }
 
         @State private var isDeletePresented: Bool = false
+        @State private var isInvalidJobIdWarningPresented: Bool = false
 
         @AppStorage("jobdashboard.explorerVisible") private var explorerVisible: Bool = true
         @AppStorage("jobdashboard.editorVisible") private var editorVisible: Bool = true
@@ -268,6 +269,9 @@ struct JobExplorer: View {
                                     Spacer()
                                     FancySimpleButton(text: "Save", action: triggerSave)
                                         .keyboardShortcut("s", modifiers: [.command])
+                                        .alert("Please change the job ID to something other than 1.0", isPresented: $isInvalidJobIdWarningPresented) {
+                                            Button("Ok", role: .cancel) {}
+                                        }
                                 }
                                 Spacer()
                             }
@@ -279,11 +283,6 @@ struct JobExplorer: View {
                     .padding(8)
                 }
             }
-            .onChange(of: nav.saved) { status in
-                if status {
-                    print("DERPO saving all fields")
-                }
-            }
         }
     }
 }
@@ -292,13 +291,31 @@ extension JobExplorer.JobViewRedux {
     /// Triggers a save event so all fields can be updated at once
     /// - Returns: Void
     private func triggerSave() -> Void {
-        nav.save()
+        Task {
+            await self.onSave()
+        }
     }
     
     /// Update all fields at the same time
     /// - Returns: Void
-    private func onSave() -> Void {
+    private func onSave() async -> Void {
+        if job != nil && job!.jid > 1.0 {
+            let fields = job!.fields
 
+            for field in fields {
+                if let entity = field.entity {
+                    switch field.keyPath {
+                    case "jid": entity.setValue(field.value as! Double, forKey: field.keyPath)
+                    default: entity.setValue(field.value, forKey: field.keyPath)
+                    }
+
+                    entity.setValue(Date(), forKey: "lastUpdate")
+                    PersistenceController.shared.save()
+                }
+            }
+        } else {
+            isInvalidJobIdWarningPresented = true
+        }
     }
 
     /// Deletes the current Job
@@ -313,13 +330,15 @@ extension JobExplorer.JobViewRedux {
             await self.onDelete()
         }
     }
-
+    
+    /// If an object is a temporary job (has jid=1.0), hard delete the job. If not, soft delete it.
+    /// - Returns: Void
     private func onDelete() async -> Void {
-        if let job = job {
-            if job.jid == 1.0 {
-                moc.delete(job)
+        if job != nil {
+            if job!.jid == 1.0 {
+                moc.delete(job!)
             } else {
-                job.alive = false
+                job!.alive = false
             }
 
             PersistenceController.shared.save()
