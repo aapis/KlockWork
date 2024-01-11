@@ -14,8 +14,8 @@ enum PickerSize {
 }
 
 struct ProjectPickerUsing: View {
-    public var onChange: (String, String?) -> Void
-    public var onChangeLarge: ((Int, String?) -> Void)? = nil // @TODO: refactor
+    public var onChange: ((String, String?) -> Void)? = nil
+    public var onChangeLarge: ((Project, String?) -> Void)? = nil // @TODO: refactor, don't like this multiple callback func def thing
     public var transparent: Bool? = false
     public var labelText: String?
     public var showLabel: Bool? = false
@@ -36,7 +36,13 @@ struct ProjectPickerUsing: View {
         
         for project in projects {
             if project.name != nil {
-                items.append(CustomPickerItem(title: " - \(project.name!)", tag: Int(project.pid)))
+                items.append(
+                    CustomPickerItem(
+                        title: project.name!.capitalized,
+                        tag: Int(project.pid),
+                        project: project
+                    )
+                )
             }
         }
         
@@ -59,7 +65,7 @@ struct ProjectPickerUsing: View {
                     
                     HStack {
                         FancyPicker(
-                            onChange: pickerChange,
+                            onChange: onChangeSmallWidget,
                             items: pickerItems,
                             transparent: transparent,
                             labelText: labelText,
@@ -72,7 +78,7 @@ struct ProjectPickerUsing: View {
                 } else {
                     HStack {
                         FancyPicker(
-                            onChange: pickerChange,
+                            onChange: onChangeLargeWidget,
                             items: pickerItems,
                             transparent: transparent,
                             labelText: labelText,
@@ -92,32 +98,48 @@ struct ProjectPickerUsing: View {
 }
 
 extension ProjectPickerUsing {
+    /// Sets the selected picker item if one was passed to the view
+    /// - Returns: Void
     private func onLoad() -> Void {
         if let item = pickerItems.first(where: {$0.tag == defaultSelection}) {
             selectedId = item.tag
         }
     }
     
-    private func pickerChange(selected: Int, sender: String?) -> Void {
-        if size == .small {
-            if let item = pickerItems.filter({$0.tag == selected}).first {
-                projectName = item.title.replacingOccurrences(of: " - ", with: "")
-            }
-            
-            selectedId = selected
-            
-            if let selectedJob = CoreDataProjects(moc: moc).byId(Int(exactly: selected)!) {
-                idFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
-                idFieldTextColour = idFieldColour.isBright() ? Color.black : Color.white
-            } else {
-                idFieldColour = Color.clear
-                idFieldTextColour = Color.white
-            }
-            
-            onChange(projectName, sender)
-        } else if size == .large {
-            if let ocl = onChangeLarge {
-                ocl(selected, sender)
+    /// Callback that fires when a PickerSize.small widget changes selected value
+    /// - Parameters:
+    ///   - selected: Index value for the selected CustomPickerItem
+    ///   - sender: Optional sender information
+    /// - Returns: Void
+    private func onChangeSmallWidget(selected: Int, sender: String?) -> Void {
+        if let item = pickerItems.filter({$0.tag == selected}).first {
+            projectName = item.title.replacingOccurrences(of: " - ", with: "")
+        }
+
+        selectedId = selected
+
+        if let selectedJob = CoreDataProjects(moc: moc).byId(Int64(exactly: selected)!) {
+            idFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
+            idFieldTextColour = idFieldColour.isBright() ? Color.black : Color.white
+        } else {
+            idFieldColour = Color.clear
+            idFieldTextColour = Color.white
+        }
+
+        if let ocs = onChange {
+            ocs(projectName, sender)
+        }
+    }
+    
+    /// Callback that fires when a PickerSize.large widget changes selected value
+    /// - Parameter project: NSManagedObject
+    /// - Returns: Void
+    private func onChangeLargeWidget(selected: Int, sender: String?) -> Void {
+        if let ocl = onChangeLarge {
+            if let item = pickerItems.first(where: {$0.tag == selected}) {
+                if item.project != nil {
+                    ocl(item.project!, sender)
+                }
             }
         }
     }
