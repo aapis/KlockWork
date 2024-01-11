@@ -267,7 +267,7 @@ extension Navigation {
                             case .boolean: FancyToggle(label: self.field.label, value: self.field.value as! Bool, onChange: self.onChangeToggle)
                             case .colour: FancyColourPicker(initialColour: self.field.value as! [Double], onChange: self.onChange, showLabel: false)
                             case .editor: FancyTextField(placeholder: self.field.label, lineLimit: 10, text: $bValue)
-                            case .projectDropdown: ProjectPickerUsing(onChange: {_, _ in}, size: .large, displayName: $bValue)
+                            case .projectDropdown: ProjectPickerUsing(onChange: {_, _ in}, size: .large, defaultSelection: Int((self.field.value as! Project).pid), displayName: $bValue)
                             default:
                                 FancyTextField(placeholder: self.field.label, onSubmit: onSubmit, text: $bValue)
                             }

@@ -19,11 +19,12 @@ struct ProjectPickerUsing: View {
     public var labelText: String?
     public var showLabel: Bool? = false
     public var size: PickerSize = .small
+    public var defaultSelection: Int = 0
 
     @Binding public var displayName: String
     @State private var idFieldColour: Color = Color.clear
     @State private var idFieldTextColour: Color = Color.white
-    @State private var selectedId: String = ""
+    @State private var selectedId: Int = 0
     @State private var projectName: String = ""
     
     @Environment(\.managedObjectContext) var moc
@@ -62,6 +63,7 @@ struct ProjectPickerUsing: View {
                             transparent: transparent,
                             labelText: labelText,
                             showLabel: showLabel,
+                            defaultSelected: selectedId,
                             size: size
                         )
                     }
@@ -74,6 +76,7 @@ struct ProjectPickerUsing: View {
                             transparent: transparent,
                             labelText: labelText,
                             showLabel: showLabel,
+                            defaultSelected: defaultSelection,
                             size: size
                         )
                     }
@@ -83,6 +86,19 @@ struct ProjectPickerUsing: View {
             }
         }
         .frame(width: size == .small ? 450 : nil, height: 40)
+        .onAppear(perform: onLoad)
+    }
+}
+
+extension ProjectPickerUsing {
+    private func onLoad() -> Void {
+        print("DERPO defaultSelection=\(defaultSelection)")
+        if let idx = pickerItems.first(where: {$0.tag == defaultSelection}) {
+            selectedId = idx.tag
+            print("DERPO selectedId=\(selectedId)")
+        } else {
+            print("DERPO no id")
+        }
     }
     
     private func pickerChange(selected: Int, sender: String?) -> Void {
@@ -90,7 +106,7 @@ struct ProjectPickerUsing: View {
             projectName = item.title.replacingOccurrences(of: " - ", with: "")
         }
 
-        selectedId = String(selected)
+        selectedId = selected
         
         if let selectedJob = CoreDataProjects(moc: moc).byId(Int(exactly: selected)!) {
             idFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
