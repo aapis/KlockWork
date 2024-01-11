@@ -300,7 +300,7 @@ extension Navigation {
 
                 private func onChange(colour: Color) -> Void {
                     if let entity = field.entity {
-                        entity.setValue(colour, forKey: self.field.keyPath)
+                        entity.setValue(colour.toStored(), forKey: self.field.keyPath)
                         PersistenceController.shared.save()
                     }
                 }
