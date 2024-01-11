@@ -286,6 +286,7 @@ extension Navigation {
                     if status {
                         if let entity = field.entity {
                             entity.setValue(status, forKey: self.field.keyPath)
+                            entity.setValue(Date(), forKey: "lastUpdate")
                             PersistenceController.shared.save()
                         }
                     }
@@ -294,6 +295,7 @@ extension Navigation {
                 private func onChangeProjectDropdown(selected: Project, sender: String?) -> Void {
                     if let entity = field.entity {
                         entity.setValue(selected, forKey: self.field.keyPath)
+                        entity.setValue(Date(), forKey: "lastUpdate")
                         PersistenceController.shared.save()
                     }
                 }
@@ -301,13 +303,19 @@ extension Navigation {
                 private func onChange(colour: Color) -> Void {
                     if let entity = field.entity {
                         entity.setValue(colour.toStored(), forKey: self.field.keyPath)
+                        entity.setValue(Date(), forKey: "lastUpdate")
                         PersistenceController.shared.save()
                     }
                 }
                 
                 private func onSubmit() -> Void {
                     if let entity = field.entity {
-                        entity.setValue(bValue, forKey: self.field.keyPath)
+                        if self.field.keyPath == "jid" {
+                            entity.setValue(Double(bValue), forKey: self.field.keyPath)
+                        } else {
+                            entity.setValue(bValue, forKey: self.field.keyPath)
+                        }
+                        entity.setValue(Date(), forKey: "lastUpdate")
                         PersistenceController.shared.save()
                     }
                 }

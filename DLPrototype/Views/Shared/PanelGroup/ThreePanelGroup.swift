@@ -17,6 +17,8 @@ struct ThreePanelGroup: View {
         return Array(repeating: .init(.flexible(minimum: 100), spacing: 1), count: 3)
     }
 
+    @AppStorage("jobdashboard.editorVisible") private var editorVisible: Bool = true
+
     @EnvironmentObject private var nav: Navigation
 
     var body: some View {
@@ -68,6 +70,7 @@ extension ThreePanelGroup {
     /// - Returns: Void
     private func onChangeJob(job: Job?) -> Void {
         if job != nil {
+            editorVisible = true
             nav.forms.jobSelector.selected = []
 
             if let project = job!.project {

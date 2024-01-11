@@ -77,6 +77,12 @@ extension JobDashboard {
 }
 
 struct JobDashboardRedux: View {
+    @AppStorage("jobdashboard.explorerVisible") private var explorerVisible: Bool = true
+    @AppStorage("jobdashboard.editorVisible") private var editorVisible: Bool = true
+
+    @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject private var nav: Navigation
+
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 1) {
@@ -89,12 +95,25 @@ struct JobDashboardRedux: View {
                     Spacer()
                     FancyButtonv2(
                         text: "Create",
-                        action: {},
+                        action: {
+                            editorVisible = true
+                            explorerVisible = false
+
+                            // Creates a new job entity so the user can customize it
+                            let newJob = Job(context: moc)
+                            newJob.id = UUID()
+                            newJob.jid = 1.0
+                            newJob.colour = Color.randomStorable()
+                            newJob.alive = true
+                            newJob.project = CoreDataProjects(moc: moc).alive().first(where: {$0.company?.isDefault == true})
+                            newJob.created = Date()
+                            newJob.lastUpdate = newJob.created
+                            newJob.overview = "Edit this description"
+                            newJob.title = "Sample job title"
+                            nav.session.job = newJob
+                        },
                         icon: "plus",
-                        showLabel: false,
-                        redirect: AnyView(JobCreate()),
-                        pageType: .jobs,
-                        sidebar: AnyView(JobDashboardSidebar())
+                        showLabel: false
                     )
                 }
                 
@@ -176,9 +195,9 @@ struct JobExplorer: View {
             .foregroundStyle(.white)
             
             if editorVisible {
-                if nav.session.job != nil {
+                if let job = nav.session.job {
                     VStack {
-                        JobViewRedux(job: nav.session.job!)
+                        JobViewRedux(job: job)
                     }
                     .padding(5)
                     .background(Theme.rowColour)
@@ -205,46 +224,97 @@ struct JobExplorer: View {
     }
     
     public struct JobViewRedux: View {
-        public var job: Job
-        private var fields: [Navigation.Forms.Field] { job.fields }
+        public var job: Job? = nil
+        private var fields: [Navigation.Forms.Field] { job != nil ? job!.fields : [] }
         private let columnSplit: [Navigation.Forms.Field.LayoutType] = [.date, .projectDropdown]
         private var columns: [GridItem] {
             Array(repeating: .init(.flexible(minimum: 300)), count: 2)
         }
 
+        @AppStorage("jobdashboard.explorerVisible") private var explorerVisible: Bool = true
+        @AppStorage("jobdashboard.editorVisible") private var editorVisible: Bool = true
+
+        @Environment(\.managedObjectContext) var moc
         @EnvironmentObject private var nav: Navigation
 
         var body: some View {
             ScrollView {
-                Grid(alignment: .topLeading, horizontalSpacing: 8, verticalSpacing: 10) {
-                    LazyVGrid(columns: columns) {
-                        VStack {
-                            ForEach(fields.filter({!columnSplit.contains($0.type)})) { field in
-                                field.body
-                            }
-                            Spacer()
-                        }
-                        .padding([.top, .leading], 8)
-                        
-                        VStack {
-                            ForEach(fields.filter({columnSplit.contains($0.type)})) { field in
-                                field.body
-                            }
-                            FancyDivider()
-                            HStack(alignment: .bottom) {
+                if job != nil {
+                    Grid(alignment: .topLeading, horizontalSpacing: 8, verticalSpacing: 10) {
+                        LazyVGrid(columns: columns) {
+                            VStack {
+                                ForEach(fields.filter({!columnSplit.contains($0.type)})) { field in
+                                    field.body
+                                }
                                 Spacer()
-                                FancySimpleButton(text: "Save")
-                                    .keyboardShortcut("s", modifiers: [.command])
                             }
-                            Spacer()
+                            .padding([.top, .leading], 8)
+                            
+                            VStack {
+                                ForEach(fields.filter({columnSplit.contains($0.type)})) { field in
+                                    field.body
+                                }
+                                FancyDivider()
+                                HStack(alignment: .bottom) {
+                                    FancySimpleButton(text: "Delete", action: triggerDelete, icon: "trash", showLabel: false, showIcon: true, type: .destructive)
+                                    Spacer()
+                                    FancySimpleButton(text: "Save", action: triggerSave)
+                                        .keyboardShortcut("s", modifiers: [.command])
+                                }
+                                Spacer()
+                            }
+                            .padding([.top, .trailing], 8)
                         }
-                        .padding([.top, .trailing], 8)
                     }
+                    .background(Theme.toolbarColour)
+                    .border(width: 1, edges: [.top, .bottom, .leading, .trailing], color: Theme.rowColour)
+                    .padding(8)
                 }
-                .background(Theme.toolbarColour)
-                .border(width: 1, edges: [.top, .bottom, .leading, .trailing], color: Theme.rowColour)
-                .padding(8)
             }
+            .onChange(of: nav.saved) { status in
+                if status {
+                    print("DERPO saving all fields")
+                }
+            }
+        }
+    }
+}
+
+extension JobExplorer.JobViewRedux {
+    /// Triggers a save event so all fields can be updated at once
+    /// - Returns: Void
+    private func triggerSave() -> Void {
+        nav.save()
+    }
+    
+    /// Update all fields at the same time
+    /// - Returns: Void
+    private func onSave() -> Void {
+
+    }
+
+    /// Deletes the current Job
+    /// - Returns: Void
+    private func triggerDelete() -> Void {
+        // Temporary jobs will have a default JID value, they can be safely hard-deleted
+        nav.session.job = nil
+        editorVisible = false
+        explorerVisible = true
+
+        Task {
+            await self.onDelete()
+        }
+    }
+
+    private func onDelete() async -> Void {
+        if let job = job {
+            if job.jid == 1.0 {
+                moc.delete(job)
+            } else {
+                job.alive = false
+            }
+
+            PersistenceController.shared.save()
         }
     }
 }
