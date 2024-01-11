@@ -39,8 +39,8 @@ struct FancyPicker: View {
                 ForEach(items) { item in
                     Text(item.title)
                         .tag(item.tag)
+                        // @TODO: this doesn't actually work; see https://stackoverflow.com/a/76154257
                         .disabled(item.disabled)
-                        .font(Theme.font)
                 }
             }
             .background(transparent! ? Color.clear : Theme.toolbarColour)
@@ -67,8 +67,8 @@ struct FancyPicker: View {
                 ForEach(items) { item in
                     Text(item.title)
                         .tag(item.tag)
+                        // @TODO: this doesn't actually work; see https://stackoverflow.com/a/76154257
                         .disabled(item.disabled)
-                        .font(Theme.font)
                 }
             }
             .background(transparent! ? Color.clear : Theme.toolbarColour)

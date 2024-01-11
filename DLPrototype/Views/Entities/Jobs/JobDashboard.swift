@@ -231,6 +231,8 @@ struct JobExplorer: View {
             Array(repeating: .init(.flexible(minimum: 300)), count: 2)
         }
 
+        @State private var isDeletePresented: Bool = false
+
         @AppStorage("jobdashboard.explorerVisible") private var explorerVisible: Bool = true
         @AppStorage("jobdashboard.editorVisible") private var editorVisible: Bool = true
 
@@ -256,7 +258,13 @@ struct JobExplorer: View {
                                 }
                                 FancyDivider()
                                 HStack(alignment: .bottom) {
-                                    FancySimpleButton(text: "Delete", action: triggerDelete, icon: "trash", showLabel: false, showIcon: true, type: .destructive)
+                                    FancySimpleButton(text: "Delete", action: {isDeletePresented = true}, icon: "trash", showLabel: false, showIcon: true, type: .destructive)
+                                        .alert("Are you sure you want to delete job ID \(job!.jid.string)? This is irreversible.", isPresented: $isDeletePresented) {
+                                            Button("Yes", role: .destructive) {
+                                                self.triggerDelete()
+                                            }
+                                            Button("No", role: .cancel) {}
+                                        }
                                     Spacer()
                                     FancySimpleButton(text: "Save", action: triggerSave)
                                         .keyboardShortcut("s", modifiers: [.command])
