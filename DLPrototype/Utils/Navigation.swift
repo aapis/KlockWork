@@ -295,11 +295,7 @@ extension Navigation {
                     if let entity = field.entity {
                         entity.setValue(selected, forKey: self.field.keyPath)
                         PersistenceController.shared.save()
-                        print("DERPO saved pdropdown name=\(selected.name)")
-                    } else {
-                        print("DERPO vbad")
                     }
-                    print("DERPO hi")
                 }
 
                 private func onChange(colour: Color) -> Void {
