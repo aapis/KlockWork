@@ -40,6 +40,7 @@ struct ThreePanelGroup: View {
             }
         }
         .onAppear(perform: actionOnAppear)
+        .onChange(of: nav.session.job) { job in onChangeJob(job: job) }
     }
     
     init(orientation: Panel.Orientation, data: any Collection) {
@@ -59,5 +60,34 @@ extension ThreePanelGroup {
             nav.forms.jobSelector.middle = []
             nav.forms.jobSelector.last = []
         }
+    }
+    
+    /// Changing the current session job value requires us to change which items are highlighted in each column. This is done by modifying the
+    /// `nav.forms.jobSelector.selected` array
+    /// - Parameter job: A Job object
+    /// - Returns: Void
+    private func onChangeJob(job: Job?) -> Void {
+        if job != nil {
+            nav.forms.jobSelector.selected = []
+
+            if let project = job!.project {
+                nav.forms.jobSelector.last = (project.jobs?.allObjects as! [Job]).sorted(by: {$0.jid < $1.jid})
+                setSelected(config: Panel.SelectedValueCoordinates(position: .middle, item: project))
+
+                if let company = project.company {
+                    nav.forms.jobSelector.middle = (company.projects?.allObjects as! [Project]).sorted(by: {$0.name! < $1.name!})
+                    setSelected(config: Panel.SelectedValueCoordinates(position: .first, item: company))
+                }
+            }
+            setSelected(config: Panel.SelectedValueCoordinates(position: .last, item: job!))
+        }
+    }
+
+    
+    /// Adds a panel selection value to the list of selected panel items
+    /// - Parameter config: A key/value pair, with position and item fields
+    /// - Returns: Void
+    private func setSelected(config: Panel.SelectedValueCoordinates) -> Void {
+        nav.forms.jobSelector.selected.append(config)
     }
 }

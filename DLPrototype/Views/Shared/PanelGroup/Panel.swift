@@ -64,10 +64,16 @@ public struct Panel {
 }
 
 extension Panel.Row {
+    /// Fire the callback INTO THE SUN
+    /// - Returns: Void
     private func fireCallback() -> Void {
-        let selected = Panel.SelectedValueCoordinates(position: config.position, item: config.entity)
-        
-        // changes which entity is highlighted in each column
+        highlightPanelEntity(Panel.SelectedValueCoordinates(position: config.position, item: config.entity))
+        config.action()
+    }
+
+    /// Changes which entity is highlighted in each column
+    /// - Returns: Void
+    private func highlightPanelEntity(_ selected: Panel.SelectedValueCoordinates) -> Void {
         var items = nav.forms.jobSelector.selected
         if items.isEmpty {
             items.append(selected)
@@ -82,9 +88,8 @@ extension Panel.Row {
                 }
             }
         }
+
         nav.forms.jobSelector.selected = items
-        
-        config.action()
     }
 }
 

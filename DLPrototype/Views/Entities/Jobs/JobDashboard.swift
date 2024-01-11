@@ -198,9 +198,6 @@ struct JobExplorer: View {
                 }
             }
         }
-//        .onChange(of: nav.saved) { status in
-//            editorVisible = status
-//        }
     }
     
     init() {
