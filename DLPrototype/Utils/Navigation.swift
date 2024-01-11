@@ -247,7 +247,7 @@ extension Navigation {
             }
 
             public enum LayoutType {
-                case text, dropdown, date, boolean, colour, editor
+                case text, dropdown, projectDropdown, date, boolean, colour, editor
             }
 
             struct Layout: View {
@@ -258,7 +258,7 @@ extension Navigation {
                 @EnvironmentObject private var nav: Navigation
 
                 var body: some View {
-                    GridRow(alignment: field.type == .editor ? .top : .center) {
+                    GridRow(alignment: .center) {
                         VStack(alignment: .leading) {
                             Text(field.label)
                                 .padding(5)
@@ -267,6 +267,7 @@ extension Navigation {
                             case .boolean: FancyToggle(label: self.field.label, value: self.field.value as! Bool, onChange: self.onChangeToggle)
                             case .colour: FancyColourPicker(initialColour: self.field.value as! [Double], onChange: self.onChange, showLabel: false)
                             case .editor: FancyTextField(placeholder: self.field.label, lineLimit: 10, text: $bValue)
+                            case .projectDropdown: ProjectPickerUsing(onChange: {_, _ in}, size: .large, displayName: $bValue)
                             default:
                                 FancyTextField(placeholder: self.field.label, onSubmit: onSubmit, text: $bValue)
                             }

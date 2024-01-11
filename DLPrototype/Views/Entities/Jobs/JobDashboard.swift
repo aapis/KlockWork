@@ -209,7 +209,8 @@ struct JobExplorer: View {
     
     public struct JobViewRedux: View {
         public var job: Job
-        private var fields: [Navigation.Forms.Field] { job.fields() }
+        private var fields: [Navigation.Forms.Field] { job.fields }
+        private let columnSplit: [Navigation.Forms.Field.LayoutType] = [.date, .projectDropdown]
         private var columns: [GridItem] {
             Array(repeating: .init(.flexible(minimum: 300)), count: 2)
         }
@@ -221,21 +222,27 @@ struct JobExplorer: View {
                 Grid(alignment: .topLeading, horizontalSpacing: 8, verticalSpacing: 10) {
                     LazyVGrid(columns: columns) {
                         VStack {
-                            ForEach(fields.filter({$0.type != .date})) { field in
+                            ForEach(fields.filter({!columnSplit.contains($0.type)})) { field in
                                 field.body
                             }
+                            Spacer()
                         }
                         .padding([.top, .leading], 8)
                         
                         VStack {
-                            ForEach(fields.filter({$0.type == .date})) { field in
+                            ForEach(fields.filter({columnSplit.contains($0.type)})) { field in
                                 field.body
                             }
+                            FancyDivider()
+                            HStack(alignment: .bottom) {
+                                Spacer()
+                                FancySimpleButton(text: "Save")
+                                    .keyboardShortcut("s", modifiers: [.command])
+                            }
+                            Spacer()
                         }
                         .padding([.top, .trailing], 8)
                     }
-
-                    FancyButtonv2(text: "Hello")
                 }
                 .background(Theme.toolbarColour)
                 .border(width: 1, edges: [.top, .bottom, .leading, .trailing], color: Theme.rowColour)
