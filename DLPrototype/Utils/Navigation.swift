@@ -267,7 +267,7 @@ extension Navigation {
                             case .boolean: FancyToggle(label: self.field.label, value: self.field.value as! Bool, onChange: self.onChangeToggle)
                             case .colour: FancyColourPicker(initialColour: self.field.value as! [Double], onChange: self.onChange, showLabel: false)
                             case .editor: FancyTextField(placeholder: self.field.label, lineLimit: 10, text: $bValue)
-                            case .projectDropdown: ProjectPickerUsing(onChange: {_, _ in}, size: .large, defaultSelection: Int((self.field.value as! Project).pid), displayName: $bValue)
+                            case .projectDropdown: ProjectPickerUsing(onChangeLarge: onChangeProjectDropdown, size: .large, defaultSelection: Int((self.field.value as! Project).pid), displayName: $bValue)
                             default:
                                 FancyTextField(placeholder: self.field.label, onSubmit: onSubmit, text: $bValue)
                             }
@@ -289,6 +289,17 @@ extension Navigation {
                             PersistenceController.shared.save()
                         }
                     }
+                }
+
+                private func onChangeProjectDropdown(selected: Project, sender: String?) -> Void {
+                    if let entity = field.entity {
+                        entity.setValue(selected, forKey: self.field.keyPath)
+                        PersistenceController.shared.save()
+                        print("DERPO saved pdropdown name=\(selected.name)")
+                    } else {
+                        print("DERPO vbad")
+                    }
+                    print("DERPO hi")
                 }
 
                 private func onChange(colour: Color) -> Void {
