@@ -10,6 +10,21 @@ import SwiftUI
 
 extension Job {
     typealias Field = Navigation.Forms.Field
+    
+    /// Field definitions used to generate user-editable forms for this object
+    var fields: [Field] {
+        [
+            Field(type: .text, label: "Job ID", value: self.jid.string, entity: self, keyPath: "jid"),
+            Field(type: .text, label: "Title", value: self.title, entity: self, keyPath: "title"),
+            Field(type: .colour, label: "Colour", value: self.colour, entity: self, keyPath: "colour"),
+            Field(type: .boolean, label: "Published", value: self.alive, entity: self, keyPath: "alive"),
+            Field(type: .boolean, label: "SRED Qualified", value: self.shredable, entity: self, keyPath: "shredable"),
+            Field(type: .date, label: "Last update", value: self.lastUpdate?.formatted(date: .abbreviated, time: .omitted), entity:self, keyPath: "lastUpdate"),
+            Field(type: .date, label: "Created", value: self.created?.formatted(date: .abbreviated, time: .omitted), entity: self,keyPath: "created"),
+            Field(type: .projectDropdown, label: "Project", value: self.project, entity: self, keyPath: "project"),
+            Field(type: .editor, label: "Description", value: self.overview, entity: self, keyPath: "overview")
+        ]
+    }
 
     var idInt: Int { Int(exactly: jid.rounded(.toNearestOrEven)) ?? 0 }
 
@@ -43,24 +58,5 @@ extension Job {
 
     func fgColour() -> Color {
         return self.colour_from_stored().isBright() ? .black : .white
-    }
-    
-    /// Create form fields for the important properties and relationships
-    /// - Returns: [Field]
-    func fields() -> [Field] {
-        var fields: [Field] = []
-
-        fields.append(Field(type: .text, label: "Job ID", value: self.jid.string, entity: self, keyPath: "jid"))
-        fields.append(Field(type: .text, label: "Title", value: self.title, entity: self, keyPath: "title"))
-        fields.append(Field(type: .colour, label: "Colour", value: self.colour, entity: self, keyPath: "colour"))
-        fields.append(Field(type: .boolean, label: "Published", value: self.alive, entity: self, keyPath: "alive"))
-        fields.append(Field(type: .boolean, label: "SRED Qualified", value: self.shredable, entity: self, keyPath: "shredable"))
-        // @TODO: make this a sidebar calendar selector
-        fields.append(Field(type: .date, label: "Last update", value: self.lastUpdate?.formatted(date: .abbreviated, time: .omitted), entity: self, keyPath: "lastUpdate"))
-        // @TODO: make this a sidebar calendar selector
-        fields.append(Field(type: .date, label: "Created", value: self.created?.formatted(date: .abbreviated, time: .omitted), entity: self, keyPath: "created"))
-        fields.append(Field(type: .editor, label: "Description", value: self.overview, entity: self, keyPath: "overview"))
-
-        return fields
     }
 }
