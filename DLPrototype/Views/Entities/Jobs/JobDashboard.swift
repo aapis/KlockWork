@@ -111,6 +111,7 @@ struct JobDashboardRedux: View {
                             newJob.overview = "Edit this description"
                             newJob.title = "Sample job title"
                             nav.session.job = newJob
+                            nav.forms.jobSelector.editor.job = newJob
                         },
                         icon: "plus",
                         showLabel: false
@@ -188,7 +189,6 @@ struct JobExplorer: View {
                         .font(.caption)
                     Spacer()
                 }
-                
             }
             .padding(5)
             .background(.white.opacity(0.2))
@@ -300,18 +300,8 @@ extension JobExplorer.JobViewRedux {
     /// - Returns: Void
     private func onSave() async -> Void {
         if job != nil && job!.jid > 1.0 {
-            let fields = job!.fields
-
-            for field in fields {
-                if let entity = field.entity {
-                    switch field.keyPath {
-                    case "jid": entity.setValue(field.value as! Double, forKey: field.keyPath)
-                    default: entity.setValue(field.value, forKey: field.keyPath)
-                    }
-
-                    entity.setValue(Date(), forKey: "lastUpdate")
-                    PersistenceController.shared.save()
-                }
+            for field in job!.fields {
+                field.save()
             }
         } else {
             isInvalidJobIdWarningPresented = true

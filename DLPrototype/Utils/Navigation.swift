@@ -224,6 +224,7 @@ extension Navigation {
             var editor: Editor = Editor()
 
             struct Editor {
+                var job: Job? = nil
                 var jid: String? = ""
                 var title: String? = ""
             }
@@ -246,6 +247,28 @@ extension Navigation {
                 self.keyPath = keyPath
             }
 
+            public func save() -> Void {
+                if let entity = self.entity {
+                    switch self.keyPath {
+                    case "jid": entity.setValue(self.value as! Double, forKey: self.keyPath)
+                    case "colour": entity.setValue((self.value as! Color).toStored(), forKey: self.keyPath)
+                    default: entity.setValue(self.value, forKey: self.keyPath)
+                    }
+
+                    entity.setValue(Date(), forKey: "lastUpdate")
+                    PersistenceController.shared.save()
+                }
+            }
+
+            public func update(value: Any) -> Void {
+                if let entity = self.entity {
+                    self.value = value
+
+//                    entity.setValue(Date(), forKey: "lastUpdate")
+                    self.save()
+                }
+            }
+
             public enum LayoutType {
                 case text, dropdown, projectDropdown, date, boolean, colour, editor
             }
@@ -254,6 +277,7 @@ extension Navigation {
                 public var field: Field
 
                 @State private var bValue: String = ""
+                @FocusState public var fieldSelectionChanged: Bool
 
                 @EnvironmentObject private var nav: Navigation
 
@@ -266,14 +290,34 @@ extension Navigation {
                             switch field.type {
                             case .boolean: FancyToggle(label: self.field.label, value: self.field.value as! Bool, onChange: self.onChangeToggle)
                             case .colour: FancyColourPicker(initialColour: self.field.value as! [Double], onChange: self.onChange, showLabel: false)
-                            case .editor: FancyTextField(placeholder: self.field.label, lineLimit: 10, text: $bValue)
+                            case .editor: FancyTextField(placeholder: self.field.label, lineLimit: 10, text: $bValue, hasFocus: _fieldSelectionChanged)
                             case .projectDropdown: ProjectPickerUsing(onChangeLarge: onChangeProjectDropdown, size: .large, defaultSelection: Int((self.field.value as! Project).pid), displayName: $bValue)
                             default:
-                                FancyTextField(placeholder: self.field.label, onSubmit: onSubmit, text: $bValue)
+                                FancyTextField(placeholder: self.field.label, onSubmit: onSubmit, text: $bValue, hasFocus: _fieldSelectionChanged)
                             }
                         }
                     }
                     .onAppear(perform: onLoad)
+                    .onChange(of: fieldSelectionChanged) { status in
+                        print("DERPO INg status=\(status) \(self.bValue)")
+                        if !status {
+//                            self.test()
+//                            if let entity = field.entity {
+//                                entity.setValue(status, forKey: self.field.keyPath)
+//                                entity.setValue(Date(), forKey: "lastUpdate")
+//                                PersistenceController.shared.save()
+//                            }
+                        }
+                    }
+                }
+
+                private func test() -> Void {
+                    switch field.type {
+                    case .boolean: field.update(value: Bool(bValue))
+                    case .colour: field.update(value: Double(bValue))
+                    case .projectDropdown: field.update(value: Int(bValue))
+                    default: field.update(value: bValue)
+                    }
                 }
 
                 private func onLoad() -> Void {

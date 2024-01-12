@@ -21,12 +21,12 @@ struct FancyTextField: View {
     public var font: Font = Theme.fontTextField
 
     @Binding public var text: String
-    
+
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
 
     @EnvironmentObject private var nav: Navigation
 
-    @FocusState public var focused: Bool
+    @FocusState public var hasFocus: Bool
 
     var body: some View {
         HStack(spacing: 5) {
@@ -61,7 +61,7 @@ struct FancyTextField: View {
             .disabled(disabled ?? false)
             .foregroundColor(disabled ?? false ? Color.gray : fgColour)
             .textSelection(.enabled)
-            .focused($focused)
+            .focused($hasFocus)
     }
     
     private var oneBigLine: some View {
@@ -76,7 +76,7 @@ struct FancyTextField: View {
             .disabled(disabled ?? false)
             .foregroundColor(disabled ?? false ? Color.gray : fgColour)
             .textSelection(.enabled)
-            .focused($focused)
+            .focused($hasFocus)
     }
     
     private var multiLine: some View {
@@ -92,24 +92,12 @@ struct FancyTextField: View {
             .disabled(disabled ?? false)
             .foregroundColor(disabled ?? false ? Color.gray : fgColour)
             .textSelection(.enabled)
-            .focused($focused)
+            .focused($hasFocus)
     }
 }
 
 extension FancyTextField {
     private func reset() -> Void {
         text = ""
-    }
-}
-
-struct FancyTextFieldPreview: PreviewProvider {
-    @State static private var text: String = "Test text"
-    
-    static var previews: some View {
-        VStack {
-            FancyTextField(placeholder: "Small one", lineLimit: 1, onSubmit: {}, text: $text)
-            FancyTextField(placeholder: "Medium one", lineLimit: 9, onSubmit: {}, text: $text)
-            FancyTextField(placeholder: "Big one", lineLimit: 100, onSubmit: {}, text: $text)
-        }
     }
 }

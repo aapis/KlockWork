@@ -16,6 +16,7 @@ extension Job {
         [
             Field(type: .text, label: "Job ID", value: self.jid.string, entity: self, keyPath: "jid"),
             Field(type: .text, label: "Title", value: self.title, entity: self, keyPath: "title"),
+            Field(type: .text, label: "URL", value: self.uri, entity: self, keyPath: "uri"),
             Field(type: .colour, label: "Colour", value: self.colour, entity: self, keyPath: "colour"),
             Field(type: .boolean, label: "Published", value: self.alive, entity: self, keyPath: "alive"),
             Field(type: .boolean, label: "SRED Qualified", value: self.shredable, entity: self, keyPath: "shredable"),
