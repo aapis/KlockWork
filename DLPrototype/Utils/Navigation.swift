@@ -250,21 +250,20 @@ extension Navigation {
             public func save() -> Void {
                 if let entity = self.entity {
                     switch self.keyPath {
-                    case "jid": entity.setValue(self.value as! Double, forKey: self.keyPath)
+                    case "jid": entity.setValue(Double(self.value as! String), forKey: self.keyPath)
                     case "colour": entity.setValue((self.value as! Color).toStored(), forKey: self.keyPath)
+                    case "created": entity.setValue(self.value != nil ? self.value : NSDate(), forKey: self.keyPath)
+                    case "lastUpdate": entity.setValue(NSDate(), forKey: self.keyPath)
                     default: entity.setValue(self.value, forKey: self.keyPath)
                     }
 
-                    entity.setValue(Date(), forKey: "lastUpdate")
                     PersistenceController.shared.save()
                 }
             }
 
             public func update(value: Any) -> Void {
-                if let entity = self.entity {
+                if self.entity != nil {
                     self.value = value
-
-//                    entity.setValue(Date(), forKey: "lastUpdate")
                     self.save()
                 }
             }
@@ -299,24 +298,9 @@ extension Navigation {
                     }
                     .onAppear(perform: onLoad)
                     .onChange(of: fieldSelectionChanged) { status in
-                        print("DERPO INg status=\(status) \(self.bValue)")
                         if !status {
-//                            self.test()
-//                            if let entity = field.entity {
-//                                entity.setValue(status, forKey: self.field.keyPath)
-//                                entity.setValue(Date(), forKey: "lastUpdate")
-//                                PersistenceController.shared.save()
-//                            }
+                            field.update(value: bValue)
                         }
-                    }
-                }
-
-                private func test() -> Void {
-                    switch field.type {
-                    case .boolean: field.update(value: Bool(bValue))
-                    case .colour: field.update(value: Double(bValue))
-                    case .projectDropdown: field.update(value: Int(bValue))
-                    default: field.update(value: bValue)
                     }
                 }
 
@@ -328,39 +312,25 @@ extension Navigation {
                 
                 private func onChangeToggle(status: Bool) -> Void {
                     if status {
-                        if let entity = field.entity {
-                            entity.setValue(status, forKey: self.field.keyPath)
-                            entity.setValue(Date(), forKey: "lastUpdate")
-                            PersistenceController.shared.save()
-                        }
+                        field.update(value: status)
                     }
                 }
 
                 private func onChangeProjectDropdown(selected: Project, sender: String?) -> Void {
-                    if let entity = field.entity {
-                        entity.setValue(selected, forKey: self.field.keyPath)
-                        entity.setValue(Date(), forKey: "lastUpdate")
-                        PersistenceController.shared.save()
+                    if field.entity != nil {
+                        field.update(value: selected)
                     }
                 }
 
                 private func onChange(colour: Color) -> Void {
-                    if let entity = field.entity {
-                        entity.setValue(colour.toStored(), forKey: self.field.keyPath)
-                        entity.setValue(Date(), forKey: "lastUpdate")
-                        PersistenceController.shared.save()
+                    if field.entity != nil {
+                        field.update(value: colour.toStored())
                     }
                 }
                 
                 private func onSubmit() -> Void {
-                    if let entity = field.entity {
-                        if self.field.keyPath == "jid" {
-                            entity.setValue(Double(bValue), forKey: self.field.keyPath)
-                        } else {
-                            entity.setValue(bValue, forKey: self.field.keyPath)
-                        }
-                        entity.setValue(Date(), forKey: "lastUpdate")
-                        PersistenceController.shared.save()
+                    if field.entity != nil {
+                        field.update(value: bValue)
                     }
                 }
             }
