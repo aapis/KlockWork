@@ -204,6 +204,7 @@ extension Navigation {
         var eventStatus: EventIndicatorStatus = .ready
     }
 
+    // @TODO: remove from Navigation
     public struct Forms {
         var note: NoteForm = NoteForm()
         var jobSelector: JobSelectorForm = JobSelectorForm()
@@ -250,9 +251,10 @@ extension Navigation {
             public func save() -> Void {
                 if let entity = self.entity {
                     switch self.keyPath {
+                    case "uri": entity.setValue(UrlHelper.from(uri: self.value as! String).isValid ? self.value : URL(string: self.value as! String)?.absoluteString, forKey: self.keyPath)
                     case "jid": entity.setValue(Double(self.value as! String), forKey: self.keyPath)
                     case "colour": entity.setValue((self.value as! Color).toStored(), forKey: self.keyPath)
-                    case "created": entity.setValue(self.value != nil ? self.value : NSDate(), forKey: self.keyPath)
+                    case "created": entity.setValue(self.value != nil && !self.value.debugDescription.isEmpty ? DateHelper.date(self.value as! String) : NSDate(), forKey: self.keyPath)
                     case "lastUpdate": entity.setValue(NSDate(), forKey: self.keyPath)
                     default: entity.setValue(self.value, forKey: self.keyPath)
                     }
