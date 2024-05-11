@@ -395,7 +395,7 @@ extension FindDashboard {
         
         init(_ text: String) {
             let rr: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
-            rr.predicate = NSPredicate(format: "message CONTAINS[cd] %@", text)
+            rr.predicate = NSPredicate(format: "message CONTAINS[cd] %@ && job.project.company.hidden == false", text)
             rr.sortDescriptors = [
                 NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)
             ]
@@ -436,7 +436,7 @@ extension FindDashboard {
         
         init(_ text: String) {
             let req: NSFetchRequest<Note> = Note.fetchRequest()
-            req.predicate = NSPredicate(format: "(body CONTAINS[cd] %@ OR title CONTAINS[cd] %@) AND alive = true", text, text)
+            req.predicate = NSPredicate(format: "(body CONTAINS[cd] %@ OR title CONTAINS[cd] %@) AND alive = true && mJob.project.company.hidden == false", text, text)
             req.sortDescriptors = [
                 NSSortDescriptor(keyPath: \Note.postedDate, ascending: false)
             ]
@@ -477,7 +477,7 @@ extension FindDashboard {
         
         init(_ text: String) {
             let tr: NSFetchRequest<LogTask> = LogTask.fetchRequest()
-            tr.predicate = NSPredicate(format: "content CONTAINS[c] %@", text)
+            tr.predicate = NSPredicate(format: "content CONTAINS[c] %@ && owner.project.company.hidden == false", text)
             tr.sortDescriptors = [
                 NSSortDescriptor(keyPath: \LogTask.created, ascending: false)
             ]
@@ -518,7 +518,7 @@ extension FindDashboard {
         
         init(_ text: String) {
             let pr: NSFetchRequest<Project> = Project.fetchRequest()
-            pr.predicate = NSPredicate(format: "name CONTAINS[c] %@ AND alive = true", text)
+            pr.predicate = NSPredicate(format: "name CONTAINS[c] %@ AND alive = true && company.hidden == false", text)
             pr.sortDescriptors = [
                 NSSortDescriptor(keyPath: \Project.created, ascending: false)
             ]
@@ -559,7 +559,7 @@ extension FindDashboard {
         
         init(_ text: String) {
             let jr: NSFetchRequest<Job> = Job.fetchRequest()
-            jr.predicate = NSPredicate(format: "(uri CONTAINS[c] %@ OR jid.stringValue BEGINSWITH %@ OR overview CONTAINS[c] %@ OR title CONTAINS[c] %@) AND alive = true", text, text, text, text)
+            jr.predicate = NSPredicate(format: "(uri CONTAINS[c] %@ OR jid.stringValue BEGINSWITH %@ OR overview CONTAINS[c] %@ OR title CONTAINS[c] %@) AND alive = true && project.company.hidden == false", text, text, text, text)
             jr.sortDescriptors = [
                 NSSortDescriptor(keyPath: \Job.created, ascending: false)
             ]

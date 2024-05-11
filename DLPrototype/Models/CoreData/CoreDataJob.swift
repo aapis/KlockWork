@@ -23,7 +23,7 @@ public class CoreDataJob: ObservableObject {
         ]
 
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive == true && lastUpdate != nil && project != nil")
+        fetch.predicate = NSPredicate(format: "alive == true && lastUpdate != nil && project != nil && project.company.hidden == false")
         fetch.sortDescriptors = descriptors
         fetch.fetchLimit = 10
 
@@ -32,7 +32,7 @@ public class CoreDataJob: ObservableObject {
 
     static public func fetchAll(limit: Int? = nil) -> FetchRequest<Job> {
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive == true && project != nil && project.alive == true")
+        fetch.predicate = NSPredicate(format: "alive == true && project != nil && project.alive == true && project.company.hidden == false")
         fetch.sortDescriptors = [
             NSSortDescriptor(keyPath: \Job.project?, ascending: false),
             NSSortDescriptor(keyPath: \Job.jid, ascending: false)

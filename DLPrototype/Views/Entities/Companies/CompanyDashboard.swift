@@ -11,6 +11,7 @@ import SwiftUI
 struct CompanyDashboard: View {
     @State private var searchText: String = ""
     @State private var selected: Int = 0
+    @State private var allowHidden: Bool = false
 
     @AppStorage("notes.columns") private var numColumns: Int = 3
     @AppStorage("general.defaultCompany") public var defaultCompany: Int = 0
@@ -27,8 +28,17 @@ struct CompanyDashboard: View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
                 HStack {
-                    Title(text: "Projects & Companies")
+                    Title(text: "Companies & Projects")
                     Spacer()
+                    FancyButtonv2(
+                        text: "Show hidden",
+                        action: showHidden,
+                        icon: "eye.slash",
+                        transparent: true,
+                        showLabel: false,
+                        showIcon: true,
+                        type: .clear
+                    )
                     FancyButtonv2(
                         text: "New Company",
                         action: {},
@@ -85,7 +95,12 @@ extension CompanyDashboard {
     }
 
     private func filter(_ companies: FetchedResults<Company>) -> [Company] {
-        return SearchHelper(bucket: companies).findInCompanies($searchText)
+        return SearchHelper(bucket: companies).findInCompanies($searchText, allowHidden: allowHidden)
+    }
+
+    private func showHidden() -> Void {
+        
+        allowHidden.toggle()
     }
 }
 

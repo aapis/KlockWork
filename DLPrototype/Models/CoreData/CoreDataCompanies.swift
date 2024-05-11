@@ -27,7 +27,7 @@ public class CoreDataCompanies: ObservableObject {
         ]
 
         let fetch: NSFetchRequest<Company> = Company.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive == true")
+        fetch.predicate = NSPredicate(format: "alive == true && hidden == false")
         fetch.sortDescriptors = descriptors
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
@@ -35,7 +35,7 @@ public class CoreDataCompanies: ObservableObject {
 
     public func byPid(_ id: Int) -> Company? {
         let predicate = NSPredicate(
-            format: "pid = %d",
+            format: "pid = %d && hidden == false",
             id as CVarArg
         )
 
@@ -50,7 +50,7 @@ public class CoreDataCompanies: ObservableObject {
 
     public func alive() -> [Company] {
         let predicate = NSPredicate(
-            format: "alive = true"
+            format: "alive = true && hidden == false"
         )
 
         return query(predicate)
@@ -58,7 +58,7 @@ public class CoreDataCompanies: ObservableObject {
 
     public func all() -> [Company] {
         let predicate = NSPredicate(
-            format: "name != nil"
+            format: "name != nil && hidden == false"
         )
 
         return query(predicate)

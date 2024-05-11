@@ -107,9 +107,9 @@ public class CoreDataNotes {
 
         let fetch: NSFetchRequest<Note> = Note.fetchRequest()
         if favouritesOnly {
-            fetch.predicate = NSPredicate(format: "alive == true && starred == true")
+            fetch.predicate = NSPredicate(format: "alive == true && starred == true && mJob.project.company.hidden == false")
         } else {
-            fetch.predicate = NSPredicate(format: "alive == true && mJob != nil")
+            fetch.predicate = NSPredicate(format: "alive == true && mJob != nil && mJob.project.company.hidden == false")
         }
         fetch.sortDescriptors = descriptors
         fetch.fetchLimit = 1000

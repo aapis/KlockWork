@@ -64,7 +64,7 @@ public class CoreDataRecords: ObservableObject {
         let (start, end) = DateHelper.startAndEndOf(date)
         let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
         fetch.predicate = NSPredicate(
-            format: "alive == true && (timestamp > %@ && timestamp <= %@)",
+            format: "alive == true && (timestamp > %@ && timestamp <= %@) && job.project.company.hidden == false",
             start as CVarArg,
             end as CVarArg
         )
@@ -85,7 +85,7 @@ public class CoreDataRecords: ObservableObject {
         let (start, end) = DateHelper.startAndEndOf(date)
         let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
         fetch.predicate = NSPredicate(
-            format: "@message.count > 0 && alive == true && (timestamp > %@ && timestamp <= %@)",
+            format: "@message.count > 0 && alive == true && (timestamp > %@ && timestamp <= %@) && job.project.company.hidden == false",
             start as CVarArg,
             end as CVarArg
         )
@@ -107,7 +107,7 @@ public class CoreDataRecords: ObservableObject {
         let date = DateHelper.daysPast(14)
 
         fetch.predicate = NSPredicate(
-            format: "alive == true && timestamp >= %@",
+            format: "(alive == true && timestamp >= %@) && job.project.company.hidden == false",
             date
         )
 
@@ -156,7 +156,7 @@ public class CoreDataRecords: ObservableObject {
         let cutoff = DateHelper.daysPast(numWeeks * 7)
         
         let predicate = NSPredicate(
-            format: "timestamp > %@",
+            format: "timestamp > %@ && job.project.company.hidden == false",
             cutoff
         )
         
@@ -165,7 +165,7 @@ public class CoreDataRecords: ObservableObject {
     
     public func recent(_ start: CVarArg, _ end: CVarArg) -> [LogRecord] {
         let predicate = NSPredicate(
-            format: "timestamp > %@ && timestamp <= %@",
+            format: "(timestamp > %@ && timestamp <= %@) && job.project.company.hidden == false",
             start,
             end
         )
@@ -203,7 +203,7 @@ public class CoreDataRecords: ObservableObject {
 
     public func countAll() -> Int {
         let predicate = NSPredicate(
-            format: "alive == true"
+            format: "alive == true && job.project.company.hidden == false"
         )
 
         return count(predicate)
@@ -212,7 +212,7 @@ public class CoreDataRecords: ObservableObject {
     public func forDate(_ date: Date) -> [LogRecord] {
         let (start, end) = DateHelper.startAndEndOf(date)
         let predicate = NSPredicate(
-            format: "alive == true && timestamp > %@ && timestamp <= %@",
+            format: "(alive == true && timestamp > %@ && timestamp <= %@) && job.project.company.hidden == false",
             start as CVarArg,
             end as CVarArg
         )
@@ -224,7 +224,7 @@ public class CoreDataRecords: ObservableObject {
         if let d = date {
             let (start, end) = DateHelper.startAndEndOf(d)
             let predicate = NSPredicate(
-                format: "timestamp > %@ && timestamp <= %@",
+                format: "(timestamp > %@ && timestamp <= %@) && job.project.company.hidden == false",
                 start as CVarArg,
                 end as CVarArg
             )

@@ -303,7 +303,7 @@ extension Navigation {
                                 .padding(5)
 
                             switch field.type {
-                            case .boolean: FancyToggle(label: self.field.label, value: self.field.value as! Bool, onChange: self.onChangeToggle)
+                            case .boolean: FancyToggle(label: self.field.label, value: self.field.value as! Bool, showLabel: true, onChange: self.onChangeToggle)
                             case .colour: FancyColourPicker(initialColour: self.field.value as! [Double], onChange: self.onChangeColour, showLabel: false)
                             case .editor: FancyTextField(placeholder: self.field.label, lineLimit: 10, fieldStatus: self.field.status, text: $newValue)
                             case .projectDropdown: ProjectPickerUsing(onChangeLarge: onChangeProjectDropdown, size: .large, defaultSelection: Int((self.field.value as! Project).pid), displayName: $newValue)
