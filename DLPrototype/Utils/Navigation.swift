@@ -231,14 +231,15 @@ extension Navigation {
             }
         }
 
-        public class Field: Identifiable {
+        public class Field: Identifiable, Equatable {
             public let id: UUID = UUID()
             public var type: LayoutType = .text
-            public var body: some View { Layout(field: self) }
+            public var body: some View { FieldView(field: self) }
             public var label: String = ""
             public var value: Any? = nil
             public var entity: NSManagedObject? = nil
             public var keyPath: String
+            public var status: FieldStatus = .standard
 
             init(type: LayoutType, label: String, value: Any? = nil, entity: NSManagedObject? = nil, keyPath: String) {
                 self.type = type
@@ -248,25 +249,33 @@ extension Navigation {
                 self.keyPath = keyPath
             }
 
-            public func save() -> Void {
-                if let entity = self.entity {
-                    switch self.keyPath {
-                    case "uri": entity.setValue(UrlHelper.from(uri: self.value as! String).isValid ? self.value : URL(string: self.value as! String)?.absoluteString, forKey: self.keyPath)
-                    case "jid": entity.setValue(Double(self.value as! String), forKey: self.keyPath)
-                    case "colour": entity.setValue((self.value as! Color).toStored(), forKey: self.keyPath)
-                    case "created": entity.setValue(self.value != nil && !self.value.debugDescription.isEmpty ? DateHelper.date(self.value as! String) : NSDate(), forKey: self.keyPath)
-                    case "lastUpdate": entity.setValue(NSDate(), forKey: self.keyPath)
-                    default: entity.setValue(self.value, forKey: self.keyPath)
-                    }
-
-                    PersistenceController.shared.save()
-                }
+            static public func == (lhs: Navigation.Forms.Field, rhs: Navigation.Forms.Field) -> Bool {
+                return lhs.id == rhs.id
             }
 
             public func update(value: Any) -> Void {
-                if self.entity != nil {
-                    self.value = value
-                    self.save()
+                if let entity = self.entity {
+                    let en = entity as! Job
+
+                    switch self.keyPath {
+                    case "uri": self.value = URL(string: value as? String ?? "")
+                    case "title": self.value = value as? String ?? ""
+                    case "shredable": self.value = value as? Bool ?? false
+                    case "overview": self.value = value as? String ?? ""
+                    case "lastUpdate": self.value = Date()
+                    case "jid": self.value = Double(value as! String) ?? 1.0
+                    case "created": self.value = DateHelper.date(value as! String)
+                    case "colour": self.value = value as? Array<Double>
+                    case "alive": self.value = value as? Bool ?? false
+                    case "id": self.value = en.id
+                    case "project": self.value = en.project // @TODO: should use self.value
+                    default:
+                        print("[debug][Navigation.Forms.Field] Unknown field \(self.keyPath)")
+                    }
+
+                    en.setValue(self.value, forKey: self.keyPath)
+
+                    PersistenceController.shared.save()
                 }
             }
 
@@ -274,11 +283,16 @@ extension Navigation {
                 case text, dropdown, projectDropdown, date, boolean, colour, editor
             }
 
-            struct Layout: View {
+            public enum FieldStatus {
+                case unsaved, saved, standard
+            }
+
+            struct FieldView: View {
                 public var field: Field
 
-                @State private var bValue: String = ""
-                @FocusState public var fieldSelectionChanged: Bool
+                @State private var oldValue: String = ""
+                @State private var newValue: String = ""
+                @State private var status: FieldStatus = .standard
 
                 @EnvironmentObject private var nav: Navigation
 
@@ -290,50 +304,65 @@ extension Navigation {
 
                             switch field.type {
                             case .boolean: FancyToggle(label: self.field.label, value: self.field.value as! Bool, onChange: self.onChangeToggle)
-                            case .colour: FancyColourPicker(initialColour: self.field.value as! [Double], onChange: self.onChange, showLabel: false)
-                            case .editor: FancyTextField(placeholder: self.field.label, lineLimit: 10, text: $bValue, hasFocus: _fieldSelectionChanged)
-                            case .projectDropdown: ProjectPickerUsing(onChangeLarge: onChangeProjectDropdown, size: .large, defaultSelection: Int((self.field.value as! Project).pid), displayName: $bValue)
+                            case .colour: FancyColourPicker(initialColour: self.field.value as! [Double], onChange: self.onChangeColour, showLabel: false)
+                            case .editor: FancyTextField(placeholder: self.field.label, lineLimit: 10, fieldStatus: self.field.status, text: $newValue)
+                            case .projectDropdown: ProjectPickerUsing(onChangeLarge: onChangeProjectDropdown, size: .large, defaultSelection: Int((self.field.value as! Project).pid), displayName: $newValue)
                             default:
-                                FancyTextField(placeholder: self.field.label, onSubmit: onSubmit, text: $bValue, hasFocus: _fieldSelectionChanged)
+                                FancyTextField(placeholder: self.field.label, fieldStatus: self.field.status, text: $newValue)
                             }
                         }
                     }
                     .onAppear(perform: onLoad)
-                    .onChange(of: fieldSelectionChanged) { status in
-                        if !status {
-                            field.update(value: bValue)
+                    .onChange(of: newValue) { _ in
+                        field.status = .unsaved
+
+                        if oldValue != newValue {
+                            field.update(value: newValue)
+                            field.status = .saved
+
+                            self.status = field.status
                         }
                     }
                 }
 
                 private func onLoad() -> Void {
-                    if let value = self.field.value as? String {
-                        bValue = value
+                    if let entity = self.field.entity {
+                        if let value = entity.value(forKey: self.field.keyPath) {
+                            switch self.field.keyPath {
+                            case "uri": self.field.value = (value as? URL)?.absoluteString
+                            case "title": self.field.value = value as? String ?? ""
+                            case "shredable": self.field.value = value as? Bool ?? false
+                            case "overview": self.field.value = value as? String ?? ""
+                            case "lastUpdate": self.field.value = Date().description
+                            case "jid": self.field.value = (value as! Double).string
+                            case "created": self.field.value = value
+                            case "colour": self.field.value = value as? Array<Double>
+                            case "alive": self.field.value = value as? Bool ?? false
+                            default:
+                                print("[debug] Unknown field \(self.field.keyPath)")
+                            }
+
+                            oldValue = self.field.value as? String ?? ""
+                            newValue = self.field.value as? String ?? ""
+                        }
                     }
+
+                    self.status = field.status
                 }
                 
                 private func onChangeToggle(status: Bool) -> Void {
-                    if status {
-                        field.update(value: status)
-                    }
+                    field.update(value: status)
+                    self.status = field.status
                 }
 
                 private func onChangeProjectDropdown(selected: Project, sender: String?) -> Void {
-                    if field.entity != nil {
-                        field.update(value: selected)
-                    }
+                    field.update(value: selected)
+                    self.status = field.status
                 }
 
-                private func onChange(colour: Color) -> Void {
-                    if field.entity != nil {
-                        field.update(value: colour.toStored())
-                    }
-                }
-                
-                private func onSubmit() -> Void {
-                    if field.entity != nil {
-                        field.update(value: bValue)
-                    }
+                private func onChangeColour(colour: Color) -> Void {
+                    field.update(value: colour.toStored())
+                    self.status = field.status
                 }
             }
         }

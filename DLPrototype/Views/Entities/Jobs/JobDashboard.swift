@@ -226,7 +226,7 @@ struct JobExplorer: View {
     public struct JobViewRedux: View {
         public var job: Job? = nil
         private var fields: [Navigation.Forms.Field] { job != nil ? job!.fields : [] }
-        private let columnSplit: [Navigation.Forms.Field.LayoutType] = [.date, .projectDropdown]
+        private let columnSplit: [Navigation.Forms.Field.LayoutType] = [.date, .projectDropdown, .colour]
         private var columns: [GridItem] {
             Array(repeating: .init(.flexible(minimum: 300)), count: 2)
         }
@@ -244,38 +244,35 @@ struct JobExplorer: View {
             ScrollView {
                 if job != nil {
                     Grid(alignment: .topLeading, horizontalSpacing: 8, verticalSpacing: 10) {
-                        LazyVGrid(columns: columns) {
-                            VStack {
-                                ForEach(fields.filter({!columnSplit.contains($0.type)})) { field in
-                                    field.body
-                                }
-                                Spacer()
-                            }
-                            .padding([.top, .leading], 8)
-                            
-                            VStack {
-                                ForEach(fields.filter({columnSplit.contains($0.type)})) { field in
-                                    field.body
-                                }
-                                FancyDivider()
-                                HStack(alignment: .bottom) {
-                                    FancySimpleButton(text: "Delete", action: {isDeletePresented = true}, icon: "trash", showLabel: false, showIcon: true, type: .destructive)
-                                        .alert("Are you sure you want to delete job ID \(job!.jid.string)? This is irreversible.", isPresented: $isDeletePresented) {
-                                            Button("Yes", role: .destructive) {
-                                                self.triggerDelete()
-                                            }
-                                            Button("No", role: .cancel) {}
-                                        }
+                        GridRow {
+                            LazyVGrid(columns: columns) {
+                                VStack {
+                                    ForEach(fields.filter({!columnSplit.contains($0.type)})) { field in
+                                        field.body
+                                    }
                                     Spacer()
-                                    FancySimpleButton(text: "Save", action: triggerSave)
-                                        .keyboardShortcut("s", modifiers: [.command])
-                                        .alert("Please change the job ID to something other than 1.0", isPresented: $isInvalidJobIdWarningPresented) {
-                                            Button("Ok", role: .cancel) {}
-                                        }
                                 }
-                                Spacer()
+                                .padding([.top, .leading], 8)
+
+                                VStack {
+                                    ForEach(fields.filter({columnSplit.contains($0.type)})) { field in
+                                        field.body
+                                    }
+                                    FancyDivider()
+                                    HStack(alignment: .bottom) {
+                                        Spacer()
+                                        FancySimpleButton(text: "Delete", action: {isDeletePresented = true}, icon: "trash", showLabel: false, showIcon: true, type: .destructive)
+                                            .alert("Are you sure you want to delete job ID \(job!.jid.string)? This is irreversible.", isPresented: $isDeletePresented) {
+                                                Button("Yes", role: .destructive) {
+                                                    self.triggerDelete()
+                                                }
+                                                Button("No", role: .cancel) {}
+                                            }
+                                    }
+                                    Spacer()
+                                }
+                                .padding([.top, .trailing], 8)
                             }
-                            .padding([.top, .trailing], 8)
                         }
                     }
                     .background(Theme.toolbarColour)
@@ -288,26 +285,6 @@ struct JobExplorer: View {
 }
 
 extension JobExplorer.JobViewRedux {
-    /// Triggers a save event so all fields can be updated at once
-    /// - Returns: Void
-    private func triggerSave() -> Void {
-        Task {
-            await self.onSave()
-        }
-    }
-    
-    /// Update all fields at the same time
-    /// - Returns: Void
-    private func onSave() async -> Void {
-        if job != nil && job!.jid > 1.0 {
-            for field in job!.fields {
-                field.save()
-            }
-        } else {
-            isInvalidJobIdWarningPresented = true
-        }
-    }
-
     /// Deletes the current Job
     /// - Returns: Void
     private func triggerDelete() -> Void {

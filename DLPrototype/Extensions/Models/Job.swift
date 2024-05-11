@@ -20,8 +20,8 @@ extension Job {
             Field(type: .colour, label: "Colour", value: self.colour, entity: self, keyPath: "colour"),
             Field(type: .boolean, label: "Published", value: self.alive, entity: self, keyPath: "alive"),
             Field(type: .boolean, label: "SRED Qualified", value: self.shredable, entity: self, keyPath: "shredable"),
-            Field(type: .date, label: "Last update", value: self.lastUpdate?.formatted(date: .abbreviated, time: .omitted), entity:self, keyPath: "lastUpdate"),
-            Field(type: .date, label: "Created", value: self.created?.formatted(date: .abbreviated, time: .omitted), entity: self,keyPath: "created"),
+            Field(type: .date, label: "Last update", value: self.lastUpdate?.formatted(date: .abbreviated, time: .standard), entity:self, keyPath: "lastUpdate"),
+            Field(type: .date, label: "Created", value: self.created?.formatted(date: .abbreviated, time: .standard), entity: self,keyPath: "created"),
             Field(type: .projectDropdown, label: "Project", value: self.project, entity: self, keyPath: "project"),
             Field(type: .editor, label: "Description", value: self.overview, entity: self, keyPath: "overview")
         ]
