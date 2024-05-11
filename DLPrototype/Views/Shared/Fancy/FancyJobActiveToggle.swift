@@ -13,6 +13,7 @@ struct FancyJobActiveToggle: View {
     public var label: String = "Active"
 
     @State private var alive: Bool = true
+    @FocusState private var focused: Bool
 
     var body: some View {
         HStack {
@@ -25,6 +26,7 @@ struct FancyJobActiveToggle: View {
             }
             .padding()
             .background(Theme.textBackground)
+            .focused($focused)
         }
         .onAppear(perform: {
             if entity.alive {

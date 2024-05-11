@@ -9,27 +9,52 @@
 import SwiftUI
 import Combine
 
+enum PickerSize {
+    case small, large
+}
+
 struct ProjectPickerUsing: View {
-    public var onChange: (String, String?) -> Void
+    public var onChange: ((String, String?) -> Void)? = nil
+    public var onChangeLarge: ((Project, String?) -> Void)? = nil // @TODO: refactor, don't like this multiple callback func def thing
     public var transparent: Bool? = false
     public var labelText: String?
     public var showLabel: Bool? = false
+    public var size: PickerSize = .small
+    public var defaultSelection: Int = 0
 
     @Binding public var displayName: String
     @State private var idFieldColour: Color = Color.clear
     @State private var idFieldTextColour: Color = Color.white
-    @State private var selectedId: String = ""
+    @State private var selectedId: Int = 0
     @State private var projectName: String = ""
     
     @Environment(\.managedObjectContext) var moc
     
     private var pickerItems: [CustomPickerItem] {
-        var items: [CustomPickerItem] = [CustomPickerItem(title: "Choose a project", tag: 0)]
-        let projects = CoreDataProjects(moc: moc).alive()
-        
-        for project in projects {
-            if project.name != nil {
-                items.append(CustomPickerItem(title: " - \(project.name!)", tag: Int(project.pid)))
+        var items: [CustomPickerItem] = [CustomPickerItem(title: "Choose from Projects", tag: 0)]
+        let companies = CoreDataCompanies(moc: moc).alive()
+
+        for company in companies.sorted(by: {$0.name! < $1.name!}) {
+            if company.name != nil && company.projects?.count ?? 0 > 0 {
+                items.append(
+                    CustomPickerItem(
+                        title: company.name!.capitalized,
+                        tag: Int(company.pid),
+                        disabled: true
+                    )
+                )
+
+                if let projects = company.projects {
+                    for project in (projects.allObjects as! [Project]).sorted(by: {$0.name! < $1.name!}) {
+                        items.append(
+                            CustomPickerItem(
+                                title: " - \(project.name!.capitalized)",
+                                tag: Int(project.pid),
+                                project: project
+                            )
+                        )
+                    }
+                }
             }
         }
         
@@ -39,57 +64,98 @@ struct ProjectPickerUsing: View {
     var body: some View {
         HStack {
             ZStack {
-                FancyTextField(
-                    placeholder: "Project name",
-                    lineLimit: 1,
-                    onSubmit: {},
-                    fgColour: idFieldTextColour,
-                    bgColour: idFieldColour,
-                    text: $projectName
-                )
-                .border(idFieldColour == Color.clear ? Color.black.opacity(0.1) : Color.clear, width: 2)
-                
-                HStack {
-//                    if !id.isEmpty {
-//                        FancyButton(text: "Reset", action: resetUi, icon: "xmark", showLabel: false)
-//                    }
-                    FancyPicker(onChange: pickerChange, items: pickerItems, transparent: transparent, labelText: labelText, showLabel: showLabel)
+                if size == .small {
+                    FancyTextField(
+                        placeholder: "Project name",
+                        lineLimit: 1,
+                        onSubmit: {},
+                        fgColour: idFieldTextColour,
+                        bgColour: idFieldColour,
+                        text: $projectName
+                    )
+                    .border(idFieldColour == Color.clear ? Color.black.opacity(0.1) : Color.clear, width: 2)
+                    
+                    HStack {
+                        FancyPicker(
+                            onChange: onChangeSmallWidget,
+                            items: pickerItems,
+                            transparent: transparent,
+                            labelText: labelText,
+                            showLabel: showLabel,
+                            defaultSelected: selectedId,
+                            size: size
+                        )
+                    }
+                    .padding([.leading], 150)
+                } else {
+                    HStack {
+                        FancyPicker(
+                            onChange: onChangeLargeWidget,
+                            items: pickerItems,
+                            transparent: transparent,
+                            labelText: labelText,
+                            showLabel: showLabel,
+                            defaultSelected: defaultSelection,
+                            size: size
+                        )
+                    }
+                    .padding()
+                    .border(idFieldColour == Color.clear ? Color.black.opacity(0.1) : Color.clear, width: 2)
                 }
-                .padding([.leading], 150)
             }
         }
-        .frame(width: 450, height: 40)
-        .onAppear(perform: onAppear)
+        .frame(width: size == .small ? 450 : nil, height: 40)
+        .onAppear(perform: onLoad)
+    }
+}
+
+extension ProjectPickerUsing {
+    /// Sets the selected picker item if one was passed to the view
+    /// - Returns: Void
+    private func onLoad() -> Void {
+        if let item = pickerItems.first(where: {$0.tag == defaultSelection}) {
+            selectedId = item.tag
+        }
     }
     
-    private func pickerChange(selected: Int, sender: String?) -> Void {
+    /// Callback that fires when a PickerSize.small widget changes selected value
+    /// - Parameters:
+    ///   - selected: Index value for the selected CustomPickerItem
+    ///   - sender: Optional sender information
+    /// - Returns: Void
+    private func onChangeSmallWidget(selected: Int, sender: String?) -> Void {
         if let item = pickerItems.filter({$0.tag == selected}).first {
             projectName = item.title.replacingOccurrences(of: " - ", with: "")
         }
 
-        selectedId = String(selected)
-        
-        if let selectedJob = CoreDataProjects(moc: moc).byId(Int(exactly: selected)!) {
+        selectedId = selected
+
+        if let selectedJob = CoreDataProjects(moc: moc).byId(Int64(exactly: selected)!) {
             idFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
             idFieldTextColour = idFieldColour.isBright() ? Color.black : Color.white
         } else {
             idFieldColour = Color.clear
             idFieldTextColour = Color.white
         }
-        
-        onChange(projectName, sender)
+
+        if let ocs = onChange {
+            ocs(projectName, sender)
+        }
     }
     
-    private func onAppear() -> Void {
-        // TODO: this is borked now, fix it
-//        if !id.isEmpty {
-//            let pid = (id as NSString).integerValue
-//            print("JERB pid \(pid)")
-//
-//            pickerChange(selected: pid, sender: "")
-//        }
+    /// Callback that fires when a PickerSize.large widget changes selected value
+    /// - Parameter project: NSManagedObject
+    /// - Returns: Void
+    private func onChangeLargeWidget(selected: Int, sender: String?) -> Void {
+        if let ocl = onChangeLarge {
+            if let item = pickerItems.first(where: {$0.tag == selected}) {
+                if item.project != nil {
+                    ocl(item.project!, sender)
+                }
+            }
+        }
     }
-    
+
     private func resetUi() -> Void {
         idFieldColour = Color.clear
         idFieldTextColour = Color.white

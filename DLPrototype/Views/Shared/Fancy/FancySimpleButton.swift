@@ -14,6 +14,7 @@ struct FancySimpleButton: View {
     public var icon: String = "checkmark.circle"
     public var showLabel: Bool = true
     public var showIcon: Bool = false
+    public var labelView: AnyView? = nil
     public var size: ButtonSize = .large
     public var type: ButtonType = .standard
     public var href: Page? = nil
@@ -28,37 +29,37 @@ struct FancySimpleButton: View {
                 action()
             }
 
-            DispatchQueue.main.asyncAfter(deadline: .now()) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 if let href = href {
                     nav.to(href)
                 }
             }
         } label: {
-            VStack(alignment: .center) {
-                HStack(alignment: .top, spacing: 5) {
-                    if showIcon {
-                        VStack(alignment: .leading) {
+            if let labelView = labelView {
+                labelView
+            } else {
+                VStack(alignment: .center, spacing: 0) {
+                    HStack(alignment: .top, spacing: 5) {
+                        if showIcon {
                             Image(systemName: icon)
                                 .padding(size.padding)
                         }
-                    }
-
-                    if showLabel {
-                        VStack(alignment: .leading) {
+                        
+                        if showLabel {
                             Text(text)
                                 .font(.title3)
                                 .padding(size.padding)
                         }
                     }
+                    .font(.title3)
                 }
-                .font(.title3)
             }
         }
         .help(text)
         .buttonStyle(.borderless)
         .background(highlighted ? type.highlightColour : type.colours.first)
         .foregroundColor(type.textColour)
-        .mask(RoundedRectangle(cornerRadius: 3)) // @TODO: make configurable
+//        .mask(RoundedRectangle(cornerRadius: 3)) // @TODO: make configurable?
         .useDefaultHover({ inside in highlighted = inside})
     }
 }

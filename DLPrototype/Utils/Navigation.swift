@@ -92,9 +92,10 @@ public class Navigation: Identifiable, ObservableObject {
     @Published public var session: Session = Session()
     @Published public var planning: PlanningState = PlanningState(moc: PersistenceController.shared.container.viewContext)
     @Published public var saved: Bool = false
-    @Published public var state: State = State()
+//    @Published public var state: State = State()
     @Published public var history: History = History()
     @Published public var forms: Forms = Forms()
+    @Published public var events: SysEvents = SysEvents()
 
     public func pageTitle() -> String {
         if title!.isEmpty {
@@ -120,6 +121,7 @@ public class Navigation: Identifiable, ObservableObject {
         parent = newParent
     }
 
+    // @TODO: Should attempt to set content with "@ViewBuilder content: () -> Content" instead of wrapping in AnyView
     public func setSidebar(_ newView: AnyView?) -> Void {
         if let view = newView {
             sidebar = view
@@ -149,7 +151,19 @@ public class Navigation: Identifiable, ObservableObject {
             self.saved = false
         }
     }
-    
+
+    public func save(updatedValue: String, callback: ((String) -> Void)? = nil) -> Void {
+        self.saved = true
+
+        if let cb = callback {
+            cb(updatedValue)
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+            self.saved = false
+        }
+    }
+
     // @TODO: this doesn't really work yet
     public func to(_ page: Page) -> Void {
         let hp = self.history.get(page: page)
@@ -170,7 +184,7 @@ public class Navigation: Identifiable, ObservableObject {
         setId()
         inspector = nil
         session = Session()
-        state = State()
+//        state = State()
         history = History()
         forms = Forms()
     }
@@ -190,8 +204,10 @@ extension Navigation {
         var eventStatus: EventIndicatorStatus = .ready
     }
 
+    // @TODO: remove from Navigation
     public struct Forms {
         var note: NoteForm = NoteForm()
+        var jobSelector: JobSelectorForm = JobSelectorForm()
 
         struct NoteForm {
             var template: NoteTemplates.Template? = nil
@@ -199,9 +215,196 @@ extension Navigation {
             var version: NoteVersion? = nil
             var star: Bool = false
         }
+        
+        struct JobSelectorForm {
+            var currentPosition: Panel.Position = .first
+            var first: FetchedResults<Company>? = nil
+            var middle: [Project] = []
+            var last: [Job] = []
+            var selected: [Panel.SelectedValueCoordinates] = []
+            var editor: Editor = Editor()
+
+            struct Editor {
+                var job: Job? = nil
+                var jid: String? = ""
+                var title: String? = ""
+            }
+        }
+
+        public class Field: Identifiable, Equatable {
+            public let id: UUID = UUID()
+            public var type: LayoutType = .text
+            public var body: some View { FieldView(field: self) }
+            public var label: String = ""
+            public var value: Any? = nil
+            public var entity: NSManagedObject? = nil
+            public var keyPath: String
+            public var status: FieldStatus = .standard
+
+            init(type: LayoutType, label: String, value: Any? = nil, entity: NSManagedObject? = nil, keyPath: String) {
+                self.type = type
+                self.label = label
+                self.value = value
+                self.entity = entity
+                self.keyPath = keyPath
+            }
+
+            static public func == (lhs: Navigation.Forms.Field, rhs: Navigation.Forms.Field) -> Bool {
+                return lhs.id == rhs.id
+            }
+
+            public func update(value: Any) -> Void {
+                if let entity = self.entity {
+                    let en = entity as! Job
+
+                    switch self.keyPath {
+                    case "uri": self.value = URL(string: value as? String ?? "")
+                    case "title": self.value = value as? String ?? ""
+                    case "shredable": self.value = value as? Bool ?? false
+                    case "overview": self.value = value as? String ?? ""
+                    case "lastUpdate": self.value = Date()
+                    case "jid": self.value = Double(value as! String) ?? 1.0
+                    case "created": self.value = DateHelper.date(value as! String)
+                    case "colour": self.value = value as? Array<Double>
+                    case "alive": self.value = value as? Bool ?? false
+                    case "id": self.value = en.id
+                    case "project": self.value = en.project // @TODO: should use self.value
+                    default:
+                        print("[debug][Navigation.Forms.Field] Unknown field \(self.keyPath)")
+                    }
+
+                    en.setValue(self.value, forKey: self.keyPath)
+
+                    PersistenceController.shared.save()
+                }
+            }
+
+            public enum LayoutType {
+                case text, dropdown, projectDropdown, date, boolean, colour, editor
+            }
+
+            public enum FieldStatus {
+                case unsaved, saved, standard
+            }
+
+            struct FieldView: View {
+                public var field: Field
+
+                @State private var oldValue: String = ""
+                @State private var newValue: String = ""
+                @State private var status: FieldStatus = .standard
+
+                @EnvironmentObject private var nav: Navigation
+
+                var body: some View {
+                    GridRow(alignment: .center) {
+                        VStack(alignment: .leading) {
+                            Text(field.label)
+                                .padding(5)
+
+                            switch field.type {
+                            case .boolean: FancyToggle(label: self.field.label, value: self.field.value as! Bool, onChange: self.onChangeToggle)
+                            case .colour: FancyColourPicker(initialColour: self.field.value as! [Double], onChange: self.onChangeColour, showLabel: false)
+                            case .editor: FancyTextField(placeholder: self.field.label, lineLimit: 10, fieldStatus: self.field.status, text: $newValue)
+                            case .projectDropdown: ProjectPickerUsing(onChangeLarge: onChangeProjectDropdown, size: .large, defaultSelection: Int((self.field.value as! Project).pid), displayName: $newValue)
+                            default:
+                                FancyTextField(placeholder: self.field.label, fieldStatus: self.field.status, text: $newValue)
+                            }
+                        }
+                    }
+                    .onAppear(perform: onLoad)
+                    .onChange(of: newValue) { _ in
+                        field.status = .unsaved
+
+                        if oldValue != newValue {
+                            field.update(value: newValue)
+                            field.status = .saved
+
+                            self.status = field.status
+                        }
+                    }
+                }
+
+                private func onLoad() -> Void {
+                    if let entity = self.field.entity {
+                        if let value = entity.value(forKey: self.field.keyPath) {
+                            switch self.field.keyPath {
+                            case "uri": self.field.value = (value as? URL)?.absoluteString
+                            case "title": self.field.value = value as? String ?? ""
+                            case "shredable": self.field.value = value as? Bool ?? false
+                            case "overview": self.field.value = value as? String ?? ""
+                            case "lastUpdate": self.field.value = Date().description
+                            case "jid": self.field.value = (value as! Double).string
+                            case "created": self.field.value = value
+                            case "colour": self.field.value = value as? Array<Double>
+                            case "alive": self.field.value = value as? Bool ?? false
+                            default:
+                                print("[debug] Unknown field \(self.field.keyPath)")
+                            }
+
+                            oldValue = self.field.value as? String ?? ""
+                            newValue = self.field.value as? String ?? ""
+                        }
+                    }
+
+                    self.status = field.status
+                }
+                
+                private func onChangeToggle(status: Bool) -> Void {
+                    field.update(value: status)
+                    self.status = field.status
+                }
+
+                private func onChangeProjectDropdown(selected: Project, sender: String?) -> Void {
+                    field.update(value: selected)
+                    self.status = field.status
+                }
+
+                private func onChangeColour(colour: Color) -> Void {
+                    field.update(value: colour.toStored())
+                    self.status = field.status
+                }
+            }
+        }
+    }
+    
+    public struct SysEvents: Equatable {
+        var id: UUID = UUID()
+        var stack: [SysEvent] = []
+
+        mutating func on(_ type: SysEvent.Types, _ callback: @escaping () -> Void) -> Void {
+            stack.insert(SysEvent(type: type, data: nil, callback: callback), at: 0)
+//            print("DERPO nav.events.stack.count=\(stack.count)")
+        }
+        
+        mutating func trigger(_ type: SysEvent.Types) -> Void {
+            if let event = stack.first(where: {$0.type == type}) {
+                event.callback()
+                stack.removeAll(where: {$0 == event})
+            }
+        }
+        
+        public static func == (lhs: Navigation.SysEvents, rhs: Navigation.SysEvents) -> Bool {
+            lhs.id == rhs.id
+        }
+        
+        public struct SysEvent: Equatable {
+            var id: UUID = UUID()
+            var type: SysEvent.Types
+            var data: Any?
+            var callback: () -> Void
+            
+            public static func == (lhs: Navigation.SysEvents.SysEvent, rhs: Navigation.SysEvents.SysEvent) -> Bool {
+                lhs.id == rhs.id
+            }
+            
+            public enum Types {
+                case focusStateChange
+            }
+        }
     }
 
-    public struct State {
+    public struct ApplicationViewState {
         private var phase: Phase = .ready
         private var hierarchy: [Phase] = [.ready, .transitioning, .complete]
 
@@ -259,7 +462,7 @@ extension Navigation {
             HistoryPage(page: .planning, view: AnyView(Planning()), sidebar: AnyView(DefaultPlanningSidebar()), title: "Planning"),
             HistoryPage(page: .today, view: AnyView(Today()), sidebar: AnyView(TodaySidebar()), title: "Today"),
             HistoryPage(page: .companies, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Companies & Projects"),
-            HistoryPage(page: .jobs, view: AnyView(JobDashboard()), sidebar: AnyView(JobDashboardSidebar()), title: "Jobs"),
+            HistoryPage(page: .jobs, view: AnyView(JobDashboardRedux()), sidebar: AnyView(JobDashboardSidebar()), title: "Jobs"),
             HistoryPage(page: .notes, view: AnyView(NoteDashboard()), sidebar: AnyView(NoteDashboardSidebar()), title: "Notes"),
             HistoryPage(page: .tasks, view: AnyView(TaskDashboard()), sidebar: AnyView(TaskDashboardSidebar()), title: "Tasks"),
         ]
@@ -271,6 +474,14 @@ extension Navigation {
             var view: AnyView
             var sidebar: AnyView
             var title: String
+        }
+        
+        public struct Breadcrumb {
+            var id: UUID = UUID()
+            var current: Page
+            var history: [HistoryPage] = []
+            
+            
         }
     }
 }

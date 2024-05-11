@@ -29,7 +29,12 @@ struct CompanyPicker: View {
 
         for company in companies {
             if company.name != nil {
-                items.append(CustomPickerItem(title: company.name!.capitalized, tag: Int(company.pid)))
+                items.append(
+                    CustomPickerItem(
+                        title: company.name!.capitalized,
+                        tag: Int(company.pid)
+                    )
+                )
             }
         }
 

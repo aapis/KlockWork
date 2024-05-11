@@ -13,17 +13,23 @@ struct FancyTextField: View {
     public var placeholder: String
     public var lineLimit: Int = 1
     public var onSubmit: (() -> Void)? = nil
+    public var onChange: ((Any) -> Void)? = nil
     public var transparent: Bool? = false
     public var disabled: Bool? = false
     public var fgColour: Color? = Color.white
     public var bgColour: Color? = Theme.textBackground
     public var showLabel: Bool = false
     public var font: Font = Theme.fontTextField
-    
+    public var fieldStatus: Navigation.Forms.Field.FieldStatus = .standard
+
     @Binding public var text: String
-    
+
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
-    
+
+    @EnvironmentObject private var nav: Navigation
+
+    @FocusState public var hasFocus: Bool
+
     var body: some View {
         HStack(spacing: 5) {
             if showLabel {
@@ -51,12 +57,14 @@ struct FancyTextField: View {
             .disableAutocorrection(!enableAutoCorrection)
             .padding()
             .onSubmit(onSubmit ?? {})
-            .background(transparent! ? Color.clear : bgColour)
+            .onChange(of: text) { newText in self.onChange != nil ? self.onChange!(newText) : nil }
+            .background(fieldStatus == .standard ? (transparent! ? Color.clear : bgColour) : fieldStatus == .unsaved ? Color.yellow : Theme.cGreen) // sorry
             .frame(height: 45)
             .lineLimit(1)
             .disabled(disabled ?? false)
-            .foregroundColor(disabled ?? false ? Color.gray : fgColour)
+            .foregroundColor(disabled ?? false ? Color.gray : fieldStatus == .unsaved ? .black : fgColour)
             .textSelection(.enabled)
+            .focused($hasFocus)
     }
     
     private var oneBigLine: some View {
@@ -66,11 +74,13 @@ struct FancyTextField: View {
             .disableAutocorrection(!enableAutoCorrection)
             .padding()
             .onSubmit(onSubmit ?? {})
-            .background(transparent! ? Color.clear : bgColour)
+            .onChange(of: text) { newText in self.onChange != nil ? self.onChange!(newText) : nil }
+            .background(fieldStatus == .standard ? (transparent! ? Color.clear : bgColour) : fieldStatus == .unsaved ? Color.yellow : Theme.cGreen) // sorry
             .lineLimit(lineLimit...)
             .disabled(disabled ?? false)
-            .foregroundColor(disabled ?? false ? Color.gray : fgColour)
+            .foregroundColor(disabled ?? false ? Color.gray : fieldStatus == .unsaved ? .black : fgColour)
             .textSelection(.enabled)
+            .focused($hasFocus)
     }
     
     private var multiLine: some View {
@@ -80,27 +90,19 @@ struct FancyTextField: View {
             .disableAutocorrection(!enableAutoCorrection)
             .padding()
             .onSubmit(onSubmit ?? {})
-            .background(transparent! ? Theme.textBackground : bgColour)
+            .onChange(of: text) { newText in self.onChange != nil ? self.onChange!(newText) : nil }
+            .background(fieldStatus == .standard ? (transparent! ? Color.clear : bgColour) : fieldStatus == .unsaved ? Color.yellow : Theme.cGreen) // sorry{}
             .scrollContentBackground(.hidden)
             .lineLimit(lineLimit...)
             .disabled(disabled ?? false)
-            .foregroundColor(disabled ?? false ? Color.gray : fgColour)
+            .foregroundColor(disabled ?? false ? Color.gray : fieldStatus == .unsaved ? .black : fgColour)
             .textSelection(.enabled)
-    }
-    
-    private func reset() -> Void {
-        text = ""
+            .focused($hasFocus)
     }
 }
 
-struct FancyTextFieldPreview: PreviewProvider {
-    @State static private var text: String = "Test text"
-    
-    static var previews: some View {
-        VStack {
-            FancyTextField(placeholder: "Small one", lineLimit: 1, onSubmit: {}, text: $text)
-            FancyTextField(placeholder: "Medium one", lineLimit: 9, onSubmit: {}, text: $text)
-            FancyTextField(placeholder: "Big one", lineLimit: 100, onSubmit: {}, text: $text)
-        }
+extension FancyTextField {
+    private func reset() -> Void {
+        text = ""
     }
 }

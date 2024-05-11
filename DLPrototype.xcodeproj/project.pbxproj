@@ -127,6 +127,8 @@
 		537AEBA1296287B900385787 /* LogRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA0296287B900385787 /* LogRow.swift */; };
 		53814A8B2A95151000A5A015 /* CoreDataPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53814A8A2A95151000A5A015 /* CoreDataPlan.swift */; };
 		53814A8E2A9821C800A5A015 /* DefaultPlanningSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53814A8D2A9821C800A5A015 /* DefaultPlanningSidebar.swift */; };
+		53842B272B4C82B20029AC73 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53842B262B4C82B20029AC73 /* Project.swift */; };
+		53842B2A2B4C9B100029AC73 /* FancyToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53842B292B4C9B100029AC73 /* FancyToggle.swift */; };
 		53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A19297377A7007A2549 /* FancyGenericToolbar.swift */; };
 		53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1C2973897F007A2549 /* ProjectConfig.swift */; };
 		53959A1F29738AAA007A2549 /* FancySubTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1E29738AAA007A2549 /* FancySubTitle.swift */; };
@@ -181,6 +183,9 @@
 		53E918702B43671E00912C6F /* EntityViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E9186F2B43671E00912C6F /* EntityViewMode.swift */; };
 		53E918772B43DB2F00912C6F /* Meeting.md in Resources */ = {isa = PBXBuildFile; fileRef = 53E918762B43DB0D00912C6F /* Meeting.md */; };
 		53E918792B43DD4200912C6F /* List.md in Resources */ = {isa = PBXBuildFile; fileRef = 53E918782B43DCB600912C6F /* List.md */; };
+		53E9187B2B47C9A400912C6F /* ThreePanelGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E9187A2B47C9A400912C6F /* ThreePanelGroup.swift */; };
+		53E9187F2B47C9E300912C6F /* Panel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E9187E2B47C9E300912C6F /* Panel.swift */; };
+		53E918832B4A6D9600912C6F /* SessionInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E918822B4A6D9600912C6F /* SessionInspector.swift */; };
 		53ECD0572971F8F400A09AAB /* CoreDataRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */; };
 		53EDDF9E29634852008D34C7 /* Entry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDF9D29634852008D34C7 /* Entry.swift */; };
 		53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */; };
@@ -346,6 +351,8 @@
 		537AEBA0296287B900385787 /* LogRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRow.swift; sourceTree = "<group>"; };
 		53814A8A2A95151000A5A015 /* CoreDataPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPlan.swift; sourceTree = "<group>"; };
 		53814A8D2A9821C800A5A015 /* DefaultPlanningSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultPlanningSidebar.swift; sourceTree = "<group>"; };
+		53842B262B4C82B20029AC73 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
+		53842B292B4C9B100029AC73 /* FancyToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyToggle.swift; sourceTree = "<group>"; };
 		53959A19297377A7007A2549 /* FancyGenericToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyGenericToolbar.swift; sourceTree = "<group>"; };
 		53959A1C2973897F007A2549 /* ProjectConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfig.swift; sourceTree = "<group>"; };
 		53959A1E29738AAA007A2549 /* FancySubTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancySubTitle.swift; sourceTree = "<group>"; };
@@ -400,6 +407,9 @@
 		53E9186F2B43671E00912C6F /* EntityViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityViewMode.swift; sourceTree = "<group>"; };
 		53E918762B43DB0D00912C6F /* Meeting.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Meeting.md; sourceTree = "<group>"; };
 		53E918782B43DCB600912C6F /* List.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = List.md; sourceTree = "<group>"; };
+		53E9187A2B47C9A400912C6F /* ThreePanelGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreePanelGroup.swift; sourceTree = "<group>"; };
+		53E9187E2B47C9E300912C6F /* Panel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Panel.swift; sourceTree = "<group>"; };
+		53E918822B4A6D9600912C6F /* SessionInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionInspector.swift; sourceTree = "<group>"; };
 		53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataRecords.swift; sourceTree = "<group>"; };
 		53EDDF9D29634852008D34C7 /* Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entry.swift; sourceTree = "<group>"; };
 		53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPickerItem.swift; sourceTree = "<group>"; };
@@ -491,6 +501,7 @@
 			children = (
 				5331FCB22A9E6ECE005CDE0E /* Plan.swift */,
 				531EB6E72A9FDA5A00B3059C /* Job.swift */,
+				53842B262B4C82B20029AC73 /* Project.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -873,6 +884,7 @@
 				5334F2732B2B958D0079D2E7 /* FancyJobSredToggle.swift */,
 				53C000972B3A821D00D5EC04 /* FancyHelpText.swift */,
 				53BDA6962B41CA1C00A61BE8 /* FancySimpleButton.swift */,
+				53842B292B4C9B100029AC73 /* FancyToggle.swift */,
 			);
 			path = Fancy;
 			sourceTree = "<group>";
@@ -1057,9 +1069,19 @@
 			path = Templates;
 			sourceTree = "<group>";
 		};
+		53E9187D2B47C9CC00912C6F /* PanelGroup */ = {
+			isa = PBXGroup;
+			children = (
+				53E9187A2B47C9A400912C6F /* ThreePanelGroup.swift */,
+				53E9187E2B47C9E300912C6F /* Panel.swift */,
+			);
+			path = PanelGroup;
+			sourceTree = "<group>";
+		};
 		53EDDF9C29634840008D34C7 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				53E9187D2B47C9CC00912C6F /* PanelGroup */,
 				53790C012A72F15200D3FFD4 /* AppSidebar */,
 				53B0BE822972610C007CB663 /* Fancy */,
 				53EDDF9D29634852008D34C7 /* Entry.swift */,
@@ -1072,6 +1094,7 @@
 				53561F8429F1FC7900D828AD /* ProjectPickerUsing.swift */,
 				53790C042A72F45900D3FFD4 /* EdgeBorder.swift */,
 				5326AE992B27FFB8009F1349 /* CompanyPicker.swift */,
+				53E918822B4A6D9600912C6F /* SessionInspector.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -1253,6 +1276,7 @@
 				5372C02A2A105AA1008CB120 /* FancyChip.swift in Sources */,
 				537628B429665F4E00DE8ECF /* Data.xcdatamodeld in Sources */,
 				53F5896429983FA300843B32 /* ProjectResult.swift in Sources */,
+				53842B272B4C82B20029AC73 /* Project.swift in Sources */,
 				53EDDF9E29634852008D34C7 /* Entry.swift in Sources */,
 				53C000A82B41438C00D5EC04 /* NoteCreateSidebar.swift in Sources */,
 				53E202632A7ECC6500B4DF70 /* TodayInHistoryWidget.swift in Sources */,
@@ -1289,6 +1313,7 @@
 				53EFCE7629637CC6004E45EC /* Color.swift in Sources */,
 				53F5896629983FD100843B32 /* ProjectRow.swift in Sources */,
 				5334F2782B2CC9EE0079D2E7 /* CoreDataPerson.swift in Sources */,
+				53E9187B2B47C9A400912C6F /* ThreePanelGroup.swift in Sources */,
 				53C3418E299968160071B855 /* JobView.swift in Sources */,
 				537885742B44CB3300825B78 /* TaskDashboardByProject.swift in Sources */,
 				535C1AEA29F4913900CD95FD /* ThisYear.swift in Sources */,
@@ -1406,9 +1431,11 @@
 				5334F2742B2B958D0079D2E7 /* FancyJobSredToggle.swift in Sources */,
 				5326AE982B27FA02009F1349 /* DefaultCompanySidebar.swift in Sources */,
 				537AEB9F29627DCC00385787 /* LogTable.swift in Sources */,
+				53E918832B4A6D9600912C6F /* SessionInspector.swift in Sources */,
 				5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */,
 				53E202612A7EC96D00B4DF70 /* DashboardSidebar.swift in Sources */,
 				532A722F299037AC0038C18B /* RecordResult.swift in Sources */,
+				53E9187F2B47C9E300912C6F /* Panel.swift in Sources */,
 				53F589602998335A00843B32 /* NoteRow.swift in Sources */,
 				53FBCC8E2A61D59B00B88539 /* FancyStaticTextField.swift in Sources */,
 				5363B67C2A6BB78900C2FBB8 /* CompanyView.swift in Sources */,
@@ -1417,6 +1444,7 @@
 				53152CD4296A296A00A14E43 /* FancyButton.swift in Sources */,
 				5354C8E62AA03C40001C1779 /* Planning.Group.swift in Sources */,
 				5371BA372A7B412300DEEC21 /* TodaySidebar.swift in Sources */,
+				53842B2A2B4C9B100029AC73 /* FancyToggle.swift in Sources */,
 				5363B6782A6BB2CC00C2FBB8 /* CompanyDashboard.swift in Sources */,
 				53E202562A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift in Sources */,
 				532A722B298F1CB70038C18B /* Results.swift in Sources */,
@@ -1597,7 +1625,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 161;
+				CURRENT_PROJECT_VERSION = 162;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -1629,10 +1657,9 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = DLPrototype/DLPrototype.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 161;
+				CURRENT_PROJECT_VERSION = 162;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -1649,6 +1676,7 @@
 				MARKETING_VERSION = 1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.DLPrototype;
 				PRODUCT_NAME = ClockWork;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;

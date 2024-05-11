@@ -16,6 +16,7 @@ struct FancyPicker: View {
     public var labelText: String?
     public var showLabel: Bool? = false
     public var defaultSelected: Int = 0
+    public var size: PickerSize = .small
     
     @State private var selection: Int = 0
     
@@ -38,8 +39,8 @@ struct FancyPicker: View {
                 ForEach(items) { item in
                     Text(item.title)
                         .tag(item.tag)
+                        // @TODO: this doesn't actually work; see https://stackoverflow.com/a/76154257
                         .disabled(item.disabled)
-                        .font(Theme.font)
                 }
             }
             .background(transparent! ? Color.clear : Theme.toolbarColour)
@@ -51,7 +52,8 @@ struct FancyPicker: View {
                 }
             }
             .labelsHidden()
-            .frame(width: 200)
+            .frame(width: size == .small ? 200 : nil)
+            .padding([.trailing], size == .small ? 0 : 16)
             .font(Theme.font)
             .onChange(of: selection) { _ in
                 onChange(selection, labelText)
@@ -65,8 +67,8 @@ struct FancyPicker: View {
                 ForEach(items) { item in
                     Text(item.title)
                         .tag(item.tag)
+                        // @TODO: this doesn't actually work; see https://stackoverflow.com/a/76154257
                         .disabled(item.disabled)
-                        .font(Theme.font)
                 }
             }
             .background(transparent! ? Color.clear : Theme.toolbarColour)
@@ -77,21 +79,12 @@ struct FancyPicker: View {
                     NSCursor.pop()
                 }
             }
-            .frame(width: 200)
+            .frame(width: size == .small ? 200 : nil)
+            .padding([.trailing], size == .small ? 0 : 16)
             .font(Theme.font)
             .onChange(of: selection) { _ in
                 onChange(selection, labelText)
             }
         }
-    }
-}
-
-struct FancyPickerPreview: PreviewProvider {
-    static var previews: some View {
-        FancyPicker(onChange: change, items: [])
-    }
-    
-    static private func change(num: Int, sender: String?) -> Void {
-        
     }
 }

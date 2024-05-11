@@ -11,6 +11,7 @@ import SwiftUI
 public struct UrlParts {
     public var jid_double: Double? = 0.0
     public var jid_string: String = "0.0"
+    public var isValid: Bool = false
 }
 
 public final class UrlHelper {
@@ -18,6 +19,14 @@ public final class UrlHelper {
 
     public init(url: URL) {
         self.url = url
+    }
+    
+    static public func from(uri: String) -> UrlParts {
+        if let _ = URL(string: uri) {
+            return UrlParts(isValid: true)
+        }
+        
+        return UrlParts(isValid: false)
     }
 
     static public func parts(of url: URL) -> UrlParts {

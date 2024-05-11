@@ -18,6 +18,7 @@ struct Home: View {
 
     @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+    @AppStorage("general.showSessionInspector") public var showSessionInspector: Bool = false
 
     private var buttons: [PageGroup: [SidebarButton]] {
         [
@@ -184,6 +185,10 @@ struct Home: View {
                                 (isDatePickerPresented ? Color.black.opacity(0.7) : .clear)
                             }
                         }
+                    }
+                    
+                    if showSessionInspector {
+                        SessionInspector()
                     }
                 }
             }
