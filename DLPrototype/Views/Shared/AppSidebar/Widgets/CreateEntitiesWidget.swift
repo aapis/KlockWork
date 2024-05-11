@@ -119,7 +119,7 @@ struct CreateEntitiesWidget: View {
                             action: {
                                 if nav.session.gif == .privacy { nav.session.gif = .normal } else { nav.session.gif = .privacy }
                             },
-                            icon: nav.session.gif == .privacy ? "eye.slash" : "eye",
+                            icon: nav.session.gif == .privacy ? "eye" : "eye.slash",
                             showLabel: false,
                             size: .small,
                             type: nav.session.gif == .privacy ? .secondary : .standard
