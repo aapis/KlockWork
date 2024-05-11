@@ -133,7 +133,7 @@ extension FindDashboard {
 
                 if publishedOnly.wrappedValue {
                     req.predicate = NSPredicate(
-                        format: "alive == true && (jid.stringValue BEGINSWITH %@ || jid.stringValue == %@ || title CONTAINS[c] %@ || overview CONTAINS[c] %@)",
+                        format: "alive == true && (jid.stringValue BEGINSWITH %@ || jid.stringValue == %@ || title CONTAINS[c] %@ || overview CONTAINS[c] %@) && project.company.hidden == false",
                         _searchText.wrappedValue,
                         _searchText.wrappedValue,
                         _searchText.wrappedValue,
@@ -141,7 +141,7 @@ extension FindDashboard {
                     )
                 } else {
                     req.predicate = NSPredicate(
-                        format: "(jid.stringValue BEGINSWITH %@ || jid.stringValue == %@ || title CONTAINS[c] %@ || overview CONTAINS[c] %@)",
+                        format: "(jid.stringValue BEGINSWITH %@ || jid.stringValue == %@ || title CONTAINS[c] %@ || overview CONTAINS[c] %@) && project.company.hidden == false",
                         _searchText.wrappedValue,
                         _searchText.wrappedValue,
                         _searchText.wrappedValue,
@@ -224,13 +224,13 @@ extension FindDashboard {
                 
                 if publishedOnly.wrappedValue {
                     req.predicate = NSPredicate(
-                        format: "alive = true && (name BEGINSWITH %@ || pid BEGINSWITH %@)",
+                        format: "alive = true && (name BEGINSWITH %@ || pid BEGINSWITH %@) && company.hidden == false",
                         _searchText.wrappedValue,
                         _searchText.wrappedValue
                     )
                 } else {
                     req.predicate = NSPredicate(
-                        format: "name BEGINSWITH %@ || pid BEGINSWITH %@",
+                        format: "(name BEGINSWITH %@ || pid BEGINSWITH %@) && company.hidden == false",
                         _searchText.wrappedValue,
                         _searchText.wrappedValue
                     )
@@ -321,13 +321,13 @@ extension FindDashboard {
                 
                 if publishedOnly.wrappedValue {
                     req.predicate = NSPredicate(
-                        format: "alive = true && (body CONTAINS[cd] %@ || title CONTAINS[cd] %@)",
+                        format: "alive = true && (body CONTAINS[cd] %@ || title CONTAINS[cd] %@) && mJob.project.company.hidden == false",
                         _searchText.wrappedValue,
                         _searchText.wrappedValue
                     )
                 } else {
                     req.predicate = NSPredicate(
-                        format: "body CONTAINS[cd] %@ || title CONTAINS[cd] %@",
+                        format: "body CONTAINS[cd] %@ || title CONTAINS[cd] %@ && mJob.project.company.hidden == false",
                         _searchText.wrappedValue,
                         _searchText.wrappedValue
                     )
@@ -405,7 +405,7 @@ extension FindDashboard {
                 ]
 
                 req.predicate = NSPredicate(
-                    format: "content CONTAINS[cd] %@",
+                    format: "content CONTAINS[cd] %@ && owner.project.company.hidden == false",
                     _searchText.wrappedValue
                 )
                 
@@ -484,12 +484,12 @@ extension FindDashboard {
                 
                 if publishedOnly.wrappedValue {
                     req.predicate = NSPredicate(
-                        format: "alive = true && message CONTAINS[cd] %@",
+                        format: "alive = true && message CONTAINS[cd] %@ && job.project.company.hidden == false",
                         _searchText.wrappedValue
                     )
                 } else {
                     req.predicate = NSPredicate(
-                        format: "message CONTAINS[cd] %@",
+                        format: "message CONTAINS[cd] %@ && job.project.company.hidden == false",
                         _searchText.wrappedValue
                     )
                 }
@@ -569,12 +569,12 @@ extension FindDashboard {
                 
                 if publishedOnly.wrappedValue {
                     req.predicate = NSPredicate(
-                        format: "alive = true && name CONTAINS[cd] %@",
+                        format: "alive = true && name CONTAINS[cd] %@ && hidden == false",
                         _searchText.wrappedValue
                     )
                 } else {
                     req.predicate = NSPredicate(
-                        format: "name CONTAINS[cd] %@",
+                        format: "name CONTAINS[cd] %@ && hidden == false",
                         _searchText.wrappedValue
                     )
                 }
