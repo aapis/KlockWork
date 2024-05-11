@@ -18,7 +18,7 @@ public class CoreDataTasks {
 
     static private var availableTasks: NSPredicate {
         NSPredicate(
-            format: "completedDate == nil && cancelledDate == nil && owner.project.alive == true"
+            format: "completedDate == nil && cancelledDate == nil && owner.project.alive == true && owner.project.company.hidden == false"
         )
     }
     
@@ -54,8 +54,8 @@ public class CoreDataTasks {
             }
             
             // create compound predicate that includes INCOMPLETE and JOBRELEVANT predicates
-            let jobRelevancyPredicate = NSPredicate(format: "owner.jid IN %@ && owner.alive == true", ownerJobs)
-            
+            let jobRelevancyPredicate = NSPredicate(format: "owner.jid IN %@ && owner.alive == true && owner.project.company.hidden == false", ownerJobs)
+
             filterPredicate = NSCompoundPredicate(
                 type: NSCompoundPredicate.LogicalType.and,
                 subpredicates: [CoreDataTasks.availableTasks, jobRelevancyPredicate]
@@ -117,7 +117,7 @@ public class CoreDataTasks {
 
     public func all() -> [LogTask] {
         let predicate = NSPredicate(
-            format: "created <= %@",
+            format: "created <= %@ && owner.project.company.hidden == false",
             Date() as CVarArg
         )
 
@@ -126,7 +126,7 @@ public class CoreDataTasks {
 
     public func countAll() -> Int {
         let predicate = NSPredicate(
-            format: "created <= %@",
+            format: "created <= %@ && owner.project.company.hidden == false",
             Date() as CVarArg
         )
 
