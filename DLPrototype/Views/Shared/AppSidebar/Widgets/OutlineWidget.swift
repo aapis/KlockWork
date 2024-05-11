@@ -71,7 +71,7 @@ extension OutlineWidget {
         request.sortDescriptors = [
             NSSortDescriptor(keyPath: \Company.name, ascending: true)
         ]
-        request.predicate = NSPredicate(format: "alive = true")
+        request.predicate = NSPredicate(format: "alive = true && hidden = false")
 
         _companies = FetchRequest(fetchRequest: request, animation: .easeInOut)
 

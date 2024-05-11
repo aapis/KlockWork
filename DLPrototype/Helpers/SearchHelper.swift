@@ -62,9 +62,9 @@ public final class SearchHelper {
         }
     }
 
-    public func findInCompanies(_ searchText: Binding<String>) -> [Company] {
+    public func findInCompanies(_ searchText: Binding<String>, allowHidden: Bool = false) -> [Company] {
         return companyBucket.filter {
-            matches(searchText, fields: [$0.name!])
+            matches(searchText, fields: [$0.name!]) && $0.hidden == allowHidden
         }
     }
     

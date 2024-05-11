@@ -16,6 +16,7 @@ struct CompanyView: View {
     @State private var created: Date? = nil
     @State private var updated: Date? = nil
     @State private var colour: Color = .clear
+    @State private var hidden: Bool = false
     @State private var isDeleteAlertShowing: Bool = false
     @State private var tabs: [ToolbarButton] = []
 
@@ -35,6 +36,10 @@ struct CompanyView: View {
 
                 FancyTextField(placeholder: "Legal name", lineLimit: 1, onSubmit: {}, showLabel: true, text: $name)
                 FancyTextField(placeholder: "Abbreviation", lineLimit: 1, onSubmit: {}, showLabel: true, text: $abbreviation)
+                HStack {
+                    FancyLabel(text: "Hidden")
+                    FancyBoundToggle(label: "Hidden", value: $hidden, showLabel: false, onChange: self.onChangeToggle)
+                }
                 FancyColourPicker(initialColour: company.colour ?? Theme.rowColourAsDouble, onChange: {newColour in colour = newColour})
 
                 if let created = created {
@@ -103,9 +108,8 @@ struct CompanyView: View {
         .onChange(of: name) { newName in
             abbreviation = StringHelper.abbreviate(newName)
 
-            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { timer in
+            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { _ in
                 self.save()
-                timer.invalidate()
             }
         }
         .onChange(of: colour) { newColour in
@@ -132,6 +136,7 @@ extension CompanyView {
         abbreviation = company.abbreviation!
         created = company.createdDate!
         colour = Color.fromStored(company.colour ?? Theme.rowColourAsDouble)
+        hidden = company.hidden
 
         if let updatedAt = company.lastUpdate {
             updated = updatedAt
@@ -145,8 +150,10 @@ extension CompanyView {
         company.abbreviation = abbreviation
         company.lastUpdate = Date()
         company.colour = colour.toStored()
+        company.hidden = hidden
 
-        // TODO: possibly unnecessary, but sometimes projects disown themselves and this may fix it
+        // @TODO: possibly unnecessary, but sometimes projects disown themselves and this may fix it
+        // @TODO: many months later, this did not fix it
         var projs: Set<Project> = []
         for p in projects { projs.insert(p)}
         company.projects = NSSet(set: projs)
@@ -210,5 +217,10 @@ extension CompanyView {
                 contents: AnyView(ManagePeople(company: company))
             )
         ]
+    }
+
+    private func onChangeToggle(value: Bool) -> Void {
+        company.hidden = value
+        PersistenceController.shared.save()
     }
 }
