@@ -193,6 +193,7 @@
 		53EFCE7629637CC6004E45EC /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EFCE7529637CC6004E45EC /* Color.swift */; };
 		53EFCE7929637F35004E45EC /* GeneralSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EFCE7829637F35004E45EC /* GeneralSettings.swift */; };
 		53EFCE7B29637F49004E45EC /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EFCE7A29637F49004E45EC /* Settings.swift */; };
+		53F0C70D2BF04625000BFD2E /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F0C70C2BF04625000BFD2E /* CoreSpotlight.framework */; };
 		53F10FE0296E77BE0048D040 /* CoreDataJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F10FDF296E77BE0048D040 /* CoreDataJob.swift */; };
 		53F5895E2998330000843B32 /* NoteResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F5895D2998330000843B32 /* NoteResult.swift */; };
 		53F589602998335A00843B32 /* NoteRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F5895F2998335A00843B32 /* NoteRow.swift */; };
@@ -417,6 +418,7 @@
 		53EFCE7529637CC6004E45EC /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		53EFCE7829637F35004E45EC /* GeneralSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettings.swift; sourceTree = "<group>"; };
 		53EFCE7A29637F49004E45EC /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		53F0C70C2BF04625000BFD2E /* CoreSpotlight.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreSpotlight.framework; path = System/Library/Frameworks/CoreSpotlight.framework; sourceTree = SDKROOT; };
 		53F10FDF296E77BE0048D040 /* CoreDataJob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataJob.swift; sourceTree = "<group>"; };
 		53F5895D2998330000843B32 /* NoteResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteResult.swift; sourceTree = "<group>"; };
 		53F5895F2998335A00843B32 /* NoteRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteRow.swift; sourceTree = "<group>"; };
@@ -434,6 +436,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53F0C70D2BF04625000BFD2E /* CoreSpotlight.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -515,6 +518,7 @@
 				53218D5F24B7F6EC0088ABE9 /* DLPrototypeTests */,
 				53218D6A24B7F6EC0088ABE9 /* DLPrototypeUITests */,
 				53218D4524B7F6EB0088ABE9 /* Products */,
+				53F0C70B2BF04624000BFD2E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1126,6 +1130,14 @@
 				53790C132A758A7200D3FFD4 /* RecordTableColumn.swift */,
 			);
 			path = LogTable;
+			sourceTree = "<group>";
+		};
+		53F0C70B2BF04624000BFD2E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				53F0C70C2BF04625000BFD2E /* CoreSpotlight.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

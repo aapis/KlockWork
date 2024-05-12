@@ -82,25 +82,31 @@ extension GeneralSettings {
     /// - Returns: Void
     private func index() -> Void {
         var searchableItems = [CSSearchableItem]()
-        let appData = [102, 503, 653, 998, 124, 587, 776, 354, 449, 287]
+        let moc = PersistenceController.shared.container.viewContext
+        let data = CoreDataJob(moc: moc).all().filter({$0.title != nil})
 
-        appData.forEach {
+        for job in data {
             let attributeSet = CSSearchableItemAttributeSet(contentType: .content)
-            attributeSet.displayName = $0.description
+            attributeSet.displayName = job.title ?? String(job.idInt)
+            print("[debug][Spotlight] displayName=\(attributeSet.displayName!)")
 
-            let searchableItem = CSSearchableItem(uniqueIdentifier: nil, domainIdentifier: "dlprototype", attributeSet: attributeSet)
+            let searchableItem = CSSearchableItem(uniqueIdentifier: job.id?.uuidString ?? job.jid.string, domainIdentifier: "dlprototype", attributeSet: attributeSet)
             searchableItems.append(searchableItem)
         }
 
         // Submit for indexing
-        CSSearchableIndex.default().indexSearchableItems(searchableItems)
+        CSSearchableIndex.default().indexSearchableItems(searchableItems, completionHandler: spotlightIndexer)
         print("[debug][Spotlight] Indexed data with Spotlight")
-        print("[debug][Spotlight] items=\(searchableItems)")
+        print("[debug][Spotlight] items.count=\(searchableItems.count) items=\(searchableItems)")
     }
 
     private func deindex() {
         CSSearchableIndex.default().deleteSearchableItems(withDomainIdentifiers: ["dlprototype"])
         print("[debug][Spotlight] Removed all data from Spotlight")
+    }
+
+    private func spotlightIndexer(error: (any Error)?) -> Void {
+        print("[debug][Spotlight] ERROR: \(error)")
     }
 }
 
