@@ -14,11 +14,11 @@ struct DLPrototype: App {
     private let persistenceController = PersistenceController.shared
     @StateObject public var updater: ViewUpdater = ViewUpdater()
     @StateObject public var nav: Navigation = Navigation()
-    
+
     @State private var searching: Bool = false
-    
+
     @Environment(\.scenePhase) var scenePhase
-    
+
     var body: some Scene {
         WindowGroup {
             Home()
@@ -37,28 +37,28 @@ struct DLPrototype: App {
         }
         // TODO: still shows the window close/minimize/zoom,
         // see https://stackoverflow.com/questions/70501890/how-can-i-hide-title-bar-in-swiftui-for-macos-app
-//        .windowStyle(.hiddenTitleBar)
+        //        .windowStyle(.hiddenTitleBar)
         .commands {
             MainMenu(moc: persistenceController.container.viewContext, nav: nav)
         }
 
-        #if os(macOS)
+#if os(macOS)
         Settings {
             SettingsView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(nav)
         }
-        
+
         // TODO: temp commented out, too early to include this
         MenuBarExtra("name", systemImage: "clock.fill") {
             let appName = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
             // @TODO: temp commented out until I build a compatible search view
-//            FindDashboard(searching: $searching)
-//                .environmentObject(nav)
-//            Button("Quick Record") {
-//                print("TODO: implement quick record")
-//            }.keyboardShortcut("1")
-            
+            //            FindDashboard(searching: $searching)
+            //                .environmentObject(nav)
+            //            Button("Quick Record") {
+            //                print("TODO: implement quick record")
+            //            }.keyboardShortcut("1")
+
             Button("Search") {
                 nav.setView(AnyView(Dashboard()))
                 nav.setSidebar(AnyView(DashboardSidebar()))
@@ -70,18 +70,18 @@ struct DLPrototype: App {
                 NSApplication.shared.terminate(nil)
             }.keyboardShortcut("q")
         }
-//        .menuBarExtraStyle(.window)
-        #endif
+        //        .menuBarExtraStyle(.window)
+#endif
     }
 
     private func onAppear() -> Void {
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
         let appName = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
-        
+
         // https://github.com/lukakerr/NSWindowStyles
-//        NSApp?.mainWindow?.styleMask.remove(.titled)
-//        NSApp.presentationOptions.remove(.titled)
+        //        NSApp?.mainWindow?.styleMask.remove(.titled)
+        //        NSApp.presentationOptions.remove(.titled)
 
         nav.title = "\(appName ?? "DLPrototype") \(version ?? "0").\(build ?? "0")"
         nav.session.plan = CoreDataPlan(moc: persistenceController.container.viewContext).forDate(nav.session.date).first
@@ -96,6 +96,10 @@ struct DLPrototype: App {
         }
     }
 
+    func application(application: any App, continueUserActivity userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {
+        return true
+    }
+
     private func handleSpotlight(userActivity: NSUserActivity) {
         guard let uniqueIdentifier = userActivity.userInfo?[CSSearchableItemActivityIdentifier] as? String else {
             return
@@ -104,6 +108,6 @@ struct DLPrototype: App {
         // Handle spotlight interaction
         // Maybe deep-link, or something else entirely
         // This totally depends on your app's use-case
-        print("Item tapped: \(uniqueIdentifier)")
+        print("[debug][Spotlight] Item tapped: \(uniqueIdentifier)")
     }
 }

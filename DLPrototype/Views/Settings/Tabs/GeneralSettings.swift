@@ -32,6 +32,7 @@ struct GeneralSettings: View {
 
                 if showExperimentalFeatures {
                     Toggle("Enable SessionInspector panel", isOn: $showSessionInspector)
+                    Toggle("Spotlight (data is NOT shared with Apple)", isOn: $spotlightIndex)
                 }
             }
 
@@ -41,10 +42,11 @@ struct GeneralSettings: View {
                     .help("Both table display and data exports will use the same columns set under 'Today > Display columns'")
             }
 
-            Group {
-                Text("External services")
-                Toggle("Spotlight (data is NOT shared with Apple)", isOn: $spotlightIndex)
-            }
+//          @TODO: uncomment when Spotlight search is fixed
+//            Group {
+//                Text("External services")
+//                Toggle("Spotlight (data is NOT shared with Apple)", isOn: $spotlightIndex)
+//            }
 
             Group {
                 Text("Defaults")
@@ -83,25 +85,34 @@ extension GeneralSettings {
     private func index() -> Void {
         var searchableItems = [CSSearchableItem]()
         let moc = PersistenceController.shared.container.viewContext
-        let data = CoreDataJob(moc: moc).all().filter({$0.title != nil})
+        let data = CoreDataJob(moc: moc).all().filter({$0.title != nil && $0.id != nil})
 
         for job in data {
-            let attributeSet = CSSearchableItemAttributeSet(contentType: .content)
+            let attributeSet = CSSearchableItemAttributeSet(contentType: .plainText)
             attributeSet.displayName = job.title ?? String(job.idInt)
-            print("[debug][Spotlight] displayName=\(attributeSet.displayName!)")
+            attributeSet.contentDescription = job.overview ?? ""
+            attributeSet.title = attributeSet.displayName
+            print("[debug][Spotlight] displayName=\(attributeSet.title!) id=\(job.id_int())")
 
-            let searchableItem = CSSearchableItem(uniqueIdentifier: job.id?.uuidString ?? job.jid.string, domainIdentifier: "dlprototype", attributeSet: attributeSet)
+            let searchableItem = CSSearchableItem(uniqueIdentifier: job.jid.string, domainIdentifier: "jobs", attributeSet: attributeSet)
             searchableItems.append(searchableItem)
         }
 
         // Submit for indexing
-        CSSearchableIndex.default().indexSearchableItems(searchableItems, completionHandler: spotlightIndexer)
-        print("[debug][Spotlight] Indexed data with Spotlight")
-        print("[debug][Spotlight] items.count=\(searchableItems.count) items=\(searchableItems)")
+        let index = CSSearchableIndex(name: "jobs")
+        index.beginBatch()
+        index.indexSearchableItems(searchableItems) { error in
+            if error != nil {
+                print("[debug][Spotlight] Error: \(error?.localizedDescription)")
+            } else {
+                print("[debug][Spotlight] Indexed \(searchableItems.count) items with Spotlight")
+            }
+        }
+//        index.endBatch(withClientState: .)
     }
 
     private func deindex() {
-        CSSearchableIndex.default().deleteSearchableItems(withDomainIdentifiers: ["dlprototype"])
+        CSSearchableIndex.default().deleteSearchableItems(withDomainIdentifiers: ["jobs"])
         print("[debug][Spotlight] Removed all data from Spotlight")
     }
 
