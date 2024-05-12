@@ -107,6 +107,7 @@ extension GeneralSettings {
 
     private func spotlightIndexer(error: (any Error)?) -> Void {
         print("[debug][Spotlight] ERROR: \(error)")
+        print("[debug][Spotlight] Other")
     }
 }
 
