@@ -710,6 +710,6 @@ extension Navigation {
 
 extension Navigation.PlanningState {
     enum GlobalInterfaceFilter {
-        case normal, focus
+        case normal, focus, privacy
     }
 }

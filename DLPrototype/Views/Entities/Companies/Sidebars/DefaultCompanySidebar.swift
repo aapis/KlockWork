@@ -31,7 +31,7 @@ extension DefaultCompanySidebar {
         tabs = [
             ToolbarButton(
                 id: 0,
-                helpText: "Data hierarchy",
+                helpText: "Companies & Projects",
                 icon: "menucard",
                 labelText: "Outline",
                 contents: AnyView(OutlineWidget())

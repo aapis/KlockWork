@@ -39,7 +39,7 @@ extension DashboardSidebar {
             ),
             ToolbarButton(
                 id: 1,
-                helpText: "Data hierarchy",
+                helpText: "Companies & Projects",
                 label: AnyView(
                     HStack {
                         Image(systemName: "menucard").padding(.leading)

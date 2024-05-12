@@ -47,6 +47,7 @@ struct CreateEntitiesWidget: View {
     private var Buttons: some View {
         HStack(alignment: .center, spacing: 10) {
             PlanButton(doesPlanExist: $doesPlanExist)
+            PrivacyModeButton()
             CreateButton(active: $isCreateStackShowing)
             FindButton(active: $isSearchStackShowing)
                 .disabled(nav.parent == .dashboard)
@@ -91,15 +92,46 @@ struct CreateEntitiesWidget: View {
                         }
                     }
                     .mask(Circle())
-                    if !doesPlanExist && nav.session.gif == .normal {
+                    if !doesPlanExist {
                         Image(systemName: "questionmark.circle.fill")
                             .position(x: 38, y: 38)
                     }
                 }
                 .frame(width: 46, height: 46)
 
-                Text(nav.session.gif == .focus ? "Active" : "Off")
+                Text(nav.session.gif == .focus ? "On" : "Off")
                     .opacity(nav.session.gif == .focus ? 1 : 0.4)
+            }
+        }
+    }
+
+    struct PrivacyModeButton: View {
+        @EnvironmentObject public var nav: Navigation
+
+        var body: some View {
+            VStack(alignment: .center) {
+                ZStack {
+                    ZStack {
+                        Theme.base.opacity(0.5)
+
+                        FancyButtonv2(
+                            text: "Privacy mode",
+                            action: {
+                                if nav.session.gif == .privacy { nav.session.gif = .normal } else { nav.session.gif = .privacy }
+                            },
+                            icon: nav.session.gif == .privacy ? "eye" : "eye.slash",
+                            showLabel: false,
+                            size: .small,
+                            type: nav.session.gif == .privacy ? .secondary : .standard
+                        )
+                        .mask(Circle())
+                    }
+                    .mask(Circle())
+                }
+                .frame(width: 46, height: 46)
+
+                Text(nav.session.gif == .privacy ? "On" : "Off")
+                    .opacity(nav.session.gif == .privacy ? 1 : 0.4)
             }
         }
     }
