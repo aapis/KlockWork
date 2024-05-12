@@ -85,7 +85,7 @@ extension GeneralSettings {
     private func index() -> Void {
         var searchableItems = [CSSearchableItem]()
         let moc = PersistenceController.shared.container.viewContext
-        let data = CoreDataJob(moc: moc).all().filter({$0.title != nil && $0.id != nil})
+        let data = CoreDataJob(moc: moc).all(fetchLimit: 20).filter({$0.title != nil && $0.id != nil})
 
         for job in data {
             let attributeSet = CSSearchableItemAttributeSet(contentType: .plainText)
