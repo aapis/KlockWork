@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import CoreSpotlight
 
 @main
 struct DLPrototype: App {
@@ -26,6 +27,7 @@ struct DLPrototype: App {
                 .environmentObject(nav)
                 .onAppear(perform: onAppear)
                 .defaultAppStorage(.standard)
+                .onContinueUserActivity(CSSearchableItemActionType, perform: handleSpotlight)
                 .onChange(of: scenePhase) { phase in
                     if phase == .background || phase == .inactive {
                         // @TODO: serialize/deserialize previous session data here
@@ -92,5 +94,16 @@ struct DLPrototype: App {
             nav.planning.companies = plan.companies as! Set<Company>
             nav.planning.id = plan.id!
         }
+    }
+
+    private func handleSpotlight(userActivity: NSUserActivity) {
+        guard let uniqueIdentifier = userActivity.userInfo?[CSSearchableItemActivityIdentifier] as? String else {
+            return
+        }
+
+        // Handle spotlight interaction
+        // Maybe deep-link, or something else entirely
+        // This totally depends on your app's use-case
+        print("Item tapped: \(uniqueIdentifier)")
     }
 }

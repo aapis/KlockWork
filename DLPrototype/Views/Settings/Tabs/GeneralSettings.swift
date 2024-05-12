@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import CoreSpotlight
 
 struct GeneralSettings: View {
     @AppStorage("tigerStriped") private var tigerStriped: Bool = false
@@ -16,6 +17,7 @@ struct GeneralSettings: View {
     @AppStorage("general.syncColumns") public var syncColumns: Bool = false
     @AppStorage("general.defaultCompany") public var defaultCompany: Int = 0
     @AppStorage("general.showSessionInspector") public var showSessionInspector: Bool = false
+    @AppStorage("general.spotlightIndex") public var spotlightIndex: Bool = false
 
     var body: some View {
         Form {
@@ -40,12 +42,24 @@ struct GeneralSettings: View {
             }
 
             Group {
+                Text("External services")
+                Toggle("Spotlight (data is NOT shared with Apple)", isOn: $spotlightIndex)
+            }
+
+            Group {
                 Text("Defaults")
                 CompanyPicker(onChange: self.companyPickerCallback, selected: defaultCompany)
                     .padding([.leading], 10)
             }
         }
         .padding(20)
+        .onChange(of: spotlightIndex) { shouldIndex in
+            if shouldIndex {
+                self.index()
+            } else {
+                self.deindex()
+            }
+        }
     }
 }
 
@@ -62,6 +76,31 @@ extension GeneralSettings {
         if let company = CoreDataCompanies(moc: moc).byPid(cid) {
             company.isDefault = true
         }
+    }
+
+    /// Perform Spotlight index
+    /// - Returns: Void
+    private func index() -> Void {
+        var searchableItems = [CSSearchableItem]()
+        let appData = [102, 503, 653, 998, 124, 587, 776, 354, 449, 287]
+
+        appData.forEach {
+            let attributeSet = CSSearchableItemAttributeSet(contentType: .content)
+            attributeSet.displayName = $0.description
+
+            let searchableItem = CSSearchableItem(uniqueIdentifier: nil, domainIdentifier: "dlprototype", attributeSet: attributeSet)
+            searchableItems.append(searchableItem)
+        }
+
+        // Submit for indexing
+        CSSearchableIndex.default().indexSearchableItems(searchableItems)
+        print("[debug][Spotlight] Indexed data with Spotlight")
+        print("[debug][Spotlight] items=\(searchableItems)")
+    }
+
+    private func deindex() {
+        CSSearchableIndex.default().deleteSearchableItems(withDomainIdentifiers: ["dlprototype"])
+        print("[debug][Spotlight] Removed all data from Spotlight")
     }
 }
 
