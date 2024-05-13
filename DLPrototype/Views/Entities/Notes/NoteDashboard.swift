@@ -45,15 +45,15 @@ struct NoteDashboard: View {
         request.sortDescriptors = sharedDescriptors
         
         if self.defaultSelectedJob != nil {
-            let byJobPredicate = NSPredicate(format: "ANY mJob.jid = %f", self.defaultSelectedJob!.jid)
+            let byJobPredicate = NSPredicate(format: "ANY mJob.jid = %f && mJob.project.company.hidden == false", self.defaultSelectedJob!.jid)
             let predicates = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: [byJobPredicate])
             request.predicate = predicates
         } else if self.project != nil {
-            let byJobPredicate = NSPredicate(format: "ANY mJob.project = %@", self.project!)
+            let byJobPredicate = NSPredicate(format: "ANY mJob.project = %@ && mJob.project.company.hidden == false", self.project!)
             let predicates = NSCompoundPredicate(type: NSCompoundPredicate.LogicalType.and, subpredicates: [byJobPredicate])
             request.predicate = predicates
         } else {
-            request.predicate = NSPredicate(format: "alive = true")
+            request.predicate = NSPredicate(format: "alive = true && mJob.project.company.hidden == false")
         }
         
         _notes = FetchRequest(fetchRequest: request, animation: .easeInOut)
