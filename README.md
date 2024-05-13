@@ -1,4 +1,4 @@
-#  ClockWork (formerly DLPrototype)
+#  KlockWork (formerly DLPrototype)
 
 The productivity app for ADHD people. Well that's the goal, anyways.
 
