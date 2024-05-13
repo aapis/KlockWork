@@ -138,7 +138,7 @@ struct CompanyPanel: View {
                                     ForEach(firstColData) { company in
                                         Panel.Row(
                                             config: Panel.RowConfiguration(
-                                                text: company.name!.capitalized,
+                                                text: company.name?.capitalized ?? "_COMPANY_NAME",
                                                 action: {setMiddlePanel(data: company.projects!.allObjects)},
                                                 entity: company,
                                                 position: position,
