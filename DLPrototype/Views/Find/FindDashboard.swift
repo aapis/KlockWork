@@ -43,7 +43,7 @@ struct FindDashboard: View {
                     SearchBar(
                         text: $activeSearchText,
                         disabled: false,
-                        placeholder: location == .content ? "Search \(counts.0) records, \(counts.1) jobs, \(counts.2) tasks and \(counts.3) projects" : "Search for anything",
+                        placeholder: location == .content ? "Search \(counts.0) records, \(counts.1) jobs, and \(counts.2) tasks in \(counts.3) projects" : "Search for anything",
                         onSubmit: onSubmit,
                         onReset: onReset
                     )
