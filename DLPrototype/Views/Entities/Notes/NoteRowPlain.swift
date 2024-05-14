@@ -13,6 +13,8 @@ struct NoteRowPlain: View {
     public var moc: NSManagedObjectContext
     public var icon: String = "arrow.right"
 
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
+
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {
@@ -34,6 +36,15 @@ struct NoteRowPlain: View {
                         pageType: .notes,
                         sidebar: AnyView(NoteCreateSidebar(note: note))
                     )
+                    .contextMenu {
+                        Button(action: {
+                            isSearching = true
+                            nav.setInspector(AnyView(Inspector(entity: note)))
+                            nav.session.search.text = note.title
+                        }, label: {
+                            Text("Inspect")
+                        })
+                    }
                 }
                 Spacer()
             }
