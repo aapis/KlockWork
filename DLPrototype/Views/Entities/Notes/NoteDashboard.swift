@@ -116,7 +116,13 @@ struct NoteDashboard: View {
                         placeholder: notes.count > 1 ? "Search \(notes.count) notes" : "Search 1 note"
                     )
 
-                    recentNotes
+                    ScrollView(showsIndicators: false) {
+                        LazyVGrid(columns: columns, alignment: .leading) {
+                            ForEach(filter(notes)) { note in
+                                NoteBlock(note: note)
+                            }
+                        }
+                    }
                 }
 
                 Spacer()
@@ -124,68 +130,6 @@ struct NoteDashboard: View {
             .padding()
         }
         .background(Theme.toolbarColour)
-    }
-
-    @ViewBuilder private var recentNotes: some View {
-        if notes.count > 0 {
-            ScrollView(showsIndicators: false) {
-                LazyVGrid(columns: columns, alignment: .leading) {
-                    ForEach(filter(notes)) { note in
-                        NoteBlock(note: note)
-                            .environmentObject(nav)
-                            .environmentObject(jm)
-                            .environmentObject(updater)
-                    }
-                }
-            }
-        } else {
-            Text("No notes for this query")
-        }
-    }
-
-    // TODO: keep this, but make it optional
-    @ViewBuilder
-    var allTable: some View {
-        Grid(horizontalSpacing: 1, verticalSpacing: 1) {
-            HStack(spacing: 0) {
-                GridRow {
-                    Group {
-                        ZStack(alignment: .leading) {
-                            Theme.headerColour
-                            Text("Name")
-                                .padding()
-                        }
-                    }
-                    Group {
-                        ZStack {
-                            Theme.headerColour
-                            Text("Versions")
-                                .padding()
-                        }
-                    }
-                    .frame(width: 100)
-                }
-            }
-            .frame(height: 46)
-            
-            allRows
-        }
-        .font(Theme.font)
-    }
-    
-    @ViewBuilder
-    var allRows: some View {
-        ScrollView(showsIndicators: false) {
-            if notes.count > 0 {
-                VStack(alignment: .leading, spacing: 1) {
-                    ForEach(filter(notes)) { note in
-                        NoteRow(note: note)
-                    }
-                }
-            } else {
-                Text("No notes for this query")
-            }
-        }
     }
 }
 
