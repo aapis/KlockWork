@@ -174,6 +174,11 @@ struct FindDashboard: View {
                 onReset()
             }
         }
+        .onChange(of: nav.session.search.text) { searchQuery in
+            if let sq = searchQuery {
+                activeSearchText = sq
+            }
+        }
         .onChange(of: nav.session.search.inspectingEntity) { entity in
             if location == .sidebar {
                 if entity != nil {
@@ -193,7 +198,13 @@ extension FindDashboard {
         } else {
             searching = false
         }
-        
+
+        if nav.session.search.inspectingEntity != nil {
+            if let stext = nav.session.search.text {
+                activeSearchText = stext
+            }
+        }
+
         // Search appearing in other views should only provide suggestions due to lack of visual space
         if location == .content {
             if searching {
@@ -232,10 +243,11 @@ extension FindDashboard {
                 CoreDataTasks(moc: moc).countAll(),
                 CoreDataProjects(moc: moc).countAll()
             )
+            showingTypes = true
         }
 
-        if location == .content {
-            showingTypes = true
+        if nav.session.search.text != nil {
+            activeSearchText = nav.session.search.text!
         }
     }
     

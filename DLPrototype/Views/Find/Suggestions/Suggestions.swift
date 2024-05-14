@@ -21,12 +21,14 @@ extension FindDashboard {
         @Binding public var showPeople: Bool
         public var location: WidgetLocation
 
+        @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
+
         @Environment(\.managedObjectContext) var moc
         @EnvironmentObject public var nav: Navigation
 
         var body: some View {
             VStack {
-                if searchText.count >= 2 {
+                if searchText.count >= 2 || isSearching {
                     ScrollView(showsIndicators: false) {
                         VStack {
                             HStack {

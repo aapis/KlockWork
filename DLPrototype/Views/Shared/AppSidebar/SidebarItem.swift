@@ -79,9 +79,13 @@ struct SidebarItem: View, Identifiable {
     public var showBorder: Bool = true
     public var showButton: Bool = true
 
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
+
     @State private var highlighted: Bool = false
     @State private var altIcon: String?
-    
+
+    @EnvironmentObject public var nav: Navigation
+
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             if orientation == .left {
@@ -98,6 +102,13 @@ struct SidebarItem: View, Identifiable {
             Button("Copy \(data)") {
                 ClipboardHelper.copy(data)
             }
+            Divider()
+            Button(action: {
+                isSearching = true
+                nav.session.search.text = data
+            }, label: {
+                Text("Inspect")
+            })
         }
     }
 

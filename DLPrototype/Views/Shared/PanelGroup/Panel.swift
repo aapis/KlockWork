@@ -49,11 +49,12 @@ public struct Panel {
                         }
                         Text(config.text)
                         Spacer()
-                        Image(systemName: config.position == .last ? "hammer" : "arrow.right")
+                        Image(systemName: "arrow.right")
+                            .opacity(config.position == .last ? 0 : 1)
                     }
                     .padding(10)
-                    .background(nav.forms.jobSelector.selected.contains(where: {$0.item == config.entity}) ? .orange : .clear)
-                    .foregroundStyle(nav.forms.jobSelector.selected.contains(where: {$0.item == config.entity}) ? .black : .white)
+                    .background(nav.forms.tp.selected.contains(where: {$0.item == config.entity}) ? .orange : .clear)
+                    .foregroundStyle(nav.forms.tp.selected.contains(where: {$0.item == config.entity}) ? .black : .white)
                 ),
                 size: .link,
                 type: .clear
@@ -74,7 +75,7 @@ extension Panel.Row {
     /// Changes which entity is highlighted in each column
     /// - Returns: Void
     private func highlightPanelEntity(_ selected: Panel.SelectedValueCoordinates) -> Void {
-        var items = nav.forms.jobSelector.selected
+        var items = nav.forms.tp.selected
         if items.isEmpty {
             items.append(selected)
         } else {
@@ -89,13 +90,15 @@ extension Panel.Row {
             }
         }
 
-        nav.forms.jobSelector.selected = items
+        nav.forms.tp.selected = items
     }
 }
 
 struct CompanyPanel: View {
     public var position: Panel.Position
-    
+
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
+
     @State private var showSearch: Bool = false
     @State private var searchText: String = ""
 
@@ -129,7 +132,7 @@ struct CompanyPanel: View {
                 SearchBar(text: $searchText, onSubmit: search)
             }
 
-            if let firstColData = nav.forms.jobSelector.first {
+            if let firstColData = nav.forms.tp.first {
                 if position == .first {
                     VStack(alignment: .leading, spacing: 1) {
                         if !firstColData.isEmpty {
@@ -146,6 +149,18 @@ struct CompanyPanel: View {
                                                 specialIcon: "building.2"
                                             )
                                         )
+                                        .contextMenu {
+                                            Button(action: {
+                                                isSearching = true
+                                                nav.setInspector(AnyView(Inspector(entity: company)))
+
+                                                if let name = company.name {
+                                                    nav.session.search.text = name
+                                                }
+                                            }, label: {
+                                                Text("Inspect")
+                                            })
+                                        }
                                     }
                                 }
                             }
@@ -157,10 +172,10 @@ struct CompanyPanel: View {
                     }
                 } else if position == .middle {
                     VStack(alignment: .leading, spacing: 1) {
-                        if !nav.forms.jobSelector.middle.isEmpty {
+                        if !nav.forms.tp.middle.isEmpty {
                             ScrollView {
                                 VStack(alignment: .leading, spacing: 1) {
-                                    ForEach(nav.forms.jobSelector.middle) { project in
+                                    ForEach(nav.forms.tp.middle) { project in
                                         Panel.Row(
                                             config: Panel.RowConfiguration(
                                                 text: project.name!.capitalized,
@@ -180,10 +195,11 @@ struct CompanyPanel: View {
                     }
                 } else if position == .last {
                     VStack(alignment: .leading, spacing: 1) {
-                        if !nav.forms.jobSelector.last.isEmpty {
+                        if !nav.forms.tp.last.isEmpty {
                             ScrollView {
                                 VStack(alignment: .leading, spacing: 1) {
-                                    ForEach(nav.forms.jobSelector.last) { job in
+                                    ForEach(nav.forms.tp.last, id: \.objectID) { job in
+                                        let job = job as! Job
                                         Panel.Row(
                                             config: Panel.RowConfiguration(
                                                 text: job.title?.capitalized ?? job.jid.string,
@@ -211,27 +227,27 @@ struct CompanyPanel: View {
 
 extension CompanyPanel {
     private func setMiddlePanel(data: [Any]) -> Void {
-        nav.forms.jobSelector.currentPosition = position
-        nav.forms.jobSelector.middle = (data as! [Project]).sorted(by: {$0.name! < $1.name!})
-        nav.forms.jobSelector.last = []
+        nav.forms.tp.currentPosition = position
+        nav.forms.tp.middle = (data as! [Project]).sorted(by: {$0.name! < $1.name!})
+        nav.forms.tp.last = []
         nav.session.job = nil
     }
     
     private func setLastPanel(data: [Any]) -> Void {
-        nav.forms.jobSelector.currentPosition = position
-        nav.forms.jobSelector.last = (data as! [Job]).sorted(by: {$0.jid < $1.jid})
+        nav.forms.tp.currentPosition = position
+        nav.forms.tp.last = (data as! [Job]).sorted(by: {$0.jid < $1.jid})
     }
     
     private func closePanel() -> Void {
         if position == .first {
-            nav.forms.jobSelector.middle = []
-            nav.forms.jobSelector.last = []
-            nav.forms.jobSelector.selected = []
+            nav.forms.tp.middle = []
+            nav.forms.tp.last = []
+            nav.forms.tp.selected = []
         } else if position == .middle {
-            nav.forms.jobSelector.middle = []
-            nav.forms.jobSelector.last = []
+            nav.forms.tp.middle = []
+            nav.forms.tp.last = []
         } else if position == .last {
-            nav.forms.jobSelector.last = []
+            nav.forms.tp.last = []
         }
         
         nav.session.job = nil
@@ -245,7 +261,9 @@ extension CompanyPanel {
 
 struct ProjectPanel: View {
     public var position: Panel.Position
-    
+
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
+
     @State private var showSearch: Bool = false
     @State private var searchText: String = ""
 
@@ -265,8 +283,8 @@ struct ProjectPanel: View {
 //                    showIcon: true,
 //                    type: .clear
 //                )
-//                .disabled(nav.forms.jobSelector.middle.isEmpty)
-//                .opacity(nav.forms.jobSelector.middle.isEmpty ? 0.4 : 1)
+//                .disabled(nav.forms.tp.middle.isEmpty)
+//                .opacity(nav.forms.tp.middle.isEmpty ? 0.4 : 1)
                 FancySimpleButton(
                     text: "Close",
                     action: closePanel,
@@ -274,8 +292,8 @@ struct ProjectPanel: View {
                     showLabel: false,
                     showIcon: true
                 )
-                .disabled(nav.forms.jobSelector.middle.isEmpty)
-                .opacity(nav.forms.jobSelector.middle.isEmpty ? 0.4 : 1)
+                .disabled(nav.forms.tp.middle.isEmpty || nav.forms.tp.middle.isEmpty)
+                .opacity(nav.forms.tp.middle.isEmpty || nav.forms.tp.middle.isEmpty ? 0.4 : 1)
             }
             .padding(10)
             
@@ -283,20 +301,32 @@ struct ProjectPanel: View {
                 SearchBar(text: $searchText)
             }
 
-            if let _ = nav.forms.jobSelector.first {
+            if let _ = nav.forms.tp.first {
                 VStack(alignment: .leading, spacing: 1) {
-                    if !nav.forms.jobSelector.middle.isEmpty {
+                    if !nav.forms.tp.middle.isEmpty {
                         ScrollView {
                             VStack(alignment: .leading, spacing: 1) {
-                                ForEach(nav.forms.jobSelector.middle) { project in
+                                ForEach(nav.forms.tp.middle) { project in
                                     Panel.Row(
                                         config: Panel.RowConfiguration(
                                             text: project.name!,
-                                            action: {setLastPanel(data: project.jobs!.allObjects)},
+                                            action: {setLastPanel(project: project)},
                                             entity: project,
                                             position: position
                                         )
                                     )
+                                    .contextMenu {
+                                        Button(action: {
+                                            isSearching = true
+                                            nav.setInspector(AnyView(Inspector(entity: project)))
+
+                                            if let name = project.name {
+                                                nav.session.search.text = name
+                                            }
+                                        }, label: {
+                                            Text("Inspect")
+                                        })
+                                    }
                                 }
                             }
                         }
@@ -308,28 +338,41 @@ struct ProjectPanel: View {
                 }
             }
         }
-        .background(nav.forms.jobSelector.middle.isEmpty ? .black.opacity(0.1) : Theme.rowColour)
-        .foregroundStyle(nav.forms.jobSelector.middle.isEmpty ? .white.opacity(0.4) : .white)
+        .background(nav.forms.tp.middle.isEmpty || nav.forms.tp.middle.isEmpty ? .black.opacity(0.1) : Theme.rowColour)
+        .foregroundStyle(nav.forms.tp.middle.isEmpty || nav.forms.tp.middle.isEmpty ? .white.opacity(0.4) : .white)
         .frame(height: 300)
     }
 }
 
 extension ProjectPanel {
-    private func setLastPanel(data: [Any]) -> Void {
-        nav.forms.jobSelector.currentPosition = position
-        nav.forms.jobSelector.last = (data as! [Job]).sorted(by: {$0.jid < $1.jid})
+    private func setLastPanel(project: Project) -> Void {
+        let jobs = project.jobs!.allObjects as! [Job]
+
+        if nav.parent == .jobs {
+            nav.forms.tp.currentPosition = position
+            nav.forms.tp.last = jobs.sorted(by: {$0.jid < $1.jid})
+        } else if nav.parent == .notes {
+            var notes: [Note] = []
+
+            for job in jobs {
+                notes += job.mNotes?.allObjects as! [Note]
+            }
+
+            nav.forms.tp.currentPosition = position
+            nav.forms.tp.last = notes.sorted(by: {$0.title?.count ?? 0 < $1.title?.count ?? 0})
+        }
     }
 
     private func closePanel() -> Void {
         if position == .first {
-            nav.forms.jobSelector.middle = []
-            nav.forms.jobSelector.last = []
-            nav.forms.jobSelector.selected = []
+            nav.forms.tp.middle = []
+            nav.forms.tp.last = []
+            nav.forms.tp.selected = []
         } else if position == .middle {
-            nav.forms.jobSelector.middle = []
-            nav.forms.jobSelector.last = []
+            nav.forms.tp.middle = []
+            nav.forms.tp.last = []
         } else if position == .last {
-            nav.forms.jobSelector.last = []
+            nav.forms.tp.last = []
         }
         
         nav.session.job = nil
@@ -339,7 +382,9 @@ extension ProjectPanel {
 
 public struct JobPanel: View {
     public var position: Panel.Position
-    
+
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
+
     @State private var showSearch: Bool = false
     @State private var searchText: String = ""
 
@@ -359,8 +404,8 @@ public struct JobPanel: View {
 //                    showIcon: true,
 //                    type: .clear
 //                )
-//                .disabled(nav.forms.jobSelector.last.isEmpty)
-//                .opacity(nav.forms.jobSelector.last.isEmpty ? 0.4 : 1)
+//                .disabled(nav.forms.tp.last.isEmpty)
+//                .opacity(nav.forms.tp.last.isEmpty ? 0.4 : 1)
                 FancySimpleButton(
                     text: "Close",
                     action: closePanel,
@@ -368,8 +413,8 @@ public struct JobPanel: View {
                     showLabel: false,
                     showIcon: true
                 )
-                .disabled(nav.forms.jobSelector.last.isEmpty)
-                .opacity(nav.forms.jobSelector.last.isEmpty ? 0.4 : 1)
+                .disabled(nav.forms.tp.last.isEmpty)
+                .opacity(nav.forms.tp.last.isEmpty ? 0.4 : 1)
             }
             .padding(10)
             
@@ -377,12 +422,13 @@ public struct JobPanel: View {
                 SearchBar(text: $searchText)
             }
 
-            if let _ = nav.forms.jobSelector.first {
+            if let _ = nav.forms.tp.first {
                 VStack(alignment: .leading, spacing: 1) {
-                    if !nav.forms.jobSelector.last.isEmpty {
+                    if !nav.forms.tp.last.isEmpty {
                         ScrollView {
                             VStack(alignment: .leading, spacing: 1) {
-                                ForEach(nav.forms.jobSelector.last) { job in
+                                ForEach(nav.forms.tp.last, id: \.objectID) { job in
+                                    let job = job as! Job
                                     Panel.Row(
                                         config: Panel.RowConfiguration(
                                             text: job.title?.capitalized ?? job.jid.string,
@@ -391,19 +437,28 @@ public struct JobPanel: View {
                                             position: position
                                         )
                                     )
+                                    .contextMenu {
+                                        Button(action: {
+                                            isSearching = true
+                                            nav.setInspector(AnyView(Inspector(entity: job)))
+                                            nav.session.search.text = job.jid.string
+                                        }, label: {
+                                            Text("Inspect")
+                                        })
+                                    }
                                 }
                             }
                         }
                     } else {
-                        Text("No job selected, or project has no jobs")
+                        Text("No jobs found")
                             .padding(10)
                     }
                     Spacer()
                 }
             }
         }
-        .background(nav.forms.jobSelector.last.isEmpty ? .black.opacity(0.1) : Theme.rowColour)
-        .foregroundStyle(nav.forms.jobSelector.last.isEmpty ? .white.opacity(0.4) : .white)
+        .background(nav.forms.tp.last.isEmpty ? .black.opacity(0.1) : Theme.rowColour)
+        .foregroundStyle(nav.forms.tp.last.isEmpty ? .white.opacity(0.4) : .white)
         .frame(height: 300)
     }
 }
@@ -411,17 +466,126 @@ public struct JobPanel: View {
 extension JobPanel {
     private func closePanel() -> Void {
         if position == .first {
-            nav.forms.jobSelector.middle = []
-            nav.forms.jobSelector.last = []
-            nav.forms.jobSelector.selected = []
+            nav.forms.tp.middle = []
+            nav.forms.tp.last = []
+            nav.forms.tp.selected = []
         } else if position == .middle {
-            nav.forms.jobSelector.middle = []
-            nav.forms.jobSelector.last = []
+            nav.forms.tp.middle = []
+            nav.forms.tp.last = []
         } else if position == .last {
-            nav.forms.jobSelector.last = []
+            nav.forms.tp.last = []
         }
         
         nav.session.job = nil
+        showSearch = false
+    }
+}
+
+public struct NotePanel: View {
+    public var position: Panel.Position
+
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
+
+    @State private var showSearch: Bool = false
+    @State private var searchText: String = ""
+
+    @EnvironmentObject public var nav: Navigation
+
+    public var body: some View {
+        VStack(alignment: .leading, spacing: 1) {
+            HStack(alignment: .center) {
+                Text("Notes").font(.title3)
+                Spacer()
+                // @TODO: uncomment and implement search
+//                FancySimpleButton(
+//                    text: "Search",
+//                    action: {showSearch.toggle()},
+//                    icon: "magnifyingglass",
+//                    showLabel: false,
+//                    showIcon: true,
+//                    type: .clear
+//                )
+//                .disabled(nav.forms.tp.last.isEmpty)
+//                .opacity(nav.forms.tp.last.isEmpty ? 0.4 : 1)
+                FancySimpleButton(
+                    text: "Close",
+                    action: closePanel,
+                    icon: "xmark",
+                    showLabel: false,
+                    showIcon: true
+                )
+                .disabled(nav.forms.tp.last.isEmpty)
+                .opacity(nav.forms.tp.last.isEmpty ? 0.4 : 1)
+            }
+            .padding(10)
+
+            if showSearch {
+                SearchBar(text: $searchText)
+            }
+
+            if let _ = nav.forms.tp.first {
+                VStack(alignment: .leading, spacing: 1) {
+                    if !nav.forms.tp.last.isEmpty {
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 1) {
+                                ForEach(nav.forms.tp.last, id: \.objectID) { note in
+                                    let note = note as! Note
+                                    Panel.Row(
+                                        config: Panel.RowConfiguration(
+                                            text: note.title ?? "_NOTE_TITLE",
+                                            action: {
+                                                nav.view = AnyView(NoteCreate(note: note))
+                                                nav.parent = .notes
+                                                nav.sidebar = AnyView(NoteCreateSidebar(note: note))
+                                                nav.pageId = UUID()
+                                            },
+                                            entity: note,
+                                            position: position
+                                        )
+                                    )
+                                    .contextMenu {
+                                        Button(action: {
+                                            isSearching = true
+                                            nav.setInspector(AnyView(Inspector(entity: note)))
+
+                                            if let name = note.title {
+                                                nav.session.search.text = name
+                                            }
+                                        }, label: {
+                                            Text("Inspect")
+                                        })
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        Text("No notes found")
+                            .padding(10)
+                    }
+                    Spacer()
+                }
+            }
+        }
+        .background(nav.forms.tp.last.isEmpty ? .black.opacity(0.1) : Theme.rowColour)
+        .foregroundStyle(nav.forms.tp.last.isEmpty ? .white.opacity(0.4) : .white)
+        .frame(height: 300)
+    }
+}
+
+extension NotePanel {
+    private func closePanel() -> Void {
+        if position == .first {
+            nav.forms.tp.middle = []
+            nav.forms.tp.last = []
+            nav.forms.tp.selected = []
+        } else if position == .middle {
+            nav.forms.tp.middle = []
+            nav.forms.tp.last = []
+        } else if position == .last {
+            nav.forms.tp.last = []
+        }
+
+//        nav.session.job = nil
         showSearch = false
     }
 }

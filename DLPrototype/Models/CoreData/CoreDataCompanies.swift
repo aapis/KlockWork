@@ -32,6 +32,20 @@ public class CoreDataCompanies: ObservableObject {
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
+    
+    /// Finds all active companies
+    /// - Returns: FetchRequest<Company>
+    static public func fetch() -> FetchRequest<Company> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Company.name?, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<Company> = Company.fetchRequest()
+        fetch.predicate = NSPredicate(format: "alive = true")
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
 
     public func byPid(_ id: Int) -> Company? {
         let predicate = NSPredicate(

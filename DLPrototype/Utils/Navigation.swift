@@ -109,6 +109,8 @@ public class Navigation: Identifiable, ObservableObject {
 //        view = AnyView(WidgetLoading())
 //        state.on(.complete, { _ in
             view = newView
+            forms.tp.clear()
+            setInspector()
 //        })
 //        if state.phase == .complete {
 //            
@@ -207,7 +209,7 @@ extension Navigation {
     // @TODO: remove from Navigation
     public struct Forms {
         var note: NoteForm = NoteForm()
-        var jobSelector: JobSelectorForm = JobSelectorForm()
+        var tp: ThreePanelForm = ThreePanelForm()
 
         struct NoteForm {
             var template: NoteTemplates.Template? = nil
@@ -216,11 +218,11 @@ extension Navigation {
             var star: Bool = false
         }
         
-        struct JobSelectorForm {
+        struct ThreePanelForm {
             var currentPosition: Panel.Position = .first
             var first: FetchedResults<Company>? = nil
             var middle: [Project] = []
-            var last: [Job] = []
+            var last: [NSManagedObject] = []
             var selected: [Panel.SelectedValueCoordinates] = []
             var editor: Editor = Editor()
 
@@ -228,6 +230,13 @@ extension Navigation {
                 var job: Job? = nil
                 var jid: String? = ""
                 var title: String? = ""
+            }
+
+            mutating public func clear() -> Void {
+                self.currentPosition = .first
+                self.middle = []
+                self.last = []
+                self.selected = []
             }
         }
 
@@ -553,14 +562,6 @@ extension Navigation.Session {
         var moc: NSManagedObjectContext
         var hasResults: Bool = false
         var inspectingEntity: NSManagedObject? = nil
-        
-        mutating func inspect(_ obj: NSManagedObject) -> Void {
-            inspectingEntity = obj
-        }
-        
-        mutating func cancel() -> Void {
-            inspectingEntity = nil
-        }
     }
     
     public struct Toolbar: Identifiable {
@@ -578,12 +579,23 @@ extension Navigation.Session.Search {
         
         return SearchLanguage.Results(components: components, moc: moc).find()
     }
-    
+
+    // @TODO: do we need this AND cancel?
     mutating func reset() -> Void {
         components = []
         text = nil
         hasResults = false
         inspectingEntity = nil
+    }
+
+    // @TODO: do we need this AND reset?
+    mutating func cancel() -> Void {
+        inspectingEntity = nil
+        text = nil
+    }
+
+    mutating func inspect(_ obj: NSManagedObject) -> Void {
+        inspectingEntity = obj
     }
 }
 

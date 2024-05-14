@@ -12,7 +12,8 @@ import SwiftUI
 struct ThreePanelGroup: View {
     public var orientation: Panel.Orientation
     public var data: any Collection
-    
+    public var lastColumnType: LastColumnType
+
     private var columns: [GridItem] {
         return Array(repeating: .init(.flexible(minimum: 100), spacing: 1), count: 3)
     }
@@ -30,14 +31,22 @@ struct ThreePanelGroup: View {
                 LazyVGrid(columns: columns, alignment: .leading, spacing: 1) {
                     CompanyPanel(position: .first)
                     ProjectPanel(position: .middle)
-                    JobPanel(position: .last)
+                    if lastColumnType == .jobs {
+                        JobPanel(position: .last)
+                    } else if lastColumnType == .notes {
+                        NotePanel(position: .last)
+                    }
                 }
                 .frame(height: 300)
             } else {
                 LazyHGrid(rows: columns, alignment: .top, spacing: 1) {
                     CompanyPanel(position: .first)
                     ProjectPanel(position: .middle)
-                    JobPanel(position: .last)
+                    if lastColumnType == .jobs {
+                        JobPanel(position: .last)
+                    } else if lastColumnType == .notes {
+                        NotePanel(position: .last)
+                    }
                 }
             }
         }
@@ -45,40 +54,42 @@ struct ThreePanelGroup: View {
         .onChange(of: nav.session.job) { job in onChangeJob(job: job) }
     }
     
-    init(orientation: Panel.Orientation, data: any Collection) {
+    init(orientation: Panel.Orientation, data: any Collection, lastColumnType: LastColumnType) {
         self.orientation = orientation
         self.data = data
+        self.lastColumnType = lastColumnType
     }
 }
 
 extension ThreePanelGroup {
     private func actionOnAppear() -> Void {
         switch self.data {
-        case is FetchedResults<Company>: nav.forms.jobSelector.first = self.data as? FetchedResults<Company>
-        case is FetchedResults<Project>: nav.forms.jobSelector.middle = self.data as! [Project]
-        case is FetchedResults<Job>: nav.forms.jobSelector.last = self.data as! [Job]
-        default: 
-            nav.forms.jobSelector.first = nil
-            nav.forms.jobSelector.middle = []
-            nav.forms.jobSelector.last = []
+        case is FetchedResults<Company>: nav.forms.tp.first = self.data as? FetchedResults<Company>
+        case is FetchedResults<Project>: nav.forms.tp.middle = self.data as! [Project]
+        case is FetchedResults<Job>: nav.forms.tp.last = self.data as! [Job]
+        case is FetchedResults<Note>: nav.forms.tp.last = self.data as! [Note]
+        default:
+            nav.forms.tp.first = nil
+            nav.forms.tp.middle = []
+            nav.forms.tp.last = []
         }
     }
     
     /// Changing the current session job value requires us to change which items are highlighted in each column. This is done by modifying the
-    /// `nav.forms.jobSelector.selected` array
+    /// `nav.forms.tp.selected` array
     /// - Parameter job: A Job object
     /// - Returns: Void
     private func onChangeJob(job: Job?) -> Void {
         if job != nil {
             editorVisible = true
-            nav.forms.jobSelector.selected = []
+            nav.forms.tp.selected = []
 
             if let project = job!.project {
-                nav.forms.jobSelector.last = (project.jobs?.allObjects as! [Job]).sorted(by: {$0.jid < $1.jid})
+                nav.forms.tp.last = (project.jobs?.allObjects as! [Job]).sorted(by: {$0.jid < $1.jid})
                 setSelected(config: Panel.SelectedValueCoordinates(position: .middle, item: project))
 
                 if let company = project.company {
-                    nav.forms.jobSelector.middle = (company.projects?.allObjects as! [Project]).sorted(by: {$0.name! < $1.name!})
+                    nav.forms.tp.middle = (company.projects?.allObjects as! [Project]).sorted(by: {$0.name! < $1.name!})
                     setSelected(config: Panel.SelectedValueCoordinates(position: .first, item: company))
                 }
             }
@@ -91,6 +102,12 @@ extension ThreePanelGroup {
     /// - Parameter config: A key/value pair, with position and item fields
     /// - Returns: Void
     private func setSelected(config: Panel.SelectedValueCoordinates) -> Void {
-        nav.forms.jobSelector.selected.append(config)
+        nav.forms.tp.selected.append(config)
+    }
+}
+
+extension ThreePanelGroup {
+    public enum LastColumnType {
+        case jobs, notes
     }
 }
