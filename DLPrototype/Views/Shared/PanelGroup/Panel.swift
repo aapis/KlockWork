@@ -96,7 +96,9 @@ extension Panel.Row {
 
 struct CompanyPanel: View {
     public var position: Panel.Position
-    
+
+    @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
+
     @State private var showSearch: Bool = false
     @State private var searchText: String = ""
 
@@ -147,6 +149,18 @@ struct CompanyPanel: View {
                                                 specialIcon: "building.2"
                                             )
                                         )
+                                        .contextMenu {
+                                            Button(action: {
+                                                isSearching.toggle() // doesn't work :(((
+                                                if let name = company.name {
+                                                    nav.session.search.text = name
+                                                };
+
+                                                nav.session.search.inspect(company)
+                                            }, label: {
+                                                Text("Inspect")
+                                            })
+                                        }
                                     }
                                 }
                             }

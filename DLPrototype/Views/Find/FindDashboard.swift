@@ -32,6 +32,8 @@ struct FindDashboard: View {
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @EnvironmentObject public var nav: Navigation
 
+    
+
     private var columns: [GridItem] {
         Array(repeating: .init(.flexible(minimum: 100)), count: 2)
     }
@@ -175,6 +177,7 @@ struct FindDashboard: View {
             }
         }
         .onChange(of: nav.session.search.inspectingEntity) { entity in
+
             if location == .sidebar {
                 if entity != nil {
                     nav.setInspector(AnyView(Inspector(entity: entity!)))
@@ -232,10 +235,11 @@ extension FindDashboard {
                 CoreDataTasks(moc: moc).countAll(),
                 CoreDataProjects(moc: moc).countAll()
             )
+            showingTypes = true
         }
 
-        if location == .content {
-            showingTypes = true
+        if nav.session.search.text != nil {
+            activeSearchText = nav.session.search.text!
         }
     }
     

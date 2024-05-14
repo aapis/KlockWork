@@ -172,6 +172,7 @@ struct CreateEntitiesWidget: View {
 
     struct FindButton: View {
         @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
+        @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
 
         @Binding public var active: Bool
         
@@ -184,7 +185,7 @@ struct CreateEntitiesWidget: View {
                         Theme.base.opacity(0.5)
                         FancyButtonv2(
                             text: "Search",
-                            action: {active.toggle() ; isCreateStackShowing = false ; nav.session.search.cancel()},
+                            action: {active.toggle() ; isSearching.toggle() ; isCreateStackShowing = false ; nav.session.search.cancel()},
                             icon: "magnifyingglass",
                             showLabel: false,
                             size: .small,

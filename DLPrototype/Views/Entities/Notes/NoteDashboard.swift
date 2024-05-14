@@ -99,7 +99,7 @@ struct NoteDashboard: View {
                     }
 
                     HStack {
-                        Text("Your notes, last updated first.")
+                        Text("Notes are sorted from most to least recently updated.")
                             .font(.caption)
                         Spacer()
                     }
@@ -146,7 +146,7 @@ extension NoteDashboard {
         @FetchRequest public var companies: FetchedResults<Company>
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 1) {
                 VStack(alignment: .leading, spacing: 1) {
                     HStack {
                         Text("Project Notebooks").font(.title2)
