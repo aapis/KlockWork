@@ -54,6 +54,10 @@ extension FindDashboard {
                 }
             }
             .background(location == .content ? Theme.rowColour : Color.clear)
+            .onChange(of: isSearching) { status in
+                nav.session.search.cancel()
+                nav.setInspector()
+            }
         }
         
         struct SuggestedJobs: View {

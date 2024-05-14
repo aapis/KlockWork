@@ -212,7 +212,7 @@ public class CoreDataCalendarEvent: ObservableObject {
     }
 
     public func getCalendars() -> [EKCalendar] {
-        return store.calendars(for: .event)
+        return store.calendars(for: .event).sorted(by: {$0.title <= $1.title})
     }
 
     public func getCalendarsForPicker() -> [CustomPickerItem] {
