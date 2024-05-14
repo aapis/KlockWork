@@ -1657,14 +1657,15 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 166;
+				CURRENT_PROJECT_VERSION = 167;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = DLPrototype/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = ClockWork.Beta;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				"INFOPLIST_KEY_CFBundleDisplayName[sdk=macosx*]" = KlockWork.Beta;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1673,7 +1674,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.DLPrototype;
-				PRODUCT_NAME = ClockWork.Beta;
+				PRODUCT_NAME = KlockWork.Beta;
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -1691,14 +1692,15 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 166;
+				CURRENT_PROJECT_VERSION = 167;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = DLPrototype/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = ClockWork;
+				INFOPLIST_KEY_CFBundleDisplayName = "";
+				"INFOPLIST_KEY_CFBundleDisplayName[sdk=macosx*]" = KlockWork;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1707,7 +1709,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.DLPrototype;
-				PRODUCT_NAME = ClockWork;
+				PRODUCT_NAME = KlockWork;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = NO;
