@@ -11,7 +11,7 @@ import SwiftUI
 struct SessionInspector: View {
     @EnvironmentObject private var nav: Navigation
     
-    @State private var form: Navigation.Forms.JobSelectorForm? = nil
+    @State private var form: Navigation.Forms.ThreePanelForm? = nil
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -24,8 +24,8 @@ struct SessionInspector: View {
             }
         }
         .padding()
-        .onChange(of: nav.forms.jobSelector.selected) { _ in
-            form = nav.forms.jobSelector
+        .onChange(of: nav.forms.tp.selected) { _ in
+            form = nav.forms.tp
         }
         .frame(width: 500)
     }

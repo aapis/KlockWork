@@ -17,9 +17,11 @@ struct NoteDashboard: View {
 
     @State private var searchText: String = ""
     @State private var selected: Int = 0
+    @State private var showAllNotes: Bool = false
 
     @AppStorage("notes.columns") private var numColumns: Int = 3
-    
+    @AppStorage("notedashboard.listVisible") private var listVisible: Bool = true
+
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
@@ -61,18 +63,61 @@ struct NoteDashboard: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            VStack(alignment: .leading) {
-                HStack {
+            VStack(alignment: .leading, spacing: 1) {
+                HStack(spacing: 10) {
+                    Image(systemName: "note.text")
+                    Text("Notes")
                     Spacer()
+                    FancyButtonv2(
+                        text: "Create",
+                        action: {},
+                        icon: "plus",
+                        showLabel: false,
+                        redirect: AnyView(NoteCreate()),
+                        pageType: .notes,
+                        sidebar: AnyView(NoteCreateSidebar())
+                    )
                 }
-                // TODO: remove!
-                SearchBar(
-                    text: $searchText,
-                    disabled: false,
-                    placeholder: notes.count > 1 ? "Search \(notes.count) notes" : "Search 1 note"
-                )
+                .font(.title2)
+                FancyDivider()
 
-                recentNotes
+                CompanyNotebooks()
+
+                VStack(alignment: .leading, spacing: 1) {
+                    HStack {
+                        Text("Recently updated").font(.title2)
+                        Spacer()
+                        FancySimpleButton(
+                            text: listVisible ? "Close" : "Open",
+                            action: {listVisible.toggle()},
+                            icon: listVisible ? "minus.square.fill" : "plus.square.fill",
+                            showLabel: false,
+                            showIcon: true,
+                            size: .tiny,
+                            type: .clear
+                        )
+                    }
+
+                    HStack {
+                        Text("Your notes, last updated first.")
+                            .font(.caption)
+                        Spacer()
+                    }
+                }
+                .padding(5)
+                .background(.white.opacity(0.2))
+                .foregroundStyle(.white)
+                
+                if listVisible {
+                    // TODO: remove!
+                    SearchBar(
+                        text: $searchText,
+                        disabled: false,
+                        placeholder: notes.count > 1 ? "Search \(notes.count) notes" : "Search 1 note"
+                    )
+
+                    recentNotes
+                }
 
                 Spacer()
             }
@@ -147,5 +192,50 @@ struct NoteDashboard: View {
 extension NoteDashboard {
     private func filter(_ notes: FetchedResults<Note>) -> [Note] {
         return SearchHelper(bucket: notes).findInNotes($searchText)
+    }
+}
+
+extension NoteDashboard {
+    struct CompanyNotebooks: View {
+        @AppStorage("notedashboard.explorerVisible") private var explorerVisible: Bool = true
+
+        @FetchRequest public var companies: FetchedResults<Company>
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: 1) {
+                    HStack {
+                        Text("Project Notebooks").font(.title2)
+                        Spacer()
+                        FancySimpleButton(
+                            text: explorerVisible ? "Close" : "Open",
+                            action: {explorerVisible.toggle()},
+                            icon: explorerVisible ? "minus.square.fill" : "plus.square.fill",
+                            showLabel: false,
+                            showIcon: true,
+                            size: .tiny,
+                            type: .clear
+                        )
+                    }
+
+                    HStack {
+                        Text("Find notes by project.")
+                            .font(.caption)
+                        Spacer()
+                    }
+                }
+                .padding(5)
+                .background(.white.opacity(0.2))
+                .foregroundStyle(.white)
+
+                if explorerVisible {
+                    ThreePanelGroup(orientation: .horizontal, data: companies, lastColumnType: .notes)
+                }
+            }
+        }
+
+        init() {
+            _companies = CoreDataCompanies.fetch()
+        }
     }
 }

@@ -223,6 +223,19 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		537DFF9E2BF2A2C900FC5923 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		530168162A887B0A000AF4FD /* AllJobsPickerWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllJobsPickerWidget.swift; sourceTree = "<group>"; };
 		530318462A11DD13009CA90B /* CoreDataCalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataCalendarEvent.swift; sourceTree = "<group>"; };
@@ -351,6 +364,8 @@
 		537AEB9E29627DCC00385787 /* LogTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTable.swift; sourceTree = "<group>"; };
 		537AEBA0296287B900385787 /* LogRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRow.swift; sourceTree = "<group>"; };
 		537DFF862BF27F0B00FC5923 /* PRIVACY.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PRIVACY.md; sourceTree = "<group>"; };
+		537DFF8C2BF2A2C800FC5923 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		537DFF8E2BF2A2C800FC5923 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		53814A8A2A95151000A5A015 /* CoreDataPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPlan.swift; sourceTree = "<group>"; };
 		53814A8D2A9821C800A5A015 /* DefaultPlanningSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultPlanningSidebar.swift; sourceTree = "<group>"; };
 		53842B262B4C82B20029AC73 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
@@ -1138,6 +1153,8 @@
 			isa = PBXGroup;
 			children = (
 				53F0C70C2BF04625000BFD2E /* CoreSpotlight.framework */,
+				537DFF8C2BF2A2C800FC5923 /* WidgetKit.framework */,
+				537DFF8E2BF2A2C800FC5923 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1152,6 +1169,7 @@
 				53218D4024B7F6EB0088ABE9 /* Sources */,
 				53218D4124B7F6EB0088ABE9 /* Frameworks */,
 				53218D4224B7F6EB0088ABE9 /* Resources */,
+				537DFF9E2BF2A2C900FC5923 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -1210,7 +1228,7 @@
 				KnownAssetTags = (
 					New,
 				);
-				LastSwiftUpdateCheck = 1150;
+				LastSwiftUpdateCheck = 1530;
 				LastUpgradeCheck = 1510;
 				ORGANIZATIONNAME = YegCollective;
 				TargetAttributes = {
@@ -1713,11 +1731,11 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.DLPrototypeTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DLPrototype.app/Contents/MacOS/DLPrototype";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ClockWork.Beta.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ClockWork.Beta";
 			};
 			name = Debug;
 		};
@@ -1736,11 +1754,11 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.DLPrototypeTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DLPrototype.app/Contents/MacOS/DLPrototype";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ClockWork.Beta.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ClockWork.Beta";
 			};
 			name = Release;
 		};

@@ -109,6 +109,7 @@ public class Navigation: Identifiable, ObservableObject {
 //        view = AnyView(WidgetLoading())
 //        state.on(.complete, { _ in
             view = newView
+            forms.tp.clear()
 //        })
 //        if state.phase == .complete {
 //            
@@ -207,7 +208,7 @@ extension Navigation {
     // @TODO: remove from Navigation
     public struct Forms {
         var note: NoteForm = NoteForm()
-        var jobSelector: JobSelectorForm = JobSelectorForm()
+        var tp: ThreePanelForm = ThreePanelForm()
 
         struct NoteForm {
             var template: NoteTemplates.Template? = nil
@@ -216,11 +217,11 @@ extension Navigation {
             var star: Bool = false
         }
         
-        struct JobSelectorForm {
+        struct ThreePanelForm {
             var currentPosition: Panel.Position = .first
             var first: FetchedResults<Company>? = nil
             var middle: [Project] = []
-            var last: [Job] = []
+            var last: [NSManagedObject] = []
             var selected: [Panel.SelectedValueCoordinates] = []
             var editor: Editor = Editor()
 
@@ -228,6 +229,13 @@ extension Navigation {
                 var job: Job? = nil
                 var jid: String? = ""
                 var title: String? = ""
+            }
+
+            mutating public func clear() -> Void {
+                self.currentPosition = .first
+                self.middle = []
+                self.last = []
+                self.selected = []
             }
         }
 

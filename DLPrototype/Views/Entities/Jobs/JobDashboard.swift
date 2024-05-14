@@ -111,7 +111,7 @@ struct JobDashboardRedux: View {
                             newJob.overview = "Edit this description"
                             newJob.title = "Sample job title"
                             nav.session.job = newJob
-                            nav.forms.jobSelector.editor.job = newJob
+                            nav.forms.tp.editor.job = newJob
                         },
                         icon: "plus",
                         showLabel: false
@@ -166,7 +166,7 @@ struct JobExplorer: View {
             .foregroundStyle(.white)
             
             if explorerVisible {
-                ThreePanelGroup(orientation: .horizontal, data: companies)
+                ThreePanelGroup(orientation: .horizontal, data: companies, lastColumnType: .jobs)
             }
             
             VStack(alignment: .leading, spacing: 1) {
