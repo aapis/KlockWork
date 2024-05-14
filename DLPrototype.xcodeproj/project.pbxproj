@@ -252,7 +252,7 @@
 		531B8DF12A847BE8005D911B /* NoteGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteGroup.swift; sourceTree = "<group>"; };
 		531E2F742A140533009CA230 /* CalendarToday.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarToday.swift; sourceTree = "<group>"; };
 		531EB6E72A9FDA5A00B3059C /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
-		53218D4424B7F6EB0088ABE9 /* ClockWork.Beta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClockWork.Beta.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		53218D4424B7F6EB0088ABE9 /* KlockWork.Beta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KlockWork.Beta.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DLPrototype.swift; sourceTree = "<group>"; };
 		53218D4924B7F6EB0088ABE9 /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
 		53218D4E24B7F6EC0088ABE9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -542,7 +542,7 @@
 		53218D4524B7F6EB0088ABE9 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				53218D4424B7F6EB0088ABE9 /* ClockWork.Beta.app */,
+				53218D4424B7F6EB0088ABE9 /* KlockWork.Beta.app */,
 				53218D5C24B7F6EC0088ABE9 /* DLPrototypeTests.xctest */,
 				53218D6724B7F6EC0088ABE9 /* DLPrototypeUITests.xctest */,
 			);
@@ -1179,7 +1179,7 @@
 			packageProductDependencies = (
 			);
 			productName = DLPrototype;
-			productReference = 53218D4424B7F6EB0088ABE9 /* ClockWork.Beta.app */;
+			productReference = 53218D4424B7F6EB0088ABE9 /* KlockWork.Beta.app */;
 			productType = "com.apple.product-type.application";
 		};
 		53218D5B24B7F6EC0088ABE9 /* DLPrototypeTests */ = {
@@ -1657,7 +1657,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 167;
+				CURRENT_PROJECT_VERSION = 168;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -1692,7 +1692,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 167;
+				CURRENT_PROJECT_VERSION = 168;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
