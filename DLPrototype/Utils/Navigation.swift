@@ -110,6 +110,7 @@ public class Navigation: Identifiable, ObservableObject {
 //        state.on(.complete, { _ in
             view = newView
             forms.tp.clear()
+            setInspector()
 //        })
 //        if state.phase == .complete {
 //            
