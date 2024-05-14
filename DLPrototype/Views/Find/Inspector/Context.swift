@@ -44,7 +44,10 @@ extension Inspector {
                                         icon: "arrow.right.square.fill",
                                         fgColour: .white,
                                         showIcon: true,
-                                        size: .link
+                                        size: .link,
+                                        redirect: AnyView(Today()),
+                                        pageType: .today,
+                                        sidebar: AnyView(TodaySidebar())
                                     )
                                     .help("Open day")
                                 }
@@ -178,6 +181,7 @@ extension Inspector.Context {
     private func actionOnClick(_ day: Date) -> Void {
         nav.session.date = day
         nav.session.search.cancel()
+        nav.setInspector()
     }
 
     private func actionShowPlan(_ day: Date) -> Void {
