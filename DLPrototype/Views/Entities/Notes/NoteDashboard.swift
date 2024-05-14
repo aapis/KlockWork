@@ -38,8 +38,8 @@ struct NoteDashboard: View {
 
         let sharedDescriptors = [
             NSSortDescriptor(keyPath: \Note.lastUpdate?, ascending: false),
-            NSSortDescriptor(keyPath: \Note.mJob?.project?.id, ascending: false),
-            NSSortDescriptor(keyPath: \Note.mJob?.id, ascending: false),
+            NSSortDescriptor(keyPath: \Note.mJob?.project?.pid, ascending: true),
+            NSSortDescriptor(keyPath: \Note.mJob?.jid, ascending: true),
             NSSortDescriptor(keyPath: \Note.title, ascending: true)
         ]
         
