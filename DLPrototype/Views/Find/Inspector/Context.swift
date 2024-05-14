@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension FindDashboard.Inspector {
+extension Inspector {
     public struct Context<T>: View {
         public var item: T
         // @TODO: refactor these vars into more structs (there will be dozens of these here once all entities are supported)
@@ -19,7 +19,7 @@ extension FindDashboard.Inspector {
         @Environment(\.managedObjectContext) var moc
         @EnvironmentObject private var nav: Navigation
 
-        var body: some View {
+        public var body: some View {
             VStack(alignment: .leading) {
                 FancyDivider()
                 HStack(alignment: .top) {
@@ -174,7 +174,7 @@ extension FindDashboard.Inspector {
     }
 }
 
-extension FindDashboard.Inspector.Context {
+extension Inspector.Context {
     private func actionOnClick(_ day: Date) -> Void {
         nav.session.date = day
         nav.session.search.cancel()
