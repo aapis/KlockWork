@@ -97,7 +97,7 @@ extension Panel.Row {
 struct CompanyPanel: View {
     public var position: Panel.Position
 
-    @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
 
     @State private var showSearch: Bool = false
     @State private var searchText: String = ""
@@ -151,12 +151,12 @@ struct CompanyPanel: View {
                                         )
                                         .contextMenu {
                                             Button(action: {
-                                                isSearching.toggle() // doesn't work :(((
+                                                isSearching = true
+                                                nav.setInspector(AnyView(Inspector(entity: company)))
+
                                                 if let name = company.name {
                                                     nav.session.search.text = name
-                                                };
-
-                                                nav.session.search.inspect(company)
+                                                }
                                             }, label: {
                                                 Text("Inspect")
                                             })
@@ -261,7 +261,9 @@ extension CompanyPanel {
 
 struct ProjectPanel: View {
     public var position: Panel.Position
-    
+
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
+
     @State private var showSearch: Bool = false
     @State private var searchText: String = ""
 
@@ -313,6 +315,18 @@ struct ProjectPanel: View {
                                             position: position
                                         )
                                     )
+                                    .contextMenu {
+                                        Button(action: {
+                                            isSearching = true
+                                            nav.setInspector(AnyView(Inspector(entity: project)))
+
+                                            if let name = project.name {
+                                                nav.session.search.text = name
+                                            }
+                                        }, label: {
+                                            Text("Inspect")
+                                        })
+                                    }
                                 }
                             }
                         }
@@ -368,7 +382,9 @@ extension ProjectPanel {
 
 public struct JobPanel: View {
     public var position: Panel.Position
-    
+
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
+
     @State private var showSearch: Bool = false
     @State private var searchText: String = ""
 
@@ -421,6 +437,15 @@ public struct JobPanel: View {
                                             position: position
                                         )
                                     )
+                                    .contextMenu {
+                                        Button(action: {
+                                            isSearching = true
+                                            nav.setInspector(AnyView(Inspector(entity: job)))
+                                            nav.session.search.text = job.jid.string
+                                        }, label: {
+                                            Text("Inspect")
+                                        })
+                                    }
                                 }
                             }
                         }
@@ -458,6 +483,8 @@ extension JobPanel {
 
 public struct NotePanel: View {
     public var position: Panel.Position
+
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
 
     @State private var showSearch: Bool = false
     @State private var searchText: String = ""
@@ -516,6 +543,18 @@ public struct NotePanel: View {
                                             position: position
                                         )
                                     )
+                                    .contextMenu {
+                                        Button(action: {
+                                            isSearching = true
+                                            nav.setInspector(AnyView(Inspector(entity: note)))
+
+                                            if let name = note.title {
+                                                nav.session.search.text = name
+                                            }
+                                        }, label: {
+                                            Text("Inspect")
+                                        })
+                                    }
                                 }
                             }
                         }

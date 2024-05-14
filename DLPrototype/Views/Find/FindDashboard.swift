@@ -32,8 +32,6 @@ struct FindDashboard: View {
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @EnvironmentObject public var nav: Navigation
 
-    
-
     private var columns: [GridItem] {
         Array(repeating: .init(.flexible(minimum: 100)), count: 2)
     }
@@ -176,8 +174,12 @@ struct FindDashboard: View {
                 onReset()
             }
         }
+        .onChange(of: nav.session.search.text) { searchQuery in
+            if let sq = searchQuery {
+                activeSearchText = sq
+            }
+        }
         .onChange(of: nav.session.search.inspectingEntity) { entity in
-
             if location == .sidebar {
                 if entity != nil {
                     nav.setInspector(AnyView(Inspector(entity: entity!)))
@@ -196,7 +198,13 @@ extension FindDashboard {
         } else {
             searching = false
         }
-        
+
+        if nav.session.search.inspectingEntity != nil {
+            if let stext = nav.session.search.text {
+                activeSearchText = stext
+            }
+        }
+
         // Search appearing in other views should only provide suggestions due to lack of visual space
         if location == .content {
             if searching {

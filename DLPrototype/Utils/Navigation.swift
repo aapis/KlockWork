@@ -561,14 +561,6 @@ extension Navigation.Session {
         var moc: NSManagedObjectContext
         var hasResults: Bool = false
         var inspectingEntity: NSManagedObject? = nil
-        
-        mutating func inspect(_ obj: NSManagedObject) -> Void {
-            inspectingEntity = obj
-        }
-        
-        mutating func cancel() -> Void {
-            inspectingEntity = nil
-        }
     }
     
     public struct Toolbar: Identifiable {
@@ -586,12 +578,23 @@ extension Navigation.Session.Search {
         
         return SearchLanguage.Results(components: components, moc: moc).find()
     }
-    
+
+    // @TODO: do we need this AND cancel?
     mutating func reset() -> Void {
         components = []
         text = nil
         hasResults = false
         inspectingEntity = nil
+    }
+
+    // @TODO: do we need this AND reset?
+    mutating func cancel() -> Void {
+        inspectingEntity = nil
+        text = nil
+    }
+
+    mutating func inspect(_ obj: NSManagedObject) -> Void {
+        inspectingEntity = obj
     }
 }
 
