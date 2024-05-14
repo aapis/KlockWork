@@ -119,6 +119,7 @@ extension FindDashboard {
                             }
                         }
                     }
+                    .onAppear(perform: appear)
                 } else {
                     EmptyView()
                 }
@@ -210,6 +211,7 @@ extension FindDashboard {
                             }
                         }
                     }
+                    .onAppear(perform: appear)
                 } else {
                     EmptyView()
                 }
@@ -307,6 +309,7 @@ extension FindDashboard {
                             }
                         }
                     }
+                    .onAppear(perform: appear)
                 } else {
                     EmptyView()
                 }
@@ -393,6 +396,7 @@ extension FindDashboard {
                             }
                         }
                     }
+                    .onAppear(perform: appear)
                 } else {
                     EmptyView()
                 }
@@ -470,6 +474,7 @@ extension FindDashboard {
                             }
                         }
                     }
+                    .onAppear(perform: appear)
                 } else {
                     EmptyView()
                 }
@@ -555,6 +560,7 @@ extension FindDashboard {
                             }
                         }
                     }
+                    .onAppear(perform: appear)
                 } else {
                     EmptyView()
                 }
@@ -639,6 +645,7 @@ extension FindDashboard {
                             }
                         }
                     }
+                    .onAppear(perform: appear)
                 } else {
                     EmptyView()
                 }
@@ -692,11 +699,23 @@ extension FindDashboard.Suggestions.SuggestedJobs {
             print("no op")
         }
     }
+
+    private func appear() -> Void {
+        if items.count <= 5 {
+            showChildren = true
+        }
+    }
 }
 
 extension FindDashboard.Suggestions.SuggestedProjects {
     private func choose(_ item: Project) -> Void {
         nav.session.search.inspect(item)
+    }
+
+    private func appear() -> Void {
+        if items.count <= 5 {
+            showChildren = true
+        }
     }
 }
 
@@ -727,11 +746,23 @@ extension FindDashboard.Suggestions.SuggestedNotes {
             print("no op")
         }
     }
+
+    private func appear() -> Void {
+        if items.count <= 5 {
+            showChildren = true
+        }
+    }
 }
 
 extension FindDashboard.Suggestions.SuggestedTasks {
     private func choose(_ item: LogTask) -> Void {
         nav.session.search.inspect(item)
+    }
+
+    private func appear() -> Void {
+        if items.count <= 5 {
+            showChildren = true
+        }
     }
 }
 
@@ -739,16 +770,34 @@ extension FindDashboard.Suggestions.SuggestedCompanies {
     private func choose(_ item: Company) -> Void {
         nav.session.search.inspect(item)
     }
+
+    private func appear() -> Void {
+        if items.count <= 5 {
+            showChildren = true
+        }
+    }
 }
 
 extension FindDashboard.Suggestions.SuggestedPeople {
     private func choose(_ item: Person) -> Void {
         nav.session.search.inspect(item)
     }
+
+    private func appear() -> Void {
+        if items.count <= 5 {
+            showChildren = true
+        }
+    }
 }
 
 extension FindDashboard.Suggestions.SuggestedRecords {
     private func choose(_ item: LogRecord) -> Void {
         nav.session.search.inspect(item)
+    }
+
+    private func appear() -> Void {
+        if items.count <= 5 {
+            showChildren = true
+        }
     }
 }
