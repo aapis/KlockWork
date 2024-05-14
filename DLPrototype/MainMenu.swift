@@ -12,19 +12,19 @@ import SwiftUI
 struct MainMenu: Commands {
     public var moc: NSManagedObjectContext
     public var nav: Navigation
-    
+
     public var body: some Commands {
         SidebarCommands()
         ToolbarCommands()
         TextEditingCommands()
 
-        CommandGroup(replacing: .newItem) {
-            Menu("New") {
+        CommandGroup(after: .newItem) {
+            Menu("New...") {
                 Button("Record") {
                     nav.view = AnyView(Today())
                     nav.parent = .today
                 }
-                    .keyboardShortcut("n", modifiers: .command)
+                .keyboardShortcut("r", modifiers: [.command, .shift])
                 Button("Note") {
                     nav.view = AnyView(NoteCreate())
                     nav.parent = .notes
