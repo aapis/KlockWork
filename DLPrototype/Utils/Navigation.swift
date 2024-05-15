@@ -217,9 +217,30 @@ extension Navigation {
             var time: Date = Date()
             var command: String
             var status: Status = .standard
+            var message: String
             
-            enum Status {
+            public enum Status {
                 case success, error, warning, standard
+                
+                var icon: Image {
+                    switch self {
+                    case .success, .standard:
+                        Image(systemName: "checkmark.circle.fill")
+                    case .error:
+                        Image(systemName: "xmark.circle.fill")
+                    case .warning:
+                        Image(systemName: "triangle.circle.fill")
+                    }
+                }
+                
+                var colour: Color {
+                    switch self {
+                    case .standard: .white
+                    case .success: .green
+                    case .error: .red
+                    case .warning: .yellow
+                    }
+                }
             }
         }
     }
