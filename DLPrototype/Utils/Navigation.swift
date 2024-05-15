@@ -216,6 +216,11 @@ extension Navigation {
             public var id: UUID = UUID()
             var time: Date = Date()
             var command: String
+            var status: Status = .standard
+            
+            enum Status {
+                case success, error, warning, standard
+            }
         }
     }
 
