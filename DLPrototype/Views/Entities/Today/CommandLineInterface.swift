@@ -21,6 +21,7 @@ struct CommandLineInterface: View {
     
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
     
+    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {
@@ -62,14 +63,37 @@ struct CommandLineInterface: View {
 
 extension CommandLineInterface {
     private func executeLogAction() -> Void {
-        self.updateDisplay(
+        let line = Navigation.CommandLineSession.History(
+            command: command,
             status: nav.session.job == nil ? .error : .standard,
-            message: nav.session.job == nil ? "You must select a job first" : ""
+            message: nav.session.job == nil ? "You must select a job first" : "",
+            appType: selected
         )
         
-//        self.createRecord()
+        self.updateDisplay(line: line)
         
-        self.clear()
+        Task {
+            // @TODO: copied from PostingInterface.save, refactor!
+            if let job = nav.session.job {
+                let record = LogRecord(context: moc)
+                record.timestamp = Date()
+                record.message = command
+                record.alive = true
+                record.id = UUID()
+                record.job = job
+                
+                do {
+                    try record.validateForInsert()
+
+                    PersistenceController.shared.save()
+                    nav.session.idate = DateHelper.identifiedDate(for: Date(), moc: moc)
+                } catch {
+                    print("[debug][error] Save error \(error)")
+                }
+            }
+
+            self.clear()
+        }
     }
     
     private func executeQueryAction() -> Void {
@@ -93,22 +117,23 @@ extension CommandLineInterface {
                 command: $command,
                 selected: $selected
             ),
-            CLIApp(
-                type: .query,
-                action: self.executeQueryAction,
-                promptPlaceholder: "Find stuff",
-                showSelectorPanel: $showSelectorPanel,
-                command: $command,
-                selected: $selected
-            ),
-            CLIApp(
-                type: .set,
-                action: self.executeSetAction,
-                promptPlaceholder: "Configure things",
-                showSelectorPanel: $showSelectorPanel,
-                command: $command,
-                selected: $selected
-            )
+            // @TODO: not ready for primetime yet
+//            CLIApp(
+//                type: .query,
+//                action: self.executeQueryAction,
+//                promptPlaceholder: "Find stuff",
+//                showSelectorPanel: $showSelectorPanel,
+//                command: $command,
+//                selected: $selected
+//            ),
+//            CLIApp(
+//                type: .set,
+//                action: self.executeSetAction,
+//                promptPlaceholder: "Configure things",
+//                showSelectorPanel: $showSelectorPanel,
+//                command: $command,
+//                selected: $selected
+//            )
         ]
     }
     
@@ -134,6 +159,12 @@ extension CommandLineInterface {
             )
         }
     }
+    
+    private func updateDisplay(line: Navigation.CommandLineSession.History) -> Void {
+        if nav.session.cli.history.count <= CommandLineInterface.maxItems {
+            nav.session.cli.history.append(line)
+        }
+    }
 }
 
 #Preview {
@@ -151,6 +182,8 @@ extension CommandLineInterface {
         @Binding public var command: String
         @Binding public var selected: AppType
         
+        @EnvironmentObject public var nav: Navigation
+        
         var body: some View {
             HStack(spacing: 0) {
                 CommandLineInterface.AppSelectorButton(type: type, showSelectorPanel: $showSelectorPanel, selected: $selected)
@@ -158,6 +191,7 @@ extension CommandLineInterface {
                 FancyTextField(
                     placeholder: promptPlaceholder,
                     onSubmit: action,
+                    bgColour: nav.session.job?.backgroundColor ?? Theme.textBackground,
                     font: .title2,
                     text: $command
                 )
