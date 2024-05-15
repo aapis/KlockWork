@@ -180,9 +180,9 @@ extension CommandLineInterface {
         @Binding public var showSelectorPanel: Bool
         @Binding public var command: String
         @Binding public var selected: AppType
-        
+
         @EnvironmentObject public var nav: Navigation
-        
+
         var body: some View {
             HStack(spacing: 0) {
                 CommandLineInterface.AppSelectorButton(type: type, showSelectorPanel: $showSelectorPanel, selected: $selected)
@@ -195,6 +195,22 @@ extension CommandLineInterface {
                     text: $command
                 )
                 .disabled(showSelectorPanel)
+            }
+            .onAppear(perform: actionOnAppear)
+        }
+        
+        private func actionOnAppear() -> Void {
+            NSEvent.addLocalMonitorForEvents(matching: .keyDown) {
+                let code = Int($0.keyCode)
+                
+                if code == 125 {
+                    command = ""
+                } else if code == 126 {
+                    if let last = nav.session.cli.history.last {
+                        command = last.command
+                    }
+                }
+                return $0
             }
         }
         
