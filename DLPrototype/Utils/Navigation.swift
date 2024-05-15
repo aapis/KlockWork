@@ -208,9 +208,11 @@ extension Navigation {
     }
     
     public struct CommandLineSession {
+        typealias CLIAppType = CommandLineInterface.App.AppType
+
         var history: [History] = []
         var command: String?
-        var app: CommandLineInterface.App.AppType = .log
+        var app: CLIAppType = .log
         
         public struct History: Identifiable {
             public var id: UUID = UUID()
@@ -218,6 +220,7 @@ extension Navigation {
             var command: String
             var status: Status = .standard
             var message: String
+            var appType: CLIAppType
             
             public enum Status {
                 case success, error, warning, standard

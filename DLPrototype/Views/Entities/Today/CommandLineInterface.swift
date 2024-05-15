@@ -16,17 +16,22 @@ struct CommandLineInterface: View {
     
     @State private var apps: [CLIApp] = []
     @State private var selected: CLIApp.AppType = .log
-    @State public var command: String = ""
+    @State private var command: String = ""
+    @State private var showSelectorPanel: Bool = false
     
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
     
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 1) {
             Display()
             
             // Prompt
+            if showSelectorPanel {
+                CommandLineInterface.AppSelectorPanel(apps: apps)
+            }
+            
             ZStack {
                 ForEach(apps) { app in
                     if app.type == selected {
@@ -62,6 +67,8 @@ extension CommandLineInterface {
             message: nav.session.job == nil ? "You must select a job first" : ""
         )
         
+//        self.createRecord()
+        
         self.clear()
     }
     
@@ -78,13 +85,39 @@ extension CommandLineInterface {
     
     private func actionOnAppear() -> Void {
         self.apps = [
-            CLIApp(type: .log, action: self.executeLogAction, promptPlaceholder: "What are you working on?", command: $command),
-            CLIApp(type: .query, action: self.executeQueryAction, promptPlaceholder: "Find stuff", command: $command),
-            CLIApp(type: .set, action: self.executeSetAction, promptPlaceholder: "Configure things", command: $command)
+            CLIApp(
+                type: .log,
+                action: self.executeLogAction,
+                promptPlaceholder: "What are you working on?",
+                showSelectorPanel: $showSelectorPanel,
+                command: $command,
+                selected: $selected
+            ),
+            CLIApp(
+                type: .query,
+                action: self.executeQueryAction,
+                promptPlaceholder: "Find stuff",
+                showSelectorPanel: $showSelectorPanel,
+                command: $command,
+                selected: $selected
+            ),
+            CLIApp(
+                type: .set,
+                action: self.executeSetAction,
+                promptPlaceholder: "Configure things",
+                showSelectorPanel: $showSelectorPanel,
+                command: $command,
+                selected: $selected
+            )
         ]
     }
     
     private func clear() -> Void {
+        // @TODO: expand to include some "quick" commands like exit
+        if command == "exit" {
+            commandLineMode.toggle()
+        }
+        
         nav.session.cli.command = nil
         command = ""
     }
@@ -95,7 +128,8 @@ extension CommandLineInterface {
                 Navigation.CommandLineSession.History(
                     command: command,
                     status: nav.session.job == nil ? .error : .standard,
-                    message: nav.session.job == nil ? "You must select a job first" : ""
+                    message: nav.session.job == nil ? "You must select a job first" : "",
+                    appType: selected
                 )
             )
         }
@@ -113,16 +147,13 @@ extension CommandLineInterface {
         var action: () -> Void
         var promptPlaceholder: String
         
+        @Binding public var showSelectorPanel: Bool
         @Binding public var command: String
+        @Binding public var selected: AppType
         
         var body: some View {
             HStack(spacing: 0) {
-                Text("$")
-                    .padding([.leading, .top, .bottom])
-                    .background(Theme.textBackground)
-                    .font(.title2)
-                
-                CommandLineInterface.AppSelector(selected: type)
+                CommandLineInterface.AppSelectorButton(type: type, showSelectorPanel: $showSelectorPanel, selected: $selected)
                 
                 FancyTextField(
                     placeholder: promptPlaceholder,
@@ -130,6 +161,7 @@ extension CommandLineInterface {
                     font: .title2,
                     text: $command
                 )
+                .disabled(showSelectorPanel)
             }
         }
         
@@ -146,9 +178,9 @@ extension CommandLineInterface {
             
             var bgColour: Color {
                 switch self {
-                case .log: .blue
-                case .query: .red
-                case .set: .orange
+                case .log: Theme.cPurple
+                case .query: Theme.cYellow
+                case .set: Theme.cOrange
                 }
             }
             
@@ -178,6 +210,10 @@ extension CommandLineInterface {
                                     
                                     Text("[\(line.time.formatted(date: .abbreviated, time: .complete))]")
                                         .foregroundStyle(.gray)
+                                    Text(line.appType.name)
+                                        .background(line.appType.bgColour)
+                                        .foregroundStyle(line.appType.fgColour)
+
                                     Text(line.command)
                                     Spacer()
                                 }
@@ -200,17 +236,48 @@ extension CommandLineInterface {
         }
     }
     
-    struct AppSelector: View {
+    struct AppSelectorButton: View {
         typealias CLIApp = CommandLineInterface.App
         
-        public var selected: CLIApp.AppType
+        public var type: CLIApp.AppType
+        @Binding public var showSelectorPanel: Bool
+        @Binding public var selected: CLIApp.AppType
 
         var body: some View {
-            Text(selected.name)
-                .padding([.top, .bottom, .leading])
-                .background(Theme.textBackground)
-                .font(.title2)
+            Button {
+                showSelectorPanel.toggle()
+                selected = type
+            } label: {
+                HStack {
+                    Text("$")
+                        .padding([.leading, .top, .bottom])
+                        .font(.title2)
+                    
+                    Text(type.name)
+                        .padding([.top, .bottom, .trailing])
+                        .font(.title2)
+                }
+                .background(type.bgColour)
+                .foregroundStyle(type.fgColour)
+            }
+            .buttonStyle(.plain)
+        }
+    }
+    
+    struct AppSelectorPanel: View {
+        typealias CLIApp = CommandLineInterface.App
         
+        public var apps: [CLIApp]
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 1) {
+                Text("Choose an app from the list")
+                    .padding()
+
+                ForEach(apps) { app in
+                    app
+                }
+            }
         }
     }
 }
