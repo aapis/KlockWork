@@ -99,7 +99,6 @@ extension CommandLineInterface {
     private func executeQueryAction() -> Void {
         self.updateDisplay(status: .standard, message: "Searching for X")
         self.clear()
-        
     }
     
     private func executeSetAction() -> Void {
