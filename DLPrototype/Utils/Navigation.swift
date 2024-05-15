@@ -204,6 +204,48 @@ extension Navigation {
         var search: Search = Search(moc: PersistenceController.shared.container.viewContext)
         var toolbar: Toolbar = Toolbar()
         var eventStatus: EventIndicatorStatus = .ready
+        var cli: CommandLineSession = CommandLineSession()
+    }
+    
+    public struct CommandLineSession {
+        typealias CLIAppType = CommandLineInterface.App.AppType
+
+        var history: [History] = []
+        var command: String?
+        var app: CLIAppType = .log
+        
+        public struct History: Identifiable {
+            public var id: UUID = UUID()
+            var time: Date = Date()
+            var command: String
+            var status: Status = .standard
+            var message: String
+            var appType: CLIAppType
+            
+            public enum Status {
+                case success, error, warning, standard
+                
+                var icon: Image {
+                    switch self {
+                    case .success, .standard:
+                        Image(systemName: "checkmark.circle.fill")
+                    case .error:
+                        Image(systemName: "xmark.circle.fill")
+                    case .warning:
+                        Image(systemName: "triangle.circle.fill")
+                    }
+                }
+                
+                var colour: Color {
+                    switch self {
+                    case .standard: .white
+                    case .success: .green
+                    case .error: .red
+                    case .warning: .yellow
+                    }
+                }
+            }
+        }
     }
 
     // @TODO: remove from Navigation

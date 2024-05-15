@@ -9,16 +9,23 @@ import SwiftUI
 
 struct Today: View {
     public var defaultSelectedDate: Date? = nil
+    
+    @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
 
-    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {
         VStack(alignment: .leading) {
-            PostingInterface()
-            LogTable()
+            if commandLineMode {
+                CommandLineInterface()
+            } else {
+                VStack(alignment: .leading) {
+                    PostingInterface()
+                    LogTable()
+                }
+                .padding()
+            }
         }
-        .padding()
         .background(Theme.toolbarColour)
     }
 }

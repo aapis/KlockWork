@@ -76,7 +76,7 @@ struct SidebarButton: View, Identifiable {
             nav.to(pageType)
         }, label: {
             ZStack {
-                backgroundColour
+                highlighted ? backgroundColour.opacity(0.9) : backgroundColour.opacity(1)
 
                 if nav.parent != pageType {
                     HStack {
