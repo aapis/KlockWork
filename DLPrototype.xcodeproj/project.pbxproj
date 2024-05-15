@@ -60,6 +60,7 @@
 		533E40652970DA640007785A /* ViewUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533E40642970DA640007785A /* ViewUpdater.swift */; };
 		533E40682970DD170007785A /* AutoFixJobs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533E40672970DD170007785A /* AutoFixJobs.swift */; };
 		533E406A2970F5610007785A /* SearchHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533E40692970F5610007785A /* SearchHelper.swift */; };
+		53450CEC2BF46ECF007F45FB /* CommandLineInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53450CEB2BF46ECF007F45FB /* CommandLineInterface.swift */; };
 		5345C9CD2B31315F004A4188 /* SearchLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5345C9CC2B31315F004A4188 /* SearchLanguage.swift */; };
 		534B7C2B2B3220E40017C155 /* DispatchQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534B7C2A2B3220E40017C155 /* DispatchQueue.swift */; };
 		53521E54296FBDAE002E7F21 /* CoreDataNoteVersions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53521E53296FBDAE002E7F21 /* CoreDataNoteVersions.swift */; };
@@ -298,6 +299,7 @@
 		533E40642970DA640007785A /* ViewUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewUpdater.swift; sourceTree = "<group>"; };
 		533E40672970DD170007785A /* AutoFixJobs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFixJobs.swift; sourceTree = "<group>"; };
 		533E40692970F5610007785A /* SearchHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchHelper.swift; sourceTree = "<group>"; };
+		53450CEB2BF46ECF007F45FB /* CommandLineInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandLineInterface.swift; sourceTree = "<group>"; };
 		5345C9CC2B31315F004A4188 /* SearchLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchLanguage.swift; sourceTree = "<group>"; };
 		534B7C2A2B3220E40017C155 /* DispatchQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueue.swift; sourceTree = "<group>"; };
 		53521E53296FBDAE002E7F21 /* CoreDataNoteVersions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataNoteVersions.swift; sourceTree = "<group>"; };
@@ -494,8 +496,10 @@
 				53EFCE7729637EA0004E45EC /* LogTable */,
 				537368D024B93DB600193E88 /* Today.swift */,
 				53C000992B3A90DF00D5EC04 /* PostingInterface.swift */,
+				53450CEB2BF46ECF007F45FB /* CommandLineInterface.swift */,
 			);
-			path = Today;
+			name = Today;
+			path = Entities/Today;
 			sourceTree = "<group>";
 		};
 		53152CE0296BC75A00A14E43 /* Settings */ = {
@@ -773,6 +777,7 @@
 		537368D224B93DF700193E88 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				53152CDF296BC74900A14E43 /* Today */,
 				53BDA6942B41BC2800A61BE8 /* Entities */,
 				53D5E2962A85A75000FE293A /* Planning */,
 				535C1ADF29F48EE600CD95FD /* Dashboard */,
@@ -952,7 +957,6 @@
 				53C3418A299960080071B855 /* Jobs */,
 				5335A5AF296D164F000051B1 /* Tasks */,
 				537628AD29665B7B00DE8ECF /* Notes */,
-				53152CDF296BC74900A14E43 /* Today */,
 				5363B6762A6BB2B300C2FBB8 /* Companies */,
 				53B0BE7D29725413007CB663 /* Projects */,
 			);
@@ -1306,6 +1310,7 @@
 				535C1AEE29F49AAD00CD95FD /* StatsWidget.swift in Sources */,
 				53959A1F29738AAA007A2549 /* FancySubTitle.swift in Sources */,
 				5372C02A2A105AA1008CB120 /* FancyChip.swift in Sources */,
+				53450CEC2BF46ECF007F45FB /* CommandLineInterface.swift in Sources */,
 				537628B429665F4E00DE8ECF /* Data.xcdatamodeld in Sources */,
 				53F5896429983FA300843B32 /* ProjectResult.swift in Sources */,
 				53842B272B4C82B20029AC73 /* Project.swift in Sources */,

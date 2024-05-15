@@ -52,7 +52,7 @@ struct FancyTextField: View {
     
     private var oneLine: some View {
         TextField(placeholder, text: $text)
-            .font(Theme.fontTextField)
+            .font(font)
             .textFieldStyle(.plain)
             .disableAutocorrection(!enableAutoCorrection)
             .padding()
@@ -69,7 +69,7 @@ struct FancyTextField: View {
     
     private var oneBigLine: some View {
         TextField(placeholder, text: $text, axis: .vertical)
-            .font(Theme.fontTextField)
+            .font(font)
             .textFieldStyle(.plain)
             .disableAutocorrection(!enableAutoCorrection)
             .padding()

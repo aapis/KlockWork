@@ -204,6 +204,19 @@ extension Navigation {
         var search: Search = Search(moc: PersistenceController.shared.container.viewContext)
         var toolbar: Toolbar = Toolbar()
         var eventStatus: EventIndicatorStatus = .ready
+        var cli: CommandLineSession = CommandLineSession()
+    }
+    
+    public struct CommandLineSession {
+        var history: [History] = []
+        var command: String?
+        var app: CommandLineInterface.App.AppType = .log
+        
+        public struct History: Identifiable {
+            public var id: UUID = UUID()
+            var time: Date = Date()
+            var command: String
+        }
     }
 
     // @TODO: remove from Navigation

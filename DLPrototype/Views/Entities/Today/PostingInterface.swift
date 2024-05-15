@@ -11,9 +11,10 @@ import SwiftUI
 extension Today {
     struct PostingInterface: View {
         @State private var text: String = ""
-        
         @State private var errorNoJob: Bool = false
         @State private var errorNoContent: Bool = false
+        @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
+        @AppStorage("general.experimental.cli") private var allowCLIMode: Bool = false
 
         @FocusState private var primaryTextFieldInFocus: Bool
 
@@ -49,6 +50,23 @@ extension Today {
                         Spacer()
                         HStack(spacing: 5) {
                             Spacer()
+
+                            if allowCLIMode {
+                                FancyButtonv2(
+                                    text: "Command line mode",
+                                    action: {commandLineMode.toggle()},
+                                    icon: "apple.terminal",
+                                    fgColour: .white,
+                                    showLabel: false,
+                                    size: .tiny,
+                                    type: .clear
+                                )
+                                .help("Enter CLI mode")
+                                .frame(width: 30, height: 30)
+                                .background(nav.session.job != nil ? nav.session.job!.colour_from_stored() : Theme.toolbarColour)
+                                .disabled(false)
+                            }
+
                             FancyButtonv2(
                                 text: "Reset interface to default state",
                                 action: clearAction,
