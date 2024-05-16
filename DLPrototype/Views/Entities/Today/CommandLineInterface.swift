@@ -24,17 +24,6 @@ struct CommandLineInterface: View {
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
-    
-    // @TODO: move this down
-    struct CLICommand {
-        var domain: String
-        var method: String
-        var callback: (String, inout Navigation.CommandLineSession.History) -> Void
-        
-//        enum CLIValidDomain {
-//            case session
-//        }
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 1) {
@@ -255,6 +244,12 @@ extension CommandLineInterface {
 }
 
 extension CommandLineInterface {
+    struct CLICommand {
+        var domain: String
+        var method: String
+        var callback: (String, inout Navigation.CommandLineSession.History) -> Void
+    }
+    
     struct App: View, Identifiable {
         var id: UUID = UUID()
         var type: AppType
