@@ -137,6 +137,7 @@
 		53967D8429EC6D14006616A0 /* TodaySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53967D8329EC6D14006616A0 /* TodaySettings.swift */; };
 		53967D8629EC7DEB006616A0 /* ViewModeSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53967D8529EC7DEB006616A0 /* ViewModeSelector.swift */; };
 		53999C1F29669C4E00125E65 /* NoteCreate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53999C1E29669C4E00125E65 /* NoteCreate.swift */; };
+		539F68DB2BF6BD310086F89A /* FancyDropdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539F68DA2BF6BD310086F89A /* FancyDropdown.swift */; };
 		53B0BE7F2972542A007CB663 /* ProjectsDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE7E2972542A007CB663 /* ProjectsDashboard.swift */; };
 		53B0BE8129725B52007CB663 /* CoreDataProjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8029725B52007CB663 /* CoreDataProjects.swift */; };
 		53B0BE8429726118007CB663 /* FancyLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8329726118007CB663 /* FancyLink.swift */; };
@@ -379,6 +380,7 @@
 		53967D8329EC6D14006616A0 /* TodaySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaySettings.swift; sourceTree = "<group>"; };
 		53967D8529EC7DEB006616A0 /* ViewModeSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModeSelector.swift; sourceTree = "<group>"; };
 		53999C1E29669C4E00125E65 /* NoteCreate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteCreate.swift; sourceTree = "<group>"; };
+		539F68DA2BF6BD310086F89A /* FancyDropdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyDropdown.swift; sourceTree = "<group>"; };
 		53B0BE7E2972542A007CB663 /* ProjectsDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsDashboard.swift; sourceTree = "<group>"; };
 		53B0BE8029725B52007CB663 /* CoreDataProjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataProjects.swift; sourceTree = "<group>"; };
 		53B0BE8329726118007CB663 /* FancyLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyLink.swift; sourceTree = "<group>"; };
@@ -911,6 +913,7 @@
 				53C000972B3A821D00D5EC04 /* FancyHelpText.swift */,
 				53BDA6962B41CA1C00A61BE8 /* FancySimpleButton.swift */,
 				53842B292B4C9B100029AC73 /* FancyToggle.swift */,
+				539F68DA2BF6BD310086F89A /* FancyDropdown.swift */,
 			);
 			path = Fancy;
 			sourceTree = "<group>";
@@ -1464,6 +1467,7 @@
 				532C5FE52A83024900F2AAD4 /* CreateEntitiesWidget.swift in Sources */,
 				53521E54296FBDAE002E7F21 /* CoreDataNoteVersions.swift in Sources */,
 				53967D8429EC6D14006616A0 /* TodaySettings.swift in Sources */,
+				539F68DB2BF6BD310086F89A /* FancyDropdown.swift in Sources */,
 				531E2F752A140533009CA230 /* CalendarToday.swift in Sources */,
 				5334F2742B2B958D0079D2E7 /* FancyJobSredToggle.swift in Sources */,
 				5326AE982B27FA02009F1349 /* DefaultCompanySidebar.swift in Sources */,

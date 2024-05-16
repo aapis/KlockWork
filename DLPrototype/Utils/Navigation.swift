@@ -215,7 +215,7 @@ extension Navigation {
         var command: String?
         var app: CLIAppType = .log
         var selected: CLIApp?
-        
+
         public struct History: Identifiable {
             public var id: UUID = UUID()
             var time: Date = Date()
@@ -224,6 +224,12 @@ extension Navigation {
             var message: String
             var appType: CLIAppType
             
+            /// Converts a single history line item to it's string representation
+            /// - Returns: String
+            public func toString() -> String {
+                return "\(time.formatted(date: .abbreviated, time: .complete)) \(appType.name) \"\(command)\""
+            }
+
             public enum Status {
                 case success, error, warning, standard
                 

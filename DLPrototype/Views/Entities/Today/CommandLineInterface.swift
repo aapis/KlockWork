@@ -12,7 +12,7 @@ struct CommandLineInterface: View {
     typealias CLIApp = CommandLineInterface.App
     typealias Status = Navigation.CommandLineSession.History.Status
 
-    static private let maxItems: Int = 500
+    static public let maxItems: Int = 500
 
     @State private var validSetCommands: [CLICommand] = []
     @State private var apps: [CLIApp] = []
@@ -28,9 +28,11 @@ struct CommandLineInterface: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 1) {
+            // @TODO: https://github.com/aapis/KlockWork/issues/240
+//            Filters()
             Display()
             
-            // Prompt
+            // Prompt + app selector
             if showSelectorPanel {
                 CommandLineInterface.AppSelectorPanel(apps: apps)
             }
@@ -82,9 +84,7 @@ extension CommandLineInterface {
                 appType: selected
             )
         }
-        
-        self.updateDisplay(line: line)
-        
+
         Task {
             // @TODO: copied from PostingInterface.save, refactor!
             if let job = nav.session.job {
@@ -100,11 +100,13 @@ extension CommandLineInterface {
 
                     PersistenceController.shared.save()
                     nav.session.idate = DateHelper.identifiedDate(for: Date(), moc: moc)
+                    line.status = .success
                 } catch {
                     print("[debug][error] Save error \(error)")
                 }
             }
 
+            self.updateDisplay(line: line)
             self.clear()
         }
     }
@@ -293,7 +295,24 @@ extension CommandLineInterface {
         var callback: (String, inout Navigation.CommandLineSession.History) -> Void
     }
     
-    struct App: View, Identifiable {
+    // @TODO: https://github.com/aapis/KlockWork/issues/240
+    struct Filters: View {
+        @EnvironmentObject public var nav: Navigation
+
+        var body: some View {
+            VStack(spacing: 0) {
+                HStack {
+                    FancyDropdown(label: "Type", items: App.AppType.allCases)
+                    Spacer()
+                }
+                .padding([.leading, .trailing])
+                .frame(height: 78)
+                .background(Theme.cPurple)
+            }
+        }
+    }
+    
+    public struct App: View, Identifiable {
         var id: UUID = UUID()
         var type: AppType
         var action: () -> Void
@@ -306,7 +325,7 @@ extension CommandLineInterface {
 
         @EnvironmentObject public var nav: Navigation
 
-        var body: some View {
+        public var body: some View {
             HStack(spacing: 0) {
                 CommandLineInterface.AppSelectorButton(type: type, showSelectorPanel: $showSelectorPanel, selected: $selected)
                 
@@ -338,7 +357,7 @@ extension CommandLineInterface {
             }
         }
         
-        enum AppType: CaseIterable, Identifiable {
+        public enum AppType: CaseIterable, Identifiable {
             case log, query, set
             
             var id: UUID {
@@ -361,7 +380,7 @@ extension CommandLineInterface {
                 switch self {
                 case .log: "log"
                 case .query: "query"
-                case .set: "set"
+                case .set: "conf"
                 }
             }
         }
@@ -371,41 +390,51 @@ extension CommandLineInterface {
         @EnvironmentObject public var nav: Navigation
         
         var body: some View {
-            VStack(alignment: .leading, spacing: 1) {
-                Spacer()
-                ScrollView {
-                    VStack(spacing: 1) {
-                        ForEach(nav.session.cli.history) { line in
-                            VStack(alignment: .leading, spacing: 1) {
-                                HStack {
-                                    line.status.icon
-                                        .foregroundStyle(line.status.colour)
-                                    
-                                    Text("[\(line.time.formatted(date: .abbreviated, time: .complete))]")
-                                        .foregroundStyle(.gray)
-                                    Text(line.appType.name)
-                                        .background(line.appType.bgColour)
-                                        .foregroundStyle(line.appType.fgColour)
-
-                                    Text(line.command)
-                                    Spacer()
-                                }
-
-                                if !line.message.isEmpty {
+            ZStack(alignment: .topLeading) {
+                LinearGradient(gradient: Gradient(colors: [.clear, Color.black]), startPoint: .bottom, endPoint: .top)
+                    .opacity(0.25)
+                    .frame(height: 100)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    ScrollView {
+                        VStack(spacing: 1) {
+                            ForEach(nav.session.cli.history) { line in
+                                VStack(alignment: .leading, spacing: 1) {
                                     HStack {
-                                        Image(systemName: "arrow.turn.down.right")
-                                            .padding([.leading], 8)
-                                        Text(line.message)
+                                        line.status.icon
+                                            .foregroundStyle(line.status.colour)
+                                        Text("[\(line.time.formatted(date: .abbreviated, time: .complete))]")
+                                            .foregroundStyle(.gray)
+                                        Text(line.appType.name)
+                                            .background(line.appType.bgColour)
+                                            .foregroundStyle(line.appType.fgColour)
+                                        Text("\"\(line.command)\"")
+                                        Spacer()
                                     }
-                                    .foregroundStyle(line.status.colour)
+                                    .contextMenu {
+                                        Button {
+                                            ClipboardHelper.copy(line.toString())
+                                        } label: {
+                                            Text("Copy line")
+                                        }
+                                    }
+                                    
+                                    if !line.message.isEmpty {
+                                        HStack {
+                                            Image(systemName: "arrow.turn.down.right")
+                                                .padding([.leading], 8)
+                                            Text(line.message)
+                                        }
+                                        .foregroundStyle(line.status.colour)
+                                    }
                                 }
                             }
                         }
                     }
                 }
+                .padding()
+                .font(Theme.fontTextField)
             }
-            .padding([.leading, .trailing, .bottom])
-            .font(Theme.fontTextField)
         }
     }
     
