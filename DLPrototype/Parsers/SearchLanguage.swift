@@ -153,7 +153,7 @@ extension SearchLanguage.Results {
                     }
                 }
             default:
-                print("DERPO unimplemented Species \(component.species.name)")
+                print("[debug] Unimplemented Species \(component.species.name)")
             }
             
             if jobs.count > 0 {
