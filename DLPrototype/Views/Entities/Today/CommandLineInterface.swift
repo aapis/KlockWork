@@ -194,8 +194,9 @@ extension CommandLineInterface {
                     isSearching = true
                     nav.session.search.text = job.jid.string
                     nav.session.search.inspectingEntity = job
-                    nav.setInspector(AnyView(Inspector(entity: job)))
-                    
+                    // @TODO: this causes nav.session.cli.app to reset for some reason
+//                    nav.setInspector(AnyView(Inspector(entity: job)))
+
                     line.status = .success
                 } else {
                     line.message = "Unable to find a Job with ID \(match)"
