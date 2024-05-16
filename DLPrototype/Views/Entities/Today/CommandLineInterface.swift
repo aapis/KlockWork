@@ -13,14 +13,15 @@ struct CommandLineInterface: View {
     typealias Status = Navigation.CommandLineSession.History.Status
 
     static private let maxItems: Int = 500
+
     @State private var validSetCommands: [CLICommand] = []
-    
     @State private var apps: [CLIApp] = []
     @State private var selected: CLIApp.AppType = .log
     @State private var command: String = ""
     @State private var showSelectorPanel: Bool = false
     
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
@@ -169,7 +170,7 @@ extension CommandLineInterface {
                 type: .set,
                 action: self.executeSetAction,
                 promptPlaceholder: "Configure things",
-                helpText: "Syntax: @session.job=100.0",
+                helpText: "Syntax: @session.job=100 @inspect.job=100",
                 showSelectorPanel: $showSelectorPanel,
                 command: $command,
                 selected: $selected
@@ -186,18 +187,39 @@ extension CommandLineInterface {
                     line.message = "Unable to find a Job with ID \(match)"
                     line.status = .error
                 }
+            }),
+            CLICommand(domain: "inspect", method: "job", callback: { match, line in
+                let id: Double = Double(match) ?? 0.0
+                if let job = CoreDataJob(moc: moc).byId(id) {
+                    isSearching = true
+                    nav.session.search.text = job.jid.string
+                    nav.session.search.inspectingEntity = job
+                    nav.setInspector(AnyView(Inspector(entity: job)))
+                    
+                    line.status = .success
+                } else {
+                    line.message = "Unable to find a Job with ID \(match)"
+                    line.status = .error
+                }
             })
         ]
     }
     
     private func clear() -> Void {
-        // @TODO: expand to include some "quick" commands like exit
-        if command == "exit" {
-            commandLineMode.toggle()
+        let defaultCallback: () -> Void = {
+            nav.session.cli.command = nil
+            command = ""
+        }
+        
+        // Handle special commands
+        switch command {
+        case "exit": commandLineMode.toggle()
+        case "reset": nav.session.setJob(nil)
+        default:
+            defaultCallback()
         }
 
-        nav.session.cli.command = nil
-        command = ""
+        defaultCallback()
     }
     
     private func updateDisplay(status: Status, message: String) -> Void {

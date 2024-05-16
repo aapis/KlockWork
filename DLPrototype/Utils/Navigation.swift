@@ -590,11 +590,7 @@ extension Navigation.History {
 
 extension Navigation.Session {
     mutating func setJob(_ job: Job?) -> Void {
-        if job != nil {
-            self.job = job
-        } else {
-            self.job = nil
-        }
+        self.job = job
     }
 }
 
