@@ -13,6 +13,7 @@ struct CommandLineInterface: View {
     typealias Status = Navigation.CommandLineSession.History.Status
 
     static private let maxItems: Int = 500
+    @State private var validSetCommands: [CLICommand] = []
     
     @State private var apps: [CLIApp] = []
     @State private var selected: CLIApp.AppType = .log
@@ -23,6 +24,17 @@ struct CommandLineInterface: View {
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
+    
+    // @TODO: move this down
+    struct CLICommand {
+        var domain: String
+        var method: String
+        var callback: (String, inout Navigation.CommandLineSession.History) -> Void
+        
+//        enum CLIValidDomain {
+//            case session
+//        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 1) {
@@ -63,12 +75,23 @@ struct CommandLineInterface: View {
 
 extension CommandLineInterface {
     private func executeLogAction() -> Void {
-        let line = Navigation.CommandLineSession.History(
-            command: command,
-            status: nav.session.job == nil ? .error : .standard,
-            message: nav.session.job == nil ? "You must select a job first" : "",
-            appType: selected
-        )
+        var line: Navigation.CommandLineSession.History
+        
+        if command == "help" {
+            line = Navigation.CommandLineSession.History(
+                command: command,
+                status: nav.session.job == nil ? .error : .standard,
+                message: apps.filter({$0.type == selected}).first?.helpText ?? "Help text",
+                appType: selected
+            )
+        } else {
+            line = Navigation.CommandLineSession.History(
+                command: command,
+                status: nav.session.job == nil ? .error : .standard,
+                message: nav.session.job == nil ? "You must select a job first" : "",
+                appType: selected
+            )
+        }
         
         self.updateDisplay(line: line)
         
@@ -97,13 +120,40 @@ extension CommandLineInterface {
     }
     
     private func executeQueryAction() -> Void {
-        self.updateDisplay(status: .standard, message: "Searching for X")
+        self.updateDisplay(status: .standard, message: command)
         self.clear()
     }
     
     private func executeSetAction() -> Void {
-        self.updateDisplay(status: .standard, message: "Set X = Y")
-        self.clear()
+        var line: Navigation.CommandLineSession.History = Navigation.CommandLineSession.History(
+            command: command,
+            status: .standard,
+            message: "",
+            appType: selected
+        )
+        
+        if command == "help" {
+            line.message = apps.filter({$0.type == selected}).first?.helpText ?? "Help text"
+        }
+        
+        Task {
+            let pattern = /^@(.*?)\.(.*?)=(\d+)/
+            let matches = command.matches(of: pattern)
+
+            if let match = matches.first {
+                // We found a matching CLICommand, execute it
+                if let cmd = validSetCommands.first(where: {$0.domain == match.1 && $0.method == match.2}) {
+                    // Run the callback, successful response messages is defined there
+                    cmd.callback(String(match.3), &line)
+                } else {
+                    line.message = "Invalid command: @\(String(match.1)).\(String(match.2))"
+                    line.status = .error
+                }
+            }
+
+            self.updateDisplay(line: line)
+            self.clear()
+        }
     }
     
     private func actionOnAppear() -> Void {
@@ -112,6 +162,7 @@ extension CommandLineInterface {
                 type: .log,
                 action: self.executeLogAction,
                 promptPlaceholder: "What are you working on?",
+                helpText: "Write out what you're working on right now, like right-right now, and hit return.",
                 showSelectorPanel: $showSelectorPanel,
                 command: $command,
                 selected: $selected
@@ -121,18 +172,32 @@ extension CommandLineInterface {
 //                type: .query,
 //                action: self.executeQueryAction,
 //                promptPlaceholder: "Find stuff",
-//                showSelectorPanel: $showSelectorPanel,
+//                showSelectorPanel: $showSelectorPanel, helpText: String,
 //                command: $command,
 //                selected: $selected
 //            ),
-//            CLIApp(
-//                type: .set,
-//                action: self.executeSetAction,
-//                promptPlaceholder: "Configure things",
-//                showSelectorPanel: $showSelectorPanel,
-//                command: $command,
-//                selected: $selected
-//            )
+            CLIApp(
+                type: .set,
+                action: self.executeSetAction,
+                promptPlaceholder: "Configure things",
+                helpText: "Syntax: @session.job=100.0",
+                showSelectorPanel: $showSelectorPanel,
+                command: $command,
+                selected: $selected
+            )
+        ]
+        
+        self.validSetCommands = [
+            CLICommand(domain: "session", method: "job", callback: { match, line in
+                let id: Double = Double(match) ?? 0.0
+                if let job = CoreDataJob(moc: moc).byId(id) {
+                    nav.session.setJob(job)
+                    line.status = .success
+                } else {
+                    line.message = "Unable to find a Job with ID \(match)"
+                    line.status = .error
+                }
+            })
         ]
     }
     
@@ -141,21 +206,40 @@ extension CommandLineInterface {
         if command == "exit" {
             commandLineMode.toggle()
         }
-        
+
         nav.session.cli.command = nil
         command = ""
     }
     
     private func updateDisplay(status: Status, message: String) -> Void {
         if nav.session.cli.history.count <= CommandLineInterface.maxItems {
-            nav.session.cli.history.append(
-                Navigation.CommandLineSession.History(
+            var item: Navigation.CommandLineSession.History
+            
+            switch nav.session.cli.app {
+            case .log:
+                item = Navigation.CommandLineSession.History(
                     command: command,
                     status: nav.session.job == nil ? .error : .standard,
                     message: nav.session.job == nil ? "You must select a job first" : "",
                     appType: selected
                 )
-            )
+            case .set:
+                item = Navigation.CommandLineSession.History(
+                    command: command,
+                    status: .standard,
+                    message: "",
+                    appType: selected
+                )
+            case .query:
+                item = Navigation.CommandLineSession.History(
+                    command: command,
+                    status: .standard,
+                    message: "",
+                    appType: selected
+                )
+            }
+            
+            nav.session.cli.history.append(item)
         }
     }
     
@@ -176,6 +260,7 @@ extension CommandLineInterface {
         var type: AppType
         var action: () -> Void
         var promptPlaceholder: String
+        var helpText: String
         
         @Binding public var showSelectorPanel: Bool
         @Binding public var command: String
@@ -190,8 +275,9 @@ extension CommandLineInterface {
                 FancyTextField(
                     placeholder: promptPlaceholder,
                     onSubmit: action,
+                    fgColour: nav.session.job?.backgroundColor.isBright() ?? false ? .black : .white,
                     bgColour: nav.session.job?.backgroundColor ?? Theme.textBackground,
-                    font: .title2,
+                    font: Theme.fontTextField,
                     text: $command
                 )
                 .disabled(showSelectorPanel)
@@ -266,8 +352,8 @@ extension CommandLineInterface {
                                     Text(line.command)
                                     Spacer()
                                 }
-                                
-                                if [.error, .warning].contains(line.status) {
+
+                                if !line.message.isEmpty {
                                     HStack {
                                         Image(systemName: "arrow.turn.down.right")
                                             .padding([.leading], 8)
@@ -291,25 +377,22 @@ extension CommandLineInterface {
         public var type: CLIApp.AppType
         @Binding public var showSelectorPanel: Bool
         @Binding public var selected: CLIApp.AppType
+        
+        @EnvironmentObject public var nav: Navigation
 
         var body: some View {
             Button {
                 showSelectorPanel.toggle()
                 selected = type
+                nav.session.cli.app = type
             } label: {
-                HStack {
-                    Text("$")
-                        .padding([.leading, .top, .bottom])
-                        .font(.title2)
-                    
-                    Text(type.name)
-                        .padding([.top, .bottom, .trailing])
-                        .font(.title2)
-                }
-                .background(type.bgColour)
-                .foregroundStyle(type.fgColour)
+                Text("$ \(type.name)")
+                    .padding()
+                    .background(type.bgColour)
+                    .foregroundStyle(type.fgColour)
             }
             .buttonStyle(.plain)
+            .useDefaultHover({_ in})
         }
     }
     
@@ -317,6 +400,8 @@ extension CommandLineInterface {
         typealias CLIApp = CommandLineInterface.App
         
         public var apps: [CLIApp]
+        
+        @EnvironmentObject public var nav: Navigation
 
         var body: some View {
             VStack(alignment: .leading, spacing: 1) {

@@ -208,11 +208,13 @@ extension Navigation {
     }
     
     public struct CommandLineSession {
+        typealias CLIApp = CommandLineInterface.App
         typealias CLIAppType = CommandLineInterface.App.AppType
 
         var history: [History] = []
         var command: String?
         var app: CLIAppType = .log
+        var selected: CLIApp?
         
         public struct History: Identifiable {
             public var id: UUID = UUID()
