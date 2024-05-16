@@ -213,12 +213,12 @@ extension CommandLineInterface {
         
         // Handle special commands
         switch command {
-        case "exit": commandLineMode.toggle()
-        case "reset": nav.session.setJob(nil)
+        case "@exit", "exit": commandLineMode.toggle()
+        case "@reset": nav.session.setJob(nil)
         default:
             defaultCallback()
         }
-
+        
         defaultCallback()
     }
     
