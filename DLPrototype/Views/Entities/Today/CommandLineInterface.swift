@@ -127,7 +127,7 @@ extension CommandLineInterface {
         }
         
         Task {
-            let pattern = /^@(.*?)\.(.*?)=(\d+)/
+            let pattern = /^@(.*?)\.(.*?)=(.*)/
             let matches = command.matches(of: pattern)
 
             if let match = matches.first {
@@ -139,6 +139,9 @@ extension CommandLineInterface {
                     line.message = "Invalid command: @\(String(match.1)).\(String(match.2))"
                     line.status = .error
                 }
+            } else {
+                line.message = "Unable to parse command \(command)"
+                line.status = .error
             }
 
             self.updateDisplay(line: line)
@@ -179,6 +182,7 @@ extension CommandLineInterface {
         
         self.validSetCommands = [
             CLICommand(domain: "session", method: "job", callback: { match, line in
+                isSearching = false
                 let id: Double = Double(match) ?? 0.0
                 if let job = CoreDataJob(moc: moc).byId(id) {
                     nav.session.setJob(job)
@@ -189,17 +193,33 @@ extension CommandLineInterface {
                 }
             }),
             CLICommand(domain: "inspect", method: "job", callback: { match, line in
+                isSearching = false
                 let id: Double = Double(match) ?? 0.0
-                if let job = CoreDataJob(moc: moc).byId(id) {
+                if let entity = CoreDataJob(moc: moc).byId(id) {
                     isSearching = true
-                    nav.session.search.text = job.jid.string
-                    nav.session.search.inspectingEntity = job
+                    nav.session.search.text = entity.jid.string
+                    nav.session.search.inspectingEntity = entity
                     // @TODO: this causes nav.session.cli.app to reset for some reason
-//                    nav.setInspector(AnyView(Inspector(entity: job)))
+//                    nav.setInspector(AnyView(Inspector(entity: entity)))
 
                     line.status = .success
                 } else {
                     line.message = "Unable to find a Job with ID \(match)"
+                    line.status = .error
+                }
+            }),
+            CLICommand(domain: "inspect", method: "company", callback: { match, line in
+                isSearching = false
+                if let entity = CoreDataCompanies(moc: moc).byName(match) {
+                    isSearching = true
+                    nav.session.search.text = entity.name
+                    nav.session.search.inspectingEntity = entity
+                    // @TODO: this causes nav.session.cli.app to reset for some reason
+//                    nav.setInspector(AnyView(Inspector(entity: entity)))
+
+                    line.status = .success
+                } else {
+                    line.message = "Unable to find a company named \(match)"
                     line.status = .error
                 }
             })
