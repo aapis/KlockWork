@@ -61,6 +61,24 @@ public class CoreDataCompanies: ObservableObject {
 
         return results.first
     }
+    
+    /// Find companies by name
+    /// - Parameter name: Company name
+    /// - Returns: Company
+    public func byName(_ name: String) -> Company? {
+        let predicate = NSPredicate(
+            format: "name = %@ && hidden == false",
+            name as CVarArg
+        )
+
+        let results = query(predicate)
+
+        if results.isEmpty {
+            return nil
+        }
+
+        return results.first
+    }
 
     public func alive() -> [Company] {
         let predicate = NSPredicate(
