@@ -337,6 +337,7 @@ extension CommandLineInterface {
         var body: some View {
             VStack(spacing: 0) {
                 HStack {
+                    // @TODO: these widgets aren't ready for primetime yet
 //                    FancyDropdown(label: "Type", items: App.AppType.allCases)
 //                    FancyDropdown(label: "Date format", items: ["Date: Abbreviated, Time: Complete", "Date: Complete, Time: Complete"])
                     Spacer()
