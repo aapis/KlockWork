@@ -30,7 +30,7 @@ struct IntroToKlockWork: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                FancySubTitle(text: "\(title)")
+                FancySubTitle(text: "\(title)", fgColour: .white)
                 Spacer()
                 FancyButtonv2(
                     text: "Close",
@@ -42,9 +42,10 @@ struct IntroToKlockWork: View {
                     type: .clear
                 )
             }
-            Divider().padding(.bottom, 5)
-            
-            VStack(alignment: .leading, spacing: 5) {
+            .padding()
+            .background(Theme.darkBtnColour)
+
+            VStack(alignment: .leading) {
                 HStack {
                     Toggle("Create a Company", isOn: $createCompany)
                         .foregroundStyle(createCompany ? .gray : .white)
@@ -92,11 +93,12 @@ struct IntroToKlockWork: View {
                     Spacer()
                 }
             }
-
+            .padding([.leading, .trailing, .bottom])
+            .padding(.top, 10)
+            
             Spacer()
         }
-        .padding()
-        .border(Theme.darkBtnColour)
+        .background(Theme.cPurple)
         .onAppear(perform: onAppear)
         .frame(height: 250)
     }
