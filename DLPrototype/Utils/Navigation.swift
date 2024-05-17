@@ -216,18 +216,32 @@ extension Navigation {
         var app: CLIAppType = .log
         var selected: CLIApp?
 
-        public struct History: Identifiable {
+        public class History: Identifiable, NSCopying {
             public var id: UUID = UUID()
             var time: Date = Date()
             var command: String
             var status: Status = .standard
             var message: String
             var appType: CLIAppType
-            
+            var job: Job? = nil
+
+            init(time: Date = Date(), command: String, status: Status = .standard, message: String, appType: CLIAppType, job: Job?) {
+                self.time = time
+                self.command = command
+                self.status = status
+                self.message = message
+                self.appType = appType
+                self.job = job
+            }
+
             /// Converts a single history line item to it's string representation
             /// - Returns: String
             public func toString() -> String {
                 return "\(time.formatted(date: .abbreviated, time: .complete)) \(appType.name) \"\(command)\""
+            }
+
+            public func copy(with zone: NSZone? = nil) -> Any {
+                return History(time: time, command: command, status: status, message: message, appType: appType, job: job)
             }
 
             public enum Status {

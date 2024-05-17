@@ -21,6 +21,7 @@ struct FancyTextField: View {
     public var showLabel: Bool = false
     public var font: Font = Theme.fontTextField
     public var fieldStatus: Navigation.Forms.Field.FieldStatus = .standard
+    public var padding: Double = 16
 
     @Binding public var text: String
 
@@ -55,7 +56,7 @@ struct FancyTextField: View {
             .font(font)
             .textFieldStyle(.plain)
             .disableAutocorrection(!enableAutoCorrection)
-            .padding()
+            .padding(padding)
             .onSubmit(onSubmit ?? {})
             .onChange(of: text) { newText in self.onChange != nil ? self.onChange!(newText) : nil }
             .background(fieldStatus == .standard ? (transparent! ? Color.clear : bgColour) : fieldStatus == .unsaved ? Color.yellow : Theme.cGreen) // sorry
@@ -72,7 +73,7 @@ struct FancyTextField: View {
             .font(font)
             .textFieldStyle(.plain)
             .disableAutocorrection(!enableAutoCorrection)
-            .padding()
+            .padding(padding)
             .onSubmit(onSubmit ?? {})
             .onChange(of: text) { newText in self.onChange != nil ? self.onChange!(newText) : nil }
             .background(fieldStatus == .standard ? (transparent! ? Color.clear : bgColour) : fieldStatus == .unsaved ? Color.yellow : Theme.cGreen) // sorry
@@ -88,7 +89,7 @@ struct FancyTextField: View {
             .font(Theme.fontSubTitle)
             .textFieldStyle(.plain)
             .disableAutocorrection(!enableAutoCorrection)
-            .padding()
+            .padding(padding)
             .onSubmit(onSubmit ?? {})
             .onChange(of: text) { newText in self.onChange != nil ? self.onChange!(newText) : nil }
             .background(fieldStatus == .standard ? (transparent! ? Color.clear : bgColour) : fieldStatus == .unsaved ? Color.yellow : Theme.cGreen) // sorry{}

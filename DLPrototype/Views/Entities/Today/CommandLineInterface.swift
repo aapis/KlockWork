@@ -19,7 +19,8 @@ struct CommandLineInterface: View {
     @State private var selected: CLIApp.AppType = .log
     @State private var command: String = ""
     @State private var showSelectorPanel: Bool = false
-    
+    @State private var showSearch: Bool = false
+
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
     
@@ -28,10 +29,9 @@ struct CommandLineInterface: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 1) {
-            // @TODO: https://github.com/aapis/KlockWork/issues/240
-//            Filters()
-            Display()
-            
+            Filters(showSearch: $showSearch)
+            Display(showSearch: $showSearch)
+
             // Prompt + app selector
             if showSelectorPanel {
                 CommandLineInterface.AppSelectorPanel(apps: apps)
@@ -74,14 +74,16 @@ extension CommandLineInterface {
                 command: command,
                 status: nav.session.job == nil ? .error : .standard,
                 message: apps.filter({$0.type == selected}).first?.helpText ?? "Help text",
-                appType: selected
+                appType: selected,
+                job: nav.session.job
             )
         } else {
             line = Navigation.CommandLineSession.History(
                 command: command,
                 status: nav.session.job == nil ? .error : .standard,
                 message: nav.session.job == nil ? "You must select a job first" : "",
-                appType: selected
+                appType: selected,
+                job: nav.session.job
             )
         }
 
@@ -121,7 +123,8 @@ extension CommandLineInterface {
             command: command,
             status: .standard,
             message: "",
-            appType: selected
+            appType: selected,
+            job: nav.session.job
         )
         
         if command == "help" {
@@ -246,7 +249,8 @@ extension CommandLineInterface {
                             command: record.message ?? "",
                             status: .success,
                             message: "",
-                            appType: .log
+                            appType: .log,
+                            job: record.job
                         )
                     )
                 }
@@ -281,21 +285,24 @@ extension CommandLineInterface {
                     command: command,
                     status: nav.session.job == nil ? .error : .standard,
                     message: nav.session.job == nil ? "You must select a job first" : "",
-                    appType: selected
+                    appType: selected,
+                    job: nav.session.job
                 )
             case .set:
                 item = Navigation.CommandLineSession.History(
                     command: command,
                     status: .standard,
                     message: "",
-                    appType: selected
+                    appType: selected,
+                    job: nav.session.job
                 )
             case .query:
                 item = Navigation.CommandLineSession.History(
                     command: command,
                     status: .standard,
                     message: "",
-                    appType: selected
+                    appType: selected,
+                    job: nav.session.job
                 )
             }
             
@@ -323,13 +330,25 @@ extension CommandLineInterface {
     
     // @TODO: https://github.com/aapis/KlockWork/issues/240
     struct Filters: View {
+        @Binding public var showSearch: Bool
+
         @EnvironmentObject public var nav: Navigation
 
         var body: some View {
             VStack(spacing: 0) {
                 HStack {
-                    FancyDropdown(label: "Type", items: App.AppType.allCases)
+//                    FancyDropdown(label: "Type", items: App.AppType.allCases)
+//                    FancyDropdown(label: "Date format", items: ["Date: Abbreviated, Time: Complete", "Date: Complete, Time: Complete"])
                     Spacer()
+                    FancyButtonv2(
+                        text: "Filter",
+                        action: {showSearch.toggle()},
+                        icon: "line.3.horizontal.decrease",
+                        bgColour: .white.opacity(0.15),
+                        showLabel: false,
+                        showIcon: true
+                    )
+                    .mask(Circle())
                 }
                 .padding([.leading, .trailing])
                 .frame(height: 78)
@@ -423,6 +442,11 @@ extension CommandLineInterface {
     }
     
     struct Display: View {
+        @Binding public var showSearch: Bool
+        @State private var searchText: String = ""
+        @State private var searchFilteredResults: [Navigation.CommandLineSession.History] = []
+        @State private var searchResults: [Navigation.CommandLineSession.History] = []
+
         @EnvironmentObject public var nav: Navigation
         
         var body: some View {
@@ -430,46 +454,71 @@ extension CommandLineInterface {
                 LinearGradient(gradient: Gradient(colors: [.clear, Color.black]), startPoint: .bottom, endPoint: .top)
                     .opacity(0.25)
                     .frame(height: 100)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    ScrollView {
-                        VStack(spacing: 1) {
-                            ForEach(nav.session.cli.history) { line in
-                                VStack(alignment: .leading, spacing: 1) {
-                                    HStack {
-                                        line.status.icon
-                                            .foregroundStyle(line.status.colour)
-                                        Text("[\(line.time.formatted(date: .abbreviated, time: .complete))]")
-                                            .foregroundStyle(.gray)
-                                        Text(line.appType.name)
-                                            .background(line.appType.bgColour)
-                                            .foregroundStyle(line.appType.fgColour)
-                                        Text("\"\(line.command)\"")
-                                        Spacer()
-                                    }
-                                    .contextMenu {
-                                        Button {
-                                            ClipboardHelper.copy(line.toString())
-                                        } label: {
-                                            Text("Copy line")
+                VStack {
+                    if showSearch {
+                        SearchBar(text: $searchText, placeholder: "Filter entries...", onReset: onReset)
+                            .border(width: 1, edges: [.bottom], color: Theme.cPurple)
+                            .onChange(of: searchText) { text in
+                                onSearch(text)
+                            }
+                    }
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        ScrollView {
+                            VStack(spacing: 1) {
+                                ForEach(nav.session.cli.history) { line in
+                                    HStack(spacing: 0) {
+                                        if let job = line.job {
+                                            if let project = job.project {
+                                                Rectangle()
+                                                    .foregroundStyle(Color.fromStored(project.colour!))
+                                                    .frame(width: 5)
+                                            }
+                                        } else {
+                                            Rectangle()
+                                                .foregroundStyle(.clear)
+                                                .frame(width: 5)
                                         }
-                                    }
-                                    
-                                    if !line.message.isEmpty {
-                                        HStack {
-                                            Image(systemName: "arrow.turn.down.right")
-                                                .padding([.leading], 8)
-                                            Text(line.message)
+
+                                        VStack(alignment: .leading, spacing: 1) {
+                                            HStack {
+                                                line.status.icon
+                                                    .foregroundStyle(line.status.colour)
+                                                Text("[\(line.time.formatted(date: .abbreviated, time: .complete))]")
+                                                    .foregroundStyle(.gray)
+                                                Text(line.appType.name)
+                                                    .background(line.appType.bgColour)
+                                                    .foregroundStyle(line.appType.fgColour)
+                                                Text("\"\(line.command)\"")
+                                                Spacer()
+                                            }
+                                            .contextMenu {
+                                                Button {
+                                                    ClipboardHelper.copy(line.toString())
+                                                } label: {
+                                                    Text("Copy line")
+                                                }
+                                            }
+
+                                            if !line.message.isEmpty {
+                                                HStack {
+                                                    Image(systemName: "arrow.turn.down.right")
+                                                        .padding([.leading], 8)
+                                                    Text(line.message)
+                                                }
+                                                .foregroundStyle(line.status.colour)
+                                            }
                                         }
-                                        .foregroundStyle(line.status.colour)
+                                        .padding(3)
+                                        .background(line.job != nil ? line.job!.backgroundColor : .clear)
                                     }
                                 }
                             }
                         }
                     }
+                    .padding()
+                    .font(Theme.fontTextField)
                 }
-                .padding()
-                .font(Theme.fontTextField)
             }
         }
     }
@@ -501,9 +550,9 @@ extension CommandLineInterface {
     
     struct AppSelectorPanel: View {
         typealias CLIApp = CommandLineInterface.App
-        
+
         public var apps: [CLIApp]
-        
+
         @EnvironmentObject public var nav: Navigation
 
         var body: some View {
@@ -516,5 +565,41 @@ extension CommandLineInterface {
                 }
             }
         }
+    }
+}
+
+extension CommandLineInterface.Display {
+    /// Search handler, fires when self.searchText changes
+    /// - Parameter text: Search text after the user has finished typing
+    /// - Returns: Void
+    private func onSearch(_ text: String) -> Void {
+        // Reset when there's no text
+        // @TODO: move to a callback under SearchBar
+        if text.count == 0 {
+            self.onReset()
+        }
+
+        // Deep copy nav.session.cli.history
+        for line in nav.session.cli.history {
+            let item = line.copy() as! Navigation.CommandLineSession.History
+
+            if !searchResults.contains(where: {$0.command == item.command}) {
+                searchResults.append(item)
+            }
+        }
+
+        // Set our filtered history list with items matching the search term
+        searchFilteredResults = nav.session.cli.history.filter {
+            $0.command.contains(try! Regex("\(text)"))
+        }
+
+        nav.session.cli.history = searchFilteredResults
+    }
+    
+    /// Resets UI and list back to default
+    /// - Returns: Void
+    private func onReset() -> Void {
+        nav.session.cli.history = searchResults;
+        searchFilteredResults = []
     }
 }
