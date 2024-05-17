@@ -75,15 +75,13 @@ struct DLPrototype: App {
     }
 
     private func onAppear() -> Void {
-        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
         let appName = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
 
         // https://github.com/lukakerr/NSWindowStyles
         //        NSApp?.mainWindow?.styleMask.remove(.titled)
         //        NSApp.presentationOptions.remove(.titled)
 
-        nav.title = "\(appName ?? "KlockWork") \(version ?? "0").\(build ?? "0")"
+        nav.title = "\(appName ?? "KlockWork")"
         nav.session.plan = CoreDataPlan(moc: persistenceController.container.viewContext).forDate(nav.session.date).first
 
         if let plan = nav.session.plan {
