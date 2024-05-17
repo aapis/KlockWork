@@ -9,27 +9,20 @@
 import SwiftUI
 
 public class CoreDataProjects: ObservableObject {
+    /// Context for updating CD objects
     public var moc: NSManagedObjectContext?
 
+    /// Thread lock
     private let lock = NSLock()
-    
+
+    /// Create new CoreDataProjects instance
+    /// - Parameter moc: NSManagedObjectContext
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
     }
 
-    static public func recentProjectsWidgetData() -> FetchRequest<Project> {
-        let descriptors = [
-            NSSortDescriptor(keyPath: \Project.lastUpdate?, ascending: false)
-        ]
-
-        let fetch: NSFetchRequest<Project> = Project.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive = true")
-        fetch.sortDescriptors = descriptors
-        fetch.fetchLimit = 10
-
-        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
-    }
-
+    /// Fetch request to find recent projects
+    /// - Returns: FetchRequest<Project>
     static public func fetchProjects() -> FetchRequest<Project> {
         let descriptors = [
             NSSortDescriptor(keyPath: \Project.lastUpdate?, ascending: false)
@@ -41,7 +34,10 @@ public class CoreDataProjects: ObservableObject {
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
-    
+
+    /// Find project by ID
+    /// - Parameter id: PID value to search for
+    /// - Returns: Project|nil
     public func byId(_ id: Int64) -> Project? {
         let predicate = NSPredicate(
             format: "pid = %d",
@@ -57,6 +53,9 @@ public class CoreDataProjects: ObservableObject {
         return results.first
     }
 
+    /// Find projects by company PID
+    /// - Parameter id: Company PID
+    /// - Returns: Array<Project>
     public func byCompany(_ id: Int64) -> [Project] {
         let predicate = NSPredicate(
             format: "company = %@",
@@ -66,6 +65,9 @@ public class CoreDataProjects: ObservableObject {
         return query(predicate)
     }
 
+    /// Find projects whose name matches the term
+    /// - Parameter term: Search term
+    /// - Returns: Array<Project>
     public func anyName(_ term: String) -> [Project] {
         let predicate = NSPredicate(
             format: "name = %@",
@@ -75,6 +77,9 @@ public class CoreDataProjects: ObservableObject {
         return query(predicate)
     }
 
+    /// Find a specific project by name
+    /// - Parameter term: Search term
+    /// - Returns: Project|nil
     public func byName(_ term: String) -> Project? {
         let predicate = NSPredicate(
             format: "name = %@",
@@ -89,7 +94,7 @@ public class CoreDataProjects: ObservableObject {
 
         return results.first
     }
-    
+
     /// Find projects by UUID (aka, by id)
     /// - Parameter term: A project's UUID
     /// - Returns: Optional(Project)
@@ -108,10 +113,14 @@ public class CoreDataProjects: ObservableObject {
         return results.first
     }
 
+    /// Find all projects
+    /// - Returns: Array<Project>
     public func all() -> [Project] {
         return query()
     }
-    
+
+    /// Find all alive/active projects
+    /// - Returns: Array<Project>
     public func alive() -> [Project] {
         let predicate = NSPredicate(
             format: "alive = true"
@@ -119,7 +128,10 @@ public class CoreDataProjects: ObservableObject {
         
         return query(predicate)
     }
-    
+
+    /// Find recently used projects
+    /// - Parameter numWeeks: Number of weeks in the past to search
+    /// - Returns: Array<Project>
     public func recent(_ numWeeks: Double? = 2) -> [Project] {
         var results: [Project] = []
         let records = CoreDataRecords(moc: moc!).recent(numWeeks!)
@@ -137,6 +149,8 @@ public class CoreDataProjects: ObservableObject {
         return results
     }
 
+    /// Count all living projects
+    /// - Returns: Int
     public func countAll() -> Int {
         let predicate = NSPredicate(
             format: "alive == true"
@@ -145,6 +159,38 @@ public class CoreDataProjects: ObservableObject {
         return count(predicate)
     }
 
+    /// Create a new project
+    /// - Parameters:
+    ///   - name: Project name
+    ///   - abbreviation: Abbreviation used by various search syntaxes
+    ///   - colour: Colour as an array of Double's
+    ///   - created: Created date
+    ///   - updated: Updated date
+    ///   - pid: UI-friendly ID value
+    ///   - alive: Is project alive?
+    /// - Returns: Void
+    public func create(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, pid: Int64, alive: Bool = true) -> Void {
+        let project = Project(context: moc!)
+        project.alive = alive
+        project.abbreviation = abbreviation
+        project.colour = colour
+        project.created = created
+        project.lastUpdate = updated ?? created
+        project.name = name
+        project.pid = pid
+        
+        // If this company already exists, do nothing!
+        let predicate = NSPredicate(format: "name = %@", name as CVarArg)
+        let results = query(predicate)
+        
+        if results.count == 0 {
+            PersistenceController.shared.save()
+        }
+    }
+
+    /// Query projects
+    /// - Parameter predicate: Query predicate
+    /// - Returns: Array<Project>
     private func query(_ predicate: NSPredicate? = nil) -> [Project] {
         lock.lock()
 
@@ -173,6 +219,9 @@ public class CoreDataProjects: ObservableObject {
         return results
     }
 
+    /// Count projects
+    /// - Parameter predicate: Query predicate
+    /// - Returns: Int
     private func count(_ predicate: NSPredicate) -> Int {
         lock.lock()
 
