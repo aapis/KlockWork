@@ -152,6 +152,10 @@ extension CommandLineInterface {
     }
     
     private func actionOnAppear() -> Void {
+        Task {
+            await self.recordsForToday()
+        }
+
         self.apps = [
             CLIApp(
                 type: .log,
@@ -226,6 +230,25 @@ extension CommandLineInterface {
                 }
             })
         ]
+    }
+    
+    private func recordsForToday() async -> Void {
+        let records = CoreDataRecords(moc: moc).forDate(Date())
+        nav.session.cli.history = []
+        
+        if nav.session.cli.history.count <= CommandLineInterface.maxItems {
+            for record in records.sorted(by: {$0.timestamp! <= $1.timestamp!}) {
+                nav.session.cli.history.append(
+                    Navigation.CommandLineSession.History(
+                        time: record.timestamp ?? Date(),
+                        command: record.message ?? "",
+                        status: .success,
+                        message: "",
+                        appType: .log
+                    )
+                )
+            }
+        }
     }
     
     private func clear() -> Void {
@@ -324,6 +347,8 @@ extension CommandLineInterface {
         @Binding public var selected: AppType
 
         @EnvironmentObject public var nav: Navigation
+        
+        @FocusState public var hasFocus: Bool
 
         public var body: some View {
             HStack(spacing: 0) {
@@ -335,14 +360,22 @@ extension CommandLineInterface {
                     fgColour: nav.session.job?.backgroundColor.isBright() ?? false ? .black : .white,
                     bgColour: nav.session.job?.backgroundColor ?? Theme.textBackground,
                     font: Theme.fontTextField,
-                    text: $command
+                    text: $command,
+                    hasFocus: _hasFocus
                 )
                 .disabled(showSelectorPanel)
+                .onAppear {
+                    // thx https://www.kodeco.com/31569019-focus-management-in-swiftui-getting-started#toc-anchor-002
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        self.hasFocus = true
+                    }
+                }
             }
             .onAppear(perform: actionOnAppear)
         }
         
         private func actionOnAppear() -> Void {
+            // Listen for keyboard events so we can add up/down arrow terminal interactions
             NSEvent.addLocalMonitorForEvents(matching: .keyDown) {
                 let code = Int($0.keyCode)
                 
