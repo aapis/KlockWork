@@ -151,7 +151,7 @@ extension Today.PostingInterface {
                 // Create a history item (used by CLI mode and, eventually, LogTable)
                 if nav.session.cli.history.count <= CommandLineInterface.maxItems {
                     nav.session.cli.history.append(
-                        Navigation.CommandLineSession.History(command: text, message: "", appType: .log)
+                        Navigation.CommandLineSession.History(command: text, message: "", appType: .log, job: nav.session.job)
                     )
                 }
             } catch {
