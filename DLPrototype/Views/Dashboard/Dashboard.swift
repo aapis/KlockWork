@@ -77,8 +77,14 @@ extension Dashboard {
                         if calendar > -1 {
                             HStack {
                                 Image(systemName: "calendar")
-                                Text("You have \(upcomingEvents.count) meetings today")
-                                    .font(Theme.font)
+
+                                if upcomingEvents.count == 0 || upcomingEvents.count > 1 {
+                                    Text("\(upcomingEvents.count) meetings today")
+                                        .font(Theme.font)
+                                } else {
+                                    Text("\(upcomingEvents.count) meeting today")
+                                        .font(Theme.font)
+                                }
                             }
                             .padding(5)
 

@@ -138,6 +138,7 @@
 		53967D8629EC7DEB006616A0 /* ViewModeSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53967D8529EC7DEB006616A0 /* ViewModeSelector.swift */; };
 		53999C1F29669C4E00125E65 /* NoteCreate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53999C1E29669C4E00125E65 /* NoteCreate.swift */; };
 		539F68DB2BF6BD310086F89A /* FancyDropdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539F68DA2BF6BD310086F89A /* FancyDropdown.swift */; };
+		539F68DD2BF70A260086F89A /* IntroToKlockWork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539F68DC2BF70A260086F89A /* IntroToKlockWork.swift */; };
 		53B0BE7F2972542A007CB663 /* ProjectsDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE7E2972542A007CB663 /* ProjectsDashboard.swift */; };
 		53B0BE8129725B52007CB663 /* CoreDataProjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8029725B52007CB663 /* CoreDataProjects.swift */; };
 		53B0BE8429726118007CB663 /* FancyLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE8329726118007CB663 /* FancyLink.swift */; };
@@ -381,6 +382,7 @@
 		53967D8529EC7DEB006616A0 /* ViewModeSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModeSelector.swift; sourceTree = "<group>"; };
 		53999C1E29669C4E00125E65 /* NoteCreate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteCreate.swift; sourceTree = "<group>"; };
 		539F68DA2BF6BD310086F89A /* FancyDropdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyDropdown.swift; sourceTree = "<group>"; };
+		539F68DC2BF70A260086F89A /* IntroToKlockWork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroToKlockWork.swift; sourceTree = "<group>"; };
 		53B0BE7E2972542A007CB663 /* ProjectsDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsDashboard.swift; sourceTree = "<group>"; };
 		53B0BE8029725B52007CB663 /* CoreDataProjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataProjects.swift; sourceTree = "<group>"; };
 		53B0BE8329726118007CB663 /* FancyLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyLink.swift; sourceTree = "<group>"; };
@@ -716,6 +718,7 @@
 				535C1AE529F48FD500CD95FD /* ThisWeek.swift */,
 				535C1AE729F4912800CD95FD /* ThisMonth.swift */,
 				535C1AE929F4913900CD95FD /* ThisYear.swift */,
+				539F68DC2BF70A260086F89A /* IntroToKlockWork.swift */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -1331,6 +1334,7 @@
 				53E2025C2A7EAF6100B4DF70 /* ProjectRowPlain.swift in Sources */,
 				53561F8529F1FC7900D828AD /* ProjectPickerUsing.swift in Sources */,
 				5354C8EA2AA03C77001C1779 /* Tasks.swift in Sources */,
+				539F68DD2BF70A260086F89A /* IntroToKlockWork.swift in Sources */,
 				5371BA222A7B1C9D00DEEC21 /* RecentNotesWidget.swift in Sources */,
 				53C000AA2B41447600D5EC04 /* NoteFormWidget.swift in Sources */,
 				5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */,
