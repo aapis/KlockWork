@@ -14,7 +14,7 @@ public enum TodayViewTab: CaseIterable {
     var icon: String {
         switch self {
         case .chronologic:
-            return "tray.2.fill"
+            return "tray.fill"
         case .grouped:
             return "square.grid.3x1.fill.below.line.grid.1x2"
         case .summarized:

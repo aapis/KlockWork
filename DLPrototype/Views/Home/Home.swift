@@ -42,7 +42,7 @@ struct Home: View {
                 SidebarButton(
                     destination: AnyView(Today()),
                     pageType: .today,
-                    icon: "doc.append",
+                    icon: "tray",
                     label: "Today",
                     sidebar: AnyView(TodaySidebar()),
                     altMode: PageAltMode(
