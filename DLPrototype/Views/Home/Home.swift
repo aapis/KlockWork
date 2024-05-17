@@ -19,6 +19,8 @@ struct Home: View {
     @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
     @AppStorage("general.showSessionInspector") public var showSessionInspector: Bool = false
+    @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
+    @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
 
     private var buttons: [PageGroup: [SidebarButton]] {
         [
@@ -40,9 +42,14 @@ struct Home: View {
                 SidebarButton(
                     destination: AnyView(Today()),
                     pageType: .today,
-                    icon: "doc.append",
+                    icon: "tray",
                     label: "Today",
-                    sidebar: AnyView(TodaySidebar())
+                    sidebar: AnyView(TodaySidebar()),
+                    altMode: PageAltMode(
+                        name: "CLI Mode",
+                        icon: "apple.terminal",
+                        condition: cliEnabled && commandLineMode
+                    )
                 )
             ],
             .entities: [
