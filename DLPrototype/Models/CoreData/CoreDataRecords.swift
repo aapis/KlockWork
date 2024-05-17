@@ -191,8 +191,8 @@ public class CoreDataRecords: ObservableObject {
         var jobs: [Double] = []
         
         for rec in records {
-            if rec.job != nil {
-                jobs.append(rec.job!.jid)
+            if let jerb = rec.job {
+                jobs.append(jerb.jid)
             }
         }
         
