@@ -77,10 +77,6 @@ struct DLPrototype: App {
     private func onAppear() -> Void {
         let appName = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
 
-        // https://github.com/lukakerr/NSWindowStyles
-        //        NSApp?.mainWindow?.styleMask.remove(.titled)
-        //        NSApp.presentationOptions.remove(.titled)
-
         nav.title = "\(appName ?? "KlockWork")"
         nav.session.plan = CoreDataPlan(moc: persistenceController.container.viewContext).forDate(nav.session.date).first
 
@@ -91,6 +87,21 @@ struct DLPrototype: App {
             nav.planning.projects = plan.projects as! Set<Project>
             nav.planning.companies = plan.companies as! Set<Company>
             nav.planning.id = plan.id!
+        }
+
+        // Create default company and project if none are found, only affects new users
+        let cmodel = CoreDataCompanies(moc: persistenceController.container.viewContext)
+        let company = cmodel.findDefault()
+
+        if company == nil {
+            let project = CoreDataProjects(moc: persistenceController.container.viewContext).alive().first(where: {$0.company?.isDefault == true})
+
+            cmodel.create(name: "Default", abbreviation: "DE", colour: Color.randomStorable(), created: Date(), isDefault: true, pid: 1)
+            
+            if project == nil {
+                let pmodel = CoreDataProjects(moc: persistenceController.container.viewContext)
+                pmodel.create(name: "Default", abbreviation: "DE", colour: Color.randomStorable(), created: Date(), pid: 1)
+            }
         }
     }
 
