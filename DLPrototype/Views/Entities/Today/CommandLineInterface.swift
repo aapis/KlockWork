@@ -234,19 +234,22 @@ extension CommandLineInterface {
     
     private func recordsForToday() async -> Void {
         let records = CoreDataRecords(moc: moc).forDate(Date())
-        nav.session.cli.history = []
-        
+
         if nav.session.cli.history.count <= CommandLineInterface.maxItems {
             for record in records.sorted(by: {$0.timestamp! <= $1.timestamp!}) {
-                nav.session.cli.history.append(
-                    Navigation.CommandLineSession.History(
-                        time: record.timestamp ?? Date(),
-                        command: record.message ?? "",
-                        status: .success,
-                        message: "",
-                        appType: .log
+                let exists = nav.session.cli.history.first(where: {$0.command == record.message}) != nil
+                
+                if !exists {
+                    nav.session.cli.history.append(
+                        Navigation.CommandLineSession.History(
+                            time: record.timestamp ?? Date(),
+                            command: record.message ?? "",
+                            status: .success,
+                            message: "",
+                            appType: .log
+                        )
                     )
-                )
+                }
             }
         }
     }
