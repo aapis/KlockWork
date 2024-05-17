@@ -74,7 +74,9 @@ struct SidebarButton: View, Identifiable {
                                             command: "@session.job=\(job.jid.string)",
                                             status: .success,
                                             message: "",
-                                            appType: .set)
+                                            appType: .set,
+                                            job: nav.session.job
+                                        )
                                     )
                                 }
                             }
