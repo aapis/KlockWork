@@ -54,7 +54,23 @@ struct SidebarButton: View, Identifiable {
                     if nav.session.job != nil {
                         ActiveIndicator(colour: nav.session.job!.colour_from_stored(), href: .jobs)
                     }
-                    button.frame(width: 50, height: 50)
+                    button
+                        .frame(width: 50, height: 50)
+                        // Log job change events to the CLI/History
+                        .onChange(of: nav.session.job) { _ in
+                            // Create a history item (used by CLI mode and, eventually, LogTable)
+                            if nav.session.cli.history.count <= CommandLineInterface.maxItems {
+                                if let job = nav.session.job {
+                                    nav.session.cli.history.append(
+                                        Navigation.CommandLineSession.History(
+                                            command: "@session.job=\(job.jid.string)",
+                                            status: .success,
+                                            message: "",
+                                            appType: .set)
+                                    )
+                                }
+                            }
+                        }
                 }
             default: button.frame(width: 50, height: 50)
             }
