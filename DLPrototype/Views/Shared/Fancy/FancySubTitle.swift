@@ -13,18 +13,20 @@ struct FancySubTitle: View {
     public var text: String
     public var image: String?
     public var showLabel: Bool? = true
+    public var fgColour: Color = .secondary
     
     var body: some View {
         HStack(alignment: .firstTextBaseline) {
             if image != nil {
                 Text(Image(systemName: image!))
                     .font(Theme.fontSubTitle)
+                    .foregroundStyle(fgColour)
             }
             
             if showLabel! {
                 Text(text)
                     .font(Theme.fontSubTitle)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(fgColour)
             }
         }
     }
