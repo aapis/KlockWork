@@ -9,18 +9,25 @@
 import SwiftUI
 
 public class CoreDataCompanies: ObservableObject {
+    /// Context for updating CD objects
     public var moc: NSManagedObjectContext?
-
+    
+    /// Thread lock
     private let lock = NSLock()
-
+    
+    /// Calculate next  pid value
     public var nextPid: Int64 {
         return Int64(count(NSPredicate(format: "name != nil")) + 1)
     }
-
+    
+    /// Create new CoreDataCompanies instance
+    /// - Parameter moc: NSManagedObjectContext
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
     }
-    
+
+    /// Fetch request to find all items
+    /// - Returns: FetchRequest<Company>
     static public func all() -> FetchRequest<Company> {
         let descriptors = [
             NSSortDescriptor(keyPath: \Company.name, ascending: true)
@@ -32,7 +39,7 @@ public class CoreDataCompanies: ObservableObject {
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
-    
+
     /// Finds all active companies
     /// - Returns: FetchRequest<Company>
     static public func fetch() -> FetchRequest<Company> {
@@ -47,6 +54,9 @@ public class CoreDataCompanies: ObservableObject {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
+    /// Retreive all companies by pid
+    /// - Parameter id: PID value to find
+    /// - Returns: Company|nil
     public func byPid(_ id: Int) -> Company? {
         let predicate = NSPredicate(
             format: "pid = %d && hidden == false",
@@ -61,10 +71,10 @@ public class CoreDataCompanies: ObservableObject {
 
         return results.first
     }
-    
+
     /// Find companies by name
     /// - Parameter name: Company name
-    /// - Returns: Company
+    /// - Returns: Company|nil
     public func byName(_ name: String) -> Company? {
         let predicate = NSPredicate(
             format: "name = %@ && hidden == false",
@@ -80,6 +90,8 @@ public class CoreDataCompanies: ObservableObject {
         return results.first
     }
 
+    /// Find all alive companies
+    /// - Returns: Array<Company>
     public func alive() -> [Company] {
         let predicate = NSPredicate(
             format: "alive = true && hidden == false"
@@ -88,6 +100,8 @@ public class CoreDataCompanies: ObservableObject {
         return query(predicate)
     }
 
+    /// Find all companies that have a name and are not hidden
+    /// - Returns: Array<Company>
     public func all() -> [Company] {
         let predicate = NSPredicate(
             format: "name != nil && hidden == false"
@@ -96,6 +110,8 @@ public class CoreDataCompanies: ObservableObject {
         return query(predicate)
     }
 
+    /// Finds the default company
+    /// - Returns: Company|nil
     public func findDefault() -> Company? {
         let predicate = NSPredicate(
             format: "isDefault = true"
@@ -109,7 +125,43 @@ public class CoreDataCompanies: ObservableObject {
 
         return results.first
     }
+    
+    /// Create a new company
+    /// - Parameters:
+    ///   - name: Company name
+    ///   - abbreviation: Abbreviation used by various search syntaxes
+    ///   - colour: Colour as an array of Double's
+    ///   - created: Created date
+    ///   - updated: Updated date
+    ///   - isDefault: Is this the default company?
+    ///   - pid: UI-friendly ID value
+    ///   - alive: Is company alive?
+    ///   - hidden: Is company hidden?
+    /// - Returns: Void
+    public func create(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, isDefault: Bool, pid: Int64, alive: Bool = true, hidden: Bool = false) -> Void {
+        let company = Company(context: moc!)
+        company.alive = alive
+        company.hidden = hidden
+        company.abbreviation = abbreviation
+        company.colour = colour
+        company.createdDate = created
+        company.lastUpdate = updated ?? created
+        company.isDefault = isDefault
+        company.name = name
+        company.pid = pid
+        
+        // If this company already exists, do nothing!
+        let predicate = NSPredicate(format: "name = %@", name as CVarArg)
+        let results = query(predicate)
+        
+        if results.count == 0 {
+            PersistenceController.shared.save()
+        }
+    }
 
+    /// Query companies
+    /// - Parameter predicate: Query predicate
+    /// - Returns: Array<Company>
     private func query(_ predicate: NSPredicate? = nil) -> [Company] {
         lock.lock()
 
@@ -137,7 +189,10 @@ public class CoreDataCompanies: ObservableObject {
 
         return results
     }
-
+    
+    /// Count companies
+    /// - Parameter predicate: Query predicate
+    /// - Returns: Int
     private func count(_ predicate: NSPredicate) -> Int {
         lock.lock()
 

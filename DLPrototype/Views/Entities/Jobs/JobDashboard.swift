@@ -100,6 +100,7 @@ struct JobDashboardRedux: View {
                             explorerVisible = false
 
                             // Creates a new job entity so the user can customize it
+                            // @TODO: move to new method CoreDataJobs.create
                             let newJob = Job(context: moc)
                             newJob.id = UUID()
                             newJob.jid = 1.0
@@ -108,8 +109,8 @@ struct JobDashboardRedux: View {
                             newJob.project = CoreDataProjects(moc: moc).alive().first(where: {$0.company?.isDefault == true})
                             newJob.created = Date()
                             newJob.lastUpdate = newJob.created
-                            newJob.overview = "Edit this description"
-                            newJob.title = "Sample job title"
+                            newJob.overview = ""
+                            newJob.title = ""
                             nav.session.job = newJob
                             nav.forms.tp.editor.job = newJob
                         },
@@ -233,6 +234,7 @@ struct JobExplorer: View {
 
         @State private var isDeletePresented: Bool = false
         @State private var isInvalidJobIdWarningPresented: Bool = false
+        @State private var saved: Bool = false
 
         @AppStorage("jobdashboard.explorerVisible") private var explorerVisible: Bool = true
         @AppStorage("jobdashboard.editorVisible") private var editorVisible: Bool = true
@@ -244,6 +246,15 @@ struct JobExplorer: View {
             ScrollView {
                 if job != nil {
                     Grid(alignment: .topLeading, horizontalSpacing: 8, verticalSpacing: 10) {
+                        if saved {
+                            GridRow {
+                                SaveMessage(saved: $saved)
+                                    .onChange(of: saved) { _ in
+                                        self.cancel()
+                                    }
+                            }
+                        }
+                        
                         GridRow {
                             LazyVGrid(columns: columns) {
                                 VStack {
@@ -260,7 +271,6 @@ struct JobExplorer: View {
                                     }
                                     FancyDivider()
                                     HStack(alignment: .bottom) {
-                                        Spacer()
                                         FancySimpleButton(text: "Delete", action: {isDeletePresented = true}, icon: "trash", showLabel: false, showIcon: true, type: .destructive)
                                             .alert("Are you sure you want to delete job ID \(job!.jid.string)? This is irreversible.", isPresented: $isDeletePresented) {
                                                 Button("Yes", role: .destructive) {
@@ -268,6 +278,9 @@ struct JobExplorer: View {
                                                 }
                                                 Button("No", role: .cancel) {}
                                             }
+                                        Spacer()
+                                        FancySimpleButton(text: "Cancel", action: cancel, showLabel: true)
+                                        FancySimpleButton(text: "Save", action: {PersistenceController.shared.save() ; saved = true}, showLabel: true, type: .primary)
                                     }
                                     Spacer()
                                 }
@@ -279,6 +292,23 @@ struct JobExplorer: View {
                     .border(width: 1, edges: [.top, .bottom, .leading, .trailing], color: Theme.rowColour)
                     .padding(8)
                 }
+            }
+        }
+        
+        struct SaveMessage: View {
+            @Binding public var saved: Bool
+
+            private let copy: String = "Job saved!"
+
+            var body: some View {
+                VStack {
+                    HStack {
+                        Text(copy).padding(15).bold()
+                        Spacer()
+                    }
+                }
+                .background(Theme.cGreen)
+                .onAppear(perform: startTimeout)
             }
         }
     }
@@ -309,6 +339,23 @@ extension JobExplorer.JobViewRedux {
             }
 
             PersistenceController.shared.save()
+        }
+    }
+    
+    /// Cancel job create/edit
+    /// - Returns: Void
+    private func cancel() -> Void {
+        nav.session.setJob(nil)
+        nav.forms.tp.editor.job = nil
+    }
+}
+
+extension JobExplorer.JobViewRedux.SaveMessage {
+    /// Automatically hides the save message after a set number of seconds
+    /// - Returns: Void
+    private func startTimeout() -> Void {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            self.saved = false
         }
     }
 }

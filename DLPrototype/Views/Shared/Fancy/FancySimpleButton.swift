@@ -29,10 +29,8 @@ struct FancySimpleButton: View {
                 action()
             }
 
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                if let href = href {
-                    nav.to(href)
-                }
+            if let href = href {
+                nav.to(href)
             }
         } label: {
             if let labelView = labelView {
