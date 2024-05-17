@@ -9,6 +9,13 @@
 import Foundation
 import SwiftUI
 
+struct PageAltMode: Identifiable {
+    var id: UUID = UUID()
+    var name: String
+    var icon: String
+    var condition: Bool
+}
+
 struct SidebarButton: View, Identifiable {
     public let id: UUID = UUID()
     public var destination: AnyView
@@ -18,6 +25,7 @@ struct SidebarButton: View, Identifiable {
     public var sidebar: AnyView?
     public var showLabel: Bool = true
     public var size: ButtonSize? = .large
+    public var altMode: PageAltMode? = nil
 
     @State private var highlighted: Bool = false
 
@@ -111,10 +119,11 @@ struct SidebarButton: View, Identifiable {
                     .opacity(0.1)
                 }
 
-                Image(systemName: isDatePickerPresented && nav.parent == pageType ? "xmark" : icon)
-                    .font(.title)
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundColor(isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
+                Image(systemName: isDatePickerPresented && nav.parent == pageType ? "xmark" : (altMode != nil ? (altMode!.condition ? altMode!.icon : icon) : icon))
+                   .font(.title)
+                   .symbolRenderingMode(.hierarchical)
+                   .foregroundColor(isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
+
             }
         })
         .help(label)
