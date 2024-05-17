@@ -34,5 +34,6 @@ struct StatsWidget: View {
                 Text(String(recordCount))
             }
         }
+        .padding([.leading, .trailing])
     }
 }

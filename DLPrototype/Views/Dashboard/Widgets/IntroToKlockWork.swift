@@ -95,6 +95,8 @@ struct IntroToKlockWork: View {
             }
             .padding([.leading, .trailing, .bottom])
             .padding(.top, 10)
+            
+            Spacer()
         }
         .background(Theme.cPurple)
         .onAppear(perform: onAppear)

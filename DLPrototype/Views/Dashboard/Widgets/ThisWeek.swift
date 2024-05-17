@@ -17,13 +17,28 @@ struct ThisWeek: View {
     @State private var jobCount: Int = 0
     @State private var recordCount: Int = 0
     
+    @AppStorage("dashboard.widget.thisweek") public var showWidgetThisWeek: Bool = true
+    
     @Environment(\.managedObjectContext) var moc
     @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
     
     var body: some View {
         VStack(alignment: .leading) {
-            FancySubTitle(text: "\(title)")
-            Divider()
+            HStack {
+                FancySubTitle(text: "\(title)", fgColour: .white)
+                Spacer()
+                FancyButtonv2(
+                    text: "Close",
+                    action: {showWidgetThisWeek.toggle()},
+                    icon: "xmark",
+                    showLabel: false,
+                    showIcon: true,
+                    size: .tiny,
+                    type: .clear
+                )
+            }
+            .padding()
+            .background(Theme.darkBtnColour)
             
             if recordCount == 0 {
                 WidgetLoading()
@@ -33,8 +48,7 @@ struct ThisWeek: View {
             
             Spacer()
         }
-        .padding()
-        .border(Theme.darkBtnColour)
+        .background(Theme.cPurple)
         .onAppear(perform: onAppear)
         .frame(height: 250)
     }
