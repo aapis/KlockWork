@@ -65,258 +65,6 @@ struct CommandLineInterface: View {
     }
 }
 
-extension CommandLineInterface {
-    private func executeLogAction() -> Void {
-        var line: Navigation.CommandLineSession.History
-        
-        if command == "help" {
-            line = Navigation.CommandLineSession.History(
-                command: command,
-                status: nav.session.job == nil ? .error : .standard,
-                message: apps.filter({$0.type == selected}).first?.helpText ?? "Help text",
-                appType: selected,
-                job: nav.session.job
-            )
-        } else {
-            line = Navigation.CommandLineSession.History(
-                command: command,
-                status: nav.session.job == nil ? .error : .standard,
-                message: nav.session.job == nil ? "You must select a job first" : "",
-                appType: selected,
-                job: nav.session.job
-            )
-        }
-
-        Task {
-            // @TODO: copied from PostingInterface.save, refactor!
-            if let job = nav.session.job {
-                let record = LogRecord(context: moc)
-                record.timestamp = Date()
-                record.message = command
-                record.alive = true
-                record.id = UUID()
-                record.job = job
-                
-                do {
-                    try record.validateForInsert()
-
-                    PersistenceController.shared.save()
-                    nav.session.idate = DateHelper.identifiedDate(for: Date(), moc: moc)
-                    line.status = .success
-                } catch {
-                    print("[debug][error] Save error \(error)")
-                }
-            }
-
-            self.updateDisplay(line: line)
-            self.clear()
-        }
-    }
-    
-    private func executeQueryAction() -> Void {
-        self.updateDisplay(status: .standard, message: command)
-        self.clear()
-    }
-    
-    private func executeSetAction() -> Void {
-        var line: Navigation.CommandLineSession.History = Navigation.CommandLineSession.History(
-            command: command,
-            status: .standard,
-            message: "",
-            appType: selected,
-            job: nav.session.job
-        )
-        
-        if command == "help" {
-            line.message = apps.filter({$0.type == selected}).first?.helpText ?? "Help text"
-        }
-        
-        Task {
-            let pattern = /^@(.*?)\.(.*?)=(.*)/
-            let matches = command.matches(of: pattern)
-
-            if let match = matches.first {
-                // We found a matching CLICommand, execute it
-                if let cmd = validSetCommands.first(where: {$0.domain == match.1 && $0.method == match.2}) {
-                    // Run the callback, successful response messages is defined there
-                    cmd.callback(String(match.3), &line)
-                } else {
-                    line.message = "Invalid command: @\(String(match.1)).\(String(match.2))"
-                    line.status = .error
-                }
-            } else {
-                line.message = "Unable to parse command \(command)"
-                line.status = .error
-            }
-
-            self.updateDisplay(line: line)
-            self.clear()
-        }
-    }
-    
-    private func actionOnAppear() -> Void {
-        Task {
-            await self.recordsForToday()
-        }
-
-        self.apps = [
-            CLIApp(
-                type: .log,
-                action: self.executeLogAction,
-                promptPlaceholder: "What are you working on?",
-                helpText: "Write out what you're working on right now, like right-right now, and hit return.",
-                showSelectorPanel: $showSelectorPanel,
-                command: $command,
-                selected: $selected
-            ),
-            // @TODO: not ready for primetime yet
-//            CLIApp(
-//                type: .query,
-//                action: self.executeQueryAction,
-//                promptPlaceholder: "Find stuff",
-//                showSelectorPanel: $showSelectorPanel, helpText: String,
-//                command: $command,
-//                selected: $selected
-//            ),
-            CLIApp(
-                type: .set,
-                action: self.executeSetAction,
-                promptPlaceholder: "Configure things",
-                helpText: "Syntax: @session.job=100 @inspect.job=100",
-                showSelectorPanel: $showSelectorPanel,
-                command: $command,
-                selected: $selected
-            )
-        ]
-        
-        self.validSetCommands = [
-            CLICommand(domain: "session", method: "job", callback: { match, line in
-                isSearching = false
-                let id: Double = Double(match) ?? 0.0
-                if let job = CoreDataJob(moc: moc).byId(id) {
-                    nav.session.setJob(job)
-                    line.status = .success
-                } else {
-                    line.message = "Unable to find a Job with ID \(match)"
-                    line.status = .error
-                }
-            }),
-            CLICommand(domain: "inspect", method: "job", callback: { match, line in
-                isSearching = false
-                let id: Double = Double(match) ?? 0.0
-                if let entity = CoreDataJob(moc: moc).byId(id) {
-                    isSearching = true
-                    nav.session.search.text = entity.jid.string
-                    nav.session.search.inspectingEntity = entity
-                    // @TODO: this causes nav.session.cli.app to reset for some reason
-//                    nav.setInspector(AnyView(Inspector(entity: entity)))
-
-                    line.status = .success
-                } else {
-                    line.message = "Unable to find a Job with ID \(match)"
-                    line.status = .error
-                }
-            }),
-            CLICommand(domain: "inspect", method: "company", callback: { match, line in
-                isSearching = false
-                if let entity = CoreDataCompanies(moc: moc).byName(match) {
-                    isSearching = true
-                    nav.session.search.text = entity.name
-                    nav.session.search.inspectingEntity = entity
-                    // @TODO: this causes nav.session.cli.app to reset for some reason
-//                    nav.setInspector(AnyView(Inspector(entity: entity)))
-
-                    line.status = .success
-                } else {
-                    line.message = "Unable to find a company named \(match)"
-                    line.status = .error
-                }
-            })
-        ]
-    }
-    
-    private func recordsForToday() async -> Void {
-        let records = CoreDataRecords(moc: moc).forDate(Date())
-
-        if nav.session.cli.history.count <= CommandLineInterface.maxItems {
-            for record in records.sorted(by: {$0.timestamp! <= $1.timestamp!}) {
-                let exists = nav.session.cli.history.first(where: {$0.command == record.message}) != nil
-                
-                if !exists {
-                    nav.session.cli.history.append(
-                        Navigation.CommandLineSession.History(
-                            time: record.timestamp ?? Date(),
-                            command: record.message ?? "",
-                            status: .success,
-                            message: "",
-                            appType: .log,
-                            job: record.job
-                        )
-                    )
-                }
-            }
-        }
-    }
-    
-    private func clear() -> Void {
-        let defaultCallback: () -> Void = {
-            nav.session.cli.command = nil
-            command = ""
-        }
-        
-        // Handle special commands
-        switch command {
-        case "@exit", "exit": commandLineMode.toggle()
-        case "@reset": nav.session.setJob(nil)
-        default:
-            defaultCallback()
-        }
-        
-        defaultCallback()
-    }
-    
-    private func updateDisplay(status: Status, message: String) -> Void {
-        if nav.session.cli.history.count <= CommandLineInterface.maxItems {
-            var item: Navigation.CommandLineSession.History
-            
-            switch nav.session.cli.app {
-            case .log:
-                item = Navigation.CommandLineSession.History(
-                    command: command,
-                    status: nav.session.job == nil ? .error : .standard,
-                    message: nav.session.job == nil ? "You must select a job first" : "",
-                    appType: selected,
-                    job: nav.session.job
-                )
-            case .set:
-                item = Navigation.CommandLineSession.History(
-                    command: command,
-                    status: .standard,
-                    message: "",
-                    appType: selected,
-                    job: nav.session.job
-                )
-            case .query:
-                item = Navigation.CommandLineSession.History(
-                    command: command,
-                    status: .standard,
-                    message: "",
-                    appType: selected,
-                    job: nav.session.job
-                )
-            }
-            
-            nav.session.cli.history.append(item)
-        }
-    }
-    
-    private func updateDisplay(line: Navigation.CommandLineSession.History) -> Void {
-        if nav.session.cli.history.count <= CommandLineInterface.maxItems {
-            nav.session.cli.history.append(line)
-        }
-    }
-}
-
 #Preview {
     CommandLineInterface()
 }
@@ -396,23 +144,7 @@ extension CommandLineInterface {
             }
             .onAppear(perform: actionOnAppear)
         }
-        
-        private func actionOnAppear() -> Void {
-            // Listen for keyboard events so we can add up/down arrow terminal interactions
-            NSEvent.addLocalMonitorForEvents(matching: .keyDown) {
-                let code = Int($0.keyCode)
-                
-                if code == 125 {
-                    command = ""
-                } else if code == 126 {
-                    if let last = nav.session.cli.history.last {
-                        command = last.command
-                    }
-                }
-                return $0
-            }
-        }
-        
+
         public enum AppType: CaseIterable, Identifiable {
             case log, query, set
             
@@ -565,6 +297,298 @@ extension CommandLineInterface {
                     app
                 }
             }
+        }
+    }
+}
+
+extension CommandLineInterface {
+    /// OnSubmit callback for AppType.log entries
+    /// - Returns: Void
+    private func executeLogAction() -> Void {
+        var line: Navigation.CommandLineSession.History
+
+        if command == "help" {
+            line = Navigation.CommandLineSession.History(
+                command: command,
+                status: nav.session.job == nil ? .error : .standard,
+                message: apps.filter({$0.type == selected}).first?.helpText ?? "Help text",
+                appType: selected,
+                job: nav.session.job
+            )
+        } else {
+            line = Navigation.CommandLineSession.History(
+                command: command,
+                status: nav.session.job == nil ? .error : .standard,
+                message: nav.session.job == nil ? "You must select a job first" : "",
+                appType: selected,
+                job: nav.session.job
+            )
+        }
+
+        Task {
+            // @TODO: copied from PostingInterface.save, refactor!
+            if let job = nav.session.job {
+                let record = LogRecord(context: moc)
+                record.timestamp = Date()
+                record.message = command
+                record.alive = true
+                record.id = UUID()
+                record.job = job
+
+                do {
+                    try record.validateForInsert()
+
+                    PersistenceController.shared.save()
+                    nav.session.idate = DateHelper.identifiedDate(for: Date(), moc: moc)
+                    line.status = .success
+                } catch {
+                    print("[debug][error] Save error \(error)")
+                }
+            }
+
+            self.updateDisplay(line: line)
+            self.clear()
+        }
+    }
+
+    /// OnSubmit callback for AppType.query entries
+    /// - Returns: Void
+    private func executeQueryAction() -> Void {
+        self.updateDisplay(status: .standard, message: command)
+        self.clear()
+    }
+
+    /// OnSubmit callback for AppType.set queries
+    /// - Returns: Void
+    private func executeSetAction() -> Void {
+        var line: Navigation.CommandLineSession.History = Navigation.CommandLineSession.History(
+            command: command,
+            status: .standard,
+            message: "",
+            appType: selected,
+            job: nav.session.job
+        )
+
+        if command == "help" {
+            line.message = apps.filter({$0.type == selected}).first?.helpText ?? "Help text"
+        }
+
+        Task {
+            let pattern = /^@(.*?)\.(.*?)=(.*)/
+            let matches = command.matches(of: pattern)
+
+            if let match = matches.first {
+                // We found a matching CLICommand, execute it
+                if let cmd = validSetCommands.first(where: {$0.domain == match.1 && $0.method == match.2}) {
+                    // Run the callback, successful response messages is defined there
+                    cmd.callback(String(match.3), &line)
+                } else {
+                    line.message = "Invalid command: @\(String(match.1)).\(String(match.2))"
+                    line.status = .error
+                }
+            } else {
+                line.message = "Unable to parse command \(command)"
+                line.status = .error
+            }
+
+            self.updateDisplay(line: line)
+            self.clear()
+        }
+    }
+
+    /// Runs when CommandLineInterface appears
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        Task {
+            await self.recordsForToday()
+        }
+
+        self.apps = [
+            CLIApp(
+                type: .log,
+                action: self.executeLogAction,
+                promptPlaceholder: "What are you working on?",
+                helpText: "Write out what you're working on right now, like right-right now, and hit return.",
+                showSelectorPanel: $showSelectorPanel,
+                command: $command,
+                selected: $selected
+            ),
+            // @TODO: not ready for primetime yet
+//            CLIApp(
+//                type: .query,
+//                action: self.executeQueryAction,
+//                promptPlaceholder: "Find stuff",
+//                showSelectorPanel: $showSelectorPanel, helpText: String,
+//                command: $command,
+//                selected: $selected
+//            ),
+            CLIApp(
+                type: .set,
+                action: self.executeSetAction,
+                promptPlaceholder: "Configure things",
+                helpText: "Syntax: @session.job=100 @inspect.job=100",
+                showSelectorPanel: $showSelectorPanel,
+                command: $command,
+                selected: $selected
+            )
+        ]
+
+        self.validSetCommands = [
+            CLICommand(domain: "session", method: "job", callback: { match, line in
+                isSearching = false
+                let id: Double = Double(match) ?? 0.0
+                if let job = CoreDataJob(moc: moc).byId(id) {
+                    nav.session.setJob(job)
+                    line.status = .success
+                } else {
+                    line.message = "Unable to find a Job with ID \(match)"
+                    line.status = .error
+                }
+            }),
+            CLICommand(domain: "inspect", method: "job", callback: { match, line in
+                isSearching = false
+                let id: Double = Double(match) ?? 0.0
+                if let entity = CoreDataJob(moc: moc).byId(id) {
+                    isSearching = true
+                    nav.session.search.text = entity.jid.string
+                    nav.session.search.inspectingEntity = entity
+                    // @TODO: this causes nav.session.cli.app to reset for some reason
+//                    nav.setInspector(AnyView(Inspector(entity: entity)))
+
+                    line.status = .success
+                } else {
+                    line.message = "Unable to find a Job with ID \(match)"
+                    line.status = .error
+                }
+            }),
+            CLICommand(domain: "inspect", method: "company", callback: { match, line in
+                isSearching = false
+                if let entity = CoreDataCompanies(moc: moc).byName(match) {
+                    isSearching = true
+                    nav.session.search.text = entity.name
+                    nav.session.search.inspectingEntity = entity
+                    // @TODO: this causes nav.session.cli.app to reset for some reason
+//                    nav.setInspector(AnyView(Inspector(entity: entity)))
+
+                    line.status = .success
+                } else {
+                    line.message = "Unable to find a company named \(match)"
+                    line.status = .error
+                }
+            })
+        ]
+    }
+
+    /// Merge today's records and CLI history
+    /// - Returns: Void
+    private func recordsForToday() async -> Void {
+        let records = CoreDataRecords(moc: moc).forDate(Date())
+
+        if nav.session.cli.history.count <= CommandLineInterface.maxItems {
+            for record in records.sorted(by: {$0.timestamp! <= $1.timestamp!}) {
+                let exists = nav.session.cli.history.first(where: {$0.command == record.message}) != nil
+
+                if !exists {
+                    nav.session.cli.history.append(
+                        Navigation.CommandLineSession.History(
+                            time: record.timestamp ?? Date(),
+                            command: record.message ?? "",
+                            status: .success,
+                            message: "",
+                            appType: .log,
+                            job: record.job
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    /// Prepare prompt for the next command
+    /// - Returns: Void
+    private func clear() -> Void {
+        let defaultCallback: () -> Void = {
+            nav.session.cli.command = nil
+            command = ""
+        }
+
+        // Handle special commands
+        switch command {
+        case "@exit", "exit": commandLineMode.toggle()
+        case "@reset": nav.session.setJob(nil)
+        default:
+            defaultCallback()
+        }
+
+        defaultCallback()
+    }
+
+    /// Modify the data behind Display
+    /// - Parameters:
+    ///   - status: Status for the history entry
+    ///   - message: Message for the history entry
+    /// - Returns: Void
+    private func updateDisplay(status: Status, message: String) -> Void {
+        if nav.session.cli.history.count <= CommandLineInterface.maxItems {
+            var item: Navigation.CommandLineSession.History
+
+            switch nav.session.cli.app {
+            case .log:
+                item = Navigation.CommandLineSession.History(
+                    command: command,
+                    status: nav.session.job == nil ? .error : .standard,
+                    message: nav.session.job == nil ? "You must select a job first" : "",
+                    appType: selected,
+                    job: nav.session.job
+                )
+            case .set:
+                item = Navigation.CommandLineSession.History(
+                    command: command,
+                    status: .standard,
+                    message: "",
+                    appType: selected,
+                    job: nav.session.job
+                )
+            case .query:
+                item = Navigation.CommandLineSession.History(
+                    command: command,
+                    status: .standard,
+                    message: "",
+                    appType: selected,
+                    job: nav.session.job
+                )
+            }
+
+            nav.session.cli.history.append(item)
+        }
+    }
+
+    /// Modify the data behind Display
+    /// - Parameter line: Navigation.CommandLineSession.History entry
+    /// - Returns: Void
+    private func updateDisplay(line: Navigation.CommandLineSession.History) -> Void {
+        if nav.session.cli.history.count <= CommandLineInterface.maxItems {
+            nav.session.cli.history.append(line)
+        }
+    }
+}
+
+extension CommandLineInterface.App {
+    /// Runs when the App appears on screen
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        // Listen for keyboard events so we can add up/down arrow terminal interactions
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown) {
+            let code = Int($0.keyCode)
+
+            if code == 125 {
+                command = ""
+            } else if code == 126 {
+                if let last = nav.session.cli.history.last {
+                    command = last.command
+                }
+            }
+            return $0
         }
     }
 }
