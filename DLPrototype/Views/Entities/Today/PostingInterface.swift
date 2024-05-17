@@ -35,7 +35,7 @@ extension Today {
                     .focused($primaryTextFieldInFocus)
                     .onAppear {
                         // thx https://www.kodeco.com/31569019-focus-management-in-swiftui-getting-started#toc-anchor-002
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                             self.primaryTextFieldInFocus = true
                         }
                     }
