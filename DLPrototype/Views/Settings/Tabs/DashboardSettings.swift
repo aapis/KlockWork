@@ -14,6 +14,7 @@ struct DashboardSettings: View {
     @AppStorage("dashboard.widget.thisweek") public var showWidgetThisWeek: Bool = true
     @AppStorage("dashboard.widget.thismonth") public var showWidgetThisMonth: Bool = true
     @AppStorage("dashboard.widget.thisyear") public var showWidgetThisYear: Bool = true
+    @AppStorage("dashboard.widget.intro") public var showWidgetIntro: Bool = true
     
     var body: some View {
         Form {
@@ -26,9 +27,10 @@ struct DashboardSettings: View {
             }
 
             Section("Widgets") {
-                Toggle("Show this week", isOn: $showWidgetThisWeek)
-                Toggle("Show this month", isOn: $showWidgetThisMonth)
-                Toggle("Show this year", isOn: $showWidgetThisYear)
+                Toggle("This week", isOn: $showWidgetThisWeek)
+                Toggle("This month", isOn: $showWidgetThisMonth)
+                Toggle("This year", isOn: $showWidgetThisYear)
+                Toggle("Introduction to KlockWork", isOn: $showWidgetIntro)
             }
         }
         .padding(20)
