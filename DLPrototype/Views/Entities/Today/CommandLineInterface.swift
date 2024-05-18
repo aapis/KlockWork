@@ -82,6 +82,8 @@ extension CommandLineInterface {
         @State private var searchText: String = ""
         @State private var searchFilteredResults: [Navigation.CommandLineSession.History] = []
         @State private var searchResults: [Navigation.CommandLineSession.History] = []
+        @State private var filterType: String = ""
+        @State private var filterDateFormat: String = ""
         @FocusState private var filterHasFocus: Bool
 
         @EnvironmentObject public var nav: Navigation
@@ -104,9 +106,8 @@ extension CommandLineInterface {
                                 }
                             }
                     } else {
-                        // @TODO: these widgets aren't ready for primetime yet
-                        FancyDropdown(label: "Type", items: App.AppType.allCases)
-                        FancyDropdown(label: "Date format", items: ["Date: Abbreviated, Time: Complete", "Date: Complete, Time: Complete"])
+                        FancyDropdown(label: filterType.isEmpty ? "Type" : "Type: \(filterType)", items: ["log", "conf"], onChange: self.onChangeType)
+                        FancyDropdown(label: filterDateFormat.isEmpty ? "Date format": "Date format: \(filterDateFormat)", items: ["Abbreviated", "Complete"], onChange: self.onChangeDateFormat)
                     }
 
                     Spacer()
@@ -615,6 +616,8 @@ extension CommandLineInterface.Filters {
         }
 
         // Deep copy nav.session.cli.history
+        // @TODO: this doesn't work yet
+//        searchResults = nav.session.cli.deepCopyHistory()
         for line in nav.session.cli.history {
             let item = line.copy() as! Navigation.CommandLineSession.History
 
@@ -636,5 +639,48 @@ extension CommandLineInterface.Filters {
     private func onReset() -> Void {
         nav.session.cli.history = searchResults;
         searchFilteredResults = []
+    }
+    
+    /// Callback handler for when you change Type filter options
+    /// - Parameter label: Selected value
+    /// -
+    /// - Returns: Void
+    private func onChangeType(label: String, action: FilterAction) -> Void {
+        print("DERPO label=\(label) action=\(action)")
+        if action == .select {
+            filterType = label
+        } else if action == .deselect {
+            filterType = ""
+            self.onReset()
+        }
+
+        // Deep copy
+        for line in nav.session.cli.history {
+            let item = line.copy() as! Navigation.CommandLineSession.History
+
+            if !searchResults.contains(where: {$0.command == item.command}) {
+                searchResults.append(item)
+            }
+        }
+
+        // Set our filtered history list with items matching the search term
+        searchFilteredResults = nav.session.cli.history.filter {
+//            $0.appType.name.starts(with: try! Regex("\(label)"))
+            $0.appType.name.starts(with: label)
+        }
+
+        nav.session.cli.history = searchFilteredResults
+    }
+
+    /// Callback handler for when you change Date Format filter options
+    /// - Parameter label: Selected value
+    /// - Returns: Void
+    private func onChangeDateFormat(label: String, action: FilterAction) -> Void {
+        if action == .select {
+            filterDateFormat = label
+        } else if action == .deselect {
+            filterDateFormat = ""
+            self.onReset()
+        }
     }
 }

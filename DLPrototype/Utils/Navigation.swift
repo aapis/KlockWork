@@ -215,6 +215,23 @@ extension Navigation {
         var command: String?
         var app: CLIAppType = .log
         var selected: CLIApp?
+        
+        /// Deep copies the history object
+        /// @TODO: doesn't work yet, using in CommandLineInterface.Display
+        /// - Returns: Array<History>
+        public func deepCopyHistory() -> [History] {
+            var herstory: [History] = []
+
+            for line in history {
+                let item = line.copy() as! Navigation.CommandLineSession.History
+
+                if !herstory.contains(where: {$0.command == item.command}) {
+                    herstory.append(item)
+                }
+            }
+
+            return herstory
+        }
 
         public class History: Identifiable, NSCopying {
             public var id: UUID = UUID()
