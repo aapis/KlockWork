@@ -628,7 +628,7 @@ extension CommandLineInterface.Filters {
 
         // Set our filtered history list with items matching the search term
         searchFilteredResults = nav.session.cli.history.filter {
-            $0.command.contains(try! Regex("\(text)"))
+            $0.command.contains(text)
         }
 
         nav.session.cli.history = searchFilteredResults
@@ -649,27 +649,26 @@ extension CommandLineInterface.Filters {
         print("DERPO label=\(label) action=\(action)")
         if action == .select {
             filterType = label
+
+            // Deep copy
+            for line in nav.session.cli.history {
+                let item = line.copy() as! Navigation.CommandLineSession.History
+
+                if !searchResults.contains(where: {$0.command == item.command}) {
+                    searchResults.append(item)
+                }
+            }
+
+            // Set our filtered history list with items matching the search term
+            searchFilteredResults = nav.session.cli.history.filter {
+                $0.appType.name == label
+            }
+
+            nav.session.cli.history = searchFilteredResults
         } else if action == .deselect {
             filterType = ""
             self.onReset()
         }
-
-        // Deep copy
-        for line in nav.session.cli.history {
-            let item = line.copy() as! Navigation.CommandLineSession.History
-
-            if !searchResults.contains(where: {$0.command == item.command}) {
-                searchResults.append(item)
-            }
-        }
-
-        // Set our filtered history list with items matching the search term
-        searchFilteredResults = nav.session.cli.history.filter {
-//            $0.appType.name.starts(with: try! Regex("\(label)"))
-            $0.appType.name.starts(with: label)
-        }
-
-        nav.session.cli.history = searchFilteredResults
     }
 
     /// Callback handler for when you change Date Format filter options
