@@ -262,6 +262,9 @@ extension CommandLineInterface {
                     }
                     .padding()
                     .font(Theme.fontTextField)
+                    .onChange(of: nav.session.cli.history) { h in
+                        print("DERPO history changed, new count: \(h.count)")
+                    }
                 }
             }
         }
@@ -617,17 +620,18 @@ extension CommandLineInterface.Filters {
 
         // Deep copy nav.session.cli.history
         // @TODO: this doesn't work yet
-//        searchResults = nav.session.cli.deepCopyHistory()
-        for line in nav.session.cli.history {
-            let item = line.copy() as! Navigation.CommandLineSession.History
-
-            if !searchResults.contains(where: {$0.command == item.command}) {
-                searchResults.append(item)
-            }
-        }
+        searchResults = nav.session.cli.deepCopyHistory()
+        print("DERPO post-deep-copy searchResults.count=\(searchResults.count)")
+//        for line in nav.session.cli.history {
+//            let item = line.copy() as! Navigation.CommandLineSession.History
+//
+//            if !searchResults.contains(where: {$0.command == item.command}) {
+//                searchResults.append(item)
+//            }
+//        }
 
         // Set our filtered history list with items matching the search term
-        searchFilteredResults = nav.session.cli.history.filter {
+        searchFilteredResults = searchResults.filter {
             $0.command.contains(text)
         }
 
@@ -638,17 +642,30 @@ extension CommandLineInterface.Filters {
     /// - Returns: Void
     private func onReset() -> Void {
         nav.session.cli.history = searchResults;
+        print("DERPO onReset searchResults.count=\(searchResults.count) \(nav.session.cli.history.count)")
         searchFilteredResults = []
+        searchResults = []
+        
+//        Task {
+//            await self.recordsForToday()
+//        }
     }
     
     /// Callback handler for when you change Type filter options
-    /// - Parameter label: Selected value
-    /// -
+    /// - Parameter label: String, Selected value
+    /// - Parameter action: FilterAction
     /// - Returns: Void
     private func onChangeType(label: String, action: FilterAction) -> Void {
-        print("DERPO label=\(label) action=\(action)")
-        if action == .select {
-            filterType = label
+        switch action {
+        case .select:
+            // User has selected something already, set the current and deselect the "old" one
+            if !filterType.isEmpty {
+                self.onChangeType(label: filterType, action: .deselect)
+                self.onChangeType(label: label, action: .select)
+                return
+            } else {
+                filterType = label
+            }
 
             // Deep copy
             for line in nav.session.cli.history {
@@ -660,12 +677,12 @@ extension CommandLineInterface.Filters {
             }
 
             // Set our filtered history list with items matching the search term
-            searchFilteredResults = nav.session.cli.history.filter {
+            searchFilteredResults = searchResults.filter {
                 $0.appType.name == label
             }
 
             nav.session.cli.history = searchFilteredResults
-        } else if action == .deselect {
+        case .deselect:
             filterType = ""
             self.onReset()
         }
@@ -675,9 +692,10 @@ extension CommandLineInterface.Filters {
     /// - Parameter label: Selected value
     /// - Returns: Void
     private func onChangeDateFormat(label: String, action: FilterAction) -> Void {
-        if action == .select {
+        switch action {
+        case .select:
             filterDateFormat = label
-        } else if action == .deselect {
+        case .deselect:
             filterDateFormat = ""
             self.onReset()
         }

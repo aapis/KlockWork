@@ -225,15 +225,15 @@ extension Navigation {
             for line in history {
                 let item = line.copy() as! Navigation.CommandLineSession.History
 
-                if !herstory.contains(where: {$0.command == item.command}) {
+//                if !herstory.contains(where: {$0.command == item.command}) {
                     herstory.append(item)
-                }
+//                }
             }
 
             return herstory
         }
 
-        public class History: Identifiable, NSCopying {
+        public class History: Identifiable, NSCopying, Equatable {
             public var id: UUID = UUID()
             var time: Date = Date()
             var command: String
@@ -241,6 +241,10 @@ extension Navigation {
             var message: String
             var appType: CLIAppType
             var job: Job? = nil
+            
+            public static func == (lhs: Navigation.CommandLineSession.History, rhs: Navigation.CommandLineSession.History) -> Bool {
+                return lhs.command == rhs.command
+            }
 
             init(time: Date = Date(), command: String, status: Status = .standard, message: String, appType: CLIAppType, job: Job?) {
                 self.time = time
