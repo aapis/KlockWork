@@ -79,20 +79,41 @@ extension CommandLineInterface {
     // @TODO: https://github.com/aapis/KlockWork/issues/240
     struct Filters: View {
         @Binding public var showSearch: Bool
+        @State private var searchText: String = ""
+        @State private var searchFilteredResults: [Navigation.CommandLineSession.History] = []
+        @State private var searchResults: [Navigation.CommandLineSession.History] = []
+        @FocusState private var filterHasFocus: Bool
 
         @EnvironmentObject public var nav: Navigation
 
         var body: some View {
             VStack(spacing: 0) {
                 HStack {
-                    // @TODO: these widgets aren't ready for primetime yet
-//                    FancyDropdown(label: "Type", items: App.AppType.allCases)
-//                    FancyDropdown(label: "Date format", items: ["Date: Abbreviated, Time: Complete", "Date: Complete, Time: Complete"])
+                    if showSearch {
+                        SearchBar(text: $searchText, placeholder: "Filter entries...", onReset: onReset)
+                            .focused($filterHasFocus)
+                            .background(.white.opacity(0.15))
+                            .foregroundStyle(.white)
+                            .cornerRadius(20)
+                            .onChange(of: searchText) { text in
+                                onSearch(text)
+                            }
+                            .onAppear {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                    self.filterHasFocus = true
+                                }
+                            }
+                    } else {
+                        // @TODO: these widgets aren't ready for primetime yet
+                        FancyDropdown(label: "Type", items: App.AppType.allCases)
+                        FancyDropdown(label: "Date format", items: ["Date: Abbreviated, Time: Complete", "Date: Complete, Time: Complete"])
+                    }
+
                     Spacer()
                     FancyButtonv2(
                         text: "Filter",
                         action: {showSearch.toggle()},
-                        icon: "line.3.horizontal.decrease",
+                        icon: showSearch ? "xmark" : "line.3.horizontal.decrease",
                         bgColour: .white.opacity(0.15),
                         showLabel: false,
                         showIcon: true
@@ -105,14 +126,14 @@ extension CommandLineInterface {
             }
         }
     }
-    
+
     public struct App: View, Identifiable {
         var id: UUID = UUID()
         var type: AppType
         var action: () -> Void
         var promptPlaceholder: String
         var helpText: String
-        
+
         @Binding public var showSelectorPanel: Bool
         @Binding public var command: String
         @Binding public var selected: AppType
@@ -173,12 +194,9 @@ extension CommandLineInterface {
             }
         }
     }
-    
+
     struct Display: View {
         @Binding public var showSearch: Bool
-        @State private var searchText: String = ""
-        @State private var searchFilteredResults: [Navigation.CommandLineSession.History] = []
-        @State private var searchResults: [Navigation.CommandLineSession.History] = []
 
         @EnvironmentObject public var nav: Navigation
         
@@ -188,14 +206,6 @@ extension CommandLineInterface {
                     .opacity(0.25)
                     .frame(height: 100)
                 VStack {
-                    if showSearch {
-                        SearchBar(text: $searchText, placeholder: "Filter entries...", onReset: onReset)
-                            .border(width: 1, edges: [.bottom], color: Theme.cPurple)
-                            .onChange(of: searchText) { text in
-                                onSearch(text)
-                            }
-                    }
-
                     VStack(alignment: .leading, spacing: 2) {
                         ScrollView {
                             VStack(spacing: 1) {
@@ -593,7 +603,7 @@ extension CommandLineInterface.App {
     }
 }
 
-extension CommandLineInterface.Display {
+extension CommandLineInterface.Filters {
     /// Search handler, fires when self.searchText changes
     /// - Parameter text: Search text after the user has finished typing
     /// - Returns: Void
