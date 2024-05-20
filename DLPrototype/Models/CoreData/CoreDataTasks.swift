@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import CoreData
 
 public class CoreDataTasks {
     @AppStorage("today.ltd.tasks.all") public var showAllJobsInDetailsPane: Bool = false

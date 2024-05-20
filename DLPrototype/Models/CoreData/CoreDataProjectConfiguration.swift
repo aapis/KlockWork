@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import CoreData
 
 public final class CoreDataProjectConfiguration {
     public var moc: NSManagedObjectContext?

@@ -17,6 +17,10 @@
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).example-document</string>
 		</dict>
 	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UTImportedTypeDeclarations</key>
 	<array>
 		<dict>

@@ -20,6 +20,24 @@
 		53196AC92A168E7200FE49FC /* CalendarIndividualEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53196AC82A168E7200FE49FC /* CalendarIndividualEvent.swift */; };
 		531B38FC29674EC400E74013 /* Title.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531B38FB29674EC400E74013 /* Title.swift */; };
 		531B8DF22A847BE8005D911B /* NoteGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531B8DF12A847BE8005D911B /* NoteGroup.swift */; };
+		531CFA5A2BF95266000D598B /* KlockWorkiOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531CFA592BF95266000D598B /* KlockWorkiOSApp.swift */; };
+		531CFA5C2BF95266000D598B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531CFA5B2BF95266000D598B /* ContentView.swift */; };
+		531CFA5E2BF95266000D598B /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531CFA5D2BF95266000D598B /* Item.swift */; };
+		531CFA602BF95268000D598B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 531CFA5F2BF95268000D598B /* Assets.xcassets */; };
+		531CFA632BF95268000D598B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 531CFA622BF95268000D598B /* Preview Assets.xcassets */; };
+		531CFA6E2BF95269000D598B /* KlockWorkiOSTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531CFA6D2BF95269000D598B /* KlockWorkiOSTests.swift */; };
+		531CFA782BF95269000D598B /* KlockWorkiOSUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531CFA772BF95269000D598B /* KlockWorkiOSUITests.swift */; };
+		531CFA7A2BF95269000D598B /* KlockWorkiOSUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531CFA792BF95269000D598B /* KlockWorkiOSUITestsLaunchTests.swift */; };
+		531CFA842BF95546000D598B /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537628A7296659DC00DE8ECF /* PersistenceController.swift */; };
+		531CFA852BF95546000D598B /* Data.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 537628B229665F4E00DE8ECF /* Data.xcdatamodeld */; };
+		531CFA862BF95583000D598B /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376289D29664F8C00DE8ECF /* Theme.swift */; };
+		531CFA872BF95593000D598B /* CoreDataTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B8296D2490000051B1 /* CoreDataTasks.swift */; };
+		531CFA8A2BF95593000D598B /* CoreDataNotes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5361DDEC2971E1DF00437064 /* CoreDataNotes.swift */; };
+		531CFA922BF955F1000D598B /* DateHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CCB2969453000A14E43 /* DateHelper.swift */; };
+		531CFA932BF957D3000D598B /* CustomPickerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */; };
+		531CFA942BF957D3000D598B /* CoreDataRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53ECD0562971F8F400A09AAB /* CoreDataRecords.swift */; };
+		531CFA962BF95915000D598B /* CoreDataProjectConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A202973D3E5007A2549 /* CoreDataProjectConfiguration.swift */; };
+		531CFA982BF95C27000D598B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 53218D4E24B7F6EC0088ABE9 /* Assets.xcassets */; };
 		531E2F752A140533009CA230 /* CalendarToday.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531E2F742A140533009CA230 /* CalendarToday.swift */; };
 		531EB6E82A9FDA5A00B3059C /* Job.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531EB6E72A9FDA5A00B3059C /* Job.swift */; };
 		53218D4824B7F6EB0088ABE9 /* DLPrototype.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53218D4724B7F6EB0088ABE9 /* DLPrototype.swift */; };
@@ -210,6 +228,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		531CFA6A2BF95268000D598B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53218D3C24B7F6EB0088ABE9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 531CFA562BF95266000D598B;
+			remoteInfo = KlockWorkiOS;
+		};
+		531CFA742BF95269000D598B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53218D3C24B7F6EB0088ABE9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 531CFA562BF95266000D598B;
+			remoteInfo = KlockWorkiOS;
+		};
 		53218D5D24B7F6EC0088ABE9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53218D3C24B7F6EB0088ABE9 /* Project object */;
@@ -253,6 +285,19 @@
 		53196AC82A168E7200FE49FC /* CalendarIndividualEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarIndividualEvent.swift; sourceTree = "<group>"; };
 		531B38FB29674EC400E74013 /* Title.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Title.swift; sourceTree = "<group>"; };
 		531B8DF12A847BE8005D911B /* NoteGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteGroup.swift; sourceTree = "<group>"; };
+		531CFA572BF95266000D598B /* KlockWorkiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KlockWorkiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		531CFA592BF95266000D598B /* KlockWorkiOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KlockWorkiOSApp.swift; sourceTree = "<group>"; };
+		531CFA5B2BF95266000D598B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		531CFA5D2BF95266000D598B /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
+		531CFA5F2BF95268000D598B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		531CFA622BF95268000D598B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		531CFA642BF95268000D598B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		531CFA692BF95268000D598B /* KlockWorkiOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KlockWorkiOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		531CFA6D2BF95269000D598B /* KlockWorkiOSTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KlockWorkiOSTests.swift; sourceTree = "<group>"; };
+		531CFA732BF95269000D598B /* KlockWorkiOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KlockWorkiOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		531CFA772BF95269000D598B /* KlockWorkiOSUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KlockWorkiOSUITests.swift; sourceTree = "<group>"; };
+		531CFA792BF95269000D598B /* KlockWorkiOSUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KlockWorkiOSUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		531CFA992BF95F5F000D598B /* KlockWorkiOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = KlockWorkiOS.entitlements; sourceTree = "<group>"; };
 		531E2F742A140533009CA230 /* CalendarToday.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarToday.swift; sourceTree = "<group>"; };
 		531EB6E72A9FDA5A00B3059C /* Job.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Job.swift; sourceTree = "<group>"; };
 		53218D4424B7F6EB0088ABE9 /* KlockWork.Beta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KlockWork.Beta.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -454,6 +499,27 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		531CFA542BF95266000D598B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		531CFA662BF95268000D598B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		531CFA702BF95269000D598B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		53218D4124B7F6EB0088ABE9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -523,6 +589,45 @@
 			path = Home;
 			sourceTree = "<group>";
 		};
+		531CFA582BF95266000D598B /* KlockWorkiOS */ = {
+			isa = PBXGroup;
+			children = (
+				531CFA992BF95F5F000D598B /* KlockWorkiOS.entitlements */,
+				531CFA592BF95266000D598B /* KlockWorkiOSApp.swift */,
+				531CFA5B2BF95266000D598B /* ContentView.swift */,
+				531CFA5D2BF95266000D598B /* Item.swift */,
+				531CFA5F2BF95268000D598B /* Assets.xcassets */,
+				531CFA642BF95268000D598B /* Info.plist */,
+				531CFA612BF95268000D598B /* Preview Content */,
+			);
+			path = KlockWorkiOS;
+			sourceTree = "<group>";
+		};
+		531CFA612BF95268000D598B /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				531CFA622BF95268000D598B /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		531CFA6C2BF95269000D598B /* KlockWorkiOSTests */ = {
+			isa = PBXGroup;
+			children = (
+				531CFA6D2BF95269000D598B /* KlockWorkiOSTests.swift */,
+			);
+			path = KlockWorkiOSTests;
+			sourceTree = "<group>";
+		};
+		531CFA762BF95269000D598B /* KlockWorkiOSUITests */ = {
+			isa = PBXGroup;
+			children = (
+				531CFA772BF95269000D598B /* KlockWorkiOSUITests.swift */,
+				531CFA792BF95269000D598B /* KlockWorkiOSUITestsLaunchTests.swift */,
+			);
+			path = KlockWorkiOSUITests;
+			sourceTree = "<group>";
+		};
 		531EB6E62A9FDA5000B3059C /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -542,6 +647,9 @@
 				53218D4624B7F6EB0088ABE9 /* DLPrototype */,
 				53218D5F24B7F6EC0088ABE9 /* DLPrototypeTests */,
 				53218D6A24B7F6EC0088ABE9 /* DLPrototypeUITests */,
+				531CFA582BF95266000D598B /* KlockWorkiOS */,
+				531CFA6C2BF95269000D598B /* KlockWorkiOSTests */,
+				531CFA762BF95269000D598B /* KlockWorkiOSUITests */,
 				53218D4524B7F6EB0088ABE9 /* Products */,
 				53F0C70B2BF04624000BFD2E /* Frameworks */,
 			);
@@ -553,6 +661,9 @@
 				53218D4424B7F6EB0088ABE9 /* KlockWork.Beta.app */,
 				53218D5C24B7F6EC0088ABE9 /* DLPrototypeTests.xctest */,
 				53218D6724B7F6EC0088ABE9 /* DLPrototypeUITests.xctest */,
+				531CFA572BF95266000D598B /* KlockWorkiOS.app */,
+				531CFA692BF95268000D598B /* KlockWorkiOSTests.xctest */,
+				531CFA732BF95269000D598B /* KlockWorkiOSUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1172,6 +1283,59 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		531CFA562BF95266000D598B /* KlockWorkiOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 531CFA812BF95269000D598B /* Build configuration list for PBXNativeTarget "KlockWorkiOS" */;
+			buildPhases = (
+				531CFA532BF95266000D598B /* Sources */,
+				531CFA542BF95266000D598B /* Frameworks */,
+				531CFA552BF95266000D598B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KlockWorkiOS;
+			productName = KlockWorkiOS;
+			productReference = 531CFA572BF95266000D598B /* KlockWorkiOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		531CFA682BF95268000D598B /* KlockWorkiOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 531CFA822BF95269000D598B /* Build configuration list for PBXNativeTarget "KlockWorkiOSTests" */;
+			buildPhases = (
+				531CFA652BF95268000D598B /* Sources */,
+				531CFA662BF95268000D598B /* Frameworks */,
+				531CFA672BF95268000D598B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				531CFA6B2BF95268000D598B /* PBXTargetDependency */,
+			);
+			name = KlockWorkiOSTests;
+			productName = KlockWorkiOSTests;
+			productReference = 531CFA692BF95268000D598B /* KlockWorkiOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		531CFA722BF95269000D598B /* KlockWorkiOSUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 531CFA832BF95269000D598B /* Build configuration list for PBXNativeTarget "KlockWorkiOSUITests" */;
+			buildPhases = (
+				531CFA6F2BF95269000D598B /* Sources */,
+				531CFA702BF95269000D598B /* Frameworks */,
+				531CFA712BF95269000D598B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				531CFA752BF95269000D598B /* PBXTargetDependency */,
+			);
+			name = KlockWorkiOSUITests;
+			productName = KlockWorkiOSUITests;
+			productReference = 531CFA732BF95269000D598B /* KlockWorkiOSUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		53218D4324B7F6EB0088ABE9 /* DLPrototype */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 53218D7024B7F6EC0088ABE9 /* Build configuration list for PBXNativeTarget "DLPrototype" */;
@@ -1238,10 +1402,21 @@
 				KnownAssetTags = (
 					New,
 				);
-				LastSwiftUpdateCheck = 1530;
+				LastSwiftUpdateCheck = 1540;
 				LastUpgradeCheck = 1510;
 				ORGANIZATIONNAME = YegCollective;
 				TargetAttributes = {
+					531CFA562BF95266000D598B = {
+						CreatedOnToolsVersion = 15.4;
+					};
+					531CFA682BF95268000D598B = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = 531CFA562BF95266000D598B;
+					};
+					531CFA722BF95269000D598B = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = 531CFA562BF95266000D598B;
+					};
 					53218D4324B7F6EB0088ABE9 = {
 						CreatedOnToolsVersion = 11.5;
 					};
@@ -1273,11 +1448,38 @@
 				53218D4324B7F6EB0088ABE9 /* DLPrototype */,
 				53218D5B24B7F6EC0088ABE9 /* DLPrototypeTests */,
 				53218D6624B7F6EC0088ABE9 /* DLPrototypeUITests */,
+				531CFA562BF95266000D598B /* KlockWorkiOS */,
+				531CFA682BF95268000D598B /* KlockWorkiOSTests */,
+				531CFA722BF95269000D598B /* KlockWorkiOSUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		531CFA552BF95266000D598B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				531CFA982BF95C27000D598B /* Assets.xcassets in Resources */,
+				531CFA632BF95268000D598B /* Preview Assets.xcassets in Resources */,
+				531CFA602BF95268000D598B /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		531CFA672BF95268000D598B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		531CFA712BF95269000D598B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		53218D4224B7F6EB0088ABE9 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1307,6 +1509,42 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		531CFA532BF95266000D598B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				531CFA962BF95915000D598B /* CoreDataProjectConfiguration.swift in Sources */,
+				531CFA932BF957D3000D598B /* CustomPickerItem.swift in Sources */,
+				531CFA942BF957D3000D598B /* CoreDataRecords.swift in Sources */,
+				531CFA922BF955F1000D598B /* DateHelper.swift in Sources */,
+				531CFA872BF95593000D598B /* CoreDataTasks.swift in Sources */,
+				531CFA8A2BF95593000D598B /* CoreDataNotes.swift in Sources */,
+				531CFA862BF95583000D598B /* Theme.swift in Sources */,
+				531CFA842BF95546000D598B /* PersistenceController.swift in Sources */,
+				531CFA852BF95546000D598B /* Data.xcdatamodeld in Sources */,
+				531CFA5C2BF95266000D598B /* ContentView.swift in Sources */,
+				531CFA5E2BF95266000D598B /* Item.swift in Sources */,
+				531CFA5A2BF95266000D598B /* KlockWorkiOSApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		531CFA652BF95268000D598B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				531CFA6E2BF95269000D598B /* KlockWorkiOSTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		531CFA6F2BF95269000D598B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				531CFA7A2BF95269000D598B /* KlockWorkiOSUITestsLaunchTests.swift in Sources */,
+				531CFA782BF95269000D598B /* KlockWorkiOSUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		53218D4024B7F6EB0088ABE9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1525,6 +1763,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		531CFA6B2BF95268000D598B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 531CFA562BF95266000D598B /* KlockWorkiOS */;
+			targetProxy = 531CFA6A2BF95268000D598B /* PBXContainerItemProxy */;
+		};
+		531CFA752BF95269000D598B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 531CFA562BF95266000D598B /* KlockWorkiOS */;
+			targetProxy = 531CFA742BF95269000D598B /* PBXContainerItemProxy */;
+		};
 		53218D5E24B7F6EC0088ABE9 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 53218D4324B7F6EB0088ABE9 /* DLPrototype */;
@@ -1538,6 +1786,182 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		531CFA7B2BF95269000D598B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = iOS.Beta.Icon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = KlockWorkiOS/KlockWorkiOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"KlockWorkiOS/Preview Content\"";
+				DEVELOPMENT_TEAM = 6DT7L2N5X6;
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KlockWorkiOS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = KlockWork;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.KlockWorkiOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		531CFA7C2BF95269000D598B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = iOS.Icon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = KlockWorkiOS/KlockWorkiOS.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"KlockWorkiOS/Preview Content\"";
+				DEVELOPMENT_TEAM = 6DT7L2N5X6;
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = KlockWorkiOS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = KlockWork;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportsDocumentBrowser = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.KlockWorkiOS;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		531CFA7D2BF95269000D598B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6DT7L2N5X6;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.KlockWorkiOSTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KlockWorkiOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KlockWorkiOS";
+			};
+			name = Debug;
+		};
+		531CFA7E2BF95269000D598B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6DT7L2N5X6;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.KlockWorkiOSTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/KlockWorkiOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/KlockWorkiOS";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		531CFA7F2BF95269000D598B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6DT7L2N5X6;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.KlockWorkiOSUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = KlockWorkiOS;
+			};
+			name = Debug;
+		};
+		531CFA802BF95269000D598B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6DT7L2N5X6;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.KlockWorkiOSUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = KlockWorkiOS;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		53218D6E24B7F6EC0088ABE9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1663,7 +2087,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = Parade;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Nightingale;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = DLPrototype/DLPrototype.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -1680,6 +2104,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "";
 				"INFOPLIST_KEY_CFBundleDisplayName[sdk=macosx*]" = KlockWork.Beta;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1688,10 +2113,11 @@
 				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.DLPrototype;
 				PRODUCT_NAME = KlockWork.Beta;
-				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -1715,6 +2141,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = "";
 				"INFOPLIST_KEY_CFBundleDisplayName[sdk=macosx*]" = KlockWork;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -1724,10 +2151,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.DLPrototype;
 				PRODUCT_NAME = KlockWork;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SUPPORTED_PLATFORMS = macosx;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -1822,6 +2250,33 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		531CFA812BF95269000D598B /* Build configuration list for PBXNativeTarget "KlockWorkiOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				531CFA7B2BF95269000D598B /* Debug */,
+				531CFA7C2BF95269000D598B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		531CFA822BF95269000D598B /* Build configuration list for PBXNativeTarget "KlockWorkiOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				531CFA7D2BF95269000D598B /* Debug */,
+				531CFA7E2BF95269000D598B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		531CFA832BF95269000D598B /* Build configuration list for PBXNativeTarget "KlockWorkiOSUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				531CFA7F2BF95269000D598B /* Debug */,
+				531CFA802BF95269000D598B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		53218D3F24B7F6EB0088ABE9 /* Build configuration list for PBXProject "DLPrototype" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

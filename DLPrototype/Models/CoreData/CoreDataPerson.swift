@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 public class CoreDataPerson: ObservableObject {
     public var moc: NSManagedObjectContext?

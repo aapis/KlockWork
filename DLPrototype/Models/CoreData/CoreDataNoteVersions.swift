@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import CoreData
 
 public class CoreDataNoteVersions: ObservableObject {
     public var moc: NSManagedObjectContext?

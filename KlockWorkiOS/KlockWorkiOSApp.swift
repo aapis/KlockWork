@@ -12,10 +12,23 @@ import UniformTypeIdentifiers
 
 @main
 struct KlockWorkiOSApp: App {
+    private let persistenceController = PersistenceController.shared
+    
+    @State private var items: [Note] = []
+
     var body: some Scene {
-        DocumentGroup(editing: .itemDocument, migrationPlan: KlockWorkiOSMigrationPlan.self) {
-            ContentView()
+        WindowGroup {
+            ContentView(items: $items)
+                .onAppear(perform: {
+                    items = CoreDataNotes(moc: persistenceController.container.viewContext).alive()
+                })
         }
+    }
+}
+
+extension Double {
+    var string: String {
+        return self.formatted()
     }
 }
 

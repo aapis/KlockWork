@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import CoreData
 
 public struct IdentifiableDay: Identifiable, Equatable, Hashable {
     public var id: UUID = UUID()

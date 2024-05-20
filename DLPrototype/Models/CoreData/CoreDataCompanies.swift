@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 public class CoreDataCompanies: ObservableObject {
     /// Context for updating CD objects
