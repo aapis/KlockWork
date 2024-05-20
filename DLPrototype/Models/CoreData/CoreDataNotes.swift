@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import CoreData
 
 public class CoreDataNotes {
     /// Used to query Coredata
@@ -142,6 +143,16 @@ public class CoreDataNotes {
     /// - Returns: Array<Note>
     public func all() -> [Note] {
         return query()
+    }
+
+    /// Only notes that haven't been soft deleted
+    /// - Returns: Array<Note>
+    public func alive() -> [Note] {
+        let predicate = NSPredicate(
+            format: "alive = true"
+        )
+
+        return query(predicate)
     }
 
     /// Query function, finds and filters notes

@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 public final class CoreDataPlan {
     public var moc: NSManagedObjectContext?

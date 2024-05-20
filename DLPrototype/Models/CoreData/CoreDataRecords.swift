@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import CoreData
 
 // TODO: rename this to something else. Currently meant to represent how many 15 minute periods a task intersected
 // TODO: with, rate is the percent of the total number of sections per day
@@ -308,6 +309,7 @@ public class CoreDataRecords: ObservableObject {
         return exportableRecords(records)
     }
 
+#if os(macOS)
     public func createExportableGroupedRecordsAsViews(_ records: [LogRecord]) -> [FancyStaticTextField] {
         var views: [FancyStaticTextField] = []
 
@@ -334,6 +336,7 @@ public class CoreDataRecords: ObservableObject {
 
         return views
     }
+#endif
 
     private func exportableGroupedRecordsAsString(_ records: [LogRecord]) -> (String, [Intersection], [Project], [Job]) {
         var buffer = ""

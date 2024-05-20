@@ -9,6 +9,7 @@
 import Foundation
 import EventKit
 import SwiftUI
+import CoreData
 
 public enum CalendarEventType: String, CaseIterable {
     case inProgress = "In Progress"
