@@ -56,6 +56,8 @@
 		532C5FE32A83019C00F2AAD4 /* GlobalSidebarWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532C5FE22A83019C00F2AAD4 /* GlobalSidebarWidgets.swift */; };
 		532C5FE52A83024900F2AAD4 /* CreateEntitiesWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532C5FE42A83024900F2AAD4 /* CreateEntitiesWidget.swift */; };
 		532CF0DC2A12A14200710B67 /* EventRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532CF0DB2A12A14200710B67 /* EventRow.swift */; };
+		532F5CF62BFD141E00C2FB93 /* CoreDataCompanies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5326AE9B2B27FFE2009F1349 /* CoreDataCompanies.swift */; };
+		532F5CF72BFD6E4E00C2FB93 /* CoreDataJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F10FDF296E77BE0048D040 /* CoreDataJob.swift */; };
 		5330EEB7298B6418004FC38A /* JobRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5330EEB6298B6418004FC38A /* JobRow.swift */; };
 		5331FCB32A9E6ECE005CDE0E /* Plan.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5331FCB22A9E6ECE005CDE0E /* Plan.swift */; };
 		5333E7A12A0ECE0D00EE4A36 /* FancyTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5333E7A02A0ECE0D00EE4A36 /* FancyTab.swift */; };
@@ -1513,6 +1515,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				532F5CF72BFD6E4E00C2FB93 /* CoreDataJob.swift in Sources */,
+				532F5CF62BFD141E00C2FB93 /* CoreDataCompanies.swift in Sources */,
 				531CFA962BF95915000D598B /* CoreDataProjectConfiguration.swift in Sources */,
 				531CFA932BF957D3000D598B /* CustomPickerItem.swift in Sources */,
 				531CFA942BF957D3000D598B /* CoreDataRecords.swift in Sources */,

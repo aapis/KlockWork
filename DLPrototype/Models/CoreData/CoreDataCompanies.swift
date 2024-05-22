@@ -110,6 +110,16 @@ public class CoreDataCompanies: ObservableObject {
 
         return query(predicate)
     }
+    
+    /// Total number of active companies
+    /// - Returns: Int
+    public func countAll() -> Int {
+        let predicate = NSPredicate(
+            format: "alive == true && hidden == false"
+        )
+
+        return count(predicate)
+    }
 
     /// Finds the default company
     /// - Returns: Company|nil

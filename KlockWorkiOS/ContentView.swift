@@ -66,23 +66,219 @@ extension NoteView {
     }
 }
 
-struct ContentView: View {
-//    @Environment(\.modelContext) private var modelContext
-//    @Query private var items: [Item]
-    @Binding public var items: [Note]
+struct CompanyView: View {
+    public let company: Company
+    
+    @State private var projects: [Project] = []
+    @State private var isDefault: Bool = false
 
     var body: some View {
-        NavigationSplitView {
+        VStack {
             List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        NoteView(note: item)
-                    } label: {
-                        Text(item.title!)
+                Section("Projects") {
+                    if projects.count > 0 {
+                        ForEach(projects) { project in
+                            Text(project.name!)
+                        }
+                    } else {
+                        Text("No projects found")
+                            .foregroundStyle(.gray)
                     }
                 }
-                .onDelete(perform: deleteItems)
+
+                Section("Settings") {
+                    Toggle("Default company", isOn: $isDefault)
+                }
             }
+        }
+        .onAppear(perform: actionOnAppear)
+        .navigationTitle(company.name!)
+    }
+}
+
+extension CompanyView {
+    private func actionOnAppear() -> Void {
+        projects = company.projects?.allObjects as! [Project]
+    }
+}
+
+struct Home: View {
+    private let fgColour: Color = .red
+    private var columns: [GridItem] {
+        Array(repeating: .init(.flexible()), count: 2)
+    }
+
+    @State private var path = NavigationPath()
+    @State private var entityCounts: (Int, Int, Int, Int) = (0,0,0,0)
+
+    @Environment(\.managedObjectContext) var moc
+
+    var body: some View {
+        NavigationStack(path: $path) {
+            List {
+                Section("Views") {
+                    HStack {
+                        Image(systemName: "hexagon")
+                            .foregroundStyle(fgColour)
+                        Text("Planning")
+                        Spacer()
+                        Text("Coming soon!")
+                    }
+                    .foregroundStyle(.gray)
+                    
+                    HStack {
+                        Image(systemName: "tray")
+                            .foregroundStyle(fgColour)
+                        Text("Today")
+                        Spacer()
+                        Text("Coming soon!")
+                    }
+                    .foregroundStyle(.gray)
+                }
+
+                Section("Entities") {
+                    NavigationLink {
+                        Companies()
+                            .environment(\.managedObjectContext, moc)
+                    } label: {
+                        HStack {
+                            Image(systemName: "building.2")
+                                .foregroundStyle(fgColour)
+                            Text("Companies")
+                            Spacer()
+                            Text(String(entityCounts.0))
+                        }
+                    }
+
+                    NavigationLink {
+                        Notes()
+                            .environment(\.managedObjectContext, moc)
+                    } label: {
+                        HStack {
+                            Image(systemName: "hammer")
+                                .foregroundStyle(fgColour)
+                            Text("Jobs")
+                            Spacer()
+                            Text(String(entityCounts.1))
+                        }
+                    }
+                    
+                    
+                    NavigationLink {
+                        Notes()
+                            .environment(\.managedObjectContext, moc)
+                    } label: {
+                        HStack {
+                            Image(systemName: "note.text")
+                                .foregroundStyle(fgColour)
+                            Text("Notes")
+                            Spacer()
+                            Text(String(entityCounts.2))
+                        }
+                    }
+                    
+                    NavigationLink {
+                        Notes()
+                            .environment(\.managedObjectContext, moc)
+                    } label: {
+                        HStack {
+                            Image(systemName: "checklist")
+                                .foregroundStyle(fgColour)
+                            Text("Tasks")
+                            Spacer()
+                            Text(String(entityCounts.3))
+                        }
+                    }
+                }
+                
+                LazyVGrid(columns: columns) {
+                    Text("Another Section")
+                    Text("Another Section")
+                }
+            }
+            .navigationTitle("Home")
+            .toolbarBackground(Theme.cPurple, for: .navigationBar)
+            .toolbar {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(fgColour)
+            }
+        }
+        .accentColor(fgColour)
+        .onAppear(perform: actionOnAppear)
+    }
+}
+
+extension Home {
+    private func actionOnAppear() -> Void {
+        Task {
+            entityCounts = (
+                CoreDataCompanies(moc: moc).countAll(),
+                CoreDataJob(moc: moc).countAll(),
+                CoreDataNotes(moc: moc).alive().count,
+                CoreDataTasks(moc: moc).countAllTime()
+            )
+        }
+    }
+}
+
+struct Companies: View {
+    @State public var items: [Company] = []
+    
+    @Environment(\.managedObjectContext) var moc
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    ForEach(items) { item in
+                        NavigationLink {
+                            CompanyView(company: item)
+                        } label: {
+                            Text(item.name!)
+                        }
+                    }
+                }
+//                .onDelete(perform: deleteItems)
+            }
+            .onAppear(perform: {
+                items = CoreDataCompanies(moc: moc).alive()
+            })
+            .navigationTitle("Companies")
+            .toolbarBackground(Theme.cPurple, for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbar {
+                ToolbarItem {
+                    Button(action: {}/*addItem*/) {
+                        Label("Add Item", systemImage: "plus")
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct Notes: View {
+    @State public var items: [Note] = []
+
+    @Environment(\.managedObjectContext) var moc
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    ForEach(items) { item in
+                        NavigationLink {
+                            NoteView(note: item)
+                        } label: {
+                            Text(item.title!)
+                        }
+                    }
+                    .onDelete(perform: deleteItems)
+                }
+            }
+            .onAppear(perform: {
+                items = CoreDataNotes(moc: moc).alive()
+            })
             .navigationTitle("Notes")
             .toolbarBackground(Theme.cPurple, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
@@ -96,8 +292,6 @@ struct ContentView: View {
                     }
                 }
             }
-        } detail: {
-            Text("Select an item")
         }
     }
 
