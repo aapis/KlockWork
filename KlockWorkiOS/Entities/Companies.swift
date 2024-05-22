@@ -30,7 +30,6 @@ struct Companies: View {
             .onAppear(perform: {
                 items = CoreDataCompanies(moc: moc).alive()
             })
-            .navigationTitle("Companies")
             .toolbarBackground(Theme.cPurple, for: .navigationBar)
             .toolbar {
                 ToolbarItem {

@@ -26,6 +26,7 @@ struct Home: View {
                     NavigationLink {
                         Companies()
                             .environment(\.managedObjectContext, moc)
+                            .navigationTitle("Companies")
                     } label: {
                         HStack {
                             Image(systemName: "building.2")
@@ -37,8 +38,9 @@ struct Home: View {
                     }
 
                     NavigationLink {
-                        Notes()
+                        Jobs()
                             .environment(\.managedObjectContext, moc)
+                            .navigationTitle("Jobs")
                     } label: {
                         HStack {
                             Image(systemName: "hammer")
@@ -53,6 +55,7 @@ struct Home: View {
                     NavigationLink {
                         Notes()
                             .environment(\.managedObjectContext, moc)
+                            .navigationTitle("Notes")
                     } label: {
                         HStack {
                             Image(systemName: "note.text")
@@ -66,6 +69,7 @@ struct Home: View {
                     NavigationLink {
                         Notes()
                             .environment(\.managedObjectContext, moc)
+                            .navigationTitle("Tasks")
                     } label: {
                         HStack {
                             Image(systemName: "checklist")

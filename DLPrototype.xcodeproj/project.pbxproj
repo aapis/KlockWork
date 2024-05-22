@@ -193,6 +193,8 @@
 		53D4CB3C2BFE5B5100AFEDEA /* Notes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB3B2BFE5B5100AFEDEA /* Notes.swift */; };
 		53D4CB3F2BFE5B9F00AFEDEA /* CompanyDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB3E2BFE5B9F00AFEDEA /* CompanyDetail.swift */; };
 		53D4CB412BFE5BEA00AFEDEA /* NoteDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB402BFE5BEA00AFEDEA /* NoteDetail.swift */; };
+		53D4CB432BFE60D200AFEDEA /* JobDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB422BFE60D200AFEDEA /* JobDetail.swift */; };
+		53D4CB452BFE614700AFEDEA /* Jobs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB442BFE614700AFEDEA /* Jobs.swift */; };
 		53D5E2982A85A75C00FE293A /* Planning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D5E2972A85A75C00FE293A /* Planning.swift */; };
 		53D5E29A2A85E38A00FE293A /* WidgetLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D5E2992A85E38A00FE293A /* WidgetLocation.swift */; };
 		53E202562A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202552A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift */; };
@@ -472,6 +474,8 @@
 		53D4CB3B2BFE5B5100AFEDEA /* Notes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notes.swift; sourceTree = "<group>"; };
 		53D4CB3E2BFE5B9F00AFEDEA /* CompanyDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyDetail.swift; sourceTree = "<group>"; };
 		53D4CB402BFE5BEA00AFEDEA /* NoteDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetail.swift; sourceTree = "<group>"; };
+		53D4CB422BFE60D200AFEDEA /* JobDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDetail.swift; sourceTree = "<group>"; };
+		53D4CB442BFE614700AFEDEA /* Jobs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Jobs.swift; sourceTree = "<group>"; };
 		53D5E2972A85A75C00FE293A /* Planning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Planning.swift; sourceTree = "<group>"; };
 		53D5E2992A85E38A00FE293A /* WidgetLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLocation.swift; sourceTree = "<group>"; };
 		53E202552A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsDashboardSidebar.swift; sourceTree = "<group>"; };
@@ -1183,6 +1187,7 @@
 				53D4CB3D2BFE5B8300AFEDEA /* Detail */,
 				53D4CB392BFE5B3800AFEDEA /* Companies.swift */,
 				53D4CB3B2BFE5B5100AFEDEA /* Notes.swift */,
+				53D4CB442BFE614700AFEDEA /* Jobs.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -1204,6 +1209,7 @@
 				531CFA5D2BF95266000D598B /* Item.swift */,
 				53D4CB3E2BFE5B9F00AFEDEA /* CompanyDetail.swift */,
 				53D4CB402BFE5BEA00AFEDEA /* NoteDetail.swift */,
+				53D4CB422BFE60D200AFEDEA /* JobDetail.swift */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
@@ -1566,6 +1572,7 @@
 				53D4CB322BFE5AD800AFEDEA /* Planning.swift in Sources */,
 				532F5CF72BFD6E4E00C2FB93 /* CoreDataJob.swift in Sources */,
 				532F5CF62BFD141E00C2FB93 /* CoreDataCompanies.swift in Sources */,
+				53D4CB452BFE614700AFEDEA /* Jobs.swift in Sources */,
 				531CFA962BF95915000D598B /* CoreDataProjectConfiguration.swift in Sources */,
 				53D4CB3A2BFE5B3800AFEDEA /* Companies.swift in Sources */,
 				53D4CB382BFE5B1800AFEDEA /* Home.swift in Sources */,
@@ -1578,6 +1585,7 @@
 				53D4CB3C2BFE5B5100AFEDEA /* Notes.swift in Sources */,
 				531CFA8A2BF95593000D598B /* CoreDataNotes.swift in Sources */,
 				531CFA862BF95583000D598B /* Theme.swift in Sources */,
+				53D4CB432BFE60D200AFEDEA /* JobDetail.swift in Sources */,
 				531CFA842BF95546000D598B /* PersistenceController.swift in Sources */,
 				531CFA852BF95546000D598B /* Data.xcdatamodeld in Sources */,
 				531CFA5C2BF95266000D598B /* Main.swift in Sources */,

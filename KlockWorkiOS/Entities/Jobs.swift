@@ -1,5 +1,5 @@
 //
-//  Notes.swift
+//  Jobs.swift
 //  KlockWorkiOS
 //
 //  Created by Ryan Priebe on 2024-05-22.
@@ -8,8 +8,8 @@
 
 import SwiftUI
 
-struct Notes: View {
-    @State public var items: [Note] = []
+struct Jobs: View {
+    @State public var items: [Job] = []
 
     @Environment(\.managedObjectContext) var moc
 
@@ -19,16 +19,16 @@ struct Notes: View {
                 Section {
                     ForEach(items) { item in
                         NavigationLink {
-                            NoteDetail(note: item)
+                            JobDetail(job: item)
                         } label: {
-                            Text(item.title!.capitalized)
+                            Text(item.title != nil ? item.title!.isEmpty ? item.jid.string : item.title!.capitalized : item.jid.string)
                         }
                     }
                     .onDelete(perform: deleteItems)
                 }
             }
             .onAppear(perform: {
-                items = CoreDataNotes(moc: moc).alive()
+                items = CoreDataJob(moc: moc).all(true)
             })
             .toolbarBackground(Theme.cPurple, for: .navigationBar)
             .toolbar {
