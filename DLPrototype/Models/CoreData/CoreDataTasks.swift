@@ -133,6 +133,17 @@ public class CoreDataTasks {
 
         return count(predicate)
     }
+    
+    /// Count of all tasks
+    /// @TODO: the other countAll method needs to be renamed or deleted
+    /// - Returns: Int
+    public func countAllTime() -> Int {
+        let predicate = NSPredicate(
+            format: "owner.project.company.hidden == false"
+        )
+
+        return count(predicate)
+    }
 
     private func query(_ predicate: NSPredicate) -> [LogTask] {
         lock.lock()
