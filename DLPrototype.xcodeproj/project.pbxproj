@@ -21,7 +21,7 @@
 		531B38FC29674EC400E74013 /* Title.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531B38FB29674EC400E74013 /* Title.swift */; };
 		531B8DF22A847BE8005D911B /* NoteGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531B8DF12A847BE8005D911B /* NoteGroup.swift */; };
 		531CFA5A2BF95266000D598B /* KlockWorkiOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531CFA592BF95266000D598B /* KlockWorkiOSApp.swift */; };
-		531CFA5C2BF95266000D598B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531CFA5B2BF95266000D598B /* ContentView.swift */; };
+		531CFA5C2BF95266000D598B /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531CFA5B2BF95266000D598B /* Main.swift */; };
 		531CFA5E2BF95266000D598B /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531CFA5D2BF95266000D598B /* Item.swift */; };
 		531CFA602BF95268000D598B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 531CFA5F2BF95268000D598B /* Assets.xcassets */; };
 		531CFA632BF95268000D598B /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 531CFA622BF95268000D598B /* Preview Assets.xcassets */; };
@@ -185,6 +185,14 @@
 		53C3418C299960310071B855 /* JobDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418B299960310071B855 /* JobDashboard.swift */; };
 		53C3418E299968160071B855 /* JobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418D299968160071B855 /* JobView.swift */; };
 		53C3419029996C070071B855 /* FancyRandomJobColourPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418F29996C070071B855 /* FancyRandomJobColourPicker.swift */; };
+		53D4CB322BFE5AD800AFEDEA /* Planning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB312BFE5AD800AFEDEA /* Planning.swift */; };
+		53D4CB342BFE5AED00AFEDEA /* Today.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB332BFE5AED00AFEDEA /* Today.swift */; };
+		53D4CB362BFE5B0000AFEDEA /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB352BFE5B0000AFEDEA /* AppSettings.swift */; };
+		53D4CB382BFE5B1800AFEDEA /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB372BFE5B1800AFEDEA /* Home.swift */; };
+		53D4CB3A2BFE5B3800AFEDEA /* Companies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB392BFE5B3800AFEDEA /* Companies.swift */; };
+		53D4CB3C2BFE5B5100AFEDEA /* Notes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB3B2BFE5B5100AFEDEA /* Notes.swift */; };
+		53D4CB3F2BFE5B9F00AFEDEA /* CompanyDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB3E2BFE5B9F00AFEDEA /* CompanyDetail.swift */; };
+		53D4CB412BFE5BEA00AFEDEA /* NoteDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB402BFE5BEA00AFEDEA /* NoteDetail.swift */; };
 		53D5E2982A85A75C00FE293A /* Planning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D5E2972A85A75C00FE293A /* Planning.swift */; };
 		53D5E29A2A85E38A00FE293A /* WidgetLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D5E2992A85E38A00FE293A /* WidgetLocation.swift */; };
 		53E202562A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202552A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift */; };
@@ -289,7 +297,7 @@
 		531B8DF12A847BE8005D911B /* NoteGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteGroup.swift; sourceTree = "<group>"; };
 		531CFA572BF95266000D598B /* KlockWorkiOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KlockWorkiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		531CFA592BF95266000D598B /* KlockWorkiOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KlockWorkiOSApp.swift; sourceTree = "<group>"; };
-		531CFA5B2BF95266000D598B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		531CFA5B2BF95266000D598B /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		531CFA5D2BF95266000D598B /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		531CFA5F2BF95268000D598B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		531CFA622BF95268000D598B /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -456,6 +464,14 @@
 		53C3418B299960310071B855 /* JobDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDashboard.swift; sourceTree = "<group>"; };
 		53C3418D299968160071B855 /* JobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobView.swift; sourceTree = "<group>"; };
 		53C3418F29996C070071B855 /* FancyRandomJobColourPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyRandomJobColourPicker.swift; sourceTree = "<group>"; };
+		53D4CB312BFE5AD800AFEDEA /* Planning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Planning.swift; sourceTree = "<group>"; };
+		53D4CB332BFE5AED00AFEDEA /* Today.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Today.swift; sourceTree = "<group>"; };
+		53D4CB352BFE5B0000AFEDEA /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		53D4CB372BFE5B1800AFEDEA /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
+		53D4CB392BFE5B3800AFEDEA /* Companies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Companies.swift; sourceTree = "<group>"; };
+		53D4CB3B2BFE5B5100AFEDEA /* Notes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notes.swift; sourceTree = "<group>"; };
+		53D4CB3E2BFE5B9F00AFEDEA /* CompanyDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyDetail.swift; sourceTree = "<group>"; };
+		53D4CB402BFE5BEA00AFEDEA /* NoteDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetail.swift; sourceTree = "<group>"; };
 		53D5E2972A85A75C00FE293A /* Planning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Planning.swift; sourceTree = "<group>"; };
 		53D5E2992A85E38A00FE293A /* WidgetLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLocation.swift; sourceTree = "<group>"; };
 		53E202552A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsDashboardSidebar.swift; sourceTree = "<group>"; };
@@ -594,10 +610,11 @@
 		531CFA582BF95266000D598B /* KlockWorkiOS */ = {
 			isa = PBXGroup;
 			children = (
+				53D4CB302BFE5AB900AFEDEA /* Pages */,
+				53D4CB2F2BFE5A9A00AFEDEA /* Entities */,
 				531CFA992BF95F5F000D598B /* KlockWorkiOS.entitlements */,
 				531CFA592BF95266000D598B /* KlockWorkiOSApp.swift */,
-				531CFA5B2BF95266000D598B /* ContentView.swift */,
-				531CFA5D2BF95266000D598B /* Item.swift */,
+				531CFA5B2BF95266000D598B /* Main.swift */,
 				531CFA5F2BF95268000D598B /* Assets.xcassets */,
 				531CFA642BF95268000D598B /* Info.plist */,
 				531CFA612BF95268000D598B /* Preview Content */,
@@ -1160,6 +1177,37 @@
 			path = RowTypes;
 			sourceTree = "<group>";
 		};
+		53D4CB2F2BFE5A9A00AFEDEA /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				53D4CB3D2BFE5B8300AFEDEA /* Detail */,
+				53D4CB392BFE5B3800AFEDEA /* Companies.swift */,
+				53D4CB3B2BFE5B5100AFEDEA /* Notes.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		53D4CB302BFE5AB900AFEDEA /* Pages */ = {
+			isa = PBXGroup;
+			children = (
+				53D4CB312BFE5AD800AFEDEA /* Planning.swift */,
+				53D4CB332BFE5AED00AFEDEA /* Today.swift */,
+				53D4CB352BFE5B0000AFEDEA /* AppSettings.swift */,
+				53D4CB372BFE5B1800AFEDEA /* Home.swift */,
+			);
+			path = Pages;
+			sourceTree = "<group>";
+		};
+		53D4CB3D2BFE5B8300AFEDEA /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				531CFA5D2BF95266000D598B /* Item.swift */,
+				53D4CB3E2BFE5B9F00AFEDEA /* CompanyDetail.swift */,
+				53D4CB402BFE5BEA00AFEDEA /* NoteDetail.swift */,
+			);
+			path = Detail;
+			sourceTree = "<group>";
+		};
 		53D5E2962A85A75000FE293A /* Planning */ = {
 			isa = PBXGroup;
 			children = (
@@ -1515,20 +1563,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53D4CB322BFE5AD800AFEDEA /* Planning.swift in Sources */,
 				532F5CF72BFD6E4E00C2FB93 /* CoreDataJob.swift in Sources */,
 				532F5CF62BFD141E00C2FB93 /* CoreDataCompanies.swift in Sources */,
 				531CFA962BF95915000D598B /* CoreDataProjectConfiguration.swift in Sources */,
+				53D4CB3A2BFE5B3800AFEDEA /* Companies.swift in Sources */,
+				53D4CB382BFE5B1800AFEDEA /* Home.swift in Sources */,
 				531CFA932BF957D3000D598B /* CustomPickerItem.swift in Sources */,
 				531CFA942BF957D3000D598B /* CoreDataRecords.swift in Sources */,
+				53D4CB412BFE5BEA00AFEDEA /* NoteDetail.swift in Sources */,
 				531CFA922BF955F1000D598B /* DateHelper.swift in Sources */,
+				53D4CB342BFE5AED00AFEDEA /* Today.swift in Sources */,
 				531CFA872BF95593000D598B /* CoreDataTasks.swift in Sources */,
+				53D4CB3C2BFE5B5100AFEDEA /* Notes.swift in Sources */,
 				531CFA8A2BF95593000D598B /* CoreDataNotes.swift in Sources */,
 				531CFA862BF95583000D598B /* Theme.swift in Sources */,
 				531CFA842BF95546000D598B /* PersistenceController.swift in Sources */,
 				531CFA852BF95546000D598B /* Data.xcdatamodeld in Sources */,
-				531CFA5C2BF95266000D598B /* ContentView.swift in Sources */,
+				531CFA5C2BF95266000D598B /* Main.swift in Sources */,
 				531CFA5E2BF95266000D598B /* Item.swift in Sources */,
 				531CFA5A2BF95266000D598B /* KlockWorkiOSApp.swift in Sources */,
+				53D4CB362BFE5B0000AFEDEA /* AppSettings.swift in Sources */,
+				53D4CB3F2BFE5B9F00AFEDEA /* CompanyDetail.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
