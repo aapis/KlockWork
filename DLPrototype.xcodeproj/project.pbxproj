@@ -195,6 +195,8 @@
 		53D4CB412BFE5BEA00AFEDEA /* NoteDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB402BFE5BEA00AFEDEA /* NoteDetail.swift */; };
 		53D4CB432BFE60D200AFEDEA /* JobDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB422BFE60D200AFEDEA /* JobDetail.swift */; };
 		53D4CB452BFE614700AFEDEA /* Jobs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB442BFE614700AFEDEA /* Jobs.swift */; };
+		53D4CB472BFE645900AFEDEA /* Tasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB462BFE645900AFEDEA /* Tasks.swift */; };
+		53D4CB492BFE648400AFEDEA /* TaskDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CB482BFE648400AFEDEA /* TaskDetail.swift */; };
 		53D5E2982A85A75C00FE293A /* Planning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D5E2972A85A75C00FE293A /* Planning.swift */; };
 		53D5E29A2A85E38A00FE293A /* WidgetLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D5E2992A85E38A00FE293A /* WidgetLocation.swift */; };
 		53E202562A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202552A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift */; };
@@ -476,6 +478,8 @@
 		53D4CB402BFE5BEA00AFEDEA /* NoteDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetail.swift; sourceTree = "<group>"; };
 		53D4CB422BFE60D200AFEDEA /* JobDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDetail.swift; sourceTree = "<group>"; };
 		53D4CB442BFE614700AFEDEA /* Jobs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Jobs.swift; sourceTree = "<group>"; };
+		53D4CB462BFE645900AFEDEA /* Tasks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tasks.swift; sourceTree = "<group>"; };
+		53D4CB482BFE648400AFEDEA /* TaskDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetail.swift; sourceTree = "<group>"; };
 		53D5E2972A85A75C00FE293A /* Planning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Planning.swift; sourceTree = "<group>"; };
 		53D5E2992A85E38A00FE293A /* WidgetLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLocation.swift; sourceTree = "<group>"; };
 		53E202552A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsDashboardSidebar.swift; sourceTree = "<group>"; };
@@ -1188,6 +1192,7 @@
 				53D4CB392BFE5B3800AFEDEA /* Companies.swift */,
 				53D4CB3B2BFE5B5100AFEDEA /* Notes.swift */,
 				53D4CB442BFE614700AFEDEA /* Jobs.swift */,
+				53D4CB462BFE645900AFEDEA /* Tasks.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -1210,6 +1215,7 @@
 				53D4CB3E2BFE5B9F00AFEDEA /* CompanyDetail.swift */,
 				53D4CB402BFE5BEA00AFEDEA /* NoteDetail.swift */,
 				53D4CB422BFE60D200AFEDEA /* JobDetail.swift */,
+				53D4CB482BFE648400AFEDEA /* TaskDetail.swift */,
 			);
 			path = Detail;
 			sourceTree = "<group>";
@@ -1588,10 +1594,12 @@
 				53D4CB432BFE60D200AFEDEA /* JobDetail.swift in Sources */,
 				531CFA842BF95546000D598B /* PersistenceController.swift in Sources */,
 				531CFA852BF95546000D598B /* Data.xcdatamodeld in Sources */,
+				53D4CB492BFE648400AFEDEA /* TaskDetail.swift in Sources */,
 				531CFA5C2BF95266000D598B /* Main.swift in Sources */,
 				531CFA5E2BF95266000D598B /* Item.swift in Sources */,
 				531CFA5A2BF95266000D598B /* KlockWorkiOSApp.swift in Sources */,
 				53D4CB362BFE5B0000AFEDEA /* AppSettings.swift in Sources */,
+				53D4CB472BFE645900AFEDEA /* Tasks.swift in Sources */,
 				53D4CB3F2BFE5B9F00AFEDEA /* CompanyDetail.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

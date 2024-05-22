@@ -17,15 +17,22 @@ struct Companies: View {
         NavigationStack {
             List {
                 Section {
-                    ForEach(items) { item in
-                        NavigationLink {
-                            CompanyDetail(company: item)
-                        } label: {
-                            Text(item.name!.capitalized)
+                    if items.count > 0 {
+                        ForEach(items) { item in
+                            NavigationLink {
+                                CompanyDetail(company: item)
+                            } label: {
+                                Text(item.name!.capitalized)
+                            }
+                        }
+                        .onDelete(perform: deleteItems)
+                    } else {
+                        Button(action: addItem) {
+                            Text("No companies found. Create one!")
                         }
                     }
                 }
-//                .onDelete(perform: deleteItems)
+                
             }
             .onAppear(perform: {
                 items = CoreDataCompanies(moc: moc).alive()
@@ -37,6 +44,23 @@ struct Companies: View {
                         Label("Add Item", systemImage: "plus")
                     }
                 }
+            }
+        }
+    }
+}
+
+extension Companies {
+    private func addItem() {
+        withAnimation {
+            let newItem = Item(timestamp: Date())
+//            modelContext.insert(newItem)
+        }
+    }
+
+    private func deleteItems(offsets: IndexSet) {
+        withAnimation {
+            for index in offsets {
+//                modelContext.delete(items[index])
             }
         }
     }

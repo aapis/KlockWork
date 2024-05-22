@@ -67,7 +67,7 @@ struct Home: View {
                     }
                     
                     NavigationLink {
-                        Notes()
+                        Tasks()
                             .environment(\.managedObjectContext, moc)
                             .navigationTitle("Tasks")
                     } label: {

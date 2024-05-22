@@ -17,14 +17,20 @@ struct Jobs: View {
         NavigationStack {
             List {
                 Section {
-                    ForEach(items) { item in
-                        NavigationLink {
-                            JobDetail(job: item)
-                        } label: {
-                            Text(item.title != nil ? item.title!.isEmpty ? item.jid.string : item.title!.capitalized : item.jid.string)
+                    if items.count > 0 {
+                        ForEach(items) { item in
+                            NavigationLink {
+                                JobDetail(job: item)
+                            } label: {
+                                Text(item.title != nil ? item.title!.isEmpty ? item.jid.string : item.title!.capitalized : item.jid.string)
+                            }
+                        }
+                        .onDelete(perform: deleteItems)
+                    } else {
+                        Button(action: addItem) {
+                            Text("No jobs found. Create one!")
                         }
                     }
-                    .onDelete(perform: deleteItems)
                 }
             }
             .onAppear(perform: {
@@ -43,7 +49,9 @@ struct Jobs: View {
             }
         }
     }
+}
 
+extension Jobs {
     private func addItem() {
         withAnimation {
             let newItem = Item(timestamp: Date())
@@ -59,3 +67,4 @@ struct Jobs: View {
         }
     }
 }
+

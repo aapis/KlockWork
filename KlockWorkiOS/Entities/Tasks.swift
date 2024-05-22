@@ -1,5 +1,5 @@
 //
-//  Notes.swift
+//  Tasks.swift
 //  KlockWorkiOS
 //
 //  Created by Ryan Priebe on 2024-05-22.
@@ -8,8 +8,8 @@
 
 import SwiftUI
 
-struct Notes: View {
-    @State public var items: [Note] = []
+struct Tasks: View {
+    @State public var items: [LogTask] = []
 
     @Environment(\.managedObjectContext) var moc
 
@@ -20,21 +20,21 @@ struct Notes: View {
                     if items.count > 0 {
                         ForEach(items) { item in
                             NavigationLink {
-                                NoteDetail(note: item)
+                                TaskDetail(task: item)
                             } label: {
-                                Text(item.title!.capitalized)
+                                Text(item.content!)
                             }
                         }
                         .onDelete(perform: deleteItems)
                     } else {
                         Button(action: addItem) {
-                            Text("No notes found. Create one!")
+                            Text("No tasks found. Create one!")
                         }
                     }
                 }
             }
             .onAppear(perform: {
-                items = CoreDataNotes(moc: moc).alive()
+                items = CoreDataTasks(moc: moc).all()
             })
             .toolbarBackground(Theme.cPurple, for: .navigationBar)
             .toolbar {
@@ -51,7 +51,7 @@ struct Notes: View {
     }
 }
 
-extension Notes {
+extension Tasks {
     private func addItem() {
         withAnimation {
             let newItem = Item(timestamp: Date())
