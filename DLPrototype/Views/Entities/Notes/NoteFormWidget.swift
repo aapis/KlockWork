@@ -8,17 +8,6 @@
 
 import SwiftUI
 
-public enum SaveSource {
-    case auto, manual
-    
-    var name: String {
-        return switch self {
-        case .auto: "Automatic"
-        case .manual: ""
-        }
-    }
-}
-
 struct NoteFormWidget: View {
     public var note: Note? = nil
     private var currentVersion: NoteVersion? = nil

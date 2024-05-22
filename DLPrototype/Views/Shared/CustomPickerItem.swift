@@ -9,6 +9,10 @@
 import SwiftUI
 
 public struct CustomPickerItem: Identifiable, Hashable {
+    public static func == (lhs: CustomPickerItem, rhs: CustomPickerItem) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
     public var id = UUID()
     public var title: String
     public var tag: Int
