@@ -102,6 +102,52 @@ extension CompanyView {
     }
 }
 
+struct Main: View {
+    var body: some View {
+        TabView {
+            Home()
+                .tabItem {
+                    Image(systemName: "house")
+                    Text("Home")
+            }
+            Today()
+                .tabItem {
+                    Image(systemName: "tray")
+                    Text("Today")
+            }
+            Planning()
+                .tabItem {
+                    Image(systemName: "hexagon")
+                    Text("Planning")
+            }
+            
+            AppSettings()
+                .tabItem {
+                    Image(systemName: "gear")
+                    Text("Settings")
+            }
+        }
+    }
+}
+
+struct Planning: View {
+    var body: some View {
+        Text("Coming soon!")
+    }
+}
+
+struct Today: View {
+    var body: some View {
+        Text("Coming soon!")
+    }
+}
+
+struct AppSettings: View {
+    var body: some View {
+        Text("Coming soon!")
+    }
+}
+
 struct Home: View {
     private let fgColour: Color = .red
     private var columns: [GridItem] {
@@ -116,26 +162,6 @@ struct Home: View {
     var body: some View {
         NavigationStack(path: $path) {
             List {
-                Section("Views") {
-                    HStack {
-                        Image(systemName: "hexagon")
-                            .foregroundStyle(fgColour)
-                        Text("Planning")
-                        Spacer()
-                        Text("Coming soon!")
-                    }
-                    .foregroundStyle(.gray)
-                    
-                    HStack {
-                        Image(systemName: "tray")
-                            .foregroundStyle(fgColour)
-                        Text("Today")
-                        Spacer()
-                        Text("Coming soon!")
-                    }
-                    .foregroundStyle(.gray)
-                }
-
                 Section("Entities") {
                     NavigationLink {
                         Companies()
@@ -190,11 +216,6 @@ struct Home: View {
                         }
                     }
                 }
-                
-                LazyVGrid(columns: columns) {
-                    Text("Another Section")
-                    Text("Another Section")
-                }
             }
             .navigationTitle("Home")
             .toolbarBackground(Theme.cPurple, for: .navigationBar)
@@ -202,6 +223,26 @@ struct Home: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(fgColour)
             }
+
+//            LazyVGrid(columns: columns) {
+//                HStack {
+//                    Image(systemName: "hexagon")
+//                        .font(.title)
+//                    Text("Planning")
+//                }
+//                .padding()
+//                .background(Theme.cPurple)
+//                .mask(RoundedRectangle(cornerRadius: 10.0))
+//                
+//                HStack {
+//                    Image(systemName: "tray")
+//                        .font(.title)
+//                    Text("Today")
+//                }
+//                .padding()
+//                .background(Theme.cPurple)
+//                .mask(RoundedRectangle(cornerRadius: 10.0))
+//            }
         }
         .accentColor(fgColour)
         .onAppear(perform: actionOnAppear)

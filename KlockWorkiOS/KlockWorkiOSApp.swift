@@ -15,7 +15,7 @@ struct KlockWorkiOSApp: App {
 
     var body: some Scene {
         WindowGroup {
-            Home()
+            Main()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
