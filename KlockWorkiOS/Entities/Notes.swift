@@ -21,7 +21,7 @@ struct Notes: View {
                         NavigationLink {
                             NoteDetail(note: item)
                         } label: {
-                            Text(item.title!)
+                            Text(item.title!.capitalized)
                         }
                     }
                     .onDelete(perform: deleteItems)
@@ -32,7 +32,6 @@ struct Notes: View {
             })
             .navigationTitle("Notes")
             .toolbarBackground(Theme.cPurple, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     EditButton()

@@ -20,7 +20,7 @@ struct CompanyDetail: View {
                 Section("Projects") {
                     if projects.count > 0 {
                         ForEach(projects) { project in
-                            Text(project.name!)
+                            Text(project.name!.capitalized)
                         }
                     } else {
                         Text("No projects found")
@@ -34,7 +34,7 @@ struct CompanyDetail: View {
             }
         }
         .onAppear(perform: actionOnAppear)
-        .navigationTitle(company.name!)
+        .navigationTitle(company.name!.capitalized)
     }
 }
 

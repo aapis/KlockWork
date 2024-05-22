@@ -21,7 +21,7 @@ struct Companies: View {
                         NavigationLink {
                             CompanyDetail(company: item)
                         } label: {
-                            Text(item.name!)
+                            Text(item.name!.capitalized)
                         }
                     }
                 }
@@ -32,7 +32,6 @@ struct Companies: View {
             })
             .navigationTitle("Companies")
             .toolbarBackground(Theme.cPurple, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
             .toolbar {
                 ToolbarItem {
                     Button(action: {}/*addItem*/) {

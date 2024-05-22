@@ -17,16 +17,7 @@ struct NoteDetail: View {
     @State private var title: String = ""
 
     var body: some View {
-        VStack(alignment: .leading) {
-            VStack {
-                HStack {
-                    Text(title)
-                        .font(.title)
-                    Spacer()
-                }
-            }
-            .padding()
-
+        VStack(alignment: .leading, spacing: 1) {
             HStack {
                 ScrollView(showsIndicators: false) {
                     Text(content)
@@ -37,14 +28,24 @@ struct NoteDetail: View {
             .background(Theme.base)
         }
         .onAppear(perform: actionOnAppear)
+        .navigationTitle(title.capitalized)
+//        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(Theme.cPurple, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .background(Theme.cPurple)
-//        .toolbar {
-//            ToolbarItem {
-//                Button(action: {}) {
-//                    Label("Versions", systemImage: "questionmark.circle")
-//                }
-//            }
-//        }
+        .toolbar {
+            ToolbarItem {
+                Button(action: {}) {
+                    Label("Versions", systemImage: "questionmark.circle")
+                }
+            }
+
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {}) {
+                    Text("Edit")
+                }
+            }
+        }
     }
 }
 
