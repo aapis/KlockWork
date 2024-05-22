@@ -145,7 +145,6 @@ extension Today.PostingInterface {
                 try record.validateForInsert()
 
                 PersistenceController.shared.save()
-                text = ""
                 nav.session.idate = DateHelper.identifiedDate(for: Date(), moc: moc)
 
                 // Create a history item (used by CLI mode and, eventually, LogTable)
@@ -154,6 +153,8 @@ extension Today.PostingInterface {
                         Navigation.CommandLineSession.History(command: text, message: "", appType: .log, job: nav.session.job)
                     )
                 }
+
+                text = ""
             } catch {
                 print("[error] Save error \(error)")
             }

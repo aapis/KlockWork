@@ -86,7 +86,7 @@ struct FancyGenericToolbar: View {
                     }
                 }
             }
-            .frame(height: 33)
+            .frame(height: 32)
 
             GridRow {
                 Group {
