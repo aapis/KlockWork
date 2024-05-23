@@ -9,6 +9,7 @@
 import SwiftUI
 
 extension Job {
+#if os(macOS)
     typealias Field = Navigation.Forms.Field
     
     /// Field definitions used to generate user-editable forms for this object
@@ -26,6 +27,7 @@ extension Job {
             Field(type: .editor, label: "Description", value: self.overview, entity: self, keyPath: "overview")
         ]
     }
+#endif
 
     var idInt: Int { Int(exactly: jid.rounded(.toNearestOrEven)) ?? 0 }
 

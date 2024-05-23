@@ -35,7 +35,11 @@ extension Color {
     }
 
     static func lightGray() -> Color {
+#if os(macOS)
         Color(nsColor: .lightGray)
+#else
+        Color(uiColor: .lightGray)
+#endif
     }
     
     public func isBright() -> Bool {
