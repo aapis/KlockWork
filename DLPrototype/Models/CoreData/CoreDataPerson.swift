@@ -17,6 +17,24 @@ public class CoreDataPerson: ObservableObject {
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
     }
+    
+    /// Find people who have been updated recently
+    /// - Parameter numDaysPrior: How far back to look, 7 days by default
+    /// - Returns: FetchRequest<Person>
+    static public func fetchRecent(numDaysPrior: Double = 7) -> FetchRequest<Person> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Person.name?, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<Person> = Person.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "lastUpdate >= %@",
+            DateHelper.daysPast(numDaysPrior) as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
 
     public func byCompany(_ company: Company) -> [Person] {
         let predicate = NSPredicate(
@@ -25,6 +43,16 @@ public class CoreDataPerson: ObservableObject {
         )
 
         return query(predicate)
+    }
+    
+    /// Count of all people in the system
+    /// - Returns: Int
+    public func countAll() -> Int {
+        let predicate = NSPredicate(
+            format: "name != nil"
+        )
+
+        return count(predicate)
     }
 
     private func query(_ predicate: NSPredicate? = nil) -> [Person] {

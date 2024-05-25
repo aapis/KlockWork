@@ -39,7 +39,25 @@ public class CoreDataTasks {
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
-    
+
+    /// Find all active tasks that have been updated within the last week
+    /// - Parameter numDaysPrior: How far back to look, 7 days by default
+    /// - Returns: FetchRequest<Job>
+    static public func fetchRecent(numDaysPrior: Double = 7) -> FetchRequest<LogTask> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \LogTask.created, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "lastUpdate >= %@",
+            DateHelper.daysPast(numDaysPrior) as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
     public func forDate(_ date: Date, from: [LogRecord]) -> [LogTask] {
         var results: [LogTask] = []
         var filterPredicate: NSCompoundPredicate

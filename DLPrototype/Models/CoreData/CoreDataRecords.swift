@@ -115,13 +115,20 @@ public class CoreDataRecords: ObservableObject {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
     
+    /// Create a new record using a known job, date and message
+    /// - Parameters:
+    ///   - job: Job
+    ///   - date: Date
+    ///   - text: String
+    /// - Returns: Void
     public func createWithJob(job: Job, date: Date, text: String) -> Void {
         let record = LogRecord(context: moc!)
         record.timestamp = date
         record.message = text
         record.id = UUID()
         record.job = job
-        
+        record.alive = true
+
         do {
             try moc!.save()
         } catch {
@@ -301,6 +308,7 @@ public class CoreDataRecords: ObservableObject {
         return intersections
     }
 
+#if os(macOS)
     public func createExportableRecordsFrom(_ records: [LogRecord], grouped: Bool? = false) -> String {
         if grouped! {
             return exportableGroupedRecordsAsString(records).0
@@ -309,7 +317,7 @@ public class CoreDataRecords: ObservableObject {
         return exportableRecords(records)
     }
 
-#if os(macOS)
+
     public func createExportableGroupedRecordsAsViews(_ records: [LogRecord]) -> [FancyStaticTextField] {
         var views: [FancyStaticTextField] = []
 

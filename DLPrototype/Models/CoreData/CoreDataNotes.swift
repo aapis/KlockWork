@@ -53,9 +53,10 @@ public class CoreDataNotes {
             NSSortDescriptor(keyPath: \Note.mJob?.id, ascending: false),
             NSSortDescriptor(keyPath: \Note.title, ascending: true)
         ]
-
+        
+        let date = DateHelper.daysPast(7)
         let fetch: NSFetchRequest<Note> = Note.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive == true && lastUpdate != nil")
+        fetch.predicate = NSPredicate(format: "alive == true && lastUpdate != nil && lastUpdate >= %@", date as CVarArg)
         fetch.sortDescriptors = descriptors
 
         if let lim = limit {

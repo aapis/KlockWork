@@ -31,6 +31,24 @@ public class CoreDataJob: ObservableObject {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
+    /// Find all active jobs that have been updated within the last week
+    /// - Parameter numDaysPrior: How far back to look, 7 days by default
+    /// - Returns: FetchRequest<Job>
+    static public func fetchRecent(numDaysPrior: Double = 7) -> FetchRequest<Job> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Job.jid, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "alive = true && ANY records.timestamp >= %@",
+            DateHelper.daysPast(numDaysPrior) as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
     static public func fetchAll(limit: Int? = nil) -> FetchRequest<Job> {
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.predicate = NSPredicate(format: "alive == true && project != nil && project.alive == true && project.company.hidden == false")

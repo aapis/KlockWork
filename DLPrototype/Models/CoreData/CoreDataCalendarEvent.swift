@@ -90,6 +90,7 @@ public class CoreDataCalendarEvent: ObservableObject {
         }
     }
 
+#if os(macOS)
     public func find(calendar: String, _ callback: (String) -> [EKEvent]) -> [EKEvent] {
         let status = EKEventStore.authorizationStatus(for: EKEntityType.event)
         var events: [EKEvent] = []
@@ -113,6 +114,7 @@ public class CoreDataCalendarEvent: ObservableObject {
 
         return events
     }
+#endif
 
     public func findInCalendar(calendar: String, _ callback: (EKCalendar) -> [EKEvent]) -> [EKEvent] {
         let status = EKEventStore.authorizationStatus(for: EKEntityType.event)
@@ -142,6 +144,7 @@ public class CoreDataCalendarEvent: ObservableObject {
         return events
     }
 
+#if os(macOS)
     public func eventsInProgress(_ calendarName: String) -> [EKEvent] {
         return find(calendar: calendarName) { calendar in
             let existingEvents = self.byType(.inProgress)
@@ -185,6 +188,7 @@ public class CoreDataCalendarEvent: ObservableObject {
             return ekEvents
         }
     }
+#endif
 
     public func events(_ calendarName: String) -> [EKEvent] {
         return self.findInCalendar(calendar: calendarName) { calendar in

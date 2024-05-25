@@ -54,6 +54,24 @@ public class CoreDataCompanies: ObservableObject {
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
+    
+    /// Find all active companies that have been updated within the last week
+    /// - Parameter numDaysPrior: How far back to look, 7 days by default
+    /// - Returns: FetchRequest<Company>
+    static public func fetchRecent(numDaysPrior: Double = 7) -> FetchRequest<Company> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Company.name?, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<Company> = Company.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "alive = true && lastUpdate >= %@",
+            DateHelper.daysPast(numDaysPrior) as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
 
     /// Retreive all companies by pid
     /// - Parameter id: PID value to find
