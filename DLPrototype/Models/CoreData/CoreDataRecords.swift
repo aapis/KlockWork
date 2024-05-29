@@ -115,6 +115,22 @@ public class CoreDataRecords: ObservableObject {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
     
+    /// Find records whose content matches a given string
+    /// - Parameter term: String
+    /// - Returns: FetchRequest<LogRecord>
+    static public func fetchMatching(term: String) -> FetchRequest<LogRecord> {
+        let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
+        fetch.sortDescriptors = [
+            NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)
+        ]
+        fetch.predicate = NSPredicate(
+            format: "alive == true && message CONTAINS [c] %@ && job.project.company.hidden == false",
+            term
+        )
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
     /// Create a new record using a known job, date and message
     /// - Parameters:
     ///   - job: Job
@@ -450,7 +466,38 @@ public class CoreDataRecords: ObservableObject {
 
         return buffer
     }
-    
+
+    /// Finds records created on a specific date that aren't hidden by their parent
+    /// - Parameter date: Date
+    /// - Returns: Array<LogRecord>
+    public func find(for date: Date) -> [LogRecord] {
+        let window = DateHelper.startAndEndOf(date)
+        let predicate = NSPredicate(
+            format: "(timestamp > %@ && timestamp <= %@) && job.project.company.hidden == false",
+            window.0 as CVarArg,
+            window.1 as CVarArg
+        )
+
+        return query(predicate)
+    }
+
+    /// Count up all the records created and jobs referenced for a given day
+    /// - Parameter date: Date
+    /// - Returns: Int
+    public func countRecords(for date: Date) -> Int {
+        return self.find(for: date).count
+    }
+
+    /// Count up all the jobs referenced for a given day
+    /// - Parameter date: Date
+    /// - Returns: Int
+    public func countJobs(for date: Date) -> Int {
+        let records = self.find(for: date)
+        let jobsInteractedWith = Dictionary(grouping: records, by: {$0.job})
+
+        return jobsInteractedWith.count
+    }
+
     private func query(_ predicate: NSPredicate) -> [LogRecord] {
         lock.lock()
 

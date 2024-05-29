@@ -63,6 +63,25 @@ public class CoreDataJob: ObservableObject {
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
+    
+    /// Find jobs whose JID or title fields match a given string
+    /// - Parameter term: String
+    /// - Returns: FetchRequest<Job>
+    static public func fetchMatching(term: String) -> FetchRequest<Job> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Job.jid, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "alive == true && (ANY jid.string CONTAINS[c] %@ || ANY title CONTAINS[c] %@)",
+            term,
+            term
+        )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
 
     public func getRecentlyUsed(records: FetchedResults<LogRecord>) -> [Job] {
         var jobs: Set<Job> = []
@@ -135,6 +154,34 @@ public class CoreDataJob: ObservableObject {
         return all
     }
     
+    /// Find all jobs created on a specific date. Used in aggregate queries, mainly.
+    /// - Parameter date: Date
+    /// - Returns: Array<Job>
+    public func byDate(_ date: Date) -> [Job] {
+        let window = DateHelper.startAndEndOf(date)
+        let predicate = NSPredicate(
+            format: "created >= %@ && created <= %@",
+            window.0 as CVarArg,
+            window.1 as CVarArg
+        )
+
+        return query(predicate)
+    }
+
+    /// Count of all jobs created on a specific date. Used in aggregate queries, mainly.
+    /// - Parameter date: Date
+    /// - Returns: Array<Job>
+    public func countByDate(_ date: Date) -> Int {
+        let window = DateHelper.startAndEndOf(date)
+        let predicate = NSPredicate(
+            format: "created >= %@ && created <= %@",
+            window.0 as CVarArg,
+            window.1 as CVarArg
+        )
+
+        return count(predicate)
+    }
+
     public func all(_ stillAlive: Bool? = true, fetchLimit: Int? = nil, resultLimit: Int? = nil) -> [Job] {
         var all: [Job] = []
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()

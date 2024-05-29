@@ -73,6 +73,21 @@ public class CoreDataCompanies: ObservableObject {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
+    /// Find companies whose name matches a given string
+    /// - Parameter term: String
+    /// - Returns: FetchRequest<Company>
+    static public func fetchMatching(term: String) -> FetchRequest<Company> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Company.name?, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<Company> = Company.fetchRequest()
+        fetch.predicate = NSPredicate(format: "alive = true && name CONTAINS[c] %@", term as CVarArg)
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
     /// Retreive all companies by pid
     /// - Parameter id: PID value to find
     /// - Returns: Company|nil
@@ -186,6 +201,19 @@ public class CoreDataCompanies: ObservableObject {
         if results.count == 0 {
             PersistenceController.shared.save()
         }
+    }
+    
+    /// Find companies matching the provided search term
+    /// - Parameter term: String - Search term
+    /// - Returns: Array<Company>
+    public func matching(term: String) -> [Company] {
+        let predicate = NSPredicate(
+            format: "name CONTAINS[c] %@",
+            term.lowercased() as CVarArg,
+            term.lowercased() as CVarArg
+        )
+
+        return query(predicate)
     }
 
     /// Query companies

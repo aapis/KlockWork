@@ -50,6 +50,22 @@ final public class DateHelper {
         return Calendar.current.startOfDay(for: date) as CVarArg
     }
     
+    /// Returns a list of date objects representing the numDays prior to from
+    /// - Parameter numDays: Double
+    /// - Parameter from: Date
+    /// - Returns: Array<Date>
+    static public func prior(numDays: Int, from: Date) -> [Date] {
+        var entries: [Date] = []
+
+        for idx in 0...numDays {
+            let dblIndex = Double(idx)
+            let entry = from - (86400 * (dblIndex + 1.0)) // first list item is yesterday
+            entries.append(entry)
+        }
+
+        return entries
+    }
+
     static public func todayShort(_ date: Date? = Date()) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
@@ -202,24 +218,65 @@ final public class DateHelper {
             lower: Calendar.autoupdatingCurrent.date(byAdding: eComponents, to: end)!
         )
     }
-
-    static public func dayAtStartAndEndOfMonth() -> (CVarArg, CVarArg)? {
+    
+    /// Determine the start of the month for a given Date object
+    /// - Parameter date: Date
+    /// - Returns: Optional(Date)
+    static public func startOfMonth(for date: Date) -> Date? {
         let calendar = Calendar.autoupdatingCurrent
-        let today = Date()
-        let components = calendar.dateComponents([.year, .month], from: today)
-        let startOfMonth = calendar.date(from: components)
-        
-        if startOfMonth != nil {
-            let endOfMonth = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: startOfMonth!)
-            
-            if endOfMonth != nil {
-                return (
-                    startOfMonth! as CVarArg,
-                    endOfMonth! as CVarArg
-                )
-            }
+        let components = calendar.dateComponents([.year, .month], from: date)
+        let sComponents = DateComponents(year: components.year, month: components.month, day: 1)
+
+        return calendar.date(from: sComponents)
+    }
+    
+    /// Determine the last day of the month for a given Date object
+    /// - Parameter date: Date
+    /// - Returns: Optional(Date)
+    static public func endOfMonth(for date: Date) -> Date? {
+        if let start = self.startOfMonth(for: date) {
+            return Calendar.autoupdatingCurrent.date(byAdding: DateComponents(month: 1, day: -1), to: start)
         }
-        
+
         return nil
+    }
+
+    /// Create date objects for days at the start and end of the provided month
+    /// - Parameter date: Date
+    /// - Returns: Optional(Date, Date)
+    static public func datesAtStartAndEndOfMonth(for date: Date) -> (Date, Date)? {
+        let start = self.startOfMonth(for: date)
+        let end = self.endOfMonth(for: date)
+
+        if (start != nil && end != nil) {
+            return (start!, end!)
+        }
+
+        return nil
+    }
+    
+    /// Find days at the beginning and end of the CURRENT month
+    /// - Returns: Optional((CVarArg, CVarArg))>
+    static public func dayAtStartAndEndOfMonth() -> (CVarArg, CVarArg)? {
+        if let dates = DateHelper.datesAtStartAndEndOfMonth(for: Date()) {
+            return (dates.0 as CVarArg, dates.1 as CVarArg)
+        }
+
+        return nil
+    }
+
+    /// Checks to see if the selected date is the current day
+    /// - Parameter day: IdentifiableDay
+    /// - Returns: Bool
+    static public func isCurrentDay(_ day: IdentifiableDay) -> Bool {
+        let currentDay = Date.now.timeIntervalSince1970
+        if let date = day.date {
+            let rowDay = date.timeIntervalSince1970
+            let window = (currentDay - 86400, currentDay + 84600)
+
+            return rowDay > window.0 && rowDay <= window.1
+        }
+
+        return false
     }
 }

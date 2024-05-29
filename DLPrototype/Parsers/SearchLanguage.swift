@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 // MARK: Structs
 public struct SearchLanguage {}

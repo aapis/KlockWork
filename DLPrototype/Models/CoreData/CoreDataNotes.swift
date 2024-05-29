@@ -47,14 +47,14 @@ public class CoreDataNotes {
     /// Fetch request to find all recent notes
     /// - Parameter limit: Max number of items to return
     /// - Returns: FetchRequest<Note>
-    static public func fetchRecentNotes(limit: Int? = 0) -> FetchRequest<Note> {
+    static public func fetchRecentNotes(limit: Int? = 0, daysPrior: Double = 7) -> FetchRequest<Note> {
         let descriptors = [
             NSSortDescriptor(keyPath: \Note.mJob?.project?.id, ascending: false),
             NSSortDescriptor(keyPath: \Note.mJob?.id, ascending: false),
             NSSortDescriptor(keyPath: \Note.title, ascending: true)
         ]
         
-        let date = DateHelper.daysPast(7)
+        let date = DateHelper.daysPast(daysPrior)
         let fetch: NSFetchRequest<Note> = Note.fetchRequest()
         fetch.predicate = NSPredicate(format: "alive == true && lastUpdate != nil && lastUpdate >= %@", date as CVarArg)
         fetch.sortDescriptors = descriptors
@@ -84,6 +84,25 @@ public class CoreDataNotes {
         }
         fetch.sortDescriptors = descriptors
         fetch.fetchLimit = 1000
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
+    /// Find notes whose title or content fields match a given string
+    /// - Parameter term: String
+    /// - Returns: FetchRequest<Note>
+    static public func fetchMatching(term: String) -> FetchRequest<Note> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Note.title, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<Note> = Note.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "alive == true && (ANY title CONTAINS[c] %@ || ANY body CONTAINS[c] %@)",
+            term,
+            term
+        )
+        fetch.sortDescriptors = descriptors
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }

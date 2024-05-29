@@ -36,6 +36,24 @@ public class CoreDataPerson: ObservableObject {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
+    /// Find people whose names match a given string
+    /// - Parameter term: String
+    /// - Returns: FetchRequest<Person>
+    static public func fetchMatching(term: String) -> FetchRequest<Person> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Person.name, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<Person> = Person.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "ANY name CONTAINS[c] %@",
+            term
+        )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
     public func byCompany(_ company: Company) -> [Person] {
         let predicate = NSPredicate(
             format: "company = %@",
@@ -45,6 +63,16 @@ public class CoreDataPerson: ObservableObject {
         return query(predicate)
     }
     
+    /// Find all people
+    /// - Returns: Array<Person>
+    public func all() -> [Person] {
+        let predicate = NSPredicate(
+            format: "name != nil"
+        )
+
+        return query(predicate)
+    }
+
     /// Count of all people in the system
     /// - Returns: Int
     public func countAll() -> Int {

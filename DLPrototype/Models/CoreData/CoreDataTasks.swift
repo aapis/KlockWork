@@ -42,7 +42,7 @@ public class CoreDataTasks {
 
     /// Find all active tasks that have been updated within the last week
     /// - Parameter numDaysPrior: How far back to look, 7 days by default
-    /// - Returns: FetchRequest<Job>
+    /// - Returns: FetchRequest<LogTask>
     static public func fetchRecent(numDaysPrior: Double = 7) -> FetchRequest<LogTask> {
         let descriptors = [
             NSSortDescriptor(keyPath: \LogTask.created, ascending: true)
@@ -50,8 +50,26 @@ public class CoreDataTasks {
 
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
         fetch.predicate = NSPredicate(
-            format: "lastUpdate >= %@",
+            format: "completedDate == nil && cancelledDate == nil && owner.project.alive == true && lastUpdate >= %@",
             DateHelper.daysPast(numDaysPrior) as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
+    /// Find tasks whose content matches a given string
+    /// - Parameter term: String
+    /// - Returns: FetchRequest<LogTask>
+    static public func fetchMatching(term: String) -> FetchRequest<LogTask> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \LogTask.created, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "completedDate == nil && cancelledDate == nil && ANY content CONTAINS[c] %@",
+            term
         )
         fetch.sortDescriptors = descriptors
 

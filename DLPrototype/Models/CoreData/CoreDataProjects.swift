@@ -23,14 +23,37 @@ public class CoreDataProjects: ObservableObject {
     }
 
     /// Fetch request to find recent projects
+    /// - Parameter numDaysPrior: How far back to look, 7 days by default
     /// - Returns: FetchRequest<Project>
-    static public func fetchProjects() -> FetchRequest<Project> {
+    static public func fetchProjects(numDaysPrior: Double = 7) -> FetchRequest<Project> {
         let descriptors = [
             NSSortDescriptor(keyPath: \Project.lastUpdate?, ascending: false)
         ]
 
         let fetch: NSFetchRequest<Project> = Project.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive = true")
+        fetch.predicate = NSPredicate(
+            format: "alive == true && name != \"Unassigned jobs\" && lastUpdate >= %@",
+            DateHelper.daysPast(numDaysPrior) as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
+    /// Find notes whose title or content fields match a given string
+    /// - Parameter term: String
+    /// - Returns: FetchRequest<Project>
+    static public func fetchMatching(term: String) -> FetchRequest<Project> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Project.name, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<Project> = Project.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "alive == true && (ANY name CONTAINS[c] %@ || ANY company.name CONTAINS[c] %@)",
+            term,
+            term
+        )
         fetch.sortDescriptors = descriptors
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
