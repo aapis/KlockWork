@@ -44,10 +44,10 @@ final public class DateHelper {
         return DateHelper.daysPast(2)
     }
     
-    static public func daysPast(_ numDays: Double) -> CVarArg {
-        let date = Date() - (86400 * numDays)
+    static public func daysPast(_ numDays: Double, from date: Date = Date()) -> CVarArg {
+        let previousDate = date - (86400 * numDays)
 
-        return Calendar.current.startOfDay(for: date) as CVarArg
+        return Calendar.current.startOfDay(for: previousDate) as CVarArg
     }
     
     /// Returns a list of date objects representing the numDays prior to from
@@ -256,7 +256,7 @@ final public class DateHelper {
     }
     
     /// Find days at the beginning and end of the CURRENT month
-    /// - Returns: Optional((CVarArg, CVarArg))>
+    /// - Returns: Optional((CVarArg, CVarArg))
     static public func dayAtStartAndEndOfMonth() -> (CVarArg, CVarArg)? {
         if let dates = DateHelper.datesAtStartAndEndOfMonth(for: Date()) {
             return (dates.0 as CVarArg, dates.1 as CVarArg)

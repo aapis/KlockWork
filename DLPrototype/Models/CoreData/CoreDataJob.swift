@@ -34,7 +34,7 @@ public class CoreDataJob: ObservableObject {
     /// Find all active jobs that have been updated within the last week
     /// - Parameter numDaysPrior: How far back to look, 7 days by default
     /// - Returns: FetchRequest<Job>
-    static public func fetchRecent(numDaysPrior: Double = 7) -> FetchRequest<Job> {
+    static public func fetchRecent(numDaysPrior: Double = 7, from date: Date = Date()) -> FetchRequest<Job> {
         let descriptors = [
             NSSortDescriptor(keyPath: \Job.jid, ascending: true)
         ]
@@ -42,7 +42,7 @@ public class CoreDataJob: ObservableObject {
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.predicate = NSPredicate(
             format: "alive = true && ANY records.timestamp >= %@",
-            DateHelper.daysPast(numDaysPrior) as CVarArg
+            DateHelper.daysPast(numDaysPrior, from: date) as CVarArg
         )
         fetch.sortDescriptors = descriptors
 
@@ -79,6 +79,34 @@ public class CoreDataJob: ObservableObject {
             term
         )
         fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
+    /// Find all objects created on a given date
+    /// - Parameters:
+    ///   - date: Date
+    ///   - limit: Int, 10 by default
+    /// - Returns: FetchRequest<NSManagedObject>
+    static public func fetch(for date: Date, limit: Int? = 10) -> FetchRequest<Job> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Job.created, ascending: true)
+        ]
+
+        let (start, end) = DateHelper.startAndEndOf(date)
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "alive == true && ((created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@)) && project.company.hidden == false",
+            start as CVarArg,
+            end as CVarArg,
+            start as CVarArg,
+            end as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        if let lim = limit {
+            fetch.fetchLimit = lim
+        }
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }

@@ -88,6 +88,34 @@ public class CoreDataCompanies: ObservableObject {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
+    /// Find all objects created on a given date
+    /// - Parameters:
+    ///   - date: Date
+    ///   - limit: Int, 10 by default
+    /// - Returns: FetchRequest<NSManagedObject>
+    static public func fetch(for date: Date, limit: Int? = 10) -> FetchRequest<Company> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Company.name, ascending: true)
+        ]
+
+        let (start, end) = DateHelper.startAndEndOf(date)
+        let fetch: NSFetchRequest<Company> = Company.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "alive == true && ((createdDate > %@ && createdDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@)) && hidden == false",
+            start as CVarArg,
+            end as CVarArg,
+            start as CVarArg,
+            end as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        if let lim = limit {
+            fetch.fetchLimit = lim
+        }
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
     /// Retreive all companies by pid
     /// - Parameter id: PID value to find
     /// - Returns: Company|nil

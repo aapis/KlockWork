@@ -59,6 +59,34 @@ public class CoreDataProjects: ObservableObject {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
+    /// Find all objects created on a given date
+    /// - Parameters:
+    ///   - date: Date
+    ///   - limit: Int, 10 by default
+    /// - Returns: FetchRequest<NSManagedObject>
+    static public func fetch(for date: Date, limit: Int? = 10) -> FetchRequest<Project> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Project.created, ascending: true)
+        ]
+
+        let (start, end) = DateHelper.startAndEndOf(date)
+        let fetch: NSFetchRequest<Project> = Project.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "alive == true && ((created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@)) && company.hidden == false",
+            start as CVarArg,
+            end as CVarArg,
+            start as CVarArg,
+            end as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        if let lim = limit {
+            fetch.fetchLimit = lim
+        }
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
     /// Find project by ID
     /// - Parameter id: PID value to search for
     /// - Returns: Project|nil

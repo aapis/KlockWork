@@ -107,6 +107,34 @@ public class CoreDataNotes {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
+    /// Find all objects created on a given date
+    /// - Parameters:
+    ///   - date: Date
+    ///   - limit: Int, 10 by default
+    /// - Returns: FetchRequest<NSManagedObject>
+    static public func fetch(for date: Date, limit: Int? = 10) -> FetchRequest<Note> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Note.postedDate, ascending: true)
+        ]
+
+        let (start, end) = DateHelper.startAndEndOf(date)
+        let fetch: NSFetchRequest<Note> = Note.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "alive == true && ((postedDate > %@ && postedDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@)) && mJob.project.company.hidden == false",
+            start as CVarArg,
+            end as CVarArg,
+            start as CVarArg,
+            end as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        if let lim = limit {
+            fetch.fetchLimit = lim
+        }
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
     /// Get all notes posted on a given day
     /// - Parameter date: Date
     /// - Returns: Array<Note>
@@ -173,6 +201,29 @@ public class CoreDataNotes {
         )
 
         return query(predicate)
+    }
+
+    /// Finds notes created or updated on a specific date, that aren't hidden by their parent
+    /// - Parameter date: Date
+    /// - Returns: Array<Note>
+    public func find(for date: Date) -> [Note] {
+        let window = DateHelper.startAndEndOf(date)
+        let predicate = NSPredicate(
+            format: "((postedDate > %@ && postedDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@)) && job.project.company.hidden == false",
+            window.0 as CVarArg,
+            window.1 as CVarArg,
+            window.0 as CVarArg,
+            window.1 as CVarArg
+        )
+
+        return query(predicate)
+    }
+
+    /// Count up all the jobs referenced for a given day
+    /// - Parameter date: Date
+    /// - Returns: Int
+    public func countByDate(for date: Date) -> Int {
+        return self.find(for: date).count
     }
 
     /// Query function, finds and filters notes

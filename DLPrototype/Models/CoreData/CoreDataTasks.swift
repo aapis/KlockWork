@@ -76,6 +76,38 @@ public class CoreDataTasks {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
+    /// Find all objects created on a given date
+    /// - Parameters:
+    ///   - date: Date
+    ///   - limit: Int, 10 by default
+    /// - Returns: FetchRequest<NSManagedObject>
+    static public func fetch(for date: Date, limit: Int? = 10) -> FetchRequest<LogTask> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \LogTask.created, ascending: true)
+        ]
+
+        let (start, end) = DateHelper.startAndEndOf(date)
+        let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "((created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@) || (completedDate > %@ && completedDate <= %@) || (cancelledDate > %@ && cancelledDate <= %@)) && owner.project.company.hidden == false",
+            start as CVarArg,
+            end as CVarArg,
+            start as CVarArg,
+            end as CVarArg,
+            start as CVarArg,
+            end as CVarArg,
+            start as CVarArg,
+            end as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        if let lim = limit {
+            fetch.fetchLimit = lim
+        }
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
     public func forDate(_ date: Date, from: [LogRecord]) -> [LogTask] {
         var results: [LogTask] = []
         var filterPredicate: NSCompoundPredicate
@@ -179,6 +211,29 @@ public class CoreDataTasks {
         )
 
         return count(predicate)
+    }
+
+    /// Finds notes created or updated on a specific date, that aren't hidden by their parent
+    /// - Parameter date: Date
+    /// - Returns: Array<LogTask>
+    public func find(for date: Date) -> [LogTask] {
+        let window = DateHelper.startAndEndOf(date)
+        let predicate = NSPredicate(
+            format: "((completedDate > %@ && completedDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@)) && owner.project.company.hidden == false",
+            window.0 as CVarArg,
+            window.1 as CVarArg,
+            window.0 as CVarArg,
+            window.1 as CVarArg
+        )
+
+        return query(predicate)
+    }
+
+    /// Count up all the jobs referenced for a given day
+    /// - Parameter date: Date
+    /// - Returns: Int
+    public func countByDate(for date: Date) -> Int {
+        return self.find(for: date).count
     }
 
     private func query(_ predicate: NSPredicate) -> [LogTask] {

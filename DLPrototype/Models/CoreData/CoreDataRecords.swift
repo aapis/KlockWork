@@ -56,8 +56,13 @@ public class CoreDataRecords: ObservableObject {
 //
 //        return cb
 //    }
-
-    static public func fetchForDate(_ date: Date, limit: Int? = 10) -> FetchRequest<LogRecord> {
+    
+    /// Find all objects created on a given date
+    /// - Parameters:
+    ///   - date: Date
+    ///   - limit: Int, 10 by default
+    /// - Returns: FetchRequest<NSManagedObject>
+    static public func fetch(for date: Date, limit: Int? = 10) -> FetchRequest<LogRecord> {
         let descriptors = [
             NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)
         ]
