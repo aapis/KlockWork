@@ -48,7 +48,10 @@ public class CoreDataJob: ObservableObject {
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
-
+    
+    /// Find a list of active jobs
+    /// - Parameter limit: Int
+    /// - Returns: FetchRequest<Job>
     static public func fetchAll(limit: Int? = nil) -> FetchRequest<Job> {
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.predicate = NSPredicate(format: "alive == true && project != nil && project.alive == true && project.company.hidden == false")
@@ -199,13 +202,45 @@ public class CoreDataJob: ObservableObject {
     /// Count of all jobs created on a specific date. Used in aggregate queries, mainly.
     /// - Parameter date: Date
     /// - Returns: Array<Job>
-    public func countByDate(_ date: Date) -> Int {
+    public func countByDate(for date: Date) -> Int {
         let window = DateHelper.startAndEndOf(date)
         let predicate = NSPredicate(
             format: "created >= %@ && created <= %@",
             window.0 as CVarArg,
             window.1 as CVarArg
         )
+
+        return count(predicate)
+    }
+
+    /// Count of all jobs created on a specific date. Used in aggregate queries, mainly.
+    /// - Parameter date: Date
+    /// - Parameter term: String
+    /// - Returns: Array<Job>
+    public func countByDateOrTerm(date: Date, term: String) -> Int {
+        let window = DateHelper.startAndEndOf(date)
+        var predicate: NSPredicate
+
+        if term.isEmpty {
+            predicate = NSPredicate(
+                format: "(created >= %@ && created <= %@) || (lastUpdate >= %@ && lastUpdate <= %@)",
+                window.0 as CVarArg,
+                window.1 as CVarArg,
+                window.0 as CVarArg,
+                window.1 as CVarArg
+            )
+        } else {
+            predicate = NSPredicate(
+                format: "((created >= %@ && created <= %@) || (lastUpdate >= %@ && lastUpdate <= %@)) || (jid.string CONTAINS[c] %@ || title CONTAINS[c] %@)",
+                window.0 as CVarArg,
+                window.1 as CVarArg,
+                window.0 as CVarArg,
+                window.1 as CVarArg,
+                term,
+                term
+            )
+        }
+
 
         return count(predicate)
     }

@@ -185,6 +185,7 @@
 		53E202722A80BAD500B4DF70 /* ButtonType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202712A80BAD500B4DF70 /* ButtonType.swift */; };
 		53E202762A81F2E100B4DF70 /* FancyStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202752A81F2E100B4DF70 /* FancyStar.swift */; };
 		53E24C412A844BC800EB21FD /* EKEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E24C402A844BC800EB21FD /* EKEvent.swift */; };
+		53E3A2692C0989F4004A85C3 /* CDAssessmentFactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E3A2682C0989F4004A85C3 /* CDAssessmentFactor.swift */; };
 		53E918702B43671E00912C6F /* EntityViewMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E9186F2B43671E00912C6F /* EntityViewMode.swift */; };
 		53E918772B43DB2F00912C6F /* Meeting.md in Resources */ = {isa = PBXBuildFile; fileRef = 53E918762B43DB0D00912C6F /* Meeting.md */; };
 		53E918792B43DD4200912C6F /* List.md in Resources */ = {isa = PBXBuildFile; fileRef = 53E918782B43DCB600912C6F /* List.md */; };
@@ -431,6 +432,7 @@
 		53E202712A80BAD500B4DF70 /* ButtonType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonType.swift; sourceTree = "<group>"; };
 		53E202752A81F2E100B4DF70 /* FancyStar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyStar.swift; sourceTree = "<group>"; };
 		53E24C402A844BC800EB21FD /* EKEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKEvent.swift; sourceTree = "<group>"; };
+		53E3A2682C0989F4004A85C3 /* CDAssessmentFactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CDAssessmentFactor.swift; sourceTree = "<group>"; };
 		53E9186F2B43671E00912C6F /* EntityViewMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityViewMode.swift; sourceTree = "<group>"; };
 		53E918762B43DB0D00912C6F /* Meeting.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Meeting.md; sourceTree = "<group>"; };
 		53E918782B43DCB600912C6F /* List.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = List.md; sourceTree = "<group>"; };
@@ -821,6 +823,7 @@
 				53814A8A2A95151000A5A015 /* CoreDataPlan.swift */,
 				5326AE9B2B27FFE2009F1349 /* CoreDataCompanies.swift */,
 				5334F2772B2CC9EE0079D2E7 /* CoreDataPerson.swift */,
+				53E3A2682C0989F4004A85C3 /* CDAssessmentFactor.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -1510,6 +1513,7 @@
 				53E202582A7E19B900B4DF70 /* NotesWidget.swift in Sources */,
 				537628A8296659DC00DE8ECF /* PersistenceController.swift in Sources */,
 				532C5FE32A83019C00F2AAD4 /* GlobalSidebarWidgets.swift in Sources */,
+				53E3A2692C0989F4004A85C3 /* CDAssessmentFactor.swift in Sources */,
 				53790C072A74408D00D3FFD4 /* Navigation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

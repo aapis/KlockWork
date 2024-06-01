@@ -485,12 +485,42 @@ public class CoreDataRecords: ObservableObject {
 
         return query(predicate)
     }
+    
+    /// Finds records created on a given date or whose job ID or title match a given string
+    /// - Parameters:
+    ///   - date: Date
+    ///   - term: String
+    /// - Returns: Int
+    public func countWithDateOrTerm(date: Date, term: String) -> Int {
+        let window = DateHelper.startAndEndOf(date)
+        let predicate = NSPredicate(
+            format: "((timestamp > %@ && timestamp <= %@) || (message CONTAINS[c] %@ || job.jid.string CONTAINS[c] %@)) && job.project.company.hidden == false",
+            window.0 as CVarArg,
+            window.1 as CVarArg,
+            term,
+            term
+        )
+
+        return count(predicate)
+    }
 
     /// Count up all the records created and jobs referenced for a given day
     /// - Parameter date: Date
     /// - Returns: Int
     public func countRecords(for date: Date) -> Int {
         return self.find(for: date).count
+    }
+    
+    /// Count records whose message body matches a given string, or date
+    /// - Parameters:
+    ///   - date: Date
+    ///   - term: String
+    /// - Returns: Int
+    public func countRecordsWithSearchTerm(for date: Date, term: String) -> Int {
+        if term.isEmpty {
+            return self.countRecords(for: date)
+        }
+        return self.countWithDateOrTerm(date: date, term: term)
     }
 
     /// Count up all the jobs referenced for a given day

@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22757" systemVersion="23E224" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23E224" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AssessmentFactor" representedClassName="AssessmentFactor" syncable="YES" codeGenerationType="class">
+        <attribute name="alive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="count" attributeType="Integer 64" valueTransformerName="NSSecureUnarchiveFromData" defaultValueString="0" usesScalarValueType="YES" customClassName="Int"/>
+        <attribute name="created" attributeType="Date" defaultDateTimeInterval="738823080" usesScalarValueType="NO"/>
+        <attribute name="date" attributeType="Date" defaultDateTimeInterval="738823140" usesScalarValueType="NO"/>
+        <attribute name="desc" attributeType="String" defaultValueString=""/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="lastUpdate" attributeType="Date" defaultDateTimeInterval="738823200" usesScalarValueType="NO"/>
+        <attribute name="weight" attributeType="Integer 64" defaultValueString="1" usesScalarValueType="YES"/>
+    </entity>
     <entity name="BannedWord" representedClassName="BannedWord" syncable="YES" codeGenerationType="class">
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
@@ -127,6 +137,9 @@
         <relationship name="bannedWords" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="BannedWord" inverseName="configurations" inverseEntity="BannedWord"/>
         <relationship name="projects" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Project" inverseName="configuration" inverseEntity="Project"/>
     </entity>
+    <entity name="SharedConfiguration" representedClassName="SharedConfiguration" syncable="YES" codeGenerationType="class">
+        <attribute name="accentColour" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[Double]"/>
+    </entity>
     <configuration name="Cloud" usedWithCloudKit="YES">
         <memberEntity name="LogRecord"/>
         <memberEntity name="Note"/>
@@ -140,5 +153,6 @@
         <memberEntity name="Company"/>
         <memberEntity name="Plan"/>
         <memberEntity name="Person"/>
+        <memberEntity name="AssessmentFactor"/>
     </configuration>
 </model>
