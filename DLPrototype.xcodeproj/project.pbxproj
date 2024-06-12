@@ -132,6 +132,7 @@
 		53814A8E2A9821C800A5A015 /* DefaultPlanningSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53814A8D2A9821C800A5A015 /* DefaultPlanningSidebar.swift */; };
 		53842B272B4C82B20029AC73 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53842B262B4C82B20029AC73 /* Project.swift */; };
 		53842B2A2B4C9B100029AC73 /* FancyToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53842B292B4C9B100029AC73 /* FancyToggle.swift */; };
+		53911FC32C19E84C00B77DAB /* ActivityWeight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53911FC22C19E84C00B77DAB /* ActivityWeight.swift */; };
 		53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A19297377A7007A2549 /* FancyGenericToolbar.swift */; };
 		53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1C2973897F007A2549 /* ProjectConfig.swift */; };
 		53959A1F29738AAA007A2549 /* FancySubTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1E29738AAA007A2549 /* FancySubTitle.swift */; };
@@ -380,6 +381,7 @@
 		53814A8D2A9821C800A5A015 /* DefaultPlanningSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultPlanningSidebar.swift; sourceTree = "<group>"; };
 		53842B262B4C82B20029AC73 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
 		53842B292B4C9B100029AC73 /* FancyToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyToggle.swift; sourceTree = "<group>"; };
+		53911FC22C19E84C00B77DAB /* ActivityWeight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityWeight.swift; sourceTree = "<group>"; };
 		53959A19297377A7007A2549 /* FancyGenericToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyGenericToolbar.swift; sourceTree = "<group>"; };
 		53959A1C2973897F007A2549 /* ProjectConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfig.swift; sourceTree = "<group>"; };
 		53959A1E29738AAA007A2549 /* FancySubTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancySubTitle.swift; sourceTree = "<group>"; };
@@ -1098,6 +1100,7 @@
 				53E9186F2B43671E00912C6F /* EntityViewMode.swift */,
 				5378857B2B450F2800825B78 /* EventIndicatorStatus.swift */,
 				53D4CBC72BFE953700AFEDEA /* SaveSource.swift */,
+				53911FC22C19E84C00B77DAB /* ActivityWeight.swift */,
 			);
 			path = Enums;
 			sourceTree = "<group>";
@@ -1489,6 +1492,7 @@
 				539F68DB2BF6BD310086F89A /* FancyDropdown.swift in Sources */,
 				531E2F752A140533009CA230 /* CalendarToday.swift in Sources */,
 				5334F2742B2B958D0079D2E7 /* FancyJobSredToggle.swift in Sources */,
+				53911FC32C19E84C00B77DAB /* ActivityWeight.swift in Sources */,
 				5326AE982B27FA02009F1349 /* DefaultCompanySidebar.swift in Sources */,
 				537AEB9F29627DCC00385787 /* LogTable.swift in Sources */,
 				53E918832B4A6D9600912C6F /* SessionInspector.swift in Sources */,
