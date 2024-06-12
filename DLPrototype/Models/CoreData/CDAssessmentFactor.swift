@@ -27,7 +27,7 @@ public class CDAssessmentFactor {
         if date != nil {
             let (start, end) = DateHelper.startAndEndOf(date!)
             fetch.predicate = NSPredicate(
-                format: "alive == true && date >= %@ && date <= %@",
+                format: "alive == true && (date >= %@ && date <= %@)",
                 start as CVarArg,
                 end as CVarArg
             )
@@ -55,7 +55,7 @@ public class CDAssessmentFactor {
         if date != nil {
             let (start, end) = DateHelper.startAndEndOf(date!)
             fetch.predicate = NSPredicate(
-                format: "alive == true && date >= %@ && date <= %@",
+                format: "alive == true && (date >= %@ && date <= %@)",
                 start as CVarArg,
                 end as CVarArg
             )
@@ -73,18 +73,18 @@ public class CDAssessmentFactor {
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
-    
+
     /// Find all assessment factors for a given date
     /// - Parameter date: Date
     /// - Returns: Array<AssessmentFactor>
-    public func all(for date: Date? = nil) -> [AssessmentFactor] {
+    public func all(for date: Date? = nil, limit: Int? = nil) -> [AssessmentFactor] {
         var all: [AssessmentFactor] = []
         do {
             var aFactor: NSFetchRequest<AssessmentFactor>
             if date != nil {
-                aFactor = CDAssessmentFactor.nsfetch(date: date!)
+                aFactor = CDAssessmentFactor.nsfetch(date: date!, limit: limit)
             } else {
-                aFactor = CDAssessmentFactor.nsfetch()
+                aFactor = CDAssessmentFactor.nsfetch(limit: limit)
             }
 
             all = try self.moc!.fetch(aFactor)
@@ -93,5 +93,30 @@ public class CDAssessmentFactor {
         }
 
         return all
+    }
+    
+    /// Delete AssessmentFactor objects
+    /// @TODO: Remove in favour of a "global" one like PersistenceController.shared.delete()
+    /// - Returns: Void
+    public func delete(factor: AssessmentFactor? = nil) -> Void {
+        if let fact = factor {
+            self.moc!.delete(fact)
+        } else {
+            // Delete ALL assessment factors
+            let items = CDAssessmentFactor(moc: self.moc!).all()
+            for ass in items {
+                self.moc!.delete(ass)
+            }
+        }
+
+        PersistenceController.shared.save()
+    }
+
+    public func delete(by date: Date) -> Void {
+        for ass in CDAssessmentFactor(moc: self.moc!).all(for: date) {
+            self.moc!.delete(ass)
+        }
+
+        PersistenceController.shared.save()
     }
 }

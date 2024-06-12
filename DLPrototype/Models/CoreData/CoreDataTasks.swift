@@ -107,6 +107,24 @@ public class CoreDataTasks {
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
+    
+    /// Find all objects associated with the given job
+    /// - Parameter job: Job
+    /// - Returns: FetchRequest<NSManagedObject>
+    static public func fetch(by job: Job) -> FetchRequest<LogTask> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \LogTask.created, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "completedDate == nil && cancelledDate == nil && owner == %@ && owner.project.company.hidden == false",
+            job
+        )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
 
     public func forDate(_ date: Date, from: [LogRecord]) -> [LogTask] {
         var results: [LogTask] = []

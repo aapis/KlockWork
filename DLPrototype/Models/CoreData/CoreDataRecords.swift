@@ -533,6 +533,10 @@ public class CoreDataRecords: ObservableObject {
         return jobsInteractedWith.count
     }
 
+    public func factorRecordCount(for date: Date) -> Int64 {
+        return Int64(CoreDataRecords(moc: self.moc).countRecords(for: date))
+    }
+
     private func query(_ predicate: NSPredicate) -> [LogRecord] {
         lock.lock()
 

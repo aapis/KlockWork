@@ -229,3 +229,21 @@ extension Planning.Menu {
         }
     }
 }
+extension Menu {
+    // @TODO: use this instead!
+    struct MenuItem: View {
+        var count: Int
+        var icon: String
+        var description: String
+
+        var body: some View {
+            HStack {
+                Text("\(count)")
+                Image(systemName: icon)
+                    .help("\(count) \(description)")
+            }
+            .padding(8)
+            .background(Theme.base.opacity(0.2))
+        }
+    }
+}

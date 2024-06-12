@@ -66,6 +66,54 @@ public final class CoreDataPlan {
 
         return query(predicate)
     }
+    
+    /// Create and return a new plan
+    /// - Parameters:
+    ///   - date: Date
+    ///   - jobs: Set<Job>
+    ///   - tasks: Set<LogTask>
+    ///   - notes: Set<Note>
+    ///   - projects: Set<Project>
+    ///   - companies: Set<Company>
+    ///   - estimatedScore Int64
+    /// - Returns: Plan
+    public func createAndReturn(date: Date, jobs: Set<Job>, tasks: Set<LogTask>, notes: Set<Note>, projects: Set<Project>, companies: Set<Company>) -> Plan {
+        let plan = Plan(context: self.moc!)
+        plan.id = UUID()
+        plan.created = date
+        plan.jobs = NSSet(set: jobs)
+        plan.tasks = NSSet(set: tasks)
+        plan.notes = NSSet(set: notes)
+        plan.projects = NSSet(set: projects)
+        plan.companies = NSSet(set: companies)
+
+        PersistenceController.shared.save()
+        return plan
+    }
+
+    /// Create a new plan object
+    /// - Parameters:
+    ///   - date: Date
+    ///   - jobs: Set<Job>
+    ///   - tasks: Set<LogTask>
+    ///   - notes: Set<Note>
+    ///   - projects: Set<Project>
+    ///   - companies: Set<Company>
+    /// - Returns: Void
+    public func create(date: Date, jobs: Set<Job>, tasks: Set<LogTask>, notes: Set<Note>, projects: Set<Project>, companies: Set<Company>) -> Void {
+        let _ = createAndReturn(
+            date: date,
+            jobs: jobs,
+            tasks: tasks,
+            notes: notes,
+            projects: projects,
+            companies: companies
+        )
+    }
+
+    public func score(_ plan: Plan) -> Int {
+        return 0
+    }
 
     private func query(_ predicate: NSPredicate) -> [Plan] {
         lock.lock()

@@ -31,7 +31,7 @@ extension Color {
     }
 
     static func randomStorable() -> [Double] {
-        return [Double.random(in: 0...1), Double.random(in: 0...1), Double.random(in: 0...1)]
+        return [Double.random(in: 0...1), Double.random(in: 0...1), Double.random(in: 0...1), 1.0]
     }
 
     static func lightGray() -> Color {
@@ -53,10 +53,11 @@ extension Color {
             let r = components[0] * 1.0
             let g = components[1] * 1.0
             let b = components[2] * 1.0
+            let a = components[3] * 1.0
 
-            return [r,g,b]
+            return [r,g,b,a]
         }
 
-        return [0.0, 0.0, 0.0]
+        return [0.0, 0.0, 0.0, 1.0]
     }
 }

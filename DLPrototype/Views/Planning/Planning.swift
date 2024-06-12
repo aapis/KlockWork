@@ -39,6 +39,7 @@ struct Planning: View {
         )
     ]
 
+    // @TODO: make this customizable
     static public let tooManyJobs: Int = 5
     static public let tooManyTasks: Int = 8
     static public let tooManyProjects: Int = 4

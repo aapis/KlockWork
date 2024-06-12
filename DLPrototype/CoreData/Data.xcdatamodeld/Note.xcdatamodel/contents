@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23E224" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AssessmentFactor" representedClassName="AssessmentFactor" syncable="YES" codeGenerationType="class">
+        <attribute name="action" attributeType="String" defaultValueString="Create"/>
         <attribute name="alive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="count" attributeType="Integer 64" valueTransformerName="NSSecureUnarchiveFromData" defaultValueString="0" usesScalarValueType="YES" customClassName="Int"/>
         <attribute name="created" attributeType="Date" defaultDateTimeInterval="738823080" usesScalarValueType="NO"/>
@@ -8,7 +9,21 @@
         <attribute name="desc" attributeType="String" defaultValueString=""/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="lastUpdate" attributeType="Date" defaultDateTimeInterval="738823200" usesScalarValueType="NO"/>
+        <attribute name="schemaVersion" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="threshold" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="type" attributeType="String" defaultValueString="Records"/>
         <attribute name="weight" attributeType="Integer 64" defaultValueString="1" usesScalarValueType="YES"/>
+        <relationship name="plans" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Plan" inverseName="factors" inverseEntity="Plan"/>
+    </entity>
+    <entity name="AssessmentThreshold" representedClassName="AssessmentThreshold" syncable="YES" codeGenerationType="class">
+        <attribute name="colour" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[Double]"/>
+        <attribute name="created" attributeType="Date" defaultDateTimeInterval="739755180" usesScalarValueType="NO"/>
+        <attribute name="defaultValue" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="emoji" attributeType="String" defaultValueString="🏖️"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="label" optional="YES" attributeType="String"/>
+        <attribute name="lastUpdate" attributeType="Date" defaultDateTimeInterval="739755240" usesScalarValueType="NO"/>
+        <attribute name="value" attributeType="Integer 64" defaultValueString="-1" usesScalarValueType="YES"/>
     </entity>
     <entity name="BannedWord" representedClassName="BannedWord" syncable="YES" codeGenerationType="class">
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -108,9 +123,11 @@
     </entity>
     <entity name="Plan" representedClassName="Plan" syncable="YES" codeGenerationType="class">
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="estimatedScore" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="period" optional="YES" attributeType="String"/>
         <relationship name="companies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Company" inverseName="plans" inverseEntity="Company"/>
+        <relationship name="factors" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="AssessmentFactor" inverseName="plans" inverseEntity="AssessmentFactor"/>
         <relationship name="jobs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Job" inverseName="plans" inverseEntity="Job"/>
         <relationship name="notes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Note" inverseName="plans" inverseEntity="Note"/>
         <relationship name="projects" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Project" inverseName="plans" inverseEntity="Project"/>

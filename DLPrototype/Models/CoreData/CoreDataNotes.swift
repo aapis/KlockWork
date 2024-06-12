@@ -135,6 +135,24 @@ public class CoreDataNotes {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
+    /// Find all objects associated with the given job
+    /// - Parameter job: Job
+    /// - Returns: FetchRequest<NSManagedObject>
+    static public func fetch(by job: Job) -> FetchRequest<Note> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Note.title, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<Note> = Note.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "alive == true && ANY mJob == %@",
+            job
+        )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
     /// Get all notes posted on a given day
     /// - Parameter date: Date
     /// - Returns: Array<Note>

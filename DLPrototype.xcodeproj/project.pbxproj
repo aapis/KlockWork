@@ -10,6 +10,7 @@
 		530168172A887B0A000AF4FD /* AllJobsPickerWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530168162A887B0A000AF4FD /* AllJobsPickerWidget.swift */; };
 		530318472A11DD13009CA90B /* CoreDataCalendarEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530318462A11DD13009CA90B /* CoreDataCalendarEvent.swift */; };
 		5309EE3D25619A6D00B3BC06 /* Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5309EE3C25619A6D00B3BC06 /* Backup.swift */; };
+		5311F4042C17C5F600FB3071 /* CDAssessmentThreshold.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5311F4032C17C5F600FB3071 /* CDAssessmentThreshold.swift */; };
 		53152CC929690E7300A14E43 /* LosslessStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CC829690E7300A14E43 /* LosslessStringConvertible.swift */; };
 		53152CCC2969453000A14E43 /* DateHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CCB2969453000A14E43 /* DateHelper.swift */; };
 		53152CD0296A245200A14E43 /* ClipboardHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CCF296A245200A14E43 /* ClipboardHelper.swift */; };
@@ -246,6 +247,7 @@
 		530168162A887B0A000AF4FD /* AllJobsPickerWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllJobsPickerWidget.swift; sourceTree = "<group>"; };
 		530318462A11DD13009CA90B /* CoreDataCalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataCalendarEvent.swift; sourceTree = "<group>"; };
 		5309EE3C25619A6D00B3BC06 /* Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
+		5311F4032C17C5F600FB3071 /* CDAssessmentThreshold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CDAssessmentThreshold.swift; sourceTree = "<group>"; };
 		53152CC829690E7300A14E43 /* LosslessStringConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LosslessStringConvertible.swift; sourceTree = "<group>"; };
 		53152CCB2969453000A14E43 /* DateHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHelper.swift; sourceTree = "<group>"; };
 		53152CCF296A245200A14E43 /* ClipboardHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardHelper.swift; sourceTree = "<group>"; };
@@ -824,6 +826,7 @@
 				5326AE9B2B27FFE2009F1349 /* CoreDataCompanies.swift */,
 				5334F2772B2CC9EE0079D2E7 /* CoreDataPerson.swift */,
 				53E3A2682C0989F4004A85C3 /* CDAssessmentFactor.swift */,
+				5311F4032C17C5F600FB3071 /* CDAssessmentThreshold.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -1448,6 +1451,7 @@
 				53759E0829678DC700DCDC4B /* Import.swift in Sources */,
 				53E2025A2A7EAE5B00B4DF70 /* ProjectsWidget.swift in Sources */,
 				532CF0DC2A12A14200710B67 /* EventRow.swift in Sources */,
+				5311F4042C17C5F600FB3071 /* CDAssessmentThreshold.swift in Sources */,
 				5371BA282A7B264900DEEC21 /* NoteRowPlain.swift in Sources */,
 				535C1AE829F4912800CD95FD /* ThisMonth.swift in Sources */,
 				53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */,
