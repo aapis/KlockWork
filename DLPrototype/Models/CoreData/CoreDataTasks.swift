@@ -80,25 +80,44 @@ public class CoreDataTasks {
     /// - Parameters:
     ///   - date: Date
     ///   - limit: Int, 10 by default
+    ///   - daysPrior: Int, 7 by default
     /// - Returns: FetchRequest<NSManagedObject>
-    static public func fetch(for date: Date, limit: Int? = 10) -> FetchRequest<LogTask> {
+    static public func fetch(for date: Date, limit: Int? = 10, daysPrior: Int = 7) -> FetchRequest<LogTask> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \LogTask.created, ascending: true)
+            NSSortDescriptor(keyPath: \LogTask.owner?.title, ascending: true),
+            NSSortDescriptor(keyPath: \LogTask.lastUpdate, ascending: true)
         ]
 
+        var predicate: NSPredicate
         let (start, end) = DateHelper.startAndEndOf(date)
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
-        fetch.predicate = NSPredicate(
-            format: "((created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@) || (completedDate > %@ && completedDate <= %@) || (cancelledDate > %@ && cancelledDate <= %@)) && owner.project.company.hidden == false",
-            start as CVarArg,
-            end as CVarArg,
-            start as CVarArg,
-            end as CVarArg,
-            start as CVarArg,
-            end as CVarArg,
-            start as CVarArg,
-            end as CVarArg
-        )
+        if let rangeStart = DateHelper.prior(numDays: daysPrior, from: start).last {
+            predicate = NSPredicate(
+                format: "((created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@) || (completedDate > %@ && completedDate <= %@) || (cancelledDate > %@ && cancelledDate <= %@)) && owner.project.company.hidden == false",
+                rangeStart as CVarArg,
+                end as CVarArg,
+                rangeStart as CVarArg,
+                end as CVarArg,
+                rangeStart as CVarArg,
+                end as CVarArg,
+                rangeStart as CVarArg,
+                end as CVarArg
+            )
+        } else {
+            predicate = NSPredicate(
+                format: "((created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@) || (completedDate > %@ && completedDate <= %@) || (cancelledDate > %@ && cancelledDate <= %@)) && owner.project.company.hidden == false",
+                start as CVarArg,
+                end as CVarArg,
+                start as CVarArg,
+                end as CVarArg,
+                start as CVarArg,
+                end as CVarArg,
+                start as CVarArg,
+                end as CVarArg
+            )
+        }
+
+        fetch.predicate = predicate
         fetch.sortDescriptors = descriptors
 
         if let lim = limit {
@@ -252,6 +271,78 @@ public class CoreDataTasks {
     /// - Returns: Int
     public func countByDate(for date: Date) -> Int {
         return self.find(for: date).count
+    }
+
+    /// Public method to create new LogTask objects
+    /// - Parameters:
+    ///   - cancelledDate: Date
+    ///   - completedDate: Date
+    ///   - content: String
+    ///   - created: Date
+    ///   - due: Date
+    ///   - lastUpdate: Date
+    ///   - job: Job
+    ///   - saveByDefault: Bool
+    /// - Returns: LogTask
+    public func create(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job?, saveByDefault: Bool = true) -> Void {
+        let _ = self.make(cancelledDate: cancelledDate, completedDate: completedDate, content: content, created: created, due: due, lastUpdate: lastUpdate, job: job, saveByDefault: saveByDefault)
+    }
+
+    /// Public method to create new LogTask objects
+    /// - Parameters:
+    ///   - cancelledDate: Date
+    ///   - completedDate: Date
+    ///   - content: String
+    ///   - created: Date
+    ///   - due: Date
+    ///   - lastUpdate: Date
+    ///   - job: Job
+    ///   - saveByDefault: Bool
+    /// - Returns: LogTask
+    public func createAndReturn(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job?, saveByDefault: Bool = true) -> LogTask {
+        return self.make(cancelledDate: cancelledDate, completedDate: completedDate, content: content, created: created, due: due, lastUpdate: lastUpdate, job: job, saveByDefault: saveByDefault)
+    }
+
+    /// Internal method to create new LogTask objects
+    /// - Parameters:
+    ///   - cancelledDate: Date
+    ///   - completedDate: Date
+    ///   - content: String
+    ///   - created: Date
+    ///   - lastUpdate: Date
+    ///   - due: Date
+    ///   - job: Job
+    ///   - saveByDefault: Bool
+    /// - Returns: LogTask
+    private func make(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job?, saveByDefault: Bool = true) -> LogTask {
+        let predicate = NSPredicate(format: "content == %@", content as CVarArg)
+        let results = query(predicate)
+
+        // Quit early if this item already exists
+        if results.count > 0 {
+            if let entity = results.first {
+                return entity
+            }
+        }
+
+        let newTask = LogTask(context: self.moc!)
+        newTask.cancelledDate = cancelledDate
+        newTask.completedDate = completedDate
+        newTask.content = content
+        newTask.created = created
+        newTask.id = UUID()
+        newTask.lastUpdate = Date()
+        newTask.due = due
+
+        if job != nil {
+            newTask.owner = job!
+        }
+
+        if saveByDefault {
+            PersistenceController.shared.save()
+        }
+
+        return newTask
     }
 
     private func query(_ predicate: NSPredicate) -> [LogTask] {

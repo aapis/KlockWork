@@ -23,6 +23,20 @@ public class CoreDataProjects: ObservableObject {
     }
 
     /// Fetch request to find recent projects
+    /// - Returns: FetchRequest<Project>
+    static public func fetchAll() -> FetchRequest<Project> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Project.lastUpdate?, ascending: false)
+        ]
+
+        let fetch: NSFetchRequest<Project> = Project.fetchRequest()
+        fetch.predicate = NSPredicate(format: "alive == true && name != \"Unassigned jobs\"")
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
+    /// Fetch request to find recent projects
     /// - Parameter numDaysPrior: How far back to look, 7 days by default
     /// - Returns: FetchRequest<Project>
     static public func fetchProjects(numDaysPrior: Double = 7) -> FetchRequest<Project> {
@@ -63,21 +77,62 @@ public class CoreDataProjects: ObservableObject {
     /// - Parameters:
     ///   - date: Date
     ///   - limit: Int, 10 by default
+    ///   - daysPrior: Int, 7 by default
     /// - Returns: FetchRequest<NSManagedObject>
-    static public func fetch(for date: Date, limit: Int? = 10) -> FetchRequest<Project> {
+    static public func fetch(for date: Date, limit: Int? = 10, daysPrior: Int = 7) -> FetchRequest<Project> {
         let descriptors = [
+            NSSortDescriptor(keyPath: \Project.company?.name, ascending: true),
             NSSortDescriptor(keyPath: \Project.created, ascending: true)
         ]
 
+        var predicate: NSPredicate
+        let fetch: NSFetchRequest<Project> = Project.fetchRequest()
         let (start, end) = DateHelper.startAndEndOf(date)
+        if let rangeStart = DateHelper.prior(numDays: daysPrior, from: start).last {
+            predicate = NSPredicate(
+                format: "alive == true && ((created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@))",
+                rangeStart as CVarArg,
+                end as CVarArg,
+                rangeStart as CVarArg,
+                end as CVarArg
+            )
+        } else {
+            predicate = NSPredicate(
+                format: "alive == true && ((created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@))",
+                start as CVarArg,
+                end as CVarArg,
+                start as CVarArg,
+                end as CVarArg
+            )
+        }
+
+        fetch.predicate = predicate
+        fetch.sortDescriptors = descriptors
+
+        if let lim = limit {
+            fetch.fetchLimit = lim
+        }
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
+    /// Find all objects for a given company
+    /// - Parameters:
+    ///   - date: Date
+    ///   - limit: Int, 10 by default
+    /// - Returns: FetchRequest<NSManagedObject>
+    static public func fetch(by company: Company, limit: Int? = 10) -> FetchRequest<Project> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Project.company?.name, ascending: true),
+            NSSortDescriptor(keyPath: \Project.created, ascending: true)
+        ]
+
         let fetch: NSFetchRequest<Project> = Project.fetchRequest()
         fetch.predicate = NSPredicate(
-            format: "alive == true && ((created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@)) && company.hidden == false",
-            start as CVarArg,
-            end as CVarArg,
-            start as CVarArg,
-            end as CVarArg
+            format: "alive == true && company == %@",
+            company as CVarArg
         )
+
         fetch.sortDescriptors = descriptors
 
         if let lim = limit {
@@ -220,8 +275,20 @@ public class CoreDataProjects: ObservableObject {
     ///   - updated: Updated date
     ///   - pid: UI-friendly ID value
     ///   - alive: Is project alive?
-    /// - Returns: Void
-    public func create(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, pid: Int64, alive: Bool = true) -> Void {
+    ///   - company: Optional(Company)
+    ///   - saveByDefault: Bool: True by default)
+    /// - Returns: Project
+    private func make(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, pid: Int64, alive: Bool = true, company: Company? = nil, saveByDefault: Bool = true) -> Project {
+        let predicate = NSPredicate(format: "name = %@", name as CVarArg)
+        let results = query(predicate)
+
+        // Quit early if this item already exists
+        if results.count > 0 {
+            if let entity = results.first {
+                return entity
+            }
+        }
+
         let project = Project(context: moc!)
         project.alive = alive
         project.abbreviation = abbreviation
@@ -230,14 +297,52 @@ public class CoreDataProjects: ObservableObject {
         project.lastUpdate = updated ?? created
         project.name = name
         project.pid = pid
-        
-        // If this company already exists, do nothing!
-        let predicate = NSPredicate(format: "name = %@", name as CVarArg)
-        let results = query(predicate)
-        
-        if results.count == 0 {
+        project.company = company
+
+        // Use default company if we don't have one
+        if company == nil {
+            if let corpo = CoreDataCompanies(moc: self.moc!).findDefault() {
+                project.company = corpo
+            }
+        }
+
+        if saveByDefault {
             PersistenceController.shared.save()
         }
+
+        return project
+    }
+    
+    /// Create a new project
+    /// - Parameters:
+    ///   - name: Project name
+    ///   - abbreviation: Abbreviation used by various search syntaxes
+    ///   - colour: Colour as an array of Double's
+    ///   - created: Created date
+    ///   - updated: Updated date
+    ///   - pid: UI-friendly ID value
+    ///   - alive: Is project alive?
+    ///   - company: Optional(Company)
+    ///   - saveByDefault: Bool: True by default)
+    /// - Returns: Project
+    public func create(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, pid: Int64, alive: Bool = true, company: Company? = nil, saveByDefault: Bool = true) -> Void {
+        let _ = self.make(name: name, abbreviation: abbreviation, colour: colour, created: created, pid: pid, company: company, saveByDefault: saveByDefault)
+    }
+
+    /// Create and return a new project
+    /// - Parameters:
+    ///   - name: Project name
+    ///   - abbreviation: Abbreviation used by various search syntaxes
+    ///   - colour: Colour as an array of Double's
+    ///   - created: Created date
+    ///   - updated: Updated date
+    ///   - pid: UI-friendly ID value
+    ///   - alive: Is project alive?
+    ///   - company: Optional(Company)
+    ///   - saveByDefault: Bool: True by default)
+    /// - Returns: Project
+    public func createAndReturn(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, pid: Int64, alive: Bool = true, company: Company? = nil, saveByDefault: Bool = true) -> Project {
+        return self.make(name: name, abbreviation: abbreviation, colour: colour, created: created, pid: pid, company: company, saveByDefault: saveByDefault)
     }
 
     /// Query projects

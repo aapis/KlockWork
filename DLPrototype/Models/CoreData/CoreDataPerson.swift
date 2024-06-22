@@ -58,21 +58,36 @@ public class CoreDataPerson: ObservableObject {
     /// - Parameters:
     ///   - date: Date
     ///   - limit: Int, 10 by default
+    ///   - daysPrior: Int, 7 by default
     /// - Returns: FetchRequest<NSManagedObject>
-    static public func fetch(for date: Date, limit: Int? = 10) -> FetchRequest<Person> {
+    static public func fetch(for date: Date, limit: Int? = 10, daysPrior: Int = 7) -> FetchRequest<Person> {
         let descriptors = [
+            NSSortDescriptor(keyPath: \Person.name?, ascending: true),
             NSSortDescriptor(keyPath: \Person.created, ascending: true)
         ]
 
+        var predicate: NSPredicate
         let (start, end) = DateHelper.startAndEndOf(date)
         let fetch: NSFetchRequest<Person> = Person.fetchRequest()
-        fetch.predicate = NSPredicate(
-            format: "((created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@)) && company.hidden == false",
-            start as CVarArg,
-            end as CVarArg,
-            start as CVarArg,
-            end as CVarArg
-        )
+        if let rangeStart = DateHelper.prior(numDays: daysPrior, from: start).last {
+            predicate = NSPredicate(
+                format: "((created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@)) && company.hidden == false",
+                rangeStart as CVarArg,
+                end as CVarArg,
+                rangeStart as CVarArg,
+                end as CVarArg
+            )
+        } else {
+            predicate = NSPredicate(
+                format: "((created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@)) && company.hidden == false",
+                start as CVarArg,
+                end as CVarArg,
+                start as CVarArg,
+                end as CVarArg
+            )
+        }
+
+        fetch.predicate = predicate
         fetch.sortDescriptors = descriptors
 
         if let lim = limit {

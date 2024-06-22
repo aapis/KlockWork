@@ -92,21 +92,36 @@ public class CoreDataCompanies: ObservableObject {
     /// - Parameters:
     ///   - date: Date
     ///   - limit: Int, 10 by default
+    ///   - daysPrior: Int, 7 by default
     /// - Returns: FetchRequest<NSManagedObject>
-    static public func fetch(for date: Date, limit: Int? = 10) -> FetchRequest<Company> {
+    static public func fetch(for date: Date, limit: Int? = 10, daysPrior: Int = 7) -> FetchRequest<Company> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \Company.name, ascending: true)
+            NSSortDescriptor(keyPath: \Company.name, ascending: true),
+            NSSortDescriptor(keyPath: \Company.createdDate?, ascending: true)
         ]
 
+        var predicate: NSPredicate
         let (start, end) = DateHelper.startAndEndOf(date)
         let fetch: NSFetchRequest<Company> = Company.fetchRequest()
-        fetch.predicate = NSPredicate(
-            format: "alive == true && ((createdDate > %@ && createdDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@)) && hidden == false",
-            start as CVarArg,
-            end as CVarArg,
-            start as CVarArg,
-            end as CVarArg
-        )
+        if let rangeStart = DateHelper.prior(numDays: daysPrior, from: start).last {
+            predicate = NSPredicate(
+                format: "alive == true && ((createdDate > %@ && createdDate < %@) || (lastUpdate > %@ && lastUpdate < %@)) && hidden == false",
+                rangeStart as CVarArg,
+                end as CVarArg,
+                rangeStart as CVarArg,
+                end as CVarArg
+            )
+        } else {
+            predicate = NSPredicate(
+                format: "alive == true && ((createdDate > %@ && createdDate < %@) || (lastUpdate > %@ && lastUpdate < %@)) && hidden == false",
+                start as CVarArg,
+                end as CVarArg,
+                start as CVarArg,
+                end as CVarArg
+            )
+        }
+
+        fetch.predicate = predicate
         fetch.sortDescriptors = descriptors
 
         if let lim = limit {
@@ -164,7 +179,7 @@ public class CoreDataCompanies: ObservableObject {
 
     /// Find all companies that have a name and are not hidden
     /// - Returns: Array<Company>
-    public func all() -> [Company] {
+    public func indescriminate() -> [Company] {
         let predicate = NSPredicate(
             format: "name != nil && hidden == false"
         )
@@ -210,7 +225,17 @@ public class CoreDataCompanies: ObservableObject {
     ///   - alive: Is company alive?
     ///   - hidden: Is company hidden?
     /// - Returns: Void
-    public func create(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, isDefault: Bool, pid: Int64, alive: Bool = true, hidden: Bool = false) -> Void {
+    private func make(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, isDefault: Bool, pid: Int64, alive: Bool = true, hidden: Bool = false, saveByDefault: Bool = true) -> Company {
+        let predicate = NSPredicate(format: "name = %@", name as CVarArg)
+        let results = query(predicate)
+
+        // Quit early if this item already exists
+        if results.count > 0 {
+            if let entity = results.first {
+                return entity
+            }
+        }
+
         let company = Company(context: moc!)
         company.alive = alive
         company.hidden = hidden
@@ -222,15 +247,61 @@ public class CoreDataCompanies: ObservableObject {
         company.name = name
         company.pid = pid
         
-        // If this company already exists, do nothing!
-        let predicate = NSPredicate(format: "name = %@", name as CVarArg)
-        let results = query(predicate)
-        
-        if results.count == 0 {
+        if saveByDefault {
             PersistenceController.shared.save()
         }
+
+        return company
     }
-    
+
+    /// Create a new company
+    /// - Parameters:
+    ///   - name: Company name
+    ///   - abbreviation: Abbreviation used by various search syntaxes
+    ///   - colour: Colour as an array of Double's
+    ///   - created: Created date
+    ///   - updated: Updated date
+    ///   - isDefault: Is this the default company?
+    ///   - pid: UI-friendly ID value
+    ///   - alive: Is company alive?
+    ///   - hidden: Is company hidden?
+    /// - Returns: Void
+    public func create(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, isDefault: Bool, pid: Int64, alive: Bool = true, hidden: Bool = false, saveByDefault: Bool = true) -> Void {
+        let _ = self.make(
+            name: name,
+            abbreviation: abbreviation,
+            colour: colour,
+            created: created,
+            isDefault: isDefault,
+            pid: pid,
+            saveByDefault: saveByDefault
+        )
+    }
+
+    /// Create a new company and return it
+    /// - Parameters:
+    ///   - name: Company name
+    ///   - abbreviation: Abbreviation used by various search syntaxes
+    ///   - colour: Colour as an array of Double's
+    ///   - created: Created date
+    ///   - updated: Updated date
+    ///   - isDefault: Is this the default company?
+    ///   - pid: UI-friendly ID value
+    ///   - alive: Is company alive?
+    ///   - hidden: Is company hidden?
+    /// - Returns: Void
+    public func createAndReturn(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, isDefault: Bool, pid: Int64, alive: Bool = true, hidden: Bool = false, saveByDefault: Bool = true) -> Company {
+        return self.make(
+            name: name,
+            abbreviation: abbreviation,
+            colour: colour,
+            created: created,
+            isDefault: isDefault,
+            pid: pid,
+            saveByDefault: saveByDefault
+        )
+    }
+
     /// Find companies matching the provided search term
     /// - Parameter term: String - Search term
     /// - Returns: Array<Company>

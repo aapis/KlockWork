@@ -92,7 +92,7 @@ struct FancyTextField: View {
             .padding(padding)
             .onSubmit(onSubmit ?? {})
             .onChange(of: text) { newText in self.onChange != nil ? self.onChange!(newText) : nil }
-            .background(fieldStatus == .standard ? (transparent! ? Color.clear : bgColour) : fieldStatus == .unsaved ? Color.yellow : Theme.cGreen) // sorry{}
+            .background(fieldStatus == .standard ? (transparent! ? Color.clear : bgColour) : fieldStatus == .unsaved ? Color.yellow : Theme.cGreen) // sorry
             .scrollContentBackground(.hidden)
             .lineLimit(lineLimit...)
             .disabled(disabled ?? false)

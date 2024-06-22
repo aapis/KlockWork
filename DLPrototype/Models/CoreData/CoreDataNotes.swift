@@ -98,7 +98,7 @@ public class CoreDataNotes {
 
         let fetch: NSFetchRequest<Note> = Note.fetchRequest()
         fetch.predicate = NSPredicate(
-            format: "alive == true && (ANY title CONTAINS[c] %@ || ANY body CONTAINS[c] %@)",
+            format: "alive == true && (title CONTAINS[c] %@ || body CONTAINS[c] %@)",
             term,
             term
         )
@@ -111,21 +111,36 @@ public class CoreDataNotes {
     /// - Parameters:
     ///   - date: Date
     ///   - limit: Int, 10 by default
+    ///   - daysPrior: Int, 7 by default
     /// - Returns: FetchRequest<NSManagedObject>
-    static public func fetch(for date: Date, limit: Int? = 10) -> FetchRequest<Note> {
+    static public func fetch(for date: Date, limit: Int? = 10, daysPrior: Int = 7) -> FetchRequest<Note> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \Note.postedDate, ascending: true)
+            NSSortDescriptor(keyPath: \Note.mJob?.title, ascending: true),
+            NSSortDescriptor(keyPath: \Note.lastUpdate, ascending: true)
         ]
 
-        let (start, end) = DateHelper.startAndEndOf(date)
+        var predicate: NSPredicate
         let fetch: NSFetchRequest<Note> = Note.fetchRequest()
-        fetch.predicate = NSPredicate(
-            format: "alive == true && ((postedDate > %@ && postedDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@)) && mJob.project.company.hidden == false",
-            start as CVarArg,
-            end as CVarArg,
-            start as CVarArg,
-            end as CVarArg
-        )
+        let (start, end) = DateHelper.startAndEndOf(date)
+        if let rangeStart = DateHelper.prior(numDays: daysPrior, from: start).last {
+            predicate = NSPredicate(
+                format: "alive == true && ((postedDate > %@ && postedDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@)) && mJob.project.company.hidden == false",
+                rangeStart as CVarArg,
+                end as CVarArg,
+                rangeStart as CVarArg,
+                end as CVarArg
+            )
+        } else {
+            predicate = NSPredicate(
+                format: "alive == true && ((postedDate > %@ && postedDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@)) && mJob.project.company.hidden == false",
+                start as CVarArg,
+                end as CVarArg,
+                start as CVarArg,
+                end as CVarArg
+            )
+        }
+
+        fetch.predicate = predicate
         fetch.sortDescriptors = descriptors
 
         if let lim = limit {
@@ -215,7 +230,7 @@ public class CoreDataNotes {
     /// - Returns: Array<Note>
     public func alive() -> [Note] {
         let predicate = NSPredicate(
-            format: "alive = true"
+            format: "alive == true"
         )
 
         return query(predicate)
@@ -227,7 +242,7 @@ public class CoreDataNotes {
     public func find(for date: Date) -> [Note] {
         let window = DateHelper.startAndEndOf(date)
         let predicate = NSPredicate(
-            format: "((postedDate > %@ && postedDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@)) && job.project.company.hidden == false",
+            format: "((postedDate > %@ && postedDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@))", // && job.project.company.hidden == false
             window.0 as CVarArg,
             window.1 as CVarArg,
             window.0 as CVarArg,
@@ -242,6 +257,108 @@ public class CoreDataNotes {
     /// - Returns: Int
     public func countByDate(for date: Date) -> Int {
         return self.find(for: date).count
+    }
+    
+    /// Updates a single NSManagedObject
+    /// - Parameters:
+    ///   - entity: Note, the target to modify
+    ///   - alive: Bool
+    ///   - body: String
+    ///   - lastUpdate: Date
+    ///   - postedDate: Date
+    ///   - starred: Bool
+    ///   - title: String
+    ///   - saveByDefault: Bool
+    /// - Returns: Void
+    public func update(entity: Note, alive: Bool, body: String, lastUpdate: Date?, postedDate: Date?, starred: Bool, title: String, job: Job? = nil, saveByDefault: Bool = true) -> Void {
+        entity.alive = alive
+        entity.body = body
+        entity.lastUpdate = lastUpdate
+        entity.postedDate = postedDate
+        entity.starred = starred
+        entity.title = title
+        entity.job = job
+        entity.addToVersions(
+            CoreDataNoteVersions(moc: self.moc!).from(entity, source: .manual)
+        )
+
+        if saveByDefault {
+            PersistenceController.shared.save()
+        }
+    }
+
+    /// Public method for creating a new note
+    /// - Parameters:
+    ///   - alive: Bool
+    ///   - body: String
+    ///   - lastUpdate: Date
+    ///   - postedDate: Date
+    ///   - starred: Bool
+    ///   - title: String
+    ///   - saveByDefault: Bool
+    /// - Returns: Void
+    public func create(alive: Bool, body: String, lastUpdate: Date?, postedDate: Date?, starred: Bool, title: String, job: Job? = nil, saveByDefault: Bool = true) -> Void {
+        let _ = self.make(alive: alive, body: body, starred: starred, title: title, job: job, saveByDefault: saveByDefault)
+    }
+
+    /// Public method for creating and returning a new note
+    /// - Parameters:
+    ///   - alive: Bool
+    ///   - body: String
+    ///   - lastUpdate: Date
+    ///   - postedDate: Date
+    ///   - starred: Bool
+    ///   - title: String
+    ///   - saveByDefault: Bool
+    /// - Returns: Note
+    public func createAndReturn(alive: Bool, body: String, lastUpdate: Date?, postedDate: Date?, starred: Bool, title: String, job: Job? = nil, saveByDefault: Bool = true) -> Note {
+        return self.make(alive: alive, body: body, starred: starred, title: title, job: job, saveByDefault: saveByDefault)
+    }
+
+    /// Internal method for creating a new note
+    /// - Parameters:
+    ///   - alive: Bool
+    ///   - body: String
+    ///   - lastUpdate: Date
+    ///   - postedDate: Date
+    ///   - starred: Bool
+    ///   - title: String
+    ///   - saveByDefault: Bool
+    /// - Returns: Note
+    private func make(alive: Bool, body: String, lastUpdate: Date? = Date(), postedDate: Date? = Date(), starred: Bool, title: String, job: Job? = nil, saveByDefault: Bool = true) -> Note {
+        let predicate = NSPredicate(format: "title == %@", title as CVarArg)
+        let results = query(predicate)
+
+        // Quit early if this item already exists
+        if results.count > 0 {
+            if let entity = results.first {
+                return entity
+            }
+        }
+
+        // Create the note
+        let newNote = Note(context: self.moc!)
+        newNote.alive = alive
+        newNote.body = body
+        newNote.id = UUID()
+        newNote.lastUpdate = lastUpdate
+        newNote.postedDate = postedDate
+        newNote.starred = starred
+        newNote.title = title
+        // Create a version
+        newNote.addToVersions(
+            CoreDataNoteVersions(moc: self.moc!).from(newNote, source: .auto, saveByDefault: saveByDefault)
+        )
+        // Assign to job
+        if let job = job {
+            newNote.mJob = job
+        }
+
+        if saveByDefault {
+            PersistenceController.shared.save()
+        }
+
+        return newNote
     }
 
     /// Query function, finds and filters notes
@@ -290,7 +407,7 @@ public class CoreDataNotes {
         do {
             count = try moc!.fetch(fetch).count
         } catch {
-            print("[error] CoreDataProjects.query Unable to find records for predicate \(predicate.predicateFormat)")
+            print("[error] CoreDataNotes.query Unable to find records for predicate \(predicate.predicateFormat)")
         }
 
         lock.unlock()

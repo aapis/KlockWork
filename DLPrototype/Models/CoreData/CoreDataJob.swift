@@ -33,18 +33,31 @@ public class CoreDataJob: ObservableObject {
 
     /// Find all active jobs that have been updated within the last week
     /// - Parameter numDaysPrior: How far back to look, 7 days by default
+    /// - Parameter date: The date from which we look back from
+    /// - Parameter limit: Int
     /// - Returns: FetchRequest<Job>
-    static public func fetchRecent(numDaysPrior: Double = 7, from date: Date = Date()) -> FetchRequest<Job> {
+    static public func fetchRecent(numDaysPrior: Double = 7, from date: Date = Date(), limit: Int = 0) -> FetchRequest<Job> {
         let descriptors = [
+            NSSortDescriptor(keyPath: \Job.title?, ascending: true),
             NSSortDescriptor(keyPath: \Job.jid, ascending: true)
         ]
+        let end = DateHelper.startAndEndOf(date).1
+        let outerBound = DateHelper.daysPast(numDaysPrior, from: date) as CVarArg
 
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.predicate = NSPredicate(
-            format: "alive = true && ANY records.timestamp >= %@",
-            DateHelper.daysPast(numDaysPrior, from: date) as CVarArg
+            format: "alive == true && (ANY records.timestamp > %@ || created > %@ && created < %@ || lastUpdate > %@ && lastUpdate < %@) && project != nil",
+            outerBound,
+            outerBound,
+            end as CVarArg,
+            outerBound,
+            end as CVarArg
         )
         fetch.sortDescriptors = descriptors
+
+        if limit > 0 {
+            fetch.fetchLimit = limit
+        }
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
@@ -56,7 +69,8 @@ public class CoreDataJob: ObservableObject {
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.predicate = NSPredicate(format: "alive == true && project != nil && project.alive == true && project.company.hidden == false")
         fetch.sortDescriptors = [
-            NSSortDescriptor(keyPath: \Job.project?, ascending: false),
+            NSSortDescriptor(keyPath: \Job.lastUpdate, ascending: false),
+            NSSortDescriptor(keyPath: \Job.project?.name?, ascending: false),
             NSSortDescriptor(keyPath: \Job.jid, ascending: false)
         ]
 
@@ -67,6 +81,25 @@ public class CoreDataJob: ObservableObject {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
     
+    /// Find a list of commonly used Jobs
+    /// - Parameter limit: Int
+    /// - Returns: FetchRequest<Job>
+    static public func fetchCommon(limit: Int? = nil) -> FetchRequest<Job> {
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.predicate = NSPredicate(format: "alive == true && project != nil && project.alive == true && project.company.hidden == false")
+        fetch.sortDescriptors = [
+            NSSortDescriptor(keyPath: \Job.lastUpdate, ascending: false),
+            NSSortDescriptor(keyPath: \Job.project?.name?, ascending: false),
+            NSSortDescriptor(keyPath: \Job.jid, ascending: false)
+        ]
+
+        if let lim = limit {
+            fetch.fetchLimit = lim
+        }
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
     /// Find jobs whose JID or title fields match a given string
     /// - Parameter term: String
     /// - Returns: FetchRequest<Job>
@@ -77,7 +110,7 @@ public class CoreDataJob: ObservableObject {
 
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.predicate = NSPredicate(
-            format: "alive == true && (ANY jid.string CONTAINS[c] %@ || ANY title CONTAINS[c] %@)",
+            format: "alive == true && project != nil && (ANY jid.string CONTAINS[c] %@ || ANY title CONTAINS[c] %@)",
             term,
             term
         )
@@ -99,11 +132,39 @@ public class CoreDataJob: ObservableObject {
         let (start, end) = DateHelper.startAndEndOf(date)
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.predicate = NSPredicate(
-            format: "alive == true && ((created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@)) && project.company.hidden == false",
+            format: "alive == true && project != nil && ((created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@)) && project.company.hidden == false",
             start as CVarArg,
             end as CVarArg,
             start as CVarArg,
             end as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        if let lim = limit {
+            fetch.fetchLimit = lim
+        }
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+    
+    /// Fetch Jobs belonging to a specific Project
+    /// - Parameters:
+    ///   - project: Project
+    ///   - limit: Int
+    /// - Returns: FetchedRequest<Job>?
+    static public func fetch(project: Project?, limit: Int? = 10) -> FetchRequest<Job>? {
+        if project == nil {
+            return nil
+        }
+
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Job.created, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "alive == true && project == %@",
+            project! as CVarArg
         )
         fetch.sortDescriptors = descriptors
 
@@ -170,11 +231,11 @@ public class CoreDataJob: ObservableObject {
         return nil
     }
     
-    public func byProject(_ projectId: UUID) -> [Job] {
+    public func byProject(_ project: Project) -> [Job] {
         var all: [Job] = []
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.jid, ascending: false)]
-        fetch.predicate = NSPredicate(format: "project.id = %@ && project.alive == true", projectId.uuidString)
+        fetch.predicate = NSPredicate(format: "project = %@ && project.alive == true", project as CVarArg)
 
         do {
             all = try moc!.fetch(fetch)
@@ -185,13 +246,31 @@ public class CoreDataJob: ObservableObject {
         return all
     }
     
+    /// Find jobs belonging to a given Company
+    /// - Parameter company: Company
+    /// - Returns: Array<Job>
+    public func byCompany(_ company: Company) -> [Job] {
+        var all: [Job] = []
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.jid, ascending: false)]
+        fetch.predicate = NSPredicate(format: "project.company = %@ && project.alive == true && project.company.alive == true", company as CVarArg)
+
+        do {
+            all = try moc!.fetch(fetch)
+        } catch {
+            print("Couldn't retrieve all jobs")
+        }
+
+        return all
+    }
+
     /// Find all jobs created on a specific date. Used in aggregate queries, mainly.
     /// - Parameter date: Date
     /// - Returns: Array<Job>
     public func byDate(_ date: Date) -> [Job] {
         let window = DateHelper.startAndEndOf(date)
         let predicate = NSPredicate(
-            format: "created >= %@ && created <= %@",
+            format: "created >= %@ && created <= %@ && project != nil",
             window.0 as CVarArg,
             window.1 as CVarArg
         )
@@ -205,7 +284,7 @@ public class CoreDataJob: ObservableObject {
     public func countByDate(for date: Date) -> Int {
         let window = DateHelper.startAndEndOf(date)
         let predicate = NSPredicate(
-            format: "created >= %@ && created <= %@",
+            format: "created >= %@ && created <= %@ && project != nil",
             window.0 as CVarArg,
             window.1 as CVarArg
         )
@@ -223,7 +302,7 @@ public class CoreDataJob: ObservableObject {
 
         if term.isEmpty {
             predicate = NSPredicate(
-                format: "(created >= %@ && created <= %@) || (lastUpdate >= %@ && lastUpdate <= %@)",
+                format: "(created >= %@ && created <= %@) || (lastUpdate >= %@ && lastUpdate <= %@) && project != nil",
                 window.0 as CVarArg,
                 window.1 as CVarArg,
                 window.0 as CVarArg,
@@ -231,7 +310,7 @@ public class CoreDataJob: ObservableObject {
             )
         } else {
             predicate = NSPredicate(
-                format: "((created >= %@ && created <= %@) || (lastUpdate >= %@ && lastUpdate <= %@)) || (jid.string CONTAINS[c] %@ || title CONTAINS[c] %@)",
+                format: "((created >= %@ && created <= %@) || (lastUpdate >= %@ && lastUpdate <= %@)) || (jid.string CONTAINS[c] %@ || title CONTAINS[c] %@) && project != nil",
                 window.0 as CVarArg,
                 window.1 as CVarArg,
                 window.0 as CVarArg,
@@ -255,7 +334,7 @@ public class CoreDataJob: ObservableObject {
         }
         
         if stillAlive! {
-            fetch.predicate = NSPredicate(format: "alive == true")
+            fetch.predicate = NSPredicate(format: "alive == true && project != nil")
         }
         
         do {
@@ -311,6 +390,108 @@ public class CoreDataJob: ObservableObject {
         )
 
         return count(predicate)
+    }
+    
+    /// Create a new Job
+    /// - Parameters:
+    ///   - alive: Bool
+    ///   - colour: Array<Double>
+    ///   - created: Date
+    ///   - jid: Double
+    ///   - overview: Optional(String)
+    ///   - shredable: Bool
+    ///   - title: Optional(String)
+    ///   - uri: String
+    ///   - project: Optional(Project)
+    ///   - saveByDefault: Bool(true) - Save immediately after creating the obejct, or not
+    /// - Returns: Void
+    public func create(alive: Bool, colour: [Double], created: Date = Date(), jid: Double, overview: String?, shredable: Bool, title: String?, uri: String, project: Project?, saveByDefault: Bool = true) -> Void {
+        let _ = self.make(
+            alive: alive,
+            colour: colour,
+            jid: jid,
+            overview: overview,
+            shredable: shredable,
+            title: title,
+            uri: uri,
+            project: project,
+            saveByDefault: saveByDefault
+        )
+    }
+
+    /// Create and return a new Job
+    /// - Parameters:
+    ///   - alive: Bool
+    ///   - colour: Array<Double>
+    ///   - created: Date
+    ///   - jid: Double
+    ///   - overview: Optional(String)
+    ///   - shredable: Bool
+    ///   - title: Optional(String)
+    ///   - uri: String
+    ///   - project: Optional(Project)
+    ///   - saveByDefault: Bool(true) - Save immediately after creating the obejct, or not
+    /// - Returns: Void
+    public func createAndReturn(alive: Bool, colour: [Double], created: Date = Date(), jid: Double, overview: String?, shredable: Bool, title: String?, uri: String, project: Project?, saveByDefault: Bool = true) -> Job {
+        return self.make(
+            alive: alive,
+            colour: colour,
+            jid: jid,
+            overview: overview,
+            shredable: shredable,
+            title: title,
+            uri: uri,
+            project: project,
+            saveByDefault: saveByDefault
+        )
+    }
+
+    /// Internal method for creating jobs
+    /// - Parameters:
+    ///   - alive: Bool
+    ///   - colour: Array<Double>
+    ///   - created: Date
+    ///   - jid: Double
+    ///   - overview: Optional(String)
+    ///   - shredable: Bool
+    ///   - title: Optional(String)
+    ///   - uri: String
+    ///   - project: Optional(Project)
+    ///   - saveByDefault: Bool(true)
+    /// - Returns: Void
+    private func make(alive: Bool, colour: [Double], created: Date = Date(), id: UUID = UUID(), jid: Double, lastUpdate: Date = Date(), overview: String?, shredable: Bool, title: String?, uri: String, project: Project?, saveByDefault: Bool = true) -> Job {
+        let predicate = NSPredicate(format: "title == %@ && jid == %d && project != nil", title! as CVarArg, jid)
+        let results = query(predicate)
+
+        // Quit early if this item already exists
+        if results.count > 0 {
+            if let entity = results.first {
+                return entity
+            }
+        }
+
+        let newJob = Job(context: self.moc!)
+        newJob.alive = alive
+        newJob.colour = colour
+        newJob.created = created
+        newJob.id = id
+        newJob.jid = jid
+        newJob.lastUpdate = lastUpdate
+        newJob.overview = overview
+        newJob.shredable = shredable
+        newJob.title = title
+        newJob.uri = URL(string: uri)
+
+        if let proj = project {
+            newJob.project = proj
+//            proj.addToJobs(newJob) // @TODO: unclear if this is necessary, test more and decide
+        }
+
+        if saveByDefault {
+            PersistenceController.shared.save()
+        }
+
+        return newJob
     }
 
     private func query(_ predicate: NSPredicate) -> [Job] {

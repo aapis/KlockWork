@@ -70,7 +70,7 @@ enum ActivityWeight: CaseIterable {
         }
     }
 
-    func typeFromLabel(label: String) -> Self? {
+    static func typeFromLabel(label: String) -> Self? {
         for w in Self.allCases {
             if w.label == label {
                 return w
