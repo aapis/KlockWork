@@ -96,8 +96,8 @@ struct DLPrototype: App {
         if company == nil {
             let project = CoreDataProjects(moc: persistenceController.container.viewContext).alive().first(where: {$0.company?.isDefault == true})
 
-            cmodel.create(name: "Default", abbreviation: "DE", colour: Color.randomStorable(), created: Date(), isDefault: true, pid: 1)
-            
+            cmodel.create(name: "Default", abbreviation: "DE", colour: Color.randomStorable(), created: Date(), projects: NSSet(), isDefault: true, pid: 1)
+
             if project == nil {
                 let pmodel = CoreDataProjects(moc: persistenceController.container.viewContext)
                 pmodel.create(name: "Default", abbreviation: "DE", colour: Color.randomStorable(), created: Date(), pid: 1)

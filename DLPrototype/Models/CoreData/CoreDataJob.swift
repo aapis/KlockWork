@@ -80,7 +80,25 @@ public class CoreDataJob: ObservableObject {
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
-    
+
+    /// Find a list of active jobs that don't belong to a project yet
+    /// - Parameter limit: Int
+    /// - Returns: FetchRequest<Job>
+    static public func fetchUnowned(limit: Int? = nil) -> FetchRequest<Job> {
+        let fetch: NSFetchRequest<Job> = Job.fetchRequest()
+        fetch.predicate = NSPredicate(format: "alive == true && project == nil")
+        fetch.sortDescriptors = [
+            NSSortDescriptor(keyPath: \Job.lastUpdate, ascending: false),
+            NSSortDescriptor(keyPath: \Job.jid, ascending: false)
+        ]
+
+        if let lim = limit {
+            fetch.fetchLimit = lim
+        }
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
     /// Find a list of commonly used Jobs
     /// - Parameter limit: Int
     /// - Returns: FetchRequest<Job>
@@ -253,7 +271,7 @@ public class CoreDataJob: ObservableObject {
         var all: [Job] = []
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.jid, ascending: false)]
-        fetch.predicate = NSPredicate(format: "project.company = %@ && project.alive == true && project.company.alive == true", company as CVarArg)
+        fetch.predicate = NSPredicate(format: "project.company == %@ && project.alive == true && project.company.alive == true", company as CVarArg)
 
         do {
             all = try moc!.fetch(fetch)
@@ -270,7 +288,7 @@ public class CoreDataJob: ObservableObject {
     public func byDate(_ date: Date) -> [Job] {
         let window = DateHelper.startAndEndOf(date)
         let predicate = NSPredicate(
-            format: "created >= %@ && created <= %@ && project != nil",
+            format: "created > %@ && created <= %@ && project != nil",
             window.0 as CVarArg,
             window.1 as CVarArg
         )
@@ -284,7 +302,7 @@ public class CoreDataJob: ObservableObject {
     public func countByDate(for date: Date) -> Int {
         let window = DateHelper.startAndEndOf(date)
         let predicate = NSPredicate(
-            format: "created >= %@ && created <= %@ && project != nil",
+            format: "created > %@ && created <= %@ && project != nil",
             window.0 as CVarArg,
             window.1 as CVarArg
         )
@@ -460,16 +478,6 @@ public class CoreDataJob: ObservableObject {
     ///   - saveByDefault: Bool(true)
     /// - Returns: Void
     private func make(alive: Bool, colour: [Double], created: Date = Date(), id: UUID = UUID(), jid: Double, lastUpdate: Date = Date(), overview: String?, shredable: Bool, title: String?, uri: String, project: Project?, saveByDefault: Bool = true) -> Job {
-        let predicate = NSPredicate(format: "title == %@ && jid == %d && project != nil", title! as CVarArg, jid)
-        let results = query(predicate)
-
-        // Quit early if this item already exists
-        if results.count > 0 {
-            if let entity = results.first {
-                return entity
-            }
-        }
-
         let newJob = Job(context: self.moc!)
         newJob.alive = alive
         newJob.colour = colour
@@ -484,7 +492,6 @@ public class CoreDataJob: ObservableObject {
 
         if let proj = project {
             newJob.project = proj
-//            proj.addToJobs(newJob) // @TODO: unclear if this is necessary, test more and decide
         }
 
         if saveByDefault {

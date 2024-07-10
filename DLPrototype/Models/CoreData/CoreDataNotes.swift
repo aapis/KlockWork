@@ -160,7 +160,7 @@ public class CoreDataNotes {
 
         let fetch: NSFetchRequest<Note> = Note.fetchRequest()
         fetch.predicate = NSPredicate(
-            format: "alive == true && ANY mJob == %@",
+            format: "alive == true && mJob == %@",
             job
         )
         fetch.sortDescriptors = descriptors
@@ -326,16 +326,6 @@ public class CoreDataNotes {
     ///   - saveByDefault: Bool
     /// - Returns: Note
     private func make(alive: Bool, body: String, lastUpdate: Date? = Date(), postedDate: Date? = Date(), starred: Bool, title: String, job: Job? = nil, saveByDefault: Bool = true) -> Note {
-        let predicate = NSPredicate(format: "title == %@", title as CVarArg)
-        let results = query(predicate)
-
-        // Quit early if this item already exists
-        if results.count > 0 {
-            if let entity = results.first {
-                return entity
-            }
-        }
-
         // Create the note
         let newNote = Note(context: self.moc!)
         newNote.alive = alive

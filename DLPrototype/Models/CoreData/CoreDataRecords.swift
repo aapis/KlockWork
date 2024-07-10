@@ -62,7 +62,7 @@ public class CoreDataRecords: ObservableObject {
     ///   - date: Date
     ///   - limit: Int, 10 by default
     /// - Returns: FetchRequest<NSManagedObject>
-    static public func fetch(for date: Date, limit: Int? = 10) -> FetchRequest<LogRecord> {
+    static public func fetch(for date: Date, limit: Int? = -1) -> FetchRequest<LogRecord> {
         let descriptors = [
             NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)
         ]
@@ -77,12 +77,33 @@ public class CoreDataRecords: ObservableObject {
         fetch.sortDescriptors = descriptors
 
         if let lim = limit {
-            fetch.fetchLimit = lim
+            if lim > -1 {
+                fetch.fetchLimit = lim
+            }
         }
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
-    
+
+    /// Find all objects owned by a given Job
+    /// - Parameters:
+    ///   - job: Job
+    /// - Returns: FetchRequest<NSManagedObject>
+    static public func fetch(job: Job) -> FetchRequest<LogRecord> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)
+        ]
+
+        let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "alive == true && job == %@ && job.project.company.hidden == false",
+            job as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
     static public func fetchSummarizedForDate(_ date: Date, limit: Int? = 10) -> FetchRequest<LogRecord> {
         let descriptors = [
             NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)
@@ -478,7 +499,7 @@ public class CoreDataRecords: ObservableObject {
     public func find(for date: Date) -> [LogRecord] {
         let window = DateHelper.startAndEndOf(date)
         let predicate = NSPredicate(
-            format: "(timestamp > %@ && timestamp <= %@) && job.project.company.hidden == false",
+            format: "timestamp > %@ && timestamp <= %@",
             window.0 as CVarArg,
             window.1 as CVarArg
         )
@@ -494,7 +515,7 @@ public class CoreDataRecords: ObservableObject {
     public func countWithDateOrTerm(date: Date, term: String) -> Int {
         let window = DateHelper.startAndEndOf(date)
         let predicate = NSPredicate(
-            format: "((timestamp > %@ && timestamp <= %@) || (message CONTAINS[c] %@ || job.jid.string CONTAINS[c] %@)) && job.project.company.hidden == false",
+            format: "(timestamp > %@ && timestamp <= %@) || (message CONTAINS[c] %@ || job.jid.string CONTAINS[c] %@)",
             window.0 as CVarArg,
             window.1 as CVarArg,
             term,
@@ -535,6 +556,70 @@ public class CoreDataRecords: ObservableObject {
 
     public func factorRecordCount(for date: Date) -> Int64 {
         return Int64(CoreDataRecords(moc: self.moc).countRecords(for: date))
+    }
+
+    /// Create a new LogRecord
+    /// - Parameters:
+    ///   - alive: Bool
+    ///   - id: UUID
+    ///   - message: String
+    ///   - timestamp: Date
+    ///   - job: Job
+    ///   - saveByDefault: Bool: True by default)
+    /// - Returns: LogRecord
+    public func createAndReturn(alive: Bool = true, id: UUID = UUID(), message: String, timestamp: Date = Date(), job: Job?, saveByDefault: Bool = true) -> LogRecord {
+        return self.make(
+            alive: alive,
+            id: id,
+            message: message,
+            timestamp: timestamp,
+            job: job,
+            saveByDefault: saveByDefault
+        )
+    }
+
+    /// Create a new LogRecord
+    /// - Parameters:
+    ///   - alive: Bool
+    ///   - id: UUID
+    ///   - message: String
+    ///   - timestamp: Date
+    ///   - job: Job
+    ///   - saveByDefault: Bool: True by default)
+    /// - Returns: Void
+    public func create(alive: Bool = true, id: UUID = UUID(), message: String, timestamp: Date = Date(), job: Job?, saveByDefault: Bool = true) -> Void {
+        let _ = self.make(
+            alive: alive,
+            id: id,
+            message: message,
+            timestamp: timestamp,
+            job: job,
+            saveByDefault: saveByDefault
+        )
+    }
+
+    /// Create a new LogRecord
+    /// - Parameters:
+    ///   - alive: Bool
+    ///   - id: UUID
+    ///   - message: String
+    ///   - timestamp: Date
+    ///   - job: Job
+    ///   - saveByDefault: Bool: True by default)
+    /// - Returns: LogRecord
+    private func make(alive: Bool = true, id: UUID = UUID(), message: String, timestamp: Date = Date(), job: Job?, saveByDefault: Bool = true) -> LogRecord {
+        let record = LogRecord(context: self.moc!)
+        record.alive = alive
+        record.id = id
+        record.message = message
+        record.timestamp = timestamp
+        record.job = job
+
+        if saveByDefault {
+            PersistenceController.shared.save()
+        }
+
+        return record
     }
 
     private func query(_ predicate: NSPredicate) -> [LogRecord] {

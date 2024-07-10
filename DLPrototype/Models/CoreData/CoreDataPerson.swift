@@ -125,6 +125,71 @@ public class CoreDataPerson: ObservableObject {
 
         return count(predicate)
     }
+    
+    /// Create a new Person entity
+    /// - Parameters:
+    ///   - created: Date
+    ///   - lastUpdate: Date
+    ///   - name: String
+    ///   - title: String
+    ///   - company: Company
+    ///   - saveByDefault: Bool(true)
+    /// - Returns: Person
+    public func create(created: Date, lastUpdate: Date, name: String, title: String, company: Company, saveByDefault: Bool = true) -> Void {
+        let _ = self.make(
+            created: created,
+            lastUpdate: lastUpdate,
+            name: name,
+            title: title,
+            company: company,
+            saveByDefault: saveByDefault
+        )
+    }
+
+    /// Create a new Person entity
+    /// - Parameters:
+    ///   - created: Date
+    ///   - lastUpdate: Date
+    ///   - name: String
+    ///   - title: String
+    ///   - company: Company
+    ///   - saveByDefault: Bool(true)
+    /// - Returns: Person
+    public func createAndReturn(created: Date, lastUpdate: Date, name: String, title: String, company: Company, saveByDefault: Bool = true) -> Person {
+        return self.make(
+            created: created,
+            lastUpdate: lastUpdate,
+            name: name,
+            title: title,
+            company: company,
+            saveByDefault: saveByDefault
+        )
+    }
+
+    /// Create a new Person entity
+    /// - Parameters:
+    ///   - created: Date
+    ///   - lastUpdate: Date
+    ///   - name: String
+    ///   - title: String
+    ///   - company: Company
+    ///   - saveByDefault: Bool(true)
+    /// - Returns: Person
+    private func make(created: Date, lastUpdate: Date, name: String, title: String, company: Company, saveByDefault: Bool = true) -> Person {
+        let person = Person(context: self.moc!)
+        person.created = created
+        person.lastUpdate = lastUpdate
+        person.id = UUID()
+        person.name = name
+        person.title = title
+        person.company = company
+
+        if saveByDefault {
+            PersistenceController.shared.save()
+        }
+
+        return person
+    }
 
     private func query(_ predicate: NSPredicate? = nil) -> [Person] {
         lock.lock()

@@ -93,9 +93,7 @@ public class CoreDataTasks {
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
         if let rangeStart = DateHelper.prior(numDays: daysPrior, from: start).last {
             predicate = NSPredicate(
-                format: "((created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@) || (completedDate > %@ && completedDate <= %@) || (cancelledDate > %@ && cancelledDate <= %@)) && owner.project.company.hidden == false",
-                rangeStart as CVarArg,
-                end as CVarArg,
+                format: "((created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@)) && completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false",
                 rangeStart as CVarArg,
                 end as CVarArg,
                 rangeStart as CVarArg,
@@ -105,9 +103,7 @@ public class CoreDataTasks {
             )
         } else {
             predicate = NSPredicate(
-                format: "((created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@) || (completedDate > %@ && completedDate <= %@) || (cancelledDate > %@ && cancelledDate <= %@)) && owner.project.company.hidden == false",
-                start as CVarArg,
-                end as CVarArg,
+                format: "((created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@)) && completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false",
                 start as CVarArg,
                 end as CVarArg,
                 start as CVarArg,
@@ -256,7 +252,7 @@ public class CoreDataTasks {
     public func find(for date: Date) -> [LogTask] {
         let window = DateHelper.startAndEndOf(date)
         let predicate = NSPredicate(
-            format: "((completedDate > %@ && completedDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@)) && owner.project.company.hidden == false",
+            format: "(completedDate > %@ && completedDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@)",
             window.0 as CVarArg,
             window.1 as CVarArg,
             window.0 as CVarArg,
@@ -315,16 +311,6 @@ public class CoreDataTasks {
     ///   - saveByDefault: Bool
     /// - Returns: LogTask
     private func make(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job?, saveByDefault: Bool = true) -> LogTask {
-        let predicate = NSPredicate(format: "content == %@", content as CVarArg)
-        let results = query(predicate)
-
-        // Quit early if this item already exists
-        if results.count > 0 {
-            if let entity = results.first {
-                return entity
-            }
-        }
-
         let newTask = LogTask(context: self.moc!)
         newTask.cancelledDate = cancelledDate
         newTask.completedDate = completedDate

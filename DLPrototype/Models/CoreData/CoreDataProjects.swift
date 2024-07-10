@@ -26,11 +26,25 @@ public class CoreDataProjects: ObservableObject {
     /// - Returns: FetchRequest<Project>
     static public func fetchAll() -> FetchRequest<Project> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \Project.lastUpdate?, ascending: false)
+            NSSortDescriptor(keyPath: \Project.name?, ascending: true)
         ]
 
         let fetch: NSFetchRequest<Project> = Project.fetchRequest()
         fetch.predicate = NSPredicate(format: "alive == true && name != \"Unassigned jobs\"")
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
+    /// Fetch request to find unowned projects
+    /// - Returns: FetchRequest<Project>
+    static public func fetchUnowned() -> FetchRequest<Project> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Project.name?, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<Project> = Project.fetchRequest()
+        fetch.predicate = NSPredicate(format: "alive == true && name != \"Unassigned jobs\" && company == nil")
         fetch.sortDescriptors = descriptors
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
@@ -278,17 +292,7 @@ public class CoreDataProjects: ObservableObject {
     ///   - company: Optional(Company)
     ///   - saveByDefault: Bool: True by default)
     /// - Returns: Project
-    private func make(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, pid: Int64, alive: Bool = true, company: Company? = nil, saveByDefault: Bool = true) -> Project {
-        let predicate = NSPredicate(format: "name = %@", name as CVarArg)
-        let results = query(predicate)
-
-        // Quit early if this item already exists
-        if results.count > 0 {
-            if let entity = results.first {
-                return entity
-            }
-        }
-
+    private func make(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, pid: Int64, alive: Bool = true, company: Company? = nil, jobs: NSSet? = nil, saveByDefault: Bool = true) -> Project {
         let project = Project(context: moc!)
         project.alive = alive
         project.abbreviation = abbreviation
@@ -298,6 +302,8 @@ public class CoreDataProjects: ObservableObject {
         project.name = name
         project.pid = pid
         project.company = company
+        project.id = UUID()
+        project.jobs = jobs
 
         // Use default company if we don't have one
         if company == nil {
@@ -325,8 +331,8 @@ public class CoreDataProjects: ObservableObject {
     ///   - company: Optional(Company)
     ///   - saveByDefault: Bool: True by default)
     /// - Returns: Project
-    public func create(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, pid: Int64, alive: Bool = true, company: Company? = nil, saveByDefault: Bool = true) -> Void {
-        let _ = self.make(name: name, abbreviation: abbreviation, colour: colour, created: created, pid: pid, company: company, saveByDefault: saveByDefault)
+    public func create(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, pid: Int64, alive: Bool = true, company: Company? = nil, jobs: NSSet? = nil, saveByDefault: Bool = true) -> Void {
+        let _ = self.make(name: name, abbreviation: abbreviation, colour: colour, created: created, pid: pid, company: company, jobs: jobs, saveByDefault: saveByDefault)
     }
 
     /// Create and return a new project
@@ -341,8 +347,8 @@ public class CoreDataProjects: ObservableObject {
     ///   - company: Optional(Company)
     ///   - saveByDefault: Bool: True by default)
     /// - Returns: Project
-    public func createAndReturn(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, pid: Int64, alive: Bool = true, company: Company? = nil, saveByDefault: Bool = true) -> Project {
-        return self.make(name: name, abbreviation: abbreviation, colour: colour, created: created, pid: pid, company: company, saveByDefault: saveByDefault)
+    public func createAndReturn(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, pid: Int64, alive: Bool = true, company: Company? = nil, jobs: NSSet? = nil, saveByDefault: Bool = true) -> Project {
+        return self.make(name: name, abbreviation: abbreviation, colour: colour, created: created, pid: pid, company: company, jobs: jobs, saveByDefault: saveByDefault)
     }
 
     /// Query projects

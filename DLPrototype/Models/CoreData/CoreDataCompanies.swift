@@ -45,11 +45,12 @@ public class CoreDataCompanies: ObservableObject {
     /// - Returns: FetchRequest<Company>
     static public func fetch() -> FetchRequest<Company> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \Company.name?, ascending: true)
+            NSSortDescriptor(keyPath: \Company.name, ascending: true),
+            NSSortDescriptor(keyPath: \Company.createdDate, ascending: true),
         ]
 
         let fetch: NSFetchRequest<Company> = Company.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive = true")
+        fetch.predicate = NSPredicate(format: "alive == true")
         fetch.sortDescriptors = descriptors
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
@@ -65,7 +66,7 @@ public class CoreDataCompanies: ObservableObject {
 
         let fetch: NSFetchRequest<Company> = Company.fetchRequest()
         fetch.predicate = NSPredicate(
-            format: "alive = true && lastUpdate >= %@",
+            format: "alive == true && lastUpdate >= %@",
             DateHelper.daysPast(numDaysPrior) as CVarArg
         )
         fetch.sortDescriptors = descriptors
@@ -82,7 +83,7 @@ public class CoreDataCompanies: ObservableObject {
         ]
 
         let fetch: NSFetchRequest<Company> = Company.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive = true && name CONTAINS[c] %@", term as CVarArg)
+        fetch.predicate = NSPredicate(format: "alive == true && name CONTAINS[c] %@", term as CVarArg)
         fetch.sortDescriptors = descriptors
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
@@ -136,7 +137,7 @@ public class CoreDataCompanies: ObservableObject {
     /// - Returns: Company|nil
     public func byPid(_ id: Int) -> Company? {
         let predicate = NSPredicate(
-            format: "pid = %d && hidden == false",
+            format: "pid == %d && hidden == false",
             id as CVarArg
         )
 
@@ -154,7 +155,7 @@ public class CoreDataCompanies: ObservableObject {
     /// - Returns: Company|nil
     public func byName(_ name: String) -> Company? {
         let predicate = NSPredicate(
-            format: "name = %@ && hidden == false",
+            format: "name == %@ && hidden == false",
             name as CVarArg
         )
 
@@ -171,7 +172,7 @@ public class CoreDataCompanies: ObservableObject {
     /// - Returns: Array<Company>
     public func alive() -> [Company] {
         let predicate = NSPredicate(
-            format: "alive = true && hidden == false"
+            format: "alive == true && hidden == false"
         )
 
         return query(predicate)
@@ -201,7 +202,7 @@ public class CoreDataCompanies: ObservableObject {
     /// - Returns: Company|nil
     public func findDefault() -> Company? {
         let predicate = NSPredicate(
-            format: "isDefault = true"
+            format: "isDefault == true"
         )
 
         let results = query(predicate)
@@ -220,22 +221,13 @@ public class CoreDataCompanies: ObservableObject {
     ///   - colour: Colour as an array of Double's
     ///   - created: Created date
     ///   - updated: Updated date
+    ///   - projects: NSSet(Array<Project>)
     ///   - isDefault: Is this the default company?
     ///   - pid: UI-friendly ID value
     ///   - alive: Is company alive?
     ///   - hidden: Is company hidden?
     /// - Returns: Void
-    private func make(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, isDefault: Bool, pid: Int64, alive: Bool = true, hidden: Bool = false, saveByDefault: Bool = true) -> Company {
-        let predicate = NSPredicate(format: "name = %@", name as CVarArg)
-        let results = query(predicate)
-
-        // Quit early if this item already exists
-        if results.count > 0 {
-            if let entity = results.first {
-                return entity
-            }
-        }
-
+    private func make(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, projects: NSSet, isDefault: Bool, pid: Int64, alive: Bool = true, hidden: Bool = false, saveByDefault: Bool = true) -> Company {
         let company = Company(context: moc!)
         company.alive = alive
         company.hidden = hidden
@@ -261,17 +253,20 @@ public class CoreDataCompanies: ObservableObject {
     ///   - colour: Colour as an array of Double's
     ///   - created: Created date
     ///   - updated: Updated date
+    ///   - projects: NSSet(Array<Project>)
     ///   - isDefault: Is this the default company?
     ///   - pid: UI-friendly ID value
     ///   - alive: Is company alive?
     ///   - hidden: Is company hidden?
     /// - Returns: Void
-    public func create(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, isDefault: Bool, pid: Int64, alive: Bool = true, hidden: Bool = false, saveByDefault: Bool = true) -> Void {
+    public func create(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, projects: NSSet, isDefault: Bool, pid: Int64, alive: Bool = true, hidden: Bool = false, saveByDefault: Bool = true) -> Void {
         let _ = self.make(
             name: name,
             abbreviation: abbreviation,
             colour: colour,
             created: created,
+            updated: updated,
+            projects: projects,
             isDefault: isDefault,
             pid: pid,
             saveByDefault: saveByDefault
@@ -285,17 +280,20 @@ public class CoreDataCompanies: ObservableObject {
     ///   - colour: Colour as an array of Double's
     ///   - created: Created date
     ///   - updated: Updated date
+    ///   - projects: NSSet(Array<Project>)
     ///   - isDefault: Is this the default company?
     ///   - pid: UI-friendly ID value
     ///   - alive: Is company alive?
     ///   - hidden: Is company hidden?
     /// - Returns: Void
-    public func createAndReturn(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, isDefault: Bool, pid: Int64, alive: Bool = true, hidden: Bool = false, saveByDefault: Bool = true) -> Company {
+    public func createAndReturn(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, projects: NSSet, isDefault: Bool, pid: Int64, alive: Bool = true, hidden: Bool = false, saveByDefault: Bool = true) -> Company {
         return self.make(
             name: name,
             abbreviation: abbreviation,
             colour: colour,
             created: created,
+            updated: updated,
+            projects: projects,
             isDefault: isDefault,
             pid: pid,
             saveByDefault: saveByDefault
@@ -323,7 +321,7 @@ public class CoreDataCompanies: ObservableObject {
 
         var results: [Company] = []
         let fetch: NSFetchRequest<Company> = Company.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Company.createdDate, ascending: false)]
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Company.name?, ascending: false)]
 
         if predicate != nil {
             fetch.predicate = predicate
