@@ -45,8 +45,8 @@ struct JobPickerUsing: View {
                     
                     if jobs.count > 0 {
                         // remove ignored jobs
-                        jobs.removeAll(where: {($0.project?.configuration?.ignoredJobs!.contains($0.jid.string))!})
-                        
+                        jobs.removeAll(where: {($0.project?.configuration?.ignoredJobs?.contains($0.jid.string)) ?? false})
+
                         // remove jobs that haven't been used within the selected time window, if dynamic pickers is enabled
                         if allowRelativeJobList && supportsDynamicPicker!   {
                             jobs.removeAll(where: {
