@@ -132,6 +132,16 @@ public class CoreDataCompanies: ObservableObject {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
+    /// Fetch request to find all items
+    /// - Returns: FetchRequest<Company>
+    public func active() -> [Company] {
+        let predicate = NSPredicate(
+            format: "alive == true"
+        )
+
+        return query(predicate)
+    }
+
     /// Retreive all companies by pid
     /// - Parameter id: PID value to find
     /// - Returns: Company|nil

@@ -104,7 +104,7 @@ struct IntroToKlockWork: View {
     }
     
     private func onAppear() -> Void {
-        if let company = CoreDataCompanies(moc: moc).all().first {
+        if let company = CoreDataCompanies(moc: moc).active().first {
             createCompany = true
             companyName = company.name ?? "_COMPANY_NAME"
         }

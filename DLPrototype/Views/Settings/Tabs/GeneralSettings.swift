@@ -72,7 +72,7 @@ extension GeneralSettings {
         defaultCompany = cid
         let moc = PersistenceController.shared.container.viewContext
 
-        let companies = CoreDataCompanies(moc: moc).all()
+        let companies = CoreDataCompanies(moc: moc).active()
         for company in companies {
             company.isDefault = false
         }

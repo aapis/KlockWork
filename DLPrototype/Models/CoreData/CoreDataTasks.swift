@@ -141,6 +141,24 @@ public class CoreDataTasks {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
+    /// Find all upcoming tasks
+    /// - Returns: FetchRequest<NSManagedObject>
+    static public func fetchUpcoming() -> FetchRequest<LogTask> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \LogTask.due, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
+        let now = Date()
+        fetch.predicate = NSPredicate(
+            format: "due > %@ && (completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false)",
+            now as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
     public func forDate(_ date: Date, from: [LogRecord]) -> [LogTask] {
         var results: [LogTask] = []
         var filterPredicate: NSCompoundPredicate
