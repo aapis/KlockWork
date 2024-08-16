@@ -140,7 +140,19 @@ extension Today.PostingInterface {
             record.alive = true
             record.id = UUID()
             record.job = job
-            
+
+            let matches = text.matches(of: /(.*) == (.*)/)
+            if matches.count > 0 {
+                for match in matches {
+                    let term = TaxonomyTerm(context: moc)
+                    term.name = String(match.1)
+                    term.definition = String(match.2)
+                    term.created = record.timestamp
+                    term.lastUpdate = record.timestamp
+                    term.source = record
+                }
+            }
+
             do {
                 try record.validateForInsert()
 
