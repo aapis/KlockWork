@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23173.10" systemVersion="24A5264n" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23173.10" systemVersion="24A5279h" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AssessmentFactor" representedClassName="AssessmentFactor" syncable="YES" codeGenerationType="class">
         <attribute name="action" attributeType="String" defaultValueString="Create"/>
         <attribute name="alive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
@@ -86,6 +86,7 @@
         <attribute name="message" optional="YES" attributeType="String"/>
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" customClassName="Date"/>
         <relationship name="job" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="records" inverseEntity="Job"/>
+        <relationship name="terms" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TaxonomyTerm" inverseName="source" inverseEntity="TaxonomyTerm"/>
     </entity>
     <entity name="LogTask" representedClassName="LogTask" syncable="YES" codeGenerationType="class">
         <attribute name="cancelledDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -164,6 +165,12 @@
     <entity name="SharedConfiguration" representedClassName="SharedConfiguration" syncable="YES" codeGenerationType="class">
         <attribute name="accentColour" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[Double]"/>
     </entity>
+    <entity name="TaxonomyTerm" representedClassName="TaxonomyTerm" syncable="YES" codeGenerationType="class">
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="source" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LogRecord" inverseName="terms" inverseEntity="LogRecord"/>
+    </entity>
     <configuration name="Cloud" usedWithCloudKit="YES">
         <memberEntity name="LogRecord"/>
         <memberEntity name="Note"/>
@@ -178,5 +185,6 @@
         <memberEntity name="Plan"/>
         <memberEntity name="Person"/>
         <memberEntity name="AssessmentFactor"/>
+        <memberEntity name="TaxonomyTerm"/>
     </configuration>
 </model>
