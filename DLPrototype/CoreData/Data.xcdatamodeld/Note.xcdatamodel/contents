@@ -167,6 +167,7 @@
     </entity>
     <entity name="TaxonomyTerm" representedClassName="TaxonomyTerm" syncable="YES" codeGenerationType="class">
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="definition" optional="YES" attributeType="String"/>
         <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="source" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LogRecord" inverseName="terms" inverseEntity="LogRecord"/>
