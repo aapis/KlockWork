@@ -73,6 +73,7 @@
         <attribute name="shredable" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="uri" optional="YES" attributeType="URI"/>
+        <relationship name="definitions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TaxonomyTermDefinitions" inverseName="job" inverseEntity="TaxonomyTermDefinitions"/>
         <relationship name="mNotes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Note" inverseName="mJob" inverseEntity="Note"/>
         <relationship name="notes" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Note" inverseName="job" inverseEntity="Note"/>
         <relationship name="plans" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Plan" inverseName="jobs" inverseEntity="Plan"/>
@@ -86,7 +87,6 @@
         <attribute name="message" optional="YES" attributeType="String"/>
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" customClassName="Date"/>
         <relationship name="job" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="records" inverseEntity="Job"/>
-        <relationship name="terms" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TaxonomyTerm" inverseName="source" inverseEntity="TaxonomyTerm"/>
     </entity>
     <entity name="LogTask" representedClassName="LogTask" syncable="YES" codeGenerationType="class">
         <attribute name="cancelledDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -166,11 +166,18 @@
         <attribute name="accentColour" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[Double]"/>
     </entity>
     <entity name="TaxonomyTerm" representedClassName="TaxonomyTerm" syncable="YES" codeGenerationType="class">
+        <attribute name="alive" optional="YES" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="definition" optional="YES" attributeType="String"/>
         <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <relationship name="source" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LogRecord" inverseName="terms" inverseEntity="LogRecord"/>
+        <relationship name="definitions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TaxonomyTermDefinitions" inverseName="term" inverseEntity="TaxonomyTermDefinitions"/>
+    </entity>
+    <entity name="TaxonomyTermDefinitions" representedClassName="TaxonomyTermDefinitions" syncable="YES" codeGenerationType="class">
+        <attribute name="alive" optional="YES" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="definition" optional="YES" attributeType="String"/>
+        <relationship name="job" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="definitions" inverseEntity="Job"/>
+        <relationship name="term" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TaxonomyTerm" inverseName="definitions" inverseEntity="TaxonomyTerm"/>
     </entity>
     <configuration name="Cloud" usedWithCloudKit="YES">
         <memberEntity name="LogRecord"/>
@@ -187,5 +194,6 @@
         <memberEntity name="Person"/>
         <memberEntity name="AssessmentFactor"/>
         <memberEntity name="TaxonomyTerm"/>
+        <memberEntity name="TaxonomyTermDefinitions"/>
     </configuration>
 </model>

@@ -171,6 +171,32 @@ public class CoreDataRecords: ObservableObject {
         record.job = job
         record.alive = true
 
+        let matches = text.matches(of: /(.*) == (.*)/)
+        if matches.count > 0 {
+            for match in matches {
+                // Find existing term, if one exists
+                let name = String(match.1)
+                let definition = String(match.2)
+                // Create term definition
+                let tTermDefinition = TaxonomyTermDefinitions(context: moc!)
+                tTermDefinition.definition = definition
+                tTermDefinition.created = record.timestamp
+                tTermDefinition.job = job
+
+                // Add definition to existing term
+                if let foundTerm = CoreDataTaxonomyTerms(moc: moc!).byName(name) {
+                    foundTerm.addToDefinitions(tTermDefinition)
+                } else {
+                    // Create Term
+                    let term = TaxonomyTerm(context: moc!)
+                    term.name = name
+                    term.created = record.timestamp
+                    term.lastUpdate = record.timestamp
+                    tTermDefinition.term = term
+                }
+            }
+        }
+
         do {
             try moc!.save()
         } catch {
@@ -184,7 +210,31 @@ public class CoreDataRecords: ObservableObject {
         record.message = text
         record.id = UUID()
         record.job = job
-        
+
+        let matches = text.matches(of: /(.*) == (.*)/)
+        if matches.count > 0 {
+            for match in matches {
+                // Find existing term, if one exists
+                let name = String(match.1)
+                let definition = String(match.2)
+                let tTermDefinition = TaxonomyTermDefinitions(context: moc!)
+                tTermDefinition.definition = definition
+                tTermDefinition.created = record.timestamp
+                tTermDefinition.job = job
+
+                // Add definition to existing term
+                if let foundTerm = CoreDataTaxonomyTerms(moc: moc!).byName(name) {
+                    foundTerm.addToDefinitions(tTermDefinition)
+                } else {
+                    // For now, we create both records AND definitions
+                    let term = TaxonomyTerm(context: moc!)
+                    term.name = name
+                    term.created = record.timestamp
+                    term.lastUpdate = record.timestamp
+                }
+            }
+        }
+
         do {
             try moc!.save()
         } catch {
