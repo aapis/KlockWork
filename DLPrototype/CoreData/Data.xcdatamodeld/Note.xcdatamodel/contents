@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23173.10" systemVersion="24A5264n" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23173.10" systemVersion="24A5279h" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AssessmentFactor" representedClassName="AssessmentFactor" syncable="YES" codeGenerationType="class">
         <attribute name="action" attributeType="String" defaultValueString="Create"/>
         <attribute name="alive" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
@@ -73,6 +73,7 @@
         <attribute name="shredable" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="uri" optional="YES" attributeType="URI"/>
+        <relationship name="definitions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TaxonomyTermDefinitions" inverseName="job" inverseEntity="TaxonomyTermDefinitions"/>
         <relationship name="mNotes" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Note" inverseName="mJob" inverseEntity="Note"/>
         <relationship name="notes" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Note" inverseName="job" inverseEntity="Note"/>
         <relationship name="plans" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Plan" inverseName="jobs" inverseEntity="Plan"/>
@@ -164,6 +165,20 @@
     <entity name="SharedConfiguration" representedClassName="SharedConfiguration" syncable="YES" codeGenerationType="class">
         <attribute name="accentColour" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[Double]"/>
     </entity>
+    <entity name="TaxonomyTerm" representedClassName="TaxonomyTerm" syncable="YES" codeGenerationType="class">
+        <attribute name="alive" optional="YES" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="definitions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="TaxonomyTermDefinitions" inverseName="term" inverseEntity="TaxonomyTermDefinitions"/>
+    </entity>
+    <entity name="TaxonomyTermDefinitions" representedClassName="TaxonomyTermDefinitions" syncable="YES" codeGenerationType="class">
+        <attribute name="alive" optional="YES" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="definition" optional="YES" attributeType="String"/>
+        <relationship name="job" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="definitions" inverseEntity="Job"/>
+        <relationship name="term" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TaxonomyTerm" inverseName="definitions" inverseEntity="TaxonomyTerm"/>
+    </entity>
     <configuration name="Cloud" usedWithCloudKit="YES">
         <memberEntity name="LogRecord"/>
         <memberEntity name="Note"/>
@@ -178,5 +193,7 @@
         <memberEntity name="Plan"/>
         <memberEntity name="Person"/>
         <memberEntity name="AssessmentFactor"/>
+        <memberEntity name="TaxonomyTerm"/>
+        <memberEntity name="TaxonomyTermDefinitions"/>
     </configuration>
 </model>

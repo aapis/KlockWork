@@ -33,7 +33,7 @@ struct TaskGroup: View {
                     }
 
                     FancyButtonv2(
-                        text: String(key.id_int()),
+                        text: key.title ?? String(key.id_int()),
                         action: minimize,
                         icon: minimized ? "plus" : "minus",
                         fgColour: minimized ? (colour.isBright() ? .black : .white) : .white,
@@ -43,7 +43,7 @@ struct TaskGroup: View {
 
                     Spacer()
                     FancyButtonv2(
-                        text: project.name!,
+                        text: project.name ?? "_PROJECT_NAME",
                         action: minimize,
                         icon: minimized ? "plus" : "minus",
                         fgColour: minimized ? (colour.isBright() ? .black : .white) : .white,

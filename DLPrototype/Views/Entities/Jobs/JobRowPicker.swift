@@ -29,11 +29,11 @@ struct JobRowPicker: View {
                     }
 
                     SidebarItem(
-                        data: job.jid.string,
-                        help: "Set current job to \(job.jid.string)",
+                        data: job.title ?? job.jid.string,
+                        help: "Set current job to \(job.title ?? job.jid.string)",
                         icon: "arrowshape.right",
                         orientation: .right,
-                        action: action,
+                        action: self.action,
                         showBorder: false
                     )
                     .foregroundColor(job.colour != nil && job.colour_from_stored().isBright() ? .black : .white)
