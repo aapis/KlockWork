@@ -693,7 +693,7 @@ extension FindDashboard.Suggestions.SuggestedJobs {
     /// - Returns: Void
     private func setContext(_ item: Job) -> Void {
         switch nav.parent {
-        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today:
+        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today, .terms:
             nav.session.job = item
         case .planning:
             nav.planning.jobs.insert(item)
@@ -736,7 +736,7 @@ extension FindDashboard.Suggestions.SuggestedNotes {
     /// - Returns: Void
     private func setContext(_ item: Note) -> Void {
         switch nav.parent {
-        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today:
+        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today, .terms:
             nav.session.job = item.mJob
         case .planning:
             if let job = item.mJob {

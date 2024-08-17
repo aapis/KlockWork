@@ -76,6 +76,8 @@ extension JobRowPicker {
                 nav.session.setJob(job)
             } else if parent == .planning {
                 actionUpdatePlanningStore()
+            } else if parent == .terms {
+                nav.session.setJob(job)
             } else {
                 nav.session.setJob(job)
                 nav.to(.today)

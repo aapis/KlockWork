@@ -80,6 +80,13 @@ struct Home: View {
                     icon: "checklist",
                     label: "Tasks",
                     sidebar: AnyView(TaskDashboardSidebar())
+                ),
+                SidebarButton(
+                    destination: AnyView(TermsDashboard()),
+                    pageType: .terms,
+                    icon: "list.bullet.rectangle",
+                    label: "Terms & Definitions",
+                    sidebar: AnyView(TermsDashboardSidebar())
                 )
             ]
         ]

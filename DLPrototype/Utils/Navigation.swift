@@ -9,7 +9,7 @@
 import SwiftUI
 
 public enum Page {
-    case dashboard, today, notes, tasks, projects, jobs, companies, planning
+    case dashboard, today, notes, tasks, projects, jobs, companies, planning, terms
 
     var ViewUpdaterKey: String {
         switch self {
@@ -29,6 +29,8 @@ public enum Page {
             return "companies.dashboard"
         case .planning:
             return "planning.dashboard"
+        case .terms:
+            return "terms.dashboard"
         }
     }
 
@@ -49,6 +51,8 @@ public enum Page {
         case .companies:
             return .blue
         case .planning:
+            return .blue
+        case .terms:
             return .blue
         }
     }
@@ -71,6 +75,8 @@ public enum Page {
             return "Companies"
         case .planning:
             return "Planning"
+        case .terms:
+            return "Terms"
         }
     }
 }
@@ -538,6 +544,7 @@ extension Navigation {
             HistoryPage(page: .jobs, view: AnyView(JobDashboardRedux()), sidebar: AnyView(JobDashboardSidebar()), title: "Jobs"),
             HistoryPage(page: .notes, view: AnyView(NoteDashboard()), sidebar: AnyView(NoteDashboardSidebar()), title: "Notes"),
             HistoryPage(page: .tasks, view: AnyView(TaskDashboard()), sidebar: AnyView(TaskDashboardSidebar()), title: "Tasks"),
+            HistoryPage(page: .terms, view: AnyView(TermsDashboard()), sidebar: AnyView(TermsDashboardSidebar()), title: "Terms"),
         ]
         
         /// A single page representing a page the user navigated to
