@@ -132,6 +132,7 @@
 		53814A8E2A9821C800A5A015 /* DefaultPlanningSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53814A8D2A9821C800A5A015 /* DefaultPlanningSidebar.swift */; };
 		53842B272B4C82B20029AC73 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53842B262B4C82B20029AC73 /* Project.swift */; };
 		53842B2A2B4C9B100029AC73 /* FancyToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53842B292B4C9B100029AC73 /* FancyToggle.swift */; };
+		538A534E2C6FEA1700711639 /* CoreDataTaxonomyTerms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538A534D2C6FEA1100711639 /* CoreDataTaxonomyTerms.swift */; };
 		53911FC32C19E84C00B77DAB /* ActivityWeight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53911FC22C19E84C00B77DAB /* ActivityWeight.swift */; };
 		53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A19297377A7007A2549 /* FancyGenericToolbar.swift */; };
 		53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1C2973897F007A2549 /* ProjectConfig.swift */; };
@@ -381,6 +382,7 @@
 		53814A8D2A9821C800A5A015 /* DefaultPlanningSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultPlanningSidebar.swift; sourceTree = "<group>"; };
 		53842B262B4C82B20029AC73 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
 		53842B292B4C9B100029AC73 /* FancyToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyToggle.swift; sourceTree = "<group>"; };
+		538A534D2C6FEA1100711639 /* CoreDataTaxonomyTerms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataTaxonomyTerms.swift; sourceTree = "<group>"; };
 		53911FC22C19E84C00B77DAB /* ActivityWeight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityWeight.swift; sourceTree = "<group>"; };
 		53959A19297377A7007A2549 /* FancyGenericToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyGenericToolbar.swift; sourceTree = "<group>"; };
 		53959A1C2973897F007A2549 /* ProjectConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfig.swift; sourceTree = "<group>"; };
@@ -816,6 +818,7 @@
 		53759E0B2967EC9600DCDC4B /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
+				538A534D2C6FEA1100711639 /* CoreDataTaxonomyTerms.swift */,
 				5335A5B8296D2490000051B1 /* CoreDataTasks.swift */,
 				53F10FDF296E77BE0048D040 /* CoreDataJob.swift */,
 				53521E53296FBDAE002E7F21 /* CoreDataNoteVersions.swift */,
@@ -1451,6 +1454,7 @@
 				53D4CBC82BFE953700AFEDEA /* SaveSource.swift in Sources */,
 				53C036EF29F8A59900539C3C /* DashboardSettings.swift in Sources */,
 				5371BA302A7B2A8800DEEC21 /* JobDashboardSidebar.swift in Sources */,
+				538A534E2C6FEA1700711639 /* CoreDataTaxonomyTerms.swift in Sources */,
 				53759E0829678DC700DCDC4B /* Import.swift in Sources */,
 				53E2025A2A7EAE5B00B4DF70 /* ProjectsWidget.swift in Sources */,
 				532CF0DC2A12A14200710B67 /* EventRow.swift in Sources */,

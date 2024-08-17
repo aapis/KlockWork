@@ -144,12 +144,25 @@ extension Today.PostingInterface {
             let matches = text.matches(of: /(.*) == (.*)/)
             if matches.count > 0 {
                 for match in matches {
-                    let term = TaxonomyTerm(context: moc)
-                    term.name = String(match.1)
-                    term.definition = String(match.2)
-                    term.created = record.timestamp
-                    term.lastUpdate = record.timestamp
-                    term.source = record
+                    // Find existing term, if one exists
+                    let name = String(match.1)
+                    let definition = String(match.2)
+                    let tTermDefinition = TaxonomyTermDefinitions(context: moc)
+                    tTermDefinition.definition = definition
+                    tTermDefinition.created = record.timestamp
+                    tTermDefinition.job = job
+
+                    // Add definition to existing term
+                    if let foundTerm = CoreDataTaxonomyTerms(moc: self.moc).byName(name) {
+                        foundTerm.addToDefinitions(tTermDefinition)
+                    } else {
+                        // For now, we create both records AND definitions
+                        let term = TaxonomyTerm(context: moc)
+                        term.name = name
+                        term.created = record.timestamp
+                        term.lastUpdate = record.timestamp
+                        tTermDefinition.term = term
+                    }
                 }
             }
 

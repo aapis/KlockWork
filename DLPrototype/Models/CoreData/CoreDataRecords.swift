@@ -543,6 +543,28 @@ public class CoreDataRecords: ObservableObject {
         return buffer
     }
 
+    /// Finds records matching a given Regex query
+    /// - Parameter date: Date
+    /// - Returns: Array<LogRecord>
+    public func matching(_ pattern: Regex<(Substring, Substring, Substring)>) -> [LogRecord] {
+        let predicate = NSPredicate(
+            format: "alive == true" // @TODO: it SHOULD be possible to pass pattern here w/MATCHES but it doesn't work and I don't have time to bully it
+        )
+
+        let records = query(predicate)
+        var matchedRecords: [LogRecord] = []
+
+        for record in records {
+            if let matches = record.message?.matches(of: pattern) {
+                if !matches.isEmpty {
+                    matchedRecords.append(record)
+                }
+            }
+        }
+
+        return matchedRecords
+    }
+
     /// Finds records created on a specific date that aren't hidden by their parent
     /// - Parameter date: Date
     /// - Returns: Array<LogRecord>
