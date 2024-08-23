@@ -29,8 +29,26 @@ public class CoreDataTaxonomyTerms {
 
         let fetch: NSFetchRequest<TaxonomyTerm> = TaxonomyTerm.fetchRequest()
         fetch.predicate = NSPredicate(
-            format: "ANY name CONTAINS[c] %@",
+            format: "alive == true && name CONTAINS %@",
             term
+        )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
+    /// Find tasks whose content matches a given string
+    /// - Parameter job: Job
+    /// - Returns: FetchRequest<TaxonomyTerm>
+    static public func fetch(job: Job) -> FetchRequest<TaxonomyTerm> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \TaxonomyTerm.created, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<TaxonomyTerm> = TaxonomyTerm.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "ANY definitions.job == %@",
+            job
         )
         fetch.sortDescriptors = descriptors
 
@@ -67,6 +85,24 @@ public class CoreDataTaxonomyTerms {
         }
 
         return results.first
+    }
+
+    /// Find taxonomy terms by job
+    /// - Parameter job: Job
+    /// - Returns: Optional(TaxonomyTerm)
+    public func byJob(_ job: Job) -> [TaxonomyTerm]? {
+        let results = self.query(
+            NSPredicate(
+                format: "ANY definitions.job == %@",
+                job
+            )
+        )
+
+        if results.isEmpty {
+            return nil
+        }
+
+        return results
     }
 
     /// All taxonomy terms

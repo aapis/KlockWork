@@ -176,6 +176,7 @@
         <attribute name="alive" optional="YES" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="definition" optional="YES" attributeType="String"/>
+        <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="job" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Job" inverseName="definitions" inverseEntity="Job"/>
         <relationship name="term" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TaxonomyTerm" inverseName="definitions" inverseEntity="TaxonomyTerm"/>
     </entity>
