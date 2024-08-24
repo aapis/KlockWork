@@ -203,6 +203,17 @@ final public class DateHelper {
             Calendar.autoupdatingCurrent.date(byAdding: components, to: start)!
         )
     }
+    
+    /// Sets a date object's time properties to 23:59:59
+    /// - Parameter date: Date
+    /// - Returns: Optional(Date)
+    static public func endOfDay(_ date: Date = Date()) -> Date? {
+        if let newDate = Calendar.autoupdatingCurrent.date(bySettingHour: 23, minute: 59, second: 59, of: date) {
+            return newDate
+        }
+
+        return nil
+    }
 
     static public func bounds(_ date: Date) -> DateBounds {
         let start = Calendar.autoupdatingCurrent.startOfDay(for: date)

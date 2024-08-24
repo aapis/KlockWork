@@ -145,7 +145,8 @@ public class CoreDataTasks {
     /// - Returns: FetchRequest<NSManagedObject>
     static public func fetchUpcoming() -> FetchRequest<LogTask> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \LogTask.due, ascending: true)
+            NSSortDescriptor(keyPath: \LogTask.owner?, ascending: true),
+            NSSortDescriptor(keyPath: \LogTask.due?, ascending: true)
         ]
 
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
