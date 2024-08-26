@@ -84,8 +84,9 @@ public class CoreDataTasks {
     /// - Returns: FetchRequest<NSManagedObject>
     static public func fetch(for date: Date, limit: Int? = 10, daysPrior: Int = 7) -> FetchRequest<LogTask> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \LogTask.owner?.title, ascending: true),
-            NSSortDescriptor(keyPath: \LogTask.lastUpdate, ascending: true)
+            NSSortDescriptor(keyPath: \LogTask.owner?, ascending: true),
+            NSSortDescriptor(keyPath: \LogTask.due?, ascending: true)
+//            NSSortDescriptor(keyPath: \LogTask.lastUpdate, ascending: true)
         ]
 
         var predicate: NSPredicate
@@ -93,7 +94,9 @@ public class CoreDataTasks {
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
         if let rangeStart = DateHelper.prior(numDays: daysPrior, from: start).last {
             predicate = NSPredicate(
-                format: "((created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@)) && completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false",
+                format: "((created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@) || (due > %@ && due < %@)) && completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false",
+                rangeStart as CVarArg,
+                end as CVarArg,
                 rangeStart as CVarArg,
                 end as CVarArg,
                 rangeStart as CVarArg,
@@ -103,7 +106,9 @@ public class CoreDataTasks {
             )
         } else {
             predicate = NSPredicate(
-                format: "((created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@)) && completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false",
+                format: "((created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@) || (due > %@ && due < %@)) && completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false",
+                start as CVarArg,
+                end as CVarArg,
                 start as CVarArg,
                 end as CVarArg,
                 start as CVarArg,
@@ -145,8 +150,8 @@ public class CoreDataTasks {
     /// - Returns: FetchRequest<NSManagedObject>
     static public func fetchUpcoming() -> FetchRequest<LogTask> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \LogTask.owner?, ascending: true),
-            NSSortDescriptor(keyPath: \LogTask.due?, ascending: true)
+            NSSortDescriptor(keyPath: \LogTask.owner, ascending: true),
+//            NSSortDescriptor(keyPath: \LogTask.due?, ascending: true) // @TODO: this causes a crash when saving a task and setting task.due
         ]
 
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
