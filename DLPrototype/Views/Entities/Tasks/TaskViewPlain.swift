@@ -18,7 +18,7 @@ struct TaskViewPlain: View {
         SidebarItem(
             data: task.content ?? "_TASK_CONTENT",
             help: task.content ?? "_TASK_CONTENT",
-            icon: "circle",
+            icon: task.completedDate != nil ? "square.fill" : "square",
             type: .thin,
             action: completeAction
         )

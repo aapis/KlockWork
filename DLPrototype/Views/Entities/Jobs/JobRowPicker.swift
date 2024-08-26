@@ -15,46 +15,28 @@ struct JobRowPicker: View {
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {
-        HStack(alignment: .top, spacing: 0) {
-            project
-            ZStack(alignment: .topLeading) {
-                job.colour_from_stored()
-                HStack(spacing: 0) {
-                    if let jerb = nav.session.job {
-                        if jerb == job {
-                            FancyStar(background: jerb.colour_from_stored())
-                                .padding(.leading, 10)
-                                .help("Records you create will be associated with this job (#\(job.jid.string))")
-                        }
-                    }
-
-                    SidebarItem(
-                        data: job.title ?? job.jid.string,
-                        help: "Set current job to \(job.title ?? job.jid.string)",
-                        icon: "arrowshape.right",
-                        orientation: .right,
-                        action: self.action,
-                        showBorder: false
-                    )
-                    .foregroundColor(job.colour != nil && job.colour_from_stored().isBright() ? .black : .white)
+        HStack(alignment: .center, spacing: 0) {
+            if let jerb = nav.session.job {
+                if jerb == job {
+                    FancyStar(background: jerb.colour_from_stored())
+                        .padding(.leading, 10)
+                        .help("Records you create will be associated with this job (#\(job.jid.string))")
                 }
             }
-        }
-    }
 
-    @ViewBuilder var project: some View {
-        Group {
-            HStack(spacing: 0) {
-                ZStack(alignment: .leading) {
-                    if job.project != nil {
-                        Color.fromStored(job.project!.colour ?? Theme.rowColourAsDouble)
-                    } else {
-                        Theme.rowColour
-                    }
-                }
-            }
+            SidebarItem(
+                data: job.title ?? job.jid.string,
+                help: "Set current job to \(job.title ?? job.jid.string)",
+                icon: "arrowshape.right",
+                orientation: .right,
+                action: self.action,
+                showBorder: false
+            )
+            .foregroundColor(job.colour != nil && job.colour_from_stored().isBright() ? .black : .white)
         }
-        .frame(width: 5)
+        .background(job.colour_from_stored())
+        .padding(.leading, 10)
+        .border(width: 10, edges: [.leading], color: Color.fromStored(job.project?.colour ?? Theme.rowColourAsDouble))
     }
 }
 
