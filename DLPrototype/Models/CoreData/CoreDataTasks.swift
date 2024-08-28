@@ -84,9 +84,9 @@ public class CoreDataTasks {
     /// - Returns: FetchRequest<NSManagedObject>
     static public func fetch(for date: Date, limit: Int? = 10, daysPrior: Int = 7) -> FetchRequest<LogTask> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \LogTask.owner?, ascending: true),
-            NSSortDescriptor(keyPath: \LogTask.due?, ascending: true)
-//            NSSortDescriptor(keyPath: \LogTask.lastUpdate, ascending: true)
+            NSSortDescriptor(keyPath: \LogTask.owner?.title?, ascending: true),
+            NSSortDescriptor(keyPath: \LogTask.due, ascending: true),
+            NSSortDescriptor(keyPath: \LogTask.lastUpdate, ascending: true)
         ]
 
         var predicate: NSPredicate
@@ -150,8 +150,8 @@ public class CoreDataTasks {
     /// - Returns: FetchRequest<NSManagedObject>
     static public func fetchUpcoming() -> FetchRequest<LogTask> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \LogTask.owner, ascending: true),
-//            NSSortDescriptor(keyPath: \LogTask.due?, ascending: true) // @TODO: this causes a crash when saving a task and setting task.due
+            NSSortDescriptor(keyPath: \LogTask.owner?.title?, ascending: true),
+            NSSortDescriptor(keyPath: \LogTask.due, ascending: true)
         ]
 
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
