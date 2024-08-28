@@ -85,8 +85,7 @@ public class CoreDataTasks {
     static public func fetch(for date: Date, limit: Int? = 10, daysPrior: Int = 7) -> FetchRequest<LogTask> {
         let descriptors = [
             NSSortDescriptor(keyPath: \LogTask.owner?.title?, ascending: true),
-            NSSortDescriptor(keyPath: \LogTask.due, ascending: true),
-            NSSortDescriptor(keyPath: \LogTask.lastUpdate, ascending: true)
+            NSSortDescriptor(keyPath: \LogTask.due, ascending: true)
         ]
 
         var predicate: NSPredicate
