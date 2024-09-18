@@ -289,7 +289,7 @@ public class CoreDataTasks {
 
             CoreDataRecords(moc: moc).createWithJob(
                 job: task.owner!,
-                date: date,
+                date: Date(),
                 text: "Delayed task: \(task.content ?? "Invalid task") to \(date.formatted())"
             )
         } catch {
