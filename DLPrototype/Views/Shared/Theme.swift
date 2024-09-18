@@ -37,4 +37,5 @@ struct Theme {
     static public let cGreen: Color = .init(.sRGB, red: 0.22, green: 0.34, blue: 0.32, opacity: 1)
     static public let cPurple: Color = .init(.sRGB, red: 0.34, green: 0.37, blue: 0.53, opacity: 1)
     static public let cOrange: Color = .init(.sRGB, red: 0.34, green: 0.26, blue: 0.22, opacity: 1)
+    static public let cRoyal: Color = .init(.sRGB, red: 0.31, green: 0.13, blue: 0.34, opacity: 1)
 }

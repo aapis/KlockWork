@@ -36,8 +36,8 @@ public final class CoreDataPlan {
         return query(predicate)
     }
 
-    public func forToday() -> [Plan] {
-        let (start, _) = DateHelper.startAndEndOf(Date())
+    public func forToday(_ date: Date = Date()) -> [Plan] {
+        let (start, _) = DateHelper.startAndEndOf(date)
         let predicate = NSPredicate(
             format: "created >= %@",
             start as CVarArg
@@ -109,6 +109,29 @@ public final class CoreDataPlan {
             projects: projects,
             companies: companies
         )
+    }
+    
+    /// Delete all plans for a specified date
+    /// - Parameter date: Date
+    /// - Returns: Void
+    public func deleteAll(for date: Date) -> Void {
+        let plans = CoreDataPlan(moc: self.moc!).forToday(date)
+        for plan in plans {
+            plan.jobs = []
+            plan.tasks = []
+            plan.notes = []
+            plan.projects = []
+            plan.companies = []
+            
+            do {
+                try plan.validateForDelete()
+                self.moc!.delete(plan)
+
+                PersistenceController.shared.save()
+            } catch {
+                print("[error] CoreDataPlan.deleteAll Unable to delete all plans for date \(date)")
+            }
+        }
     }
 
     public func score(_ plan: Plan) -> Int {

@@ -428,6 +428,7 @@ extension FindDashboard {
             @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
             @State private var hover: Bool = false
+            @State private var showAll: Bool = false
             @FetchRequest private var items: FetchedResults<LogRecord>
             
             @EnvironmentObject public var nav: Navigation
@@ -437,11 +438,12 @@ extension FindDashboard {
                     VStack {
                         Button {
                             showChildren.toggle()
+                            self.showAll.toggle()
                         } label: {
                             ZStack {
                                 Theme.base
                                 HStack(spacing: 1) {
-                                    Text("Showing \(items.prefix(5).count)/\(items.count) Records")
+                                    Text(self.showAll ? "Showing \(items.count) Records" : "Showing \(items.prefix(5).count)/\(items.count) Records")
                                         .font(Theme.fontSubTitle)
                                     Spacer()
                                     Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
@@ -456,7 +458,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(5)) { item in
+                                ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {

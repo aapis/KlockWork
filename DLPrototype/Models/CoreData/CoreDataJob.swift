@@ -70,7 +70,7 @@ public class CoreDataJob: ObservableObject {
         fetch.predicate = NSPredicate(format: "alive == true && project != nil && project.alive == true && project.company.hidden == false")
         fetch.sortDescriptors = [
             NSSortDescriptor(keyPath: \Job.lastUpdate, ascending: false),
-            NSSortDescriptor(keyPath: \Job.project?.name?, ascending: false),
+            NSSortDescriptor(keyPath: \Job.title, ascending: false),
             NSSortDescriptor(keyPath: \Job.jid, ascending: false)
         ]
 
@@ -89,6 +89,7 @@ public class CoreDataJob: ObservableObject {
         fetch.predicate = NSPredicate(format: "alive == true && project == nil")
         fetch.sortDescriptors = [
             NSSortDescriptor(keyPath: \Job.lastUpdate, ascending: false),
+            NSSortDescriptor(keyPath: \Job.title, ascending: false),
             NSSortDescriptor(keyPath: \Job.jid, ascending: false)
         ]
 
