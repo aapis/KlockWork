@@ -18,6 +18,7 @@ struct DefinitionDetail: View {
     @State private var alive: Bool = true
     @State private var job: Job?
     @State private var term: TaxonomyTerm?
+    @State private var isDeleteAlertPresented: Bool = false
     // @TODO: not sure if I want this here
 //    @FocusState private var primaryTextFieldInFocus: Bool
 
@@ -26,6 +27,21 @@ struct DefinitionDetail: View {
             HStack(alignment: .center, spacing: 8) {
                 Title(text: "Definition", image: "list.bullet.rectangle")
                 Spacer()
+                FancyButtonv2(
+                    text: "Delete",
+                    action: {isDeleteAlertPresented = true},
+                    icon: "trash",
+                    showLabel: false,
+                    type: .destructive
+                )
+                .alert("Are you sure you want to delete this term?", isPresented: $isDeleteAlertPresented) {
+                    Button("Yes", role: .destructive) {
+                        self.actionOnSoftDelete()
+                    }
+                    Button("No", role: .cancel) {
+                        self.actionOnCancel()
+                    }
+                }
                 FancyButtonv2(text: "Cancel", action: self.actionOnCancel, showIcon: false)
                 FancyButtonv2(text: "Save", action: self.actionOnSave, showIcon: false)
             }
@@ -94,8 +110,8 @@ extension DefinitionDetail {
                 term: self.term // @TODO: NOTE TO SELF: all new items created will not be associated with terms until we build a term selector
             )
         }
-        PersistenceController.shared.save()
 
+        PersistenceController.shared.save()
         self.state.to(.terms)
     }
     
@@ -111,5 +127,12 @@ extension DefinitionDetail {
             self.job = newJob
             self.jobIdString = newJob.jid.string
         }
+    }
+
+    private func actionOnSoftDelete() -> Void {
+        self.alive = false
+        self.definition?.alive = false
+        PersistenceController.shared.save()
+        self.state.to(.terms)
     }
 }
