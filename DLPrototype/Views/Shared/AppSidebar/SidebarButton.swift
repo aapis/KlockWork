@@ -82,13 +82,6 @@ struct SidebarButton: View, Identifiable {
                             }
                         }
                 }
-            case .terms:
-                HStack(alignment: .top, spacing: 0) {
-                    if nav.session.job != nil {
-                        ActiveIndicator(colour: nav.session.job!.colour_from_stored(), href: .jobs)
-                    }
-                    button.frame(width: 50, height: 50)
-                }
             default: button.frame(width: 50, height: 50)
             }
         case .medium:
