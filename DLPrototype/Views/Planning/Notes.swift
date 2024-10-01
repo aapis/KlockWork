@@ -18,7 +18,7 @@ extension Planning {
         var body: some View {
             if notes.count > 0 {
                 VStack(alignment: .leading, spacing: 0) {
-                    ForEach(notes) { note in
+                    ForEach(notes, id: \.objectID) { note in
                         Row(note: note, colour: colour)
                     }
                 }

@@ -62,7 +62,7 @@ struct Planning: View {
             FancyGenericToolbar(buttons: buttons, standalone: true)
         }
         .padding()
-        .background(self.page.primaryColour)
+        .background(Theme.toolbarColour)
         .onAppear(perform: actionOnAppear)
         .onChange(of: nav.planning.jobs) { self.actionOnChangeJobs(nav.planning.jobs)}
     }

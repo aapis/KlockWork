@@ -93,7 +93,7 @@ extension FindDashboard {
                         
                         if showChildren {
                             VStack(alignment: .leading) {
-                                ForEach(items.prefix(5)) { item in
+                                ForEach(items.prefix(5), id: \.objectID) { item in
                                     VStack(alignment: .leading, spacing: 10) {
                                         Divider()
                                         HStack {
@@ -193,7 +193,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(5)) { item in
+                                ForEach(items.prefix(5), id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -281,7 +281,7 @@ extension FindDashboard {
                         
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(5)) { item in
+                                ForEach(items.prefix(5), id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -378,7 +378,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(5)) { item in
+                                ForEach(items.prefix(5), id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -544,7 +544,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(5)) { item in
+                                ForEach(items.prefix(5), id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -629,7 +629,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(5)) { item in
+                                ForEach(items.prefix(5), id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {

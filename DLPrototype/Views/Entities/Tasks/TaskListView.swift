@@ -48,7 +48,7 @@ struct TaskListView: View {
                             
                             ScrollView(showsIndicators: false) {
                                 VStack(spacing: 1) {
-                                    ForEach(tasks, id: \LogTask.id) { task in
+                                    ForEach(tasks, id: \.id) { task in
                                         TaskView(task: task, showCreated: true, showUpdated: true, showCancelled: true)
                                     }
                                 }

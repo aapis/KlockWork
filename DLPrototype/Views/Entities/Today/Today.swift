@@ -27,6 +27,6 @@ struct Today: View {
                 .padding()
             }
         }
-        .background(self.page.primaryColour)
+        .background(Theme.toolbarColour)
     }
 }

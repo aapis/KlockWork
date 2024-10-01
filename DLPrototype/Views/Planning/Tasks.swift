@@ -17,7 +17,7 @@ extension Planning {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                ForEach(tasks) { task in
+                ForEach(tasks, id: \.objectID) { task in
                     Row(task: task, colour: colour)
                 }
                 .onAppear(perform: actionOnAppear)

@@ -30,7 +30,7 @@ struct ProjectConfig: View {
             FancyTextField(placeholder: "Add a banned word", lineLimit: 1, onSubmit: createBannedWord, text: $bannedWord)
             
             HStack {
-                ForEach(bannedWords) { bad in
+                ForEach(bannedWords, id: \.objectID) { bad in
                     Button(action: {removeFromBannedWordList(bad)}) {
                         HStack {
                             Image(systemName: "multiply")

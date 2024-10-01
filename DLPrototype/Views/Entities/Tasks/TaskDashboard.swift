@@ -36,7 +36,7 @@ struct TaskDashboard: View {
             }
             .padding()
         }
-        .background(self.page.primaryColour)
+        .background(Theme.toolbarColour)
         .onAppear(perform: setJob)
         .id(updater.get("task.dashboard"))
     }
@@ -81,7 +81,7 @@ struct TaskDashboard: View {
                 GridRow {
                     ScrollView(showsIndicators: false) {
                         VStack(alignment: .leading, spacing: 1) {
-                            ForEach(filter(tasks)) { task in
+                            ForEach(filter(tasks), id: \.objectID) { task in
                                 TaskView(task: task, showJobId: true, showCreated: true, showUpdated: true, showCompleted: true, colourizeRow: true)
                             }
                         }

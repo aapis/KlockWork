@@ -20,7 +20,7 @@ extension Planning {
                 ScrollView(.vertical, showsIndicators: false) {
                     let jobs = Array(nav.planning.jobs).sorted(by: {$0.jid > $1.jid})
                     if jobs.count > 0 {
-                        ForEach(jobs) { job in
+                        ForEach(jobs, id: \.objectID) { job in
                             VStack(spacing: 1) {
                                 Planning.Group(job: job, jobs: jobs)
                             }

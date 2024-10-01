@@ -106,7 +106,7 @@ struct ProjectCreate: View {
                 }
                 .frame(height: 40)
             
-                ForEach(allUnOwned, id: \.jid) { job in
+                ForEach(allUnOwned, id: \.objectID) { job in
                     GridRow {
                         Group {
                             ZStack {

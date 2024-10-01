@@ -57,7 +57,7 @@ struct CompanyDashboard: View {
             }
             .padding()
         }
-        .background(self.page.primaryColour)
+        .background(Theme.toolbarColour)
         .onAppear(perform: self.actionOnAppear)
     }
 
@@ -65,7 +65,7 @@ struct CompanyDashboard: View {
         if companies.count > 0 {
             ScrollView(showsIndicators: false) {
                 LazyVGrid(columns: columns, alignment: .leading, spacing: 10) {
-                    ForEach(filter(companies)) { company in
+                    ForEach(filter(companies), id: \.objectID) { company in
                         CompanyBlock(company: company)
                     }
                 }

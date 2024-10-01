@@ -86,7 +86,7 @@ extension ManagePeople {
 
         var body: some View {
             VStack(spacing: 1) {
-                ForEach(people) { person in
+                ForEach(people, id: \.objectID) { person in
                     Grid(alignment: .leading, horizontalSpacing: 1, verticalSpacing: 1) {
                         GridRow {
                             HStack {

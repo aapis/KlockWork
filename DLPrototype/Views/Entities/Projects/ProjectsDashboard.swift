@@ -81,7 +81,7 @@ struct ProjectsDashboard: View {
     var projectsView: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 1) {
-                ForEach(projects) { project in
+                ForEach(projects, id: \.objectID) { project in
                     ProjectRow(project: project)
                 }
             }

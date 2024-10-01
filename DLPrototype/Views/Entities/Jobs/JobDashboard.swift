@@ -128,7 +128,7 @@ struct JobDashboardRedux: View {
             }
             .padding()
         }
-        .background(self.page.primaryColour)
+        .background(Theme.toolbarColour)
     }
 }
 
@@ -259,7 +259,7 @@ struct JobExplorer: View {
                         GridRow {
                             LazyVGrid(columns: columns) {
                                 VStack {
-                                    ForEach(fields.filter({!columnSplit.contains($0.type)})) { field in
+                                    ForEach(fields.filter({!columnSplit.contains($0.type)}), id: \.id) { field in
                                         field.body
                                     }
                                     Spacer()
@@ -267,7 +267,7 @@ struct JobExplorer: View {
                                 .padding([.top, .leading], 8)
 
                                 VStack {
-                                    ForEach(fields.filter({columnSplit.contains($0.type)})) { field in
+                                    ForEach(fields.filter({columnSplit.contains($0.type)}), id: \.id) { field in
                                         field.body
                                     }
                                     FancyDivider()

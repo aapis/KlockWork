@@ -120,7 +120,7 @@ struct NoteDashboard: View {
 
                     ScrollView(showsIndicators: false) {
                         LazyVGrid(columns: columns, alignment: .leading) {
-                            ForEach(filter(notes)) { note in
+                            ForEach(filter(notes), id: \.objectID) { note in
                                 NoteBlock(note: note)
                             }
                         }
@@ -131,7 +131,7 @@ struct NoteDashboard: View {
             }
             .padding()
         }
-        .background(self.page.primaryColour)
+        .background(Theme.toolbarColour)
     }
 }
 
