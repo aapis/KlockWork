@@ -37,23 +37,23 @@ public enum Page {
     var colour: Color {
         switch self {
         case .dashboard:
-            return .blue
+            return PageConfiguration.AppPage.find.primaryColour
         case .today:
-            return .blue
+            return PageConfiguration.AppPage.today.primaryColour
         case .tasks:
-            return .blue
+            return PageConfiguration.AppPage.explore.primaryColour
         case .notes:
-            return .blue
+            return PageConfiguration.AppPage.explore.primaryColour
         case .projects:
-            return .blue
+            return PageConfiguration.AppPage.explore.primaryColour
         case .jobs:
-            return .blue
+            return PageConfiguration.AppPage.explore.primaryColour
         case .companies:
-            return .blue
+            return PageConfiguration.AppPage.explore.primaryColour
         case .planning:
-            return .blue
+            return PageConfiguration.AppPage.planning.primaryColour
         case .terms:
-            return .blue
+            return PageConfiguration.AppPage.explore.primaryColour
         }
     }
 
