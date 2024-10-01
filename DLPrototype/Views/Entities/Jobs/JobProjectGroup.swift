@@ -23,7 +23,7 @@ struct JobProjectGroup: View {
     var body: some View {
         let colour = Color.fromStored(key.colour ?? Theme.rowColourAsDouble)
         
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .firstTextBaseline, spacing: 5) {
                 if let job = nav.session.job {
                     if job.project == key {
@@ -53,28 +53,20 @@ struct JobProjectGroup: View {
             }
             .padding(8)
         }
-        .background(minimized ? colour : Theme.base.opacity(0.3))
+        .background(colour)
         .onAppear(perform: actionOnAppear)
 
         if !minimized {
             VStack(alignment: .leading, spacing: 5) {
                 if let subtasks = self.jobs[key] {
-                    HStack(alignment: .top, spacing: 0) {
-                        ZStack {
-                            colour
-                        }
-                        .frame(width: 5)
-
-                        VStack(alignment: .leading, spacing: 0) {
-                            ForEach(subtasks.filter {$0.id != nil}) { job in
-                                JobRowPicker(job: job, location: location)
-                            }
+                    VStack(alignment: .leading, spacing: 0) {
+                        ForEach(subtasks.filter {$0.id != nil}, id: \.objectID) { job in
+                            JobRowPicker(job: job, location: location)
                         }
                     }
                 }
             }
             .foregroundColor(colour.isBright() ? .black : .white)
-            .border(Theme.base.opacity(0.5), width: 1)
         }
 
         FancyDivider(height: 8)

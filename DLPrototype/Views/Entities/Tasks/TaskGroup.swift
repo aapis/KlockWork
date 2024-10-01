@@ -99,7 +99,7 @@ struct TaskGroup: View {
                     }
 
                     if let st = self.tasks[key] {
-                        ForEach(st) { task in
+                        ForEach(st, id: \.objectID) { task in
                             TaskViewPlain(task: task)
                         }
                     }

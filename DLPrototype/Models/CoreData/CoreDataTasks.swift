@@ -84,8 +84,8 @@ public class CoreDataTasks {
     /// - Returns: FetchRequest<NSManagedObject>
     static public func fetch(for date: Date, limit: Int? = 10, daysPrior: Int = 7) -> FetchRequest<LogTask> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \LogTask.owner?.title, ascending: true),
-            NSSortDescriptor(keyPath: \LogTask.lastUpdate, ascending: true)
+            NSSortDescriptor(keyPath: \LogTask.owner?.title?, ascending: true),
+            NSSortDescriptor(keyPath: \LogTask.due, ascending: true)
         ]
 
         var predicate: NSPredicate
@@ -93,7 +93,9 @@ public class CoreDataTasks {
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
         if let rangeStart = DateHelper.prior(numDays: daysPrior, from: start).last {
             predicate = NSPredicate(
-                format: "((created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@)) && completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false",
+                format: "((created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@) || (due > %@ && due < %@)) && completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false",
+                rangeStart as CVarArg,
+                end as CVarArg,
                 rangeStart as CVarArg,
                 end as CVarArg,
                 rangeStart as CVarArg,
@@ -103,7 +105,9 @@ public class CoreDataTasks {
             )
         } else {
             predicate = NSPredicate(
-                format: "((created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@)) && completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false",
+                format: "((created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@) || (due > %@ && due < %@)) && completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false",
+                start as CVarArg,
+                end as CVarArg,
                 start as CVarArg,
                 end as CVarArg,
                 start as CVarArg,
@@ -128,7 +132,7 @@ public class CoreDataTasks {
     /// - Returns: FetchRequest<NSManagedObject>
     static public func fetch(by job: Job) -> FetchRequest<LogTask> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \LogTask.created, ascending: true)
+            NSSortDescriptor(keyPath: \LogTask.due, ascending: true)
         ]
 
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
@@ -142,8 +146,45 @@ public class CoreDataTasks {
     }
 
     /// Find all upcoming tasks
+    /// - Parameter date: Date
     /// - Returns: FetchRequest<NSManagedObject>
-    static public func fetchUpcoming() -> FetchRequest<LogTask> {
+    static public func fetchUpcoming(_ date: Date = Date()) -> FetchRequest<LogTask> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \LogTask.due, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "due > %@ && (completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false)",
+            date as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
+    /// Find all upcoming tasks
+    /// - Parameter date: Date
+    /// - Returns: FetchRequest<NSManagedObject>
+    static public func fetchDue(on date: Date = Date()) -> FetchRequest<LogTask> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \LogTask.due, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "due > %@ && due <= %@ && (completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false)",
+            date as CVarArg,
+            (DateHelper.endOfDay(date) ?? date) as CVarArg
+        )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
+    /// Find all overdue tasks
+    /// - Returns: FetchRequest<NSManagedObject>
+    static public func fetchOverdue() -> FetchRequest<LogTask> {
         let descriptors = [
             NSSortDescriptor(keyPath: \LogTask.due, ascending: true)
         ]
@@ -151,7 +192,7 @@ public class CoreDataTasks {
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
         let now = Date()
         fetch.predicate = NSPredicate(
-            format: "due > %@ && (completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false)",
+            format: "due < %@ && (completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false)",
             now as CVarArg
         )
         fetch.sortDescriptors = descriptors
@@ -233,6 +274,42 @@ public class CoreDataTasks {
         } catch {
             PersistenceController.shared.save()
         }
+    }
+    
+    /// Set task due date and save
+    /// - Parameters:
+    ///   - date: Date
+    ///   - task: LogTask
+    /// - Returns: Void
+    public func due(on date: Date, task: LogTask) -> Void {
+        task.due = date
+
+        do {
+            try moc!.save()
+
+            CoreDataRecords(moc: moc).createWithJob(
+                job: task.owner!,
+                date: Date(),
+                text: "Delayed task: \(task.content ?? "Invalid task") to \(date.formatted())"
+            )
+        } catch {
+            PersistenceController.shared.save()
+        }
+    }
+
+    /// Find upcoming events
+    /// - Returns: Array<LogTask>
+    public func dueToday(_ date: Date = Date()) -> [LogTask] {
+        let predicate = NSPredicate(
+            format: "due > %@ && due <= %@ && (completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false)",
+            date as CVarArg,
+            (DateHelper.endOfDay(date) ?? date) as CVarArg
+        )
+        let sort = [
+            NSSortDescriptor(keyPath: \LogTask.due, ascending: true)
+        ]
+
+        return query(predicate, sort)
     }
 
     public func all() -> [LogTask] {
@@ -349,12 +426,12 @@ public class CoreDataTasks {
         return newTask
     }
 
-    private func query(_ predicate: NSPredicate) -> [LogTask] {
+    private func query(_ predicate: NSPredicate, _ sort: [NSSortDescriptor] = [NSSortDescriptor(keyPath: \LogTask.created?, ascending: false)]) -> [LogTask] {
         lock.lock()
 
         var results: [LogTask] = []
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogTask.created?, ascending: true)]
+        fetch.sortDescriptors = sort
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
 

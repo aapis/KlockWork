@@ -12,13 +12,13 @@ import CoreData
 
 public class CoreDataTaxonomyTerms {
     public var moc: NSManagedObjectContext?
-
+    
     private let lock = NSLock()
-
+    
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
     }
-
+    
     /// Find tasks whose content matches a given string
     /// - Parameter term: String
     /// - Returns: FetchRequest<TaxonomyTerm>
@@ -26,17 +26,35 @@ public class CoreDataTaxonomyTerms {
         let descriptors = [
             NSSortDescriptor(keyPath: \TaxonomyTerm.created, ascending: true)
         ]
-
+        
         let fetch: NSFetchRequest<TaxonomyTerm> = TaxonomyTerm.fetchRequest()
         fetch.predicate = NSPredicate(
-            format: "ANY name CONTAINS[c] %@",
+            format: "alive == true && name CONTAINS %@",
             term
         )
         fetch.sortDescriptors = descriptors
-
+        
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
-
+    
+    /// Find tasks whose content matches a given string
+    /// - Parameter job: Job
+    /// - Returns: FetchRequest<TaxonomyTerm>
+    static public func fetch(job: Job) -> FetchRequest<TaxonomyTerm> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \TaxonomyTerm.created, ascending: true)
+        ]
+        
+        let fetch: NSFetchRequest<TaxonomyTerm> = TaxonomyTerm.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "ANY definitions.job == %@",
+            job
+        )
+        fetch.sortDescriptors = descriptors
+        
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+    
     /// Find all terms owned by a given Job
     /// - Parameters:
     ///   - job: Job
@@ -45,17 +63,17 @@ public class CoreDataTaxonomyTerms {
         let descriptors = [
             NSSortDescriptor(keyPath: \TaxonomyTermDefinitions.created, ascending: false)
         ]
-
+        
         let fetch: NSFetchRequest<TaxonomyTermDefinitions> = TaxonomyTermDefinitions.fetchRequest()
         fetch.predicate = NSPredicate(
             format: "alive == true && job == %@",
             job as CVarArg
         )
         fetch.sortDescriptors = descriptors
-
+        
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
-    
+
     /// Find taxonomy terms by name (key)
     /// - Parameter name: String
     /// - Returns: Optional(TaxonomyTerm)
@@ -67,6 +85,24 @@ public class CoreDataTaxonomyTerms {
         }
 
         return results.first
+    }
+
+    /// Find taxonomy terms by job
+    /// - Parameter job: Job
+    /// - Returns: Optional(TaxonomyTerm)
+    public func byJob(_ job: Job) -> [TaxonomyTerm]? {
+        let results = self.query(
+            NSPredicate(
+                format: "ANY definitions.job == %@",
+                job
+            )
+        )
+
+        if results.isEmpty {
+            return nil
+        }
+
+        return results
     }
 
     /// All taxonomy terms

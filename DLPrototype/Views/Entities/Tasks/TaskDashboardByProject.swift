@@ -25,7 +25,7 @@ struct TaskDashboardByProject: View {
                     if tasks.count > 0 {
                         ScrollView(showsIndicators: false) {
                             VStack(alignment: .leading, spacing: 1) {
-                                ForEach(tasks) { task in
+                                ForEach(tasks, id: \.objectID) { task in
                                     TaskView(task: task, showJobId: true, showCreated: true, showUpdated: true, showCompleted: true, colourizeRow: true)
                                 }
                             }
@@ -84,7 +84,7 @@ extension TaskDashboardByProject {
                     .padding()
                     .background(Theme.rowColour)
 
-                ForEach(jobs, id: \.self) { job in
+                ForEach(jobs, id: \.objectID) { job in
                     FancyTextLink(text: String(job.id_int()), destination: AnyView(JobDashboard(defaultSelectedJob: job)), fgColour: job.fgColour(), pageType: .jobs, sidebar: AnyView(JobDashboardSidebar()))
                         .padding()
                         .background(job.colour_from_stored())

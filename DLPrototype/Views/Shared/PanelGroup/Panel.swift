@@ -48,6 +48,7 @@ public struct Panel {
                                 .help("This is your default company. Change this in Settings")
                         }
                         Text(config.text)
+                            .multilineTextAlignment(.leading)
                         Spacer()
                         Image(systemName: "arrow.right")
                             .opacity(config.position == .last ? 0 : 1)
@@ -138,7 +139,7 @@ struct CompanyPanel: View {
                         if !firstColData.isEmpty {
                             ScrollView {
                                 VStack(alignment: .leading, spacing: 1) {
-                                    ForEach(firstColData) { company in
+                                    ForEach(firstColData, id: \.objectID) { company in
                                         Panel.Row(
                                             config: Panel.RowConfiguration(
                                                 text: company.name?.capitalized ?? "_COMPANY_NAME",
@@ -175,7 +176,7 @@ struct CompanyPanel: View {
                         if !nav.forms.tp.middle.isEmpty {
                             ScrollView {
                                 VStack(alignment: .leading, spacing: 1) {
-                                    ForEach(nav.forms.tp.middle) { project in
+                                    ForEach(nav.forms.tp.middle, id: \.objectID) { project in
                                         Panel.Row(
                                             config: Panel.RowConfiguration(
                                                 text: project.name!.capitalized,
@@ -306,7 +307,7 @@ struct ProjectPanel: View {
                     if !nav.forms.tp.middle.isEmpty {
                         ScrollView {
                             VStack(alignment: .leading, spacing: 1) {
-                                ForEach(nav.forms.tp.middle) { project in
+                                ForEach(nav.forms.tp.middle, id: \.objectID) { project in
                                     Panel.Row(
                                         config: Panel.RowConfiguration(
                                             text: project.name!,

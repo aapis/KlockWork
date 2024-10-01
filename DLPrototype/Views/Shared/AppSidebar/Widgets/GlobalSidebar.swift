@@ -1,15 +1,15 @@
 //
-//  ContentView.swift
+//  GlobalSidebar.swift
 //  DLPrototype
 //
-//  Created by Ryan Priebe on 2020-07-09.
-//  Copyright © 2020 YegCollective. All rights reserved.
+//  Created by Ryan Priebe on 2024-09-30.
+//  Copyright © 2024 YegCollective. All rights reserved.
 //
 
 import EventKit
 import SwiftUI
 
-struct Home: View {
+struct GlobalSidebar: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
 
@@ -93,7 +93,7 @@ struct Home: View {
         ]
     }
 
-    var body: some View {
+    var body3: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top, spacing: 0) {
@@ -102,14 +102,7 @@ struct Home: View {
                         Sidebar
                     }
 
-                    Divider().background(Theme.rowColour)
-                    ZStack(alignment: .leading) {
-                        InspectorAndMain
-                        LinearGradient(colors: [Theme.base, .clear], startPoint: .leading, endPoint: .trailing)
-                            .opacity(0.1)
-                            .blendMode(.softLight)
-                            .frame(width: 20)
-                    }
+                    InspectorAndMain
 
                     if showSessionInspector {
                         SessionInspector()
@@ -120,27 +113,17 @@ struct Home: View {
     }
 
     @ViewBuilder var Sidebar: some View {
-        ZStack(alignment: .trailing) {
-            Color.white
-                .opacity(0.4)
-                .blendMode(.softLight)
-            LinearGradient(colors: [.white, .clear], startPoint: .trailing, endPoint: .leading)
-                .opacity(0.1)
-                .blendMode(.softLight)
-                .frame(width: 40)
+        VStack(alignment: .leading, spacing: 0) {
+            GlobalSidebarWidgets()
 
-            VStack(alignment: .leading, spacing: 0) {
-                GlobalSidebarWidgets()
-
-                if !isSearchStackShowing {
-                    if isDatePickerPresented {
-                        ZStack {
-                            nav.sidebar
-                            Color.black.opacity(0.7)
-                        }
-                    } else {
+            if !isSearchStackShowing {
+                if isDatePickerPresented {
+                    ZStack {
                         nav.sidebar
+                        Color.black.opacity(0.7)
                     }
+                } else {
+                    nav.sidebar
                 }
             }
         }
@@ -236,7 +219,7 @@ struct Home: View {
         }
     }
 
-    var body2: some View {
+    var body: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .top, spacing: 0) {
                 VStack(alignment: .leading) {
@@ -260,7 +243,7 @@ struct Home: View {
                     if nav.sidebar != nil {
                         VStack(alignment: .leading, spacing: 0) {
                             GlobalSidebarWidgets()
-                            
+
                             if !isSearchStackShowing {
                                 if isDatePickerPresented {
                                     ZStack {
@@ -344,7 +327,7 @@ struct Home: View {
                             }
                         }
                     }
-                    
+
                     if showSessionInspector {
                         SessionInspector()
                     }
@@ -353,10 +336,12 @@ struct Home: View {
         }
         .background(Theme.base)
         .onAppear(perform: onAppear)
-        .onChange(of: nav.parent!) { buttonToHighlight in
-            selectedSidebarButton = buttonToHighlight
+        .onChange(of: nav.parent) {
+            if nav.parent != nil {
+                selectedSidebarButton = nav.parent!
+            }
         }
-        .onChange(of: nav.session.eventStatus) { status in
+        .onChange(of: nav.session.eventStatus) {
 
         }
     }
@@ -399,8 +384,8 @@ struct Home: View {
             nav.session.eventStatus = updateIndicator()
         }
     }
-    
-    /// Updates the dashboard icon upcoming event indicator 
+
+    /// Updates the dashboard icon upcoming event indicator
     /// - Returns: EventIndicatorStatus
     private func updateIndicator() -> EventIndicatorStatus {
         let ce = CoreDataCalendarEvent(moc: moc)

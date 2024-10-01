@@ -36,7 +36,7 @@ struct ManageOwnedProjects: View {
                     }
                     FancyDivider()
 
-                    ForEach(projects) { project in
+                    ForEach(projects, id: \.objectID) { project in
                         Grid(alignment: .leading, horizontalSpacing: 1, verticalSpacing: 1) {
                             GridRow {
                                 HStack {
@@ -71,7 +71,7 @@ struct ManageOwnedProjects: View {
                     }
                     FancyDivider()
 
-                    ForEach(unowned) { project in
+                    ForEach(unowned, id: \.objectID) { project in
                         Grid(alignment: .leading, horizontalSpacing: 1, verticalSpacing: 1) {
                             GridRow {
                                 HStack {

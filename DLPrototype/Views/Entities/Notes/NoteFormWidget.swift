@@ -296,7 +296,7 @@ struct NoteFormWidget: View {
                 if filteredJobs.count > 0 {
                     ScrollView {
                         VStack(spacing: 1) {
-                            ForEach(filteredJobs) { job in
+                            ForEach(filteredJobs, id: \.objectID) { job in
                                 FancyButtonv2(
                                     text: job.jid.string,
                                     action: {choose(job)},
@@ -391,7 +391,7 @@ struct NoteFormWidget: View {
                 if showVersions {
                     ScrollView {
                         VStack(spacing: 1) {
-                            ForEach(versions) { version in
+                            ForEach(versions, id: \.objectID) { version in
                                 if let date = version.created {
                                     FancyButtonv2(
                                         text: self.labelText(date: date, version: version),

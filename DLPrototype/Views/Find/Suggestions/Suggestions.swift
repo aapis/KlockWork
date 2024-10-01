@@ -54,7 +54,7 @@ extension FindDashboard {
                 }
             }
             .background(location == .content ? Theme.rowColour : Color.clear)
-            .onChange(of: isSearching) { status in
+            .onChange(of: isSearching) {
                 nav.session.search.cancel()
                 nav.setInspector()
             }
@@ -93,7 +93,7 @@ extension FindDashboard {
                         
                         if showChildren {
                             VStack(alignment: .leading) {
-                                ForEach(items.prefix(5)) { item in
+                                ForEach(items.prefix(5), id: \.objectID) { item in
                                     VStack(alignment: .leading, spacing: 10) {
                                         Divider()
                                         HStack {
@@ -193,7 +193,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(5)) { item in
+                                ForEach(items.prefix(5), id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -281,7 +281,7 @@ extension FindDashboard {
                         
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(5)) { item in
+                                ForEach(items.prefix(5), id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -378,7 +378,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(5)) { item in
+                                ForEach(items.prefix(5), id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -428,6 +428,7 @@ extension FindDashboard {
             @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
             @State private var hover: Bool = false
+            @State private var showAll: Bool = false
             @FetchRequest private var items: FetchedResults<LogRecord>
             
             @EnvironmentObject public var nav: Navigation
@@ -437,11 +438,12 @@ extension FindDashboard {
                     VStack {
                         Button {
                             showChildren.toggle()
+                            self.showAll.toggle()
                         } label: {
                             ZStack {
                                 Theme.base
                                 HStack(spacing: 1) {
-                                    Text("Showing \(items.prefix(5).count)/\(items.count) Records")
+                                    Text(self.showAll ? "Showing \(items.count) Records" : "Showing \(items.prefix(5).count)/\(items.count) Records")
                                         .font(Theme.fontSubTitle)
                                     Spacer()
                                     Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
@@ -456,7 +458,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(5)) { item in
+                                ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -542,7 +544,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(5)) { item in
+                                ForEach(items.prefix(5), id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -627,7 +629,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(5)) { item in
+                                ForEach(items.prefix(5), id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -693,13 +695,13 @@ extension FindDashboard.Suggestions.SuggestedJobs {
     /// - Returns: Void
     private func setContext(_ item: Job) -> Void {
         switch nav.parent {
-        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today:
+        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today, .terms:
             nav.session.job = item
         case .planning:
             nav.planning.jobs.insert(item)
             // @TODO: this throws "Can't do a substring operation with something that isn't a string (lhs = 870732407166554 rhs = 55)"
 //            nav.planning.projects.insert(item.project!)
-        case .none:
+        default:
             print("no op")
         }
     }
@@ -736,7 +738,7 @@ extension FindDashboard.Suggestions.SuggestedNotes {
     /// - Returns: Void
     private func setContext(_ item: Note) -> Void {
         switch nav.parent {
-        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today:
+        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today, .terms:
             nav.session.job = item.mJob
         case .planning:
             if let job = item.mJob {
@@ -746,7 +748,7 @@ extension FindDashboard.Suggestions.SuggestedNotes {
             nav.planning.notes.insert(item)
             // @TODO: this throws "Can't do a substring operation with something that isn't a string (lhs = 870732407166554 rhs = 55)"
 //            nav.planning.projects.insert(item.project!)
-        case .none:
+        default:
             print("no op")
         }
     }

@@ -67,25 +67,25 @@ struct JobPickerWidget: View {
             .background(Theme.base.opacity(0.2))
 
             VStack {
-                    if isSettingsPresented {
-                        Settings(
-                            minimizeAll: $minimizeAll
-                        )
-                    } else {
-                        VStack(alignment: .leading, spacing: 0) {
-                            if sorted.count > 0 {
-                                ForEach(sorted, id: \.element) { index, key in
-                                    JobProjectGroup(index: index, key: key, jobs: grouped, location: location)
-                                }
-                            } else {
-                                SidebarItem(
-                                    data: "No jobs matching query",
-                                    help: "No jobs matching query",
-                                    role: .important
-                                )
+                if isSettingsPresented {
+                    Settings(
+                        minimizeAll: $minimizeAll
+                    )
+                } else {
+                    VStack(alignment: .leading, spacing: 0) {
+                        if sorted.count > 0 {
+                            ForEach(sorted, id: \.element) { index, key in
+                                JobProjectGroup(index: index, key: key, jobs: grouped, location: location)
                             }
+                        } else {
+                            SidebarItem(
+                                data: "No jobs matching query",
+                                help: "No jobs matching query",
+                                role: .important
+                            )
                         }
                     }
+                }
             }
             .padding(8)
             .background(Theme.base.opacity(0.2))

@@ -20,7 +20,7 @@ struct OutlineWidget: View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 10) {
                 if companies.count > 0 {
-                    ForEach(companies) { company in
+                    ForEach(companies, id: \.objectID) { company in
                         Group {
                             HStack {
                                 if company.isDefault {
@@ -44,7 +44,7 @@ struct OutlineWidget: View {
                     Divider()
                     VStack(alignment: .leading) {
                         Text("Unowned Projects")
-                        ForEach(unowned) { project in
+                        ForEach(unowned, id: \.objectID) { project in
                             HStack {
                                 Image(systemName: "folder")
                                 FancyTextLink(text: "[\(project.abbreviation != nil ? project.abbreviation!.uppercased() : "NOPE")] \(project.name!.capitalized)", destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
@@ -59,7 +59,7 @@ struct OutlineWidget: View {
         }
         .background(Theme.base.opacity(0.2))
         .onAppear(perform: actionOnAppear)
-        .onChange(of: defaultCompany) { _ in
+        .onChange(of: defaultCompany) {
             actionOnAppear()
         }
     }
@@ -163,9 +163,9 @@ extension ProjectOutline {
                     panelContents
                 }
             }
-            .onChange(of: panelOpen) { newStatus in
+            .onChange(of: panelOpen) {
                 // only calculate when opening the panel
-                if newStatus == true {
+                if self.panelOpen == true {
                     self.generateStatisticsFor(project)
                 }
             }

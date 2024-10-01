@@ -57,6 +57,77 @@ public class CoreDataTaxonomyTermDefinitions {
         return self.query(NSPredicate(format: "alive == true"))
     }
 
+    /// Find definitions for a given job
+    /// - Parameter job: Job
+    /// - Returns: [TaxonomyTermDefinitions]
+    public func definitions(for job: Job) -> [TaxonomyTermDefinitions] {
+        let results = self.query(
+            NSPredicate(
+                format: "alive == true && job == %@",
+                job
+            )
+        )
+
+        return results
+    }
+
+    /// Create a new TaxonomyTermDefinitions
+    /// - Parameters:
+    ///   - alive: Bool
+    ///   - created: Date
+    ///   - definition: String
+    ///   - lastUpdate: Date
+    ///   - job: Job?
+    ///   - term: TaxonomyTerm?
+    /// - Returns: TaxonomyTermDefinitions
+    public func create(alive: Bool, created: Date, definition: String, lastUpdate: Date, job: Job?, term: TaxonomyTerm?, saveByDefault: Bool = true) -> Void {
+        let _ = self.make(alive: alive, created: created, definition: definition, lastUpdate: lastUpdate, job: job, term: term, saveByDefault: saveByDefault)
+    }
+
+    /// Create a new TaxonomyTermDefinitions
+    /// - Parameters:
+    ///   - alive: Bool
+    ///   - created: Date
+    ///   - definition: String
+    ///   - lastUpdate: Date
+    ///   - job: Job?
+    ///   - term: TaxonomyTerm?
+    /// - Returns: TaxonomyTermDefinitions
+    public func createAndReturn(alive: Bool, created: Date, definition: String, lastUpdate: Date, job: Job?, term: TaxonomyTerm?, saveByDefault: Bool = true) -> TaxonomyTermDefinitions {
+        return self.make(alive: alive, created: created, definition: definition, lastUpdate: lastUpdate, job: job, term: term, saveByDefault: saveByDefault)
+    }
+
+    /// Create a new TaxonomyTermDefinitions
+    /// - Parameters:
+    ///   - alive: Bool
+    ///   - created: Date
+    ///   - definition: String
+    ///   - lastUpdate: Date
+    ///   - job: Job?
+    ///   - term: TaxonomyTerm?
+    /// - Returns: TaxonomyTermDefinitions
+    private func make(alive: Bool, created: Date, definition: String, lastUpdate: Date, job: Job?, term: TaxonomyTerm?, saveByDefault: Bool = true) -> TaxonomyTermDefinitions {
+        let def = TaxonomyTermDefinitions(context: self.moc!)
+        def.alive = alive
+        def.created = created
+        def.definition = definition
+        def.lastUpdate = Date()
+
+        if job != nil {
+            def.job = job!
+        }
+
+        if term != nil {
+            def.term = term!
+        }
+
+        if saveByDefault {
+            PersistenceController.shared.save()
+        }
+
+        return def
+    }
+
     /// Query function, finds and filters notes
     /// - Parameter predicate: A predicate to modify the results
     /// - Returns: Array<NoteVersion>

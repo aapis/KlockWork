@@ -50,6 +50,17 @@ final public class DateHelper {
         return Calendar.current.startOfDay(for: previousDate) as CVarArg
     }
     
+    /// Returns a CVarArg object representing a date in the future
+    /// - Parameters:
+    ///   - numDays: Double
+    ///   - date: Date
+    /// - Returns: Date
+    static public func daysAhead(_ numDays: Double, from date: Date = Date()) -> Date {
+        let nextDate = date + (86400 * numDays)
+
+        return Calendar.current.startOfDay(for: nextDate)
+    }
+
     /// Returns a list of date objects representing the numDays prior to from
     /// - Parameter numDays: Double
     /// - Parameter from: Date
@@ -203,6 +214,40 @@ final public class DateHelper {
             Calendar.autoupdatingCurrent.date(byAdding: components, to: start)!
         )
     }
+    
+    /// Sets a date object's time properties to 00:00:01
+    /// - Parameter date: Date
+    /// - Returns: Optional(Date)
+    static public func startOfDay(_ date: Date = Date()) -> Date {
+        var calendar = Calendar.autoupdatingCurrent
+        calendar.timeZone = TimeZone.autoupdatingCurrent
+        return calendar.startOfDay(for: date)
+    }
+
+    /// Sets a date object's time properties to 23:59:59
+    /// - Parameter date: Date
+    /// - Returns: Optional(Date)
+    static public func endOfDay(_ date: Date = Date()) -> Date? {
+        if let newDate = Calendar.autoupdatingCurrent.date(bySettingHour: 23, minute: 59, second: 59, of: date) {
+            return newDate
+        }
+
+        return nil
+    }
+
+    /// Increments date by 1 and set time properties to 23:59:59
+    /// - Parameter date: Date
+    /// - Returns: Optional(Date)
+    static public func endOfTomorrow(_ date: Date = Date()) -> Date? {
+        var dc = DateComponents()
+        dc.day = +1
+        
+        if let newDate = Calendar.autoupdatingCurrent.date(byAdding: dc, to: date) {
+            return DateHelper.endOfDay(newDate)
+        }
+
+        return nil
+    }
 
     static public func bounds(_ date: Date) -> DateBounds {
         let start = Calendar.autoupdatingCurrent.startOfDay(for: date)
@@ -278,5 +323,36 @@ final public class DateHelper {
         }
 
         return false
+    }
+
+    /// Checks to see if the selected date is the current day
+    /// - Parameter day: Date
+    /// - Returns: Bool
+    static public func isToday(_ date: Date) -> Bool {
+        let df = DateFormatter()
+        df.dateFormat = "MM-dd"
+        df.timeZone = TimeZone.autoupdatingCurrent
+        df.locale = NSLocale.current
+
+        let currDate = df.string(from: Date())
+        let compDate = df.string(from: date)
+
+        return currDate == compDate
+    }
+    
+    /// Get date objects representing 1 calendar week, as a range
+    /// - Parameters:
+    ///   - weekOfYear: Int
+    ///   - date: Date
+    /// - Returns: Range<Date>
+    static public func datesForWeek(_ weekOfYear: Int, for date: Date = Date()) -> Range<Date> {
+        let calendar = Calendar.current
+        let year = calendar.component(.yearForWeekOfYear, from: date)
+        let startComponents = DateComponents(weekOfYear: weekOfYear, yearForWeekOfYear: year)
+        let startDate = calendar.date(from: startComponents)!
+        let endComponents = DateComponents(day:7, second: -1)
+        let endDate = calendar.date(byAdding: endComponents, to: startDate)!
+
+        return startDate..<endDate
     }
 }

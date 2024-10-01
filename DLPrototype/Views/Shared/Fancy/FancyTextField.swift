@@ -58,7 +58,7 @@ struct FancyTextField: View {
             .disableAutocorrection(!enableAutoCorrection)
             .padding(padding)
             .onSubmit(onSubmit ?? {})
-            .onChange(of: text) { newText in self.onChange != nil ? self.onChange!(newText) : nil }
+            .onChange(of: text) { self.onChange != nil ? self.onChange!(self.text) : nil }
             .background(fieldStatus == .standard ? (transparent! ? Color.clear : bgColour) : fieldStatus == .unsaved ? Color.yellow : Theme.cGreen) // sorry
             .frame(height: 45)
             .lineLimit(1)
@@ -75,7 +75,7 @@ struct FancyTextField: View {
             .disableAutocorrection(!enableAutoCorrection)
             .padding(padding)
             .onSubmit(onSubmit ?? {})
-            .onChange(of: text) { newText in self.onChange != nil ? self.onChange!(newText) : nil }
+            .onChange(of: text) { self.onChange != nil ? self.onChange!(self.text) : nil }
             .background(fieldStatus == .standard ? (transparent! ? Color.clear : bgColour) : fieldStatus == .unsaved ? Color.yellow : Theme.cGreen) // sorry
             .lineLimit(lineLimit...)
             .disabled(disabled ?? false)
@@ -91,7 +91,7 @@ struct FancyTextField: View {
             .disableAutocorrection(!enableAutoCorrection)
             .padding(padding)
             .onSubmit(onSubmit ?? {})
-            .onChange(of: text) { newText in self.onChange != nil ? self.onChange!(newText) : nil }
+            .onChange(of: text) { self.onChange != nil ? self.onChange!(self.text) : nil }
             .background(fieldStatus == .standard ? (transparent! ? Color.clear : bgColour) : fieldStatus == .unsaved ? Color.yellow : Theme.cGreen) // sorry
             .scrollContentBackground(.hidden)
             .lineLimit(lineLimit...)

@@ -11,7 +11,8 @@ import SwiftUI
 
 struct TaskDashboard: View {
     public var defaultSelectedJob: Job?
-    
+    private let page: PageConfiguration.AppPage = .explore
+
     @State private var searchText: String = ""
     @State private var selectedJob: Int = 0
     @State private var jobId: String = ""
@@ -80,7 +81,7 @@ struct TaskDashboard: View {
                 GridRow {
                     ScrollView(showsIndicators: false) {
                         VStack(alignment: .leading, spacing: 1) {
-                            ForEach(filter(tasks)) { task in
+                            ForEach(filter(tasks), id: \.objectID) { task in
                                 TaskView(task: task, showJobId: true, showCreated: true, showUpdated: true, showCompleted: true, colourizeRow: true)
                             }
                         }
@@ -103,7 +104,7 @@ struct TaskDashboard: View {
 
             JobPickerUsing(onChange: change, jobId: $jobId)
                 .onAppear(perform: setJob)
-                .onChange(of: selectedJob) { _ in
+                .onChange(of: selectedJob) {
                     setJob()
                 }
             if job != nil {

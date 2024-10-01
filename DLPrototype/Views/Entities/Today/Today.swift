@@ -1,5 +1,5 @@
 //
-//  Add.swift
+//  Today.swift
 //  DLPrototype
 //
 //  Created by Ryan Priebe on 2020-07-10.
@@ -9,7 +9,8 @@ import SwiftUI
 
 struct Today: View {
     public var defaultSelectedDate: Date? = nil
-    
+    private let page: PageConfiguration.AppPage = .today
+
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
 
     @EnvironmentObject public var nav: Navigation

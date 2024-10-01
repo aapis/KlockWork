@@ -38,7 +38,7 @@ struct CommandLineInterface: View {
             }
             
             ZStack {
-                ForEach(apps) { app in
+                ForEach(apps, id: \.id) { app in
                     if app.type == selected {
                         app
                     }
@@ -467,7 +467,7 @@ extension CommandLineInterface {
                     VStack(alignment: .leading, spacing: 2) {
                         ScrollView {
                             VStack(spacing: 1) {
-                                ForEach(nav.session.cli.history) { line in
+                                ForEach(nav.session.cli.history, id: \.id) { line in
                                     HStack(spacing: 0) {
                                         if let job = line.job {
                                             if let project = job.project {
@@ -561,7 +561,7 @@ extension CommandLineInterface {
                 Text("Choose an app from the list")
                     .padding()
 
-                ForEach(apps) { app in
+                ForEach(apps, id: \.id) { app in
                     app
                 }
             }

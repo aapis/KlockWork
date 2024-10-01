@@ -87,13 +87,17 @@ struct SidebarItem: View, Identifiable {
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {
-        HStack(alignment: .top, spacing: 0) {
+        HStack(alignment: .firstTextBaseline, spacing: 0) {
             if orientation == .left {
-                if showButton {ItemIcon}
-                ItemLabel
+                HStack(alignment: .top, spacing: 0) {
+                    if showButton {ItemIcon}
+                    ItemLabel
+                }
             } else {
-                ItemLabel
-                if showButton {ItemIcon}
+                HStack(alignment: .top, spacing: 0) {
+                    ItemLabel
+                    if showButton {ItemIcon}
+                }
             }
         }
         .border(.black.opacity(0.2), width: (showBorder ? 1 : 0))
@@ -122,23 +126,21 @@ struct SidebarItem: View, Identifiable {
                         role.colour
                     }
                     
-                    VStack {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Spacer()
                         if let alt = altIcon {
                             if highlighted {
                                 Image(systemName: alt)
-                                    .font(.title2)
-                                    .frame(maxWidth: 30, maxHeight: 30)
                             } else {
                                 Image(systemName: ic)
-                                    .font(.title2)
-                                    .frame(maxWidth: 30, maxHeight: 30)
+
                             }
                         } else {
                             Image(systemName: ic)
-                                .font(.title2)
-                                .frame(maxWidth: 30, maxHeight: 30)
                         }
+                        Spacer()
                     }
+                    .font(.title2)
                 }
                 .frame(width: type.iconFrameSize)
             }
@@ -148,18 +150,15 @@ struct SidebarItem: View, Identifiable {
     }
 
     private var ItemLabel: some View {
-        ZStack(alignment: .topLeading) {
-            if ![.important, .action].contains(role) {
-                role.colour.opacity(0.02)
-            } else {
-                role.colour
-            }
-
+        HStack(alignment: .center, spacing: 0) {
             Text(data)
                 .help(help)
                 .padding(type.padding)
                 .fixedSize(horizontal: false, vertical: true)
+                .multilineTextAlignment(.leading)
+            Spacer()
         }
+        .background([.important, .action].contains(role) ? role.colour.opacity(0.02) : .clear)
     }
 }
 

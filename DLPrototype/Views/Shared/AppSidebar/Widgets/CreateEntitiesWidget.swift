@@ -38,10 +38,13 @@ struct CreateEntitiesWidget: View {
                 .background(Theme.base.opacity(0.5))
             }
         }
+        .padding(self.isCreateStackShowing ? .top : [.top, .bottom])
+        .border(width: 1, edges: [.bottom], color: Theme.rowColour)
+        .background(Theme.base.blendMode(.softLight).opacity(0.3))
         .onAppear(perform: actionOnAppear)
-        .onChange(of: nav.planning.tasks, perform: actionOnChangeOfTasks)
-        .onChange(of: nav.planning.jobs, perform: actionOnChangeOfJobs)
-        .onChange(of: nav.planning.notes, perform: actionOnChangeOfNotes)
+        .onChange(of: nav.planning.tasks) { self.actionOnChangeOfTasks() }
+        .onChange(of: nav.planning.jobs) { self.actionOnChangeOfJobs() }
+        .onChange(of: nav.planning.notes) { self.actionOnChangeOfNotes() }
     }
 
     private var Buttons: some View {
@@ -120,6 +123,8 @@ struct CreateEntitiesWidget: View {
                                 if nav.session.gif == .privacy { nav.session.gif = .normal } else { nav.session.gif = .privacy }
                             },
                             icon: nav.session.gif == .privacy ? "eye" : "eye.slash",
+                            fgColour: nav.session.job?.colour_from_stored().isBright() ?? false ? .black : .white,
+                            bgColour: nav.session.job?.colour_from_stored() ?? nil,
                             showLabel: false,
                             size: .small,
                             type: nav.session.gif == .privacy ? .secondary : .standard
@@ -152,6 +157,8 @@ struct CreateEntitiesWidget: View {
                             text: "Create companies, jobs, notes, projects or tasks.",
                             action: {active.toggle() ; isSearchStackShowing = false},
                             icon: "doc",
+                            fgColour: nav.session.job?.colour_from_stored().isBright() ?? false ? .black : .white,
+                            bgColour: nav.session.job?.colour_from_stored() ?? nil,
                             showLabel: false,
                             size: .small,
                             type: active ? .secondary : .standard
@@ -187,6 +194,8 @@ struct CreateEntitiesWidget: View {
                             text: "Search",
                             action: {active.toggle() ; isSearching.toggle() ; isCreateStackShowing = false ; nav.session.search.cancel()},
                             icon: "magnifyingglass",
+                            fgColour: nav.session.job?.colour_from_stored().isBright() ?? false ? .black : .white,
+                            bgColour: nav.session.job?.colour_from_stored() ?? nil,
                             showLabel: false,
                             size: .small,
                             type: active ? .secondary : .standard
@@ -343,24 +352,24 @@ extension CreateEntitiesWidget {
         findPlan()
     }
 
-    private func actionOnChangeOfTasks(_ items: Set<LogTask>) -> Void {
-        if (items.count + nav.planning.jobs.count + nav.planning.notes.count) == 0 {
+    private func actionOnChangeOfTasks() -> Void {
+        if (nav.planning.taskCount() + nav.planning.jobs.count + nav.planning.notes.count) == 0 {
             nav.planning = Navigation.PlanningState(moc: nav.planning.moc)
         }
 
         findPlan()
     }
 
-    private func actionOnChangeOfJobs(_ items: Set<Job>) -> Void {
-        if (items.count + nav.planning.tasks.count + nav.planning.notes.count) == 0 {
+    private func actionOnChangeOfJobs() -> Void {
+        if (nav.planning.jobs.count + nav.planning.tasks.count + nav.planning.notes.count) == 0 {
             nav.planning = Navigation.PlanningState(moc: nav.planning.moc)
         }
 
         findPlan()
     }
 
-    private func actionOnChangeOfNotes(_ items: Set<Note>) -> Void {
-        if (items.count + nav.planning.jobs.count + nav.planning.tasks.count) == 0 {
+    private func actionOnChangeOfNotes() -> Void {
+        if (nav.planning.notes.count + nav.planning.jobs.count + nav.planning.tasks.count) == 0 {
             nav.planning = Navigation.PlanningState(moc: nav.planning.moc)
         }
 

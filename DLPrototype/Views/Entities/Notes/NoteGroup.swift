@@ -61,7 +61,7 @@ struct NoteGroup: View {
             if !minimized {
                 VStack(alignment: .leading, spacing: 5) {
                     if let subtasks = self.notes[key] {
-                        ForEach(subtasks) { note in
+                        ForEach(subtasks, id: \.objectID) { note in
                             NoteRowPlain(note: note, moc: moc)
                         }
                     }

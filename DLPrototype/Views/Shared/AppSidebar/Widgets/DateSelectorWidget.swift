@@ -11,6 +11,7 @@ import SwiftUI
 // @TODO: https://developer.apple.com/documentation/swiftui/datepickerstyle/field use this somehow
 struct DateSelectorWidget: View {
     @State private var days: [IdentifiableDay] = []
+    @State private var highlighted: Bool = false
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject private var nav: Navigation
@@ -22,59 +23,62 @@ struct DateSelectorWidget: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center) {
-                FancyButtonv2(
-                    text: "Previous day",
-                    action: actionPreviousDay,
-                    icon: "chevron.left",
-                    fgColour: .black,
-                    showLabel: false,
-                    size: .titleLink,
-                    type: .titleLink
-                )
-                .frame(height: 20)
-
-                Spacer()
-                HStack(alignment: .top, spacing: 0) {
-                    VStack(alignment: .center) {
-                        Spacer()
-                        FancyButtonv2(
-                            text: formattedDate(),
-                            action: actionOpenSelector,
-                            fgColour: .black,
-                            showLabel: true,
-                            showIcon: false,
-                            size: .titleLink,
-                            type: .titleLink
-                        )
-                        .padding(.leading, 10)
-                        Spacer()
+                HStack(alignment: .center, spacing: 0) {
+                    Button {
+                        self.actionOpenSelector()
+                    } label: {
+                        ZStack {
+                            (isDatePickerPresented ? Theme.secondary : Color.lightGray())
+                            HStack(alignment: .center) {
+                                Image(systemName: self.isDatePickerPresented ? "chevron.up.chevron.down" : "calendar")
+                                Text(self.formattedDate())
+                            }
+                            .padding(8)
+                        }
+                        .clipShape(.capsule(style: .continuous))
+                        .foregroundColor(.black)
+                        .font(Theme.fontSubTitle)
+                        .padding(.top, 10)
                     }
-
-                    Spacer()
-                    SecondaryOpenButton
+                    .buttonStyle(.plain)
+                    .useDefaultHover({ inside in highlighted = inside})
                 }
 
                 Spacer()
-                FancyButtonv2(
-                    text: "Next day",
-                    action: actionNextDay,
-                    icon: "chevron.right",
-                    fgColour: .black,
-                    showLabel: false,
-                    size: .titleLink,
-                    type: .titleLink
-                )
+                HStack(alignment: .center) {
+                    FancyButtonv2(
+                        text: "Previous day",
+                        action: actionPreviousDay,
+                        icon: "chevron.left",
+                        fgColour: .black,
+                        showLabel: false,
+                        size: .titleLink,
+                        type: .titleLink
+                    )
+
+                    FancyButtonv2(
+                        text: "Next day",
+                        action: actionNextDay,
+                        icon: "chevron.right",
+                        fgColour: .black,
+                        showLabel: false,
+                        size: .titleLink,
+                        type: .titleLink
+                    )
+                }
                 .frame(height: 20)
+                .padding(.leading)
+                .padding(.top, 15)
             }
-            .background(areSameDate(nav.session.date, Date()) ? .yellow : .white)
-            .frame(height: 78)
-            .border(width: 3, edges: [.bottom], color: Color.lightGray())
+            .padding(10)
+            .background(areSameDate(nav.session.date, Date()) ? .yellow.opacity(0.8) : .white.opacity(0.4))
+            .frame(height: 40)
 
             if isDatePickerPresented {
                 VStack(alignment: .leading, spacing: 0) {
                     ScrollView(showsIndicators: false) {
                         VStack(alignment: .leading, spacing: 0) {
-                            ForEach(days) { day in
+                            ForEach(days, id: \.id) { day in
                                 DateSelectorRow(
                                     day: day,
                                     callback: actionOnChangeDate,
@@ -89,30 +93,10 @@ struct DateSelectorWidget: View {
                     ResetDateButton(isDatePickerPresented: $isDatePickerPresented)
                 }
                 .background(.white)
+                .padding(.top, 13)
             }
         }
         .onAppear(perform: actionOnAppear)
-    }
-
-    @ViewBuilder private var SecondaryOpenButton: some View {
-        Button {
-            actionOpenSelector()
-        } label: {
-            ZStack {
-                (isDatePickerPresented ? Theme.secondary : Color.lightGray())
-                VStack(alignment: .center) {
-                    Image(systemName: "chevron.up.chevron.down")
-                        .font(Theme.fontSubTitle)
-                        .foregroundColor(.black)
-                }
-            }
-            .mask(
-                Circle()
-                    .frame(width: 30)
-            )
-        }
-        .buttonStyle(.plain)
-        .frame(width: 50)
     }
 }
 
@@ -143,7 +127,7 @@ extension DateSelectorWidget {
                     }
                 }
                 .onAppear(perform: actionOnAppear)
-                .font(Theme.fontTitle)
+                .font(Theme.fontSubTitle)
                 .buttonStyle(.plain)
                 .useDefaultHover({ inside in highlighted = inside})
             }
@@ -174,13 +158,11 @@ extension DateSelectorWidget {
                 }
                 Text(String(day.recordCount))
                     .help("\(day.recordCount) records")
-                    .font(.caption)
+                    .font(.subheadline)
+                    .foregroundStyle(.black.opacity(0.55))
             }
-            .mask {
-                (current ? Image(systemName: "seal.fill") : Image(systemName: "circle.fill"))
-
-            }
-            .frame(width: 30, height: 30)
+            .clipShape(.capsule(style: .continuous))
+            .frame(width: 30)
         }
     }
     
@@ -246,7 +228,7 @@ extension DateSelectorWidget {
 
     private func formattedDate() -> String {
         let df = DateFormatter()
-        df.dateFormat = "MMM d, yyyy"
+        df.dateFormat = "MMMM d, yyyy"
         return df.string(from: nav.session.date)
     }
 
@@ -312,4 +294,29 @@ extension DateSelectorWidget.DateSelectorRow {
 
 extension DateSelectorWidget.ResetDateButton {
     
+}
+
+struct DateSelectorReduxWidget: View {
+    var body: some View {
+        Button {
+            
+        } label: {
+            ZStack(alignment: .bottom) {
+                LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
+                    .opacity(0.4)
+                    .blendMode(.softLight)
+                    .frame(height: 20)
+
+                HStack(alignment: .center) {
+                    Image(systemName: "calendar")
+                    Text("September 30, 2024")
+                    Spacer()
+                }
+                .padding()
+            }
+//            .frame(height: 24)
+        }
+
+        .buttonStyle(.plain)
+    }
 }

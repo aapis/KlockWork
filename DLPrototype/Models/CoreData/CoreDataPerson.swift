@@ -18,6 +18,22 @@ public class CoreDataPerson: ObservableObject {
         self.moc = moc
     }
     
+    /// Find all people
+    /// - Returns: FetchRequest<Person>
+    static public func fetchAll() -> FetchRequest<Person> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \Person.name?, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<Person> = Person.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "company != nil"
+        )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
     /// Find people who have been updated recently
     /// - Parameter numDaysPrior: How far back to look, 7 days by default
     /// - Returns: FetchRequest<Person>

@@ -11,7 +11,7 @@ import EventKit
 
 struct Dashboard: View {
     static public let id: UUID = UUID()
-
+    private let page: PageConfiguration.AppPage = .find
     @State public var searching: Bool = false
 
     @Environment(\.managedObjectContext) var moc
@@ -90,7 +90,7 @@ extension Dashboard {
 
                             if upcomingEvents.count <= 3 {
                                 VStack(alignment: .leading) {
-                                    ForEach(upcomingEvents, id: \.self) { event in
+                                    ForEach(upcomingEvents, id: \.objectSpecifier) { event in
                                         HStack {
                                             let hasPassed = event.startDate >= Date()
                                             Image(systemName: hasPassed ? "arrow.right" : "checkmark")
@@ -106,9 +106,9 @@ extension Dashboard {
                     .padding()
                 }
             }
-            .frame(height: 150)
+            .frame(height: 151)
             .onAppear(perform: actionOnAppear)
-            .onChange(of: calendar, perform: actionOnChangeCalendar)
+            .onChange(of: calendar) { self.actionOnChangeCalendar() }
             .id(updater.get("dashboard.header"))
         }
     }
@@ -122,9 +122,9 @@ extension Dashboard.Header {
         }
     }
 
-    private func actionOnChangeCalendar(calendar: Int) -> Void {
+    private func actionOnChangeCalendar() -> Void {
         let calendars = CoreDataCalendarEvent(moc: moc).getCalendarsForPicker()
-        let calendarChanged = calendars.first(where: ({$0.tag == calendar})) != nil
+        let calendarChanged = calendars.first(where: ({$0.tag == self.calendar})) != nil
         if calendarChanged {
             updater.updateOne("dashboard.header")
         }

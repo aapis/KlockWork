@@ -28,6 +28,8 @@ struct NoteDashboard: View {
     
     @FetchRequest public var notes: FetchedResults<Note>
 
+    private let page: PageConfiguration.AppPage = .explore
+
     private var columns: [GridItem] {
         return Array(repeating: .init(.flexible(minimum: 100)), count: numColumns)
     }
@@ -118,7 +120,7 @@ struct NoteDashboard: View {
 
                     ScrollView(showsIndicators: false) {
                         LazyVGrid(columns: columns, alignment: .leading) {
-                            ForEach(filter(notes)) { note in
+                            ForEach(filter(notes), id: \.objectID) { note in
                                 NoteBlock(note: note)
                             }
                         }

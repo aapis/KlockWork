@@ -333,7 +333,7 @@ struct ProjectView: View {
         
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 1) {
-                    ForEach(allUnOwned, id: \.jid) { job in
+                    ForEach(allUnOwned, id: \.objectID) { job in
                         HStack(alignment: .top, spacing: 1) {
                             GridRow {
                                 Group {

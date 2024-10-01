@@ -65,7 +65,7 @@ struct SidebarButton: View, Identifiable {
                     button
                         .frame(width: 50, height: 50)
                         // Log job change events to the CLI/History
-                        .onChange(of: nav.session.job) { _ in
+                        .onChange(of: nav.session.job) {
                             // Create a history item (used by CLI mode and, eventually, LogTable)
                             if nav.session.cli.history.count <= CommandLineInterface.maxItems {
                                 if let job = nav.session.job {
@@ -82,6 +82,11 @@ struct SidebarButton: View, Identifiable {
                             }
                         }
                 }
+            case .companies:
+                HStack(alignment: .top, spacing: 0) {
+                    ActiveIndicator(colour: nav.session.job?.project?.company?.backgroundColor ?? .clear, href: .companies)
+                    button.frame(width: 50, height: 50)
+                }
             default: button.frame(width: 50, height: 50)
             }
         case .medium:
@@ -91,6 +96,42 @@ struct SidebarButton: View, Identifiable {
         case .link, .tiny, .titleLink, .tinyLink, .none:
             button
         }
+    }
+
+    private var FancyLink: some View {
+        NavigationLink {
+            self.destination
+        } label: {
+            ZStack {
+                highlighted ? backgroundColour.opacity(0.9) : backgroundColour.opacity(1)
+
+                if nav.parent != pageType {
+                    HStack {
+                        Spacer()
+                        LinearGradient(gradient: Gradient(colors: [.clear, .black]), startPoint: .leading, endPoint: .trailing)
+                            .opacity(0.6)
+                            .blendMode(.softLight)
+                            .frame(width: 12)
+                    }
+                } else {
+                    LinearGradient(
+                        colors: [(highlighted ? .black : .clear), Theme.toolbarColour],
+                        startPoint: .bottomLeading,
+                        endPoint: .topTrailing
+                    )
+                    .opacity(0.1)
+                }
+
+                Image(systemName: isDatePickerPresented && nav.parent == pageType ? "xmark" : (altMode != nil ? (altMode!.condition ? altMode!.icon : icon) : icon))
+                   .font(.title)
+                   .symbolRenderingMode(.hierarchical)
+                   .foregroundColor(isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
+
+            }
+        }
+        .help(label)
+        .buttonStyle(.plain)
+        .useDefaultHover({ hover in highlighted = hover})
     }
 
     private var FancyButton: some View {
@@ -103,6 +144,9 @@ struct SidebarButton: View, Identifiable {
         }, label: {
             ZStack {
                 highlighted ? backgroundColour.opacity(0.9) : backgroundColour.opacity(1)
+                Color.white
+                    .opacity(0.4)
+                    .blendMode(.softLight)
 
                 if nav.parent != pageType {
                     HStack {
@@ -130,15 +174,7 @@ struct SidebarButton: View, Identifiable {
         })
         .help(label)
         .buttonStyle(.plain)
-        .onHover { inside in
-            if inside {
-                NSCursor.pointingHand.push()
-            } else {
-                NSCursor.pop()
-            }
-
-            highlighted.toggle()
-        }
+        .useDefaultHover({ hover in highlighted = hover})
     }
 
     @ViewBuilder private var backgroundColour: some View {

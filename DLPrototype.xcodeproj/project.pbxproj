@@ -134,6 +134,8 @@
 		53842B2A2B4C9B100029AC73 /* FancyToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53842B292B4C9B100029AC73 /* FancyToggle.swift */; };
 		538A534E2C6FEA1700711639 /* CoreDataTaxonomyTerms.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538A534D2C6FEA1100711639 /* CoreDataTaxonomyTerms.swift */; };
 		538A53542C70269900711639 /* CoreDataTaxonomyTermDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538A53532C70269200711639 /* CoreDataTaxonomyTermDefinitions.swift */; };
+		538A535A2C704E2B00711639 /* TermsDashboardSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538A53592C704E2600711639 /* TermsDashboardSidebar.swift */; };
+		538A535E2C704E5800711639 /* TermsDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538A535D2C704E4400711639 /* TermsDashboard.swift */; };
 		53911FC32C19E84C00B77DAB /* ActivityWeight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53911FC22C19E84C00B77DAB /* ActivityWeight.swift */; };
 		53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A19297377A7007A2549 /* FancyGenericToolbar.swift */; };
 		53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1C2973897F007A2549 /* ProjectConfig.swift */; };
@@ -385,6 +387,8 @@
 		53842B292B4C9B100029AC73 /* FancyToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyToggle.swift; sourceTree = "<group>"; };
 		538A534D2C6FEA1100711639 /* CoreDataTaxonomyTerms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataTaxonomyTerms.swift; sourceTree = "<group>"; };
 		538A53532C70269200711639 /* CoreDataTaxonomyTermDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataTaxonomyTermDefinitions.swift; sourceTree = "<group>"; };
+		538A53592C704E2600711639 /* TermsDashboardSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsDashboardSidebar.swift; sourceTree = "<group>"; };
+		538A535D2C704E4400711639 /* TermsDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsDashboard.swift; sourceTree = "<group>"; };
 		53911FC22C19E84C00B77DAB /* ActivityWeight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityWeight.swift; sourceTree = "<group>"; };
 		53959A19297377A7007A2549 /* FancyGenericToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyGenericToolbar.swift; sourceTree = "<group>"; };
 		53959A1C2973897F007A2549 /* ProjectConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfig.swift; sourceTree = "<group>"; };
@@ -894,6 +898,23 @@
 			path = Sidebars;
 			sourceTree = "<group>";
 		};
+		538A53572C704E1800711639 /* Terms */ = {
+			isa = PBXGroup;
+			children = (
+				538A535D2C704E4400711639 /* TermsDashboard.swift */,
+				538A53582C704E2000711639 /* Sidebars */,
+			);
+			path = Terms;
+			sourceTree = "<group>";
+		};
+		538A53582C704E2000711639 /* Sidebars */ = {
+			isa = PBXGroup;
+			children = (
+				538A53592C704E2600711639 /* TermsDashboardSidebar.swift */,
+			);
+			path = Sidebars;
+			sourceTree = "<group>";
+		};
 		53B0BE7D29725413007CB663 /* Projects */ = {
 			isa = PBXGroup;
 			children = (
@@ -978,6 +999,7 @@
 		53BDA6942B41BC2800A61BE8 /* Entities */ = {
 			isa = PBXGroup;
 			children = (
+				538A53572C704E1800711639 /* Terms */,
 				53C3418A299960080071B855 /* Jobs */,
 				5335A5AF296D164F000051B1 /* Tasks */,
 				537628AD29665B7B00DE8ECF /* Notes */,
@@ -1339,6 +1361,7 @@
 				5372C02A2A105AA1008CB120 /* FancyChip.swift in Sources */,
 				53450CEC2BF46ECF007F45FB /* CommandLineInterface.swift in Sources */,
 				537628B429665F4E00DE8ECF /* Data.xcdatamodeld in Sources */,
+				538A535A2C704E2B00711639 /* TermsDashboardSidebar.swift in Sources */,
 				53F5896429983FA300843B32 /* ProjectResult.swift in Sources */,
 				53842B272B4C82B20029AC73 /* Project.swift in Sources */,
 				53EDDF9E29634852008D34C7 /* Entry.swift in Sources */,
@@ -1418,6 +1441,7 @@
 				5376289B2966467100DE8ECF /* SearchBar.swift in Sources */,
 				5363B67A2A6BB75F00C2FBB8 /* CompanyBlock.swift in Sources */,
 				531B8DF22A847BE8005D911B /* NoteGroup.swift in Sources */,
+				538A535E2C704E5800711639 /* TermsDashboard.swift in Sources */,
 				5363B6752A6B4A9A00C2FBB8 /* NoteDashboardSettings.swift in Sources */,
 				530318472A11DD13009CA90B /* CoreDataCalendarEvent.swift in Sources */,
 				535C1AE129F48EF700CD95FD /* Dashboard.swift in Sources */,
