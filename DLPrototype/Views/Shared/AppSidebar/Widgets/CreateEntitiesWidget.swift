@@ -38,6 +38,9 @@ struct CreateEntitiesWidget: View {
                 .background(Theme.base.opacity(0.5))
             }
         }
+        .padding(self.isCreateStackShowing ? .top : [.top, .bottom])
+        .border(width: 1, edges: [.bottom], color: Theme.rowColour)
+        .background(Theme.base.blendMode(.softLight).opacity(0.3))
         .onAppear(perform: actionOnAppear)
         .onChange(of: nav.planning.tasks) { self.actionOnChangeOfTasks() }
         .onChange(of: nav.planning.jobs) { self.actionOnChangeOfJobs() }
