@@ -9,6 +9,10 @@
 import Foundation
 import SwiftUI
 
+#if os(macOS)
+struct Swipe {}
+#endif
+
 extension View {
     func border(width: CGFloat, edges: [Edge], color: Color) -> some View {
         overlay(EdgeBorder(width: width, edges: edges).foregroundColor(color))
@@ -39,6 +43,10 @@ extension View {
                 }
             }
         )
+    }
+#else
+    func swipe(_ swipe: Swipe, sensitivity: Double = 1, action: @escaping (Swipe) -> ()) -> some View {
+        return EmptyView()
     }
 #endif
 }
