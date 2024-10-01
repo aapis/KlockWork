@@ -126,15 +126,7 @@ struct SidebarButton: View, Identifiable {
         }
         .help(label)
         .buttonStyle(.plain)
-        .onHover { inside in
-            if inside {
-                NSCursor.pointingHand.push()
-            } else {
-                NSCursor.pop()
-            }
-
-            highlighted.toggle()
-        }
+        .useDefaultHover({ hover in highlighted = hover})
     }
 
     private var FancyButton: some View {
@@ -147,6 +139,9 @@ struct SidebarButton: View, Identifiable {
         }, label: {
             ZStack {
                 highlighted ? backgroundColour.opacity(0.9) : backgroundColour.opacity(1)
+                Color.white
+                    .opacity(0.4)
+                    .blendMode(.softLight)
 
                 if nav.parent != pageType {
                     HStack {
@@ -174,15 +169,7 @@ struct SidebarButton: View, Identifiable {
         })
         .help(label)
         .buttonStyle(.plain)
-        .onHover { inside in
-            if inside {
-                NSCursor.pointingHand.push()
-            } else {
-                NSCursor.pop()
-            }
-
-            highlighted.toggle()
-        }
+        .useDefaultHover({ hover in highlighted = hover})
     }
 
     @ViewBuilder private var backgroundColour: some View {
