@@ -70,7 +70,7 @@ public struct FancyStaticTextField: View, Identifiable {
 
             backgroundColour = setBackground()
         })
-        .onChange(of: copied) { colour in
+        .onChange(of: copied) {
             backgroundColour = setBackground()
         }
         .onHover { inside in
@@ -108,6 +108,7 @@ public struct FancyStaticTextField: View, Identifiable {
                 }
                 .buttonStyle(.plain)
                 .help("Copied group to clipboard!")
+#if os(macOS)
                 .onHover { inside in
                     if inside {
                         NSCursor.pointingHand.push()
@@ -115,12 +116,14 @@ public struct FancyStaticTextField: View, Identifiable {
                         NSCursor.pop()
                     }
                 }
+#endif
             } else {
                 Button(action: copy) {
                     Image(systemName: "doc.on.clipboard")
                 }
                 .buttonStyle(.plain)
                 .help("Copy this group")
+#if os(macOS)
                 .onHover { inside in
                     if inside {
                         NSCursor.pointingHand.push()
@@ -128,6 +131,7 @@ public struct FancyStaticTextField: View, Identifiable {
                         NSCursor.pop()
                     }
                 }
+#endif
             }
 
             Spacer()
@@ -197,8 +201,10 @@ public struct FancyStaticTextField: View, Identifiable {
     }
 
     private func copy() -> Void {
+#if os(macOS)
         ClipboardHelper.copy(text)
         copied = true
+#endif
     }
 
     private func setBackground() -> Color {

@@ -54,7 +54,7 @@ extension FindDashboard {
                 }
             }
             .background(location == .content ? Theme.rowColour : Color.clear)
-            .onChange(of: isSearching) { status in
+            .onChange(of: isSearching) {
                 nav.session.search.cancel()
                 nav.setInspector()
             }

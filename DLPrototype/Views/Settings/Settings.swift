@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 struct SettingsView: View {
-    private enum Tabs: Hashable {
+    private enum SettingsTabs: Hashable {
         case general, today, advanced, dashboard, notedashboard
     }
 
@@ -25,27 +25,27 @@ struct SettingsView: View {
                 .tabItem {
                     Label("General", systemImage: "gear")
                 }
-                .tag(Tabs.general)
-            
+                .tag(SettingsTabs.general)
+
             TodaySettings()
                 .environmentObject(ce)
                 .environmentObject(nav)
                 .tabItem {
                     Label("Today", systemImage: "doc.append.fill")
                 }
-                .tag(Tabs.today)
-            
+                .tag(SettingsTabs.today)
+
             DashboardSettings()
                 .tabItem {
                     Label("Dashboard", systemImage: "house")
                 }
-                .tag(Tabs.dashboard)
+                .tag(SettingsTabs.dashboard)
 
             NoteDashboardSettings()
                 .tabItem {
                     Label("Notes", systemImage: "note.text")
                 }
-                .tag(Tabs.notedashboard)
+                .tag(SettingsTabs.notedashboard)
         }
         .padding(20)
     }

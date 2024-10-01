@@ -138,10 +138,10 @@ struct TodaySettings: View {
                                     onAppear()
                                 })
                             } else {
-                                ce.requestAccess({(granted, error) in
-                                    hasAccess = granted
-                                    onAppear()
-                                })
+//                                ce.requestAccess({(granted, error) in
+//                                    hasAccess = granted
+//                                    onAppear()
+//                                })
                             }
                         }
                     }
@@ -163,14 +163,14 @@ struct TodaySettings: View {
                 }
             })
         } else {
-            ce.requestAccess({(granted, error) in
-                if granted {
-                    calendars = CoreDataCalendarEvent(moc: moc).getCalendarsForPicker()
-                } else {
-                    print("[error][calendar] No calendar access")
-                    print("[error][calendar] \(error.debugDescription)")
-                }
-            })
+//            ce.requestAccess({(granted, error) in
+//                if granted {
+//                    calendars = CoreDataCalendarEvent(moc: moc).getCalendarsForPicker()
+//                } else {
+//                    print("[error][calendar] No calendar access")
+//                    print("[error][calendar] \(error.debugDescription)")
+//                }
+//            })
         }
     }
 }
