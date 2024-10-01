@@ -17,29 +17,36 @@ struct TermsDashboard: View {
         return Array(repeating: .init(.flexible(minimum: 100)), count: numColumns)
     }
     @State public var job: Job?
-    @State private var terms: [TaxonomyTermDefinitions] = []
+    @State private var definitions: [TaxonomyTermDefinitions] = []
+    @State private var searchText: String = ""
 
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 1) {
-                HStack(spacing: 10) {
-                    eType.icon
-                    Text(eType.label)
+                HStack(alignment: .center, spacing: 0) {
+                    Title(text: eType.label, imageAsImage: eType.icon)
                     Spacer()
-                    FancyButtonv2(text: "Create term", action: {}, icon: "plus", showLabel: false)
+                    FancyButtonv2(text: "Create term", action: self.actionOnTap, icon: "plus", showLabel: false)
                 }
-                .font(.title2)
+                FancyDivider()
 
-                if self.terms.count > 0 {
+                SearchBar(
+                    text: $searchText,
+                    disabled: false,
+                    placeholder: self.definitions.count > 1 ? "Search \(self.definitions.count) terms" : "Find in terms & definitions"
+                )
+
+                if self.definitions.count > 0 {
                     ScrollView(showsIndicators: false) {
                         LazyVGrid(columns: columns, alignment: .leading) {
-                            ForEach(self.terms, id: \.objectID) { term in
-                                TermBlock(term: term)
+                            ForEach(self.filter(self.definitions), id: \TaxonomyTermDefinitions.objectID) { def in
+                                TermBlock(definition: def)
                             }
                         }
                     }
                 } else {
-                    Text("No Terms")
+                    FancyDivider()
+                    Text("No terms for selected job. Choose a job from the sidebar to get started.")
                 }
 
                 Spacer()
@@ -59,20 +66,36 @@ extension TermsDashboard {
         self.job = self.state.session.job
 
         if let job = self.job {
-            self.terms = CoreDataTaxonomyTermDefinitions(moc: self.state.moc).definitions(for: job)
+            self.definitions = CoreDataTaxonomyTermDefinitions(moc: self.state.moc).definitions(for: job)
         } else {
-            self.terms = []
+            self.definitions = []
         }
+    }
+
+    /// Filter terms by input text
+    /// - Parameter terms: TaxonomyTerm
+    /// - Returns: [TaxonomyTermDefinitions]
+    private func filter(_ terms: [TaxonomyTermDefinitions]) -> [TaxonomyTermDefinitions] {
+        return SearchHelper(bucket: terms).findInDefinitions($searchText)
+    }
+
+    /// Fires when a term block is clicked/tapped
+    /// - Returns: Void
+    private func actionOnTap() -> Void {
+        self.state.setView(AnyView(DefinitionDetail()))
+        self.state.setId()
     }
 }
 
 struct TermBlock: View {
-    public let term: TaxonomyTermDefinitions
+    @EnvironmentObject public var state: Navigation
+    public let definition: TaxonomyTermDefinitions
     @State private var highlighted: Bool = false
+    @State private var searchText: String = ""
 
     var body: some View {
         Button {
-
+            self.actionOnTap()
         } label: {
             VStack(spacing: 0) {
                 ZStack(alignment: .topLeading) {
@@ -81,15 +104,14 @@ struct TermBlock: View {
                         .opacity(highlighted ? 0.2 : 0.1)
 
                     VStack(alignment: .leading, spacing: 10) {
-                        Text(self.term.definition?.capitalized ?? "_TERM_NAME")
+                        Text(self.definition.term?.name?.capitalized ?? "_TERM_NAME")
                             .font(.title3)
                             .fontWeight(.bold)
                             .padding([.leading, .trailing, .top])
-//                        Text(noteBody())
-//                            .padding([.leading, .trailing, .bottom])
-
+                        Text(self.definitionBody())
+                            .padding([.leading, .trailing, .bottom])
                         Spacer()
-//                        jobAndProject
+                        ResourcePath()
                     }
                 }
             }
@@ -97,5 +119,81 @@ struct TermBlock: View {
         .frame(height: 150)
         .useDefaultHover({ inside in highlighted = inside})
         .buttonStyle(.plain)
+    }
+}
+
+struct ResourcePath: View {
+    @EnvironmentObject public var state: Navigation
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 0) {
+            if let company = self.state.session.job?.project?.company {
+                if let project = self.state.session.job?.project {
+                    ZStack(alignment: .leading) {
+                        if let cJob = self.state.session.job {
+                            cJob.backgroundColor
+
+                            if let cAbb = company.abbreviation {
+                                if let pAbb = project.abbreviation {
+                                    HStack(alignment: .center, spacing: 8) {
+                                        HStack(spacing: 0) {
+                                            Text("\(cAbb)")
+                                                .padding(7)
+                                                .background(company.backgroundColor)
+                                                .foregroundStyle(company.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
+                                            Image(systemName: "chevron.right")
+                                                .padding([.top, .bottom], 8)
+                                                .padding([.leading, .trailing], 4)
+                                                .background(company.backgroundColor.opacity(0.9))
+                                                .foregroundStyle(company.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
+                                            Text("\(pAbb)")
+                                                .padding(7)
+                                                .background(project.backgroundColor)
+                                                .foregroundStyle(project.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
+                                            Image(systemName: "chevron.right")
+                                                .padding([.top, .bottom], 8)
+                                                .padding([.leading, .trailing], 4)
+                                                .background(project.backgroundColor.opacity(0.9))
+                                                .foregroundStyle(project.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
+                                        }
+
+                                        Text("\(self.state.session.job?.title ?? self.state.session.job?.jid.string ?? "")")
+                                            .foregroundStyle(cJob.backgroundColor.isBright() ? .black : .white)
+                                        Spacer()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .foregroundStyle((self.state.session.job?.project?.backgroundColor ?? .clear).isBright() ? .black : .white)
+                }
+            }
+        }
+        .frame(height: 30)
+        .background(self.state.session.job?.backgroundColor ?? .clear)
+    }
+}
+
+extension TermBlock {
+    /// Trucate term answer
+    /// - Returns: String
+    private func definitionBody() -> String {
+        if let body = self.definition.definition {
+            if body.count > 100 {
+                let i = body.index(body.startIndex, offsetBy: 100)
+                let description = String(body[...i]).trimmingCharacters(in: .whitespacesAndNewlines)
+
+                return description + "..."
+            }
+        }
+
+        return "No preview available"
+    }
+    
+    /// Fires when a term block is clicked/tapped
+    /// - Returns: Void
+    private func actionOnTap() -> Void {
+        self.state.setView(AnyView(DefinitionDetail(definition: self.definition)))
+        self.state.setId()
     }
 }

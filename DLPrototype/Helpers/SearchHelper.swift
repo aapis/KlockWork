@@ -16,6 +16,7 @@ public final class SearchHelper {
     public var noteBucket: [Note] = []
     public var recordBucket: [LogRecord] = []
     public var companyBucket: [Company] = []
+    public var definitionsBucket: [TaxonomyTermDefinitions] = []
     public var fields: [String] = []
     
     public init(bucket: FetchedResults<LogTask>) {
@@ -37,7 +38,11 @@ public final class SearchHelper {
     public init(bucket: FetchedResults<Company>) {
         self.companyBucket = Array(bucket)
     }
-    
+
+    public init(bucket: [TaxonomyTermDefinitions]) {
+        self.definitionsBucket = bucket
+    }
+
     public func exec(_ searchText: Binding<String>) -> [LogTask] {
         return bucket.filter({
             matches(searchText, fields: [$0.content ?? "", $0.owner!.jid.string])
@@ -67,7 +72,13 @@ public final class SearchHelper {
             matches(searchText, fields: [$0.name!]) && $0.hidden == allowHidden
         }
     }
-    
+
+    public func findInDefinitions(_ searchText: Binding<String>) -> [TaxonomyTermDefinitions] {
+        return definitionsBucket.filter {
+            matches(searchText, fields: [$0.definition!, $0.term!.name!])
+        }
+    }
+
 //    static public func highlight(phrase: String, bucket: [String]) -> [String] {
 //        
 //    }

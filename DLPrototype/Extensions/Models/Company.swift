@@ -9,7 +9,7 @@
 import SwiftUI
 
 extension Company {
-    var backgroundColour: Color {
+    var backgroundColor: Color {
         if let c = self.colour {
             return Color.fromStored(c)
         }

@@ -701,7 +701,7 @@ extension FindDashboard.Suggestions.SuggestedJobs {
             nav.planning.jobs.insert(item)
             // @TODO: this throws "Can't do a substring operation with something that isn't a string (lhs = 870732407166554 rhs = 55)"
 //            nav.planning.projects.insert(item.project!)
-        case .none:
+        default:
             print("no op")
         }
     }
@@ -748,7 +748,7 @@ extension FindDashboard.Suggestions.SuggestedNotes {
             nav.planning.notes.insert(item)
             // @TODO: this throws "Can't do a substring operation with something that isn't a string (lhs = 870732407166554 rhs = 55)"
 //            nav.planning.projects.insert(item.project!)
-        case .none:
+        default:
             print("no op")
         }
     }

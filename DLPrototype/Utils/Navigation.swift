@@ -9,7 +9,7 @@
 import SwiftUI
 
 public enum Page {
-    case dashboard, today, notes, tasks, projects, jobs, companies, planning, terms
+    case dashboard, today, notes, tasks, projects, jobs, companies, planning, terms, definitionDetail
 
     var ViewUpdaterKey: String {
         switch self {
@@ -31,6 +31,7 @@ public enum Page {
             return "planning.dashboard"
         case .terms:
             return "terms.dashboard"
+        case .definitionDetail: return "terms.definition.detail"
         }
     }
 
@@ -53,6 +54,8 @@ public enum Page {
         case .planning:
             return PageConfiguration.AppPage.planning.primaryColour
         case .terms:
+            return PageConfiguration.AppPage.explore.primaryColour
+        case .definitionDetail:
             return PageConfiguration.AppPage.explore.primaryColour
         }
     }
@@ -77,6 +80,8 @@ public enum Page {
             return "Planning"
         case .terms:
             return "Terms"
+        case .definitionDetail:
+            return "Definition"
         }
     }
 }
@@ -185,6 +190,12 @@ public class Navigation: Identifiable, ObservableObject {
         self.session.search.cancel()
     }
 
+    public func link(to page: Page) -> AnyView {
+        let hp = self.history.get(page: page)
+
+        return hp.view
+    }
+
     public func reset() -> Void {
         parent = .dashboard
         view = nil
@@ -287,7 +298,11 @@ extension Navigation {
             var version: NoteVersion? = nil
             var star: Bool = false
         }
-        
+
+        struct TermForm {
+            var job: Job? = nil
+        }
+
         struct ThreePanelForm {
             var currentPosition: Panel.Position = .first
             var first: FetchedResults<Company>? = nil
@@ -392,7 +407,7 @@ extension Navigation {
                         }
                     }
                     .onAppear(perform: onLoad)
-                    .onChange(of: newValue) { _ in
+                    .onChange(of: newValue) {
                         field.status = .unsaved
 
                         if oldValue != newValue {
@@ -545,6 +560,7 @@ extension Navigation {
             HistoryPage(page: .notes, view: AnyView(NoteDashboard()), sidebar: AnyView(NoteDashboardSidebar()), title: "Notes"),
             HistoryPage(page: .tasks, view: AnyView(TaskDashboard()), sidebar: AnyView(TaskDashboardSidebar()), title: "Tasks"),
             HistoryPage(page: .terms, view: AnyView(TermsDashboard()), sidebar: AnyView(TermsDashboardSidebar()), title: "Terms"),
+            HistoryPage(page: .definitionDetail, view: AnyView(DefinitionDetail()), sidebar: AnyView(TermsDashboardSidebar()), title: "Definition detail"),
         ]
         
         /// A single page representing a page the user navigated to

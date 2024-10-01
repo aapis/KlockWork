@@ -84,7 +84,7 @@ struct SidebarButton: View, Identifiable {
                 }
             case .companies:
                 HStack(alignment: .top, spacing: 0) {
-                    ActiveIndicator(colour: nav.session.job?.project?.company?.backgroundColour ?? .clear, href: .companies)
+                    ActiveIndicator(colour: nav.session.job?.project?.company?.backgroundColor ?? .clear, href: .companies)
                     button.frame(width: 50, height: 50)
                 }
             default: button.frame(width: 50, height: 50)

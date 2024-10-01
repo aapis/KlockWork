@@ -104,7 +104,7 @@ struct TaskDashboard: View {
 
             JobPickerUsing(onChange: change, jobId: $jobId)
                 .onAppear(perform: setJob)
-                .onChange(of: selectedJob) { _ in
+                .onChange(of: selectedJob) {
                     setJob()
                 }
             if job != nil {
