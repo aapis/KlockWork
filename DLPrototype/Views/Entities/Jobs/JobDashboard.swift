@@ -46,7 +46,7 @@ struct JobDashboard: View {
         }
         .background(Theme.toolbarColour)
         .onAppear(perform: actionOnAppear)
-        .onChange(of: defaultSelectedJob, perform: actionOnChange)
+        .onChange(of: defaultSelectedJob) { self.actionOnChange(job: self.defaultSelectedJob)}
     }
 }
 
@@ -82,6 +82,7 @@ struct JobDashboardRedux: View {
 
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject private var nav: Navigation
+    private let page: PageConfiguration.AppPage = .explore
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -127,7 +128,7 @@ struct JobDashboardRedux: View {
             }
             .padding()
         }
-        .background(Theme.toolbarColour)
+        .background(self.page.primaryColour)
     }
 }
 
@@ -249,7 +250,7 @@ struct JobExplorer: View {
                         if saved {
                             GridRow {
                                 SaveMessage(saved: $saved)
-                                    .onChange(of: saved) { _ in
+                                    .onChange(of: saved) {
                                         self.cancel()
                                     }
                             }

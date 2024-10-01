@@ -11,7 +11,8 @@ import SwiftUI
 
 struct TaskDashboard: View {
     public var defaultSelectedJob: Job?
-    
+    private let page: PageConfiguration.AppPage = .explore
+
     @State private var searchText: String = ""
     @State private var selectedJob: Int = 0
     @State private var jobId: String = ""
@@ -35,7 +36,7 @@ struct TaskDashboard: View {
             }
             .padding()
         }
-        .background(Theme.toolbarColour)
+        .background(self.page.primaryColour)
         .onAppear(perform: setJob)
         .id(updater.get("task.dashboard"))
     }

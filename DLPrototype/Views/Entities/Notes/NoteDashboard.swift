@@ -28,6 +28,8 @@ struct NoteDashboard: View {
     
     @FetchRequest public var notes: FetchedResults<Note>
 
+    private let page: PageConfiguration.AppPage = .explore
+
     private var columns: [GridItem] {
         return Array(repeating: .init(.flexible(minimum: 100)), count: numColumns)
     }
@@ -129,7 +131,7 @@ struct NoteDashboard: View {
             }
             .padding()
         }
-        .background(Theme.toolbarColour)
+        .background(self.page.primaryColour)
     }
 }
 

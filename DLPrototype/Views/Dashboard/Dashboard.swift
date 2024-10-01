@@ -11,7 +11,7 @@ import EventKit
 
 struct Dashboard: View {
     static public let id: UUID = UUID()
-
+    private let page: PageConfiguration.AppPage = .find
     @State public var searching: Bool = false
 
     @Environment(\.managedObjectContext) var moc
@@ -38,7 +38,7 @@ struct Dashboard: View {
             .font(Theme.font)
             .padding()
             .focused($primaryTextFieldInFocus)
-            .background(Theme.toolbarColour)
+            .background(self.page.primaryColour)
             .onAppear {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
                     self.primaryTextFieldInFocus = true
