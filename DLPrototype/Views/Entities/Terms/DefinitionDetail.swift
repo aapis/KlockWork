@@ -27,21 +27,25 @@ struct DefinitionDetail: View {
             HStack(alignment: .center, spacing: 8) {
                 Title(text: "Definition", image: "list.bullet.rectangle")
                 Spacer()
-                FancyButtonv2(
-                    text: "Delete",
-                    action: {isDeleteAlertPresented = true},
-                    icon: "trash",
-                    showLabel: false,
-                    type: .destructive
-                )
-                .alert("Are you sure you want to delete this term?", isPresented: $isDeleteAlertPresented) {
-                    Button("Yes", role: .destructive) {
-                        self.actionOnSoftDelete()
-                    }
-                    Button("No", role: .cancel) {
-                        self.actionOnCancel()
+
+                if self.definition != nil {
+                    FancyButtonv2(
+                        text: "Delete",
+                        action: {isDeleteAlertPresented = true},
+                        icon: "trash",
+                        showLabel: false,
+                        type: .destructive
+                    )
+                    .alert("Are you sure you want to delete this term?", isPresented: $isDeleteAlertPresented) {
+                        Button("Yes", role: .destructive) {
+                            self.actionOnSoftDelete()
+                        }
+                        Button("No", role: .cancel) {
+                            self.actionOnCancel()
+                        }
                     }
                 }
+
                 FancyButtonv2(text: "Cancel", action: self.actionOnCancel, showIcon: false)
                 FancyButtonv2(text: "Save", action: self.actionOnSave, showIcon: false)
             }
