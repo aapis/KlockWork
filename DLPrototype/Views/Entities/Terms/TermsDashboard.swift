@@ -194,6 +194,7 @@ extension TermBlock {
     /// - Returns: Void
     private func actionOnTap() -> Void {
         self.state.setView(AnyView(DefinitionDetail(definition: self.definition)))
+        self.state.setSidebar(AnyView(DefinitionSidebar()))
         self.state.setId()
     }
 }
