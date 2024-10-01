@@ -91,6 +91,7 @@ extension DefinitionDetail {
     ///   - sender: String
     /// - Returns: Void
     private func actionOnJobChange(selected: Int, sender: String?) -> Void {
+        // @TODO: doesn't work for all jobs since some use job ID 0.. need to build a new job selector
         if let newJob = CoreDataJob(moc: self.state.moc).byId(Double(selected)) {
 
             self.job = newJob
