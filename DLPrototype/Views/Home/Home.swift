@@ -94,10 +94,6 @@ struct Home: View {
     }
 
     var body: some View {
-//        Dashboard()
-        GlobalSidebar()
-    }
-    var body3: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top, spacing: 0) {
@@ -106,8 +102,15 @@ struct Home: View {
                         Sidebar
                     }
 
-                    InspectorAndMain
-                    
+                    Divider().background(.white.opacity(0.2))
+                    ZStack(alignment: .leading) {
+                        InspectorAndMain
+                        LinearGradient(colors: [Theme.base, .clear], startPoint: .leading, endPoint: .trailing)
+                            .opacity(0.1)
+                            .blendMode(.softLight)
+                            .frame(width: 20)
+                    }
+
                     if showSessionInspector {
                         SessionInspector()
                     }
@@ -117,17 +120,27 @@ struct Home: View {
     }
 
     @ViewBuilder var Sidebar: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            GlobalSidebarWidgets()
+        ZStack(alignment: .trailing) {
+            Color.white
+                .opacity(0.4)
+                .blendMode(.softLight)
+            LinearGradient(colors: [.white, .clear], startPoint: .trailing, endPoint: .leading)
+                .opacity(0.1)
+                .blendMode(.softLight)
+                .frame(width: 40)
 
-            if !isSearchStackShowing {
-                if isDatePickerPresented {
-                    ZStack {
+            VStack(alignment: .leading, spacing: 0) {
+                GlobalSidebarWidgets()
+
+                if !isSearchStackShowing {
+                    if isDatePickerPresented {
+                        ZStack {
+                            nav.sidebar
+                            Color.black.opacity(0.7)
+                        }
+                    } else {
                         nav.sidebar
-                        Color.black.opacity(0.7)
                     }
-                } else {
-                    nav.sidebar
                 }
             }
         }
