@@ -12,13 +12,13 @@ import CoreData
 
 public class CoreDataTaxonomyTerms {
     public var moc: NSManagedObjectContext?
-
+    
     private let lock = NSLock()
-
+    
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
     }
-
+    
     /// Find tasks whose content matches a given string
     /// - Parameter term: String
     /// - Returns: FetchRequest<TaxonomyTerm>
@@ -26,17 +26,17 @@ public class CoreDataTaxonomyTerms {
         let descriptors = [
             NSSortDescriptor(keyPath: \TaxonomyTerm.created, ascending: true)
         ]
-
+        
         let fetch: NSFetchRequest<TaxonomyTerm> = TaxonomyTerm.fetchRequest()
         fetch.predicate = NSPredicate(
             format: "alive == true && name CONTAINS %@",
             term
         )
         fetch.sortDescriptors = descriptors
-
+        
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
-
+    
     /// Find tasks whose content matches a given string
     /// - Parameter job: Job
     /// - Returns: FetchRequest<TaxonomyTerm>
@@ -44,17 +44,17 @@ public class CoreDataTaxonomyTerms {
         let descriptors = [
             NSSortDescriptor(keyPath: \TaxonomyTerm.created, ascending: true)
         ]
-
+        
         let fetch: NSFetchRequest<TaxonomyTerm> = TaxonomyTerm.fetchRequest()
         fetch.predicate = NSPredicate(
             format: "ANY definitions.job == %@",
             job
         )
         fetch.sortDescriptors = descriptors
-
+        
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
-
+    
     /// Find all terms owned by a given Job
     /// - Parameters:
     ///   - job: Job
@@ -63,17 +63,17 @@ public class CoreDataTaxonomyTerms {
         let descriptors = [
             NSSortDescriptor(keyPath: \TaxonomyTermDefinitions.created, ascending: false)
         ]
-
+        
         let fetch: NSFetchRequest<TaxonomyTermDefinitions> = TaxonomyTermDefinitions.fetchRequest()
         fetch.predicate = NSPredicate(
             format: "alive == true && job == %@",
             job as CVarArg
         )
         fetch.sortDescriptors = descriptors
-
+        
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
-    
+
     /// Find taxonomy terms by name (key)
     /// - Parameter name: String
     /// - Returns: Optional(TaxonomyTerm)

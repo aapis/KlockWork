@@ -102,7 +102,7 @@ struct Home: View {
                         Sidebar
                     }
 
-                    Divider().background(.white.opacity(0.2))
+                    Divider().background(Theme.rowColour)
                     ZStack(alignment: .leading) {
                         InspectorAndMain
                         LinearGradient(colors: [Theme.base, .clear], startPoint: .leading, endPoint: .trailing)

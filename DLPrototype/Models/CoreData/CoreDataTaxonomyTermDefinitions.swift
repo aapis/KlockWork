@@ -57,6 +57,20 @@ public class CoreDataTaxonomyTermDefinitions {
         return self.query(NSPredicate(format: "alive == true"))
     }
 
+    /// Find definitions for a given job
+    /// - Parameter job: Job
+    /// - Returns: [TaxonomyTermDefinitions]
+    public func definitions(for job: Job) -> [TaxonomyTermDefinitions] {
+        let results = self.query(
+            NSPredicate(
+                format: "alive == true && job == %@",
+                job
+            )
+        )
+
+        return results
+    }
+
     /// Query function, finds and filters notes
     /// - Parameter predicate: A predicate to modify the results
     /// - Returns: Array<NoteVersion>

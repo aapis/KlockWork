@@ -21,6 +21,7 @@ struct CompanyDashboard: View {
 
     @FetchRequest public var companies: FetchedResults<Company>
 
+    private let page: PageConfiguration.AppPage = .explore
     private var columns: [GridItem] {
         Array(repeating: .init(.flexible(minimum: 100)), count: numColumns)
     }
@@ -56,7 +57,8 @@ struct CompanyDashboard: View {
             }
             .padding()
         }
-        .background(Theme.toolbarColour)
+        .background(self.page.primaryColour)
+        .onAppear(perform: self.actionOnAppear)
     }
 
     @ViewBuilder private var recent: some View {
@@ -88,6 +90,11 @@ extension CompanyDashboard {
 
     private func filter(_ companies: FetchedResults<Company>) -> [Company] {
         return SearchHelper(bucket: companies).findInCompanies($searchText, allowHidden: nav.session.gif == .privacy)
+    }
+
+    /// Onload handler, sets page configuration
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
     }
 }
 
