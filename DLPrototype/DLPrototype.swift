@@ -21,6 +21,16 @@ struct DLPrototype: App {
 
     var body: some Scene {
         WindowGroup {
+
+            /// Eventually we will implement NavigationStack for nav, this will be useful then
+//            HStack(alignment: .top, spacing: 0) {
+//                GlobalSidebar()
+//                if nav.parent == nil {
+//                    Spacer()
+//                } else {
+//                    // something??
+//                }
+//            }
             Home()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environmentObject(updater)
@@ -28,9 +38,8 @@ struct DLPrototype: App {
                 .onAppear(perform: onAppear)
                 .defaultAppStorage(.standard)
                 .onContinueUserActivity(CSSearchableItemActionType, perform: handleSpotlight)
-                .onChange(of: scenePhase) { phase in
-                    if phase == .background || phase == .inactive {
-                        // @TODO: serialize/deserialize previous session data here
+                .onChange(of: scenePhase) {
+                    if scenePhase == .background {
                         persistenceController.save()
                     }
                 }
@@ -76,7 +85,6 @@ struct DLPrototype: App {
 
     private func onAppear() -> Void {
         let appName = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
-
         nav.title = "\(appName ?? "KlockWork")"
         nav.session.plan = CoreDataPlan(moc: persistenceController.container.viewContext).forDate(nav.session.date).first
 

@@ -16,4 +16,20 @@ extension Project {
 //
 //        return field
 //    }
+
+    var cBackgroundColor: Color {
+        if let c = self.company?.colour {
+            return Color.fromStored(c)
+        }
+
+        return Color.clear
+    }
+
+    var backgroundColor: Color {
+        if let c = self.colour {
+            return Color.fromStored(c)
+        }
+
+        return Color.clear
+    }
 }

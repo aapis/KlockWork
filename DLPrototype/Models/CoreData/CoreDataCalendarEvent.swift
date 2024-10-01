@@ -90,7 +90,6 @@ public class CoreDataCalendarEvent: ObservableObject {
         }
     }
 
-#if os(macOS)
     public func find(calendar: String, _ callback: (String) -> [EKEvent]) -> [EKEvent] {
         let status = EKEventStore.authorizationStatus(for: EKEntityType.event)
         var events: [EKEvent] = []
@@ -99,8 +98,6 @@ public class CoreDataCalendarEvent: ObservableObject {
         case .notDetermined:
             if #available(macOS 14.0, *) {
                 requestFullAccessToEvents()
-            } else {
-                requestAccess()
             }
         case .authorized, .fullAccess, .writeOnly:
             events = callback(calendar)
@@ -114,7 +111,6 @@ public class CoreDataCalendarEvent: ObservableObject {
 
         return events
     }
-#endif
 
     public func findInCalendar(calendar: String, _ callback: (EKCalendar) -> [EKEvent]) -> [EKEvent] {
         let status = EKEventStore.authorizationStatus(for: EKEntityType.event)
@@ -129,8 +125,6 @@ public class CoreDataCalendarEvent: ObservableObject {
         case .notDetermined:
             if #available(macOS 14.0, *) {
                 requestFullAccessToEvents()
-            } else {
-                requestAccess()
             }
         case .authorized, .fullAccess, .writeOnly:
             events = callback(ekCalendar!)

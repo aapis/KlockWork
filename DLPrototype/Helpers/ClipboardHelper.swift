@@ -7,7 +7,9 @@
 //
 
 import Foundation
+#if canImport(AppKit)
 import AppKit
+
 
 final public class ClipboardHelper {
     static public func copy(_ textToCopy: String) -> Void {
@@ -18,3 +20,5 @@ final public class ClipboardHelper {
         pasteBoard.setString(data, forType: .string)
     }
 }
+
+#endif

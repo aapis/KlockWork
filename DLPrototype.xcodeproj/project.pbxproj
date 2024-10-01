@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		53013A962CAB825B0024BA30 /* GlobalSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A952CAB82580024BA30 /* GlobalSidebar.swift */; };
+		53013A982CAC60200024BA30 /* Company.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A972CAC601F0024BA30 /* Company.swift */; };
+		53013A9A2CAC8C530024BA30 /* DefinitionDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A992CAC8C510024BA30 /* DefinitionDetail.swift */; };
+		53013A9C2CAC9CCA0024BA30 /* DefinitionSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A9B2CAC9CC40024BA30 /* DefinitionSidebar.swift */; };
 		530168172A887B0A000AF4FD /* AllJobsPickerWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530168162A887B0A000AF4FD /* AllJobsPickerWidget.swift */; };
 		530318472A11DD13009CA90B /* CoreDataCalendarEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530318462A11DD13009CA90B /* CoreDataCalendarEvent.swift */; };
 		5309EE3D25619A6D00B3BC06 /* Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5309EE3C25619A6D00B3BC06 /* Backup.swift */; };
@@ -172,6 +176,8 @@
 		53C3418C299960310071B855 /* JobDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418B299960310071B855 /* JobDashboard.swift */; };
 		53C3418E299968160071B855 /* JobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418D299968160071B855 /* JobView.swift */; };
 		53C3419029996C070071B855 /* FancyRandomJobColourPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418F29996C070071B855 /* FancyRandomJobColourPicker.swift */; };
+		53CEDBC82CA9FFA3002726DC /* PageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CEDBC72CA9FFA3002726DC /* PageConfiguration.swift */; };
+		53CEDBD42CAA014B002726DC /* FilterField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CEDBD32CAA014B002726DC /* FilterField.swift */; };
 		53D4CBC82BFE953700AFEDEA /* SaveSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CBC72BFE953700AFEDEA /* SaveSource.swift */; };
 		53D5E2982A85A75C00FE293A /* Planning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D5E2972A85A75C00FE293A /* Planning.swift */; };
 		53D5E29A2A85E38A00FE293A /* WidgetLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D5E2992A85E38A00FE293A /* WidgetLocation.swift */; };
@@ -249,6 +255,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		53013A952CAB82580024BA30 /* GlobalSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalSidebar.swift; sourceTree = "<group>"; };
+		53013A972CAC601F0024BA30 /* Company.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Company.swift; sourceTree = "<group>"; };
+		53013A992CAC8C510024BA30 /* DefinitionDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefinitionDetail.swift; sourceTree = "<group>"; };
+		53013A9B2CAC9CC40024BA30 /* DefinitionSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefinitionSidebar.swift; sourceTree = "<group>"; };
 		530168162A887B0A000AF4FD /* AllJobsPickerWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllJobsPickerWidget.swift; sourceTree = "<group>"; };
 		530318462A11DD13009CA90B /* CoreDataCalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataCalendarEvent.swift; sourceTree = "<group>"; };
 		5309EE3C25619A6D00B3BC06 /* Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
@@ -425,6 +435,8 @@
 		53C3418B299960310071B855 /* JobDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDashboard.swift; sourceTree = "<group>"; };
 		53C3418D299968160071B855 /* JobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobView.swift; sourceTree = "<group>"; };
 		53C3418F29996C070071B855 /* FancyRandomJobColourPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyRandomJobColourPicker.swift; sourceTree = "<group>"; };
+		53CEDBC72CA9FFA3002726DC /* PageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PageConfiguration.swift; path = "../klockwork-ios/KlockWork-iOS/KlockWork-iOS/SharedEnums/PageConfiguration.swift"; sourceTree = "<group>"; };
+		53CEDBD32CAA014B002726DC /* FilterField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FilterField.swift; path = "../klockwork-ios/KlockWork-iOS/KlockWork-iOS/SharedViews/FilterField.swift"; sourceTree = "<group>"; };
 		53D4CBC72BFE953700AFEDEA /* SaveSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveSource.swift; sourceTree = "<group>"; };
 		53D5E2972A85A75C00FE293A /* Planning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Planning.swift; sourceTree = "<group>"; };
 		53D5E2992A85E38A00FE293A /* WidgetLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLocation.swift; sourceTree = "<group>"; };
@@ -544,6 +556,7 @@
 		531EB6E62A9FDA5000B3059C /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				53013A972CAC601F0024BA30 /* Company.swift */,
 				5331FCB22A9E6ECE005CDE0E /* Plan.swift */,
 				531EB6E72A9FDA5A00B3059C /* Job.swift */,
 				53842B262B4C82B20029AC73 /* Project.swift */,
@@ -554,6 +567,8 @@
 		53218D3B24B7F6EB0088ABE9 = {
 			isa = PBXGroup;
 			children = (
+				53CEDBD32CAA014B002726DC /* FilterField.swift */,
+				53CEDBC72CA9FFA3002726DC /* PageConfiguration.swift */,
 				537DFF862BF27F0B00FC5923 /* PRIVACY.md */,
 				53218D8124B8195D0088ABE9 /* Screenshots */,
 				53218D8024B8094C0088ABE9 /* README.md */,
@@ -901,6 +916,7 @@
 		538A53572C704E1800711639 /* Terms */ = {
 			isa = PBXGroup;
 			children = (
+				53013A992CAC8C510024BA30 /* DefinitionDetail.swift */,
 				538A535D2C704E4400711639 /* TermsDashboard.swift */,
 				538A53582C704E2000711639 /* Sidebars */,
 			);
@@ -910,6 +926,7 @@
 		538A53582C704E2000711639 /* Sidebars */ = {
 			isa = PBXGroup;
 			children = (
+				53013A9B2CAC9CC40024BA30 /* DefinitionSidebar.swift */,
 				538A53592C704E2600711639 /* TermsDashboardSidebar.swift */,
 			);
 			path = Sidebars;
@@ -963,6 +980,7 @@
 		53B0DC102A79D7E200DA1679 /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
+				53013A952CAB82580024BA30 /* GlobalSidebar.swift */,
 				53B0DC112A79D7FC00DA1679 /* NoteVersionNavigationWidget.swift */,
 				5371BA212A7B1C9D00DEEC21 /* RecentNotesWidget.swift */,
 				5371BA312A7B2ADE00DEEC21 /* JobsWidget.swift */,
@@ -1354,6 +1372,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53CEDBD42CAA014B002726DC /* FilterField.swift in Sources */,
+				53CEDBC82CA9FFA3002726DC /* PageConfiguration.swift in Sources */,
 				53FEF578296603D9000B94FC /* FancyTextField.swift in Sources */,
 				53F5895E2998330000843B32 /* NoteResult.swift in Sources */,
 				535C1AEE29F49AAD00CD95FD /* StatsWidget.swift in Sources */,
@@ -1370,6 +1390,7 @@
 				53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */,
 				535C1AE629F48FD500CD95FD /* ThisWeek.swift in Sources */,
 				5354C8EF2AA03CBF001C1779 /* Menu.swift in Sources */,
+				53013A982CAC60200024BA30 /* Company.swift in Sources */,
 				53ECD0572971F8F400A09AAB /* CoreDataRecords.swift in Sources */,
 				53EFCE7929637F35004E45EC /* GeneralSettings.swift in Sources */,
 				5335A5B7296D2089000051B1 /* TaskListView.swift in Sources */,
@@ -1395,6 +1416,7 @@
 				53B0BE86297261A3007CB663 /* ProjectCreate.swift in Sources */,
 				531EB6E82A9FDA5A00B3059C /* Job.swift in Sources */,
 				53B0BE8C297318A6007CB663 /* ProjectView.swift in Sources */,
+				53013A9A2CAC8C530024BA30 /* DefinitionDetail.swift in Sources */,
 				5361DDED2971E1DF00437064 /* CoreDataNotes.swift in Sources */,
 				5309EE3D25619A6D00B3BC06 /* Backup.swift in Sources */,
 				53B0BE8429726118007CB663 /* FancyLink.swift in Sources */,
@@ -1445,6 +1467,7 @@
 				5363B6752A6B4A9A00C2FBB8 /* NoteDashboardSettings.swift in Sources */,
 				530318472A11DD13009CA90B /* CoreDataCalendarEvent.swift in Sources */,
 				535C1AE129F48EF700CD95FD /* Dashboard.swift in Sources */,
+				53013A962CAB825B0024BA30 /* GlobalSidebar.swift in Sources */,
 				53C000962B3A7BD500D5EC04 /* String.swift in Sources */,
 				537628A22966525500DE8ECF /* ToolbarButtons.swift in Sources */,
 				537AEBA1296287B900385787 /* LogRow.swift in Sources */,
@@ -1469,6 +1492,7 @@
 				53F10FE0296E77BE0048D040 /* CoreDataJob.swift in Sources */,
 				533E40652970DA640007785A /* ViewUpdater.swift in Sources */,
 				5334F2682B2963B60079D2E7 /* StringHelper.swift in Sources */,
+				53013A9C2CAC9CCA0024BA30 /* DefinitionSidebar.swift in Sources */,
 				53F589682998437D00843B32 /* JobResult.swift in Sources */,
 				53C000922B38E34C00D5EC04 /* FancyLoader.swift in Sources */,
 				535DDE5E2A7982F3008350D4 /* SidebarItem.swift in Sources */,
@@ -1722,7 +1746,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 171;
+				CURRENT_PROJECT_VERSION = 172;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -1737,7 +1761,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.DLPrototype;
 				PRODUCT_NAME = KlockWork.Beta;
@@ -1759,7 +1783,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 171;
+				CURRENT_PROJECT_VERSION = 172;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"DLPrototype/Preview Content\"";
 				DEVELOPMENT_TEAM = 6DT7L2N5X6;
@@ -1774,7 +1798,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yegcollective.DLPrototype;
 				PRODUCT_NAME = KlockWork;
