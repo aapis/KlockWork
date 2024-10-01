@@ -9,7 +9,8 @@ import SwiftUI
 
 struct Today: View {
     public var defaultSelectedDate: Date? = nil
-    
+    private let page: PageConfiguration.AppPage = .today
+
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
 
     @EnvironmentObject public var nav: Navigation
@@ -26,6 +27,6 @@ struct Today: View {
                 .padding()
             }
         }
-        .background(Theme.toolbarColour)
+        .background(self.page.primaryColour)
     }
 }

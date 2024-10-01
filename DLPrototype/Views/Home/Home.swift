@@ -22,6 +22,7 @@ struct Home: View {
     @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
 
+    private let page: PageConfiguration.AppPage = .find
     private var buttons: [PageGroup: [SidebarButton]] {
         [
             .views: [
@@ -93,6 +94,136 @@ struct Home: View {
     }
 
     var body: some View {
+//        Dashboard()
+        GlobalSidebar()
+    }
+    var body3: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .top, spacing: 0) {
+                    TabBackground
+                    if nav.sidebar != nil {
+                        Sidebar
+                    }
+
+                    InspectorAndMain
+                    
+                    if showSessionInspector {
+                        SessionInspector()
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder var Sidebar: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            GlobalSidebarWidgets()
+
+            if !isSearchStackShowing {
+                if isDatePickerPresented {
+                    ZStack {
+                        nav.sidebar
+                        Color.black.opacity(0.7)
+                    }
+                } else {
+                    nav.sidebar
+                }
+            }
+        }
+        .frame(width: 320)
+        .background(nav.parent != nil ? nav.parent!.colour : Theme.tabActiveColour)
+    }
+
+    @ViewBuilder var TabBackground: some View {
+        VStack(alignment: .leading) {
+            ZStack(alignment: .topTrailing) {
+                Theme.toolbarColour
+                LinearGradient(gradient: Gradient(colors: [Color.black, Theme.toolbarColour]), startPoint: .topTrailing, endPoint: .topLeading)
+                    .opacity(0.25)
+
+                VStack(alignment: .trailing, spacing: 5) {
+                    FancyDivider()
+                    ForEach(buttons[.views]!) { button in button.environmentObject(nav) }
+
+                    FancyDivider()
+                    ForEach(buttons[.entities]!) { button in button.environmentObject(nav) }
+                }
+            }
+        }
+        .frame(width: 100)
+    }
+
+    @ViewBuilder var InspectorAndMain: some View {
+        if nav.inspector != nil {
+            ZStack(alignment: .topLeading) {
+                nav.view
+                    .navigationTitle(nav.pageTitle())
+                    .disabled(isDatePickerPresented)
+                Color.black.opacity(0.7)
+
+                ZStack(alignment: .topLeading) {
+                    LinearGradient(gradient: Gradient(colors: [Color.clear, Color.black]), startPoint: .topTrailing, endPoint: .topLeading)
+                        .opacity(0.25)
+                        .frame(width: 20)
+
+                    Theme.subHeaderColour
+
+                    nav.inspector
+
+                    if isDatePickerPresented {
+                        Color.black.opacity(0.7)
+                    }
+                }
+                .background(Theme.base)
+                .frame(width: 340)
+            }
+        } else {
+            VStack {
+                //                                if nav.history.recent.count > 0 {
+                //                                    HStack {
+                //                                        Button {
+                //                                            if let previous = nav.history.previous() {
+                //                                                nav.to(previous.page)
+                //                                            }
+                //                                        } label: {
+                //                                            HStack(spacing: 5) {
+                //                                                Image(systemName: "arrow.left")
+                //                                                Text("Back")
+                //                                            }
+                //                                        }
+                //                                        .buttonStyle(.plain)
+                //                                        .background(Theme.subHeaderColour)
+                //
+                //                                        Spacer()
+                //                                        Button {
+                //                                            if let next = nav.history.next() {
+                //                                                nav.to(next.page)
+                //                                            }
+                //                                        } label: {
+                //                                            HStack(spacing: 5) {
+                //                                                Text("Next")
+                //                                                Image(systemName: "arrow.right")
+                //                                            }
+                //                                        }
+                //                                        .buttonStyle(.plain)
+                //                                        .background(Theme.subHeaderColour)
+                //                                    }
+                //                                    .background(Theme.base)
+                //                                    .frame(height: 70)
+                //                                }
+
+                ZStack {
+                    nav.view
+                        .navigationTitle(nav.pageTitle())
+                        .disabled(isDatePickerPresented)
+                    (isDatePickerPresented ? Color.black.opacity(0.7) : .clear)
+                }
+            }
+        }
+    }
+
+    var body2: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .top, spacing: 0) {
                 VStack(alignment: .leading) {

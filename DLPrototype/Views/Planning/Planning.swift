@@ -11,6 +11,7 @@ import SwiftUI
 struct Planning: View {
     private let maxItems: Int = 6
     private let title: String = "Planning"
+    private let page: PageConfiguration.AppPage = .planning
     private let description: String = "Use the daily plan to organize your day. Feature plans allow you to define projects of any scope!"
     private let buttons: [ToolbarButton] = [
         ToolbarButton(
@@ -60,11 +61,10 @@ struct Planning: View {
 
             FancyGenericToolbar(buttons: buttons, standalone: true)
         }
-        .onAppear(perform: actionOnAppear)
-        .onChange(of: nav.planning.jobs, perform: actionOnChangeJobs)
-        .font(Theme.font)
         .padding()
-        .background(Theme.toolbarColour)
+        .background(self.page.primaryColour)
+        .onAppear(perform: actionOnAppear)
+        .onChange(of: nav.planning.jobs) { self.actionOnChangeJobs(nav.planning.jobs)}
     }
 }
 
