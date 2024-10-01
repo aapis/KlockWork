@@ -47,7 +47,7 @@ struct DefinitionDetail: View {
                 }
 
                 FancyButtonv2(text: "Cancel", action: self.actionOnCancel, showIcon: false)
-                FancyButtonv2(text: "Save", action: self.actionOnSave, showIcon: false)
+                FancyButtonv2(text: "Save", action: self.actionOnSave, showIcon: false, type: .primary)
             }
             .padding(.bottom)
 
