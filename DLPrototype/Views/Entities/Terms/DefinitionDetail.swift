@@ -17,6 +17,7 @@ struct DefinitionDetail: View {
     @State private var jobIdString: String = ""
     @State private var alive: Bool = true
     @State private var job: Job?
+    @State private var term: TaxonomyTerm?
     // @TODO: not sure if I want this here
 //    @FocusState private var primaryTextFieldInFocus: Bool
 
@@ -66,6 +67,7 @@ extension DefinitionDetail {
         self.definitionString = self.definition?.definition ?? ""
         self.jobIdString = self.definition?.job?.jid.string ?? ""
         self.alive = self.definition?.alive ?? true
+        self.term = self.definition?.term
     }
 
     /// Callback that fires when cancel button clicked/tapped
@@ -77,9 +79,21 @@ extension DefinitionDetail {
     /// Callback that fires when save button clicked/tapped
     /// - Returns: Void
     private func actionOnSave() -> Void {
-        self.definition?.definition = self.definitionString
-        self.definition?.alive = self.alive
-        self.definition?.job = self.job
+        if self.definition != nil {
+            self.definition?.definition = self.definitionString
+            self.definition?.alive = self.alive
+            self.definition?.job = self.job
+            self.definition?.term = self.term
+        } else {
+            CoreDataTaxonomyTermDefinitions(moc: self.state.moc).create(
+                alive: self.alive,
+                created: Date(),
+                definition: self.definitionString,
+                lastUpdate: Date(),
+                job: self.job,
+                term: self.term // @TODO: NOTE TO SELF: all new items created will not be associated with terms until we build a term selector
+            )
+        }
         PersistenceController.shared.save()
 
         self.state.to(.terms)
