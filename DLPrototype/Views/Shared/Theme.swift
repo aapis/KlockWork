@@ -28,8 +28,8 @@ struct Theme {
     
     static public let font: Font = .system(.body, design: .default)
     static public let fontTextField: Font = .system(.body, design: .monospaced)
-    static public let fontTitle: Font = .system(.title, design: .monospaced)
-    static public let fontSubTitle: Font = .system(.title3, design: .monospaced)
+    static public let fontTitle: Font = .system(.title)
+    static public let fontSubTitle: Font = .system(.title3)
     static public let fontCaption: Font = .system(.caption, design: .monospaced)
 
     static public let cYellow: Color = .init(.sRGB, red: 0.34, green: 0.32, blue: 0.22, opacity: 1)
