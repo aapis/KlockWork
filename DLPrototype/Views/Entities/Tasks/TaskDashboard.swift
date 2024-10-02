@@ -12,6 +12,7 @@ import SwiftUI
 struct TaskDashboard: View {
     public var defaultSelectedJob: Job?
     private let page: PageConfiguration.AppPage = .explore
+    private let eType: PageConfiguration.EntityType = .tasks
 
     @State private var searchText: String = ""
     @State private var selectedJob: Int = 0
@@ -29,6 +30,19 @@ struct TaskDashboard: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
+                HStack(alignment: .center, spacing: 0) {
+                    Title(text: eType.label, imageAsImage: eType.icon)
+                    Spacer()
+                    FancyButtonv2(
+                        text: "Create",
+                        action: {
+
+                        },
+                        icon: "plus",
+                        showLabel: false
+                    )
+                }
+                FancyDivider()
                 search.font(Theme.font)
                 create
 

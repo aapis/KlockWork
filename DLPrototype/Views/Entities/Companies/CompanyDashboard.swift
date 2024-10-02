@@ -22,6 +22,7 @@ struct CompanyDashboard: View {
     @FetchRequest public var companies: FetchedResults<Company>
 
     private let page: PageConfiguration.AppPage = .explore
+    private let eType: PageConfiguration.EntityType = .companies
     private var columns: [GridItem] {
         Array(repeating: .init(.flexible(minimum: 100)), count: numColumns)
     }
@@ -30,7 +31,7 @@ struct CompanyDashboard: View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
                 HStack {
-                    Title(text: "Companies & Projects")
+                    Title(text: "Companies & Projects", imageAsImage: eType.icon)
                     Spacer()
                     FancyButtonv2(
                         text: "New Company",
