@@ -23,49 +23,22 @@ struct TodayInHistoryWidget: View {
     @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
 
     var body: some View {
-        VStack(alignment: .leading) {
-            VStack {
-                HStack {
-                    VStack(alignment: .leading) {
-                        FancyButton(text: "Previous day", action: prev, icon: "chevron.left", transparent: true, showLabel: false, size: .small)
-                    }
 
-                    VStack(alignment: .center) {
-                        HStack {
-                            Spacer()
-                            FancyTextLink(
-                                text: "\(selectedDate)",
-                                transparent: true,
-                                destination: AnyView(Today(defaultSelectedDate: currentDate).environmentObject(nav)),
-                                pageType: .today,
-                                sidebar: AnyView(TodaySidebar())
-                            )
-                            Spacer()
-                        }
-                    }
-
-                    VStack(alignment: .trailing) {
-                        FancyButton(text: "Next day", action: next, icon: "chevron.right", transparent: true, showLabel: false, size: .small)
-                    }
-                }
-                .frame(height: 30)
-                
-                VStack(alignment: .leading, spacing: 1) {
-                    ForEach(todayInHistory, id: \.year) { day in
-                        SidebarItem(
-                            data: day.linkLabel(),
-                            help: day.linkLabel(),
-                            icon: "arrowshape.right",
-                            orientation: .right,
-                            action: {actionTodayInHistory(day)}
-                        )
-                        .foregroundColor(day.highlight ? Color.black.opacity(0.6) : Color.white)
-                    }
+            VStack(alignment: .leading, spacing: 1) {
+                ForEach(todayInHistory, id: \.year) { day in
+                    SidebarItem(
+                        data: day.linkLabel(),
+                        help: day.linkLabel(),
+                        icon: "arrowshape.right",
+                        orientation: .right,
+                        action: {actionTodayInHistory(day)}
+                    )
+                    .foregroundColor(day.highlight ? Color.black.opacity(0.6) : Color.white)
                 }
             }
             .padding(8)
             .background(Theme.base.opacity(0.2))
-        }
+        
         .onAppear(perform: loadWidgetData)
         .onChange(of: nav.session.date) {
             loadWidgetData()
