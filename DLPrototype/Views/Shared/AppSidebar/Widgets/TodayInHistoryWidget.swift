@@ -67,7 +67,7 @@ struct TodayInHistoryWidget: View {
             .background(Theme.base.opacity(0.2))
         }
         .onAppear(perform: loadWidgetData)
-        .onChange(of: nav.session.date) { _ in
+        .onChange(of: nav.session.date) {
             loadWidgetData()
         }
     }

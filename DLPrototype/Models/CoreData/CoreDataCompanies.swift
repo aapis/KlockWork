@@ -354,7 +354,7 @@ public class CoreDataCompanies: ObservableObject {
 
         var results: [Company] = []
         let fetch: NSFetchRequest<Company> = Company.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Company.name?, ascending: false)]
+        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Company.name?, ascending: true)]
 
         if predicate != nil {
             fetch.predicate = predicate
