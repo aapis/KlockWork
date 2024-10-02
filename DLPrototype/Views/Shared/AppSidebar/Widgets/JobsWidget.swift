@@ -123,11 +123,12 @@ struct UnifiedSidebar {
                             .opacity(0.7)
                             .padding(.leading)
                         Spacer()
-                        RowAddNavLink(
-                            title: "+ Person",
-                            target: AnyView(EmptyView())
-                        )
-                        .buttonStyle(.plain)
+                        // @TODO: uncomment when people entities has been implemented
+//                        RowAddNavLink(
+//                            title: "+ Person",
+//                            target: AnyView(EmptyView())
+//                        )
+//                        .buttonStyle(.plain)
                         RowAddNavLink(
                             title: "+ Project",
                             target: AnyView(ProjectCreate())
@@ -403,7 +404,7 @@ struct UnifiedSidebar {
                                 ForEach(self.definitions, id: \.objectID) { def in
                                     if def.definition != nil {
                                         Button {
-//                                            self.state.to(.taskDetail)
+                                            self.state.to(.definitionDetail)
                                         } label: {
                                             Text(def.definition ?? "_NO_DEFINITION")
                                         }
@@ -433,11 +434,6 @@ struct UnifiedSidebar {
                 ZStack(alignment: .trailing) {
                     EntityRowButton(text: "\(self.records.count) Records", isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
-                    RowAddNavLink(
-                        title: "Add",
-                        target: AnyView(EmptyView())
-                    )
-                    .buttonStyle(.plain)
                 }
                 .background(Theme.base.opacity(0.6).blendMode(.softLight))
 
@@ -480,11 +476,12 @@ struct UnifiedSidebar {
                 ZStack(alignment: .trailing) {
                     EntityRowButton(text: "People", isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
-                    RowAddNavLink(
-                        title: "Add",
-                        target: AnyView(EmptyView())
-                    )
-                    .buttonStyle(.plain)
+                    // @TODO: uncomment when people entities has been implemented
+//                    RowAddNavLink(
+//                        title: "Add",
+//                        target: AnyView(EmptyView())
+//                    )
+//                    .buttonStyle(.plain)
                 }
                 .background(Theme.base.opacity(0.6).blendMode(.softLight))
 
