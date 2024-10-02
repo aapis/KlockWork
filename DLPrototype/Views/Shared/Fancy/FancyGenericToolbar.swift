@@ -80,6 +80,7 @@ struct FancyGenericToolbar: View {
                                 if buttons.count == 1 {
                                     Text(buttons.first!.helpText)
                                         .padding(.leading, 10)
+                                        .opacity(0.6)
                                 }
                             }
                         }
@@ -94,11 +95,13 @@ struct FancyGenericToolbar: View {
                         if !standalone {
                             Theme.toolbarColour
                         }
-                        
-                        VStack {
-                            ForEach(buttons, id: \ToolbarButton.id) { button in
-                                if button.id == selected && button.contents != nil {
-                                    button.contents
+
+                        ScrollView(showsIndicators: false) {
+                            VStack {
+                                ForEach(buttons, id: \ToolbarButton.id) { button in
+                                    if button.id == selected && button.contents != nil {
+                                        button.contents
+                                    }
                                 }
                             }
                         }

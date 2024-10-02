@@ -13,16 +13,13 @@ struct TaskDashboardSidebar: View {
     @State private var searching: Bool = false
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 5) {
-                FancyGenericToolbar(
-                    buttons: tabs,
-                    standalone: true,
-                    location: .sidebar,
-                    mode: .compact
-                )
-            }
-            Spacer()
+        VStack(alignment: .leading, spacing: 5) {
+            FancyGenericToolbar(
+                buttons: tabs,
+                standalone: true,
+                location: .sidebar,
+                mode: .compact
+            )
         }
         .onAppear(perform: createToolbar)
     }
