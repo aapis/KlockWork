@@ -471,7 +471,7 @@ struct UnifiedSidebar {
                 self.callback?()
             } label: {
                 HStack(alignment: .center, spacing: 8) {
-                    ZStack {
+                    ZStack(alignment: .center) {
                         Theme.base.opacity(0.6).blendMode(.softLight)
                         Image(systemName: self.isPresented ? "minus" : "plus")
                     }
@@ -506,10 +506,10 @@ struct UnifiedSidebar {
                 isPresented.toggle()
                 self.callback?()
             } label: {
-                ZStack {
+                ZStack(alignment: .topLeading) {
                     Theme.base.opacity(0.6).blendMode(.softLight)
                     HStack(alignment: .center, spacing: 8) {
-                        ZStack {
+                        ZStack(alignment: .center) {
                             Theme.base.opacity(0.6).blendMode(.softLight)
                             Image(systemName: self.isPresented ? "minus" : "plus")
                         }
