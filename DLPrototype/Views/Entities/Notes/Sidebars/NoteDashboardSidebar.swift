@@ -24,7 +24,6 @@ struct NoteDashboardSidebar: View {
             }
             Spacer()
         }
-        .padding()
         .onAppear(perform: createToolbar)
     }
 }
@@ -34,13 +33,20 @@ extension NoteDashboardSidebar {
         tabs = [
             ToolbarButton(
                 id: 0,
+                helpText: "Find resources",
+                icon: "globe.americas",
+                labelText: "Resources",
+                contents: AnyView(JobsWidgetRedux())
+            ),
+            ToolbarButton(
+                id: 1,
                 helpText: "Notes",
                 icon: "note.text",
                 labelText: "Notes",
                 contents: AnyView(NotesWidget())
             ),
             ToolbarButton(
-                id: 1,
+                id: 2,
                 helpText: "Favourites notes",
                 icon: "star.fill",
                 labelText: "Favourite Notes",

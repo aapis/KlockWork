@@ -21,7 +21,6 @@ struct DefaultCompanySidebar: View {
             }
             Spacer()
         }
-        .padding()
         .onAppear(perform: createToolbar)
     }
 }

@@ -18,7 +18,6 @@ struct DashboardSidebar: View {
             }
             Spacer()
         }
-        .padding()
         .onAppear(perform: createToolbar)
     }
 }

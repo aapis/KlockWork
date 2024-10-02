@@ -14,7 +14,7 @@ struct TermsDashboardSidebar: View {
 
     var body: some View {
         ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 5) {
+            VStack(alignment: .leading, spacing: 0) {
                 FancyGenericToolbar(
                     buttons: tabs,
                     standalone: true,
@@ -22,9 +22,7 @@ struct TermsDashboardSidebar: View {
                     mode: .compact
                 )
             }
-            Spacer()
         }
-        .padding()
         .onAppear(perform: createToolbar)
     }
 }
@@ -34,17 +32,17 @@ extension TermsDashboardSidebar {
         tabs = [
             ToolbarButton(
                 id: 0,
+                helpText: "Find resources",
+                icon: "globe.americas",
+                labelText: "Resources",
+                contents: AnyView(JobsWidgetRedux())
+            ),
+            ToolbarButton(
+                id: 1,
                 helpText: "Recent jobs",
                 icon: "clock",
                 labelText: "Recent jobs",
                 contents: AnyView(JobPickerWidget())
-            ),
-            ToolbarButton(
-                id: 1,
-                helpText: "All jobs",
-                icon: "hammer",
-                labelText: "All Jobs",
-                contents: AnyView(JobsWidget())
             )
         ]
     }

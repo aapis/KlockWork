@@ -24,7 +24,6 @@ struct TaskDashboardSidebar: View {
             }
             Spacer()
         }
-        .padding()
         .onAppear(perform: createToolbar)
     }
 }
@@ -34,6 +33,13 @@ extension TaskDashboardSidebar {
         tabs = [
             ToolbarButton(
                 id: 0,
+                helpText: "Find resources",
+                icon: "globe.americas",
+                labelText: "Resources",
+                contents: AnyView(JobsWidgetRedux())
+            ),
+            ToolbarButton(
+                id: 1,
                 helpText: "Tasks",
                 icon: "checklist",
                 labelText: "Tasks",

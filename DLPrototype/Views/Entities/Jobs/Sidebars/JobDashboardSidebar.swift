@@ -24,7 +24,6 @@ struct JobDashboardSidebar: View {
             }
             Spacer()
         }
-        .padding()
         .onAppear(perform: createToolbar)
     }
 }
@@ -34,13 +33,20 @@ extension JobDashboardSidebar {
         tabs = [
             ToolbarButton(
                 id: 0,
+                helpText: "Find resources",
+                icon: "globe.americas",
+                labelText: "Resources",
+                contents: AnyView(JobsWidgetRedux())
+            ),
+            ToolbarButton(
+                id: 1,
                 helpText: "Recent jobs",
                 icon: "clock",
                 labelText: "Recent jobs",
                 contents: AnyView(JobPickerWidget())
             ),
             ToolbarButton(
-                id: 1,
+                id: 2,
                 helpText: "All jobs",
                 icon: "hammer",
                 labelText: "All Jobs",
