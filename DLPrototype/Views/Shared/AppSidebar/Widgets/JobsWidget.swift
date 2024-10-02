@@ -136,7 +136,7 @@ struct UnifiedSidebar {
                                 .blendMode(.softLight)
                                 .frame(height: 50)
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(self.company.projects?.allObjects as? [Project] ?? [], id: \.objectID) { project in
+                                ForEach((self.company.projects?.allObjects as? [Project] ?? []).sorted(by: {$0.created! > $1.created!}), id: \.objectID) { project in
                                     if !showPublished || project.alive {
                                         SingleProject(project: project)
                                     }
@@ -188,7 +188,7 @@ struct UnifiedSidebar {
                                 .blendMode(.softLight)
                                 .frame(height: 50)
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(self.project.jobs?.allObjects as? [Job] ?? [], id: \.objectID) { job in
+                                ForEach((self.project.jobs?.allObjects as? [Job] ?? []).sorted(by: {$0.created! > $1.created!}), id: \.objectID) { job in
                                     if !showPublished || job.alive {
                                         SingleJob(job: job)
                                     }
