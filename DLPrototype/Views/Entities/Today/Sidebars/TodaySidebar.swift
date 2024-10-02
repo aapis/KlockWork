@@ -37,27 +37,6 @@ extension TodaySidebar {
                 icon: "globe.americas",
                 labelText: "Resources",
                 contents: AnyView(JobsWidgetRedux())
-            ),
-            ToolbarButton(
-                id: 1,
-                helpText: "Jobs",
-                icon: "hammer",
-                labelText: "Jobs",
-                contents: AnyView(JobPickerWidget())
-            ),
-            ToolbarButton(
-                id: 2,
-                helpText: "Tasks",
-                icon: "checklist",
-                labelText: "Tasks",
-                contents: AnyView(TasksWidget())
-            ),
-            ToolbarButton(
-                id: 3,
-                helpText: "Notes",
-                icon: "note.text",
-                labelText: "Notes",
-                contents: AnyView(NotesWidget())
             )
         ]
     }
