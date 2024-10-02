@@ -43,13 +43,18 @@ public class CoreDataCompanies: ObservableObject {
 
     /// Finds all active companies
     /// - Returns: FetchRequest<Company>
-    static public func fetch() -> FetchRequest<Company> {
+    static public func fetch(_ allowKilled: Bool = false) -> FetchRequest<Company> {
         let descriptors = [
             NSSortDescriptor(keyPath: \Company.name, ascending: true),
         ]
 
         let fetch: NSFetchRequest<Company> = Company.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive == true")
+
+        if allowKilled {
+            fetch.predicate = NSPredicate(format: "createdDate < %@", Date() as CVarArg)
+        } else {
+            fetch.predicate = NSPredicate(format: "alive == true")
+        }
         fetch.sortDescriptors = descriptors
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
