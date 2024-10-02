@@ -98,6 +98,7 @@ extension JobsWidgetRedux {
 
 struct UnifiedSidebar {
     struct SingleCompany: View {
+        @EnvironmentObject private var state: Navigation
         public let company: Company
         @State private var isPresented: Bool = false
         @State private var highlighted: Bool = false
@@ -105,8 +106,15 @@ struct UnifiedSidebar {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                RowButton(text: self.company.name ?? "_COMPANY_NAME", alive: self.company.alive, isPresented: $isPresented)
-                    .useDefaultHover({ inside in self.highlighted = inside})
+                ZStack(alignment: .trailing) {
+                    RowButton(text: self.company.name ?? "_COMPANY_NAME", alive: self.company.alive, isPresented: $isPresented)
+                        .useDefaultHover({ inside in self.highlighted = inside})
+
+                    if self.company == self.state.session.job?.project?.company {
+                        FancyStarv2()
+                            .help("Currently selected job")
+                    }
+                }
 
                 if self.isPresented {
                     HStack(alignment: .center, spacing: 0) {
@@ -154,6 +162,7 @@ struct UnifiedSidebar {
     }
 
     struct SingleProject: View {
+        @EnvironmentObject private var state: Navigation
         public let project: Project
         @State private var isPresented: Bool = false
         @State private var highlighted: Bool = false
@@ -161,8 +170,15 @@ struct UnifiedSidebar {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                RowButton(text: self.project.name ?? "_PROJECT_NAME", alive: self.project.alive, isPresented: $isPresented)
-                    .useDefaultHover({ inside in self.highlighted = inside})
+                ZStack(alignment: .trailing) {
+                    RowButton(text: self.project.name ?? "_PROJECT_NAME", alive: self.project.alive, isPresented: $isPresented)
+                        .useDefaultHover({ inside in self.highlighted = inside})
+
+                    if self.project == self.state.session.job?.project {
+                        FancyStarv2()
+                            .help("Currently selected job")
+                    }
+                }
 
                 if self.isPresented {
                     HStack(alignment: .center, spacing: 0) {
@@ -186,7 +202,7 @@ struct UnifiedSidebar {
                                 .opacity(0.6)
                                 .blendMode(.softLight)
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach((self.project.jobs?.allObjects as? [Job] ?? []).sorted(by: {$0.created! > $1.created!}), id: \.objectID) { job in
+                                ForEach((self.project.jobs?.allObjects as? [Job] ?? []).sorted(by: {$0.created ?? Date() > $1.created ?? Date()}), id: \.objectID) { job in
                                     if !showPublished || job.alive {
                                         SingleJob(job: job)
                                     }
@@ -211,10 +227,17 @@ struct UnifiedSidebar {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                RowButton(text: self.job.title ?? self.job.jid.string, alive: self.job.alive, callback: {
-                    self.state.session.setJob(self.job)
-                }, isPresented: $isPresented)
-                .useDefaultHover({ inside in self.highlighted = inside})
+                ZStack(alignment: .trailing) {
+                    RowButton(text: self.job.title ?? self.job.jid.string, alive: self.job.alive, callback: {
+                        self.state.session.setJob(self.job)
+                    }, isPresented: $isPresented)
+                    .useDefaultHover({ inside in self.highlighted = inside})
+
+                    if self.job == self.state.session.job {
+                        FancyStarv2()
+                            .help("Currently selected job")
+                    }
+                }
 
                 if self.isPresented {
                     VStack(alignment: .leading, spacing: 0) {

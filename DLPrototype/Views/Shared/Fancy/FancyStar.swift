@@ -17,3 +17,14 @@ struct FancyStar: View {
             .shadow(color: (background.isBright() ? Color.yellow : Color.black).opacity(0.4), radius: 3)
     }
 }
+
+
+struct FancyStarv2: View {
+    var body: some View {
+        Image(systemName: "star.fill")
+            .padding(.trailing, 8)
+            .foregroundStyle(.yellow)
+            .font(.title3)
+            .shadow(color: .black.opacity(0.5), radius: 3)
+    }
+}
