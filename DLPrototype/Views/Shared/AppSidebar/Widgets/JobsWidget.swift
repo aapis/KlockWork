@@ -59,17 +59,26 @@ struct JobsWidgetRedux: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .center, spacing: 8) {
-                Spacer()
-                Toggle("Published", isOn: $showPublished)
-                    .font(.caption)
-                    .padding(6)
-                    .background(self.showPublished ? Theme.textBackground : .white.opacity(0.5))
-                    .foregroundStyle(self.showPublished ? .white : Theme.base)
-                    .clipShape(RoundedRectangle(cornerRadius: 5))
+            ZStack {
+                Theme.base.opacity(0.2)
+                LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
+                    .opacity(0.6)
+                    .blendMode(.softLight)
+                    .frame(height: 50)
+                
+                HStack(alignment: .center, spacing: 8) {
+                    Text("\(self.companies.count) Companies")
+                    Spacer()
+                    Toggle("Published", isOn: $showPublished)
+                        .padding(6)
+                        .background(self.showPublished ? Theme.textBackground : .white.opacity(0.5))
+                        .foregroundStyle(self.showPublished ? .white : Theme.base)
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                }
+                .font(.caption)
+                .padding(8)
+//                .background(Theme.base.opacity(0.2))
             }
-            .padding(8)
-            .background(Theme.base.opacity(0.2))
 
             ForEach(self.companies, id: \.objectID) { company in
                 UnifiedSidebar.SingleCompany(company: company)
@@ -101,6 +110,10 @@ struct UnifiedSidebar {
 
                 if self.isPresented {
                     HStack(alignment: .center, spacing: 0) {
+                        Text(self.company.abbreviation ?? "XXX")
+                            .foregroundStyle(self.company.backgroundColor.isBright() ? Theme.base : .white)
+                            .opacity(0.7)
+                            .padding(.leading)
                         Spacer()
                         RowAddNavLink(
                             title: "+ Person",
@@ -149,15 +162,14 @@ struct UnifiedSidebar {
 
                 if self.isPresented {
                     HStack(alignment: .center, spacing: 0) {
+                        Text("\(self.project.company?.abbreviation ?? "XXX").\(self.project.abbreviation ?? "YYY")")
+                            .foregroundStyle(self.project.backgroundColor.isBright() ? Theme.base : .white)
+                            .opacity(0.7)
+                            .padding(.leading)
                         Spacer()
                         RowAddNavLink(
-                            title: "+ Person",
-                            target: AnyView(EmptyView())
-                        )
-                        .buttonStyle(.plain)
-                        RowAddNavLink(
-                            title: "+ Project",
-                            target: AnyView(ProjectCreate())
+                            title: "+ Job",
+                            target: AnyView(JobCreate())
                         )
                         .buttonStyle(.plain)
                     }
@@ -174,6 +186,7 @@ struct UnifiedSidebar {
                                 ForEach(self.project.jobs?.allObjects as? [Job] ?? [], id: \.objectID) { job in
                                     SingleJob(job: job)
                                 }
+                                People(project: self.project)
                             }
                             .padding(.leading, 15)
                         }
@@ -199,17 +212,6 @@ struct UnifiedSidebar {
                 .useDefaultHover({ inside in self.highlighted = inside})
 
                 if self.isPresented {
-                    HStack(alignment: .center, spacing: 0) {
-                        Spacer()
-                        RowAddNavLink(
-                            title: "+ Job",
-                            target: AnyView(JobCreate())
-                        )
-                        .buttonStyle(.plain)
-                    }
-                    .padding([.top, .bottom], 8)
-                    .background(Theme.base.opacity(0.6).blendMode(.softLight))
-
                     VStack(alignment: .leading, spacing: 0) {
                         ZStack(alignment: .topLeading) {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
@@ -335,6 +337,57 @@ struct UnifiedSidebar {
             }
             .background(self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8))
             .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white)
+        }
+    }
+
+    struct People: View {
+        @EnvironmentObject private var state: Navigation
+        public let project: Project
+        @State private var isPresented: Bool = false
+        @State private var highlighted: Bool = false
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                RowButton(text: "People", alive: self.project.alive, isPresented: $isPresented)
+                    .useDefaultHover({ inside in self.highlighted = inside})
+
+                if self.isPresented {
+                    HStack(alignment: .center, spacing: 0) {
+                        Spacer()
+                        RowAddNavLink(
+                            title: "+ Task",
+                            target: AnyView(EmptyView())
+                        )
+                        .buttonStyle(.plain)
+                    }
+                    .padding([.top, .bottom], 8)
+                    .background(Theme.base.opacity(0.6).blendMode(.softLight))
+
+                    VStack(alignment: .leading, spacing: 0) {
+                        ZStack(alignment: .topLeading) {
+                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                .opacity(0.6)
+                                .blendMode(.softLight)
+                                .frame(height: 50)
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(self.project.company?.people?.allObjects as? [Person] ?? [], id: \.objectID) { person in
+                                    if person.name != nil {
+                                        Button {
+                                            self.state.to(.taskDetail)
+                                        } label: {
+                                            Text(person.name!)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                            }
+                            .padding(.leading, 15)
+                        }
+                    }
+                }
+            }
+            .background(self.project.alive ? self.highlighted ? self.project.backgroundColor.opacity(0.9) : self.project.backgroundColor : .gray.opacity(0.8))
+            .foregroundStyle((self.project.alive ? self.project.backgroundColor : .gray).isBright() ? Theme.base : .white)
         }
     }
 
