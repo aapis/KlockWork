@@ -30,7 +30,7 @@ extension JobDashboardSidebar {
         tabs = [
             ToolbarButton(
                 id: 0,
-                helpText: "Find resources",
+                helpText: "Resources",
                 icon: "globe.americas",
                 labelText: "Resources",
                 contents: AnyView(JobsWidgetRedux())
