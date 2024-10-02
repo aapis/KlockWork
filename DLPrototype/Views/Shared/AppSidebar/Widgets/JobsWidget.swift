@@ -53,20 +53,38 @@ extension JobsWidget {
 }
 
 struct JobsWidgetRedux: View {
-    @FetchRequest public var companies: FetchedResults<Company>
+    @EnvironmentObject public var state: Navigation
+    @State private var showPublished: Bool = true
+    @State private var companies: [Company] = []
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .center, spacing: 8) {
+                Spacer()
+                Toggle("Published", isOn: $showPublished)
+                    .font(.caption)
+                    .padding(6)
+                    .background(self.showPublished ? Theme.textBackground : .white.opacity(0.5))
+                    .foregroundStyle(self.showPublished ? .white : Theme.base)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+            }
+            .padding(8)
+            .background(Theme.base.opacity(0.2))
+
             ForEach(self.companies, id: \.objectID) { company in
                 UnifiedSidebar.SingleCompany(company: company)
             }
         }
+        .onAppear(perform: self.actionOnAppear)
+        .onChange(of: self.showPublished) { self.actionOnAppear() }
     }
 }
 
 extension JobsWidgetRedux {
-    public init() {
-        _companies = CoreDataCompanies.fetch(true)
+    /// Onload handler. Finds companies
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.companies = CoreDataCompanies(moc: self.state.moc).all(allowKilled: self.showPublished)
     }
 }
 

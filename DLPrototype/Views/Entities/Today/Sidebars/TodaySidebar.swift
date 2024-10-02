@@ -16,16 +16,13 @@ struct TodaySidebar: View {
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 5) {
-                FancyGenericToolbar(
-                    buttons: tabs,
-                    standalone: true,
-                    location: .sidebar,
-                    mode: .compact
-                )
-            }
-            Spacer()
+        VStack(alignment: .leading, spacing: 5) {
+            FancyGenericToolbar(
+                buttons: tabs,
+                standalone: true,
+                location: .sidebar,
+                mode: .compact
+            )
         }
         .onAppear(perform: createToolbar)
     }
