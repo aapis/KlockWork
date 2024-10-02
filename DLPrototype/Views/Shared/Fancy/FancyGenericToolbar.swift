@@ -68,19 +68,21 @@ struct FancyGenericToolbar: View {
                     ZStack(alignment: .topLeading) {
                         (location == .sidebar ? .clear : Theme.toolbarColour)
 
-                        HStack(spacing: 1) {
-                            ForEach(buttons, id: \ToolbarButton.id) { button in
-                                TabView(
-                                    button: button,
-                                    location: location,
-                                    selected: $selected,
-                                    mode: mode
-                                )
-                                
-                                if buttons.count == 1 {
-                                    Text(buttons.first!.helpText)
-                                        .padding(.leading, 10)
-                                        .opacity(0.6)
+                        ScrollView(.horizontal) {
+                            HStack(spacing: 1) {
+                                ForEach(buttons, id: \ToolbarButton.id) { button in
+                                    TabView(
+                                        button: button,
+                                        location: location,
+                                        selected: $selected,
+                                        mode: mode
+                                    )
+                                    
+                                    if buttons.count == 1 {
+                                        Text(buttons.first!.helpText)
+                                            .padding(.leading, 10)
+                                            .opacity(0.6)
+                                    }
                                 }
                             }
                         }
@@ -146,7 +148,7 @@ struct FancyGenericToolbar: View {
                         )
                         :
                         (
-                            highlighted ? Theme.base.opacity(0.2) : Theme.tabColour
+                            highlighted ? Theme.base.opacity(0.1) : Theme.tabColour
                         )
                     )
 
