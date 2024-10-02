@@ -178,6 +178,7 @@ extension ProjectOutline {
                 HStack(spacing: 0) {
                     HStack {
                         Image(systemName: "hammer")
+                            .foregroundStyle(project.backgroundColor)
                         Text(String(jobs))
                     }
                     .help("\(jobs) Jobs")
@@ -185,6 +186,7 @@ extension ProjectOutline {
 
                     HStack {
                         Image(systemName: "note.text")
+                            .foregroundStyle(project.backgroundColor)
                         Text(String(notes))
                     }
                     .help("\(notes) Notes")
@@ -192,6 +194,7 @@ extension ProjectOutline {
 
                     HStack {
                         Image(systemName: "checklist")
+                            .foregroundStyle(project.backgroundColor)
                         Text(String(tasks))
                     }
                     .help("\(tasks) Tasks")
