@@ -78,7 +78,7 @@ struct DateSelectorWidget: View {
                 VStack(alignment: .leading, spacing: 0) {
                     ScrollView(showsIndicators: false) {
                         VStack(alignment: .leading, spacing: 0) {
-                            ForEach(days, id: \.id) { day in
+                            ForEach(days) { day in
                                 DateSelectorRow(
                                     day: day,
                                     callback: actionOnChangeDate,

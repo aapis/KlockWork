@@ -27,7 +27,6 @@ struct TodaySidebar: View {
             }
             Spacer()
         }
-        .padding()
         .onAppear(perform: createToolbar)
     }
 }
@@ -37,20 +36,27 @@ extension TodaySidebar {
         tabs = [
             ToolbarButton(
                 id: 0,
+                helpText: "Find resources",
+                icon: "globe.americas",
+                labelText: "Resources",
+                contents: AnyView(JobsWidgetRedux())
+            ),
+            ToolbarButton(
+                id: 1,
                 helpText: "Jobs",
                 icon: "hammer",
                 labelText: "Jobs",
                 contents: AnyView(JobPickerWidget())
             ),
             ToolbarButton(
-                id: 1,
+                id: 2,
                 helpText: "Tasks",
                 icon: "checklist",
                 labelText: "Tasks",
                 contents: AnyView(TasksWidget())
             ),
             ToolbarButton(
-                id: 2,
+                id: 3,
                 helpText: "Notes",
                 icon: "note.text",
                 labelText: "Notes",

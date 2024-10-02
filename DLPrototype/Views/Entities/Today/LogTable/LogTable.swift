@@ -200,7 +200,7 @@ extension Today.LogTable {
                         .background(Theme.headerColour)
 
                         if records.count > 0 {
-                            ForEach(grouped, id: \.id) {group in group}
+                            ForEach(grouped) {group in group}
                         } else {
                             LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: Theme.rowColour)
                         }
