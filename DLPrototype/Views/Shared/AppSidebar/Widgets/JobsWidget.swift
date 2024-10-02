@@ -78,27 +78,8 @@ struct UnifiedSidebar {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                Button {
-                    self.isPresented.toggle()
-                } label: {
-                    HStack(alignment: .center, spacing: 8) {
-                        ZStack {
-                            Theme.base.opacity(0.6).blendMode(.softLight)
-                            Image(systemName: self.isPresented ? "minus" : "plus")
-                                .foregroundStyle(.white)
-                        }
-                        .frame(width: 30, height: 30)
-                        .cornerRadius(5)
-
-                        Text(self.company.name ?? "_COMPANY_NAME")
-                            .font(.title3)
-                            .multilineTextAlignment(.leading)
-                        Spacer()
-                    }
-                }
-                .padding(8)
-                .buttonStyle(.plain)
-                .useDefaultHover({ inside in self.highlighted = inside})
+                RowButton(text: self.company.name ?? "_COMPANY_NAME", alive: self.company.alive, isPresented: $isPresented)
+                    .useDefaultHover({ inside in self.highlighted = inside})
 
                 if self.isPresented {
                     HStack(alignment: .center, spacing: 0) {
@@ -134,7 +115,7 @@ struct UnifiedSidebar {
                 }
             }
             .background(self.company.alive ? self.highlighted ? self.company.backgroundColor.opacity(0.9) : self.company.backgroundColor : .gray.opacity(0.8))
-            .foregroundStyle((self.company.alive ? self.company.backgroundColor : .gray).isBright() ? .black : .white)
+            .foregroundStyle((self.company.alive ? self.company.backgroundColor : .gray).isBright() ? Theme.base : .white)
         }
     }
 
@@ -145,27 +126,8 @@ struct UnifiedSidebar {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                Button {
-                    self.isPresented.toggle()
-                } label: {
-                    HStack(alignment: .center, spacing: 8) {
-                        ZStack {
-                            Theme.base.opacity(0.6).blendMode(.softLight)
-                            Image(systemName: self.isPresented ? "minus" : "plus")
-                                .foregroundStyle(.white)
-                        }
-                        .frame(width: 30, height: 30)
-                        .cornerRadius(5)
-
-                        Text(self.project.name ?? "_PROJECT_NAME")
-                            .font(.title3)
-                            .multilineTextAlignment(.leading)
-                        Spacer()
-                    }
-                }
-                .padding(8)
-                .buttonStyle(.plain)
-                .useDefaultHover({ inside in self.highlighted = inside})
+                RowButton(text: self.project.name ?? "_PROJECT_NAME", alive: self.project.alive, isPresented: $isPresented)
+                    .useDefaultHover({ inside in self.highlighted = inside})
 
                 if self.isPresented {
                     HStack(alignment: .center, spacing: 0) {
@@ -201,7 +163,7 @@ struct UnifiedSidebar {
                 }
             }
             .background(self.project.alive ? self.highlighted ? self.project.backgroundColor.opacity(0.9) : self.project.backgroundColor : .gray.opacity(0.8))
-            .foregroundStyle((self.project.alive ? self.project.backgroundColor : .gray).isBright() ? .black : .white)
+            .foregroundStyle((self.project.alive ? self.project.backgroundColor : .gray).isBright() ? Theme.base : .white)
         }
     }
 
@@ -213,27 +175,9 @@ struct UnifiedSidebar {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                Button {
-                    self.isPresented.toggle()
+                RowButton(text: self.job.title ?? self.job.jid.string, alive: self.job.alive, callback: {
                     self.state.session.setJob(self.job)
-                } label: {
-                    HStack(alignment: .center, spacing: 8) {
-                        ZStack {
-                            Theme.base.opacity(0.6).blendMode(.softLight)
-                            Image(systemName: self.isPresented ? "minus" : "plus")
-                                .foregroundStyle(.white)
-                        }
-                        .frame(width: 30, height: 30)
-                        .cornerRadius(5)
-
-                        Text(self.job.title ?? self.job.jid.string)
-                            .font(.title3)
-                            .multilineTextAlignment(.leading)
-                        Spacer()
-                    }
-                }
-                .padding(8)
-                .buttonStyle(.plain)
+                }, isPresented: $isPresented)
                 .useDefaultHover({ inside in self.highlighted = inside})
 
                 if self.isPresented {
@@ -258,6 +202,9 @@ struct UnifiedSidebar {
                                 if let tasks = self.job.tasks?.allObjects as? [LogTask] {
                                     Tasks(job: self.job, tasks: tasks)
                                 }
+                                if let notes = self.job.mNotes?.allObjects as? [Note] {
+                                    Notes(job: self.job, notes: notes)
+                                }
                             }
                             .padding(.leading, 15)
                         }
@@ -265,7 +212,7 @@ struct UnifiedSidebar {
                 }
             }
             .background(self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8))
-            .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? .black : .white)
+            .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white)
         }
     }
 
@@ -278,27 +225,8 @@ struct UnifiedSidebar {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                Button {
-                    self.isPresented.toggle()
-                } label: {
-                    HStack(alignment: .center, spacing: 8) {
-                        ZStack {
-                            Theme.base.opacity(0.6).blendMode(.softLight)
-                            Image(systemName: self.isPresented ? "minus" : "plus")
-                                .foregroundStyle(.white)
-                        }
-                        .frame(width: 30, height: 30)
-                        .cornerRadius(5)
-
-                        Text("Tasks")
-                            .font(.title3)
-                            .multilineTextAlignment(.leading)
-                        Spacer()
-                    }
-                }
-                .padding(8)
-                .buttonStyle(.plain)
-                .useDefaultHover({ inside in self.highlighted = inside})
+                RowButton(text: "Tasks", alive: self.job.alive, isPresented: $isPresented)
+                    .useDefaultHover({ inside in self.highlighted = inside})
 
                 if self.isPresented {
                     HStack(alignment: .center, spacing: 0) {
@@ -336,7 +264,96 @@ struct UnifiedSidebar {
                 }
             }
             .background(self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8))
-            .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? .black : .white)
+            .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white)
+        }
+    }
+
+    struct Notes: View {
+        @EnvironmentObject private var state: Navigation
+        public let job: Job
+        public let notes: [Note]
+        @State private var isPresented: Bool = false
+        @State private var highlighted: Bool = false
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                RowButton(text: "Notes", alive: self.job.alive, isPresented: $isPresented)
+                    .useDefaultHover({ inside in self.highlighted = inside})
+
+                if self.isPresented {
+                    HStack(alignment: .center, spacing: 0) {
+                        Spacer()
+                        RowAddNavLink(
+                            title: "+ Note",
+                            target: AnyView(EmptyView())
+                        )
+                        .buttonStyle(.plain)
+                    }
+                    .padding([.top, .bottom], 8)
+                    .background(Theme.base.opacity(0.6).blendMode(.softLight))
+
+                    VStack(alignment: .leading, spacing: 0) {
+                        ZStack(alignment: .topLeading) {
+                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                .opacity(0.6)
+                                .blendMode(.softLight)
+                                .frame(height: 50)
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(self.notes, id: \.objectID) { note in
+                                    if note.title != nil {
+                                        Button {
+                                            self.state.to(.taskDetail)
+                                        } label: {
+                                            Text(note.title!)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                            }
+                            .padding(.leading, 15)
+                        }
+                    }
+                }
+            }
+            .background(self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8))
+            .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white)
+        }
+    }
+
+    struct RowButton: View {
+        public let text: String
+        public let alive: Bool
+        public var callback: (() -> Void)?
+        @Binding public var isPresented: Bool
+
+        var body: some View {
+            Button {
+                isPresented.toggle()
+                self.callback?()
+            } label: {
+                HStack(alignment: .center, spacing: 8) {
+                    ZStack {
+                        Theme.base.opacity(0.6).blendMode(.softLight)
+                        Image(systemName: self.isPresented ? "minus" : "plus")
+                    }
+                    .frame(width: 30, height: 30)
+                    .cornerRadius(5)
+
+                    Text(self.text)
+                        .font(.title3)
+                        .multilineTextAlignment(.leading)
+                    Spacer()
+
+                    if !self.alive {
+                        Image(systemName: "snowflake")
+                            .font(.title3)
+                            .opacity(0.5)
+                            .help("Unpublished")
+                    }
+                }
+            }
+            .padding(8)
+            .buttonStyle(.plain)
         }
     }
 }
