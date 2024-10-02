@@ -241,6 +241,11 @@ struct UnifiedSidebar {
                                         Definitions(job: self.job, definitions: definitions)
                                     }
                                 }
+                                if let records = self.job.records?.allObjects as? [LogRecord] {
+                                    if records.count > 0 {
+                                        Records(job: self.job, records: records)
+                                    }
+                                }
                             }
                             .padding(.leading, 15)
                         }
@@ -261,21 +266,18 @@ struct UnifiedSidebar {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                EntityRowButton(text: "\(self.tasks.count) Tasks", isPresented: $isPresented)
-                    .useDefaultHover({ inside in self.highlighted = inside})
+                ZStack(alignment: .trailing) {
+                    EntityRowButton(text: "\(self.tasks.count) Tasks", isPresented: $isPresented)
+                        .useDefaultHover({ inside in self.highlighted = inside})
+                    RowAddNavLink(
+                        title: "Add",
+                        target: AnyView(EmptyView())
+                    )
+                    .buttonStyle(.plain)
+                }
+                .background(Theme.base.opacity(0.6).blendMode(.softLight))
 
                 if self.isPresented {
-                    HStack(alignment: .center, spacing: 0) {
-                        Spacer()
-                        RowAddNavLink(
-                            title: "+ Task",
-                            target: AnyView(EmptyView())
-                        )
-                        .buttonStyle(.plain)
-                    }
-                    .padding([.top, .bottom], 8)
-                    .background(Theme.base.opacity(0.6).blendMode(.softLight))
-
                     VStack(alignment: .leading, spacing: 0) {
                         ZStack(alignment: .topLeading) {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
@@ -313,21 +315,18 @@ struct UnifiedSidebar {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                EntityRowButton(text: "\(self.notes.count) Notes", isPresented: $isPresented)
-                    .useDefaultHover({ inside in self.highlighted = inside})
+                ZStack(alignment: .trailing) {
+                    EntityRowButton(text: "\(self.notes.count) Notes", isPresented: $isPresented)
+                        .useDefaultHover({ inside in self.highlighted = inside})
+                    RowAddNavLink(
+                        title: "Add",
+                        target: AnyView(EmptyView())
+                    )
+                    .buttonStyle(.plain)
+                }
+                .background(Theme.base.opacity(0.6).blendMode(.softLight))
 
                 if self.isPresented {
-                    HStack(alignment: .center, spacing: 0) {
-                        Spacer()
-                        RowAddNavLink(
-                            title: "+ Note",
-                            target: AnyView(EmptyView())
-                        )
-                        .buttonStyle(.plain)
-                    }
-                    .padding([.top, .bottom], 8)
-                    .background(Theme.base.opacity(0.6).blendMode(.softLight))
-
                     VStack(alignment: .leading, spacing: 0) {
                         ZStack(alignment: .topLeading) {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
@@ -365,21 +364,18 @@ struct UnifiedSidebar {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                EntityRowButton(text: "\(self.definitions.count) Definitions", isPresented: $isPresented)
-                    .useDefaultHover({ inside in self.highlighted = inside})
+                ZStack(alignment: .trailing) {
+                    EntityRowButton(text: "\(self.definitions.count) Definitions", isPresented: $isPresented)
+                        .useDefaultHover({ inside in self.highlighted = inside})
+                    RowAddNavLink(
+                        title: "Add",
+                        target: AnyView(EmptyView())
+                    )
+                    .buttonStyle(.plain)
+                }
+                .background(Theme.base.opacity(0.6).blendMode(.softLight))
 
                 if self.isPresented {
-                    HStack(alignment: .center, spacing: 0) {
-                        Spacer()
-                        RowAddNavLink(
-                            title: "+ Definition",
-                            target: AnyView(EmptyView())
-                        )
-                        .buttonStyle(.plain)
-                    }
-                    .padding([.top, .bottom], 8)
-                    .background(Theme.base.opacity(0.6).blendMode(.softLight))
-
                     VStack(alignment: .leading, spacing: 0) {
                         ZStack(alignment: .topLeading) {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
@@ -408,6 +404,55 @@ struct UnifiedSidebar {
         }
     }
 
+    struct Records: View {
+        @EnvironmentObject private var state: Navigation
+        public let job: Job
+        public let records: [LogRecord]
+        @State private var isPresented: Bool = false
+        @State private var highlighted: Bool = false
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                ZStack(alignment: .trailing) {
+                    EntityRowButton(text: "\(self.records.count) Records", isPresented: $isPresented)
+                        .useDefaultHover({ inside in self.highlighted = inside})
+                    RowAddNavLink(
+                        title: "Add",
+                        target: AnyView(EmptyView())
+                    )
+                    .buttonStyle(.plain)
+                }
+                .background(Theme.base.opacity(0.6).blendMode(.softLight))
+
+                if self.isPresented {
+                    VStack(alignment: .leading, spacing: 0) {
+                        ZStack(alignment: .topLeading) {
+                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                .opacity(0.6)
+                                .blendMode(.softLight)
+                                .frame(height: 50)
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(self.records, id: \.objectID) { record in
+                                    if record.message != nil {
+                                        Button {
+//                                            self.state.to(.taskDetail)
+                                        } label: {
+                                            Text(record.message!)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                            }
+                            .padding(.leading, 15)
+                        }
+                    }
+                }
+            }
+            .background(self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8))
+            .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white)
+        }
+    }
+
     struct People: View {
         @EnvironmentObject private var state: Navigation
         public let entity: Company
@@ -416,21 +461,18 @@ struct UnifiedSidebar {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                RowButton(text: "People", alive: self.entity.alive, isPresented: $isPresented)
-                    .useDefaultHover({ inside in self.highlighted = inside})
+                ZStack(alignment: .trailing) {
+                    EntityRowButton(text: "People", isPresented: $isPresented)
+                        .useDefaultHover({ inside in self.highlighted = inside})
+                    RowAddNavLink(
+                        title: "Add",
+                        target: AnyView(EmptyView())
+                    )
+                    .buttonStyle(.plain)
+                }
+                .background(Theme.base.opacity(0.6).blendMode(.softLight))
 
                 if self.isPresented {
-                    HStack(alignment: .center, spacing: 0) {
-                        Spacer()
-                        RowAddNavLink(
-                            title: "+ Task",
-                            target: AnyView(EmptyView())
-                        )
-                        .buttonStyle(.plain)
-                    }
-                    .padding([.top, .bottom], 8)
-                    .background(Theme.base.opacity(0.6).blendMode(.softLight))
-
                     VStack(alignment: .leading, spacing: 0) {
                         ZStack(alignment: .topLeading) {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
