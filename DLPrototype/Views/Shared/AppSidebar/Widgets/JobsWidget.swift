@@ -139,6 +139,8 @@ struct UnifiedSidebar {
                                 ForEach(self.company.projects?.allObjects as? [Project] ?? [], id: \.objectID) { project in
                                     SingleProject(project: project)
                                 }
+
+                                People(entity: self.company)
                             }
                             .padding(.leading, 15)
                         }
@@ -186,7 +188,6 @@ struct UnifiedSidebar {
                                 ForEach(self.project.jobs?.allObjects as? [Job] ?? [], id: \.objectID) { job in
                                     SingleJob(job: job)
                                 }
-                                People(project: self.project)
                             }
                             .padding(.leading, 15)
                         }
@@ -342,13 +343,13 @@ struct UnifiedSidebar {
 
     struct People: View {
         @EnvironmentObject private var state: Navigation
-        public let project: Project
+        public let entity: Company
         @State private var isPresented: Bool = false
         @State private var highlighted: Bool = false
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                RowButton(text: "People", alive: self.project.alive, isPresented: $isPresented)
+                RowButton(text: "People", alive: self.entity.alive, isPresented: $isPresented)
                     .useDefaultHover({ inside in self.highlighted = inside})
 
                 if self.isPresented {
@@ -370,7 +371,7 @@ struct UnifiedSidebar {
                                 .blendMode(.softLight)
                                 .frame(height: 50)
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(self.project.company?.people?.allObjects as? [Person] ?? [], id: \.objectID) { person in
+                                ForEach(self.entity.people?.allObjects as? [Person] ?? [], id: \.objectID) { person in
                                     if person.name != nil {
                                         Button {
                                             self.state.to(.taskDetail)
@@ -386,8 +387,8 @@ struct UnifiedSidebar {
                     }
                 }
             }
-            .background(self.project.alive ? self.highlighted ? self.project.backgroundColor.opacity(0.9) : self.project.backgroundColor : .gray.opacity(0.8))
-            .foregroundStyle((self.project.alive ? self.project.backgroundColor : .gray).isBright() ? Theme.base : .white)
+            .background(self.entity.alive ? self.highlighted ? self.entity.backgroundColor.opacity(0.9) : self.entity.backgroundColor : .gray.opacity(0.8))
+            .foregroundStyle((self.entity.alive ? self.entity.backgroundColor : .gray).isBright() ? Theme.base : .white)
         }
     }
 
