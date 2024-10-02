@@ -54,8 +54,8 @@ extension JobsWidget {
 
 struct JobsWidgetRedux: View {
     @EnvironmentObject public var state: Navigation
-    @State private var showPublished: Bool = true
     @State private var companies: [Company] = []
+    @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -77,7 +77,6 @@ struct JobsWidgetRedux: View {
                 }
                 .font(.caption)
                 .padding(8)
-//                .background(Theme.base.opacity(0.2))
             }
 
             ForEach(self.companies, id: \.objectID) { company in
@@ -102,6 +101,7 @@ struct UnifiedSidebar {
         public let company: Company
         @State private var isPresented: Bool = false
         @State private var highlighted: Bool = false
+        @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
@@ -137,7 +137,9 @@ struct UnifiedSidebar {
                                 .frame(height: 50)
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(self.company.projects?.allObjects as? [Project] ?? [], id: \.objectID) { project in
-                                    SingleProject(project: project)
+                                    if !showPublished || project.alive {
+                                        SingleProject(project: project)
+                                    }
                                 }
 
                                 People(entity: self.company)
@@ -156,6 +158,7 @@ struct UnifiedSidebar {
         public let project: Project
         @State private var isPresented: Bool = false
         @State private var highlighted: Bool = false
+        @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
@@ -186,7 +189,9 @@ struct UnifiedSidebar {
                                 .frame(height: 50)
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(self.project.jobs?.allObjects as? [Job] ?? [], id: \.objectID) { job in
-                                    SingleJob(job: job)
+                                    if !showPublished || job.alive {
+                                        SingleJob(job: job)
+                                    }
                                 }
                             }
                             .padding(.leading, 15)
@@ -204,6 +209,7 @@ struct UnifiedSidebar {
         public let job: Job
         @State private var isPresented: Bool = false
         @State private var highlighted: Bool = false
+        @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
@@ -221,10 +227,19 @@ struct UnifiedSidebar {
                                 .frame(height: 50)
                             VStack(alignment: .leading, spacing: 0) {
                                 if let tasks = self.job.tasks?.allObjects as? [LogTask] {
-                                    Tasks(job: self.job, tasks: tasks)
+                                    if tasks.count > 0 {
+                                        Tasks(job: self.job, tasks: tasks)
+                                    }
                                 }
                                 if let notes = self.job.mNotes?.allObjects as? [Note] {
-                                    Notes(job: self.job, notes: notes)
+                                    if notes.count > 0 {
+                                        Notes(job: self.job, notes: notes)
+                                    }
+                                }
+                                if let definitions = self.job.definitions?.allObjects as? [TaxonomyTermDefinitions] {
+                                    if definitions.count > 0 {
+                                        Definitions(job: self.job, definitions: definitions)
+                                    }
                                 }
                             }
                             .padding(.leading, 15)
@@ -246,7 +261,7 @@ struct UnifiedSidebar {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                RowButton(text: "Tasks", alive: self.job.alive, isPresented: $isPresented)
+                EntityRowButton(text: "\(self.tasks.count) Tasks", isPresented: $isPresented)
                     .useDefaultHover({ inside in self.highlighted = inside})
 
                 if self.isPresented {
@@ -298,7 +313,7 @@ struct UnifiedSidebar {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                RowButton(text: "Notes", alive: self.job.alive, isPresented: $isPresented)
+                EntityRowButton(text: "\(self.notes.count) Notes", isPresented: $isPresented)
                     .useDefaultHover({ inside in self.highlighted = inside})
 
                 if self.isPresented {
@@ -326,6 +341,58 @@ struct UnifiedSidebar {
                                             self.state.to(.taskDetail)
                                         } label: {
                                             Text(note.title!)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                            }
+                            .padding(.leading, 15)
+                        }
+                    }
+                }
+            }
+            .background(self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8))
+            .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white)
+        }
+    }
+
+    struct Definitions: View {
+        @EnvironmentObject private var state: Navigation
+        public let job: Job
+        public let definitions: [TaxonomyTermDefinitions]
+        @State private var isPresented: Bool = false
+        @State private var highlighted: Bool = false
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                EntityRowButton(text: "\(self.definitions.count) Definitions", isPresented: $isPresented)
+                    .useDefaultHover({ inside in self.highlighted = inside})
+
+                if self.isPresented {
+                    HStack(alignment: .center, spacing: 0) {
+                        Spacer()
+                        RowAddNavLink(
+                            title: "+ Definition",
+                            target: AnyView(EmptyView())
+                        )
+                        .buttonStyle(.plain)
+                    }
+                    .padding([.top, .bottom], 8)
+                    .background(Theme.base.opacity(0.6).blendMode(.softLight))
+
+                    VStack(alignment: .leading, spacing: 0) {
+                        ZStack(alignment: .topLeading) {
+                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                .opacity(0.6)
+                                .blendMode(.softLight)
+                                .frame(height: 50)
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(self.definitions, id: \.objectID) { def in
+                                    if def.definition != nil {
+                                        Button {
+//                                            self.state.to(.taskDetail)
+                                        } label: {
+                                            Text(def.definition ?? "_NO_DEFINITION")
                                         }
                                         .buttonStyle(.plain)
                                     }
@@ -423,8 +490,40 @@ struct UnifiedSidebar {
                             .help("Unpublished")
                     }
                 }
+                .padding(8)
             }
-            .padding(8)
+            .buttonStyle(.plain)
+        }
+    }
+
+    struct EntityRowButton: View {
+        public let text: String
+        public var callback: (() -> Void)?
+        @Binding public var isPresented: Bool
+
+        var body: some View {
+            Button {
+                isPresented.toggle()
+                self.callback?()
+            } label: {
+                ZStack {
+                    Theme.base.opacity(0.6).blendMode(.softLight)
+                    HStack(alignment: .center, spacing: 8) {
+                        ZStack {
+                            Theme.base.opacity(0.6).blendMode(.softLight)
+                            Image(systemName: self.isPresented ? "minus" : "plus")
+                        }
+                        .frame(width: 30, height: 30)
+                        .cornerRadius(5)
+
+                        Text(self.text)
+                            .font(.title3)
+                            .multilineTextAlignment(.leading)
+                        Spacer()
+                    }
+                    .padding(8)
+                }
+            }
             .buttonStyle(.plain)
         }
     }
