@@ -134,7 +134,6 @@ struct UnifiedSidebar {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                                 .opacity(0.6)
                                 .blendMode(.softLight)
-                                .frame(height: 50)
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach((self.company.projects?.allObjects as? [Project] ?? []).sorted(by: {$0.created! > $1.created!}), id: \.objectID) { project in
                                     if !showPublished || project.alive {
@@ -186,7 +185,6 @@ struct UnifiedSidebar {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                                 .opacity(0.6)
                                 .blendMode(.softLight)
-                                .frame(height: 50)
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach((self.project.jobs?.allObjects as? [Job] ?? []).sorted(by: {$0.created! > $1.created!}), id: \.objectID) { job in
                                     if !showPublished || job.alive {
@@ -224,7 +222,6 @@ struct UnifiedSidebar {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                                 .opacity(0.6)
                                 .blendMode(.softLight)
-                                .frame(height: 50)
                             VStack(alignment: .leading, spacing: 0) {
                                 if let tasks = self.job.tasks?.allObjects as? [LogTask] {
                                     if tasks.count > 0 {
@@ -283,7 +280,6 @@ struct UnifiedSidebar {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                                 .opacity(0.6)
                                 .blendMode(.softLight)
-                                .frame(height: 50)
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(self.tasks, id: \.objectID) { task in
                                     if task.content != nil {
@@ -332,7 +328,6 @@ struct UnifiedSidebar {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                                 .opacity(0.6)
                                 .blendMode(.softLight)
-                                .frame(height: 50)
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(self.notes, id: \.objectID) { note in
                                     if note.title != nil {
@@ -381,7 +376,6 @@ struct UnifiedSidebar {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                                 .opacity(0.6)
                                 .blendMode(.softLight)
-                                .frame(height: 50)
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(self.definitions, id: \.objectID) { def in
                                     if def.definition != nil {
@@ -430,7 +424,6 @@ struct UnifiedSidebar {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                                 .opacity(0.6)
                                 .blendMode(.softLight)
-                                .frame(height: 50)
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(self.records, id: \.objectID) { record in
                                     if record.message != nil {

@@ -18,7 +18,7 @@ struct Theme {
     static public var subHeaderColour: Color = headerColour.opacity(0.2)
     static public var footerColour: Color = Color.gray.opacity(0.5)
     static public var toolbarColour: Color = Color.indigo.opacity(0.2)
-    static public var tabColour: Color = Color.white.opacity(0.2)
+    static public var tabColour: Color = Color.white.opacity(0.08)
     static public var tabActiveColour: Color = headerColour
     static public var rowStatusGreen: Color = Color.green.opacity(0.2)
     static public var rowStatusYellow: Color = Color.yellow.opacity(0.2)
