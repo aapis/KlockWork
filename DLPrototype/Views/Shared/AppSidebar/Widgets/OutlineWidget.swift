@@ -132,8 +132,10 @@ extension ProjectOutline {
 
         var body: some View {
             HStack(alignment: .top, spacing: 5) {
-                Image(systemName: "folder")
-                FancyTextLink(text: "[\(project.abbreviation != nil ? project.abbreviation!.uppercased() : "NOPE")] \(project.name!.capitalized)", destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
+                Image(systemName: "folder.fill")
+                    .foregroundStyle(project.backgroundColor)
+
+                FancyTextLink(text: "[\(project.abbreviation != nil ? project.abbreviation!.uppercased() : "XXX")] \(project.name!.capitalized)", destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
                     .help("Edit project: \(project.name!.capitalized)")
                 Spacer()
                 FancyButtonv2(text: "Action", action: {aboutPanelOpen.toggle()}, icon: aboutPanelOpen ? "chevron.up.square.fill" : "chevron.down.square", showLabel: false, size: .tiny, type: .clear)
