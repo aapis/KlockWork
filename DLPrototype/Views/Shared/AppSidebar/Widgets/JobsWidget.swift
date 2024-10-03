@@ -575,34 +575,14 @@ struct UnifiedSidebar {
         public var redirect: Page
         public var resource: NSManagedObject
         @State private var highlighted: Bool = false
+        @State private var noLinkAvailable: Bool = false // @TODO: this should be removed after all entity detail pages have been implemented
 
         var body: some View {
             Button {
-                switch self.redirect {
-                case .today:
-                    self.state.session.record = self.resource as? LogRecord
-                case .projects:
-                    self.state.session.project = self.resource as? Project
-                case .jobs:
-                    self.state.session.job = self.resource as? Job
-                case .companies:
-                    self.state.session.company = self.resource as? Company
-                case .terms:
-                    self.state.session.term = self.resource as? TaxonomyTerm
-                case .definitionDetail:
-                    self.state.session.definition = self.resource as? TaxonomyTermDefinitions
-                case .taskDetail, .tasks:
-                    self.state.session.task = self.resource as? LogTask
-                case .noteDetail, .notes:
-                    self.state.session.note = self.resource as? Note
-                default:
-                    print("no op")
-                }
-
                 self.state.to(self.redirect)
             } label: {
                 HStack(alignment: .center, spacing: 8) {
-                    Image(systemName: "link")
+                    Image(systemName: self.noLinkAvailable ? "questionmark.square.fill" : "link")
                         .opacity(0.4)
                     Text(self.label)
                     Spacer()
@@ -611,7 +591,39 @@ struct UnifiedSidebar {
                 .background(self.highlighted ? .white.opacity(0.2) : .clear)
                 .useDefaultHover({ inside in self.highlighted = inside})
             }
+            .disabled(self.noLinkAvailable)
+            .help(self.noLinkAvailable ? "Link not found" : self.label)
             .buttonStyle(.plain)
+            .onAppear(perform: self.actionOnAppear)
+        }
+    }
+}
+
+extension UnifiedSidebar.EntityTypeRowButton {
+    /// Onload handler. Sets appropriate link data for the given Page
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        switch self.redirect {
+            // @TODO: uncomment after this detail view has been implemented
+//        case .today:
+//            self.state.session.record = self.resource as? LogRecord
+        case .projects:
+            self.state.session.project = self.resource as? Project
+        case .jobs:
+            self.state.session.job = self.resource as? Job
+        case .companies:
+            self.state.session.company = self.resource as? Company
+        case .terms:
+            self.state.session.term = self.resource as? TaxonomyTerm
+        case .definitionDetail:
+            self.state.session.definition = self.resource as? TaxonomyTermDefinitions
+        // @TODO: uncomment after this detail view has been implemented
+//        case .taskDetail, .tasks:
+//            self.state.session.task = self.resource as? LogTask
+        case .noteDetail, .notes:
+            self.state.session.note = self.resource as? Note
+        default:
+            self.noLinkAvailable = true
         }
     }
 }
