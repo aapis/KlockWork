@@ -575,7 +575,7 @@ extension Navigation {
             HistoryPage(page: .terms, view: AnyView(TermsDashboard()), sidebar: AnyView(TermsDashboardSidebar()), title: "Terms"),
             HistoryPage(page: .definitionDetail, view: AnyView(DefinitionDetail()), sidebar: AnyView(TermsDashboardSidebar()), title: "Definition detail"),
             HistoryPage(page: .taskDetail, view: AnyView(EmptyView()), sidebar: AnyView(TermsDashboardSidebar()), title: "Task detail"),
-            HistoryPage(page: .noteDetail, view: AnyView(NoteCreate()), sidebar: AnyView(NoteCreateSidebar()), title: "Note detail"),
+            HistoryPage(page: .noteDetail, view: AnyView(NoteView()), sidebar: AnyView(NoteCreateSidebar()), title: "Note detail"),
         ]
         
         /// A single page representing a page the user navigated to
