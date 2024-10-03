@@ -15,13 +15,9 @@ struct DefaultCompanySidebar: View {
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 5) {
-                FancyGenericToolbar(buttons: tabs, standalone: true, location: .sidebar, mode: .compact)
-            }
-            Spacer()
+        VStack(alignment: .leading, spacing: 5) {
+            FancyGenericToolbar(buttons: tabs, standalone: true, location: .sidebar, mode: .compact)
         }
-        .padding()
         .onAppear(perform: createToolbar)
     }
 }
@@ -31,7 +27,14 @@ extension DefaultCompanySidebar {
         tabs = [
             ToolbarButton(
                 id: 0,
-                helpText: "Companies & Projects",
+                helpText: "Resources",
+                icon: "globe.americas",
+                labelText: "Resources",
+                contents: AnyView(JobsWidgetRedux())
+            ),
+            ToolbarButton(
+                id: 1,
+                helpText: "Outline",
                 icon: "menucard",
                 labelText: "Outline",
                 contents: AnyView(OutlineWidget())

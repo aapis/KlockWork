@@ -68,18 +68,21 @@ struct FancyGenericToolbar: View {
                     ZStack(alignment: .topLeading) {
                         (location == .sidebar ? .clear : Theme.toolbarColour)
 
-                        HStack(spacing: 1) {
-                            ForEach(buttons, id: \ToolbarButton.id) { button in
-                                TabView(
-                                    button: button,
-                                    location: location,
-                                    selected: $selected,
-                                    mode: mode
-                                )
-                                
-                                if buttons.count == 1 {
-                                    Text(buttons.first!.helpText)
-                                        .padding(.leading, 10)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 1) {
+                                ForEach(buttons, id: \ToolbarButton.id) { button in
+                                    TabView(
+                                        button: button,
+                                        location: location,
+                                        selected: $selected,
+                                        mode: mode
+                                    )
+                                    
+                                    if buttons.count == 1 {
+                                        Text(buttons.first!.helpText)
+                                            .padding(.leading, 10)
+                                            .opacity(0.6)
+                                    }
                                 }
                             }
                         }
@@ -94,11 +97,13 @@ struct FancyGenericToolbar: View {
                         if !standalone {
                             Theme.toolbarColour
                         }
-                        
-                        VStack {
-                            ForEach(buttons, id: \ToolbarButton.id) { button in
-                                if button.id == selected && button.contents != nil {
-                                    button.contents
+
+                        ScrollView(showsIndicators: false) {
+                            VStack {
+                                ForEach(buttons, id: \ToolbarButton.id) { button in
+                                    if button.id == selected && button.contents != nil {
+                                        button.contents
+                                    }
                                 }
                             }
                         }
@@ -143,7 +148,7 @@ struct FancyGenericToolbar: View {
                         )
                         :
                         (
-                            highlighted ? Theme.base.opacity(0.2) : Theme.tabColour
+                            highlighted ? Theme.base.opacity(0.1) : Theme.tabColour
                         )
                     )
 

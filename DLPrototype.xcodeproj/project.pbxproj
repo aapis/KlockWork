@@ -11,6 +11,7 @@
 		53013A982CAC60200024BA30 /* Company.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A972CAC601F0024BA30 /* Company.swift */; };
 		53013A9A2CAC8C530024BA30 /* DefinitionDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A992CAC8C510024BA30 /* DefinitionDetail.swift */; };
 		53013A9C2CAC9CCA0024BA30 /* DefinitionSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A9B2CAC9CC40024BA30 /* DefinitionSidebar.swift */; };
+		53013A9F2CACD23D0024BA30 /* RowAddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A9E2CACD23D0024BA30 /* RowAddButton.swift */; };
 		530168172A887B0A000AF4FD /* AllJobsPickerWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530168162A887B0A000AF4FD /* AllJobsPickerWidget.swift */; };
 		530318472A11DD13009CA90B /* CoreDataCalendarEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530318462A11DD13009CA90B /* CoreDataCalendarEvent.swift */; };
 		5309EE3D25619A6D00B3BC06 /* Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5309EE3C25619A6D00B3BC06 /* Backup.swift */; };
@@ -259,6 +260,7 @@
 		53013A972CAC601F0024BA30 /* Company.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Company.swift; sourceTree = "<group>"; };
 		53013A992CAC8C510024BA30 /* DefinitionDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefinitionDetail.swift; sourceTree = "<group>"; };
 		53013A9B2CAC9CC40024BA30 /* DefinitionSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefinitionSidebar.swift; sourceTree = "<group>"; };
+		53013A9E2CACD23D0024BA30 /* RowAddButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RowAddButton.swift; path = "../klockwork-ios/KlockWork-iOS/KlockWork-iOS/SharedViews/RowAddButton.swift"; sourceTree = "<group>"; };
 		530168162A887B0A000AF4FD /* AllJobsPickerWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllJobsPickerWidget.swift; sourceTree = "<group>"; };
 		530318462A11DD13009CA90B /* CoreDataCalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataCalendarEvent.swift; sourceTree = "<group>"; };
 		5309EE3C25619A6D00B3BC06 /* Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
@@ -567,6 +569,7 @@
 		53218D3B24B7F6EB0088ABE9 = {
 			isa = PBXGroup;
 			children = (
+				53013A9E2CACD23D0024BA30 /* RowAddButton.swift */,
 				53CEDBD32CAA014B002726DC /* FilterField.swift */,
 				53CEDBC72CA9FFA3002726DC /* PageConfiguration.swift */,
 				537DFF862BF27F0B00FC5923 /* PRIVACY.md */,
@@ -1372,6 +1375,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53013A9F2CACD23D0024BA30 /* RowAddButton.swift in Sources */,
 				53CEDBD42CAA014B002726DC /* FilterField.swift in Sources */,
 				53CEDBC82CA9FFA3002726DC /* PageConfiguration.swift in Sources */,
 				53FEF578296603D9000B94FC /* FancyTextField.swift in Sources */,

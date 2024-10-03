@@ -28,28 +28,41 @@ public class CoreDataCompanies: ObservableObject {
     }
 
     /// Fetch request to find all items
+    /// - Parameter allowKilled: Bool
     /// - Returns: FetchRequest<Company>
-    static public func all() -> FetchRequest<Company> {
+    static public func all(_ allowKilled: Bool = false) -> FetchRequest<Company> {
         let descriptors = [
             NSSortDescriptor(keyPath: \Company.name, ascending: true)
         ]
 
         let fetch: NSFetchRequest<Company> = Company.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive == true && hidden == false")
+
+        if allowKilled {
+            fetch.predicate = NSPredicate(format: "hidden == false")
+        } else {
+            fetch.predicate = NSPredicate(format: "alive == true && hidden == false")
+        }
+
         fetch.sortDescriptors = descriptors
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
     /// Finds all active companies
+    /// - Parameter allowKilled: Bool
     /// - Returns: FetchRequest<Company>
-    static public func fetch() -> FetchRequest<Company> {
+    static public func fetch(_ allowKilled: Bool = false) -> FetchRequest<Company> {
         let descriptors = [
             NSSortDescriptor(keyPath: \Company.name, ascending: true),
         ]
 
         let fetch: NSFetchRequest<Company> = Company.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive == true")
+
+        if allowKilled {
+            fetch.predicate = NSPredicate(format: "createdDate < %@", Date() as CVarArg)
+        } else {
+            fetch.predicate = NSPredicate(format: "alive == true")
+        }
         fetch.sortDescriptors = descriptors
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
@@ -136,6 +149,17 @@ public class CoreDataCompanies: ObservableObject {
     public func active() -> [Company] {
         let predicate = NSPredicate(
             format: "alive == true"
+        )
+
+        return query(predicate)
+    }
+
+    /// Fetch request to find all items
+    /// - Returns: FetchRequest<Company>
+    public func all(allowKilled: Bool = false) -> [Company] {
+        let predicate = NSPredicate(
+            format: !allowKilled ? "createdDate < %@" : "alive == true && createdDate < %@",
+            Date() as CVarArg
         )
 
         return query(predicate)
@@ -330,7 +354,10 @@ public class CoreDataCompanies: ObservableObject {
 
         var results: [Company] = []
         let fetch: NSFetchRequest<Company> = Company.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Company.name?, ascending: false)]
+        fetch.sortDescriptors = [
+            NSSortDescriptor(keyPath: \Company.name?, ascending: true),
+            NSSortDescriptor(keyPath: \Company.createdDate?, ascending: true)
+        ]
 
         if predicate != nil {
             fetch.predicate = predicate

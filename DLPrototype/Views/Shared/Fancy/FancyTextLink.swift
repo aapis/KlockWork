@@ -10,6 +10,7 @@ import Foundation
 import SwiftUI
 
 struct FancyTextLink: View {
+    @EnvironmentObject public var nav: Navigation
     public var text: String
     public var transparent: Bool? = true
     public var showIcon: Bool? = false
@@ -18,9 +19,8 @@ struct FancyTextLink: View {
     public var bgColour: Color? = Color.black.opacity(0.2)
     public var pageType: Page = .today
     public var sidebar: AnyView? = nil
+    @State private var highlighted: Bool = false
 
-    @EnvironmentObject public var nav: Navigation
-    
     var body: some View {
         VStack {
             Button {
@@ -35,19 +35,14 @@ struct FancyTextLink: View {
                 
                 Text(text)
                     .font(Theme.font)
+                    .multilineTextAlignment(.leading)
             }
             .buttonStyle(.borderless)
             .foregroundColor(fgColour)
             .font(.title3)
             .underline()
             .background(transparent! ? Color.clear : bgColour)
-            .onHover { inside in
-                if inside {
-                    NSCursor.pointingHand.push()
-                } else {
-                    NSCursor.pop()
-                }
-            }
+            .useDefaultHover({ inside in self.highlighted = inside})
         }
     }
 }

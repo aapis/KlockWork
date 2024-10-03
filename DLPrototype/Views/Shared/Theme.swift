@@ -18,7 +18,7 @@ struct Theme {
     static public var subHeaderColour: Color = headerColour.opacity(0.2)
     static public var footerColour: Color = Color.gray.opacity(0.5)
     static public var toolbarColour: Color = Color.indigo.opacity(0.2)
-    static public var tabColour: Color = Color.white.opacity(0.2)
+    static public var tabColour: Color = Color.white.opacity(0.08)
     static public var tabActiveColour: Color = headerColour
     static public var rowStatusGreen: Color = Color.green.opacity(0.2)
     static public var rowStatusYellow: Color = Color.yellow.opacity(0.2)
@@ -28,8 +28,8 @@ struct Theme {
     
     static public let font: Font = .system(.body, design: .default)
     static public let fontTextField: Font = .system(.body, design: .monospaced)
-    static public let fontTitle: Font = .system(.title, design: .monospaced)
-    static public let fontSubTitle: Font = .system(.title3, design: .monospaced)
+    static public let fontTitle: Font = .system(.title)
+    static public let fontSubTitle: Font = .system(.title3)
     static public let fontCaption: Font = .system(.caption, design: .monospaced)
 
     static public let cYellow: Color = .init(.sRGB, red: 0.34, green: 0.32, blue: 0.22, opacity: 1)

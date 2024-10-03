@@ -272,11 +272,15 @@ struct ProjectView: View {
                                                 })
                                             }
 
-                                            if project.configuration!.ignoredJobs!.contains(job.jid.string) {
-                                                FancyButton(text: "Hide from exports", action: {disableExport(job.jid.string)}, icon: "eye.slash", transparent: true, showLabel: false)
-                                                    .opacity(0.3)
-                                            } else {
-                                                FancyButton(text: "Included in exports", action: {enableExport(job.jid.string)}, icon: "eye", transparent: true, showLabel: false)
+                                            if let conf = project.configuration {
+                                                if let ignored = conf.ignoredJobs {
+                                                    if ignored.contains(job.jid.string) {
+                                                        FancyButton(text: "Hide from exports", action: {disableExport(job.jid.string)}, icon: "eye.slash", transparent: true, showLabel: false)
+                                                            .opacity(0.3)
+                                                    } else {
+                                                        FancyButton(text: "Included in exports", action: {enableExport(job.jid.string)}, icon: "eye", transparent: true, showLabel: false)
+                                                    }
+                                                }
                                             }
                                         }
                                         .padding([.leading, .trailing], 5)

@@ -18,6 +18,5 @@ struct DefaultPlanningSidebar: View {
             }
             Spacer()
         }
-        .padding()
     }
 }

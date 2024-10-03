@@ -12,13 +12,9 @@ struct DashboardSidebar: View {
     @State private var tabs: [ToolbarButton] = []
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 5) {
-                FancyGenericToolbar(buttons: tabs, standalone: true, location: .sidebar)
-            }
-            Spacer()
+        VStack(alignment: .leading, spacing: 5) {
+            FancyGenericToolbar(buttons: tabs, standalone: true, location: .sidebar)
         }
-        .padding()
         .onAppear(perform: createToolbar)
     }
 }
@@ -31,9 +27,10 @@ extension DashboardSidebar {
                 helpText: "Today in history",
                 label: AnyView(
                     HStack {
-                        Image(systemName: "calendar").padding(.leading)
+                        Image(systemName: "calendar")
                         Text("History")
                     }
+                        .padding([.leading, .trailing], 10)
                 ),
                 contents: AnyView(TodayInHistoryWidget())
             ),
@@ -42,12 +39,25 @@ extension DashboardSidebar {
                 helpText: "Companies & Projects",
                 label: AnyView(
                     HStack {
-                        Image(systemName: "menucard").padding(.leading)
+                        Image(systemName: "menucard")
                         Text("Outline")
                     }
+                        .padding([.leading, .trailing], 10)
                 ),
                 contents: AnyView(OutlineWidget())
             ),
+            ToolbarButton(
+                id: 2,
+                helpText: "Resources",
+                label: AnyView(
+                    HStack {
+                        Image(systemName: "globe.americas")
+                        Text("Resources")
+                    }
+                        .padding([.leading, .trailing], 10)
+                ),
+                contents: AnyView(JobsWidgetRedux())
+            )
         ]
     }
 }

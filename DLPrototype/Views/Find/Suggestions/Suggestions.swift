@@ -19,6 +19,8 @@ extension FindDashboard {
         @Binding public var showJobs: Bool
         @Binding public var showCompanies: Bool
         @Binding public var showPeople: Bool
+        @Binding public var showTerms: Bool
+        @Binding public var showDefinitions: Bool
         public var location: WidgetLocation
 
         @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
@@ -41,13 +43,15 @@ extension FindDashboard {
                             }
 
                             // @TODO: reduce this with a loop, each view is basically identical...
-                            if showJobs {SuggestedJobs(searchText: $searchText, publishedOnly: $publishedOnly)}
-                            if showProjects {SuggestedProjects(searchText: $searchText, publishedOnly: $publishedOnly)}
+                            if showRecords {SuggestedRecords(searchText: $searchText, publishedOnly: $publishedOnly)}
                             if showNotes {SuggestedNotes(searchText: $searchText, publishedOnly: $publishedOnly)}
                             if showTasks {SuggestedTasks(searchText: $searchText)}
-                            if showRecords {SuggestedRecords(searchText: $searchText, publishedOnly: $publishedOnly)}
+                            if showProjects {SuggestedProjects(searchText: $searchText, publishedOnly: $publishedOnly)}
+                            if showJobs {SuggestedJobs(searchText: $searchText, publishedOnly: $publishedOnly)}
                             if showCompanies {SuggestedCompanies(searchText: $searchText, publishedOnly: $publishedOnly)}
                             if showPeople {SuggestedPeople(searchText: $searchText)}
+                            if showTerms {SuggestedTerms(searchText: $searchText, publishedOnly: $publishedOnly)}
+                            if showDefinitions {SuggestedDefinitions(searchText: $searchText, publishedOnly: $publishedOnly)}
                         }
                     }
                     .padding()
@@ -61,24 +65,25 @@ extension FindDashboard {
         }
         
         struct SuggestedJobs: View {
+            @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
+            @State private var showAll: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Job>
-            
-            @EnvironmentObject public var nav: Navigation
             
             var body: some View {
                 if items.count > 0 {
                     VStack(alignment: .leading) {
                         Button {
                             showChildren.toggle()
+                            self.showAll.toggle()
                         } label: {
                             ZStack {
                                 Theme.base
                                 HStack(spacing: 1) {
-                                    Text("Showing \(items.prefix(5).count)/\(items.count) Jobs")
+                                    Text(self.showAll ? "Showing \(items.count) Jobs" : "Showing \(items.prefix(5).count)/\(items.count) Jobs")
                                         .font(Theme.fontSubTitle)
                                     Spacer()
                                     Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
@@ -93,12 +98,12 @@ extension FindDashboard {
                         
                         if showChildren {
                             VStack(alignment: .leading) {
-                                ForEach(items.prefix(5), id: \.objectID) { item in
+                                ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
                                     VStack(alignment: .leading, spacing: 10) {
                                         Divider()
                                         HStack {
                                             FancyButtonv2(
-                                                text: item.jid.string,
+                                                text: item.title ?? item.jid.string,
                                                 action: {choose(item)},
                                                 icon: "questionmark.square.fill",
                                                 showIcon: true,
@@ -108,7 +113,7 @@ extension FindDashboard {
                                             .help("Inspect")
                                             Spacer()
                                             FancyButtonv2(
-                                                text: item.jid.string,
+                                                text: item.title ?? item.jid.string,
                                                 action: {setContext(item)},
                                                 icon: "arrow.right.square.fill",
                                                 showLabel: false,
@@ -161,24 +166,25 @@ extension FindDashboard {
         }
         
         struct SuggestedProjects: View {
+            @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
+            @State private var showAll: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Project>
-            
-            @EnvironmentObject public var nav: Navigation
 
             var body: some View {
                 if items.count > 0 {
                     VStack {
                         Button {
                             showChildren.toggle()
+                            self.showAll.toggle()
                         } label: {
                             ZStack {
                                 Theme.base
                                 HStack(spacing: 1) {
-                                    Text("Showing \(items.prefix(5).count)/\(items.count) Projects")
+                                    Text(self.showAll ? "Showing \(items.count) Projects" : "Showing \(items.prefix(5).count)/\(items.count) Projects")
                                         .font(Theme.fontSubTitle)
                                     Spacer()
                                     Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
@@ -193,7 +199,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(5), id: \.objectID) { item in
+                                ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -232,13 +238,13 @@ extension FindDashboard {
                 
                 if publishedOnly.wrappedValue {
                     req.predicate = NSPredicate(
-                        format: "alive = true && (name BEGINSWITH %@ || pid BEGINSWITH %@) && company.hidden == false",
+                        format: "alive = true && (name CONTAINS[cd] %@ || pid BEGINSWITH %@) && company.hidden == false",
                         _searchText.wrappedValue,
                         _searchText.wrappedValue
                     )
                 } else {
                     req.predicate = NSPredicate(
-                        format: "(name BEGINSWITH %@ || pid BEGINSWITH %@) && company.hidden == false",
+                        format: "(name CONTAINS[cd] %@ || pid BEGINSWITH %@) && company.hidden == false",
                         _searchText.wrappedValue,
                         _searchText.wrappedValue
                     )
@@ -249,24 +255,25 @@ extension FindDashboard {
         }
         
         struct SuggestedNotes: View {
+            @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
+            @State private var showAll: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Note>
-            
-            @EnvironmentObject public var nav: Navigation
 
             var body: some View {
                 if items.count > 0 {
                     VStack {
                         Button {
                             showChildren.toggle()
+                            self.showAll.toggle()
                         } label: {
                             ZStack {
                                 Theme.base
                                 HStack(spacing: 1) {
-                                    Text("Showing \(items.prefix(5).count)/\(items.count) Notes")
+                                    Text(self.showAll ? "Showing \(items.count) Notes" : "Showing \(items.prefix(5).count)/\(items.count) Notes")
                                         .font(Theme.fontSubTitle)
                                     Spacer()
                                     Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
@@ -281,7 +288,7 @@ extension FindDashboard {
                         
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(5), id: \.objectID) { item in
+                                ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -347,23 +354,24 @@ extension FindDashboard {
         }
         
         struct SuggestedTasks: View {
+            @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @State private var showChildren: Bool = false
+            @State private var showAll: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<LogTask>
-            
-            @EnvironmentObject public var nav: Navigation
 
             var body: some View {
                 if items.count > 0 {
                     VStack {
                         Button {
                             showChildren.toggle()
+                            self.showAll.toggle()
                         } label: {
                             ZStack {
                                 Theme.base
                                 HStack(spacing: 1) {
-                                    Text("Showing \(items.prefix(5).count)/\(items.count) Tasks")
+                                    Text(self.showAll ? "Showing \(items.count) Tasks" : "Showing \(items.prefix(5).count)/\(items.count) Tasks")
                                         .font(Theme.fontSubTitle)
                                     Spacer()
                                     Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
@@ -378,7 +386,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(5), id: \.objectID) { item in
+                                ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -424,14 +432,13 @@ extension FindDashboard {
         }
         
         struct SuggestedRecords: View {
+            @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
-            @State private var hover: Bool = false
             @State private var showAll: Bool = false
+            @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<LogRecord>
-            
-            @EnvironmentObject public var nav: Navigation
 
             var body: some View {
                 if items.count > 0 {
@@ -512,24 +519,25 @@ extension FindDashboard {
         }
         
         struct SuggestedCompanies: View {
+            @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
+            @State private var showAll: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Company>
-            
-            @EnvironmentObject public var nav: Navigation
 
             var body: some View {
                 if items.count > 0 {
                     VStack {
                         Button {
                             showChildren.toggle()
+                            self.showAll.toggle()
                         } label: {
                             ZStack {
                                 Theme.base
                                 HStack(spacing: 1) {
-                                    Text("Showing \(items.prefix(5).count)/\(items.count) Companies")
+                                    Text(self.showAll ? "Showing \(items.count) Companies" : "Showing \(items.prefix(5).count)/\(items.count) Companies")
                                         .font(Theme.fontSubTitle)
                                     Spacer()
                                     Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
@@ -598,23 +606,24 @@ extension FindDashboard {
         }
         
         struct SuggestedPeople: View {
+            @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @State private var showChildren: Bool = false
+            @State private var showAll: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Person>
-            
-            @EnvironmentObject public var nav: Navigation
 
             var body: some View {
                 if items.count > 0 {
                     VStack {
                         Button {
                             showChildren.toggle()
+                            self.showAll.toggle()
                         } label: {
                             ZStack {
                                 Theme.base
                                 HStack(spacing: 1) {
-                                    Text("Showing \(items.prefix(5).count)/\(items.count) People")
+                                    Text(self.showAll ? "Showing \(items.count) People" : "Showing \(items.prefix(5).count)/\(items.count) People")
                                         .font(Theme.fontSubTitle)
                                     Spacer()
                                     Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
@@ -629,7 +638,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(5), id: \.objectID) { item in
+                                ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -672,6 +681,180 @@ extension FindDashboard {
                 _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
             }
         }
+
+        struct SuggestedTerms: View {
+            @EnvironmentObject public var nav: Navigation
+            @Binding public var searchText: String
+            @Binding public var publishedOnly: Bool
+            @State private var showChildren: Bool = false
+            @State private var showAll: Bool = false
+            @State private var hover: Bool = false
+            @FetchRequest private var items: FetchedResults<TaxonomyTerm>
+
+            var body: some View {
+                if items.count > 0 {
+                    VStack {
+                        Button {
+                            showChildren.toggle()
+                            self.showAll.toggle()
+                        } label: {
+                            ZStack {
+                                Theme.base
+                                HStack(spacing: 1) {
+                                    Text(self.showAll ? "Showing \(items.count) Terms" : "Showing \(items.prefix(5).count)/\(items.count) Terms")
+                                        .font(Theme.fontSubTitle)
+                                    Spacer()
+                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                        .font(.title2)
+                                }
+                                .padding()
+                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .useDefaultHover({inside in hover = inside})
+
+                        if showChildren {
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
+                                    VStack {
+                                        Divider()
+                                        HStack {
+                                            FancyButtonv2(
+                                                text: item.name ?? "",
+                                                action: {choose(item)},
+                                                icon: "questionmark.square.fill",
+                                                fgColour: .white,
+                                                showIcon: true,
+                                                size: .link,
+                                                type: .clear
+                                            )
+                                            .help("Inspect")
+                                            Spacer()
+                                        }
+                                    }
+                                    .padding(.bottom, 10)
+                                }
+                            }
+                        }
+                    }
+                    .onAppear(perform: appear)
+                } else {
+                    EmptyView()
+                }
+            }
+
+            init(searchText: Binding<String>, publishedOnly: Binding<Bool>) {
+                _searchText = searchText
+                _publishedOnly = publishedOnly
+
+                let req: NSFetchRequest<TaxonomyTerm> = TaxonomyTerm.fetchRequest()
+                req.sortDescriptors = [
+                    NSSortDescriptor(keyPath: \TaxonomyTerm.name, ascending: true),
+                ]
+
+                if publishedOnly.wrappedValue {
+                    req.predicate = NSPredicate(
+                        format: "alive == true && name CONTAINS[cd] %@",
+                        _searchText.wrappedValue
+                    )
+                } else {
+                    req.predicate = NSPredicate(
+                        format: "name CONTAINS[cd] %@",
+                        _searchText.wrappedValue
+                    )
+                }
+
+                _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
+            }
+        }
+
+        struct SuggestedDefinitions: View {
+            @EnvironmentObject public var nav: Navigation
+            @Binding public var searchText: String
+            @Binding public var publishedOnly: Bool
+            @State private var showChildren: Bool = false
+            @State private var showAll: Bool = false
+            @State private var hover: Bool = false
+            @FetchRequest private var items: FetchedResults<TaxonomyTermDefinitions>
+
+            var body: some View {
+                if items.count > 0 {
+                    VStack {
+                        Button {
+                            showChildren.toggle()
+                            self.showAll.toggle()
+                        } label: {
+                            ZStack {
+                                Theme.base
+                                HStack(spacing: 1) {
+                                    Text(self.showAll ? "Showing \(items.count) Definitions" : "Showing \(items.prefix(5).count)/\(items.count) Definitions")
+                                        .font(Theme.fontSubTitle)
+                                    Spacer()
+                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
+                                        .font(.title2)
+                                }
+                                .padding()
+                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .useDefaultHover({inside in hover = inside})
+
+                        if showChildren {
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
+                                    VStack {
+                                        Divider()
+                                        HStack {
+                                            FancyButtonv2(
+                                                text: item.definition ?? "",
+                                                action: {choose(item)},
+                                                icon: "questionmark.square.fill",
+                                                fgColour: .white,
+                                                showIcon: true,
+                                                size: .link,
+                                                type: .clear
+                                            )
+                                            .help("Inspect")
+                                            Spacer()
+                                        }
+                                    }
+                                    .padding(.bottom, 10)
+                                }
+                            }
+                        }
+                    }
+                    .onAppear(perform: appear)
+                } else {
+                    EmptyView()
+                }
+            }
+
+            init(searchText: Binding<String>, publishedOnly: Binding<Bool>) {
+                _searchText = searchText
+                _publishedOnly = publishedOnly
+
+                let req: NSFetchRequest<TaxonomyTermDefinitions> = TaxonomyTermDefinitions.fetchRequest()
+                req.sortDescriptors = [
+                    NSSortDescriptor(keyPath: \TaxonomyTermDefinitions.created, ascending: true),
+                ]
+
+                if publishedOnly.wrappedValue {
+                    req.predicate = NSPredicate(
+                        format: "alive = true && definition CONTAINS[cd] %@",
+                        _searchText.wrappedValue
+                    )
+                } else {
+                    req.predicate = NSPredicate(
+                        format: "definition CONTAINS[cd] %@",
+                        _searchText.wrappedValue
+                    )
+                }
+
+                _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
+            }
+        }
     }
 }
 
@@ -708,6 +891,7 @@ extension FindDashboard.Suggestions.SuggestedJobs {
 
     private func appear() -> Void {
         if items.count <= 5 {
+            self.showAll = true
             showChildren = true
         }
     }
@@ -720,6 +904,7 @@ extension FindDashboard.Suggestions.SuggestedProjects {
 
     private func appear() -> Void {
         if items.count <= 5 {
+            self.showAll = true
             showChildren = true
         }
     }
@@ -755,6 +940,7 @@ extension FindDashboard.Suggestions.SuggestedNotes {
 
     private func appear() -> Void {
         if items.count <= 5 {
+            self.showAll = true
             showChildren = true
         }
     }
@@ -767,6 +953,7 @@ extension FindDashboard.Suggestions.SuggestedTasks {
 
     private func appear() -> Void {
         if items.count <= 5 {
+            self.showAll = true
             showChildren = true
         }
     }
@@ -779,6 +966,7 @@ extension FindDashboard.Suggestions.SuggestedCompanies {
 
     private func appear() -> Void {
         if items.count <= 5 {
+            self.showAll = true
             showChildren = true
         }
     }
@@ -791,6 +979,7 @@ extension FindDashboard.Suggestions.SuggestedPeople {
 
     private func appear() -> Void {
         if items.count <= 5 {
+            self.showAll = true
             showChildren = true
         }
     }
@@ -803,6 +992,33 @@ extension FindDashboard.Suggestions.SuggestedRecords {
 
     private func appear() -> Void {
         if items.count <= 5 {
+            self.showAll = true
+            showChildren = true
+        }
+    }
+}
+
+extension FindDashboard.Suggestions.SuggestedTerms {
+    private func choose(_ item: TaxonomyTerm) -> Void {
+        nav.session.search.inspect(item)
+    }
+
+    private func appear() -> Void {
+        if items.count <= 5 {
+            self.showAll = true
+            showChildren = true
+        }
+    }
+}
+
+extension FindDashboard.Suggestions.SuggestedDefinitions {
+    private func choose(_ item: TaxonomyTermDefinitions) -> Void {
+        nav.session.search.inspect(item)
+    }
+
+    private func appear() -> Void {
+        if items.count <= 5 {
+            self.showAll = true
             showChildren = true
         }
     }

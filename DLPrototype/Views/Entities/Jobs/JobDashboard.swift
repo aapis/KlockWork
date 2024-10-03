@@ -83,16 +83,13 @@ struct JobDashboardRedux: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject private var nav: Navigation
     private let page: PageConfiguration.AppPage = .explore
+    private let eType: PageConfiguration.EntityType = .jobs
 
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 1) {
                 HStack {
-                    HStack(spacing: 10) {
-                        Image(systemName: "hammer")
-                        Text("Jobs")
-                    }
-                    .font(.title2)
+                    Title(text: eType.label, imageAsImage: eType.icon)
                     Spacer()
                     FancyButtonv2(
                         text: "Create",

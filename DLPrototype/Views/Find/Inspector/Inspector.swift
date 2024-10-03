@@ -21,6 +21,8 @@ public struct Inspector: View, Identifiable {
     private var person: Person? = nil
     private var note: Note? = nil
     private var task: LogTask? = nil
+    private var term: TaxonomyTerm?
+    private var definition: TaxonomyTermDefinitions?
 
     @EnvironmentObject public var nav: Navigation
 
@@ -55,6 +57,10 @@ public struct Inspector: View, Identifiable {
                 InspectingNote(item: note)
             } else if let task = task {
                 InspectingTask(item: task)
+            } else if let term = term {
+                InspectingTerm(item: term)
+            } else if let definition = definition {
+                InspectingDefinition(item: definition)
             } else {
                 Text("Unable to inspect this item")
             }
@@ -75,6 +81,8 @@ public struct Inspector: View, Identifiable {
         case let en as Person: self.person = en
         case let en as Note: self.note = en
         case let en as LogTask: self.task = en
+        case let en as TaxonomyTerm: self.term = en
+        case let en as TaxonomyTermDefinitions: self.definition = en
         default: print("[error] FindDashboard.Inspector Unknown entity type=\(self.entity)")
         }
     }
@@ -231,15 +239,14 @@ public struct Inspector: View, Identifiable {
 
                 if let message = item.message {
                     HStack(alignment: .top, spacing: 10) {
-                        Image(systemName: "doc.text.fill").symbolRenderingMode(.hierarchical)
-                        Text("Full message:")
+                        Image(systemName: "tray").symbolRenderingMode(.hierarchical)
+                        Text("Message")
                         Spacer()
                     }
                     Divider()
                     Text(message)
-                        .padding(.leading, 25)
                         .contextMenu {
-                            Button("Copy") {
+                            Button("Copy to clipboard") {
                                 ClipboardHelper.copy(message)
                             }
                         }
@@ -530,6 +537,179 @@ public struct Inspector: View, Identifiable {
                             )
                         }
                     }
+                }
+            }
+        }
+    }
+
+    struct InspectingTerm: View {
+        public var item: TaxonomyTerm
+
+        @EnvironmentObject public var nav: Navigation
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                    Text("Type: Taxonomy term")
+                    Spacer()
+                }
+                .help("Type: Taxonomy term")
+                Divider()
+
+                if let date = item.created {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
+                        Text(date.description)
+                        Spacer()
+                    }
+                    .help("Created: \(date.description)")
+                    Divider()
+                }
+
+                if let date = item.lastUpdate {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
+                        Text(date.description)
+                        Spacer()
+                    }
+                    .help("Last update: \(date.description)")
+                    Divider()
+                }
+
+                if let name = item.name {
+                    HStack(alignment: .center) {
+                        Image(systemName: "list.bullet.rectangle").symbolRenderingMode(.hierarchical)
+                        FancyButtonv2(
+                            text: name,
+                            action: {nav.session.search.cancel() ; nav.setInspector()},
+                            showLabel: true,
+                            showIcon: false,
+                            size: .link,
+                            type: .clear,
+                            redirect: AnyView(TermsDashboard()),
+                            pageType: .terms,
+                            sidebar: AnyView(TermsDashboardSidebar())
+                        )
+                        .help("Term: \(name)")
+                    }
+                    Divider()
+                }
+
+                if let defs = item.definitions?.allObjects as? [TaxonomyTermDefinitions] {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "list.bullet").symbolRenderingMode(.hierarchical)
+                        Text("\(defs.count(where: {$0.alive == true})) definition(s)")
+                        Spacer()
+                    }
+                    Divider()
+                }
+
+                Spacer()
+                HStack(alignment: .top, spacing: 10) {
+                    FancyButtonv2(
+                        text: "Open",
+                        action: {nav.session.search.cancel() ; nav.setInspector()},
+                        icon: "arrow.right.square.fill",
+                        showLabel: true,
+                        size: .link,
+                        type: .clear,
+                        redirect: AnyView(TermsDashboard()),
+                        pageType: .terms,
+                        sidebar: AnyView(DefinitionSidebar())
+                    )
+                }
+            }
+        }
+    }
+
+    struct InspectingDefinition: View {
+        public var item: TaxonomyTermDefinitions
+
+        @EnvironmentObject public var nav: Navigation
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                    Text("Type: Taxonomy definition")
+                    Spacer()
+                }
+                .help("Type: Taxonomy definition")
+                Divider()
+
+                if let date = item.created {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
+                        Text(date.description)
+                        Spacer()
+                    }
+                    .help("Created: \(date.description)")
+                    Divider()
+                }
+
+                if let date = item.lastUpdate {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
+                        Text(date.description)
+                        Spacer()
+                    }
+                    .help("Last update: \(date.description)")
+                    Divider()
+                }
+
+                if let term = self.item.term {
+                    HStack(alignment: .center) {
+                        Image(systemName: "list.bullet.rectangle").symbolRenderingMode(.hierarchical)
+                        FancyButtonv2(
+                            text: term.name ?? "Not Found",
+                            action: {nav.session.search.cancel() ; nav.setInspector()},
+                            showLabel: true,
+                            showIcon: false,
+                            size: .link,
+                            type: .clear,
+                            redirect: AnyView(TermsDashboard()),
+                            pageType: .terms,
+                            sidebar: AnyView(TermsDashboardSidebar())
+                        )
+                    }
+                    Divider()
+                }
+
+                if let definition = self.item.definition {
+                    HStack(alignment: .center) {
+                        Image(systemName: "list.bullet").symbolRenderingMode(.hierarchical)
+                        Text("Definition")
+                    }
+                    Divider()
+                    HStack(alignment: .top, spacing: 10) {
+                        Text(definition)
+                            .contextMenu {
+                                Button {
+                                    ClipboardHelper.copy(definition)
+                                } label: {
+                                    Text("Copy to clipboard")
+                                }
+                            }
+                        Spacer()
+                    }
+                    .help("Full definition text")
+                    Divider()
+                }
+
+                Spacer()
+                HStack(alignment: .top, spacing: 10) {
+                    FancyButtonv2(
+                        text: "Open",
+                        action: {nav.session.search.cancel() ; nav.setInspector()},
+                        icon: "arrow.right.square.fill",
+                        showLabel: true,
+                        size: .link,
+                        type: .clear,
+                        redirect: AnyView(DefinitionDetail(definition: item)),
+                        pageType: .terms,
+                        sidebar: AnyView(DefinitionSidebar())
+                    )
                 }
             }
         }

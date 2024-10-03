@@ -16,18 +16,14 @@ struct TodaySidebar: View {
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 5) {
-                FancyGenericToolbar(
-                    buttons: tabs,
-                    standalone: true,
-                    location: .sidebar,
-                    mode: .compact
-                )
-            }
-            Spacer()
+        VStack(alignment: .leading, spacing: 5) {
+            FancyGenericToolbar(
+                buttons: tabs,
+                standalone: true,
+                location: .sidebar,
+                mode: .compact
+            )
         }
-        .padding()
         .onAppear(perform: createToolbar)
     }
 }
@@ -37,24 +33,17 @@ extension TodaySidebar {
         tabs = [
             ToolbarButton(
                 id: 0,
-                helpText: "Jobs",
-                icon: "hammer",
-                labelText: "Jobs",
-                contents: AnyView(JobPickerWidget())
+                helpText: "Resources",
+                icon: "globe.americas",
+                labelText: "Resources",
+                contents: AnyView(JobsWidgetRedux())
             ),
             ToolbarButton(
                 id: 1,
-                helpText: "Tasks",
-                icon: "checklist",
-                labelText: "Tasks",
-                contents: AnyView(TasksWidget())
-            ),
-            ToolbarButton(
-                id: 2,
-                helpText: "Notes",
-                icon: "note.text",
-                labelText: "Notes",
-                contents: AnyView(NotesWidget())
+                helpText: "Outline",
+                icon: "menucard",
+                labelText: "Outline",
+                contents: AnyView(OutlineWidget())
             )
         ]
     }

@@ -9,9 +9,9 @@
 import SwiftUI
 
 struct FindDashboard: View {
+    @EnvironmentObject public var nav: Navigation
     @Binding public var searching: Bool
     public var location: WidgetLocation = .content
-
     @State private var searchText: String = ""
     @State private var activeSearchText: String = ""
     @State private var showRecords: Bool = true
@@ -21,17 +21,14 @@ struct FindDashboard: View {
     @State private var showJobs: Bool = true
     @State private var showCompanies: Bool = true
     @State private var showPeople: Bool = true
+    @State private var showTerms: Bool = true
+    @State private var showDefinitions: Bool = true
     @State private var allowAlive: Bool = true
     @State private var counts: (Int, Int, Int, Int) = (0, 0, 0, 0)
     @State private var advancedSearchResults: [SearchLanguage.Results.Result] = []
     @State private var buttons: [ToolbarButton] = []
     @State private var loading: Bool = false
     @State private var showingTypes: Bool = false
-
-    @Environment(\.managedObjectContext) var moc
-    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
-    @EnvironmentObject public var nav: Navigation
-
     private var columns: [GridItem] {
         Array(repeating: .init(.flexible(minimum: 100)), count: 2)
     }
@@ -84,6 +81,8 @@ struct FindDashboard: View {
                                 showJobs: $showJobs,
                                 showCompanies: $showCompanies,
                                 showPeople: $showPeople,
+                                showTerms: $showTerms,
+                                showDefinitions: $showDefinitions,
                                 location: location
                             )
                             
@@ -102,6 +101,8 @@ struct FindDashboard: View {
                             showJobs: $showJobs,
                             showCompanies: $showCompanies,
                             showPeople: $showPeople,
+                            showTerms: $showTerms,
+                            showDefinitions: $showDefinitions,
                             location: location
                         )
                     }
@@ -122,6 +123,7 @@ struct FindDashboard: View {
                                 Toggle("Jobs", isOn: $showJobs)
                                 Toggle("Companies", isOn: $showCompanies)
                                 Toggle("People", isOn: $showPeople)
+                                Toggle("Terms & Definitions", isOn: $showTerms)
                                 Spacer()
                                 Toggle("Published Only", isOn: $allowAlive)
                             }
@@ -139,6 +141,7 @@ struct FindDashboard: View {
                             Toggle("Jobs", isOn: $showJobs)
                             Toggle("Companies", isOn: $showCompanies)
                             Toggle("People", isOn: $showPeople)
+                            Toggle("Terms & Definitions", isOn: $showTerms)
                             Toggle("Published Only", isOn: $allowAlive)
                         }
                         .padding(10)
@@ -158,31 +161,29 @@ struct FindDashboard: View {
             }
         }
         .onAppear(perform: actionOnAppear)
-        .onChange(of: searchText) { searchQuery in
-            if searchText != searchQuery {
-                if searchQuery.count >= 2 {
-                    onSubmit()
-                } else {
-                    onReset()
-                }
-            }
-        }
-        .onChange(of: activeSearchText) { searchQuery in
-            nav.session.search.inspectingEntity = nil
-
-            if searchQuery.isEmpty {
+        .onChange(of: searchText) {
+            if searchText.count >= 2 {
+                onSubmit()
+            } else {
                 onReset()
             }
         }
-        .onChange(of: nav.session.search.text) { searchQuery in
-            if let sq = searchQuery {
+        .onChange(of: activeSearchText) {
+            nav.session.search.inspectingEntity = nil
+
+            if activeSearchText.isEmpty {
+                onReset()
+            }
+        }
+        .onChange(of: nav.session.search.text) {
+            if let sq = nav.session.search.text {
                 activeSearchText = sq
             }
         }
-        .onChange(of: nav.session.search.inspectingEntity) { entity in
+        .onChange(of: nav.session.search.inspectingEntity) {
             if location == .sidebar {
-                if entity != nil {
-                    nav.setInspector(AnyView(Inspector(entity: entity!)))
+                if nav.session.search.inspectingEntity != nil {
+                    nav.setInspector(AnyView(Inspector(entity: nav.session.search.inspectingEntity!)))
                 } else {
                     nav.setInspector()
                 }
@@ -238,10 +239,10 @@ extension FindDashboard {
     private func actionOnAppear() -> Void {
         if location == .content {
             counts = (
-                CoreDataRecords(moc: moc).countAll(),
-                CoreDataJob(moc: moc).countAll(),
-                CoreDataTasks(moc: moc).countAll(),
-                CoreDataProjects(moc: moc).countAll()
+                CoreDataRecords(moc: self.nav.moc).countAll(),
+                CoreDataJob(moc: self.nav.moc).countAll(),
+                CoreDataTasks(moc: self.nav.moc).countAll(),
+                CoreDataProjects(moc: self.nav.moc).countAll()
             )
             showingTypes = true
         }
@@ -262,7 +263,7 @@ extension FindDashboard {
                     helpText: "Records",
                     label: AnyView(
                         HStack {
-                            Image(systemName: "doc.plaintext")
+                            Image(systemName: "tray")
                                 .font(.title2)
                             Text("Records")
                         }
@@ -339,6 +340,57 @@ extension FindDashboard {
                 )
             )
         }
+
+        if showCompanies {
+            buttons.append(
+                ToolbarButton(
+                    id: 5,
+                    helpText: "Companies",
+                    label: AnyView(
+                        HStack {
+                            Image(systemName: "building.2")
+                                .font(.title2)
+                            Text("Companies")
+                        }
+                    ),
+                    contents: AnyView(CompaniesMatchingString(searchText))
+                )
+            )
+        }
+
+        if showPeople {
+            buttons.append(
+                ToolbarButton(
+                    id: 6,
+                    helpText: "People",
+                    label: AnyView(
+                        HStack {
+                            Image(systemName: "person.2")
+                                .font(.title2)
+                            Text("People")
+                        }
+                    ),
+                    contents: AnyView(PeopleMatchingString(searchText))
+                )
+            )
+        }
+
+        if showTerms {
+            buttons.append(
+                ToolbarButton(
+                    id: 7,
+                    helpText: "Terms & Definitions",
+                    label: AnyView(
+                        HStack {
+                            Image(systemName: "list.bullet.rectangle")
+                                .font(.title2)
+                            Text("Terms & Definitions")
+                        }
+                    ),
+                    contents: AnyView(TermsMatchingString(searchText))
+                )
+            )
+        }
     }
 }
 
@@ -377,7 +429,7 @@ extension FindDashboard {
                     
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 1) {
-                            ForEach(entities) { item in
+                            ForEach(entities, id: \.objectID) { item in
                                 let entry = Entry(
                                     timestamp: item.timestamp!,
                                     job: item.job!,
@@ -430,7 +482,7 @@ extension FindDashboard {
                     
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 1) {
-                            ForEach(entities) { item in
+                            ForEach(entities, id: \.objectID) { item in
                                 NoteRow(note: item)
                             }
                         }
@@ -471,7 +523,7 @@ extension FindDashboard {
                     
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 1) {
-                            ForEach(entities) { item in
+                            ForEach(entities, id: \.objectID) { item in
                                 TaskView(task: item, showJobId: true, showCreated: true, showUpdated: true, showCompleted: true, colourizeRow: true)
                             }
                         }
@@ -512,7 +564,7 @@ extension FindDashboard {
                     
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 1) {
-                            ForEach(entities) { item in
+                            ForEach(entities, id: \.objectID) { item in
                                 ProjectRow(project: item)
                             }
                         }
@@ -553,7 +605,7 @@ extension FindDashboard {
                     
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 1) {
-                            ForEach(entities) { item in
+                            ForEach(entities, id: \.objectID) { item in
                                 JobRow(job: item, colour: item.colour_from_stored())
                             }
                         }
@@ -574,6 +626,132 @@ extension FindDashboard {
             jr.predicate = NSPredicate(format: "(uri CONTAINS[c] %@ OR jid.stringValue BEGINSWITH %@ OR overview CONTAINS[c] %@ OR title CONTAINS[c] %@) AND alive = true && project.company.hidden == false", text, text, text, text)
             jr.sortDescriptors = [
                 NSSortDescriptor(keyPath: \Job.created, ascending: false)
+            ]
+            _entities = FetchRequest(fetchRequest: jr, animation: .easeInOut)
+        }
+    }
+
+    struct CompaniesMatchingString: View {
+        @FetchRequest private var entities: FetchedResults<Company>
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                if entities.count > 0 {
+                    HStack {
+                        Text("\(entities.count) Companies")
+                            .padding()
+                        Spacer()
+                    }
+                    .background(Theme.subHeaderColour)
+
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 1) {
+                            ForEach(entities, id: \.objectID) { item in
+//                                JobRow(job: item, colour: item.colour_from_stored())
+                                Text(item.name ?? "_COMPANY_NAME")
+                            }
+                        }
+                    }
+                } else {
+                    HStack {
+                        Text("0 Companies")
+                            .padding()
+                        Spacer()
+                    }
+                    .background(Theme.subHeaderColour)
+                }
+            }
+        }
+
+        init(_ text: String) {
+            let jr: NSFetchRequest<Company> = Company.fetchRequest()
+            jr.predicate = NSPredicate(format: "(name CONTAINS[c] %@ || abbreviation CONTAINS[c] %@) && alive == true && hidden == false", text, text)
+            jr.sortDescriptors = [
+                NSSortDescriptor(keyPath: \Company.createdDate, ascending: false)
+            ]
+            _entities = FetchRequest(fetchRequest: jr, animation: .easeInOut)
+        }
+    }
+
+    struct PeopleMatchingString: View {
+        @FetchRequest private var entities: FetchedResults<Person>
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                if entities.count > 0 {
+                    HStack {
+                        Text("\(entities.count) People")
+                            .padding()
+                        Spacer()
+                    }
+                    .background(Theme.subHeaderColour)
+
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 1) {
+                            ForEach(entities, id: \.objectID) { item in
+//                                JobRow(job: item, colour: item.colour_from_stored())
+                                Text(item.name ?? "_COMPANY_NAME")
+                            }
+                        }
+                    }
+                } else {
+                    HStack {
+                        Text("0 People")
+                            .padding()
+                        Spacer()
+                    }
+                    .background(Theme.subHeaderColour)
+                }
+            }
+        }
+
+        init(_ text: String) {
+            let jr: NSFetchRequest<Person> = Person.fetchRequest()
+            jr.predicate = NSPredicate(format: "name CONTAINS[c] %@ || title CONTAINS[c] %@", text, text)
+            jr.sortDescriptors = [
+                NSSortDescriptor(keyPath: \Person.created, ascending: false)
+            ]
+            _entities = FetchRequest(fetchRequest: jr, animation: .easeInOut)
+        }
+    }
+
+    struct TermsMatchingString: View {
+        @FetchRequest private var entities: FetchedResults<TaxonomyTerm>
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                if entities.count > 0 {
+                    HStack {
+                        Text("\(entities.count) Terms")
+                            .padding()
+                        Spacer()
+                    }
+                    .background(Theme.subHeaderColour)
+
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 1) {
+                            ForEach(entities, id: \.objectID) { item in
+//                                JobRow(job: item, colour: item.colour_from_stored())
+                                Text(item.name ?? "_NAME")
+                            }
+                        }
+                    }
+                } else {
+                    HStack {
+                        Text("0 Terms")
+                            .padding()
+                        Spacer()
+                    }
+                    .background(Theme.subHeaderColour)
+                }
+            }
+        }
+
+        init(_ text: String) {
+            let jr: NSFetchRequest<TaxonomyTerm> = TaxonomyTerm.fetchRequest()
+            jr.predicate = NSPredicate(format: "(name CONTAINS[c] %@ || ANY definitions.definition CONTAINS[c] %@) && alive == true", text, text)
+            jr.sortDescriptors = [
+                NSSortDescriptor(keyPath: \TaxonomyTerm.created, ascending: false)
             ]
             _entities = FetchRequest(fetchRequest: jr, animation: .easeInOut)
         }

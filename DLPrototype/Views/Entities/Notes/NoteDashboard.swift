@@ -29,6 +29,7 @@ struct NoteDashboard: View {
     @FetchRequest public var notes: FetchedResults<Note>
 
     private let page: PageConfiguration.AppPage = .explore
+    private let eType: PageConfiguration.EntityType = .notes
 
     private var columns: [GridItem] {
         return Array(repeating: .init(.flexible(minimum: 100)), count: numColumns)
@@ -67,8 +68,7 @@ struct NoteDashboard: View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 1) {
                 HStack(spacing: 10) {
-                    Image(systemName: "note.text")
-                    Text("Notes")
+                    Title(text: eType.label, imageAsImage: eType.icon)
                     Spacer()
                     FancyButtonv2(
                         text: "Create",

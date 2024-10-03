@@ -13,18 +13,14 @@ struct NoteDashboardSidebar: View {
     @State private var searching: Bool = false
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 5) {
-                FancyGenericToolbar(
-                    buttons: tabs,
-                    standalone: true,
-                    location: .sidebar,
-                    mode: .compact
-                )
-            }
-            Spacer()
+        VStack(alignment: .leading, spacing: 5) {
+            FancyGenericToolbar(
+                buttons: tabs,
+                standalone: true,
+                location: .sidebar,
+                mode: .compact
+            )
         }
-        .padding()
         .onAppear(perform: createToolbar)
     }
 }
@@ -34,13 +30,20 @@ extension NoteDashboardSidebar {
         tabs = [
             ToolbarButton(
                 id: 0,
-                helpText: "Notes",
-                icon: "note.text",
-                labelText: "Notes",
-                contents: AnyView(NotesWidget())
+                helpText: "Resources",
+                icon: "globe.americas",
+                labelText: "Resources",
+                contents: AnyView(JobsWidgetRedux())
             ),
             ToolbarButton(
                 id: 1,
+                helpText: "Outline",
+                icon: "menucard",
+                labelText: "Outline",
+                contents: AnyView(OutlineWidget())
+            ),
+            ToolbarButton(
+                id: 2,
                 helpText: "Favourites notes",
                 icon: "star.fill",
                 labelText: "Favourite Notes",
