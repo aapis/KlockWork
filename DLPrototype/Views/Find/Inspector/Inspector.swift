@@ -21,6 +21,8 @@ public struct Inspector: View, Identifiable {
     private var person: Person? = nil
     private var note: Note? = nil
     private var task: LogTask? = nil
+    private var term: TaxonomyTerm?
+    private var definition: TaxonomyTermDefinitions?
 
     @EnvironmentObject public var nav: Navigation
 
@@ -55,6 +57,10 @@ public struct Inspector: View, Identifiable {
                 InspectingNote(item: note)
             } else if let task = task {
                 InspectingTask(item: task)
+            } else if let term = term {
+                InspectingTerm(item: term)
+            } else if let definition = definition {
+                InspectingDefinition(item: definition)
             } else {
                 Text("Unable to inspect this item")
             }
@@ -75,6 +81,8 @@ public struct Inspector: View, Identifiable {
         case let en as Person: self.person = en
         case let en as Note: self.note = en
         case let en as LogTask: self.task = en
+        case let en as TaxonomyTerm: self.term = en
+        case let en as TaxonomyTermDefinitions: self.definition = en
         default: print("[error] FindDashboard.Inspector Unknown entity type=\(self.entity)")
         }
     }
@@ -530,6 +538,112 @@ public struct Inspector: View, Identifiable {
                             )
                         }
                     }
+                }
+            }
+        }
+    }
+
+    struct InspectingTerm: View {
+        public var item: TaxonomyTerm
+
+        @EnvironmentObject public var nav: Navigation
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                    Text("Type: Taxonomy term")
+                    Spacer()
+                }
+                .help("Type: Taxonomy term")
+                Divider()
+
+                if let date = item.created {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
+                        Text(date.description)
+                        Spacer()
+                    }
+                    .help("Created: \(date.description)")
+                    Divider()
+                }
+
+                if let date = item.lastUpdate {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
+                        Text(date.description)
+                        Spacer()
+                    }
+                    .help("Last update: \(date.description)")
+                    Divider()
+                }
+
+                Spacer()
+                HStack(alignment: .top, spacing: 10) {
+                    FancyButtonv2(
+                        text: "Open",
+                        action: {nav.session.search.cancel() ; nav.setInspector()},
+                        icon: "arrow.right.square.fill",
+                        showLabel: true,
+                        size: .link,
+                        type: .clear,
+                        redirect: AnyView(EmptyView()),
+                        pageType: .terms,
+                        sidebar: AnyView(DefinitionSidebar())
+                    )
+                }
+            }
+        }
+    }
+
+    struct InspectingDefinition: View {
+        public var item: TaxonomyTermDefinitions
+
+        @EnvironmentObject public var nav: Navigation
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                    Text("Type: Taxonomy definition")
+                    Spacer()
+                }
+                .help("Type: Taxonomy definition")
+                Divider()
+
+                if let date = item.created {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
+                        Text(date.description)
+                        Spacer()
+                    }
+                    .help("Created: \(date.description)")
+                    Divider()
+                }
+
+                if let date = item.lastUpdate {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
+                        Text(date.description)
+                        Spacer()
+                    }
+                    .help("Last update: \(date.description)")
+                    Divider()
+                }
+
+                Spacer()
+                HStack(alignment: .top, spacing: 10) {
+                    FancyButtonv2(
+                        text: "Open",
+                        action: {nav.session.search.cancel() ; nav.setInspector()},
+                        icon: "arrow.right.square.fill",
+                        showLabel: true,
+                        size: .link,
+                        type: .clear,
+                        redirect: AnyView(DefinitionDetail(definition: item)),
+                        pageType: .terms,
+                        sidebar: AnyView(DefinitionSidebar())
+                    )
                 }
             }
         }
