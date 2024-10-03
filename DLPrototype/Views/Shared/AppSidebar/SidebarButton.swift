@@ -81,6 +81,8 @@ struct SidebarButton: View, Identifiable {
                                 }
                             }
                         }
+//                        .foregroundStyle(nav.session.job != nil ? nav.session.job!.backgroundColor : isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
+                        .foregroundStyle(isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
                 }
             case .companies:
                 HStack(alignment: .top, spacing: 0) {
@@ -88,6 +90,8 @@ struct SidebarButton: View, Identifiable {
                         ActiveIndicator(colour: colour, href: .companies)
                     }
                     button.frame(width: 50, height: 50)
+//                        .foregroundStyle(nav.session.job != nil ? nav.session.job!.backgroundColor : isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
+                        .foregroundStyle(isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
                 }
             default: button.frame(width: 50, height: 50)
             }
@@ -127,7 +131,6 @@ struct SidebarButton: View, Identifiable {
                 Image(systemName: isDatePickerPresented && nav.parent == pageType ? "xmark" : (altMode != nil ? (altMode!.condition ? altMode!.icon : icon) : icon))
                    .font(.title)
                    .symbolRenderingMode(.hierarchical)
-                   .foregroundColor(isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
 
             }
         }
@@ -170,7 +173,6 @@ struct SidebarButton: View, Identifiable {
                 Image(systemName: isDatePickerPresented && nav.parent == pageType ? "xmark" : (altMode != nil ? (altMode!.condition ? altMode!.icon : icon) : icon))
                    .font(.title)
                    .symbolRenderingMode(.hierarchical)
-                   .foregroundColor(isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
 
             }
         })

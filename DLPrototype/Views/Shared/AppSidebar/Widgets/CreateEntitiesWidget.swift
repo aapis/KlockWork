@@ -221,7 +221,7 @@ struct CreateEntitiesWidget: View {
             VStack(alignment: .leading) {
                 HStack(alignment: .top, spacing: 5) {
                     FancyButtonv2(
-                        text: "New company",
+                        text: "Company",
                         action: {isCreateStackShowing = false; isSearchStackShowing = false},
                         icon: "building.2",
                         fgColour: .white,
@@ -236,7 +236,7 @@ struct CreateEntitiesWidget: View {
 
                 ZStack(alignment: .topLeading) {
                     HStack(alignment: .center) {
-                        Divider().frame(height: 121)
+                        Divider().frame(height: 149)
                     }
                     VStack(alignment: .leading) {
                         HStack(alignment: .center, spacing: 0) {
@@ -246,9 +246,9 @@ struct CreateEntitiesWidget: View {
 
                             HStack {
                                 FancyButtonv2(
-                                    text: "New project",
+                                    text: "Project",
                                     action: {isCreateStackShowing = false; isSearchStackShowing = false},
-                                    icon: "folder.badge.plus",
+                                    icon: "folder",
                                     fgColour: .white,
                                     size: .link,
                                     type: nav.parent == .projects ? .secondary : .standard,
@@ -266,7 +266,7 @@ struct CreateEntitiesWidget: View {
                             }
                             HStack {
                                 FancyButtonv2(
-                                    text: "New job",
+                                    text: "Job",
                                     action: {isCreateStackShowing = false; isSearchStackShowing = false},
                                     icon: "hammer",
                                     fgColour: .white,
@@ -286,9 +286,9 @@ struct CreateEntitiesWidget: View {
                             }
                             HStack {
                                 FancyButtonv2(
-                                    text: "New note",
+                                    text: "Note",
                                     action: {isCreateStackShowing = false; isSearchStackShowing = false},
-                                    icon: "note.text.badge.plus",
+                                    icon: "note.text",
                                     fgColour: .white,
                                     size: .link,
                                     type: nav.parent == .notes ? .secondary : .standard,
@@ -306,7 +306,7 @@ struct CreateEntitiesWidget: View {
                             }
                             HStack {
                                 FancyButtonv2(
-                                    text: "New task",
+                                    text: "Task",
                                     action: {isCreateStackShowing = false; isSearchStackShowing = false},
                                     icon: "checklist.checked",
                                     fgColour: .white,
@@ -326,15 +326,35 @@ struct CreateEntitiesWidget: View {
                             }
                             HStack {
                                 FancyButtonv2(
-                                    text: "New Record",
+                                    text: "Record",
                                     action: {isCreateStackShowing = false; isSearchStackShowing = false},
-                                    icon: "doc.append",
+                                    icon: "tray",
                                     fgColour: .white,
                                     size: .link,
                                     type: nav.parent == .tasks ? .secondary : .standard,
                                     redirect: AnyView(Today()),
                                     pageType: .today,
                                     sidebar: AnyView(TodaySidebar())
+                                )
+                            }
+                            Spacer()
+                        }
+
+                        HStack(alignment: .center, spacing: 0) {
+                            VStack(alignment: .center) {
+                                Divider().frame(width: 60)
+                            }
+                            HStack {
+                                FancyButtonv2(
+                                    text: "Definition",
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false},
+                                    icon: "list.bullet.rectangle",
+                                    fgColour: .white,
+                                    size: .link,
+                                    type: nav.parent == .tasks ? .secondary : .standard,
+                                    redirect: AnyView(TermsDashboard()),
+                                    pageType: .terms,
+                                    sidebar: AnyView(TermsDashboardSidebar())
                                 )
                             }
                             Spacer()
