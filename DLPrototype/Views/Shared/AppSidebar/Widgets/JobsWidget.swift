@@ -74,6 +74,7 @@ struct JobsWidgetRedux: View {
                         .background(self.showPublished ? Theme.textBackground : .white.opacity(0.5))
                         .foregroundStyle(self.showPublished ? .white : Theme.base)
                         .clipShape(RoundedRectangle(cornerRadius: 5))
+                        .help("Show or hide unpublished items")
                 }
                 .font(.caption)
                 .padding(8)
@@ -292,7 +293,7 @@ struct UnifiedSidebar {
                         .useDefaultHover({ inside in self.highlighted = inside})
                     RowAddNavLink(
                         title: "Add",
-                        target: AnyView(EmptyView())
+                        target: AnyView(TaskDashboard())
                     )
                     .buttonStyle(.plain)
                 }
@@ -340,7 +341,7 @@ struct UnifiedSidebar {
                         .useDefaultHover({ inside in self.highlighted = inside})
                     RowAddNavLink(
                         title: "Add",
-                        target: AnyView(EmptyView())
+                        target: AnyView(NoteCreate())
                     )
                     .buttonStyle(.plain)
                 }
@@ -388,7 +389,7 @@ struct UnifiedSidebar {
                         .useDefaultHover({ inside in self.highlighted = inside})
                     RowAddNavLink(
                         title: "Add",
-                        target: AnyView(EmptyView())
+                        target: AnyView(DefinitionDetail())
                     )
                     .buttonStyle(.plain)
                 }
@@ -447,7 +448,7 @@ struct UnifiedSidebar {
                                 ForEach(self.records, id: \.objectID) { record in
                                     if record.message != nil {
                                         Button {
-//                                            self.state.to(.taskDetail)
+                                            self.state.to(.today)
                                         } label: {
                                             Text(record.message!)
                                         }
