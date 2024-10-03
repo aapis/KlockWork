@@ -238,13 +238,13 @@ extension FindDashboard {
                 
                 if publishedOnly.wrappedValue {
                     req.predicate = NSPredicate(
-                        format: "alive = true && (name BEGINSWITH %@ || pid BEGINSWITH %@) && company.hidden == false",
+                        format: "alive = true && (name CONTAINS[cd] %@ || pid BEGINSWITH %@) && company.hidden == false",
                         _searchText.wrappedValue,
                         _searchText.wrappedValue
                     )
                 } else {
                     req.predicate = NSPredicate(
-                        format: "(name BEGINSWITH %@ || pid BEGINSWITH %@) && company.hidden == false",
+                        format: "(name CONTAINS[cd] %@ || pid BEGINSWITH %@) && company.hidden == false",
                         _searchText.wrappedValue,
                         _searchText.wrappedValue
                     )
@@ -891,6 +891,7 @@ extension FindDashboard.Suggestions.SuggestedJobs {
 
     private func appear() -> Void {
         if items.count <= 5 {
+            self.showAll = true
             showChildren = true
         }
     }
@@ -903,6 +904,7 @@ extension FindDashboard.Suggestions.SuggestedProjects {
 
     private func appear() -> Void {
         if items.count <= 5 {
+            self.showAll = true
             showChildren = true
         }
     }
@@ -938,6 +940,7 @@ extension FindDashboard.Suggestions.SuggestedNotes {
 
     private func appear() -> Void {
         if items.count <= 5 {
+            self.showAll = true
             showChildren = true
         }
     }
@@ -950,6 +953,7 @@ extension FindDashboard.Suggestions.SuggestedTasks {
 
     private func appear() -> Void {
         if items.count <= 5 {
+            self.showAll = true
             showChildren = true
         }
     }
@@ -962,6 +966,7 @@ extension FindDashboard.Suggestions.SuggestedCompanies {
 
     private func appear() -> Void {
         if items.count <= 5 {
+            self.showAll = true
             showChildren = true
         }
     }
@@ -974,6 +979,7 @@ extension FindDashboard.Suggestions.SuggestedPeople {
 
     private func appear() -> Void {
         if items.count <= 5 {
+            self.showAll = true
             showChildren = true
         }
     }
@@ -986,6 +992,7 @@ extension FindDashboard.Suggestions.SuggestedRecords {
 
     private func appear() -> Void {
         if items.count <= 5 {
+            self.showAll = true
             showChildren = true
         }
     }
@@ -998,6 +1005,7 @@ extension FindDashboard.Suggestions.SuggestedTerms {
 
     private func appear() -> Void {
         if items.count <= 5 {
+            self.showAll = true
             showChildren = true
         }
     }
@@ -1010,6 +1018,7 @@ extension FindDashboard.Suggestions.SuggestedDefinitions {
 
     private func appear() -> Void {
         if items.count <= 5 {
+            self.showAll = true
             showChildren = true
         }
     }

@@ -239,15 +239,14 @@ public struct Inspector: View, Identifiable {
 
                 if let message = item.message {
                     HStack(alignment: .top, spacing: 10) {
-                        Image(systemName: "doc.text.fill").symbolRenderingMode(.hierarchical)
-                        Text("Full message:")
+                        Image(systemName: "tray").symbolRenderingMode(.hierarchical)
+                        Text("Message")
                         Spacer()
                     }
                     Divider()
                     Text(message)
-                        .padding(.leading, 25)
                         .contextMenu {
-                            Button("Copy") {
+                            Button("Copy to clipboard") {
                                 ClipboardHelper.copy(message)
                             }
                         }
@@ -578,6 +577,34 @@ public struct Inspector: View, Identifiable {
                     Divider()
                 }
 
+                if let name = item.name {
+                    HStack(alignment: .center) {
+                        Image(systemName: "list.bullet.rectangle").symbolRenderingMode(.hierarchical)
+                        FancyButtonv2(
+                            text: name,
+                            action: {nav.session.search.cancel() ; nav.setInspector()},
+                            showLabel: true,
+                            showIcon: false,
+                            size: .link,
+                            type: .clear,
+                            redirect: AnyView(TermsDashboard()),
+                            pageType: .terms,
+                            sidebar: AnyView(TermsDashboardSidebar())
+                        )
+                        .help("Term: \(name)")
+                    }
+                    Divider()
+                }
+
+                if let defs = item.definitions?.allObjects as? [TaxonomyTermDefinitions] {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "list.bullet").symbolRenderingMode(.hierarchical)
+                        Text("\(defs.count(where: {$0.alive == true})) definition(s)")
+                        Spacer()
+                    }
+                    Divider()
+                }
+
                 Spacer()
                 HStack(alignment: .top, spacing: 10) {
                     FancyButtonv2(
@@ -587,7 +614,7 @@ public struct Inspector: View, Identifiable {
                         showLabel: true,
                         size: .link,
                         type: .clear,
-                        redirect: AnyView(EmptyView()),
+                        redirect: AnyView(TermsDashboard()),
                         pageType: .terms,
                         sidebar: AnyView(DefinitionSidebar())
                     )
@@ -628,6 +655,45 @@ public struct Inspector: View, Identifiable {
                         Spacer()
                     }
                     .help("Last update: \(date.description)")
+                    Divider()
+                }
+
+                if let term = self.item.term {
+                    HStack(alignment: .center) {
+                        Image(systemName: "list.bullet.rectangle").symbolRenderingMode(.hierarchical)
+                        FancyButtonv2(
+                            text: term.name ?? "Not Found",
+                            action: {nav.session.search.cancel() ; nav.setInspector()},
+                            showLabel: true,
+                            showIcon: false,
+                            size: .link,
+                            type: .clear,
+                            redirect: AnyView(TermsDashboard()),
+                            pageType: .terms,
+                            sidebar: AnyView(TermsDashboardSidebar())
+                        )
+                    }
+                    Divider()
+                }
+
+                if let definition = self.item.definition {
+                    HStack(alignment: .center) {
+                        Image(systemName: "list.bullet").symbolRenderingMode(.hierarchical)
+                        Text("Definition")
+                    }
+                    Divider()
+                    HStack(alignment: .top, spacing: 10) {
+                        Text(definition)
+                            .contextMenu {
+                                Button {
+                                    ClipboardHelper.copy(definition)
+                                } label: {
+                                    Text("Copy to clipboard")
+                                }
+                            }
+                        Spacer()
+                    }
+                    .help("Full definition text")
                     Divider()
                 }
 
