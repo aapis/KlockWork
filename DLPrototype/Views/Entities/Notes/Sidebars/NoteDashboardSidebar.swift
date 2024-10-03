@@ -37,10 +37,10 @@ extension NoteDashboardSidebar {
             ),
             ToolbarButton(
                 id: 1,
-                helpText: "Notes",
-                icon: "note.text",
-                labelText: "Notes",
-                contents: AnyView(NotesWidget())
+                helpText: "Outline",
+                icon: "menucard",
+                labelText: "Outline",
+                contents: AnyView(OutlineWidget())
             ),
             ToolbarButton(
                 id: 2,

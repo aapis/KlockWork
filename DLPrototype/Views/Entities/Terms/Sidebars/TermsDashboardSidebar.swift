@@ -34,6 +34,13 @@ extension TermsDashboardSidebar {
                 icon: "globe.americas",
                 labelText: "Resources",
                 contents: AnyView(JobsWidgetRedux())
+            ),
+            ToolbarButton(
+                id: 1,
+                helpText: "Outline",
+                icon: "menucard",
+                labelText: "Outline",
+                contents: AnyView(OutlineWidget())
             )
         ]
     }

@@ -27,7 +27,14 @@ extension DefaultCompanySidebar {
         tabs = [
             ToolbarButton(
                 id: 0,
-                helpText: "Companies & Projects",
+                helpText: "Resources",
+                icon: "globe.americas",
+                labelText: "Resources",
+                contents: AnyView(JobsWidgetRedux())
+            ),
+            ToolbarButton(
+                id: 1,
+                helpText: "Outline",
                 icon: "menucard",
                 labelText: "Outline",
                 contents: AnyView(OutlineWidget())

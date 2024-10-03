@@ -37,17 +37,10 @@ extension JobDashboardSidebar {
             ),
             ToolbarButton(
                 id: 1,
-                helpText: "Recent jobs",
-                icon: "clock",
-                labelText: "Recent jobs",
-                contents: AnyView(JobPickerWidget())
-            ),
-            ToolbarButton(
-                id: 2,
-                helpText: "All jobs",
-                icon: "hammer",
-                labelText: "All Jobs",
-                contents: AnyView(JobsWidget())
+                helpText: "Outline",
+                icon: "menucard",
+                labelText: "Outline",
+                contents: AnyView(OutlineWidget())
             )
         ]
     }

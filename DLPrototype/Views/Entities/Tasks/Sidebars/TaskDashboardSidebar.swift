@@ -37,10 +37,10 @@ extension TaskDashboardSidebar {
             ),
             ToolbarButton(
                 id: 1,
-                helpText: "Tasks",
-                icon: "checklist",
-                labelText: "Tasks",
-                contents: AnyView(TasksWidget())
+                helpText: "Outline",
+                icon: "menucard",
+                labelText: "Outline",
+                contents: AnyView(OutlineWidget())
             )
         ]
     }
