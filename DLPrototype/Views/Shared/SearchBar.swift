@@ -16,6 +16,7 @@ struct SearchBar: View {
     public var placeholder: String? = "Search..."
     public var onSubmit: (() -> Void)? = nil
     public var onReset: (() -> Void)? = nil
+    @FocusState private var primaryTextFieldInFocus: Bool
     // @TODO: this will remember the search text between pages, but I think instead I need some kind of search history
 //    @AppStorage("shared.searchbar") private var text: String = ""
     
@@ -23,7 +24,14 @@ struct SearchBar: View {
         GridRow {
             ZStack(alignment: .trailing) {
                 FancyTextField(placeholder: placeholder!, lineLimit: 1, onSubmit: onSubmit, disabled: disabled, text: $text)
-                
+                    .focused($primaryTextFieldInFocus)
+                    .onAppear {
+                        // thx https://www.kodeco.com/31569019-focus-management-in-swiftui-getting-started#toc-anchor-002
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            self.primaryTextFieldInFocus = true
+                        }
+                    }
+
                 Spacer()
                 
                 if text.count > 0 {
