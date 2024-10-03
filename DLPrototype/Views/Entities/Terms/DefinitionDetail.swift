@@ -10,7 +10,7 @@ import SwiftUI
 
 struct DefinitionDetail: View {
     @EnvironmentObject public var state: Navigation
-    public var definition: TaxonomyTermDefinitions?
+    @State public var definition: TaxonomyTermDefinitions?
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .terms
     @State private var definitionString: String = ""
@@ -84,6 +84,11 @@ extension DefinitionDetail {
     /// Onload handler
     /// - Returns: Void
     private func actionOnAppear() -> Void {
+        if let stored = self.state.session.definition {
+            self.definition = stored
+            self.state.session.definition = nil
+        }
+
         self.definitionString = self.definition?.definition ?? ""
         self.jobIdString = self.definition?.job?.jid.string ?? ""
         self.alive = self.definition?.alive ?? true
@@ -132,7 +137,9 @@ extension DefinitionDetail {
             self.jobIdString = newJob.jid.string
         }
     }
-
+    
+    /// Fires when user chooses to unpublish a definition
+    /// - Returns: Void
     private func actionOnSoftDelete() -> Void {
         self.alive = false
         self.definition?.alive = false
