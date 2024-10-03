@@ -160,6 +160,11 @@ struct UnifiedSidebar {
             }
             .background(self.company.alive ? self.highlighted ? self.company.backgroundColor.opacity(0.9) : self.company.backgroundColor : .gray.opacity(0.8))
             .foregroundStyle((self.company.alive ? self.company.backgroundColor : .gray).isBright() ? Theme.base : .white)
+            .onAppear(perform: {
+                if let job = self.state.session.job {
+                    self.isPresented = job.project?.company == self.company
+                }
+            })
         }
     }
 
@@ -217,6 +222,11 @@ struct UnifiedSidebar {
             }
             .background(self.project.alive ? self.highlighted ? self.project.backgroundColor.opacity(0.9) : self.project.backgroundColor : .gray.opacity(0.8))
             .foregroundStyle((self.project.alive ? self.project.backgroundColor : .gray).isBright() ? Theme.base : .white)
+            .onAppear(perform: {
+                if let job = self.state.session.job {
+                    self.isPresented = job.project == self.project
+                }
+            })
         }
     }
 
@@ -276,6 +286,11 @@ struct UnifiedSidebar {
             }
             .background(self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8))
             .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white)
+            .onAppear(perform: {
+                if self.state.session.job == self.job {
+                    self.isPresented = true
+                }
+            })
         }
     }
 
@@ -308,16 +323,10 @@ struct UnifiedSidebar {
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(self.tasks, id: \.objectID) { task in
                                     if task.content != nil {
-                                        Button {
-                                            self.state.to(.taskDetail)
-                                        } label: {
-                                            Text(task.content!)
-                                        }
-                                        .buttonStyle(.plain)
+                                        EntityTypeRowButton(label: task.content!, redirect: .taskDetail, resource: task)
                                     }
                                 }
                             }
-                            .padding(.leading, 15)
                         }
                     }
                 }
@@ -356,16 +365,10 @@ struct UnifiedSidebar {
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(self.notes, id: \.objectID) { note in
                                     if note.title != nil {
-                                        Button {
-                                            self.state.to(.taskDetail)
-                                        } label: {
-                                            Text(note.title!)
-                                        }
-                                        .buttonStyle(.plain)
+                                        EntityTypeRowButton(label: note.title!, redirect: .noteDetail, resource: note)
                                     }
                                 }
                             }
-                            .padding(.leading, 15)
                         }
                     }
                 }
@@ -404,16 +407,10 @@ struct UnifiedSidebar {
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(self.definitions, id: \.objectID) { def in
                                     if def.definition != nil {
-                                        Button {
-                                            self.state.to(.definitionDetail)
-                                        } label: {
-                                            Text(def.definition ?? "_NO_DEFINITION")
-                                        }
-                                        .buttonStyle(.plain)
+                                        EntityTypeRowButton(label: def.definition!, redirect: .definitionDetail, resource: def)
                                     }
                                 }
                             }
-                            .padding(.leading, 15)
                         }
                     }
                 }
@@ -447,16 +444,10 @@ struct UnifiedSidebar {
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(self.records, id: \.objectID) { record in
                                     if record.message != nil {
-                                        Button {
-                                            self.state.to(.today)
-                                        } label: {
-                                            Text(record.message!)
-                                        }
-                                        .buttonStyle(.plain)
+                                        EntityTypeRowButton(label: record.message!, redirect: .today, resource: record)
                                     }
                                 }
                             }
-                            .padding(.leading, 15)
                         }
                     }
                 }
@@ -496,16 +487,10 @@ struct UnifiedSidebar {
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(self.entity.people?.allObjects as? [Person] ?? [], id: \.objectID) { person in
                                     if person.name != nil {
-                                        Button {
-                                            self.state.to(.taskDetail)
-                                        } label: {
-                                            Text(person.name!)
-                                        }
-                                        .buttonStyle(.plain)
+                                        EntityTypeRowButton(label: person.name!, redirect: .taskDetail, resource: person)
                                     }
                                 }
                             }
-                            .padding(.leading, 15)
                         }
                     }
                 }
@@ -581,6 +566,64 @@ struct UnifiedSidebar {
                 }
             }
             .buttonStyle(.plain)
+        }
+    }
+
+    struct EntityTypeRowButton: View {
+        @EnvironmentObject private var state: Navigation
+        public var label: String
+        public var redirect: Page
+        public var resource: NSManagedObject
+        @State private var highlighted: Bool = false
+        @State private var noLinkAvailable: Bool = false // @TODO: this should be removed after all entity detail pages have been implemented
+
+        var body: some View {
+            Button {
+                self.state.to(self.redirect)
+            } label: {
+                HStack(alignment: .center, spacing: 8) {
+                    Image(systemName: self.noLinkAvailable ? "questionmark.square.fill" : "link")
+                        .opacity(0.4)
+                    Text(self.label)
+                    Spacer()
+                }
+                .padding(8)
+                .background(self.highlighted ? .white.opacity(0.2) : .clear)
+                .useDefaultHover({ inside in self.highlighted = inside})
+            }
+            .disabled(self.noLinkAvailable)
+            .help(self.noLinkAvailable ? "Link not found" : self.label)
+            .buttonStyle(.plain)
+            .onAppear(perform: self.actionOnAppear)
+        }
+    }
+}
+
+extension UnifiedSidebar.EntityTypeRowButton {
+    /// Onload handler. Sets appropriate link data for the given Page
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        switch self.redirect {
+            // @TODO: uncomment after this detail view has been implemented
+//        case .today:
+//            self.state.session.record = self.resource as? LogRecord
+        case .projects:
+            self.state.session.project = self.resource as? Project
+        case .jobs:
+            self.state.session.job = self.resource as? Job
+        case .companies:
+            self.state.session.company = self.resource as? Company
+        case .terms:
+            self.state.session.term = self.resource as? TaxonomyTerm
+        case .definitionDetail:
+            self.state.session.definition = self.resource as? TaxonomyTermDefinitions
+        // @TODO: uncomment after this detail view has been implemented
+//        case .taskDetail, .tasks:
+//            self.state.session.task = self.resource as? LogTask
+        case .noteDetail, .notes:
+            self.state.session.note = self.resource as? Note
+        default:
+            self.noLinkAvailable = true
         }
     }
 }

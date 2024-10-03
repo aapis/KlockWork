@@ -9,9 +9,9 @@
 import SwiftUI
 
 struct NoteView: View {
-    public var note: Note
-    public var moc: NSManagedObjectContext
-    
+    @EnvironmentObject public var state: Navigation
+    @State public var note: Note?
+
     @State private var title: String = ""
     @State private var content: String = ""
     @State private var lastUpdate: Date?
@@ -27,7 +27,7 @@ struct NoteView: View {
     @State private var isShareAlertVisible: Bool = false
 
     private var jobs: [Job] {
-        CoreDataJob(moc: moc).all()
+        CoreDataJob(moc: self.state.moc).all()
     }
     
     private var pickerItems: [CustomPickerItem] {
@@ -41,13 +41,16 @@ struct NoteView: View {
     }
     
     private var versions: [NoteVersion] {
-        CoreDataNoteVersions(moc: moc).by(id: note.id!)
+        if let id = note?.id {
+            return CoreDataNoteVersions(moc: self.state.moc).by(id: id)
+        }
+
+        return []
     }
 
     public var body: some View {
         NoteView.Detail(
             note: note,
-            moc: moc,
             ref: self,
             jobs: jobs,
             title: $title,
@@ -64,13 +67,12 @@ struct NoteView: View {
         )
     }
 
-    public init(note: Note, moc: NSManagedObjectContext) {
+    public init(note: Note? = nil) {
         self.note = note
-        self.moc = moc
-        self.title = self.note.title ?? ""
-        self.content = self.note.body ?? ""
-        self.lastUpdate = self.note.lastUpdate
-        self.star = self.note.starred
+        self.title = self.note?.title ?? ""
+        self.content = self.note?.body ?? ""
+        self.lastUpdate = self.note?.lastUpdate
+        self.star = self.note?.starred
     }
 
     // TODO: should not be part of this view
@@ -89,11 +91,11 @@ struct NoteView: View {
 
 extension NoteView {
     public struct Detail: View {
-        public var note: Note
-        public var moc: NSManagedObjectContext
+        @EnvironmentObject public var state: Navigation
+        @State public var note: Note?
         public var ref: NoteView
         public var jobs: [Job]
-        
+
         @Binding public var title: String
         @Binding public var content: String
         @Binding public var lastUpdate: Date?
@@ -144,7 +146,7 @@ extension NoteView {
                         .disabled(disableNextButton)
                     
                     FancyButtonv2(
-                        text: "Share \(note.title!)",
+                        text: "Share \(note?.title ?? "_NO_TITLE")",
                         action: share,
                         icon: "square.and.arrow.up",
                         showLabel: false
@@ -154,7 +156,7 @@ extension NoteView {
                     }
                 }
                 
-                if note.starred {
+                if star == true {
                     FancyButtonv2(text: "Un-favourite", action: starred, icon: "star.fill", showLabel: false, type: .star)
                         .keyboardShortcut("+", modifiers: .command)
                 } else {
@@ -207,113 +209,129 @@ extension NoteView {
         }
 
         public func previousVersion() -> Void {
-            let all = CoreDataNoteVersions(moc: moc).by(id: note.id!)
-            
-            if currentVersion > 0 {
-                disableNextButton = false
-                // change text fields
-                let prev = all[currentVersion - 1]
-                title = prev.title!
-                content = prev.content!
-                lastUpdate = prev.created!
-                
-                if currentVersion == noteVersions.count {
-                    CoreDataNoteVersions(moc: moc).from(note)
+            if self.note != nil {
+                let all = CoreDataNoteVersions(moc: self.state.moc).by(id: note!.id!)
+
+                if currentVersion > 0 {
+                    disableNextButton = false
+                    // change text fields
+                    let prev = all[currentVersion - 1]
+                    title = prev.title!
+                    content = prev.content!
+                    lastUpdate = prev.created!
+
+                    if currentVersion == noteVersions.count {
+                        CoreDataNoteVersions(moc: self.state.moc).from(note!)
+                    }
+
+                    currentVersion -= 1
+                } else {
+                    disablePreviousButton = true
                 }
-                
-                currentVersion -= 1
-            } else {
-                disablePreviousButton = true
             }
         }
         
         public func nextVersion() -> Void {
-            let all = CoreDataNoteVersions(moc: moc).by(id: note.id!)
-            
-            if currentVersion < noteVersions.count {
-                disablePreviousButton = false
-                
-                let next = all[currentVersion + 1]
-                title = next.title!
-                content = next.content!
-                lastUpdate = next.created!
-                
-                currentVersion += 1
-            } else {
-                disableNextButton = true
+            if self.note != nil {
+                let all = CoreDataNoteVersions(moc: self.state.moc).by(id: note!.id!)
+
+                if currentVersion < noteVersions.count {
+                    disablePreviousButton = false
+
+                    let next = all[currentVersion + 1]
+                    title = next.title!
+                    content = next.content!
+                    lastUpdate = next.created!
+
+                    currentVersion += 1
+                } else {
+                    disableNextButton = true
+                }
             }
         }
         
 
         
         private func starred() -> Void {
-            note.starred.toggle()
-            
+            note?.starred.toggle()
+
             update()
         }
         
         public func update() -> Void {
-            note.title = title // TODO: REMOVE
-            note.body = content // TODO: REMOVE
-            note.lastUpdate = Date()
-            lastUpdate = note.lastUpdate
-            note.mJob = selectedJob
-            note.alive = true
-            
-            CoreDataNoteVersions(moc: moc).from(note)
-            
-            noteVersions = CoreDataNoteVersions(moc: moc).by(id: note.id!)
-            currentVersion = noteVersions.count
-            
-            PersistenceController.shared.save()
+            if note != nil {
+                note!.title = title // TODO: REMOVE
+                note!.body = content // TODO: REMOVE
+                note!.lastUpdate = Date()
+                lastUpdate = note!.lastUpdate
+                note!.mJob = selectedJob
+                note!.alive = true
+
+                CoreDataNoteVersions(moc: self.state.moc).from(note!)
+
+                noteVersions = CoreDataNoteVersions(moc: self.state.moc).by(id: note!.id!)
+                currentVersion = noteVersions.count
+
+                PersistenceController.shared.save()
+            }
         }
         
         public func delete() -> Void {
-            note.alive = false
-            
+            note?.alive = false
+
             PersistenceController.shared.save()
         }
         
         private func hardDelete() -> Void {
-            delete() // soft delete
-            moc.delete(note)
-            
-            PersistenceController.shared.save()
+            if self.note != nil {
+                delete() // soft delete
+                self.state.moc.delete(note!)
+
+                PersistenceController.shared.save()
+            }
         }
         
         public func createBindings() -> Void {
-            title = note.title!
-            content = note.body!
-            selectedJob = note.mJob ?? nil
-            lastUpdate = note.lastUpdate ?? nil
-            noteVersions = CoreDataNoteVersions(moc: moc).by(id: note.id!)
-            currentVersion = noteVersions.count
-            autoSelectedJobId = selectedJob?.jid.string ?? ""
+            if let stored = self.state.session.note {
+                self.note = stored
+            }
+
+            if self.note != nil {
+                selectedJob = note!.mJob ?? nil
+                lastUpdate = note!.lastUpdate ?? nil
+                noteVersions = CoreDataNoteVersions(moc: self.state.moc).by(id: note!.id!)
+                currentVersion = noteVersions.count
+                autoSelectedJobId = selectedJob?.jid.string ?? ""
+                self.content = noteVersions.last?.content ?? ""
+                self.title = noteVersions.last?.title ?? ""
+            }
         }
         
         private func share() -> Void {
-            isShareAlertVisible = true
-            
-            var exportableNote = ""
-            
-            if let title = note.title {
-                exportableNote += "\(title)\n"
-            }
-            
-            if let job = note.mJob {
-                if let uri = job.uri {
-                    exportableNote += "Job ID \(job.jid.string) - \(uri.absoluteString)\n"
-                } else {
-                    exportableNote += "Job ID \(job.jid.string)\n"
+            if self.note != nil {
+                isShareAlertVisible = true
+
+                var exportableNote = ""
+
+                if let title = note!.title {
+                    exportableNote += "\(title)\n"
                 }
-            }
-            
-            if let body = note.body {
-                exportableNote += body
-            }
-            
-            if !exportableNote.isEmpty {
-                ClipboardHelper.copy(exportableNote)
+
+                if let job = note!.mJob {
+                    if let uri = job.uri {
+                        exportableNote += "Job ID \(job.jid.string) - \(uri.absoluteString)\n"
+                    } else {
+                        exportableNote += "Job ID \(job.jid.string)\n"
+                    }
+                }
+
+                if let body = note!.body {
+                    exportableNote += body
+                }
+
+                if !exportableNote.isEmpty {
+                    ClipboardHelper.copy(exportableNote)
+                }
             }
         }
     }
