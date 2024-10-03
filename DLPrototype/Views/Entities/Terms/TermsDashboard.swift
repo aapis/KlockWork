@@ -24,7 +24,7 @@ struct TermsDashboard: View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 1) {
                 HStack(alignment: .center, spacing: 0) {
-                    Title(text: eType.label, imageAsImage: eType.icon)
+                    Title(text: "Terms & Definitions", imageAsImage: eType.icon)
                     Spacer()
                     FancyButtonv2(text: "Create term", action: self.actionOnTap, icon: "plus", showLabel: false)
                 }
