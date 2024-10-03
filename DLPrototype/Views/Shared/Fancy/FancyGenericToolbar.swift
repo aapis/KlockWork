@@ -68,7 +68,7 @@ struct FancyGenericToolbar: View {
                     ZStack(alignment: .topLeading) {
                         (location == .sidebar ? .clear : Theme.toolbarColour)
 
-                        ScrollView(.horizontal) {
+                        ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 1) {
                                 ForEach(buttons, id: \ToolbarButton.id) { button in
                                     TabView(
