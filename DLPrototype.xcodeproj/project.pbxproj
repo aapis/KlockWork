@@ -11,10 +11,12 @@
 		53013A982CAC60200024BA30 /* Company.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A972CAC601F0024BA30 /* Company.swift */; };
 		53013A9A2CAC8C530024BA30 /* DefinitionDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A992CAC8C510024BA30 /* DefinitionDetail.swift */; };
 		53013A9C2CAC9CCA0024BA30 /* DefinitionSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A9B2CAC9CC40024BA30 /* DefinitionSidebar.swift */; };
-		53013A9F2CACD23D0024BA30 /* RowAddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A9E2CACD23D0024BA30 /* RowAddButton.swift */; };
 		530168172A887B0A000AF4FD /* AllJobsPickerWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530168162A887B0A000AF4FD /* AllJobsPickerWidget.swift */; };
 		530318472A11DD13009CA90B /* CoreDataCalendarEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530318462A11DD13009CA90B /* CoreDataCalendarEvent.swift */; };
 		5309EE3D25619A6D00B3BC06 /* Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5309EE3C25619A6D00B3BC06 /* Backup.swift */; };
+		530B1D722CAE219D0033E81F /* PageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D6F2CAE219D0033E81F /* PageConfiguration.swift */; };
+		530B1D732CAE219D0033E81F /* RowAddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D702CAE219D0033E81F /* RowAddButton.swift */; };
+		530B1D742CAE219D0033E81F /* FilterField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D712CAE219D0033E81F /* FilterField.swift */; };
 		5311F4042C17C5F600FB3071 /* CDAssessmentThreshold.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5311F4032C17C5F600FB3071 /* CDAssessmentThreshold.swift */; };
 		53152CC929690E7300A14E43 /* LosslessStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CC829690E7300A14E43 /* LosslessStringConvertible.swift */; };
 		53152CCC2969453000A14E43 /* DateHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CCB2969453000A14E43 /* DateHelper.swift */; };
@@ -177,8 +179,6 @@
 		53C3418C299960310071B855 /* JobDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418B299960310071B855 /* JobDashboard.swift */; };
 		53C3418E299968160071B855 /* JobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418D299968160071B855 /* JobView.swift */; };
 		53C3419029996C070071B855 /* FancyRandomJobColourPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C3418F29996C070071B855 /* FancyRandomJobColourPicker.swift */; };
-		53CEDBC82CA9FFA3002726DC /* PageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CEDBC72CA9FFA3002726DC /* PageConfiguration.swift */; };
-		53CEDBD42CAA014B002726DC /* FilterField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CEDBD32CAA014B002726DC /* FilterField.swift */; };
 		53D4CBC82BFE953700AFEDEA /* SaveSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4CBC72BFE953700AFEDEA /* SaveSource.swift */; };
 		53D5E2982A85A75C00FE293A /* Planning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D5E2972A85A75C00FE293A /* Planning.swift */; };
 		53D5E29A2A85E38A00FE293A /* WidgetLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D5E2992A85E38A00FE293A /* WidgetLocation.swift */; };
@@ -264,6 +264,9 @@
 		530168162A887B0A000AF4FD /* AllJobsPickerWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllJobsPickerWidget.swift; sourceTree = "<group>"; };
 		530318462A11DD13009CA90B /* CoreDataCalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataCalendarEvent.swift; sourceTree = "<group>"; };
 		5309EE3C25619A6D00B3BC06 /* Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
+		530B1D6F2CAE219D0033E81F /* PageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PageConfiguration.swift; path = "../klockwork-ios/KlockWork-iOS/KlockWork-iOS/SharedEnums/PageConfiguration.swift"; sourceTree = "<group>"; };
+		530B1D702CAE219D0033E81F /* RowAddButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RowAddButton.swift; path = "../klockwork-ios/KlockWork-iOS/KlockWork-iOS/SharedViews/RowAddButton.swift"; sourceTree = "<group>"; };
+		530B1D712CAE219D0033E81F /* FilterField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FilterField.swift; path = "../klockwork-ios/KlockWork-iOS/KlockWork-iOS/SharedViews/FilterField.swift"; sourceTree = "<group>"; };
 		5311F4032C17C5F600FB3071 /* CDAssessmentThreshold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CDAssessmentThreshold.swift; sourceTree = "<group>"; };
 		53152CC829690E7300A14E43 /* LosslessStringConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LosslessStringConvertible.swift; sourceTree = "<group>"; };
 		53152CCB2969453000A14E43 /* DateHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHelper.swift; sourceTree = "<group>"; };
@@ -571,7 +574,10 @@
 			children = (
 				53013A9E2CACD23D0024BA30 /* RowAddButton.swift */,
 				53CEDBD32CAA014B002726DC /* FilterField.swift */,
+				530B1D712CAE219D0033E81F /* FilterField.swift */,
 				53CEDBC72CA9FFA3002726DC /* PageConfiguration.swift */,
+				530B1D6F2CAE219D0033E81F /* PageConfiguration.swift */,
+				530B1D702CAE219D0033E81F /* RowAddButton.swift */,
 				537DFF862BF27F0B00FC5923 /* PRIVACY.md */,
 				53218D8124B8195D0088ABE9 /* Screenshots */,
 				53218D8024B8094C0088ABE9 /* README.md */,
@@ -1375,9 +1381,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				53013A9F2CACD23D0024BA30 /* RowAddButton.swift in Sources */,
-				53CEDBD42CAA014B002726DC /* FilterField.swift in Sources */,
-				53CEDBC82CA9FFA3002726DC /* PageConfiguration.swift in Sources */,
+				530B1D722CAE219D0033E81F /* PageConfiguration.swift in Sources */,
+				530B1D732CAE219D0033E81F /* RowAddButton.swift in Sources */,
+				530B1D742CAE219D0033E81F /* FilterField.swift in Sources */,
 				53FEF578296603D9000B94FC /* FancyTextField.swift in Sources */,
 				53F5895E2998330000843B32 /* NoteResult.swift in Sources */,
 				535C1AEE29F49AAD00CD95FD /* StatsWidget.swift in Sources */,
