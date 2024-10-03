@@ -223,7 +223,7 @@ struct JobExplorer: View {
     }
     
     public struct JobViewRedux: View {
-        public var job: Job? = nil
+        @State public var job: Job? = nil
         private var fields: [Navigation.Forms.Field] { job != nil ? job!.fields : [] }
         private let columnSplit: [Navigation.Forms.Field.LayoutType] = [.date, .projectDropdown, .colour]
         private var columns: [GridItem] {
@@ -291,6 +291,7 @@ struct JobExplorer: View {
                     .padding(8)
                 }
             }
+            .onAppear(perform: self.actionOnAppear)
         }
         
         struct SaveMessage: View {
@@ -313,6 +314,14 @@ struct JobExplorer: View {
 }
 
 extension JobExplorer.JobViewRedux {
+    /// Onload handler. Sets job to session resource if available
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        if let stored = self.nav.session.job {
+            self.job = stored
+        }
+    }
+
     /// Deletes the current Job
     /// - Returns: Void
     private func triggerDelete() -> Void {

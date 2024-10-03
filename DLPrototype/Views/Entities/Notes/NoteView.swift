@@ -9,8 +9,8 @@
 import SwiftUI
 
 struct NoteView: View {
+    @EnvironmentObject public var state: Navigation
     public var note: Note
-    public var moc: NSManagedObjectContext
     
     @State private var title: String = ""
     @State private var content: String = ""
@@ -27,7 +27,7 @@ struct NoteView: View {
     @State private var isShareAlertVisible: Bool = false
 
     private var jobs: [Job] {
-        CoreDataJob(moc: moc).all()
+        CoreDataJob(moc: self.state.moc).all()
     }
     
     private var pickerItems: [CustomPickerItem] {
@@ -41,13 +41,12 @@ struct NoteView: View {
     }
     
     private var versions: [NoteVersion] {
-        CoreDataNoteVersions(moc: moc).by(id: note.id!)
+        CoreDataNoteVersions(moc: self.state.moc).by(id: note.id!)
     }
 
     public var body: some View {
         NoteView.Detail(
             note: note,
-            moc: moc,
             ref: self,
             jobs: jobs,
             title: $title,
@@ -64,9 +63,8 @@ struct NoteView: View {
         )
     }
 
-    public init(note: Note, moc: NSManagedObjectContext) {
+    public init(note: Note) {
         self.note = note
-        self.moc = moc
         self.title = self.note.title ?? ""
         self.content = self.note.body ?? ""
         self.lastUpdate = self.note.lastUpdate
@@ -89,8 +87,8 @@ struct NoteView: View {
 
 extension NoteView {
     public struct Detail: View {
+        @EnvironmentObject public var state: Navigation
         public var note: Note
-        public var moc: NSManagedObjectContext
         public var ref: NoteView
         public var jobs: [Job]
         
@@ -207,8 +205,8 @@ extension NoteView {
         }
 
         public func previousVersion() -> Void {
-            let all = CoreDataNoteVersions(moc: moc).by(id: note.id!)
-            
+            let all = CoreDataNoteVersions(moc: self.state.moc).by(id: note.id!)
+
             if currentVersion > 0 {
                 disableNextButton = false
                 // change text fields
@@ -218,7 +216,7 @@ extension NoteView {
                 lastUpdate = prev.created!
                 
                 if currentVersion == noteVersions.count {
-                    CoreDataNoteVersions(moc: moc).from(note)
+                    CoreDataNoteVersions(moc: self.state.moc).from(note)
                 }
                 
                 currentVersion -= 1
@@ -228,8 +226,8 @@ extension NoteView {
         }
         
         public func nextVersion() -> Void {
-            let all = CoreDataNoteVersions(moc: moc).by(id: note.id!)
-            
+            let all = CoreDataNoteVersions(moc: self.state.moc).by(id: note.id!)
+
             if currentVersion < noteVersions.count {
                 disablePreviousButton = false
                 
@@ -260,9 +258,9 @@ extension NoteView {
             note.mJob = selectedJob
             note.alive = true
             
-            CoreDataNoteVersions(moc: moc).from(note)
-            
-            noteVersions = CoreDataNoteVersions(moc: moc).by(id: note.id!)
+            CoreDataNoteVersions(moc: self.state.moc).from(note)
+
+            noteVersions = CoreDataNoteVersions(moc: self.state.moc).by(id: note.id!)
             currentVersion = noteVersions.count
             
             PersistenceController.shared.save()
@@ -276,7 +274,7 @@ extension NoteView {
         
         private func hardDelete() -> Void {
             delete() // soft delete
-            moc.delete(note)
+            self.state.moc.delete(note)
             
             PersistenceController.shared.save()
         }
@@ -286,7 +284,7 @@ extension NoteView {
             content = note.body!
             selectedJob = note.mJob ?? nil
             lastUpdate = note.lastUpdate ?? nil
-            noteVersions = CoreDataNoteVersions(moc: moc).by(id: note.id!)
+            noteVersions = CoreDataNoteVersions(moc: self.state.moc).by(id: note.id!)
             currentVersion = noteVersions.count
             autoSelectedJobId = selectedJob?.jid.string ?? ""
         }

@@ -223,6 +223,11 @@ extension Navigation {
         var project: Project?
         var note: Note?
         var plan: Plan?
+        var task: LogTask?
+        var company: Company?
+        var record: LogRecord?
+        var term: TaxonomyTerm?
+        var definition: TaxonomyTermDefinitions?
         var date: Date = Date()
         var idate: IdentifiableDay = IdentifiableDay()
         var gif: PlanningState.GlobalInterfaceFilter = .normal
