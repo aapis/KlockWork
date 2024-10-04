@@ -9,7 +9,7 @@
 import SwiftUI
 
 public enum Page {
-    case dashboard, today, notes, tasks, projects, jobs, companies, planning, terms, definitionDetail, taskDetail, noteDetail, people
+    case dashboard, today, notes, tasks, projects, jobs, companies, planning, terms, definitionDetail, taskDetail, noteDetail, people, peopleDetail
 
     var ViewUpdaterKey: String {
         switch self {
@@ -35,6 +35,7 @@ public enum Page {
         case .taskDetail: return "task.detail"
         case .noteDetail: return "note.detail"
         case .people: return "people.dashboard"
+        case .peopleDetail: return "people.detail"
         }
     }
 
@@ -66,6 +67,8 @@ public enum Page {
             return PageConfiguration.AppPage.explore.primaryColour
         case .people:
             return PageConfiguration.AppPage.explore.primaryColour
+        case .peopleDetail:
+            return PageConfiguration.AppPage.explore.primaryColour
         }
     }
 
@@ -93,7 +96,8 @@ public enum Page {
             return "Definition"
         case .taskDetail: return "Task"
         case .noteDetail: return "Note"
-        case .people: return "Person"
+        case .people: return "People"
+        case .peopleDetail: return "Person"
         }
     }
 }
@@ -231,6 +235,7 @@ extension Navigation {
         var company: Company?
         var record: LogRecord?
         var term: TaxonomyTerm?
+        var person: Person?
         var definition: TaxonomyTermDefinitions?
         var date: Date = Date()
         var idate: IdentifiableDay = IdentifiableDay()
@@ -581,6 +586,7 @@ extension Navigation {
             HistoryPage(page: .taskDetail, view: AnyView(EmptyView()), sidebar: AnyView(TermsDashboardSidebar()), title: "Task detail"),
             HistoryPage(page: .noteDetail, view: AnyView(NoteView()), sidebar: AnyView(NoteCreateSidebar()), title: "Note detail"),
             HistoryPage(page: .people, view: AnyView(PeopleDashboard()), sidebar: AnyView(PeopleDashboardSidebar()), title: "People"),
+            HistoryPage(page: .peopleDetail, view: AnyView(PeopleDetail()), sidebar: AnyView(PeopleDashboardSidebar()), title: "Person"),
         ]
         
         /// A single page representing a page the user navigated to
