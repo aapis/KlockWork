@@ -579,6 +579,7 @@ struct UnifiedSidebar {
         var body: some View {
             Button {
                 self.state.to(self.redirect)
+                self.setSessionParameter()
             } label: {
                 HStack(alignment: .center, spacing: 8) {
                     Image(systemName: self.noLinkAvailable ? "questionmark.square.fill" : "link")
@@ -593,7 +594,6 @@ struct UnifiedSidebar {
             .disabled(self.noLinkAvailable)
             .help(self.noLinkAvailable ? "Link not found" : self.label)
             .buttonStyle(.plain)
-            .onAppear(perform: self.actionOnAppear)
         }
     }
 }
@@ -601,7 +601,7 @@ struct UnifiedSidebar {
 extension UnifiedSidebar.EntityTypeRowButton {
     /// Onload handler. Sets appropriate link data for the given Page
     /// - Returns: Void
-    private func actionOnAppear() -> Void {
+    private func setSessionParameter() -> Void {
         switch self.redirect {
             // @TODO: uncomment after this detail view has been implemented
 //        case .today:
