@@ -20,6 +20,7 @@ extension Today {
 
         @Environment(\.managedObjectContext) var moc
         @EnvironmentObject public var nav: Navigation
+        private let page: PageConfiguration.AppPage = .today
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
@@ -46,9 +47,9 @@ extension Today {
                         Button("Ok", role: .cancel) {}
                     }
 
-                    VStack(alignment: .trailing) {
+                    VStack(alignment: .trailing, spacing: 0) {
                         Spacer()
-                        HStack(spacing: 5) {
+                        HStack(spacing: 1) {
                             Spacer()
 
                             if allowCLIMode {
@@ -56,14 +57,14 @@ extension Today {
                                     text: "Command line mode",
                                     action: {commandLineMode.toggle()},
                                     icon: "apple.terminal",
-                                    fgColour: .white,
+                                    fgColour: nav.session.job != nil ? Color.fromStored(nav.session.job!.colour!).isBright() ? Theme.base : .white : .white,
                                     showLabel: false,
                                     size: .tiny,
                                     type: .clear
                                 )
                                 .help("Enter CLI mode")
                                 .frame(width: 30, height: 30)
-                                .background(nav.session.job != nil ? nav.session.job!.colour_from_stored() : Theme.toolbarColour)
+                                .background(nav.session.job != nil ? nav.session.job!.colour_from_stored() : self.page.primaryColour.opacity(0.5))
                                 .disabled(false)
                             }
 
@@ -71,38 +72,44 @@ extension Today {
                                 text: "Reset interface to default state",
                                 action: clearAction,
                                 icon: "arrow.clockwise",
-                                fgColour: nav.session.job != nil ? Color.fromStored(nav.session.job!.colour!).isBright() ? .black : .white : .white,
+                                fgColour: nav.session.job != nil ? Color.fromStored(nav.session.job!.colour!).isBright() ? Theme.base : .white : .white,
                                 showLabel: false,
                                 size: .tiny,
                                 type: .clear
                             )
                             .help("Reset interface to default state")
                             .frame(width: 30, height: 30)
-                            .background(nav.session.job != nil ? nav.session.job!.colour_from_stored() : Theme.toolbarColour)
+                            .background(nav.session.job != nil ? nav.session.job!.colour_from_stored() : self.page.primaryColour.opacity(0.5))
                             .disabled(nav.session.job == nil)
+                            .opacity(nav.session.job == nil ? 0.5 : 1)
 
                             FancyButtonv2(
                                 text: nav.session.job != nil ? "Log to job \(nav.session.job!.jid.string)" : "Log",
                                 action: submitAction,
                                 icon: "plus",
-                                fgColour: nav.session.job != nil ? Color.fromStored(nav.session.job!.colour!).isBright() ? .black : .white : .white,
+                                fgColour: nav.session.job != nil ? Color.fromStored(nav.session.job!.colour!).isBright() ? Theme.base : .white : .white,
                                 showLabel: false,
                                 size: .tiny,
                                 type: .clear
                             )
                             .help("Create a new record (alternatively, press Return!)")
                             .frame(width: 30, height: 30)
-                            .background(nav.session.job != nil ? nav.session.job!.colour_from_stored() : Theme.toolbarColour)
+                            .background(nav.session.job != nil ? nav.session.job!.colour_from_stored() : self.page.primaryColour.opacity(0.5))
                             .disabled(nav.session.job == nil)
+                            .opacity(nav.session.job == nil ? 0.5 : 1)
                         }
+                        Divider().frame(height: 1).foregroundStyle(.clear)
                     }
                 }
                 .frame(height: 215)
 
-                FancyHelpText(text: "Choose a job from the sidebar, then type into the field above and hit enter (or click the + icon at the bottom-right) to create a new record in the table below.")
+                FancyHelpText(
+                    text: "Choose a job from the sidebar, type into the field above. Enter/return/+ icon creates a new record in the table below.",
+                    page: self.page
+                )
             }
-            .onChange(of: text) { newText in
-                if newText.isEmpty {
+            .onChange(of: text) {
+                if self.text.isEmpty {
                     nav.save()
 //                    nav.state.on(.ready, { _ in
 //                        nav.save()
