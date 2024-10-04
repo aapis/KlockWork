@@ -126,11 +126,11 @@ struct UnifiedSidebar {
                             .padding(.leading)
                         Spacer()
                         // @TODO: uncomment when people entities has been implemented
-//                        RowAddNavLink(
-//                            title: "+ Person",
-//                            target: AnyView(EmptyView())
-//                        )
-//                        .buttonStyle(.plain)
+                        RowAddNavLink(
+                            title: "+ Person",
+                            target: AnyView(PeopleDetail())
+                        )
+                        .buttonStyle(.plain)
                         RowAddNavLink(
                             title: "+ Project",
                             target: AnyView(ProjectCreate())

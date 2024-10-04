@@ -10,6 +10,7 @@ import SwiftUI
 
 struct PeopleDetail: View {
     @EnvironmentObject public var state: Navigation
+    @Environment(\.dismiss) private var dismiss
     @State public var person: Person?
     @State private var isDeleteAlertPresented: Bool = false
     @State private var name: String = ""
@@ -33,7 +34,7 @@ struct PeopleDetail: View {
                     )
                     .alert("Are you sure you want to delete this contact?", isPresented: $isDeleteAlertPresented) {
                         Button("Yes", role: .destructive) {
-                            self.actionOnSoftDelete()
+                            self.actionOnDelete()
                         }
                         Button("No", role: .cancel) {}
                     }
@@ -45,6 +46,8 @@ struct PeopleDetail: View {
             .padding(.bottom)
 
             VStack(alignment: .leading) {
+                // @TODO: rebuild company picker and use it here
+//                CompanyPicker(onChange: {_, _ in}, selected: Int(self.person?.company?.pid ?? 0))
                 FancyTextField(
                     placeholder: "Name",
                     onSubmit: self.actionOnSave,
@@ -107,13 +110,18 @@ extension PeopleDetail {
 
     /// Fires when user chooses to unpublish a definition
     /// - Returns: Void
-    private func actionOnSoftDelete() -> Void {
-
+    private func actionOnDelete() -> Void {
+        if self.person != nil {
+            self.state.moc.delete(self.person!)
+            PersistenceController.shared.save()
+            self.dismiss()
+        }
     }
 
     /// Callback that fires when cancel button clicked/tapped
     /// - Returns: Void
     private func actionOnCancel() -> Void {
         self.state.to(.people)
+        self.dismiss()
     }
 }

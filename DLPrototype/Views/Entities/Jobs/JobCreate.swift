@@ -9,6 +9,9 @@
 import SwiftUI
 
 struct JobCreate: View {
+    @EnvironmentObject public var nav: Navigation
+    @EnvironmentObject public var updater: ViewUpdater
+    @Environment(\.dismiss) private var dismiss
     @State private var id: String = ""
     @State private var pName: String = ""
     @State private var pId: String = ""
@@ -23,10 +26,6 @@ struct JobCreate: View {
     @State private var colourAsDouble: [Double] = []
     @State private var project: Project?
     @State private var job: Job?
-
-    @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var nav: Navigation
-    @EnvironmentObject public var updater: ViewUpdater
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -49,16 +48,16 @@ struct JobCreate: View {
             .padding()
         }
         .background(Theme.toolbarColour)
-        .onChange(of: id) { jobId in
-            JobFormValidator(moc: moc).onChangeCallback(
-                jobFieldValue: jobId,
+        .onChange(of: id) {
+            JobFormValidator(moc: self.nav.moc).onChangeCallback(
+                jobFieldValue: id,
                 valid: $validJob,
                 id: $id
             )
         }
-        .onChange(of: url) { newUrl in
-            JobFormValidator(moc: moc).onChangeCallback(
-                urlFieldValue: newUrl,
+        .onChange(of: url) {
+            JobFormValidator(moc: self.nav.moc).onChangeCallback(
+                urlFieldValue: url,
                 valid: $validUrl,
                 id: $id
             )
@@ -96,7 +95,7 @@ struct JobCreate: View {
             Spacer()
             FancyButtonv2(
                 text: "Cancel",
-                action: {},
+                action: {self.dismiss()},
                 icon: "xmark",
                 showLabel: false,
                 redirect: AnyView(JobDashboard()),
@@ -123,7 +122,7 @@ struct JobCreate: View {
 
 extension JobCreate {
     private func update() -> Void {
-        let newJob = Job(context: moc)
+        let newJob = Job(context: self.nav.moc)
         if validUrl && !url.isEmpty {
             newJob.uri = URL(string: url)!
         }
@@ -163,7 +162,7 @@ extension JobCreate {
 
     private func projectPickerChange(selected: String, sender: String?) -> Void {
         if !selected.isEmpty {
-            if let match = CoreDataProjects(moc: moc).byName(selected) {
+            if let match = CoreDataProjects(moc: self.nav.moc).byName(selected) {
                 project = match
                 validProject = true
             }

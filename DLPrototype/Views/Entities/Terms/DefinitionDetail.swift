@@ -10,6 +10,7 @@ import SwiftUI
 
 struct DefinitionDetail: View {
     @EnvironmentObject public var state: Navigation
+    @Environment(\.dismiss) private var dismiss
     @State public var definition: TaxonomyTermDefinitions?
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .terms
@@ -97,6 +98,7 @@ extension DefinitionDetail {
     /// - Returns: Void
     private func actionOnCancel() -> Void {
         self.state.to(.terms)
+//        self.dismiss()
     }
 
     /// Callback that fires when save button clicked/tapped
