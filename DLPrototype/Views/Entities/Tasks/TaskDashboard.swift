@@ -15,18 +15,12 @@ struct TaskDashboard: View {
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .tasks
 
-    @State private var searchText: String = ""
     @State private var selectedJob: Int = 0
     @State private var jobId: String = ""
     @State private var job: Job?
 
-    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @EnvironmentObject public var updater: ViewUpdater
-    
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.jid, order: .reverse)]) public var jobs: FetchedResults<Job>
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.id)]) public var tasks: FetchedResults<LogTask>
-    @FetchRequest(sortDescriptors: [SortDescriptor(\.pid)]) public var projects: FetchedResults<Project>
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
@@ -40,8 +34,6 @@ struct TaskDashboard: View {
                         showLabel: false
                     )
                 }
-                FancyDivider()
-                search.font(Theme.font)
                 create
 
                 Spacer()
@@ -49,89 +41,41 @@ struct TaskDashboard: View {
             .padding()
         }
         .background(Theme.toolbarColour)
-        .onAppear(perform: setJob)
+        .onAppear(perform: actionOnAppear)
+        .onChange(of: self.state.session.job) { self.actionOnAppear() }
         .id(updater.get("task.dashboard"))
     }
-    
-    @ViewBuilder
-    var search: some View {
-        SearchBar(
-            text: $searchText,
-            disabled: false,
-            placeholder: "Search \(tasks.count) tasks across \(jobs.count) jobs in \(projects.count) projects"
-        )
-        
-        if searchText != "" {
-            Grid(horizontalSpacing: 1, verticalSpacing: 1) {
-                HStack(spacing: 1) {
-                    GridRow {
-                        Group {
-                            ZStack(alignment: .leading) {
-                                Theme.headerColour
-                            }
-                        }
-                        .frame(width: 50)
-                        Group {
-                            ZStack(alignment: .leading) {
-                                Theme.headerColour
-                                Text("Job ID")
-                                    .padding(5)
-                            }
-                        }
-                        .frame(width: 100)
-                        Group {
-                            ZStack(alignment: .leading) {
-                                Theme.headerColour
-                                Text("Content")
-                                    .padding(5)
-                            }
-                        }
-                    }
-                }
-                .frame(height: 40)
-                
-                GridRow {
-                    ScrollView(showsIndicators: false) {
-                        VStack(alignment: .leading, spacing: 1) {
-                            ForEach(filter(tasks), id: \.objectID) { task in
-                                TaskView(task: task, showJobId: true, showCreated: true, showUpdated: true, showCompleted: true, colourizeRow: true)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
+
     @ViewBuilder
     var create: some View {
-        if searchText == "" {
-            FancyDivider()
+        FancyDivider()
 
-            if selectedJob == 0 {
-                HStack {
-                    FancySubTitle(text: "Choose a job to get started")
-                }
-            }
-
+        if self.state.session.job == nil {
+            FancyHelpText(
+                text: "No terms found for the selected job. Choose a job from the sidebar to get started.",
+                page: self.page
+            )
+        } else {
             JobPickerUsing(onChange: change, jobId: $jobId)
-                .onAppear(perform: setJob)
+                .onAppear(perform: actionOnAppear)
                 .onChange(of: selectedJob) {
-                    setJob()
+                    actionOnAppear()
                 }
-            if job != nil {
-                TaskListView(job: job!)
-            }
+
+            TaskListView(job: self.state.session.job!)
         }
     }
     
-    private func setJob() -> Void {
+    private func actionOnAppear() -> Void {
+        if let sJob = self.state.session.job {
+            self.job = sJob
+            self.jobId = sJob.jid.string
+        }
+
         if defaultSelectedJob != nil {
-//            if selectedJob == 0 {
-                job = defaultSelectedJob
-//            }
+            job = defaultSelectedJob
         } else if selectedJob > 0 {
-            job = jm.byId(Double(selectedJob))
+            job = CoreDataJob(moc: self.state.moc).byId(Double(selectedJob))
         }
         
         if job != nil {
@@ -142,13 +86,6 @@ struct TaskDashboard: View {
     private func change(selected: Int, sender: String?) -> Void {
         selectedJob = selected
 
-        setJob()
-    }
-    
-    /// Filter entities for a search term
-    /// - Parameter tasks: [LogTask]
-    /// - Returns: [LogTask
-    private func filter(_ tasks: FetchedResults<LogTask>) -> [LogTask] {
-        return SearchHelper(bucket: tasks).findInTasks($searchText)
+        actionOnAppear()
     }
 }

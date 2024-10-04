@@ -57,12 +57,8 @@ struct TaskListView: View {
                         .id(updater.ids["tlv.table"])
                     }
                 }
-                
-                Spacer()
             }
-            .padding()
         }
-        .background(Theme.toolbarColour)
     }
     
     @ViewBuilder
@@ -88,12 +84,12 @@ struct TaskListView: View {
     }
     
     private func createTask() -> Void {
-        let task = LogTask(context: moc)
-        task.created = Date()
-        task.id = UUID()
-        task.content = entryText
-        task.owner = job
-        task.lastUpdate = task.created
+        CoreDataTasks(moc: self.nav.moc).create(
+            content: self.entryText,
+            created: Date(),
+            due: DateHelper.endOfTomorrow(Date()) ?? Date(),
+            job: self.job
+        )
 
         entryText = ""
         updater.update()
