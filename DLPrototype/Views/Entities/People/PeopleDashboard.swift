@@ -115,7 +115,7 @@ struct PersonBlock: View {
                             .foregroundStyle(.white.opacity(0.55))
                             .padding([.leading, .trailing, .bottom])
                         Spacer()
-                        ResourcePath()
+                        ResourcePath(company: self.person.company)
                     }
                 }
             }
@@ -126,10 +126,11 @@ struct PersonBlock: View {
     }
 
     struct ResourcePath: View {
+        public var company: Company?
         @EnvironmentObject public var state: Navigation
 
         var body: some View {
-            if let company = self.state.session.job?.project?.company {
+            if let company = self.company {
                 HStack(alignment: .center, spacing: 8) {
                     Text(company.name ?? "_COMPANY_NAME")
                         .multilineTextAlignment(.leading)
