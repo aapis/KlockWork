@@ -15,19 +15,20 @@ struct DayInHistory {
     public var highlight: Bool {
         return count == 0
     }
-    private var formattedDate: String {
-        let df = DateFormatter()
-        df.dateFormat = "MMM d, yyyy"
-        return df.string(from: date)
-    }
 
     public func linkLabel() -> String {
         if count == 1 {
-            return "\(count) record on \(formattedDate)"
+            return "\(count) record on \(self.formatDate())"
         } else if count > 0 {
-            return "\(count) records on \(formattedDate)"
+            return "\(count) records on \(self.formatDate())"
         }
 
-        return "No records from \(formattedDate)"
+        return "No records from \(self.formatDate("yyyy"))"
+    }
+
+    private func formatDate(_ format: String = "MMM d, yyyy") -> String {
+        let df = DateFormatter()
+        df.dateFormat = format
+        return df.string(from: date)
     }
 }

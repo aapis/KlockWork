@@ -69,10 +69,6 @@ struct FancyGenericToolbar: View {
                         (location == .sidebar ? .clear : Theme.textBackground)
 
                         ZStack(alignment: .top) {
-//                            LinearGradient(gradient: Gradient(colors: [.clear, Theme.base]), startPoint: .bottom, endPoint: .top)
-//                                .opacity(0.2)
-//                                .blendMode(.softLight)
-//                                .frame(height: 12)
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 1) {
                                     ForEach(buttons, id: \ToolbarButton.id) { button in

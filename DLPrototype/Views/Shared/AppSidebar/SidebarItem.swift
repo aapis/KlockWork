@@ -177,24 +177,27 @@ struct SidebarItem: View, Identifiable {
                         }
                         .background([.important, .action].contains(role) ? role.colour.opacity(0.02) : .clear)
 
-                        VStack(alignment: .leading, spacing: 0) {
-                            Spacer()
-                            if let alt = altIcon {
-                                if highlighted {
-                                    Image(systemName: alt)
-                                        .foregroundStyle(Theme.base.opacity(0.5))
+                        ZStack(alignment: .trailing) {
+                            ZStack(alignment: .center) {
+                                Theme.base.opacity(0.6).blendMode(.softLight)
+                                if let alt = altIcon {
+                                    if highlighted {
+                                        Image(systemName: alt)
+                                            .foregroundStyle(Theme.base.opacity(0.5))
+                                    } else {
+                                        Image(systemName: ic)
+                                            .foregroundStyle(Theme.base.opacity(0.5))
+                                    }
                                 } else {
                                     Image(systemName: ic)
                                         .foregroundStyle(Theme.base.opacity(0.5))
                                 }
-                            } else {
-                                Image(systemName: ic)
-                                    .foregroundStyle(Theme.base.opacity(0.5))
                             }
-                            Spacer()
+                            .frame(width: 30, height: 30)
+                            .cornerRadius(5)
+//                            .padding(.trailing, type.padding)
                         }
-                        .padding(.trailing, type.padding)
-                        .font(.title2)
+                        .padding(8)
                     }
                 }
                 .useDefaultHover({ inside in highlighted = inside})
