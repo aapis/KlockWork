@@ -30,7 +30,8 @@ struct JobRowPicker: View {
                 icon: "arrowshape.right",
                 orientation: .right,
                 action: self.action,
-                showBorder: false
+                showBorder: false,
+                showButton: false
             )
             .foregroundColor(job.colour != nil && job.colour_from_stored().isBright() ? .black : .white)
         }
