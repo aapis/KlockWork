@@ -30,21 +30,6 @@ struct TodaySidebar: View {
 
 extension TodaySidebar {
     private func createToolbar() -> Void {
-        tabs = [
-            ToolbarButton(
-                id: 0,
-                helpText: "Resources",
-                icon: "globe.americas",
-                labelText: "Resources",
-                contents: AnyView(JobsWidgetRedux())
-            ),
-            ToolbarButton(
-                id: 1,
-                helpText: "Outline",
-                icon: "menucard",
-                labelText: "Outline",
-                contents: AnyView(OutlineWidget())
-            )
-        ]
+        self.tabs = Home.standardSidebarWidgets
     }
 }

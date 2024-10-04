@@ -27,21 +27,8 @@ struct NoteDashboardSidebar: View {
 
 extension NoteDashboardSidebar {
     private func createToolbar() -> Void {
-        tabs = [
-            ToolbarButton(
-                id: 0,
-                helpText: "Resources",
-                icon: "globe.americas",
-                labelText: "Resources",
-                contents: AnyView(JobsWidgetRedux())
-            ),
-            ToolbarButton(
-                id: 1,
-                helpText: "Outline",
-                icon: "menucard",
-                labelText: "Outline",
-                contents: AnyView(OutlineWidget())
-            ),
+        self.tabs.append(contentsOf: Home.standardSidebarWidgets)
+        self.tabs.append(
             ToolbarButton(
                 id: 2,
                 helpText: "Favourites notes",
@@ -49,6 +36,6 @@ extension NoteDashboardSidebar {
                 labelText: "Favourite Notes",
                 contents: AnyView(NotesWidget(favouritesOnly: true))
             )
-        ]
+        )
     }
 }

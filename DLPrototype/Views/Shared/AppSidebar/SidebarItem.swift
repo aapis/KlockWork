@@ -72,6 +72,7 @@ struct SidebarItem: View, Identifiable {
     public var data: String
     public var help: String
     public var icon: String?
+    @State public var altIcon: String?
     public var orientation: ItemOrientation = .left
     public var role: ItemRole = .standard
     public var type: ItemType = .standard
@@ -82,7 +83,6 @@ struct SidebarItem: View, Identifiable {
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
 
     @State private var highlighted: Bool = false
-    @State private var altIcon: String?
 
     @EnvironmentObject public var nav: Navigation
 
@@ -90,13 +90,21 @@ struct SidebarItem: View, Identifiable {
         HStack(alignment: .firstTextBaseline, spacing: 0) {
             if orientation == .left {
                 HStack(alignment: .top, spacing: 0) {
-                    if showButton {ItemIcon}
-                    ItemLabel
+                    if showButton {
+                        ItemIcon
+                        ItemLabel
+                    } else {
+                        RowButton
+                    }
                 }
             } else {
                 HStack(alignment: .top, spacing: 0) {
-                    ItemLabel
-                    if showButton {ItemIcon}
+                    if showButton {
+                        ItemLabel
+                        ItemIcon
+                    } else {
+                        RowButton
+                    }
                 }
             }
         }
@@ -149,6 +157,52 @@ struct SidebarItem: View, Identifiable {
         }
     }
 
+    @ViewBuilder private var RowButton: some View {
+        if let ic = icon {
+            Button(action: doAction) {
+                ZStack(alignment: .center) {
+                    if ![.important, .action].contains(role) {
+                        role.colour.opacity(highlighted ? 0.15 : 0.08)
+                    } else {
+                        role.colour
+                    }
+                    HStack(alignment: .center) {
+                        HStack(alignment: .center, spacing: 0) {
+                            Text(data)
+                                .help(help)
+                                .padding(type.padding)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .multilineTextAlignment(.leading)
+                            Spacer()
+                        }
+                        .background([.important, .action].contains(role) ? role.colour.opacity(0.02) : .clear)
+
+                        VStack(alignment: .leading, spacing: 0) {
+                            Spacer()
+                            if let alt = altIcon {
+                                if highlighted {
+                                    Image(systemName: alt)
+                                        .foregroundStyle(Theme.base.opacity(0.5))
+                                } else {
+                                    Image(systemName: ic)
+                                        .foregroundStyle(Theme.base.opacity(0.5))
+                                }
+                            } else {
+                                Image(systemName: ic)
+                                    .foregroundStyle(Theme.base.opacity(0.5))
+                            }
+                            Spacer()
+                        }
+                        .padding(.trailing, type.padding)
+                        .font(.title2)
+                    }
+                }
+                .useDefaultHover({ inside in highlighted = inside})
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
     private var ItemLabel: some View {
         HStack(alignment: .center, spacing: 0) {
             Text(data)
@@ -170,8 +224,10 @@ extension SidebarItem {
     }
 
     private func actionOnAppear() -> Void {
-        if let ic = icon {
-            altIcon = ic + ".fill"
+        if self.showButton {
+            if let ic = icon {
+                altIcon = ic + ".fill"
+            }
         }
     }
 }
