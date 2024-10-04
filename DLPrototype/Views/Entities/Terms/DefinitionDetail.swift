@@ -40,9 +40,7 @@ struct DefinitionDetail: View {
                         Button("Yes", role: .destructive) {
                             self.actionOnSoftDelete()
                         }
-                        Button("No", role: .cancel) {
-                            self.actionOnCancel()
-                        }
+                        Button("No", role: .cancel) {}
                     }
                 }
 

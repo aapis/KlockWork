@@ -20,18 +20,19 @@ struct Title: View {
             HStack(alignment: .firstTextBaseline) {
                 if let img = image {
                     Image(systemName: img)
-                        .font(Theme.fontTitle)
+                        .symbolRenderingMode(.hierarchical)
                 } else if let iai = imageAsImage {
-                    iai.font(Theme.fontTitle)
+                    iai
+                        .symbolRenderingMode(.hierarchical)
                 }
 
                 if showLabel! {
                     Text(text)
-                        .font(Theme.fontTitle)
                 }
                 Spacer()
             }
             .padding(3)
         }
+        .font(Theme.fontTitle)
     }
 }

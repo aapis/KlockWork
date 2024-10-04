@@ -147,7 +147,10 @@ struct TaskDashboard: View {
         setJob()
     }
     
+    /// Filter entities for a search term
+    /// - Parameter tasks: [LogTask]
+    /// - Returns: [LogTask
     private func filter(_ tasks: FetchedResults<LogTask>) -> [LogTask] {
-        return SearchHelper(bucket: tasks).exec($searchText)
+        return SearchHelper(bucket: tasks).findInTasks($searchText)
     }
 }

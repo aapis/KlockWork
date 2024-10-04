@@ -91,7 +91,6 @@ struct TermBlock: View {
     @EnvironmentObject public var state: Navigation
     public let definition: TaxonomyTermDefinitions
     @State private var highlighted: Bool = false
-    @State private var searchText: String = ""
 
     var body: some View {
         Button {
@@ -109,6 +108,7 @@ struct TermBlock: View {
                             .fontWeight(.bold)
                             .padding([.leading, .trailing, .top])
                         Text(self.definitionBody())
+                            .foregroundStyle(.white.opacity(0.55))
                             .padding([.leading, .trailing, .bottom])
                         Spacer()
                         ResourcePath()
