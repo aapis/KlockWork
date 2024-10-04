@@ -10,6 +10,8 @@ import EventKit
 import SwiftUI
 
 struct Home: View {
+    typealias APage = PageConfiguration.AppPage
+    typealias Entity = PageConfiguration.EntityType
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
 
@@ -40,7 +42,7 @@ struct Home: View {
         )
     ]
 
-    private let page: PageConfiguration.AppPage = .find
+    private let page: APage = .find
     private var buttons: [PageGroup: [SidebarButton]] {
         [
             .views: [
@@ -58,10 +60,13 @@ struct Home: View {
                     label: "Planning",
                     sidebar: AnyView(DefaultPlanningSidebar())
                 ),
+                // @TODO: Explore page
+            ],
+            .entities: [
                 SidebarButton(
                     destination: AnyView(Today()),
                     pageType: .today,
-                    icon: "tray",
+                    iconAsImage: Entity.records.icon,
                     label: "Today",
                     sidebar: AnyView(TodaySidebar()),
                     altMode: PageAltMode(
@@ -69,42 +74,47 @@ struct Home: View {
                         icon: "apple.terminal",
                         condition: cliEnabled && commandLineMode
                     )
-                )
-            ],
-            .entities: [
+                ),
+                SidebarButton(
+                    destination: AnyView(TaskDashboard()),
+                    pageType: .tasks,
+                    iconAsImage: Entity.tasks.icon,
+                    label: Entity.tasks.label,
+                    sidebar: AnyView(TaskDashboardSidebar())
+                ),
+                SidebarButton(
+                    destination: AnyView(NoteDashboard()),
+                    pageType: .notes,
+                    iconAsImage: Entity.notes.icon,
+                    label: Entity.notes.label,
+                    sidebar: AnyView(NoteDashboardSidebar())
+                ),
+                SidebarButton(
+                    destination: AnyView(PeopleDashboard()),
+                    pageType: .people,
+                    iconAsImage: Entity.people.icon,
+                    label: Entity.people.label,
+                    sidebar: AnyView(PeopleDashboardSidebar())
+                ),
                 SidebarButton(
                     destination: AnyView(CompanyDashboard()),
                     pageType: .companies,
-                    icon: "building.2",
-                    label: "Companies & Projects",
+                    iconAsImage: Entity.companies.icon,
+                    label: Entity.companies.label,
                     sidebar: AnyView(DefaultCompanySidebar())
                 ),
                 SidebarButton(
                     destination: AnyView(JobDashboard()),
                     pageType: .jobs,
-                    icon: "hammer",
-                    label: "Jobs",
+                    iconAsImage: Entity.jobs.icon,
+                    label: Entity.jobs.label,
                     sidebar: AnyView(JobDashboardSidebar())
-                ),
-                SidebarButton(
-                    destination: AnyView(NoteDashboard()),
-                    pageType: .notes,
-                    icon: "note.text",
-                    label: "Notes",
-                    sidebar: AnyView(NoteDashboardSidebar())
-                ),
-                SidebarButton(
-                    destination: AnyView(TaskDashboard()),
-                    pageType: .tasks,
-                    icon: "checklist",
-                    label: "Tasks",
-                    sidebar: AnyView(TaskDashboardSidebar())
                 ),
                 SidebarButton(
                     destination: AnyView(TermsDashboard()),
                     pageType: .terms,
-                    icon: "list.bullet.rectangle",
-                    label: "Terms & Definitions",
+                    iconAsImage: Entity.terms.icon,
+                    label: Entity.terms.label,
                     sidebar: AnyView(TermsDashboardSidebar())
                 )
             ]

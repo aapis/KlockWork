@@ -20,7 +20,7 @@ struct Today: View {
             if commandLineMode {
                 CommandLineInterface()
             } else {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 0) {
                     PostingInterface()
                     LogTable()
                 }

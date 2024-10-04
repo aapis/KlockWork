@@ -44,9 +44,12 @@ struct TermsDashboard: View {
                             }
                         }
                     }
+                    .padding(.top)
                 } else {
-                    FancyDivider()
-                    Text("No terms for selected job. Choose a job from the sidebar to get started.")
+                    FancyHelpText(
+                        text: "No terms found for the selected job. Choose a job from the sidebar to get started.",
+                        page: self.page
+                    )
                 }
 
                 Spacer()
@@ -91,7 +94,6 @@ struct TermBlock: View {
     @EnvironmentObject public var state: Navigation
     public let definition: TaxonomyTermDefinitions
     @State private var highlighted: Bool = false
-    @State private var searchText: String = ""
 
     var body: some View {
         Button {
@@ -109,6 +111,7 @@ struct TermBlock: View {
                             .fontWeight(.bold)
                             .padding([.leading, .trailing, .top])
                         Text(self.definitionBody())
+                            .foregroundStyle(.white.opacity(0.55))
                             .padding([.leading, .trailing, .bottom])
                         Spacer()
                         ResourcePath()

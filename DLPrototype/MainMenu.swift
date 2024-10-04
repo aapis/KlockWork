@@ -31,7 +31,7 @@ struct MainMenu: Commands {
                 }
                     .keyboardShortcut("n", modifiers: [.command, .shift])
                 Button("Task") {
-                    nav.view = AnyView(TaskDashboard())
+                    nav.view = AnyView(TaskDetail())
                     nav.parent = .tasks
                 }
                     .keyboardShortcut("t", modifiers: [.command, .shift])

@@ -50,29 +50,34 @@ struct CompanyDashboard: View {
                         sidebar: AnyView(DefaultCompanySidebar())
                     )
                 }
-                About()
-                FancyDivider()
-                recent
+
+                if companies.count > 0 {
+                    FancyHelpText(
+                        text: "Build your data hierarchy by creating companies, which own projects. Projects own jobs, which define what needs to be done.",
+                        page: self.page
+                    )
+                    Recent
+                } else {
+                    FancyHelpText(
+                        text: "No companies found",
+                        page: self.page
+                    )
+                }
 
                 Spacer()
             }
             .padding()
         }
         .background(Theme.toolbarColour)
-        .onAppear(perform: self.actionOnAppear)
     }
 
-    @ViewBuilder private var recent: some View {
-        if companies.count > 0 {
-            ScrollView(showsIndicators: false) {
-                LazyVGrid(columns: columns, alignment: .leading, spacing: 10) {
-                    ForEach(filter(companies), id: \.objectID) { company in
-                        CompanyBlock(company: company)
-                    }
+    @ViewBuilder private var Recent: some View {
+        ScrollView(showsIndicators: false) {
+            LazyVGrid(columns: self.columns, alignment: .leading, spacing: 10) {
+                ForEach(self.companies, id: \.objectID) { company in
+                    CompanyBlock(company: company)
                 }
             }
-        } else {
-            Text("No company names matched your query")
         }
     }
 }
@@ -87,30 +92,5 @@ extension CompanyDashboard {
         request.predicate = NSPredicate(format: "alive = true")
 
         _companies = FetchRequest(fetchRequest: request, animation: .easeInOut)
-    }
-
-    private func filter(_ companies: FetchedResults<Company>) -> [Company] {
-        return SearchHelper(bucket: companies).findInCompanies($searchText, allowHidden: nav.session.gif == .privacy)
-    }
-
-    /// Onload handler, sets page configuration
-    /// - Returns: Void
-    private func actionOnAppear() -> Void {
-    }
-}
-
-extension CompanyDashboard {
-    struct About: View {
-        private let copy: String = "Build your data hierarchy by creating companies, which own projects. Projects own jobs, which define what needs to be done."
-
-        var body: some View {
-            VStack {
-                HStack {
-                    Text(copy).padding(15)
-                    Spacer()
-                }
-            }
-            .background(Theme.cOrange)
-        }
     }
 }

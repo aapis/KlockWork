@@ -9,6 +9,10 @@
 import SwiftUI
 
 struct CompanyCreate: View {
+    @EnvironmentObject public var state: Navigation
+    @Environment(\.dismiss) private var dismiss
+    private let page: PageConfiguration.AppPage = .explore
+    private let eType: PageConfiguration.EntityType = .companies
     @State private var name: String = ""
     @State private var abbreviation: String = ""
 
@@ -42,9 +46,9 @@ struct CompanyCreate: View {
             }
             .padding()
         }
-        .background(Theme.toolbarColour)
-        .onChange(of: name) { newName in
-            abbreviation = StringHelper.abbreviate(newName)
+        .background(self.page.primaryColour)
+        .onChange(of: self.name) {
+            self.abbreviation = StringHelper.abbreviate(self.name)
         }
     }
 }

@@ -125,12 +125,11 @@ struct UnifiedSidebar {
                             .opacity(0.7)
                             .padding(.leading)
                         Spacer()
-                        // @TODO: uncomment when people entities has been implemented
-//                        RowAddNavLink(
-//                            title: "+ Person",
-//                            target: AnyView(EmptyView())
-//                        )
-//                        .buttonStyle(.plain)
+                        RowAddNavLink(
+                            title: "+ Person",
+                            target: AnyView(PeopleDetail())
+                        )
+                        .buttonStyle(.plain)
                         RowAddNavLink(
                             title: "+ Project",
                             target: AnyView(ProjectCreate())
@@ -309,7 +308,7 @@ struct UnifiedSidebar {
                         .useDefaultHover({ inside in self.highlighted = inside})
                     RowAddNavLink(
                         title: "Add",
-                        target: AnyView(TaskDashboard())
+                        target: AnyView(TaskDetail())
                     )
                     .buttonStyle(.plain)
                 }
@@ -469,12 +468,11 @@ struct UnifiedSidebar {
                 ZStack(alignment: .trailing) {
                     EntityRowButton(text: "People", isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
-                    // @TODO: uncomment when people entities has been implemented
-//                    RowAddNavLink(
-//                        title: "Add",
-//                        target: AnyView(EmptyView())
-//                    )
-//                    .buttonStyle(.plain)
+                    RowAddNavLink(
+                        title: "Add",
+                        target: AnyView(PeopleDetail())
+                    )
+                    .buttonStyle(.plain)
                 }
                 .background(Theme.base.opacity(0.6).blendMode(.softLight))
 
@@ -488,7 +486,7 @@ struct UnifiedSidebar {
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(self.entity.people?.allObjects as? [Person] ?? [], id: \.objectID) { person in
                                     if person.name != nil {
-                                        EntityTypeRowButton(label: person.name!, redirect: .taskDetail, resource: person)
+                                        EntityTypeRowButton(label: person.name!, redirect: .peopleDetail, resource: person)
                                     }
                                 }
                             }
@@ -581,6 +579,7 @@ struct UnifiedSidebar {
         var body: some View {
             Button {
                 self.state.to(self.redirect)
+                self.setSessionParameter()
             } label: {
                 HStack(alignment: .center, spacing: 8) {
                     Image(systemName: self.noLinkAvailable ? "questionmark.square.fill" : "link")
@@ -595,7 +594,6 @@ struct UnifiedSidebar {
             .disabled(self.noLinkAvailable)
             .help(self.noLinkAvailable ? "Link not found" : self.label)
             .buttonStyle(.plain)
-            .onAppear(perform: self.actionOnAppear)
         }
     }
 }
@@ -603,7 +601,7 @@ struct UnifiedSidebar {
 extension UnifiedSidebar.EntityTypeRowButton {
     /// Onload handler. Sets appropriate link data for the given Page
     /// - Returns: Void
-    private func actionOnAppear() -> Void {
+    private func setSessionParameter() -> Void {
         switch self.redirect {
             // @TODO: uncomment after this detail view has been implemented
 //        case .today:
@@ -618,11 +616,12 @@ extension UnifiedSidebar.EntityTypeRowButton {
             self.state.session.term = self.resource as? TaxonomyTerm
         case .definitionDetail:
             self.state.session.definition = self.resource as? TaxonomyTermDefinitions
-        // @TODO: uncomment after this detail view has been implemented
-//        case .taskDetail, .tasks:
-//            self.state.session.task = self.resource as? LogTask
+        case .taskDetail:
+            self.state.session.task = self.resource as? LogTask
         case .noteDetail, .notes:
             self.state.session.note = self.resource as? Note
+        case .peopleDetail, .people:
+            self.state.session.person = self.resource as? Person
         default:
             self.noLinkAvailable = true
         }

@@ -10,13 +10,12 @@ import SwiftUI
 
 struct DefinitionDetail: View {
     @EnvironmentObject public var state: Navigation
+    @Environment(\.dismiss) private var dismiss
     @State public var definition: TaxonomyTermDefinitions?
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .terms
     @State private var definitionString: String = ""
-    @State private var jobIdString: String = ""
     @State private var alive: Bool = true
-    @State private var job: Job?
     @State private var term: TaxonomyTerm?
     @State private var isDeleteAlertPresented: Bool = false
     // @TODO: not sure if I want this here
@@ -40,20 +39,22 @@ struct DefinitionDetail: View {
                         Button("Yes", role: .destructive) {
                             self.actionOnSoftDelete()
                         }
-                        Button("No", role: .cancel) {
-                            self.actionOnCancel()
-                        }
+                        Button("No", role: .cancel) {}
                     }
+                    .disabled(self.state.session.job == nil)
+                    .opacity(self.state.session.job == nil ? 0.5 : 1)
                 }
 
                 FancyButtonv2(text: "Cancel", action: self.actionOnCancel, showIcon: false)
+                    .disabled(self.state.session.job == nil)
+                    .opacity(self.state.session.job == nil ? 0.5 : 1)
                 FancyButtonv2(text: "Save", action: self.actionOnSave, showIcon: false, type: .primary)
+                    .disabled(self.state.session.job == nil)
+                    .opacity(self.state.session.job == nil ? 0.5 : 1)
             }
             .padding(.bottom)
 
             VStack(alignment: .leading, spacing: 0) {
-                JobPickerUsing(onChange: self.actionOnJobChange, jobId: $jobIdString)
-                FancyDivider()
                 Toggle("Published", isOn: $alive)
                 FancyDivider()
                 FancyTextField(
@@ -62,6 +63,15 @@ struct DefinitionDetail: View {
                     onSubmit: self.actionOnSave,
                     text: $definitionString
                 )
+                .disabled(self.state.session.job == nil)
+                .opacity(self.state.session.job == nil ? 0.5 : 1)
+
+                if self.state.session.job == nil {
+                    FancyHelpText(
+                        text: "Select a job from the sidebar to get started.",
+                        page: self.page
+                    )
+                }
                 // @TODO: not sure if I want this here
 //                .focused($primaryTextFieldInFocus)
 //                .onAppear {
@@ -77,6 +87,7 @@ struct DefinitionDetail: View {
         .padding()
         .background(self.page.primaryColour)
         .onAppear(perform: self.actionOnAppear)
+        .onChange(of: self.state.session.definition) { self.actionOnAppear() }
     }
 }
 
@@ -90,7 +101,6 @@ extension DefinitionDetail {
         }
 
         self.definitionString = self.definition?.definition ?? ""
-        self.jobIdString = self.definition?.job?.jid.string ?? ""
         self.alive = self.definition?.alive ?? true
         self.term = self.definition?.term
     }
@@ -99,6 +109,7 @@ extension DefinitionDetail {
     /// - Returns: Void
     private func actionOnCancel() -> Void {
         self.state.to(.terms)
+        self.dismiss()
     }
 
     /// Callback that fires when save button clicked/tapped
@@ -107,7 +118,7 @@ extension DefinitionDetail {
         if self.definition != nil {
             self.definition?.definition = self.definitionString
             self.definition?.alive = self.alive
-            self.definition?.job = self.job
+            self.definition?.job = self.state.session.job
             self.definition?.term = self.term
         } else {
             CoreDataTaxonomyTermDefinitions(moc: self.state.moc).create(
@@ -115,27 +126,13 @@ extension DefinitionDetail {
                 created: Date(),
                 definition: self.definitionString,
                 lastUpdate: Date(),
-                job: self.job,
+                job: self.state.session.job,
                 term: self.term // @TODO: NOTE TO SELF: all new items created will not be associated with terms until we build a term selector
             )
         }
 
         PersistenceController.shared.save()
         self.state.to(.terms)
-    }
-    
-    /// Fires when an item is selected from the job picker
-    /// - Parameters:
-    ///   - selected: Int
-    ///   - sender: String
-    /// - Returns: Void
-    private func actionOnJobChange(selected: Int, sender: String?) -> Void {
-        // @TODO: doesn't work for all jobs since some use job ID 0.. need to build a new job selector
-        if let newJob = CoreDataJob(moc: self.state.moc).byId(Double(selected)) {
-
-            self.job = newJob
-            self.jobIdString = newJob.jid.string
-        }
     }
     
     /// Fires when user chooses to unpublish a definition

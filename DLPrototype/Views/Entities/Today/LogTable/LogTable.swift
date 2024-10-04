@@ -131,15 +131,13 @@ extension Today.LogTable {
     public struct TabContent {
         /// A list of rows in reverse-chronologic order for a given day
         public struct Chronologic: View {
+            @EnvironmentObject public var nav: Navigation
             public var date: Date? = Date()
-            
+            private let page: PageConfiguration.AppPage = .today
             @State private var searchText: String = ""
 //            @State private var loading: Bool = false
             @State private var records: [LogRecord] = []
-            
-            @Environment(\.managedObjectContext) var moc
-            @EnvironmentObject public var nav: Navigation
-            
+
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
                     // @TODO: implement loading view
@@ -149,11 +147,11 @@ extension Today.LogTable {
                         Content
 //                    }
                 }
-                .onAppear(perform: findRecords)
-                .onChange(of: nav.session.date) { newDate in self.findRecords(for: newDate)}
-                .onChange(of: nav.saved) { status in
-                    if status {
-                        self.findRecords(for: nav.session.date)
+                .onAppear(perform: self.findRecords)
+                .onChange(of: nav.session.date) { self.findRecords() }
+                .onChange(of: nav.saved) {
+                    if nav.saved {
+                        self.findRecords()
                     }
                 }
             }
@@ -163,8 +161,8 @@ extension Today.LogTable {
                     Group {
                         ToolbarButtons()
                     }
-                    .background(Theme.headerColour)
-                    
+                    .background(self.page.primaryColour)
+
                     // TODO: fix search
                     //                if nav.session.toolbar.showSearch {
                     //                    SearchBar(text: $searchText, disabled: (records.count == 0))
@@ -182,22 +180,18 @@ extension Today.LogTable {
         
         /// A list of rows that are grouped by Job
         public struct Grouped: View {
-//            public var date: Date = Date()
-            // @TODO: needed?
-            //        @State private var searchText: String = ""
+            @EnvironmentObject public var nav: Navigation
+            private let page: PageConfiguration.AppPage = .today
             @State private var grouped: [FancyStaticTextField] = []
             @State private var records: [LogRecord] = []
-            
-            @Environment(\.managedObjectContext) var moc
-            @EnvironmentObject public var nav: Navigation
-            
+
             var body: some View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 1) {
                         Group {
                             ToolbarButtons()
                         }
-                        .background(Theme.headerColour)
+                        .background(self.page.primaryColour)
 
                         if records.count > 0 {
                             ForEach(grouped) {group in group}
@@ -207,8 +201,8 @@ extension Today.LogTable {
                         Spacer()
                     }
                 }
-                .onAppear(perform: findRecords)
-                .onChange(of: nav.session.date) { newDate in self.findRecords(for: newDate)}
+                .onAppear(perform: self.findRecords)
+                .onChange(of: nav.session.date) { self.findRecords() }
             }
         }
         
@@ -216,22 +210,20 @@ extension Today.LogTable {
         // TODO: do some kind of ML/AI summarization here. Initially it will just ignore records that are likely too short to be useful
         // TODO: i.e. ignore records whose ML tokens are LUNCH|MEETING|HEALTH (and similar)
         public struct Summarized: View {
+            @EnvironmentObject public var nav: Navigation
             public var date: Date? = nil
-            
+            private let page: PageConfiguration.AppPage = .today
             // @TODO: needed?
             @State private var searchText: String = ""
             @State private var records: [LogRecord] = []
-
-            @Environment(\.managedObjectContext) var moc
-            @EnvironmentObject public var nav: Navigation
 
             var body: some View {
                 VStack(spacing: 1) {
                     Group {
                         ToolbarButtons()
                     }
-                    .background(Theme.headerColour)
-                    
+                    .background(self.page.primaryColour)
+
                     // TODO: fix search
                     //                if nav.session.toolbar.showSearch {
                     //                    SearchBar(text: $searchText, disabled: (records.count == 0))
@@ -244,8 +236,8 @@ extension Today.LogTable {
                         Full(records: records)
                     }
                 }
-                .onAppear(perform: findRecords)
-                .onChange(of: nav.session.date) { newDate in self.findRecords(for: newDate)}
+                .onAppear(perform: self.findRecords)
+                .onChange(of: nav.session.date) { self.findRecords() }
             }
         }
         
@@ -264,17 +256,9 @@ extension Today.LogTable {
 
 // MARK: method definitions
 extension Today.LogTable.TabContent.Chronologic {
-    private func findRecords(for date: Date) -> Void {
-        DispatchQueue.with(background: {
-            return CoreDataRecords(moc: moc).forDate(date)
-        }, completion: { recordsForToday in
-            self.records = recordsForToday!
-        })
-    }
-    
     private func findRecords() -> Void {
         DispatchQueue.with(background: {
-            return CoreDataRecords(moc: moc).forDate(nav.session.date)
+            return CoreDataRecords(moc: self.nav.moc).forDate(nav.session.date)
         }, completion: { recordsForToday in
             self.records = recordsForToday!
         })
@@ -282,37 +266,20 @@ extension Today.LogTable.TabContent.Chronologic {
 }
 
 extension Today.LogTable.TabContent.Grouped {
-    private func findRecords(for date: Date) -> Void {
-        DispatchQueue.with(background: {
-            return CoreDataRecords(moc: moc).forDate(date)
-        }, completion: { recordsForToday in
-            self.records = recordsForToday!
-            grouped = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(self.records)
-        })
-    }
-    
     private func findRecords() -> Void {
         DispatchQueue.with(background: {
-            return CoreDataRecords(moc: moc).forDate(nav.session.date)
+            return CoreDataRecords(moc: self.nav.moc).forDate(nav.session.date)
         }, completion: { recordsForToday in
             self.records = recordsForToday!
-            grouped = CoreDataRecords(moc: moc).createExportableGroupedRecordsAsViews(self.records)
+            grouped = CoreDataRecords(moc: self.nav.moc).createExportableGroupedRecordsAsViews(self.records)
         })
     }
 }
 
 extension Today.LogTable.TabContent.Summarized {
-    private func findRecords(for date: Date) -> Void {
-        DispatchQueue.with(background: {
-            return CoreDataRecords(moc: moc).forDate(date)
-        }, completion: { recordsForToday in
-            self.records = recordsForToday!
-        })
-    }
-    
     private func findRecords() -> Void {
         DispatchQueue.with(background: {
-            return CoreDataRecords(moc: moc).forDate(nav.session.date)
+            return CoreDataRecords(moc: self.nav.moc).forDate(nav.session.date)
         }, completion: { recordsForToday in
             self.records = recordsForToday!
         })
@@ -321,7 +288,7 @@ extension Today.LogTable.TabContent.Summarized {
 
 extension Today.LogTable.Plain {
     private func actionOnAppear() -> Void {
-        let model = CoreDataRecords(moc: moc)
+        let model = CoreDataRecords(moc: self.nav.moc)
 
         plain = model.createExportableRecordsFrom(records, grouped: true)
         grouped = model.createExportableGroupedRecordsAsViews(records)

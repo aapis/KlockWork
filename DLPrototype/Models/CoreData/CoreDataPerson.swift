@@ -148,10 +148,10 @@ public class CoreDataPerson: ObservableObject {
     ///   - lastUpdate: Date
     ///   - name: String
     ///   - title: String
-    ///   - company: Company
+    ///   - company: Optional(Company)
     ///   - saveByDefault: Bool(true)
     /// - Returns: Person
-    public func create(created: Date, lastUpdate: Date, name: String, title: String, company: Company, saveByDefault: Bool = true) -> Void {
+    public func create(created: Date, lastUpdate: Date, name: String, title: String, company: Company?, saveByDefault: Bool = true) -> Void {
         let _ = self.make(
             created: created,
             lastUpdate: lastUpdate,
@@ -168,10 +168,10 @@ public class CoreDataPerson: ObservableObject {
     ///   - lastUpdate: Date
     ///   - name: String
     ///   - title: String
-    ///   - company: Company
+    ///   - company: Optional(Company)
     ///   - saveByDefault: Bool(true)
     /// - Returns: Person
-    public func createAndReturn(created: Date, lastUpdate: Date, name: String, title: String, company: Company, saveByDefault: Bool = true) -> Person {
+    public func createAndReturn(created: Date, lastUpdate: Date, name: String, title: String, company: Company?, saveByDefault: Bool = true) -> Person {
         return self.make(
             created: created,
             lastUpdate: lastUpdate,
@@ -188,17 +188,20 @@ public class CoreDataPerson: ObservableObject {
     ///   - lastUpdate: Date
     ///   - name: String
     ///   - title: String
-    ///   - company: Company
+    ///   - company: Optional(Company)
     ///   - saveByDefault: Bool(true)
     /// - Returns: Person
-    private func make(created: Date, lastUpdate: Date, name: String, title: String, company: Company, saveByDefault: Bool = true) -> Person {
+    private func make(created: Date, lastUpdate: Date, name: String, title: String, company: Company?, saveByDefault: Bool = true) -> Person {
         let person = Person(context: self.moc!)
         person.created = created
         person.lastUpdate = lastUpdate
         person.id = UUID()
         person.name = name
         person.title = title
-        person.company = company
+
+        if company != nil {
+            person.company = company!
+        }
 
         if saveByDefault {
             PersistenceController.shared.save()

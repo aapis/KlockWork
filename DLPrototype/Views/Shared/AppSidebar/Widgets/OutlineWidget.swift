@@ -14,7 +14,7 @@ struct OutlineWidget: View {
     @FetchRequest public var companies: FetchedResults<Company>
     @FetchRequest public var unowned: FetchedResults<Project>
 
-    @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var state: Navigation
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -104,9 +104,7 @@ extension OutlineWidget {
     }
 
     private func actionOnAppear() -> Void {
-        if let company = CoreDataCompanies(moc: moc).byPid(defaultCompany) {
-            company.isDefault = true
-        }
+
     }
 }
 

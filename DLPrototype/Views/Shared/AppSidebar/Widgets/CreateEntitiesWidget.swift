@@ -236,9 +236,30 @@ struct CreateEntitiesWidget: View {
 
                 ZStack(alignment: .topLeading) {
                     HStack(alignment: .center) {
-                        Divider().frame(height: 149)
+                        Divider().frame(height: 177)
                     }
                     VStack(alignment: .leading) {
+                        HStack(alignment: .center, spacing: 0) {
+                            VStack(alignment: .center) {
+                                Divider().frame(width: 10)
+                            }
+
+                            HStack {
+                                FancyButtonv2(
+                                    text: "Person",
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false},
+                                    icon: "person",
+                                    fgColour: .white,
+                                    size: .link,
+                                    type: nav.parent == .people ? .secondary : .standard,
+                                    redirect: AnyView(PeopleDetail()),
+                                    pageType: .people,
+                                    sidebar: AnyView(PeopleDashboardSidebar())
+                                )
+                            }
+                            Spacer()
+                        }
+
                         HStack(alignment: .center, spacing: 0) {
                             VStack(alignment: .center) {
                                 Divider().frame(width: 10)
@@ -312,7 +333,7 @@ struct CreateEntitiesWidget: View {
                                     fgColour: .white,
                                     size: .link,
                                     type: nav.parent == .tasks ? .secondary : .standard,
-                                    redirect: AnyView(TaskDashboard()),
+                                    redirect: AnyView(TaskDetail()),
                                     pageType: .tasks,
                                     sidebar: AnyView(TaskDashboardSidebar())
                                 )
@@ -352,7 +373,7 @@ struct CreateEntitiesWidget: View {
                                     fgColour: .white,
                                     size: .link,
                                     type: nav.parent == .tasks ? .secondary : .standard,
-                                    redirect: AnyView(TermsDashboard()),
+                                    redirect: AnyView(DefinitionDetail()),
                                     pageType: .terms,
                                     sidebar: AnyView(TermsDashboardSidebar())
                                 )

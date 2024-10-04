@@ -19,6 +19,9 @@ extension View {
     }
 
 #if os(macOS)
+    /// Hover effect, cursor changes to hand
+    /// - Parameter onChange: (Bool) -> Void)
+    /// - Returns: some View
     func useDefaultHover(_ onChange: @escaping (Bool) -> Void) -> some View {
         self.onHover { inside in
             if inside {
@@ -27,6 +30,15 @@ extension View {
                 NSCursor.pop()
             }
             
+            onChange(inside)
+        }
+    }
+    
+    /// Hover effect without changing cursor
+    /// - Parameter onChange: (Bool) -> Void)
+    /// - Returns: some View
+    func useDefaultHoverNoCursor(_ onChange: @escaping (Bool) -> Void) -> some View {
+        self.onHover { inside in
             onChange(inside)
         }
     }

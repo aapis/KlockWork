@@ -17,6 +17,7 @@ public final class SearchHelper {
     public var recordBucket: [LogRecord] = []
     public var companyBucket: [Company] = []
     public var definitionsBucket: [TaxonomyTermDefinitions] = []
+    public var peopleBucket: [Person] = []
     public var fields: [String] = []
     
     public init(bucket: FetchedResults<LogTask>) {
@@ -43,45 +44,70 @@ public final class SearchHelper {
         self.definitionsBucket = bucket
     }
 
-    public func exec(_ searchText: Binding<String>) -> [LogTask] {
+    public init(bucket: [Person]) {
+        self.peopleBucket = bucket
+    }
+
+    /// Find matching entities of type LogTask
+    /// - Parameter searchText: Binding(String)
+    /// - Returns: [NSManagedObject]
+    public func findInTasks(_ searchText: Binding<String>) -> [LogTask] {
         return bucket.filter({
             matches(searchText, fields: [$0.content ?? "", $0.owner!.jid.string])
         })
     }
-    
+
+    /// Find matching entities of type Project
+    /// - Parameter searchText: Binding(String)
+    /// - Returns: [NSManagedObject]
     public func findInProjects(_ searchText: Binding<String>) -> [Project] {
         return projectBucket.filter {
             matches(searchText, fields: [$0.name!, $0.pid.string])
         }
     }
-    
+
+    /// Find matching entities of type Note
+    /// - Parameter searchText: Binding(String)
+    /// - Returns: [NSManagedObject]
     public func findInNotes(_ searchText: Binding<String>) -> [Note] {
         return noteBucket.filter {
             matches(searchText, fields: [$0.title!, $0.body!])
         }
     }
-    
+
+    /// Find matching entities of type LogRecord
+    /// - Parameter searchText: Binding(String)
+    /// - Returns: [NSManagedObject]
     public func findInRecords(_ searchText: Binding<String>) -> [LogRecord] {
         return recordBucket.filter {
             matches(searchText, fields: [$0.message!])
         }
     }
-
+    /// Find matching entities of type Company
+    /// - Parameter searchText: Binding(String)
+    /// - Returns: [NSManagedObject]
     public func findInCompanies(_ searchText: Binding<String>, allowHidden: Bool = false) -> [Company] {
         return companyBucket.filter {
             matches(searchText, fields: [$0.name!]) && $0.hidden == allowHidden
         }
     }
-
+    /// Find matching entities of type TaxonomyTermDefinitions
+    /// - Parameter searchText: Binding(String)
+    /// - Returns: [NSManagedObject]
     public func findInDefinitions(_ searchText: Binding<String>) -> [TaxonomyTermDefinitions] {
         return definitionsBucket.filter {
             matches(searchText, fields: [$0.definition!, $0.term!.name!])
         }
     }
-
-//    static public func highlight(phrase: String, bucket: [String]) -> [String] {
-//        
-//    }
+    
+    /// Find matching entities of type Person
+    /// - Parameter searchText: Binding(String)
+    /// - Returns: [NSManagedObject]
+    public func findInPeople(_ searchText: Binding<String>) -> [Person] {
+        return peopleBucket.filter {
+            matches(searchText, fields: [$0.name!])
+        }
+    }
     
     private func matches(_ searchText: Binding<String>, fields: [String]) -> Bool {
         do {

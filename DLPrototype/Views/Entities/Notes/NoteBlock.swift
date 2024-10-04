@@ -39,6 +39,7 @@ struct NoteBlock: View {
                             .fontWeight(.bold)
                             .padding([.leading, .trailing, .top])
                         Text(noteBody())
+                            .foregroundStyle(.white.opacity(0.55))
                             .padding([.leading, .trailing, .bottom])
 
                         Spacer()

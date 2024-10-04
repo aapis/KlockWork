@@ -17,6 +17,9 @@
 		530B1D722CAE219D0033E81F /* PageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D6F2CAE219D0033E81F /* PageConfiguration.swift */; };
 		530B1D732CAE219D0033E81F /* RowAddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D702CAE219D0033E81F /* RowAddButton.swift */; };
 		530B1D742CAE219D0033E81F /* FilterField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D712CAE219D0033E81F /* FilterField.swift */; };
+		530B1D782CAFA4DD0033E81F /* PeopleDashboadSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D772CAFA4D50033E81F /* PeopleDashboadSidebar.swift */; };
+		530B1D7A2CAFA4E40033E81F /* PeopleDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D792CAFA4E00033E81F /* PeopleDashboard.swift */; };
+		530B1D7C2CAFAFBD0033E81F /* PeopleDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D7B2CAFAFBB0033E81F /* PeopleDetail.swift */; };
 		5311F4042C17C5F600FB3071 /* CDAssessmentThreshold.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5311F4032C17C5F600FB3071 /* CDAssessmentThreshold.swift */; };
 		53152CC929690E7300A14E43 /* LosslessStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CC829690E7300A14E43 /* LosslessStringConvertible.swift */; };
 		53152CCC2969453000A14E43 /* DateHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CCB2969453000A14E43 /* DateHelper.swift */; };
@@ -143,6 +146,7 @@
 		538A53542C70269900711639 /* CoreDataTaxonomyTermDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538A53532C70269200711639 /* CoreDataTaxonomyTermDefinitions.swift */; };
 		538A535A2C704E2B00711639 /* TermsDashboardSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538A53592C704E2600711639 /* TermsDashboardSidebar.swift */; };
 		538A535E2C704E5800711639 /* TermsDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538A535D2C704E4400711639 /* TermsDashboard.swift */; };
+		538B2FA62CB095B400B353AE /* TaskDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538B2FA52CB095B200B353AE /* TaskDetail.swift */; };
 		53911FC32C19E84C00B77DAB /* ActivityWeight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53911FC22C19E84C00B77DAB /* ActivityWeight.swift */; };
 		53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A19297377A7007A2549 /* FancyGenericToolbar.swift */; };
 		53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1C2973897F007A2549 /* ProjectConfig.swift */; };
@@ -267,6 +271,9 @@
 		530B1D6F2CAE219D0033E81F /* PageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PageConfiguration.swift; path = "../klockwork-ios/KlockWork-iOS/KlockWork-iOS/SharedEnums/PageConfiguration.swift"; sourceTree = "<group>"; };
 		530B1D702CAE219D0033E81F /* RowAddButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RowAddButton.swift; path = "../klockwork-ios/KlockWork-iOS/KlockWork-iOS/SharedViews/RowAddButton.swift"; sourceTree = "<group>"; };
 		530B1D712CAE219D0033E81F /* FilterField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FilterField.swift; path = "../klockwork-ios/KlockWork-iOS/KlockWork-iOS/SharedViews/FilterField.swift"; sourceTree = "<group>"; };
+		530B1D772CAFA4D50033E81F /* PeopleDashboadSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleDashboadSidebar.swift; sourceTree = "<group>"; };
+		530B1D792CAFA4E00033E81F /* PeopleDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleDashboard.swift; sourceTree = "<group>"; };
+		530B1D7B2CAFAFBB0033E81F /* PeopleDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleDetail.swift; sourceTree = "<group>"; };
 		5311F4032C17C5F600FB3071 /* CDAssessmentThreshold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CDAssessmentThreshold.swift; sourceTree = "<group>"; };
 		53152CC829690E7300A14E43 /* LosslessStringConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LosslessStringConvertible.swift; sourceTree = "<group>"; };
 		53152CCB2969453000A14E43 /* DateHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHelper.swift; sourceTree = "<group>"; };
@@ -404,6 +411,7 @@
 		538A53532C70269200711639 /* CoreDataTaxonomyTermDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataTaxonomyTermDefinitions.swift; sourceTree = "<group>"; };
 		538A53592C704E2600711639 /* TermsDashboardSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsDashboardSidebar.swift; sourceTree = "<group>"; };
 		538A535D2C704E4400711639 /* TermsDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsDashboard.swift; sourceTree = "<group>"; };
+		538B2FA52CB095B200B353AE /* TaskDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetail.swift; sourceTree = "<group>"; };
 		53911FC22C19E84C00B77DAB /* ActivityWeight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityWeight.swift; sourceTree = "<group>"; };
 		53959A19297377A7007A2549 /* FancyGenericToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyGenericToolbar.swift; sourceTree = "<group>"; };
 		53959A1C2973897F007A2549 /* ProjectConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfig.swift; sourceTree = "<group>"; };
@@ -514,6 +522,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		530B1D752CAFA4BD0033E81F /* People */ = {
+			isa = PBXGroup;
+			children = (
+				530B1D7B2CAFAFBB0033E81F /* PeopleDetail.swift */,
+				530B1D792CAFA4E00033E81F /* PeopleDashboard.swift */,
+				530B1D762CAFA4D00033E81F /* Sidebars */,
+			);
+			path = People;
+			sourceTree = "<group>";
+		};
+		530B1D762CAFA4D00033E81F /* Sidebars */ = {
+			isa = PBXGroup;
+			children = (
+				530B1D772CAFA4D50033E81F /* PeopleDashboadSidebar.swift */,
+			);
+			path = Sidebars;
+			sourceTree = "<group>";
+		};
 		53152CCA2969452100A14E43 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -683,6 +709,7 @@
 		5335A5AF296D164F000051B1 /* Tasks */ = {
 			isa = PBXGroup;
 			children = (
+				538B2FA52CB095B200B353AE /* TaskDetail.swift */,
 				5371BA3E2A7B865300DEEC21 /* Sidebars */,
 				5335A5B2296D17EB000051B1 /* TaskDashboard.swift */,
 				5335A5B4296D1FA7000051B1 /* TaskView.swift */,
@@ -1026,6 +1053,7 @@
 		53BDA6942B41BC2800A61BE8 /* Entities */ = {
 			isa = PBXGroup;
 			children = (
+				530B1D752CAFA4BD0033E81F /* People */,
 				538A53572C704E1800711639 /* Terms */,
 				53C3418A299960080071B855 /* Jobs */,
 				5335A5AF296D164F000051B1 /* Tasks */,
@@ -1458,6 +1486,7 @@
 				53814A8B2A95151000A5A015 /* CoreDataPlan.swift in Sources */,
 				5371BA3D2A7B7F1200DEEC21 /* TaskViewPlain.swift in Sources */,
 				533E40682970DD170007785A /* AutoFixJobs.swift in Sources */,
+				538B2FA62CB095B400B353AE /* TaskDetail.swift in Sources */,
 				53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */,
 				5354C8F32AA03CE4001C1779 /* Notes.Row.swift in Sources */,
 				5371BA2D2A7B27BB00DEEC21 /* NoteDashboardSidebar.swift in Sources */,
@@ -1471,6 +1500,7 @@
 				53529A07299F38C0000D2FCB /* JobPickerUsing.swift in Sources */,
 				53E202722A80BAD500B4DF70 /* ButtonType.swift in Sources */,
 				5376289B2966467100DE8ECF /* SearchBar.swift in Sources */,
+				530B1D782CAFA4DD0033E81F /* PeopleDashboadSidebar.swift in Sources */,
 				5363B67A2A6BB75F00C2FBB8 /* CompanyBlock.swift in Sources */,
 				531B8DF22A847BE8005D911B /* NoteGroup.swift in Sources */,
 				538A535E2C704E5800711639 /* TermsDashboard.swift in Sources */,
@@ -1515,6 +1545,7 @@
 				53D4CBC82BFE953700AFEDEA /* SaveSource.swift in Sources */,
 				53C036EF29F8A59900539C3C /* DashboardSettings.swift in Sources */,
 				5371BA302A7B2A8800DEEC21 /* JobDashboardSidebar.swift in Sources */,
+				530B1D7A2CAFA4E40033E81F /* PeopleDashboard.swift in Sources */,
 				538A534E2C6FEA1700711639 /* CoreDataTaxonomyTerms.swift in Sources */,
 				53759E0829678DC700DCDC4B /* Import.swift in Sources */,
 				53E2025A2A7EAE5B00B4DF70 /* ProjectsWidget.swift in Sources */,
@@ -1551,6 +1582,7 @@
 				535C0E3529F729320053AD6A /* Keywords.swift in Sources */,
 				53F5896229983EEB00843B32 /* TaskResult.swift in Sources */,
 				53C000982B3A821D00D5EC04 /* FancyHelpText.swift in Sources */,
+				530B1D7C2CAFAFBD0033E81F /* PeopleDetail.swift in Sources */,
 				5354C8ED2AA03C9D001C1779 /* Tasks.Row.swift in Sources */,
 				532C5FE52A83024900F2AAD4 /* CreateEntitiesWidget.swift in Sources */,
 				53521E54296FBDAE002E7F21 /* CoreDataNoteVersions.swift in Sources */,

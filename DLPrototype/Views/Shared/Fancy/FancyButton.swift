@@ -68,6 +68,7 @@ public struct FancyButtonv2: View {
     public var text: String
     public var action: (() -> Void)?
     public var icon: String? = "checkmark.circle"
+    public var iconAsImage: Image? = nil
     public var fgColour: Color?
     public var bgColour: Color?
     public var highlightColour: Color?
@@ -95,7 +96,11 @@ public struct FancyButtonv2: View {
                 }
                 
                 nav.setView(destination)
-                nav.setSidebar(sidebar!)
+
+                if self.sidebar != nil {
+                    nav.setSidebar(sidebar!)
+                }
+
                 nav.setId()
 
                 if let pType = pageType {
@@ -150,9 +155,15 @@ public struct FancyButtonv2: View {
 
             HStack {
                 if showIcon! {
-                    Image(systemName: icon!)
-                        .symbolRenderingMode(.hierarchical)
-                        .font(.title2)
+                    if let icon = self.icon {
+                        Image(systemName: icon)
+                            .symbolRenderingMode(.hierarchical)
+                            .font(.title2)
+                    } else if let ic = self.iconAsImage {
+                        ic
+                            .symbolRenderingMode(.hierarchical)
+                            .font(.title2)
+                    }
                 }
 
                 if showLabel! {

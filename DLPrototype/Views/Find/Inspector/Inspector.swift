@@ -374,6 +374,26 @@ public struct Inspector: View, Identifiable {
                 .help("Type: Person entity")
                 Divider()
 
+                if let name = item.name {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                        Text(name)
+                        Spacer()
+                    }
+                    .help(name)
+                    Divider()
+                }
+
+                if let title = item.title {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                        Text(title)
+                        Spacer()
+                    }
+                    .help(title)
+                    Divider()
+                }
+
                 if let date = item.created {
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
@@ -395,19 +415,16 @@ public struct Inspector: View, Identifiable {
                 }
 
                 Spacer()
-                if let company = item.company {
-                    HStack(alignment: .top, spacing: 10) {
-                        FancyButtonv2(
-                            text: "Open",
-                            icon: "arrow.right.square.fill",
-                            showLabel: true,
-                            size: .link,
-                            type: .clear,
-                            redirect: AnyView(CompanyDashboard(company: company)),
-                            pageType: .companies,
-                            sidebar: AnyView(DefaultCompanySidebar())
-                        )
-                    }
+                HStack(alignment: .top, spacing: 10) {
+                    FancyButtonv2(
+                        text: "Open",
+                        action: {self.nav.session.person = self.item; self.nav.to(.peopleDetail)},
+                        icon: "arrow.right.square.fill",
+                        showLabel: true,
+                        size: .link,
+                        type: .clear,
+                        pageType: .people
+                    )
                 }
             }
         }

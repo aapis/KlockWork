@@ -20,7 +20,8 @@ struct SidebarButton: View, Identifiable {
     public let id: UUID = UUID()
     public var destination: AnyView
     public let pageType: Page
-    public var icon: String
+    public var icon: String?
+    public var iconAsImage: Image?
     public var label: String
     public var sidebar: AnyView?
     public var showLabel: Bool = true
@@ -128,9 +129,13 @@ struct SidebarButton: View, Identifiable {
                     .opacity(0.1)
                 }
 
-                Image(systemName: isDatePickerPresented && nav.parent == pageType ? "xmark" : (altMode != nil ? (altMode!.condition ? altMode!.icon : icon) : icon))
-                   .font(.title)
-                   .symbolRenderingMode(.hierarchical)
+                if let img = self.iconAsImage {
+                    img.font(.title).symbolRenderingMode(.hierarchical)
+                } else {
+                    Image(systemName: isDatePickerPresented && nav.parent == pageType ? "xmark" : (altMode != nil ? (altMode!.condition ? altMode!.icon : icon!) : icon!))
+                        .font(.title)
+                        .symbolRenderingMode(.hierarchical)
+                }
 
             }
         }
@@ -170,10 +175,13 @@ struct SidebarButton: View, Identifiable {
                     .opacity(0.1)
                 }
 
-                Image(systemName: isDatePickerPresented && nav.parent == pageType ? "xmark" : (altMode != nil ? (altMode!.condition ? altMode!.icon : icon) : icon))
-                   .font(.title)
-                   .symbolRenderingMode(.hierarchical)
-
+                if let img = self.iconAsImage {
+                    img.font(.title).symbolRenderingMode(.hierarchical)
+                } else {
+                    Image(systemName: isDatePickerPresented && nav.parent == pageType ? "xmark" : (altMode != nil ? (altMode!.condition ? altMode!.icon : icon!) : icon!))
+                        .font(.title)
+                        .symbolRenderingMode(.hierarchical)
+                }
             }
         })
         .help(label)
@@ -183,10 +191,12 @@ struct SidebarButton: View, Identifiable {
 
     @ViewBuilder private var backgroundColour: some View {
         Theme.toolbarColour
-        if nav.parent == pageType {
+
+
+        if nav.parent == pageType || self.nav.parent?.parentView == self.pageType {
             if let parent = nav.parent {
                 if isDatePickerPresented {
-//                    Theme.secondary
+                    //                    Theme.secondary
                     Color.white
                 } else {
                     parent.colour

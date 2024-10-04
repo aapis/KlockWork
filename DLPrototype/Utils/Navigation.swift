@@ -9,33 +9,7 @@
 import SwiftUI
 
 public enum Page {
-    case dashboard, today, notes, tasks, projects, jobs, companies, planning, terms, definitionDetail, taskDetail, noteDetail
-
-    var ViewUpdaterKey: String {
-        switch self {
-        case .dashboard:
-            return "dashboard"
-        case .today:
-            return "today.dashboard"
-        case .tasks:
-            return "task.dashboard"
-        case .notes:
-            return "note.dashboard"
-        case .projects:
-            return "project.dashboard"
-        case .jobs:
-            return "job.dashboard"
-        case .companies:
-            return "companies.dashboard"
-        case .planning:
-            return "planning.dashboard"
-        case .terms:
-            return "terms.dashboard"
-        case .definitionDetail: return "terms.definition.detail"
-        case .taskDetail: return "task.detail"
-        case .noteDetail: return "note.detail"
-        }
-    }
+    case dashboard, today, notes, tasks, projects, jobs, companies, planning, terms, definitionDetail, taskDetail, noteDetail, people, peopleDetail
 
     var colour: Color {
         switch self {
@@ -43,53 +17,48 @@ public enum Page {
             return PageConfiguration.AppPage.find.primaryColour
         case .today:
             return PageConfiguration.AppPage.today.primaryColour
-        case .tasks:
-            return PageConfiguration.AppPage.explore.primaryColour
-        case .notes:
-            return PageConfiguration.AppPage.explore.primaryColour
-        case .projects:
-            return PageConfiguration.AppPage.explore.primaryColour
-        case .jobs:
-            return PageConfiguration.AppPage.explore.primaryColour
-        case .companies:
-            return PageConfiguration.AppPage.explore.primaryColour
         case .planning:
             return PageConfiguration.AppPage.planning.primaryColour
-        case .terms:
-            return PageConfiguration.AppPage.explore.primaryColour
-        case .definitionDetail:
-            return PageConfiguration.AppPage.explore.primaryColour
-        case .taskDetail:
-            return PageConfiguration.AppPage.explore.primaryColour
-        case .noteDetail:
+        default:
             return PageConfiguration.AppPage.explore.primaryColour
         }
     }
 
     var defaultTitle: String {
         switch self {
-        case .dashboard:
-            return "Dashboard"
-        case .today:
-            return "Today"
-        case .tasks:
-            return "Tasks"
-        case .notes:
-            return "Notes"
-        case .projects:
-            return "Projects"
-        case .jobs:
-            return "Jobs"
-        case .companies:
-            return "Companies"
-        case .planning:
-            return "Planning"
-        case .terms:
-            return "Terms"
-        case .definitionDetail:
-            return "Definition"
+        case .dashboard: return "Dashboard"
+        case .today: return "Today"
+        case .tasks: return "Tasks"
+        case .notes: return "Notes"
+        case .projects: return "Projects"
+        case .jobs: return "Jobs"
+        case .companies: return "Companies"
+        case .planning: return "Planning"
+        case .terms: return "Terms"
+        case .definitionDetail: return "Definition"
         case .taskDetail: return "Task"
         case .noteDetail: return "Note"
+        case .people: return "People"
+        case .peopleDetail: return "Person"
+        }
+    }
+
+    var parentView: Page? {
+        switch self {
+        case .dashboard: return nil
+        case .today: return nil
+        case .tasks: return nil
+        case .notes: return nil
+        case .projects: return nil
+        case .jobs: return nil
+        case .companies: return nil
+        case .planning: return nil
+        case .terms: return nil
+        case .definitionDetail: return .terms
+        case .taskDetail: return .tasks
+        case .noteDetail: return .notes
+        case .people: return nil
+        case .peopleDetail: return .people
         }
     }
 }
@@ -196,6 +165,10 @@ public class Navigation: Identifiable, ObservableObject {
 
         self.history.push(hp: hp)
         self.session.search.cancel()
+
+        if self.history.recent.count > 20 {
+            self.history.recent = []
+        }
     }
 
     public func link(to page: Page) -> AnyView {
@@ -227,6 +200,7 @@ extension Navigation {
         var company: Company?
         var record: LogRecord?
         var term: TaxonomyTerm?
+        var person: Person?
         var definition: TaxonomyTermDefinitions?
         var date: Date = Date()
         var idate: IdentifiableDay = IdentifiableDay()
@@ -574,8 +548,10 @@ extension Navigation {
             HistoryPage(page: .tasks, view: AnyView(TaskDashboard()), sidebar: AnyView(TaskDashboardSidebar()), title: "Tasks"),
             HistoryPage(page: .terms, view: AnyView(TermsDashboard()), sidebar: AnyView(TermsDashboardSidebar()), title: "Terms"),
             HistoryPage(page: .definitionDetail, view: AnyView(DefinitionDetail()), sidebar: AnyView(TermsDashboardSidebar()), title: "Definition detail"),
-            HistoryPage(page: .taskDetail, view: AnyView(EmptyView()), sidebar: AnyView(TermsDashboardSidebar()), title: "Task detail"),
+            HistoryPage(page: .taskDetail, view: AnyView(TaskDetail()), sidebar: AnyView(TermsDashboardSidebar()), title: "Task detail"),
             HistoryPage(page: .noteDetail, view: AnyView(NoteView()), sidebar: AnyView(NoteCreateSidebar()), title: "Note detail"),
+            HistoryPage(page: .people, view: AnyView(PeopleDashboard()), sidebar: AnyView(PeopleDashboardSidebar()), title: "People"),
+            HistoryPage(page: .peopleDetail, view: AnyView(PeopleDetail()), sidebar: AnyView(PeopleDashboardSidebar()), title: "Person"),
         ]
         
         /// A single page representing a page the user navigated to
