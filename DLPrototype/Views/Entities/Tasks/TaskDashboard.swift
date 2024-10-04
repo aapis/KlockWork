@@ -14,12 +14,7 @@ struct TaskDashboard: View {
     public var defaultSelectedJob: Job?
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .tasks
-
-    @State private var selectedJob: Int = 0
-    @State private var jobId: String = ""
     @State private var job: Job?
-
-    @EnvironmentObject public var updater: ViewUpdater
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -43,7 +38,6 @@ struct TaskDashboard: View {
         .background(Theme.toolbarColour)
         .onAppear(perform: actionOnAppear)
         .onChange(of: self.state.session.job) { self.actionOnAppear() }
-        .id(updater.get("task.dashboard"))
     }
 
     @ViewBuilder
@@ -56,12 +50,6 @@ struct TaskDashboard: View {
                 page: self.page
             )
         } else {
-            JobPickerUsing(onChange: change, jobId: $jobId)
-                .onAppear(perform: actionOnAppear)
-                .onChange(of: selectedJob) {
-                    actionOnAppear()
-                }
-
             TaskListView(job: self.state.session.job!)
         }
     }
@@ -69,23 +57,10 @@ struct TaskDashboard: View {
     private func actionOnAppear() -> Void {
         if let sJob = self.state.session.job {
             self.job = sJob
-            self.jobId = sJob.jid.string
         }
 
         if defaultSelectedJob != nil {
-            job = defaultSelectedJob
-        } else if selectedJob > 0 {
-            job = CoreDataJob(moc: self.state.moc).byId(Double(selectedJob))
+            self.job = self.defaultSelectedJob
         }
-        
-        if job != nil {
-            jobId = job!.jid.string
-        }
-    }
-    
-    private func change(selected: Int, sender: String?) -> Void {
-        selectedJob = selected
-
-        actionOnAppear()
     }
 }
