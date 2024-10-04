@@ -60,6 +60,9 @@ struct Home: View {
                     label: "Planning",
                     sidebar: AnyView(DefaultPlanningSidebar())
                 ),
+                // @TODO: Explore page
+            ],
+            .entities: [
                 SidebarButton(
                     destination: AnyView(Today()),
                     pageType: .today,
@@ -71,9 +74,28 @@ struct Home: View {
                         icon: "apple.terminal",
                         condition: cliEnabled && commandLineMode
                     )
-                )
-            ],
-            .entities: [
+                ),
+                SidebarButton(
+                    destination: AnyView(TaskDashboard()),
+                    pageType: .tasks,
+                    iconAsImage: Entity.tasks.icon,
+                    label: Entity.tasks.label,
+                    sidebar: AnyView(TaskDashboardSidebar())
+                ),
+                SidebarButton(
+                    destination: AnyView(NoteDashboard()),
+                    pageType: .notes,
+                    iconAsImage: Entity.notes.icon,
+                    label: Entity.notes.label,
+                    sidebar: AnyView(NoteDashboardSidebar())
+                ),
+                SidebarButton(
+                    destination: AnyView(PeopleDashboard()),
+                    pageType: .people,
+                    iconAsImage: Entity.people.icon,
+                    label: Entity.people.label,
+                    sidebar: AnyView(PeopleDashboardSidebar())
+                ),
                 SidebarButton(
                     destination: AnyView(CompanyDashboard()),
                     pageType: .companies,
@@ -87,20 +109,6 @@ struct Home: View {
                     iconAsImage: Entity.jobs.icon,
                     label: Entity.jobs.label,
                     sidebar: AnyView(JobDashboardSidebar())
-                ),
-                SidebarButton(
-                    destination: AnyView(NoteDashboard()),
-                    pageType: .notes,
-                    iconAsImage: Entity.notes.icon,
-                    label: Entity.notes.label,
-                    sidebar: AnyView(NoteDashboardSidebar())
-                ),
-                SidebarButton(
-                    destination: AnyView(TaskDashboard()),
-                    pageType: .tasks,
-                    iconAsImage: Entity.tasks.icon,
-                    label: Entity.tasks.label,
-                    sidebar: AnyView(TaskDashboardSidebar())
                 ),
                 SidebarButton(
                     destination: AnyView(TermsDashboard()),
