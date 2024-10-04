@@ -146,6 +146,7 @@
 		538A53542C70269900711639 /* CoreDataTaxonomyTermDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538A53532C70269200711639 /* CoreDataTaxonomyTermDefinitions.swift */; };
 		538A535A2C704E2B00711639 /* TermsDashboardSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538A53592C704E2600711639 /* TermsDashboardSidebar.swift */; };
 		538A535E2C704E5800711639 /* TermsDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538A535D2C704E4400711639 /* TermsDashboard.swift */; };
+		538B2FA62CB095B400B353AE /* TaskDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538B2FA52CB095B200B353AE /* TaskDetail.swift */; };
 		53911FC32C19E84C00B77DAB /* ActivityWeight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53911FC22C19E84C00B77DAB /* ActivityWeight.swift */; };
 		53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A19297377A7007A2549 /* FancyGenericToolbar.swift */; };
 		53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1C2973897F007A2549 /* ProjectConfig.swift */; };
@@ -410,6 +411,7 @@
 		538A53532C70269200711639 /* CoreDataTaxonomyTermDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataTaxonomyTermDefinitions.swift; sourceTree = "<group>"; };
 		538A53592C704E2600711639 /* TermsDashboardSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsDashboardSidebar.swift; sourceTree = "<group>"; };
 		538A535D2C704E4400711639 /* TermsDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsDashboard.swift; sourceTree = "<group>"; };
+		538B2FA52CB095B200B353AE /* TaskDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetail.swift; sourceTree = "<group>"; };
 		53911FC22C19E84C00B77DAB /* ActivityWeight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityWeight.swift; sourceTree = "<group>"; };
 		53959A19297377A7007A2549 /* FancyGenericToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyGenericToolbar.swift; sourceTree = "<group>"; };
 		53959A1C2973897F007A2549 /* ProjectConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfig.swift; sourceTree = "<group>"; };
@@ -707,6 +709,7 @@
 		5335A5AF296D164F000051B1 /* Tasks */ = {
 			isa = PBXGroup;
 			children = (
+				538B2FA52CB095B200B353AE /* TaskDetail.swift */,
 				5371BA3E2A7B865300DEEC21 /* Sidebars */,
 				5335A5B2296D17EB000051B1 /* TaskDashboard.swift */,
 				5335A5B4296D1FA7000051B1 /* TaskView.swift */,
@@ -1483,6 +1486,7 @@
 				53814A8B2A95151000A5A015 /* CoreDataPlan.swift in Sources */,
 				5371BA3D2A7B7F1200DEEC21 /* TaskViewPlain.swift in Sources */,
 				533E40682970DD170007785A /* AutoFixJobs.swift in Sources */,
+				538B2FA62CB095B400B353AE /* TaskDetail.swift in Sources */,
 				53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */,
 				5354C8F32AA03CE4001C1779 /* Notes.Row.swift in Sources */,
 				5371BA2D2A7B27BB00DEEC21 /* NoteDashboardSidebar.swift in Sources */,

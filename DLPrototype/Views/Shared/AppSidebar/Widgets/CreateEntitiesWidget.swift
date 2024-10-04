@@ -312,7 +312,7 @@ struct CreateEntitiesWidget: View {
                                     fgColour: .white,
                                     size: .link,
                                     type: nav.parent == .tasks ? .secondary : .standard,
-                                    redirect: AnyView(TaskDashboard()),
+                                    redirect: AnyView(TaskDetail()),
                                     pageType: .tasks,
                                     sidebar: AnyView(TaskDashboardSidebar())
                                 )

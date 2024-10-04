@@ -308,7 +308,7 @@ struct UnifiedSidebar {
                         .useDefaultHover({ inside in self.highlighted = inside})
                     RowAddNavLink(
                         title: "Add",
-                        target: AnyView(TaskDashboard())
+                        target: AnyView(TaskDetail())
                     )
                     .buttonStyle(.plain)
                 }
@@ -616,9 +616,8 @@ extension UnifiedSidebar.EntityTypeRowButton {
             self.state.session.term = self.resource as? TaxonomyTerm
         case .definitionDetail:
             self.state.session.definition = self.resource as? TaxonomyTermDefinitions
-        // @TODO: uncomment after this detail view has been implemented
-//        case .taskDetail, .tasks:
-//            self.state.session.task = self.resource as? LogTask
+        case .taskDetail:
+            self.state.session.task = self.resource as? LogTask
         case .noteDetail, .notes:
             self.state.session.note = self.resource as? Note
         case .peopleDetail, .people:

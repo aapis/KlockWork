@@ -548,7 +548,7 @@ extension Navigation {
             HistoryPage(page: .tasks, view: AnyView(TaskDashboard()), sidebar: AnyView(TaskDashboardSidebar()), title: "Tasks"),
             HistoryPage(page: .terms, view: AnyView(TermsDashboard()), sidebar: AnyView(TermsDashboardSidebar()), title: "Terms"),
             HistoryPage(page: .definitionDetail, view: AnyView(DefinitionDetail()), sidebar: AnyView(TermsDashboardSidebar()), title: "Definition detail"),
-            HistoryPage(page: .taskDetail, view: AnyView(EmptyView()), sidebar: AnyView(TermsDashboardSidebar()), title: "Task detail"),
+            HistoryPage(page: .taskDetail, view: AnyView(TaskDetail()), sidebar: AnyView(TermsDashboardSidebar()), title: "Task detail"),
             HistoryPage(page: .noteDetail, view: AnyView(NoteView()), sidebar: AnyView(NoteCreateSidebar()), title: "Note detail"),
             HistoryPage(page: .people, view: AnyView(PeopleDashboard()), sidebar: AnyView(PeopleDashboardSidebar()), title: "People"),
             HistoryPage(page: .peopleDetail, view: AnyView(PeopleDetail()), sidebar: AnyView(PeopleDashboardSidebar()), title: "Person"),
