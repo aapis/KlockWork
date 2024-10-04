@@ -10,14 +10,11 @@ import Foundation
 import SwiftUI
 
 struct TaskListView: View {
+    @EnvironmentObject public var state: Navigation
+    @Environment(\.dismiss) private var dismiss
+    @State private var content: String = ""
+    @State var isPresented: Bool = false
     public var job: Job
-    
-    @State private var entryText: String = ""
-    
-    @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var updater: ViewUpdater
-    @EnvironmentObject public var nav: Navigation
-    
     private var tasks: [LogTask] {
         let ordered = job.tasks!.sortedArray(using: [
                 NSSortDescriptor(key: "completedDate", ascending: true),
@@ -33,8 +30,21 @@ struct TaskListView: View {
         VStack(alignment: .leading, spacing: 0) {
             VStack {
                 VStack(alignment: .leading, spacing: 0) {
-                    FancyTextField(placeholder: "Add a task to \(job.jid.string)", lineLimit: 1, onSubmit: createTask, text: $entryText)
-                    
+                    ZStack(alignment: .topTrailing) {
+                        RowAddButton(isPresented: $isPresented, callback: self.actionOnCreate)
+                            .frame(height: 40)
+                            .disabled(self.content.isEmpty || self.state.session.job == nil)
+                            .opacity(self.content.isEmpty || self.state.session.job == nil ? 0.5 : 1)
+
+                        FancyTextField(
+                            placeholder: "What needs to be done?",
+                            lineLimit: 1,
+                            onSubmit: self.actionOnCreate,
+                            disabled: self.state.session.job == nil,
+                            text: $content
+                        )
+                    }
+
                     Divider()
                         .foregroundColor(.clear)
                         .frame(height: 20)
@@ -43,9 +53,10 @@ struct TaskListView: View {
                     if job.tasks!.count == 0 {
                         Text("No tasks associated with this list yet")
                     } else {
-                        Grid(alignment: .top, horizontalSpacing: 1, verticalSpacing: 1) {
+                        VStack(alignment: .leading, spacing: 1) {
                             header.font(Theme.font)
-                            
+
+                            // @TODO: group task statuses (complete, cancelled, etc) into tabbed interface
                             ScrollView(showsIndicators: false) {
                                 VStack(spacing: 1) {
                                     ForEach(tasks, id: \.id) { task in
@@ -54,7 +65,6 @@ struct TaskListView: View {
                                 }
                             }
                         }
-                        .id(updater.ids["tlv.table"])
                     }
                 }
             }
@@ -63,36 +73,25 @@ struct TaskListView: View {
     
     @ViewBuilder
     var header: some View {
-        GridRow {
-            Group {
-                ZStack {
-                    Color.fromStored(job.colour!)
-                }
-            }
-            .frame(width: 50)
-
-            Group {
-                ZStack(alignment: .leading) {
-                    Color.fromStored(job.colour!)
-                    Text("Tasks for \(job.jid.string)")
-                        .padding(5)
-                        .foregroundColor(Color.fromStored(job.colour!).isBright() ? Color.black : Color.white)
-                }
-            }
+        HStack(alignment: .center, spacing: 0) {
+            Text("Tasks for \(self.job.title ?? self.job.jid.string) (#\(self.job.jid.string))")
+                .foregroundColor(self.job.backgroundColor.isBright() ? Theme.base : .white)
+            Spacer()
         }
-        .frame(height: 40)
+        .padding()
+        .background(self.job.backgroundColor)
     }
     
-    private func createTask() -> Void {
-        CoreDataTasks(moc: self.nav.moc).create(
-            content: self.entryText,
+    private func actionOnCreate() -> Void {
+        CoreDataTasks(moc: self.state.moc).create(
+            content: self.content,
             created: Date(),
             due: DateHelper.endOfTomorrow(Date()) ?? Date(),
             job: self.job
         )
 
-        entryText = ""
-        updater.update()
+        self.content = ""
+        self.dismiss()
 
         PersistenceController.shared.save()
     }

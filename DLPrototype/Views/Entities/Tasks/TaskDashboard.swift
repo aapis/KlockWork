@@ -17,19 +17,30 @@ struct TaskDashboard: View {
     @State private var job: Job?
 
     var body: some View {
-        VStack(alignment: .leading) {
-            VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .center, spacing: 0) {
                     Title(text: eType.label, imageAsImage: eType.icon)
-                    Spacer()
-                    FancyButtonv2(
-                        text: "Create",
-                        action: {/*self.state.to(.taskDetail)*/}, // @TODO: uncomment once TaskDetail/Dashboard is rebuilt
-                        icon: "plus",
-                        showLabel: false
-                    )
+                    if self.job == nil {
+                        Spacer()
+                        FancyButtonv2(
+                            text: "Create",
+                            action: self.actionOnTapCreate,
+                            icon: "plus",
+                            showLabel: false
+                        )
+                    }
                 }
-                create
+                FancyDivider()
+
+                if self.state.session.job == nil {
+                    FancyHelpText(
+                        text: "No terms found for the selected job. Choose a job from the sidebar to get started.",
+                        page: self.page
+                    )
+                } else {
+                    TaskListView(job: self.state.session.job!)
+                }
 
                 Spacer()
             }
@@ -39,21 +50,11 @@ struct TaskDashboard: View {
         .onAppear(perform: actionOnAppear)
         .onChange(of: self.state.session.job) { self.actionOnAppear() }
     }
+}
 
-    @ViewBuilder
-    var create: some View {
-        FancyDivider()
-
-        if self.state.session.job == nil {
-            FancyHelpText(
-                text: "No terms found for the selected job. Choose a job from the sidebar to get started.",
-                page: self.page
-            )
-        } else {
-            TaskListView(job: self.state.session.job!)
-        }
-    }
-    
+extension TaskDashboard {
+    /// Onload handler. Sets job
+    /// - Returns: Void
     private func actionOnAppear() -> Void {
         if let sJob = self.state.session.job {
             self.job = sJob
@@ -62,5 +63,11 @@ struct TaskDashboard: View {
         if defaultSelectedJob != nil {
             self.job = self.defaultSelectedJob
         }
+    }
+
+    /// Fires when you tap the Create button
+    /// - Returns: Void
+    private func actionOnTapCreate() -> Void {
+        self.state.to(.taskDetail)
     }
 }
