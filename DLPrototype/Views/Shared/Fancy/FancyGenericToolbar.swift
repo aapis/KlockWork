@@ -66,22 +66,28 @@ struct FancyGenericToolbar: View {
             GridRow {
                 Group {
                     ZStack(alignment: .topLeading) {
-                        (location == .sidebar ? .clear : Theme.toolbarColour)
+                        (location == .sidebar ? .clear : Theme.textBackground)
 
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 1) {
-                                ForEach(buttons, id: \ToolbarButton.id) { button in
-                                    TabView(
-                                        button: button,
-                                        location: location,
-                                        selected: $selected,
-                                        mode: mode
-                                    )
-                                    
-                                    if buttons.count == 1 {
-                                        Text(buttons.first!.helpText)
-                                            .padding(.leading, 10)
-                                            .opacity(0.6)
+                        ZStack(alignment: .top) {
+//                            LinearGradient(gradient: Gradient(colors: [.clear, Theme.base]), startPoint: .bottom, endPoint: .top)
+//                                .opacity(0.2)
+//                                .blendMode(.softLight)
+//                                .frame(height: 12)
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 1) {
+                                    ForEach(buttons, id: \ToolbarButton.id) { button in
+                                        TabView(
+                                            button: button,
+                                            location: location,
+                                            selected: $selected,
+                                            mode: mode
+                                        )
+
+                                        if buttons.count == 1 {
+                                            Text(buttons.first!.helpText)
+                                                .padding(.leading, 10)
+                                                .opacity(0.6)
+                                        }
                                     }
                                 }
                             }
@@ -161,13 +167,13 @@ struct FancyGenericToolbar: View {
                     
                     if location == .sidebar {
                         if mode == .compact {
-                            button.icon.padding(0)
+                            button.icon.padding(0).symbolRenderingMode(.hierarchical)
                         } else {
                             button.label.padding(0)
                         }
                     } else {
                         if mode == .compact {
-                            button.icon.padding(16)
+                            button.icon.padding(16).symbolRenderingMode(.hierarchical)
                         } else {
                             button.label.padding(16)
                         }
@@ -183,7 +189,7 @@ struct FancyGenericToolbar: View {
 
     struct UIGradient: View {
         var body: some View {
-            LinearGradient(gradient: Gradient(colors: [.clear, .black]), startPoint: .top, endPoint: .bottom)
+            LinearGradient(gradient: Gradient(colors: [.clear, Theme.base]), startPoint: .top, endPoint: .bottom)
                 .opacity(0.6)
                 .blendMode(.softLight)
                 .frame(height: 12)

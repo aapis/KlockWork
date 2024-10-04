@@ -21,6 +21,24 @@ struct Home: View {
     @AppStorage("general.showSessionInspector") public var showSessionInspector: Bool = false
     @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
+    
+    /// Sidebar widgets that live in every sidebar
+    static public let standardSidebarWidgets: [ToolbarButton] = [
+        ToolbarButton(
+            id: 0,
+            helpText: "Resources",
+            icon: "globe",
+            labelText: "Resources",
+            contents: AnyView(JobsWidgetRedux())
+        ),
+        ToolbarButton(
+            id: 1,
+            helpText: "Outline",
+            icon: "menucard",
+            labelText: "Outline",
+            contents: AnyView(OutlineWidget())
+        )
+    ]
 
     private let page: PageConfiguration.AppPage = .find
     private var buttons: [PageGroup: [SidebarButton]] {

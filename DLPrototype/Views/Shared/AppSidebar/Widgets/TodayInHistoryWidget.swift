@@ -9,36 +9,50 @@
 import SwiftUI
 
 struct TodayInHistoryWidget: View {
-    public let title: String = "Recent Jobs"
-    private let todaysDate: Date = Date()
-
-    @State private var minimized: Bool = false
+    @EnvironmentObject public var nav: Navigation
+    public let title: String = "Today In History"
     @State private var selectedDate: String = ""
     @State private var currentDate: Date = Date()
     @State private var todayInHistory: [DayInHistory] = []
-
-    @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var nav: Navigation
-
     @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
 
     var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ZStack(alignment: .bottomLeading) {
+                HStack(alignment: .center, spacing: 0) {
+                    Text(self.title)
+                        .padding(6)
+                        .background(Theme.textBackground)
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                }
+                .padding(8)
+            }
+            Divider()
 
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: 8) {
                 ForEach(todayInHistory, id: \.year) { day in
                     SidebarItem(
                         data: day.linkLabel(),
                         help: day.linkLabel(),
-                        icon: "arrowshape.right",
+                        icon: "chevron.right",
                         orientation: .right,
-                        action: {actionTodayInHistory(day)}
+                        action: {actionTodayInHistory(day)},
+                        showBorder: false,
+                        showButton: false
                     )
-                    .foregroundColor(day.highlight ? Color.black.opacity(0.6) : Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                    .padding(2)
+                    .background(day.highlight ? Color.white.opacity(0.5) : .yellow.opacity(0.8))
+                    .foregroundStyle(Theme.base.opacity(day.highlight ? 0.4 : 1))
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+
                 }
             }
             .padding(8)
-            .background(Theme.base.opacity(0.2))
-        
+            Divider()
+        }
+        .background(Theme.base.opacity(0.2))
         .onAppear(perform: loadWidgetData)
         .onChange(of: nav.session.date) {
             loadWidgetData()
@@ -47,10 +61,6 @@ struct TodayInHistoryWidget: View {
 }
 
 extension TodayInHistoryWidget {
-    private func actionMinimize() -> Void {
-        minimized.toggle()
-    }
-
     private func findHistoricalDataForToday() async -> Void {
         let calendar = Calendar.autoupdatingCurrent
         let current = calendar.dateComponents([.year, .month, .day], from: currentDate)
@@ -61,23 +71,11 @@ extension TodayInHistoryWidget {
                 let offsetYear = ((offset * -1) + current.year!)
                 let components = DateComponents(year: offsetYear, month: current.month!, day: current.day!)
                 let day = calendar.date(from: components)
-                let numRecordsForDay = CoreDataRecords(moc: moc).countForDate(day)
+                let numRecordsForDay = CoreDataRecords(moc: self.nav.moc).countForDate(day)
 
                 todayInHistory.append(DayInHistory(year: offsetYear, date: day ?? Date(), count: numRecordsForDay))
             }
         }
-    }
-
-    private func prev() -> Void {
-        todayInHistory = []
-        currentDate -= 86400
-        nav.session.date = currentDate
-    }
-
-    private func next() -> Void {
-        todayInHistory = []
-        currentDate += 86400
-        nav.session.date = currentDate
     }
 
     private func loadWidgetData() -> Void {

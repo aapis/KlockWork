@@ -13,7 +13,7 @@ struct DashboardSidebar: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            FancyGenericToolbar(buttons: tabs, standalone: true, location: .sidebar)
+            FancyGenericToolbar(buttons: tabs, standalone: true, location: .sidebar, mode: .compact)
         }
         .onAppear(perform: createToolbar)
     }
@@ -25,39 +25,24 @@ extension DashboardSidebar {
             ToolbarButton(
                 id: 0,
                 helpText: "Today in history",
-                label: AnyView(
-                    HStack {
-                        Image(systemName: "calendar")
-                        Text("History")
-                    }
-                        .padding([.leading, .trailing], 10)
-                ),
+                icon: "calendar",
+                labelText: "History",
                 contents: AnyView(TodayInHistoryWidget())
             ),
             ToolbarButton(
                 id: 1,
-                helpText: "Companies & Projects",
-                label: AnyView(
-                    HStack {
-                        Image(systemName: "menucard")
-                        Text("Outline")
-                    }
-                        .padding([.leading, .trailing], 10)
-                ),
-                contents: AnyView(OutlineWidget())
+                helpText: "Resources",
+                icon: "globe",
+                labelText: "Resources",
+                contents: AnyView(JobsWidgetRedux())
             ),
             ToolbarButton(
                 id: 2,
-                helpText: "Resources",
-                label: AnyView(
-                    HStack {
-                        Image(systemName: "globe.americas")
-                        Text("Resources")
-                    }
-                        .padding([.leading, .trailing], 10)
-                ),
-                contents: AnyView(JobsWidgetRedux())
-            )
+                helpText: "Companies & Projects",
+                icon: "menucard",
+                labelText: "Outline",
+                contents: AnyView(OutlineWidget())
+            ),
         ]
     }
 }
