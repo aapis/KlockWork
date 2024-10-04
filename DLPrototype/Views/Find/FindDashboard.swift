@@ -9,6 +9,8 @@
 import SwiftUI
 
 struct FindDashboard: View {
+    typealias Entity = PageConfiguration.EntityType
+
     @EnvironmentObject public var nav: Navigation
     @Binding public var searching: Bool
     public var location: WidgetLocation = .content
@@ -155,7 +157,7 @@ struct FindDashboard: View {
                     Loading()
                 } else {
                     FancyDivider()
-                    FancyGenericToolbar(buttons: buttons, standalone: true, location: location)
+                    FancyGenericToolbar(buttons: buttons, standalone: true, location: location, mode: .compact)
                     Spacer()
                 }
             }
@@ -260,14 +262,9 @@ extension FindDashboard {
             buttons.append(
                 ToolbarButton(
                     id: 0,
-                    helpText: "Records",
-                    label: AnyView(
-                        HStack {
-                            Image(systemName: "tray")
-                                .font(.title2)
-                            Text("Records")
-                        }
-                    ),
+                    helpText: Entity.records.label,
+                    icon: Entity.records.icon,
+                    labelText: Entity.records.label,
                     contents: AnyView(RecordsMatchingString(searchText))
                 )
             )
@@ -277,14 +274,9 @@ extension FindDashboard {
             buttons.append(
                 ToolbarButton(
                     id: 1,
-                    helpText: "Notes",
-                    label: AnyView(
-                        HStack {
-                            Image(systemName: "note.text")
-                                .font(.title2)
-                            Text("Notes")
-                        }
-                    ),
+                    helpText: Entity.notes.label,
+                    icon: Entity.notes.icon,
+                    labelText: Entity.notes.label,
                     contents: AnyView(NotesMatchingString(searchText))
                 )
             )
@@ -294,14 +286,9 @@ extension FindDashboard {
             buttons.append(
                 ToolbarButton(
                     id: 2,
-                    helpText: "Tasks",
-                    label: AnyView(
-                        HStack {
-                            Image(systemName: "checklist")
-                                .font(.title2)
-                            Text("Tasks")
-                        }
-                    ),
+                    helpText: Entity.tasks.label,
+                    icon: Entity.tasks.icon,
+                    labelText: Entity.tasks.label,
                     contents: AnyView(TasksMatchingString(searchText))
                 )
             )
@@ -311,14 +298,9 @@ extension FindDashboard {
             buttons.append(
                 ToolbarButton(
                     id: 3,
-                    helpText: "Projects",
-                    label: AnyView(
-                        HStack {
-                            Image(systemName: "folder")
-                                .font(.title2)
-                            Text("Projects")
-                        }
-                    ),
+                    helpText: Entity.projects.label,
+                    icon: Entity.projects.icon,
+                    labelText: Entity.projects.label,
                     contents: AnyView(ProjectsMatchingString(searchText))
                 )
             )
@@ -328,14 +310,9 @@ extension FindDashboard {
             buttons.append(
                 ToolbarButton(
                     id: 4,
-                    helpText: "Jobs",
-                    label: AnyView(
-                        HStack {
-                            Image(systemName: "hammer")
-                                .font(.title2)
-                            Text("Jobs")
-                        }
-                    ),
+                    helpText: Entity.jobs.label,
+                    icon: Entity.jobs.icon,
+                    labelText: Entity.jobs.label,
                     contents: AnyView(JobsMatchingString(searchText))
                 )
             )
@@ -345,14 +322,9 @@ extension FindDashboard {
             buttons.append(
                 ToolbarButton(
                     id: 5,
-                    helpText: "Companies",
-                    label: AnyView(
-                        HStack {
-                            Image(systemName: "building.2")
-                                .font(.title2)
-                            Text("Companies")
-                        }
-                    ),
+                    helpText: Entity.companies.label,
+                    icon: Entity.companies.icon,
+                    labelText: Entity.companies.label,
                     contents: AnyView(CompaniesMatchingString(searchText))
                 )
             )
@@ -362,14 +334,9 @@ extension FindDashboard {
             buttons.append(
                 ToolbarButton(
                     id: 6,
-                    helpText: "People",
-                    label: AnyView(
-                        HStack {
-                            Image(systemName: "person.2")
-                                .font(.title2)
-                            Text("People")
-                        }
-                    ),
+                    helpText: Entity.people.label,
+                    icon: Entity.people.icon,
+                    labelText: Entity.people.label,
                     contents: AnyView(PeopleMatchingString(searchText))
                 )
             )
@@ -379,14 +346,9 @@ extension FindDashboard {
             buttons.append(
                 ToolbarButton(
                     id: 7,
-                    helpText: "Terms & Definitions",
-                    label: AnyView(
-                        HStack {
-                            Image(systemName: "list.bullet.rectangle")
-                                .font(.title2)
-                            Text("Terms & Definitions")
-                        }
-                    ),
+                    helpText: Entity.terms.label,
+                    icon: Entity.terms.icon,
+                    labelText: "Terms & Definitions",
                     contents: AnyView(TermsMatchingString(searchText))
                 )
             )

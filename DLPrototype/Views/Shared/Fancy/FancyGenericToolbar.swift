@@ -31,11 +31,25 @@ struct ToolbarButton: Hashable, Equatable {
         self.label = label
         self.contents = contents
     }
-    
+
     init(id: Int, helpText: String, icon: String, labelText: String, contents: AnyView?) {
         self.id = id
         self.helpText = helpText
         self.icon = AnyView(Image(systemName: icon))
+        self.label = AnyView(
+            HStack {
+                self.icon
+                Text(labelText)
+            }
+        )
+        self.labelText = labelText
+        self.contents = contents
+    }
+
+    init(id: Int, helpText: String, icon: Image, labelText: String, contents: AnyView?) {
+        self.id = id
+        self.helpText = helpText
+        self.icon = AnyView(icon)
         self.label = AnyView(
             HStack {
                 self.icon
