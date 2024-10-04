@@ -10,13 +10,13 @@ import SwiftUI
 
 extension Planning {
     struct Menu: View {
+        @EnvironmentObject public var nav: Navigation
         @State private var numTasks: Int = 0
         @State private var numJobs: Int = 0
         @State private var numNotes: Int = 0
         @State private var numProjects: Int = 0
         @State private var numCompanies: Int = 0
-
-        @EnvironmentObject public var nav: Navigation
+        public var page: PageConfiguration.AppPage = .planning
 
         var body: some View {
             VStack {
@@ -50,7 +50,7 @@ extension Planning {
                 }
                 .padding(5)
             }
-            .background(Theme.headerColour)
+            .background(self.page.primaryColour)
             .onAppear(perform: actionOnAppear)
             .onChange(of: nav.planning.tasks, perform: actionOnChangeTasks)
             .onChange(of: nav.planning.jobs, perform: actionOnChangeJobs)

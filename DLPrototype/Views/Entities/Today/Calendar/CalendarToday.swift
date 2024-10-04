@@ -11,17 +11,17 @@ import SwiftUI
 import EventKit
 
 struct CalendarToday: View {
+    @EnvironmentObject public var ce: CoreDataCalendarEvent
+    @EnvironmentObject public var state: Navigation
+    public var page: PageConfiguration.AppPage = .today
     @State private var inProgress: [EKEvent] = []
     @State private var upcoming: [EKEvent] = []
     @State private var currentBlock: Int = 0
     @State private var currentDate: String = ""
     @State private var timer: Timer? = nil
-
     @AppStorage("today.startOfDay") public var startOfDay: Int = 9
     @AppStorage("today.endOfDay") public var endOfDay: Int = 18
 
-    @EnvironmentObject public var ce: CoreDataCalendarEvent
-    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
@@ -31,7 +31,7 @@ struct CalendarToday: View {
                 Spacer()
             }
             .frame(height: 40)
-            .background(Theme.headerColour)
+            .background(self.page.primaryColour)
 
             ScrollView(showsIndicators: false) {
                 HStack(spacing: 0) {

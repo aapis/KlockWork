@@ -10,7 +10,6 @@ import SwiftUI
 
 extension Planning {
     struct Today: View {
-        @Environment(\.managedObjectContext) var moc
         @EnvironmentObject public var nav: Navigation
         @EnvironmentObject public var updater: ViewUpdater
 
