@@ -191,10 +191,12 @@ struct SidebarButton: View, Identifiable {
 
     @ViewBuilder private var backgroundColour: some View {
         Theme.toolbarColour
-        if nav.parent == pageType {
+
+
+        if nav.parent == pageType || self.nav.parent?.parentView == self.pageType {
             if let parent = nav.parent {
                 if isDatePickerPresented {
-//                    Theme.secondary
+                    //                    Theme.secondary
                     Color.white
                 } else {
                     parent.colour
