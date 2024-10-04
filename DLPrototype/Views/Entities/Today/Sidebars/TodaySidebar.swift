@@ -9,11 +9,10 @@
 import SwiftUI
 
 struct TodaySidebar: View {
+    @EnvironmentObject public var nav: Navigation
     @State public var date: Date = Date()
     @State private var tabs: [ToolbarButton] = []
     @State private var searching: Bool = false
-
-    @EnvironmentObject public var nav: Navigation
 
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {

@@ -109,7 +109,9 @@ struct UnifiedSidebar {
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 ZStack(alignment: .trailing) {
-                    RowButton(text: self.company.name ?? "_COMPANY_NAME", alive: self.company.alive, isPresented: $isPresented)
+                    RowButton(text: self.company.name ?? "_COMPANY_NAME", alive: self.company.alive, callback: {
+                        self.state.session.company = self.company
+                    }, isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
 
                     if self.company == self.state.session.job?.project?.company {
@@ -242,6 +244,16 @@ struct UnifiedSidebar {
                 ZStack(alignment: .trailing) {
                     RowButton(text: self.job.title ?? self.job.jid.string, alive: self.job.alive, callback: {
                         self.state.session.setJob(self.job)
+
+                        if self.state.parent == .planning {
+                            self.state.planning.jobs.insert(job)
+                            self.state.planning.projects.insert(job.project!)
+
+                            // projects are allowed to be unowned
+                            if let company = job.project!.company {
+                                self.state.planning.companies.insert(company)
+                            }
+                        }
                     }, isPresented: $isPresented)
                     .useDefaultHover({ inside in self.highlighted = inside})
 
@@ -507,7 +519,7 @@ struct UnifiedSidebar {
 
         var body: some View {
             Button {
-                isPresented.toggle()
+                self.isPresented.toggle()
                 self.callback?()
             } label: {
                 HStack(alignment: .center, spacing: 8) {
