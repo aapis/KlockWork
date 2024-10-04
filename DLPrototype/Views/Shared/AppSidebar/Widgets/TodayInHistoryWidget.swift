@@ -30,7 +30,7 @@ struct TodayInHistoryWidget: View {
             }
             Divider()
 
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 1) {
                 ForEach(todayInHistory, id: \.year) { day in
                     SidebarItem(
                         data: day.linkLabel(),
@@ -41,15 +41,11 @@ struct TodayInHistoryWidget: View {
                         showBorder: false,
                         showButton: false
                     )
-                    .clipShape(RoundedRectangle(cornerRadius: 5))
-                    .padding(2)
+                    .font(.title3)
                     .background(day.highlight ? Color.white.opacity(0.5) : .yellow.opacity(0.8))
                     .foregroundStyle(Theme.base.opacity(day.highlight ? 0.4 : 1))
-                    .clipShape(RoundedRectangle(cornerRadius: 5))
-
                 }
             }
-            .padding(8)
             Divider()
         }
         .background(Theme.base.opacity(0.2))
