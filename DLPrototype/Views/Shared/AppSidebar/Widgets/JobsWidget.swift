@@ -61,13 +61,13 @@ struct JobsWidgetRedux: View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack {
                 Theme.base.opacity(0.2)
-                LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
-                    .opacity(0.6)
-                    .blendMode(.softLight)
-                    .frame(height: 50)
-                
+
                 HStack(alignment: .center, spacing: 8) {
                     Text("\(self.companies.count) Companies")
+                        .padding(6)
+                        .background(Theme.textBackground)
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
                     Spacer()
                     Toggle("Published", isOn: $showPublished)
                         .padding(6)
@@ -75,10 +75,11 @@ struct JobsWidgetRedux: View {
                         .foregroundStyle(self.showPublished ? .white : Theme.base)
                         .clipShape(RoundedRectangle(cornerRadius: 5))
                         .help("Show or hide unpublished items")
+                        .font(.caption)
                 }
-                .font(.caption)
                 .padding(8)
             }
+            Divider()
 
             ForEach(self.companies, id: \.objectID) { company in
                 UnifiedSidebar.SingleCompany(company: company)

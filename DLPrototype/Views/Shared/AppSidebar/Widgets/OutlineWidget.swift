@@ -18,46 +18,65 @@ struct OutlineWidget: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            VStack(alignment: .leading, spacing: 10) {
-                if companies.count > 0 {
-                    ForEach(companies, id: \.objectID) { company in
-                        Group {
-                            HStack {
-                                if company.isDefault {
-                                    Image(systemName: "building.2")
-                                }
-                                FancyTextLink(text: company.name!.capitalized, destination: AnyView(CompanyView(company: company)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
-                                    .help("Edit company: \(company.name!.capitalized)")
-                                Spacer()
-                            }
-                            ProjectOutline(company: company)
-                        }
-                    }
-                } else {
-                    HStack {
-                        FancyTextLink(text: "No companies yet, create one!", destination: AnyView(CompanyCreate()), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
+            ZStack(alignment: .topLeading) {
+                Theme.base.opacity(0.2)
+
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(alignment: .center, spacing: 0) {
+                        Text("Outline")
+                            .padding(6)
+                            .background(Theme.textBackground)
+                            .foregroundStyle(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 5))
                         Spacer()
                     }
-                }
-
-                if unowned.count > 0 {
+                    .padding(8)
                     Divider()
-                    VStack(alignment: .leading) {
-                        Text("Unowned Projects")
-                        ForEach(unowned, id: \.objectID) { project in
-                            HStack {
-                                Image(systemName: "folder")
-                                FancyTextLink(text: "[\(project.abbreviation != nil ? project.abbreviation!.uppercased() : "NOPE")] \(project.name!.capitalized)", destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
-                                    .help("Edit project: \(project.name!.capitalized)")
+                }
+            }
+
+            ZStack {
+                Theme.base.opacity(0.2)
+                VStack(alignment: .leading, spacing: 10) {
+                    if companies.count > 0 {
+                        ForEach(companies, id: \.objectID) { company in
+                            Group {
+                                HStack {
+                                    if company.isDefault {
+                                        Image(systemName: "building.2")
+                                    }
+                                    FancyTextLink(text: company.name!.capitalized, destination: AnyView(CompanyView(company: company)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
+                                        .help("Edit company: \(company.name!.capitalized)")
+                                    Spacer()
+                                }
+                                ProjectOutline(company: company)
                             }
-                            .padding([.leading], 10)
+                        }
+                    } else {
+                        HStack {
+                            FancyTextLink(text: "No companies yet, create one!", destination: AnyView(CompanyCreate()), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
+                            Spacer()
+                        }
+                    }
+
+                    if unowned.count > 0 {
+                        Divider()
+                        VStack(alignment: .leading) {
+                            Text("Unowned Projects")
+                            ForEach(unowned, id: \.objectID) { project in
+                                HStack {
+                                    Image(systemName: "folder")
+                                    FancyTextLink(text: "[\(project.abbreviation != nil ? project.abbreviation!.uppercased() : "NOPE")] \(project.name!.capitalized)", destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
+                                        .help("Edit project: \(project.name!.capitalized)")
+                                }
+                                .padding([.leading], 10)
+                            }
                         }
                     }
                 }
+                .padding(10)
             }
-            .padding(10)
         }
-        .background(Theme.base.opacity(0.2))
         .onAppear(perform: actionOnAppear)
         .onChange(of: defaultCompany) {
             actionOnAppear()
