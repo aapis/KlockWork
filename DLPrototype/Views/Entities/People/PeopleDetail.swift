@@ -15,6 +15,7 @@ struct PeopleDetail: View {
     @State private var isDeleteAlertPresented: Bool = false
     @State private var name: String = ""
     @State private var title: String = ""
+    @State private var company: Company?
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .people
 
@@ -38,26 +39,41 @@ struct PeopleDetail: View {
                         }
                         Button("No", role: .cancel) {}
                     }
+                    .disabled(self.company == nil)
+                    .opacity(self.company == nil ? 0.5 : 1)
                 }
 
                 FancyButtonv2(text: "Cancel", action: self.actionOnCancel, showIcon: false)
+                    .disabled(self.company == nil)
+                    .opacity(self.company == nil ? 0.5 : 1)
                 FancyButtonv2(text: "Save", action: self.actionOnSave, showIcon: false, type: .primary)
+                    .disabled(self.company == nil)
+                    .opacity(self.company == nil ? 0.5 : 1)
             }
             .padding(.bottom)
 
             VStack(alignment: .leading) {
-                // @TODO: rebuild company picker and use it here
-//                CompanyPicker(onChange: {_, _ in}, selected: Int(self.person?.company?.pid ?? 0))
                 FancyTextField(
                     placeholder: "Name",
                     onSubmit: self.actionOnSave,
                     text: $name
                 )
+                .disabled(self.company == nil).onChange(of: self.state.session.task) { self.actionOnAppear() }
+                .opacity(self.company == nil ? 0.5 : 1)
                 FancyTextField(
                     placeholder: "Title",
                     onSubmit: self.actionOnSave,
                     text: $title
                 )
+                .disabled(self.company == nil)
+                .opacity(self.company == nil ? 0.5 : 1)
+
+                if self.company == nil {
+                    FancyHelpText(
+                        text: "Select a job first",
+                        page: self.page
+                    )
+                }
                 // @TODO: not sure if I want this here
 //                .focused($primaryTextFieldInFocus)
 //                .onAppear {
@@ -74,6 +90,7 @@ struct PeopleDetail: View {
         .background(self.page.primaryColour)
         .onAppear(perform: self.actionOnAppear)
         .onChange(of: self.state.session.person) { self.actionOnAppear() }
+        .onChange(of: self.state.session.job) { self.actionOnAppear() }
     }
 }
 
@@ -86,6 +103,14 @@ extension PeopleDetail {
 
         self.name = self.person?.name ?? ""
         self.title = self.person?.title ?? ""
+
+        if let stored = self.state.session.company {
+            self.company = stored
+        }
+
+        if let stored = self.state.session.job {
+            self.company = stored.project?.company
+        }
     }
 
     /// Callback that fires when save button clicked/tapped
@@ -94,6 +119,7 @@ extension PeopleDetail {
         if self.person != nil {
             self.person?.name = self.name
             self.person?.title = self.title
+            self.person?.company = self.company
         } else {
             let date = Date()
             CoreDataPerson(moc: self.state.moc).create(
