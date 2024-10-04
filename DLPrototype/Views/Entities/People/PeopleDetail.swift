@@ -106,6 +106,7 @@ extension PeopleDetail {
 
         PersistenceController.shared.save()
         self.state.to(.people)
+        self.dismiss()
     }
 
     /// Fires when user chooses to unpublish a definition

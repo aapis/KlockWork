@@ -125,7 +125,6 @@ struct UnifiedSidebar {
                             .opacity(0.7)
                             .padding(.leading)
                         Spacer()
-                        // @TODO: uncomment when people entities has been implemented
                         RowAddNavLink(
                             title: "+ Person",
                             target: AnyView(PeopleDetail())
@@ -469,12 +468,11 @@ struct UnifiedSidebar {
                 ZStack(alignment: .trailing) {
                     EntityRowButton(text: "People", isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
-                    // @TODO: uncomment when people entities has been implemented
-//                    RowAddNavLink(
-//                        title: "Add",
-//                        target: AnyView(EmptyView())
-//                    )
-//                    .buttonStyle(.plain)
+                    RowAddNavLink(
+                        title: "Add",
+                        target: AnyView(PeopleDetail())
+                    )
+                    .buttonStyle(.plain)
                 }
                 .background(Theme.base.opacity(0.6).blendMode(.softLight))
 
@@ -488,7 +486,7 @@ struct UnifiedSidebar {
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(self.entity.people?.allObjects as? [Person] ?? [], id: \.objectID) { person in
                                     if person.name != nil {
-                                        EntityTypeRowButton(label: person.name!, redirect: .taskDetail, resource: person)
+                                        EntityTypeRowButton(label: person.name!, redirect: .peopleDetail, resource: person)
                                     }
                                 }
                             }
@@ -623,6 +621,8 @@ extension UnifiedSidebar.EntityTypeRowButton {
 //            self.state.session.task = self.resource as? LogTask
         case .noteDetail, .notes:
             self.state.session.note = self.resource as? Note
+        case .peopleDetail, .people:
+            self.state.session.person = self.resource as? Person
         default:
             self.noLinkAvailable = true
         }
