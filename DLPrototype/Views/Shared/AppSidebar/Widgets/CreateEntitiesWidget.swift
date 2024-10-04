@@ -373,7 +373,7 @@ struct CreateEntitiesWidget: View {
                                     fgColour: .white,
                                     size: .link,
                                     type: nav.parent == .tasks ? .secondary : .standard,
-                                    redirect: AnyView(TermsDashboard()),
+                                    redirect: AnyView(DefinitionDetail()),
                                     pageType: .terms,
                                     sidebar: AnyView(TermsDashboardSidebar())
                                 )

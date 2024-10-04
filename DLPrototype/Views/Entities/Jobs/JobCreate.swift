@@ -12,6 +12,8 @@ struct JobCreate: View {
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
     @Environment(\.dismiss) private var dismiss
+    private let page: PageConfiguration.AppPage = .explore
+    private let eType: PageConfiguration.EntityType = .jobs
     @State private var id: String = ""
     @State private var pName: String = ""
     @State private var pId: String = ""
@@ -31,7 +33,7 @@ struct JobCreate: View {
         VStack(alignment: .leading) {
 
             VStack(alignment: .leading) {
-                Title(text: "New job")
+                Title(text: "Create Job", imageAsImage: self.eType.icon)
 
                 fieldProjectLink
                 fieldIsOn
@@ -47,7 +49,7 @@ struct JobCreate: View {
             }
             .padding()
         }
-        .background(Theme.toolbarColour)
+        .background(self.page.primaryColour)
         .onChange(of: id) {
             JobFormValidator(moc: self.nav.moc).onChangeCallback(
                 jobFieldValue: id,

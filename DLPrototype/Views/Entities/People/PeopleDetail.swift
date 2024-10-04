@@ -70,7 +70,7 @@ struct PeopleDetail: View {
 
                 if self.company == nil {
                     FancyHelpText(
-                        text: "Select a job first",
+                        text: "Select a job from the sidebar to get started.",
                         page: self.page
                     )
                 }

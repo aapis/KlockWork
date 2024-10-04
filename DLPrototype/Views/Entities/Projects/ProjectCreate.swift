@@ -10,6 +10,10 @@ import Foundation
 import SwiftUI
 
 struct ProjectCreate: View {
+    @EnvironmentObject public var state: Navigation
+    @Environment(\.dismiss) private var dismiss
+    private let page: PageConfiguration.AppPage = .explore
+    private let eType: PageConfiguration.EntityType = .projects
     @State private var name: String = ""
     @State private var created: Date = Date()
     @State private var pid: Double = 0.0
@@ -20,7 +24,6 @@ struct ProjectCreate: View {
     @State private var colour: Color = Color.clear
     @State private var selectedCompany: Int = 0
 
-    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var updater: ViewUpdater
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
 
@@ -31,10 +34,7 @@ struct ProjectCreate: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
-                HStack {
-                    Title(text: "Create a project")
-                    Spacer()
-                }
+                Title(text: "Create Project", imageAsImage: eType.icon)
 
                 form
 
@@ -52,10 +52,9 @@ struct ProjectCreate: View {
             }
             .padding()
         }
-        .background(Theme.toolbarColour)
-        .font(Theme.font)
+        .background(self.page.primaryColour)
         .onAppear(perform: onAppear)
-        .onChange(of: selectAllToggle) { _ in
+        .onChange(of: selectAllToggle) {
             if selectAllToggle == true {
                 selectAll()
             } else {
@@ -151,7 +150,7 @@ struct ProjectCreate: View {
     }
     
     private func create() -> Void {
-        let project = Project(context: moc)
+        let project = Project(context: self.state.moc)
         project.pid = Int64.random(in: 1..<1000000000000001)
         project.name = name
         project.alive = true
@@ -160,16 +159,16 @@ struct ProjectCreate: View {
         project.colour = Color.randomStorable()
 
         if selectedCompany > 0 {
-            project.company = CoreDataCompanies(moc: moc).byPid(selectedCompany)
+            project.company = CoreDataCompanies(moc: self.state.moc).byPid(selectedCompany)
         } else {
-            project.company = CoreDataCompanies(moc: moc).findDefault()
+            project.company = CoreDataCompanies(moc: self.state.moc).findDefault()
         }
 
         for job in selectedJobs {
             project.addToJobs(job)
         }
         
-        let configuration = ProjectConfiguration(context: moc)
+        let configuration = ProjectConfiguration(context: self.state.moc)
         configuration.ignoredJobs = ""
         configuration.bannedWords = nil
         configuration.id = UUID()
