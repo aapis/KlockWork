@@ -86,7 +86,7 @@ struct JobPickerUsing: View {
                     text: $jobId
                 )
                 .border(jobIdFieldColour == Color.clear ? Color.black.opacity(0.1) : Color.clear, width: 2)
-                .onChange(of: jobId) { _ in
+                .onChange(of: jobId) {
                     if jobId != "" {
                         if let iJid = Int(jobId) {
                             nav.session.setJob(CoreDataJob(moc: moc).byId(Double(iJid)))
@@ -110,7 +110,7 @@ struct JobPickerUsing: View {
     
     private func pickerChange(selected: Int, sender: String?) -> Void {
         jobId = String(selected)
-        
+
         applyStyle()
         
         onChange(selected, "")
@@ -135,6 +135,7 @@ struct JobPickerUsing: View {
         if let selectedJob = jm.byId(Double(jobId)!) {
             jobIdFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
             jobIdFieldTextColour = jobIdFieldColour.isBright() ? Color.black : Color.white
+            self.nav.session.job = selectedJob
         } else {
             jobIdFieldColour = Color.clear
             jobIdFieldTextColour = Color.white
