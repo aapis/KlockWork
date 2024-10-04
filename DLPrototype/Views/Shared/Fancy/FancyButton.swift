@@ -95,7 +95,11 @@ public struct FancyButtonv2: View {
                 }
                 
                 nav.setView(destination)
-                nav.setSidebar(sidebar!)
+
+                if self.sidebar != nil {
+                    nav.setSidebar(sidebar!)
+                }
+
                 nav.setId()
 
                 if let pType = pageType {
