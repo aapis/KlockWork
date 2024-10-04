@@ -36,7 +36,8 @@ struct JobRowPlain: View {
                         icon: "arrowshape.right",
                         orientation: .right,
                         action: action,
-                        showBorder: false
+                        showBorder: false,
+                        showButton: false
                     )
                     .foregroundColor(job.colour != nil && job.colour_from_stored().isBright() ? .black : .white)
                 }

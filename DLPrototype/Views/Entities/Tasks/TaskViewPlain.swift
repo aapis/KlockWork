@@ -20,7 +20,9 @@ struct TaskViewPlain: View {
             help: task.content ?? "_TASK_CONTENT",
             icon: task.completedDate != nil ? "square.fill" : "square",
             type: .thin,
-            action: completeAction
+            action: completeAction,
+            showBorder: false,
+            showButton: false
         )
         .foregroundColor(task.owner != nil && Color.fromStored(task.owner!.colour!).isBright() ? .black : .white)
     }
