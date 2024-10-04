@@ -35,7 +35,7 @@ struct ToolbarButton: Hashable, Equatable {
     init(id: Int, helpText: String, icon: String, labelText: String, contents: AnyView?) {
         self.id = id
         self.helpText = helpText
-        self.icon = AnyView(Image(systemName: icon))
+        self.icon = AnyView(Image(systemName: icon).symbolRenderingMode(.hierarchical))
         self.label = AnyView(
             HStack {
                 self.icon
@@ -52,7 +52,7 @@ struct ToolbarButton: Hashable, Equatable {
         self.icon = AnyView(icon)
         self.label = AnyView(
             HStack {
-                self.icon
+                self.icon.symbolRenderingMode(.hierarchical)
                 Text(labelText)
             }
         )
@@ -177,7 +177,6 @@ struct FancyGenericToolbar: View {
                         if mode == .compact {
                             button.icon
                                 .padding(0)
-                                .symbolRenderingMode(.hierarchical)
                                 .foregroundStyle(self.selected == self.button.id ? self.nav.session.job?.backgroundColor ?? .white : .white.opacity(0.5))
                         } else {
                             button.label.padding(0)
@@ -186,15 +185,16 @@ struct FancyGenericToolbar: View {
                     } else {
                         if mode == .compact {
                             HStack(alignment: .center, spacing: 8) {
-                                button.icon.symbolRenderingMode(.hierarchical)
+                                button.icon
                                     .foregroundStyle(self.selected == self.button.id ? self.nav.session.job?.backgroundColor ?? .white : .white.opacity(0.5))
+                                    .font(.title3)
 
                                 if self.selected == self.button.id && self.button.labelText != nil {
                                     Text(self.button.labelText!)
                                         .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
+                                        .font(.headline)
                                 }
                             }
-                            .font(.headline)
                             .padding([.top, .bottom], 10)
                             .padding([.leading, .trailing])
                         } else {
