@@ -73,6 +73,7 @@ struct PeopleDetail: View {
         .padding()
         .background(self.page.primaryColour)
         .onAppear(perform: self.actionOnAppear)
+        .onChange(of: self.state.session.person) { self.actionOnAppear() }
     }
 }
 

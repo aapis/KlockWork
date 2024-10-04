@@ -78,8 +78,8 @@ struct FancyGenericToolbar: View {
         VStack(spacing: 0) {
             GridRow {
                 Group {
-                    ZStack(alignment: .topLeading) {
-                        (location == .sidebar ? .clear : Theme.textBackground)
+                    ZStack(alignment: .bottom) {
+                        (self.location == .content ? UIGradient() : nil)
 
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 1) {
@@ -154,10 +154,6 @@ struct FancyGenericToolbar: View {
             Button(action: {setActive(button)}) {
                 ZStack(alignment: mode == .compact ? .center : .leading) {
                     ZStack(alignment: .bottom) {
-                        if selected != button.id {
-                            UIGradient()
-                        }
-
                         (
                             selected == button.id ?
                             (
@@ -219,7 +215,7 @@ struct FancyGenericToolbar: View {
 
         var body: some View {
             LinearGradient(gradient: Gradient(colors: [.clear, Theme.base]), startPoint: self.reverse ? .bottom : .top, endPoint: self.reverse ? .top : .bottom)
-                .opacity(0.6)
+                .opacity(0.2)
                 .blendMode(.softLight)
                 .frame(height: 12)
         }

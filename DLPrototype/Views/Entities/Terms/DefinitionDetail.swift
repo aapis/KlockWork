@@ -76,6 +76,7 @@ struct DefinitionDetail: View {
         .padding()
         .background(self.page.primaryColour)
         .onAppear(perform: self.actionOnAppear)
+        .onChange(of: self.state.session.definition) { self.actionOnAppear() }
     }
 }
 

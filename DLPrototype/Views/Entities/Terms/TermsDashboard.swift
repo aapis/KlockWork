@@ -44,9 +44,12 @@ struct TermsDashboard: View {
                             }
                         }
                     }
+                    .padding(.top)
                 } else {
-                    FancyDivider()
-                    Text("No terms for selected job. Choose a job from the sidebar to get started.")
+                    FancyHelpText(
+                        text: "No terms found for the selected job. Choose a job from the sidebar to get started.",
+                        page: self.page
+                    )
                 }
 
                 Spacer()

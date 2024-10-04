@@ -10,6 +10,7 @@ import Foundation
 import SwiftUI
 
 struct TaskDashboard: View {
+    @EnvironmentObject public var state: Navigation
     public var defaultSelectedJob: Job?
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .tasks
@@ -18,8 +19,7 @@ struct TaskDashboard: View {
     @State private var selectedJob: Int = 0
     @State private var jobId: String = ""
     @State private var job: Job?
-    
-    @Environment(\.managedObjectContext) var moc
+
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @EnvironmentObject public var updater: ViewUpdater
     
@@ -35,9 +35,7 @@ struct TaskDashboard: View {
                     Spacer()
                     FancyButtonv2(
                         text: "Create",
-                        action: {
-
-                        },
+                        action: {/*self.state.to(.taskDetail)*/}, // @TODO: uncomment once TaskDetail/Dashboard is rebuilt
                         icon: "plus",
                         showLabel: false
                     )

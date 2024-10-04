@@ -43,9 +43,12 @@ struct PeopleDashboard: View {
                             }
                         }
                     }
+                    .padding(.top)
                 } else {
-                    FancyDivider()
-                    Text("No people found associated with the currently selected company. Choose a job from the sidebar to get started.")
+                    FancyHelpText(
+                        text: "Unable to find any people associated with the selected company. Choose a job from the sidebar to get started.",
+                        page: self.page
+                    )
                 }
 
                 Spacer()
