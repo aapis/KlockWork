@@ -13,8 +13,9 @@ public enum RecordTableColumn: CaseIterable {
     
     var width: CGFloat? {
         switch self {
-        case .index: return 50
-        case .timestamp, .extendedTimestamp: return 101
+        case .index: return 20
+        case .timestamp: return 70
+        case .extendedTimestamp: return 101
         case .job: return 80
         case .message: return nil
         }

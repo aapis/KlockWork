@@ -68,7 +68,7 @@ struct LogRow: View, Identifiable {
                         alignment: .leading,
                         text: $timestamp
                     )
-                    .frame(maxWidth: 80)
+                    .frame(maxWidth: 65)
                     .help(entry.timestamp)
                 }
 
