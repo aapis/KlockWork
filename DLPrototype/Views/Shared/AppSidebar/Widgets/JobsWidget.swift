@@ -570,7 +570,6 @@ struct UnifiedSidebar {
                         .cornerRadius(5)
 
                         Text(self.text)
-                            .font(.title3)
                             .multilineTextAlignment(.leading)
                         Spacer()
                     }
