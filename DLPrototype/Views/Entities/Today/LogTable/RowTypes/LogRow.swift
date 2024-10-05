@@ -55,60 +55,58 @@ struct LogRow: View, Identifiable {
                     colour: (entry.jobObject != nil  && entry.jobObject!.project != nil ? Color.fromStored(entry.jobObject!.project!.colour ?? Theme.rowColourAsDouble) : applyColour()),
                     textColour: self.colour.isBright() ? Theme.base : .white,
                     alignment: .center,
-                    text: required.contains(.index) ? $aIndex : $projectColHelpText
+                    show: required.contains(.index),
+                    text: $aIndex
                 )
-                .frame(width: 20)
+                .frame(minWidth: 23, maxWidth: 45)
 
-                if required.contains(.timestamp) {
-                    Column(
-                        type: .timestamp,
-                        colour: applyColour(),
-                        textColour: self.colour.isBright() ? Theme.base : .white,
-                        index: index,
-                        alignment: .leading,
-                        text: $timestamp
-                    )
-                    .frame(maxWidth: 65)
-                    .help(entry.timestamp)
-                }
 
-                if required.contains(.extendedTimestamp) {
-                    Column(
-                        type: .extendedTimestamp,
-                        colour: applyColour(),
-                        textColour: self.colour.isBright() ? Theme.base : .white,
-                        index: index,
-                        alignment: .center,
-                        text: $timestamp
-                    )
-                    .frame(maxWidth: 101)
-                    .help(entry.timestamp)
-                }
+                Column(
+                    type: .timestamp,
+                    colour: applyColour(),
+                    textColour: self.colour.isBright() ? Theme.base : .white,
+                    index: index,
+                    alignment: .leading,
+                    show: required.contains(.timestamp),
+                    text: $timestamp
+                )
+                .frame(maxWidth: 65)
+                .help(entry.timestamp)
 
-                if required.contains(.job) {
-                    Column(
-                        type: .job,
-                        colour: applyColour(),
-                        textColour: self.colour.isBright() ? Theme.base : .white,
-                        index: index,
-                        alignment: .center,
-                        url: (entry.jobObject != nil && entry.jobObject!.uri != nil ? entry.jobObject!.uri : nil),
-                        job: entry.jobObject,
-                        text: $job
-                    )
-                    .frame(maxWidth: 80)
-                }
+                Column(
+                    type: .extendedTimestamp,
+                    colour: applyColour(),
+                    textColour: self.colour.isBright() ? Theme.base : .white,
+                    index: index,
+                    alignment: .center,
+                    show: required.contains(.extendedTimestamp),
+                    text: $timestamp
+                )
+                .frame(maxWidth: 101)
+                .help(entry.timestamp)
 
-                if required.contains(.message) {
-                    Column(
-                        type: .message,
-                        colour: applyColour(),
-                        textColour: self.colour.isBright() ? Theme.base : .white,
-                        index: index,
-                        alignment: .leading,
-                        text: $message
-                    )
-                }
+                Column(
+                    type: .job,
+                    colour: applyColour(),
+                    textColour: self.colour.isBright() ? Theme.base : .white,
+                    index: index,
+                    alignment: .center,
+                    url: (entry.jobObject != nil && entry.jobObject!.uri != nil ? entry.jobObject!.uri : nil),
+                    job: entry.jobObject,
+                    show: required.contains(.job),
+                    text: $job
+                )
+                .frame(maxWidth: 80)
+
+                Column(
+                    type: .message,
+                    colour: applyColour(),
+                    textColour: self.colour.isBright() ? Theme.base : .white,
+                    index: index,
+                    alignment: .leading,
+                    show: required.contains(.message),
+                    text: $message
+                )
             }
             .contextMenu { contextMenu }
         }

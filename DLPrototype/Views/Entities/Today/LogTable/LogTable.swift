@@ -61,22 +61,18 @@ extension Today.LogTable {
                     .frame(width: 15)
                     
                     ForEach(RecordTableColumn.allCases, id: \.self) { column in
-                        // Index column content is integrated into the project indicator column so we don't need to add
-                        // another stack for it
-                        if column != .index {
-                            if self.required.contains(column) {
-                                Group {
-                                    ZStack(alignment: column.alignment) {
-                                        LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
-                                            .opacity(0.6)
-                                            .blendMode(.softLight)
-                                        self.page.primaryColour.opacity(0.4)
-                                        Text(column.name)
-                                            .padding(8)
-                                    }
+                        if self.required.contains(column) {
+                            Group {
+                                ZStack(alignment: column.alignment) {
+                                    LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                        .opacity(0.6)
+                                        .blendMode(.softLight)
+                                    self.page.primaryColour.opacity(0.4)
+                                    Text(column.name)
+                                        .padding(8)
                                 }
-                                .frame(width: column.width)
                             }
+                            .frame(width: column.width)
                         }
                     }
                 }

@@ -13,7 +13,7 @@ public enum RecordTableColumn: CaseIterable {
     
     var width: CGFloat? {
         switch self {
-        case .index: return 20
+        case .index: return 45
         case .timestamp: return 70
         case .extendedTimestamp: return 101
         case .job: return 80
@@ -34,9 +34,7 @@ public enum RecordTableColumn: CaseIterable {
     var alignment: Alignment {
         switch self {
         case .index: return .center
-        case .timestamp, .extendedTimestamp: return .leading
-        case .job: return .center
-        case .message: return .leading
+        default: return .leading
         }
     }
 }
