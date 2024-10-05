@@ -82,8 +82,7 @@ struct RecordResult: View {
                                     LogRow(
                                         entry: entry,
                                         index: bucket.firstIndex(of: item),
-                                        colour: Color.fromStored(item.job!.colour ?? Theme.rowColourAsDouble),
-                                        viewRequiresColumns: viewRequiresColumns
+                                        colour: Color.fromStored(item.job!.colour ?? Theme.rowColourAsDouble)
                                     )
                                 }
                             }
