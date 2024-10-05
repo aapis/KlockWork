@@ -21,7 +21,14 @@ struct CreateEntitiesWidget: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Buttons
+            ZStack(alignment: .top) {
+                LinearGradient(colors: [.white, .clear], startPoint: .top, endPoint: .bottom)
+                    .opacity(0.1)
+                    .blendMode(.softLight)
+                    .frame(height: 40)
+                    .padding(.top, 25)
+                Buttons
+            }
 
             if isSearchStackShowing || isCreateStackShowing {
                 FancyDivider(height: 20)
