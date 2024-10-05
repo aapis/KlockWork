@@ -55,6 +55,7 @@ struct LogRow: View, Identifiable {
                     colour: (entry.jobObject != nil  && entry.jobObject!.project != nil ? Color.fromStored(entry.jobObject!.project!.colour ?? Theme.rowColourAsDouble) : applyColour()),
                     textColour: self.colour.isBright() ? Theme.base : .white,
                     alignment: .center,
+                    job: entry.jobObject,
                     show: required.contains(.index),
                     text: $aIndex
                 )

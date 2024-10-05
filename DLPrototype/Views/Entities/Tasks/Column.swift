@@ -91,11 +91,11 @@ struct Column: View {
     @ViewBuilder private var Index: some View {
         ZStack(alignment: .center) {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(Theme.cPurple.opacity(0.8))
+                .fill(self.job == self.nav.session.job ? .yellow : Theme.cPurple.opacity(0.8))
                 .frame(height: 23)
             Text(self.text)
                 .opacity(0.5)
-                .foregroundStyle(.white.opacity(0.55))
+                .foregroundStyle((self.job == self.nav.session.job ? Theme.base : .white).opacity(0.55))
                 .font(.system(.subheadline, design: .monospaced))
         }
         .padding(6)
