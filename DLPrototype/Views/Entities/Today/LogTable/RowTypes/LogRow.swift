@@ -178,21 +178,25 @@ struct LogRow: View, Identifiable {
                 isEditing = true
             }
 
-            if entry.jobObject!.uri != nil {
-                Link(destination: entry.jobObject!.uri!, label: {
-                    Text("Open job link in browser")
-                })
+            if let uri = entry.jobObject!.uri {
+                if uri.absoluteString != "" && uri.absoluteString != "https://" {
+                    Link(destination: uri, label: {
+                        Text("Open job link in browser")
+                    })
+                }
             }
 
             Divider()
 
             Menu("Copy") {
-                if entry.jobObject!.uri != nil {
-                    Button(action: {ClipboardHelper.copy(entry.jobObject!.uri!.absoluteString)}, label: {
-                        Text("Job URL")
-                    })
+                if let uri = entry.jobObject!.uri {
+                    if uri.absoluteString != "" && uri.absoluteString != "https://" {
+                        Button(action: {ClipboardHelper.copy(entry.jobObject!.uri!.absoluteString)}, label: {
+                            Text("Job URL")
+                        })
+                    }
                 }
-                
+
                 Button(action: {ClipboardHelper.copy(entry.jobObject!.jid.string)}, label: {
                     Text("Job ID")
                 })
@@ -208,40 +212,55 @@ struct LogRow: View, Identifiable {
             
             Menu("Go to"){
                 Button {
-                    nav.view = AnyView(NoteDashboard(defaultSelectedJob: entry.jobObject).environmentObject(jm))
-                    nav.parent = .notes
+                    self.nav.session.job = entry.jobObject
+                    self.nav.to(.tasks)
                 } label: {
-                    Text("Notes")
+                    Text(PageConfiguration.EntityType.tasks.label)
                 }
-                
+
                 Button {
-                    nav.view = AnyView(TaskDashboard(defaultSelectedJob: entry.jobObject!).environmentObject(jm))
-                    nav.parent = .tasks
+                    self.nav.session.job = entry.jobObject
+                    self.nav.to(.notes)
                 } label: {
-                    Text("Tasks")
+                    Text(PageConfiguration.EntityType.notes.label)
                 }
-                
-                if entry.jobObject!.project != nil {
+
+                if entry.jobObject?.project != nil {
                     Button {
                         nav.view = AnyView(ProjectView(project: entry.jobObject!.project!).environmentObject(jm))
                         nav.parent = .projects
                         nav.sidebar = AnyView(ProjectsDashboardSidebar())
+                        // @TODO: uncomment once ProjectView is refactored so it doesn't require project on init
+//                        self.nav.session.project = entry.jobObject?.project
+//                        self.nav.to(.projects)
                     } label: {
-                        Text("Project")
+                        Text(PageConfiguration.EntityType.projects.enSingular)
                     }
                 }
                 
                 Button {
-                    nav.view = AnyView(JobDashboard(defaultSelectedJob: entry.jobObject!))
-                    nav.parent = .jobs
-                    nav.sidebar = AnyView(JobDashboardSidebar())
-                    nav.pageId = UUID()
+                    self.nav.session.job = entry.jobObject
+                    self.nav.to(.jobs)
                 } label: {
-                    Text("Job")
+                    Text(PageConfiguration.EntityType.jobs.enSingular)
                 }
             }
 
             Menu("Inspect") {
+                Button(action: self.actionInspectRecord, label: {
+                    Text(PageConfiguration.EntityType.records.enSingular)
+                })
+                Button(action: self.actionInspectCompany, label: {
+                    Text(PageConfiguration.EntityType.companies.enSingular)
+                })
+                Button(action: self.actionInspectProject, label: {
+                    Text(PageConfiguration.EntityType.projects.enSingular)
+                })
+                Button(action: self.actionInspectJob, label: {
+                    Text(PageConfiguration.EntityType.jobs.enSingular)
+                })
+
+                Divider()
                 Text("SR&ED Eligible: " + (entry.jobObject!.shredable ? "Yes" : "No"))
             }
             
@@ -249,12 +268,41 @@ struct LogRow: View, Identifiable {
 
             if let jo = entry.jobObject {
                 Button(action: {setJob(jo.jid.string)}, label: {
-                    Text("Set job")
+                    Text("Set as Active Job")
                 })
             }
         }
     }
-    
+
+    private func actionInspectRecord() -> Void {
+        if let inspectable = self.record {
+            self.actionInspect(inspectable)
+        }
+    }
+
+    private func actionInspectCompany() -> Void {
+        if let inspectable = self.entry.jobObject?.project?.company {
+            self.actionInspect(inspectable)
+        }
+    }
+
+    private func actionInspectProject() -> Void {
+        if let inspectable = self.entry.jobObject?.project {
+            self.actionInspect(inspectable)
+        }
+    }
+
+    private func actionInspectJob() -> Void {
+        if let inspectable = self.entry.jobObject {
+            self.actionInspect(inspectable)
+        }
+    }
+
+    private func actionInspect(_ inspectable: NSManagedObject) -> Void {
+        self.nav.session.search.inspectingEntity = inspectable
+        nav.setInspector(AnyView(Inspector(entity: inspectable)))
+    }
+
     private func setJob(_ job: String) -> Void {
 //        let dotIndex = (job.range(of: ".")?.lowerBound)
         

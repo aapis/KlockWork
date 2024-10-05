@@ -9,7 +9,9 @@
 import SwiftUI
 
 public enum Page {
-    case dashboard, today, notes, tasks, projects, jobs, companies, planning, terms, definitionDetail, taskDetail, noteDetail, people, peopleDetail
+    case dashboard, today, notes, tasks, projects, projectDetail, jobs, companies, planning,
+         terms, definitionDetail, taskDetail, noteDetail, people, peopleDetail
+
 
     var colour: Color {
         switch self {
@@ -31,6 +33,7 @@ public enum Page {
         case .tasks: return "Tasks"
         case .notes: return "Notes"
         case .projects: return "Projects"
+        case .projectDetail: return "Project"
         case .jobs: return "Jobs"
         case .companies: return "Companies"
         case .planning: return "Planning"
@@ -50,6 +53,7 @@ public enum Page {
         case .tasks: return nil
         case .notes: return nil
         case .projects: return nil
+        case .projectDetail: return .projects
         case .jobs: return nil
         case .companies: return nil
         case .planning: return nil
@@ -552,6 +556,8 @@ extension Navigation {
             HistoryPage(page: .noteDetail, view: AnyView(NoteView()), sidebar: AnyView(NoteCreateSidebar()), title: "Note detail"),
             HistoryPage(page: .people, view: AnyView(PeopleDashboard()), sidebar: AnyView(PeopleDashboardSidebar()), title: "People"),
             HistoryPage(page: .peopleDetail, view: AnyView(PeopleDetail()), sidebar: AnyView(PeopleDashboardSidebar()), title: "Person"),
+            HistoryPage(page: .projectDetail, view: AnyView(EmptyView()), sidebar: AnyView(ProjectsDashboardSidebar()), title: "Project"),
+            HistoryPage(page: .projects, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Projects"),
         ]
         
         /// A single page representing a page the user navigated to

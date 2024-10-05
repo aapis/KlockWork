@@ -196,7 +196,7 @@ public struct Inspector: View, Identifiable {
                                 (
                                     nav.session.job == item ? "Current job" : "Overwrite Active Job"
                                 ):
-                                    "Set to Active Job",
+                                    "Set as Active Job",
                                 action: {nav.session.job = item},
                                 icon: "arrow.right.square.fill",
                                 showLabel: true,
