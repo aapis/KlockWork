@@ -23,7 +23,7 @@ public enum RecordTableColumn: CaseIterable {
     var name: String {
         switch self {
         case .index: return ""
-        case .timestamp: return "Date"
+        case .timestamp: return "Time"
         case .extendedTimestamp: return "Timestamp"
         case .job: return "Job"
         case .message: return "Message"
