@@ -59,6 +59,7 @@ struct Forecast: View, Identifiable {
     @State private var dateStripDay: String = ""
     @State private var isSelected: Bool = false
     @State private var isUpcomingTaskListPresented: Bool = false
+    @State private var isHighlighted: Bool = false
     @FetchRequest private var upcomingTasks: FetchedResults<LogTask>
 
     var body: some View {
@@ -91,16 +92,17 @@ struct Forecast: View, Identifiable {
                             }
                             .mask(Circle().frame(width: 35))
 
-                            Theme.base
+                            (self.isHighlighted ? Color.white : Theme.base)
                                 .mask(Circle().frame(width: 25))
 
                             Text(String(self.itemsDue))
                                 .multilineTextAlignment(.leading)
                                 .font(.system(.headline, design: .monospaced))
                                 .bold()
-                                .foregroundStyle(.white)
+                                .foregroundStyle(self.itemsDue == 0 ? .gray : self.isHighlighted ? Theme.base : .white)
                         }
                         .frame(width: 50, height: 50)
+                        .useDefaultHover({ hover in self.isHighlighted = hover })
                     }
                     .buttonStyle(.plain)
                     .opacity(self.itemsDue == 0 ? 0.4 : 1)
@@ -109,8 +111,9 @@ struct Forecast: View, Identifiable {
                 VStack(alignment: .center, spacing: 0) {
                     HStack(alignment: .center, spacing: 8) {
                         Button {
-                            self.state.session.date = DateHelper.startOfDay(self.date)
-                            self.isUpcomingTaskListPresented.toggle()
+                            // @TODO: works but looks funny, fix
+//                            self.isUpcomingTaskListPresented.toggle()
+                            self.state.to(.planning)
 
                             if self.isSelected {
                                 if let cb = self.callback { cb() }
@@ -129,15 +132,16 @@ struct Forecast: View, Identifiable {
                                 }
                                 .mask(Circle().frame(width: 40))
 
-                                Theme.base
+                                (self.isHighlighted ? Color.white : Theme.base)
                                     .mask(Circle().frame(width: 29))
 
                                 Text(String(self.itemsDue))
                                     .multilineTextAlignment(.leading)
                                     .font(.system(.headline, design: .monospaced))
                                     .bold()
-                                    .foregroundStyle(self.itemsDue == 0 ? .gray : .white)
+                                    .foregroundStyle(self.itemsDue == 0 ? .gray : self.isHighlighted ? Theme.base : .white)
                             }
+                            .useDefaultHover({ hover in self.isHighlighted = hover })
                         }
                         .buttonStyle(.plain)
                     }
@@ -156,9 +160,10 @@ struct Forecast: View, Identifiable {
         .onChange(of: self.state.session.date) {
             self.actionOnAppear()
         }
+        // @TODO: works but messes with window, fix for macOS
 //        .sheet(isPresented: $isUpcomingTaskListPresented) {
 //            NavigationStack {
-//                PlanTabs.Upcoming(inSheet: true)
+//                Planning.Upcoming()
 //                    .presentationBackground(self.page?.primaryColour ?? Theme.cOrange)
 //                    .scrollContentBackground(.hidden)
 //            }

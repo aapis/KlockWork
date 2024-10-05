@@ -25,6 +25,7 @@ extension Planning {
                             }
                         } header: {
                             Timestamp(text: "\(row.tasks.count) on \(row.date)", fullWidth: true, alignment: .leading, clear: true)
+                                .background(Theme.base.opacity(0.6))
                         }
                     }
                 } else {
