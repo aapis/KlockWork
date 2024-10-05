@@ -9,15 +9,16 @@
 import SwiftUI
 
 struct CreateEntitiesWidget: View {
-    @State private var followingPlan: Bool = false
-    @State private var doesPlanExist: Bool = false
+    @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var nav: Navigation
     @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
     @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
+    @State private var followingPlan: Bool = false
+    @State private var doesPlanExist: Bool = false
     @State private var searching: Bool = false
+    public var page: PageConfiguration.AppPage = .planning
 
-    @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var nav: Navigation
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -61,7 +62,7 @@ struct CreateEntitiesWidget: View {
             CreateButton(active: $isCreateStackShowing)
             FindButton(active: $isSearchStackShowing)
                 .disabled(nav.parent == .dashboard)
-            Spacer()
+            Forecast(date: DateHelper.startOfDay(self.nav.session.date), isForecastMember: false, page: self.page)
         }
         .padding([.leading, .trailing], 15)
     }

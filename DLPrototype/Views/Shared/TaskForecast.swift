@@ -102,49 +102,58 @@ struct Forecast: View, Identifiable {
                         }
                         .frame(width: 50, height: 50)
                     }
+                    .buttonStyle(.plain)
                     .opacity(self.itemsDue == 0 ? 0.4 : 1)
                 }
             } else {
-                HStack(alignment: .center, spacing: 8) {
-                    Button {
-                        self.state.date = DateHelper.startOfDay(self.date)
-                        self.isUpcomingTaskListPresented.toggle()
-                        print("DERPO date=\(self.state.date) tz=\(TimeZone.autoupdatingCurrent) x=\(Calendar.autoupdatingCurrent.startOfDay(for: self.state.date).description(with: .autoupdatingCurrent))")
+                VStack(alignment: .center, spacing: 0) {
+                    HStack(alignment: .center, spacing: 8) {
+                        Button {
+                            self.state.session.date = DateHelper.startOfDay(self.date)
+                            self.isUpcomingTaskListPresented.toggle()
 
-                        if self.isSelected {
-                            if let cb = self.callback { cb() }
-                        }
-                    } label: {
-                        ZStack {
-                            VStack(alignment: .center, spacing: 0) {
-                                if self.upcomingTasks.count > 0 {
-                                    ForEach(self.upcomingTasks, id: \.objectID) { task in
-                                        Rectangle()
-                                            .foregroundStyle(task.owner?.backgroundColor ?? Theme.rowColour)
-                                    }
-                                } else {
-                                    Color.green
-                                }
+                            if self.isSelected {
+                                if let cb = self.callback { cb() }
                             }
-                            .mask(Circle().frame(width: 35))
+                        } label: {
+                            ZStack {
+                                VStack(alignment: .center, spacing: 0) {
+                                    if self.upcomingTasks.count > 0 {
+                                        ForEach(self.upcomingTasks, id: \.objectID) { task in
+                                            Rectangle()
+                                                .foregroundStyle(task.owner?.backgroundColor ?? Theme.rowColour)
+                                        }
+                                    } else {
+                                        Color.green
+                                    }
+                                }
+                                .mask(Circle().frame(width: 40))
 
-                            Theme.base
-                                .mask(Circle().frame(width: 25))
+                                Theme.base
+                                    .mask(Circle().frame(width: 29))
 
-                            Text(String(self.itemsDue))
-                                .multilineTextAlignment(.leading)
-                                .font(.system(.headline, design: .monospaced))
-                                .bold()
-                                .foregroundStyle(self.itemsDue == 0 ? .gray : .white)
+                                Text(String(self.itemsDue))
+                                    .multilineTextAlignment(.leading)
+                                    .font(.system(.headline, design: .monospaced))
+                                    .bold()
+                                    .foregroundStyle(self.itemsDue == 0 ? .gray : .white)
+                            }
                         }
+                        .buttonStyle(.plain)
                     }
+                    .frame(height: 40)
+                    .padding(.top, 4)
+
+                    Text("Tasks")
+                        .padding(.top, 6)
+                        .opacity(0.4)
                 }
-                .frame(width: 40, height: 35)
+                .frame(width: 40)
             }
         }
         .padding(8)
         .onAppear(perform: self.actionOnAppear)
-        .onChange(of: self.state.date) {
+        .onChange(of: self.state.session.date) {
             self.actionOnAppear()
         }
 //        .sheet(isPresented: $isUpcomingTaskListPresented) {
