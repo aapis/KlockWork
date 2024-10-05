@@ -65,7 +65,7 @@ struct LogRow: View, Identifiable {
                         colour: applyColour(),
                         textColour: self.colour.isBright() ? Theme.base : .white,
                         index: index,
-                        alignment: .center,
+                        alignment: .leading,
                         text: $timestamp
                     )
                     .frame(maxWidth: 80)

@@ -61,6 +61,8 @@ extension Today.LogTable {
                     .frame(width: 15)
                     
                     ForEach(RecordTableColumn.allCases, id: \.self) { column in
+                        // Index column content is integrated into the project indicator column so we don't need to add
+                        // another stack for it
                         if column != .index {
                             if self.required.contains(column) {
                                 Group {
