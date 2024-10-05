@@ -116,7 +116,6 @@ extension Today.LogTable {
     /// Standard display, colour coded list of records
     struct Full: View {
         @EnvironmentObject public var nav: Navigation
-        @State private var required: Set<RecordTableColumn> = [.message]
         @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
         @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
         @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
@@ -139,8 +138,7 @@ extension Today.LogTable {
                                     entry: entry,
                                     index: records.firstIndex(of: record),
                                     colour: Color.fromStored((record.job?.colour) ?? Theme.rowColourAsDouble),
-                                    record: record,
-                                    viewRequiresColumns: self.required
+                                    record: record
                                 )
                             }
                         }
@@ -149,11 +147,6 @@ extension Today.LogTable {
                     }
                 }
             }
-            .onAppear(perform: self.actionOnAppear)
-            .onChange(of: self.showColumnIndex) { self.actionOnAppear() }
-            .onChange(of: self.showColumnTimestamp) { self.actionOnAppear() }
-            .onChange(of: self.showColumnExtendedTimestamp) { self.actionOnAppear() }
-            .onChange(of: self.showColumnJobId) { self.actionOnAppear() }
         }
     }
     
@@ -282,16 +275,6 @@ extension Today.LogTable {
 // MARK: method definitions
 extension Today.LogTable.Headers {
     private func actionOnAppear() -> Void {
-        if self.showColumnIndex { self.required.insert(.index) } else { self.required.remove(.index)}
-        if self.showColumnTimestamp { self.required.insert(.timestamp) } else { self.required.remove(.timestamp)}
-        if self.showColumnExtendedTimestamp { self.required.insert(.extendedTimestamp) } else { self.required.remove(.extendedTimestamp)}
-        if self.showColumnJobId { self.required.insert(.job) } else { self.required.remove(.job)}
-    }
-}
-
-extension Today.LogTable.Full {
-    private func actionOnAppear() -> Void {
-        print("DERPO in")
         if self.showColumnIndex { self.required.insert(.index) } else { self.required.remove(.index)}
         if self.showColumnTimestamp { self.required.insert(.timestamp) } else { self.required.remove(.timestamp)}
         if self.showColumnExtendedTimestamp { self.required.insert(.extendedTimestamp) } else { self.required.remove(.extendedTimestamp)}

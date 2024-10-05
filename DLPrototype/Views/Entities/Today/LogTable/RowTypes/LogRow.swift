@@ -13,12 +13,15 @@ struct LogRow: View, Identifiable {
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
     @AppStorage("tigerStriped") private var tigerStriped = false
+    @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
+    @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
+    @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
+    @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
     public var id = UUID()
     public var entry: Entry
     public var index: Array<Entry>.Index?
     public var colour: Color
     public var record: LogRecord?
-    public var viewRequiresColumns: Set<RecordTableColumn> = []
     @State public var isEditing: Bool = false
     @State public var message: String = ""
     @State public var job: String = ""
@@ -26,7 +29,7 @@ struct LogRow: View, Identifiable {
     @State public var aIndex: String = "0"
     @State public var activeColour: Color = Theme.rowColour
     @State public var projectColHelpText: String = ""
-    @State public var columns: Set<RecordTableColumn> = [.message]
+    @State public var required: Set<RecordTableColumn> = [.message]
     @State private var isDeleteAlertShowing: Bool = false
 
     var body: some View {
@@ -52,11 +55,24 @@ struct LogRow: View, Identifiable {
                     colour: (entry.jobObject != nil  && entry.jobObject!.project != nil ? Color.fromStored(entry.jobObject!.project!.colour ?? Theme.rowColourAsDouble) : applyColour()),
                     textColour: self.colour.isBright() ? Theme.base : .white,
                     alignment: .center,
-                    text: columns.contains(.index) ? $aIndex : $projectColHelpText
+                    text: required.contains(.index) ? $aIndex : $projectColHelpText
                 )
                 .frame(width: 20)
 
-                if columns.contains(.extendedTimestamp) {
+                if required.contains(.timestamp) {
+                    Column(
+                        type: .timestamp,
+                        colour: applyColour(),
+                        textColour: self.colour.isBright() ? Theme.base : .white,
+                        index: index,
+                        alignment: .center,
+                        text: $timestamp
+                    )
+                    .frame(maxWidth: 80)
+                    .help(entry.timestamp)
+                }
+
+                if required.contains(.extendedTimestamp) {
                     Column(
                         type: .extendedTimestamp,
                         colour: applyColour(),
@@ -69,20 +85,7 @@ struct LogRow: View, Identifiable {
                     .help(entry.timestamp)
                 }
 
-                if columns.contains(.timestamp) {
-                    Column(
-                        type: .timestamp,
-                        colour: applyColour(),
-                        textColour: self.colour.isBright() ? Theme.base : .white,
-                        index: index,
-                        alignment: .center,
-                        text: $timestamp
-                    )
-                    .frame(maxWidth: 101)
-                    .help(entry.timestamp)
-                }
-
-                if columns.contains(.job) {
+                if required.contains(.job) {
                     Column(
                         type: .job,
                         colour: applyColour(),
@@ -96,7 +99,7 @@ struct LogRow: View, Identifiable {
                     .frame(maxWidth: 80)
                 }
 
-                if columns.contains(.message) {
+                if required.contains(.message) {
                     Column(
                         type: .message,
                         colour: applyColour(),
@@ -109,12 +112,16 @@ struct LogRow: View, Identifiable {
             }
             .contextMenu { contextMenu }
         }
-        .onAppear(perform: setEditableValues)
+        .onAppear(perform: self.actionOnAppear)
         .onChange(of: timestamp) {
             if !isEditing {
-                setEditableValues()
+                self.actionOnAppear()
             }
         }
+        .onChange(of: self.showColumnIndex) { self.actionOnAppear() }
+        .onChange(of: self.showColumnTimestamp) { self.actionOnAppear() }
+        .onChange(of: self.showColumnExtendedTimestamp) { self.actionOnAppear() }
+        .onChange(of: self.showColumnJobId) { self.actionOnAppear() }
     }
 
     private var ViewModeEdit: some View {
@@ -292,16 +299,16 @@ struct LogRow: View, Identifiable {
         nav.setInspector(AnyView(Inspector(entity: inspectable)))
     }
 
-    // TODO: remove?
-    private func setEditableValues() -> Void {
+    private func actionOnAppear() -> Void {
         message = entry.message
         job = entry.job
         timestamp = entry.timestamp
         aIndex = adjustedIndexAsString()
 
-        if !viewRequiresColumns.isEmpty {
-            columns = columns.union(viewRequiresColumns)
-        }
+        if self.showColumnIndex { self.required.insert(.index) } else { self.required.remove(.index)}
+        if self.showColumnTimestamp { self.required.insert(.timestamp) } else { self.required.remove(.timestamp)}
+        if self.showColumnExtendedTimestamp { self.required.insert(.extendedTimestamp) } else { self.required.remove(.extendedTimestamp)}
+        if self.showColumnJobId { self.required.insert(.job) } else { self.required.remove(.job)}
     }
 
     private func applyColour() -> Color {
