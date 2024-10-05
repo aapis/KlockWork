@@ -51,18 +51,10 @@ struct LogRow: View, Identifiable {
                     type: .index,
                     colour: (entry.jobObject != nil  && entry.jobObject!.project != nil ? Color.fromStored(entry.jobObject!.project!.colour ?? Theme.rowColourAsDouble) : applyColour()),
                     textColour: self.colour.isBright() ? Theme.base : .white,
-                    text: $projectColHelpText
+                    alignment: .center,
+                    text: columns.contains(.index) ? $aIndex : $projectColHelpText
                 )
-                .frame(width: 15)
-
-                if columns.contains(.index) {
-                    Column(
-                        colour: applyColour(),
-                        textColour: self.colour.isBright() ? Theme.base : .white,
-                        text: $aIndex
-                    )
-                    .frame(maxWidth: 50)
-                }
+                .frame(width: 20)
 
                 if columns.contains(.extendedTimestamp) {
                     Column(
