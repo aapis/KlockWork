@@ -28,8 +28,8 @@ public final class SearchHelper {
         self.projectBucket = Array(bucket)
     }
     
-    public init(bucket: FetchedResults<Note>) {
-        self.noteBucket = Array(bucket)
+    public init(bucket: [Note]) {
+        self.noteBucket = bucket
     }
     
     public init(bucket: FetchedResults<LogRecord>) {

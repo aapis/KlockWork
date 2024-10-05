@@ -251,6 +251,30 @@ public class CoreDataNotes {
 
         return query(predicate)
     }
+    
+    /// Find notes by Job
+    /// - Parameter job: Job
+    /// - Returns: [Note]]
+    public func find(by job: Job) -> [Note] {
+        let predicate = NSPredicate(
+            format: "ANY mJob == %@",
+            job
+        )
+
+        return query(predicate)
+    }
+
+    /// Find notes by Job
+    /// - Parameter project: Project
+    /// - Returns: [Note]
+    public func find(by project: Project) -> [Note] {
+        let predicate = NSPredicate(
+            format: "ANY mJob.project == %@",
+            project
+        )
+
+        return query(predicate)
+    }
 
     /// Count up all the jobs referenced for a given day
     /// - Parameter date: Date
@@ -258,7 +282,7 @@ public class CoreDataNotes {
     public func countByDate(for date: Date) -> Int {
         return self.find(for: date).count
     }
-    
+
     /// Updates a single NSManagedObject
     /// - Parameters:
     ///   - entity: Note, the target to modify
