@@ -113,12 +113,9 @@ struct Forecast: View, Identifiable {
                 VStack(alignment: .center, spacing: 0) {
                     HStack(alignment: .center, spacing: 8) {
                         Button {
-                            // @TODO: works but looks funny, fix
-//                            self.isUpcomingTaskListPresented.toggle()
                             self.isCreateStackShowing = false
                             self.isSearchStackShowing = false
                             self.isUpcomingTaskStackShowing.toggle()
-//                            self.state.to(.planning)
 
                             if self.isSelected {
                                 if let cb = self.callback { cb() }
@@ -165,14 +162,6 @@ struct Forecast: View, Identifiable {
         .onChange(of: self.state.session.date) {
             self.actionOnAppear()
         }
-        // @TODO: works but messes with window, fix for macOS
-//        .sheet(isPresented: $isUpcomingTaskListPresented) {
-//            NavigationStack {
-//                Planning.Upcoming()
-//                    .presentationBackground(self.page?.primaryColour ?? Theme.cOrange)
-//                    .scrollContentBackground(.hidden)
-//            }
-//        }
     }
 
     init(date: Date, callback: (() -> Void)? = nil, isForecastMember: Bool = true, page: PageConfiguration.AppPage) {
