@@ -10,17 +10,10 @@ import Foundation
 import SwiftUI
 
 struct ToolbarButtons: View {
-//    @Binding public var selectedTab: Int
-//    @Binding public var isShowingAlert: Bool
-//    @Binding public var showSearch: Bool
-//    @Binding public var searchText: String
-//    @Binding public var selectedDate: Date
-//    @Binding public var records: [LogRecord]
-//    @Binding public var viewMode: ViewMode
-    
     @State private var datePickerItems: [CustomPickerItem] = []
     @State private var pickerSelection: Int = 0
-    
+    @State private var highlighted: Bool = false
+
     @AppStorage("today.numPastDates") public var numPastDates: Int = 20
     
     @Environment(\.managedObjectContext) var moc
@@ -28,32 +21,37 @@ struct ToolbarButtons: View {
     @EnvironmentObject public var nav: Navigation
     
     var body: some View {
-        HStack {
-            ViewModeSelector()
-            Button(action: export, label: {
-                HStack(spacing: 5) {
-                    Image(systemName: "arrow.down.to.line")
-                    Text("Export")
-                }
-                
-            })
-            .buttonStyle(.borderless)
-            .keyboardShortcut("c", modifiers: [.command, .shift])
-            .help("Export this view")
-            .foregroundColor(Color.white)
-            .useDefaultHover({_ in})
-            
-            Spacer()
-            
-            // TODO: fix search
-//            Button(action: toggleSearch, label: {
-//                Image(systemName: "magnifyingglass")
-//            })
-//            .help("Toggle search")
-//            .buttonStyle(.borderless)
-//            .foregroundColor(Color.white)
-//            .useDefaultHover({_ in})
-        }.padding(8)
+        ZStack(alignment: .bottom) {
+            LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
+                .opacity(0.3)
+                .blendMode(.softLight)
+                .frame(height: 20)
+
+            HStack(alignment: .center) {
+                ViewModeSelector()
+                    .padding(6)
+                    .background(Theme.textBackground)
+                    .foregroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+
+                Button(action: export, label: {
+                    HStack(spacing: 5) {
+                        Image(systemName: "arrow.down.to.line")
+                        Text("Export")
+                    }
+                    .padding(6)
+                    .background(Theme.textBackground)
+                    .foregroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                })
+                .buttonStyle(.plain)
+                .keyboardShortcut("c", modifiers: [.command, .shift])
+                .help("Export this view")
+                .useDefaultHover({ hover in self.highlighted = hover})
+                Spacer()
+            }
+            .padding(8)
+        }
     }
     
     private func change(selected: Int, sender: String?) -> Void {

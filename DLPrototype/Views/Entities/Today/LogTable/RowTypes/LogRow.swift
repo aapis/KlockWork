@@ -10,10 +10,8 @@ import Foundation
 import SwiftUI
 
 struct LogRow: View, Identifiable {
-    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
-    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
     @AppStorage("tigerStriped") private var tigerStriped = false
     public var id = UUID()
     public var entry: Entry
@@ -35,7 +33,7 @@ struct LogRow: View, Identifiable {
         if isEditing {
             VStack {
                 ZStack {
-                    Color.black
+                    Theme.base
                     ViewModeNormal
                         .opacity(0.5)
                 }
@@ -47,20 +45,20 @@ struct LogRow: View, Identifiable {
     }
 
     var ViewModeNormal: some View {
-        HStack(spacing: 1) {
+        HStack(spacing: 0) {
             GridRow {
                 Column(
                     type: .index,
                     colour: (entry.jobObject != nil  && entry.jobObject!.project != nil ? Color.fromStored(entry.jobObject!.project!.colour ?? Theme.rowColourAsDouble) : applyColour()),
-                    textColour: rowTextColour(),
+                    textColour: self.colour.isBright() ? Theme.base : .white,
                     text: $projectColHelpText
                 )
-                .frame(width: 5)
+                .frame(width: 15)
 
                 if columns.contains(.index) {
                     Column(
                         colour: applyColour(),
-                        textColour: rowTextColour(),
+                        textColour: self.colour.isBright() ? Theme.base : .white,
                         text: $aIndex
                     )
                     .frame(maxWidth: 50)
@@ -70,7 +68,7 @@ struct LogRow: View, Identifiable {
                     Column(
                         type: .extendedTimestamp,
                         colour: applyColour(),
-                        textColour: rowTextColour(),
+                        textColour: self.colour.isBright() ? Theme.base : .white,
                         index: index,
                         alignment: .center,
                         text: $timestamp
@@ -83,7 +81,7 @@ struct LogRow: View, Identifiable {
                     Column(
                         type: .timestamp,
                         colour: applyColour(),
-                        textColour: rowTextColour(),
+                        textColour: self.colour.isBright() ? Theme.base : .white,
                         index: index,
                         alignment: .center,
                         text: $timestamp
@@ -96,7 +94,7 @@ struct LogRow: View, Identifiable {
                     Column(
                         type: .job,
                         colour: applyColour(),
-                        textColour: rowTextColour(),
+                        textColour: self.colour.isBright() ? Theme.base : .white,
                         index: index,
                         alignment: .center,
                         url: (entry.jobObject != nil && entry.jobObject!.uri != nil ? entry.jobObject!.uri : nil),
@@ -110,7 +108,7 @@ struct LogRow: View, Identifiable {
                     Column(
                         type: .message,
                         colour: applyColour(),
-                        textColour: rowTextColour(),
+                        textColour: self.colour.isBright() ? Theme.base : .white,
                         index: index,
                         alignment: .leading,
                         text: $message
@@ -119,7 +117,6 @@ struct LogRow: View, Identifiable {
             }
             .contextMenu { contextMenu }
         }
-        .defaultAppStorage(.standard)
         .onAppear(perform: setEditableValues)
         .onChange(of: timestamp) {
             if !isEditing {
@@ -217,7 +214,7 @@ struct LogRow: View, Identifiable {
 
                 if entry.jobObject?.project != nil {
                     Button {
-                        nav.view = AnyView(ProjectView(project: entry.jobObject!.project!).environmentObject(jm))
+                        nav.view = AnyView(ProjectView(project: entry.jobObject!.project!))
                         nav.parent = .projects
                         nav.sidebar = AnyView(ProjectsDashboardSidebar())
                         // @TODO: uncomment once ProjectView is refactored so it doesn't require project on init
@@ -322,11 +319,7 @@ struct LogRow: View, Identifiable {
 
         return colour
     }
-    
-    private func rowTextColour() -> Color {
-        return colour.isBright() ? Color.black : Color.white
-    }
-    
+
     private func adjustedIndex() -> Int {
         var adjusted: Int = Int(index!)
         adjusted += 1
@@ -348,7 +341,7 @@ struct LogRow: View, Identifiable {
                 rec.id = entry.id
                 
                 if let jid = Double(job) {
-                    if let match = CoreDataJob(moc: moc).byId(jid) {
+                    if let match = CoreDataJob(moc: self.nav.moc).byId(jid) {
                         rec.job = match
                         match.lastUpdate = Date()
                     }

@@ -39,36 +39,45 @@ extension Today {
 extension Today.LogTable {
     /// Table row headers
     struct Headers: View {
-        static public var required: Set<RecordTableColumn> = [.job, .message]
+        @EnvironmentObject public var state: Navigation
+        public var page: PageConfiguration.AppPage
+        static public var required: Set<RecordTableColumn> = [.message]
 
         var body: some View {
             GridRow {
-                // project colour block
                 HStack(spacing: 0) {
                     Group {
-                        ZStack {
-                            Theme.subHeaderColour
+                        ZStack(alignment: .top) {
+                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                .opacity(0.6)
+                                .blendMode(.softLight)
+                            self.page.primaryColour.opacity(0.4)
                         }
                     }
-                    .frame(width: 5)
+                    .frame(width: 15)
                     
                     ForEach(RecordTableColumn.allCases, id: \.self) { column in
                         if Headers.required.contains(column) {
                             Group {
                                 ZStack(alignment: column.alignment) {
-                                    Theme.subHeaderColour
-                                    Text(column.name).padding(10)
+                                    LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                        .opacity(0.6)
+                                        .blendMode(.softLight)
+                                    self.page.primaryColour.opacity(0.4)
+                                    Text(column.name)
+                                        .padding(8)
                                 }
                             }
                             .frame(width: column.width)
                         }
                     }
                 }
+                .font(.caption)
+                .foregroundStyle(.gray)
             }
-            .frame(height: 40)
         }
     }
-    
+
     /// Plaintext conversion of the standard display
     struct Plain: View {
         public var records: [LogRecord]
@@ -101,7 +110,7 @@ extension Today.LogTable {
         
         var body: some View {
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 1) {
+                VStack(spacing: 0) {
                     if records.count > 0 {
                         ForEach(records, id: \.objectID) { record in
                             if record.job != nil {
@@ -157,12 +166,10 @@ extension Today.LogTable {
             }
             
             var Content: some View {
-                VStack(spacing: 1) {
-                    Group {
-                        ToolbarButtons()
-                    }
-                    .background(self.page.primaryColour)
-
+                VStack(spacing: 0) {
+                    ToolbarButtons()
+                        .background(self.page.primaryColour)
+                    Divider().foregroundStyle(.white)
                     // TODO: fix search
                     //                if nav.session.toolbar.showSearch {
                     //                    SearchBar(text: $searchText, disabled: (records.count == 0))
@@ -171,7 +178,7 @@ extension Today.LogTable {
                     if nav.session.toolbar.mode == .plain {
                         Plain(records: records)
                     } else {
-                        Headers()
+                        Headers(page: self.page)
                         Full(records: records)
                     }
                 }
@@ -188,10 +195,9 @@ extension Today.LogTable {
             var body: some View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 1) {
-                        Group {
-                            ToolbarButtons()
-                        }
-                        .background(self.page.primaryColour)
+                        ToolbarButtons()
+                            .background(self.page.primaryColour)
+                        Divider().foregroundStyle(.white)
 
                         if records.count > 0 {
                             ForEach(grouped) {group in group}
@@ -218,11 +224,10 @@ extension Today.LogTable {
             @State private var records: [LogRecord] = []
 
             var body: some View {
-                VStack(spacing: 1) {
-                    Group {
-                        ToolbarButtons()
-                    }
-                    .background(self.page.primaryColour)
+                VStack(spacing: 0) {
+                    ToolbarButtons()
+                        .background(self.page.primaryColour)
+                    Divider().foregroundStyle(.white)
 
                     // TODO: fix search
                     //                if nav.session.toolbar.showSearch {
@@ -232,7 +237,7 @@ extension Today.LogTable {
                     if nav.session.toolbar.mode == .plain {
                         Plain(records: records)
                     } else {
-                        Headers()
+                        Headers(page: self.page)
                         Full(records: records)
                     }
                 }
