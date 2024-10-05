@@ -10,13 +10,17 @@ import Foundation
 import SwiftUI
 
 struct LogRow: View, Identifiable {
+    @Environment(\.managedObjectContext) var moc
+    @EnvironmentObject public var nav: Navigation
+    @EnvironmentObject public var updater: ViewUpdater
+    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
+    @AppStorage("tigerStriped") private var tigerStriped = false
     public var id = UUID()
     public var entry: Entry
     public var index: Array<Entry>.Index?
     public var colour: Color
     public var record: LogRecord?
     public var viewRequiresColumns: Set<RecordTableColumn> = []
-
     @State public var isEditing: Bool = false
     @State public var message: String = ""
     @State public var job: String = ""
@@ -24,22 +28,8 @@ struct LogRow: View, Identifiable {
     @State public var aIndex: String = "0"
     @State public var activeColour: Color = Theme.rowColour
     @State public var projectColHelpText: String = ""
-    @State public var showingTimestampColumn: Bool = true
     @State public var columns: Set<RecordTableColumn> = [.message]
     @State private var isDeleteAlertShowing: Bool = false
-
-    @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var nav: Navigation
-    @EnvironmentObject public var updater: ViewUpdater
-    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
-    
-    @AppStorage("tigerStriped") private var tigerStriped = false
-    @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
-    @AppStorage("showExperiment.actions") private var showExperimentActions = false
-    @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
-    @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
-    @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
-    @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
 
     var body: some View {
         if isEditing {
@@ -131,7 +121,7 @@ struct LogRow: View, Identifiable {
         }
         .defaultAppStorage(.standard)
         .onAppear(perform: setEditableValues)
-        .onChange(of: timestamp) { _ in
+        .onChange(of: timestamp) {
             if !isEditing {
                 setEditableValues()
             }
@@ -320,9 +310,6 @@ struct LogRow: View, Identifiable {
         timestamp = entry.timestamp
         aIndex = adjustedIndexAsString()
 
-        // shows timestamp column on row hover
-        showingTimestampColumn = showColumnTimestamp
-
         if !viewRequiresColumns.isEmpty {
             columns = columns.union(viewRequiresColumns)
         }
@@ -389,16 +376,5 @@ struct LogRow: View, Identifiable {
         CoreDataRecords.softDelete(record!)
         isEditing.toggle()
         updater.updateOne("today.table")
-    }
-}
-
-struct LogTableRowPreview: PreviewProvider {
-    @State static public var sj: String = "11.0"
-    
-    static var previews: some View {
-        VStack {
-            LogRow(entry: Entry(timestamp: "2023-01-01 19:48", job: "88888", message: "Hello, world"), index: 0, colour: Theme.rowColour)
-            LogRow(entry: Entry(timestamp: "2023-01-01 19:49", job: "11", message: "Hello, world"), index: 1, colour: Theme.rowColour)
-        }
     }
 }
