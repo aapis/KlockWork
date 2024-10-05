@@ -63,6 +63,11 @@
 		5334F2742B2B958D0079D2E7 /* FancyJobSredToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F2732B2B958D0079D2E7 /* FancyJobSredToggle.swift */; };
 		5334F2762B2CBF130079D2E7 /* ManagePeople.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F2752B2CBF130079D2E7 /* ManagePeople.swift */; };
 		5334F2782B2CC9EE0079D2E7 /* CoreDataPerson.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5334F2772B2CC9EE0079D2E7 /* CoreDataPerson.swift */; };
+		533544802CB19C430067A944 /* Planning.Upcoming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335447F2CB19C3F0067A944 /* Planning.Upcoming.swift */; };
+		533544822CB19C480067A944 /* Planning.Overdue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533544812CB19C450067A944 /* Planning.Overdue.swift */; };
+		533544862CB19E010067A944 /* TaskForecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533544852CB19DFE0067A944 /* TaskForecast.swift */; };
+		533544882CB1A0F00067A944 /* Timestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533544872CB1A0EE0067A944 /* Timestamp.swift */; };
+		5335448A2CB1A15C0067A944 /* TaskItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533544892CB1A14E0067A944 /* TaskItem.swift */; };
 		5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5AD296CFF83000051B1 /* FileHelper.swift */; };
 		5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B2296D17EB000051B1 /* TaskDashboard.swift */; };
 		5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B4296D1FA7000051B1 /* TaskView.swift */; };
@@ -325,6 +330,11 @@
 		5334F2732B2B958D0079D2E7 /* FancyJobSredToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyJobSredToggle.swift; sourceTree = "<group>"; };
 		5334F2752B2CBF130079D2E7 /* ManagePeople.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagePeople.swift; sourceTree = "<group>"; };
 		5334F2772B2CC9EE0079D2E7 /* CoreDataPerson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataPerson.swift; sourceTree = "<group>"; };
+		5335447F2CB19C3F0067A944 /* Planning.Upcoming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Planning.Upcoming.swift; sourceTree = "<group>"; };
+		533544812CB19C450067A944 /* Planning.Overdue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Planning.Overdue.swift; sourceTree = "<group>"; };
+		533544852CB19DFE0067A944 /* TaskForecast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskForecast.swift; sourceTree = "<group>"; };
+		533544872CB1A0EE0067A944 /* Timestamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timestamp.swift; sourceTree = "<group>"; };
+		533544892CB1A14E0067A944 /* TaskItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskItem.swift; sourceTree = "<group>"; };
 		5335A5AD296CFF83000051B1 /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		5335A5B2296D17EB000051B1 /* TaskDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDashboard.swift; sourceTree = "<group>"; };
 		5335A5B4296D1FA7000051B1 /* TaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskView.swift; sourceTree = "<group>"; };
@@ -709,6 +719,7 @@
 		5335A5AF296D164F000051B1 /* Tasks */ = {
 			isa = PBXGroup;
 			children = (
+				533544892CB1A14E0067A944 /* TaskItem.swift */,
 				538B2FA52CB095B200B353AE /* TaskDetail.swift */,
 				5371BA3E2A7B865300DEEC21 /* Sidebars */,
 				5335A5B2296D17EB000051B1 /* TaskDashboard.swift */,
@@ -753,6 +764,8 @@
 		5354C8F42AA045C2001C1779 /* Tabs */ = {
 			isa = PBXGroup;
 			children = (
+				533544812CB19C450067A944 /* Planning.Overdue.swift */,
+				5335447F2CB19C3F0067A944 /* Planning.Upcoming.swift */,
 				5354C8F52AA045CA001C1779 /* Planning.Today.swift */,
 				5354C8F72AA045F5001C1779 /* Planning.Feature.swift */,
 			);
@@ -1209,10 +1222,12 @@
 		53EDDF9C29634840008D34C7 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				533544872CB1A0EE0067A944 /* Timestamp.swift */,
 				53E9187D2B47C9CC00912C6F /* PanelGroup */,
 				53790C012A72F15200D3FFD4 /* AppSidebar */,
 				53B0BE822972610C007CB663 /* Fancy */,
 				53EDDF9D29634852008D34C7 /* Entry.swift */,
+				533544852CB19DFE0067A944 /* TaskForecast.swift */,
 				53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */,
 				5376289D29664F8C00DE8ECF /* Theme.swift */,
 				531B38FB29674EC400E74013 /* Title.swift */,
@@ -1423,6 +1438,7 @@
 				53F5896429983FA300843B32 /* ProjectResult.swift in Sources */,
 				53842B272B4C82B20029AC73 /* Project.swift in Sources */,
 				53EDDF9E29634852008D34C7 /* Entry.swift in Sources */,
+				533544862CB19E010067A944 /* TaskForecast.swift in Sources */,
 				53C000A82B41438C00D5EC04 /* NoteCreateSidebar.swift in Sources */,
 				53E202632A7ECC6500B4DF70 /* TodayInHistoryWidget.swift in Sources */,
 				53218D4A24B7F6EB0088ABE9 /* Home.swift in Sources */,
@@ -1433,6 +1449,7 @@
 				53EFCE7929637F35004E45EC /* GeneralSettings.swift in Sources */,
 				5335A5B7296D2089000051B1 /* TaskListView.swift in Sources */,
 				5378857C2B450F2800825B78 /* EventIndicatorStatus.swift in Sources */,
+				533544822CB19C480067A944 /* Planning.Overdue.swift in Sources */,
 				53814A8E2A9821C800A5A015 /* DefaultPlanningSidebar.swift in Sources */,
 				53E2025C2A7EAF6100B4DF70 /* ProjectRowPlain.swift in Sources */,
 				53561F8529F1FC7900D828AD /* ProjectPickerUsing.swift in Sources */,
@@ -1485,10 +1502,12 @@
 				53C0009A2B3A90DF00D5EC04 /* PostingInterface.swift in Sources */,
 				53814A8B2A95151000A5A015 /* CoreDataPlan.swift in Sources */,
 				5371BA3D2A7B7F1200DEEC21 /* TaskViewPlain.swift in Sources */,
+				533544882CB1A0F00067A944 /* Timestamp.swift in Sources */,
 				533E40682970DD170007785A /* AutoFixJobs.swift in Sources */,
 				538B2FA62CB095B400B353AE /* TaskDetail.swift in Sources */,
 				53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */,
 				5354C8F32AA03CE4001C1779 /* Notes.Row.swift in Sources */,
+				5335448A2CB1A15C0067A944 /* TaskItem.swift in Sources */,
 				5371BA2D2A7B27BB00DEEC21 /* NoteDashboardSidebar.swift in Sources */,
 				53790C0B2A747E0300D3FFD4 /* JobCreate.swift in Sources */,
 				5376289E29664F8C00DE8ECF /* Theme.swift in Sources */,
@@ -1595,6 +1614,7 @@
 				537AEB9F29627DCC00385787 /* LogTable.swift in Sources */,
 				53E918832B4A6D9600912C6F /* SessionInspector.swift in Sources */,
 				5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */,
+				533544802CB19C430067A944 /* Planning.Upcoming.swift in Sources */,
 				53E202612A7EC96D00B4DF70 /* DashboardSidebar.swift in Sources */,
 				532A722F299037AC0038C18B /* RecordResult.swift in Sources */,
 				53E9187F2B47C9E300912C6F /* Panel.swift in Sources */,
