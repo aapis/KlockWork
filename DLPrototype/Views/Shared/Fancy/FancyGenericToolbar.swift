@@ -179,7 +179,8 @@ struct FancyGenericToolbar: View {
                                 .padding(0)
                                 .foregroundStyle(self.selected == self.button.id ? self.nav.session.job?.backgroundColor ?? .white : .white.opacity(0.5))
                         } else {
-                            button.label.padding(0)
+                            button.label
+                                .padding(0)
                                 .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
                         }
                     } else {

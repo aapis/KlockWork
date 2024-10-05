@@ -14,7 +14,7 @@ extension Today {
         private var buttons: [ToolbarButton] = []
         
         @EnvironmentObject public var nav: Navigation
-        
+
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 FancyDivider()
@@ -39,36 +39,58 @@ extension Today {
 extension Today.LogTable {
     /// Table row headers
     struct Headers: View {
-        static public var required: Set<RecordTableColumn> = [.job, .message]
+        @EnvironmentObject public var state: Navigation
+        public var page: PageConfiguration.AppPage
+        @State private var required: Set<RecordTableColumn> = [.message]
+        @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
+        @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
+        @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
+        @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
 
         var body: some View {
             GridRow {
-                // project colour block
                 HStack(spacing: 0) {
                     Group {
-                        ZStack {
-                            Theme.subHeaderColour
+                        ZStack(alignment: .top) {
+                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                .opacity(0.6)
+                                .blendMode(.softLight)
+                            self.page.primaryColour.opacity(0.4)
                         }
                     }
-                    .frame(width: 5)
+                    .frame(width: 15)
                     
                     ForEach(RecordTableColumn.allCases, id: \.self) { column in
-                        if Headers.required.contains(column) {
-                            Group {
-                                ZStack(alignment: column.alignment) {
-                                    Theme.subHeaderColour
-                                    Text(column.name).padding(10)
+                        // Index column content is integrated into the project indicator column so we don't need to add
+                        // another stack for it
+                        if column != .index {
+                            if self.required.contains(column) {
+                                Group {
+                                    ZStack(alignment: column.alignment) {
+                                        LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                            .opacity(0.6)
+                                            .blendMode(.softLight)
+                                        self.page.primaryColour.opacity(0.4)
+                                        Text(column.name)
+                                            .padding(8)
+                                    }
                                 }
+                                .frame(width: column.width)
                             }
-                            .frame(width: column.width)
                         }
                     }
                 }
+                .font(.caption)
+                .foregroundStyle(.gray)
             }
-            .frame(height: 40)
+            .onAppear(perform: self.actionOnAppear)
+            .onChange(of: self.showColumnIndex) { self.actionOnAppear() }
+            .onChange(of: self.showColumnTimestamp) { self.actionOnAppear() }
+            .onChange(of: self.showColumnExtendedTimestamp) { self.actionOnAppear() }
+            .onChange(of: self.showColumnJobId) { self.actionOnAppear() }
         }
     }
-    
+
     /// Plaintext conversion of the standard display
     struct Plain: View {
         public var records: [LogRecord]
@@ -95,13 +117,16 @@ extension Today.LogTable {
     
     /// Standard display, colour coded list of records
     struct Full: View {
+        @EnvironmentObject public var nav: Navigation
+        @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
+        @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
+        @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
+        @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
         public var records: [LogRecord]
 
-        @EnvironmentObject public var nav: Navigation
-        
         var body: some View {
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 1) {
+                VStack(spacing: 0) {
                     if records.count > 0 {
                         ForEach(records, id: \.objectID) { record in
                             if record.job != nil {
@@ -115,8 +140,7 @@ extension Today.LogTable {
                                     entry: entry,
                                     index: records.firstIndex(of: record),
                                     colour: Color.fromStored((record.job?.colour) ?? Theme.rowColourAsDouble),
-                                    record: record,
-                                    viewRequiresColumns: Headers.required
+                                    record: record
                                 )
                             }
                         }
@@ -157,12 +181,10 @@ extension Today.LogTable {
             }
             
             var Content: some View {
-                VStack(spacing: 1) {
-                    Group {
-                        ToolbarButtons()
-                    }
-                    .background(self.page.primaryColour)
-
+                VStack(spacing: 0) {
+                    ToolbarButtons()
+                        .background(self.page.primaryColour)
+                    Divider().foregroundStyle(.white)
                     // TODO: fix search
                     //                if nav.session.toolbar.showSearch {
                     //                    SearchBar(text: $searchText, disabled: (records.count == 0))
@@ -171,7 +193,7 @@ extension Today.LogTable {
                     if nav.session.toolbar.mode == .plain {
                         Plain(records: records)
                     } else {
-                        Headers()
+                        Headers(page: self.page)
                         Full(records: records)
                     }
                 }
@@ -188,10 +210,9 @@ extension Today.LogTable {
             var body: some View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 1) {
-                        Group {
-                            ToolbarButtons()
-                        }
-                        .background(self.page.primaryColour)
+                        ToolbarButtons()
+                            .background(self.page.primaryColour)
+                        Divider().foregroundStyle(.white)
 
                         if records.count > 0 {
                             ForEach(grouped) {group in group}
@@ -218,11 +239,10 @@ extension Today.LogTable {
             @State private var records: [LogRecord] = []
 
             var body: some View {
-                VStack(spacing: 1) {
-                    Group {
-                        ToolbarButtons()
-                    }
-                    .background(self.page.primaryColour)
+                VStack(spacing: 0) {
+                    ToolbarButtons()
+                        .background(self.page.primaryColour)
+                    Divider().foregroundStyle(.white)
 
                     // TODO: fix search
                     //                if nav.session.toolbar.showSearch {
@@ -232,7 +252,7 @@ extension Today.LogTable {
                     if nav.session.toolbar.mode == .plain {
                         Plain(records: records)
                     } else {
-                        Headers()
+                        Headers(page: self.page)
                         Full(records: records)
                     }
                 }
@@ -255,6 +275,15 @@ extension Today.LogTable {
 }
 
 // MARK: method definitions
+extension Today.LogTable.Headers {
+    private func actionOnAppear() -> Void {
+        if self.showColumnIndex { self.required.insert(.index) } else { self.required.remove(.index)}
+        if self.showColumnTimestamp { self.required.insert(.timestamp) } else { self.required.remove(.timestamp)}
+        if self.showColumnExtendedTimestamp { self.required.insert(.extendedTimestamp) } else { self.required.remove(.extendedTimestamp)}
+        if self.showColumnJobId { self.required.insert(.job) } else { self.required.remove(.job)}
+    }
+}
+
 extension Today.LogTable.TabContent.Chronologic {
     private func findRecords() -> Void {
         DispatchQueue.with(background: {

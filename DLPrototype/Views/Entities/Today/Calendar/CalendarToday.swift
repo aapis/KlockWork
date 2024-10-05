@@ -17,21 +17,29 @@ struct CalendarToday: View {
     @State private var inProgress: [EKEvent] = []
     @State private var upcoming: [EKEvent] = []
     @State private var currentBlock: Int = 0
-    @State private var currentDate: String = ""
     @State private var timer: Timer? = nil
     @AppStorage("today.startOfDay") public var startOfDay: Int = 9
     @AppStorage("today.endOfDay") public var endOfDay: Int = 18
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                Text("Events for \(currentDate)")
-                    .font(Theme.font)
-                    .padding(5)
-                Spacer()
+            ZStack(alignment: .bottom) {
+                LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                    .opacity(0.6)
+                    .blendMode(.softLight)
+                    .frame(height: 20)
+                self.page.primaryColour
+                HStack {
+                    Text("Today's Events")
+                        .padding(6)
+                        .background(Theme.textBackground)
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                    Spacer()
+                }
+                .padding(8)
             }
-            .frame(height: 40)
-            .background(self.page.primaryColour)
+            Divider().foregroundStyle(.white)
 
             ScrollView(showsIndicators: false) {
                 HStack(spacing: 0) {
@@ -114,7 +122,6 @@ struct CalendarToday: View {
     private func updateChips() -> Void {
         ce.truncate()
         currentBlock = Calendar.current.component(.hour, from: Date())
-        currentDate = Date().formatted(date: .abbreviated, time: .omitted)
         inProgress = []
         upcoming = []
 

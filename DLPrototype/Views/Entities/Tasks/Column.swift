@@ -67,16 +67,11 @@ struct Column: View {
                 } label: {
                     Text(text.replacingOccurrences(of: ".0", with: ""))
                         .foregroundColor(colour.isBright() ? Color.black : Color.white)
-                        .onHover { inside in
-                            if inside {
-                                NSCursor.pointingHand.push()
-                            } else {
-                                NSCursor.pop()
-                            }
-                        }
+
                         .help("Edit job")
                 }
-                .buttonStyle(.borderless)
+                .useDefaultHover({_ in})
+                .buttonStyle(.plain)
                 .underline()
             }
 

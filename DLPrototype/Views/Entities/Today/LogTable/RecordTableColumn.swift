@@ -13,8 +13,9 @@ public enum RecordTableColumn: CaseIterable {
     
     var width: CGFloat? {
         switch self {
-        case .index: return 50
-        case .timestamp, .extendedTimestamp: return 101
+        case .index: return 20
+        case .timestamp: return 70
+        case .extendedTimestamp: return 101
         case .job: return 80
         case .message: return nil
         }
@@ -23,7 +24,7 @@ public enum RecordTableColumn: CaseIterable {
     var name: String {
         switch self {
         case .index: return ""
-        case .timestamp: return "Date"
+        case .timestamp: return "Time"
         case .extendedTimestamp: return "Timestamp"
         case .job: return "Job"
         case .message: return "Message"
@@ -33,7 +34,7 @@ public enum RecordTableColumn: CaseIterable {
     var alignment: Alignment {
         switch self {
         case .index: return .center
-        case .timestamp, .extendedTimestamp: return .center
+        case .timestamp, .extendedTimestamp: return .leading
         case .job: return .center
         case .message: return .leading
         }

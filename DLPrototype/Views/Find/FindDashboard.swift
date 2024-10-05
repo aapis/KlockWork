@@ -377,8 +377,6 @@ extension FindDashboard {
         @State private var loaded: Bool = false
         @FetchRequest private var entities: FetchedResults<LogRecord>
 
-        private let viewRequiresColumns: Set<RecordTableColumn> = [.extendedTimestamp, .job]
-
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 if entities.count > 0 {
@@ -401,8 +399,7 @@ extension FindDashboard {
                                 LogRow(
                                     entry: entry,
                                     index: entities.firstIndex(of: item),
-                                    colour: Color.fromStored(item.job!.colour ?? Theme.rowColourAsDouble),
-                                    viewRequiresColumns: viewRequiresColumns
+                                    colour: Color.fromStored(item.job!.colour ?? Theme.rowColourAsDouble)
                                 )
                             }
                         }

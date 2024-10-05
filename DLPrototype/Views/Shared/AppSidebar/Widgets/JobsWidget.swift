@@ -522,27 +522,30 @@ struct UnifiedSidebar {
                 self.isPresented.toggle()
                 self.callback?()
             } label: {
-                HStack(alignment: .center, spacing: 8) {
-                    ZStack(alignment: .center) {
-                        Theme.base.opacity(0.6).blendMode(.softLight)
-                        Image(systemName: self.isPresented ? "minus" : "plus")
-                    }
-                    .frame(width: 30, height: 30)
-                    .cornerRadius(5)
+                ZStack(alignment: .topLeading) {
+                    Color.white.opacity(0.01).blendMode(.softLight)
+                    HStack(alignment: .center, spacing: 8) {
+                        ZStack(alignment: .center) {
+                            Theme.base.opacity(0.6).blendMode(.softLight)
+                            Image(systemName: self.isPresented ? "minus" : "plus")
+                        }
+                        .frame(width: 30, height: 30)
+                        .cornerRadius(5)
 
-                    Text(self.text)
-                        .font(.title3)
-                        .multilineTextAlignment(.leading)
-                    Spacer()
-
-                    if !self.alive {
-                        Image(systemName: "snowflake")
+                        Text(self.text)
                             .font(.title3)
-                            .opacity(0.5)
-                            .help("Unpublished")
+                            .multilineTextAlignment(.leading)
+                        Spacer()
+
+                        if !self.alive {
+                            Image(systemName: "snowflake")
+                                .font(.title3)
+                                .opacity(0.5)
+                                .help("Unpublished")
+                        }
                     }
+                    .padding(8)
                 }
-                .padding(8)
             }
             .buttonStyle(.plain)
         }

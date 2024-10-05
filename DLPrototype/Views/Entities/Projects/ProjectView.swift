@@ -10,8 +10,7 @@ import Foundation
 import SwiftUI
 
 struct ProjectView: View {
-    public let project: Project
-    
+    @State public var project: Project
     @State private var name: String = ""
     @State private var colour: Color = .clear
     @State private var colourChanged: Bool = false
@@ -521,6 +520,11 @@ extension ProjectView {
     }
 
     public func onAppear() -> Void {
+        if let stored = self.nav.session.project {
+            self.project = stored
+            self.nav.session.project = nil
+        }
+
         allUnOwned = jm.unowned()
         name = project.name!
         created = project.created!

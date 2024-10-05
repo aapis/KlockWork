@@ -10,13 +10,18 @@ import Foundation
 import SwiftUI
 
 struct LogRow: View, Identifiable {
+    @EnvironmentObject public var nav: Navigation
+    @EnvironmentObject public var updater: ViewUpdater
+    @AppStorage("tigerStriped") private var tigerStriped = false
+    @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
+    @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
+    @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
+    @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
     public var id = UUID()
     public var entry: Entry
     public var index: Array<Entry>.Index?
     public var colour: Color
     public var record: LogRecord?
-    public var viewRequiresColumns: Set<RecordTableColumn> = []
-
     @State public var isEditing: Bool = false
     @State public var message: String = ""
     @State public var job: String = ""
@@ -24,28 +29,14 @@ struct LogRow: View, Identifiable {
     @State public var aIndex: String = "0"
     @State public var activeColour: Color = Theme.rowColour
     @State public var projectColHelpText: String = ""
-    @State public var showingTimestampColumn: Bool = true
-    @State public var columns: Set<RecordTableColumn> = [.message]
+    @State public var required: Set<RecordTableColumn> = [.message]
     @State private var isDeleteAlertShowing: Bool = false
-
-    @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var nav: Navigation
-    @EnvironmentObject public var updater: ViewUpdater
-    @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
-    
-    @AppStorage("tigerStriped") private var tigerStriped = false
-    @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures = false
-    @AppStorage("showExperiment.actions") private var showExperimentActions = false
-    @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
-    @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
-    @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
-    @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
 
     var body: some View {
         if isEditing {
             VStack {
                 ZStack {
-                    Color.black
+                    Theme.base
                     ViewModeNormal
                         .opacity(0.5)
                 }
@@ -57,43 +48,35 @@ struct LogRow: View, Identifiable {
     }
 
     var ViewModeNormal: some View {
-        HStack(spacing: 1) {
+        HStack(spacing: 0) {
             GridRow {
                 Column(
                     type: .index,
                     colour: (entry.jobObject != nil  && entry.jobObject!.project != nil ? Color.fromStored(entry.jobObject!.project!.colour ?? Theme.rowColourAsDouble) : applyColour()),
-                    textColour: rowTextColour(),
-                    text: $projectColHelpText
+                    textColour: self.colour.isBright() ? Theme.base : .white,
+                    alignment: .center,
+                    text: required.contains(.index) ? $aIndex : $projectColHelpText
                 )
-                .frame(width: 5)
+                .frame(width: 20)
 
-                if columns.contains(.index) {
-                    Column(
-                        colour: applyColour(),
-                        textColour: rowTextColour(),
-                        text: $aIndex
-                    )
-                    .frame(maxWidth: 50)
-                }
-
-                if columns.contains(.extendedTimestamp) {
-                    Column(
-                        type: .extendedTimestamp,
-                        colour: applyColour(),
-                        textColour: rowTextColour(),
-                        index: index,
-                        alignment: .center,
-                        text: $timestamp
-                    )
-                    .frame(maxWidth: 101)
-                    .help(entry.timestamp)
-                }
-
-                if columns.contains(.timestamp) {
+                if required.contains(.timestamp) {
                     Column(
                         type: .timestamp,
                         colour: applyColour(),
-                        textColour: rowTextColour(),
+                        textColour: self.colour.isBright() ? Theme.base : .white,
+                        index: index,
+                        alignment: .leading,
+                        text: $timestamp
+                    )
+                    .frame(maxWidth: 65)
+                    .help(entry.timestamp)
+                }
+
+                if required.contains(.extendedTimestamp) {
+                    Column(
+                        type: .extendedTimestamp,
+                        colour: applyColour(),
+                        textColour: self.colour.isBright() ? Theme.base : .white,
                         index: index,
                         alignment: .center,
                         text: $timestamp
@@ -102,11 +85,11 @@ struct LogRow: View, Identifiable {
                     .help(entry.timestamp)
                 }
 
-                if columns.contains(.job) {
+                if required.contains(.job) {
                     Column(
                         type: .job,
                         colour: applyColour(),
-                        textColour: rowTextColour(),
+                        textColour: self.colour.isBright() ? Theme.base : .white,
                         index: index,
                         alignment: .center,
                         url: (entry.jobObject != nil && entry.jobObject!.uri != nil ? entry.jobObject!.uri : nil),
@@ -116,11 +99,11 @@ struct LogRow: View, Identifiable {
                     .frame(maxWidth: 80)
                 }
 
-                if columns.contains(.message) {
+                if required.contains(.message) {
                     Column(
                         type: .message,
                         colour: applyColour(),
-                        textColour: rowTextColour(),
+                        textColour: self.colour.isBright() ? Theme.base : .white,
                         index: index,
                         alignment: .leading,
                         text: $message
@@ -129,13 +112,16 @@ struct LogRow: View, Identifiable {
             }
             .contextMenu { contextMenu }
         }
-        .defaultAppStorage(.standard)
-        .onAppear(perform: setEditableValues)
-        .onChange(of: timestamp) { _ in
+        .onAppear(perform: self.actionOnAppear)
+        .onChange(of: timestamp) {
             if !isEditing {
-                setEditableValues()
+                self.actionOnAppear()
             }
         }
+        .onChange(of: self.showColumnIndex) { self.actionOnAppear() }
+        .onChange(of: self.showColumnTimestamp) { self.actionOnAppear() }
+        .onChange(of: self.showColumnExtendedTimestamp) { self.actionOnAppear() }
+        .onChange(of: self.showColumnJobId) { self.actionOnAppear() }
     }
 
     private var ViewModeEdit: some View {
@@ -178,21 +164,25 @@ struct LogRow: View, Identifiable {
                 isEditing = true
             }
 
-            if entry.jobObject!.uri != nil {
-                Link(destination: entry.jobObject!.uri!, label: {
-                    Text("Open job link in browser")
-                })
+            if let uri = entry.jobObject!.uri {
+                if uri.absoluteString != "" && uri.absoluteString != "https://" {
+                    Link(destination: uri, label: {
+                        Text("Open job link in browser")
+                    })
+                }
             }
 
             Divider()
 
             Menu("Copy") {
-                if entry.jobObject!.uri != nil {
-                    Button(action: {ClipboardHelper.copy(entry.jobObject!.uri!.absoluteString)}, label: {
-                        Text("Job URL")
-                    })
+                if let uri = entry.jobObject!.uri {
+                    if uri.absoluteString != "" && uri.absoluteString != "https://" {
+                        Button(action: {ClipboardHelper.copy(entry.jobObject!.uri!.absoluteString)}, label: {
+                            Text("Job URL")
+                        })
+                    }
                 }
-                
+
                 Button(action: {ClipboardHelper.copy(entry.jobObject!.jid.string)}, label: {
                     Text("Job ID")
                 })
@@ -208,79 +198,117 @@ struct LogRow: View, Identifiable {
             
             Menu("Go to"){
                 Button {
-                    nav.view = AnyView(NoteDashboard(defaultSelectedJob: entry.jobObject).environmentObject(jm))
-                    nav.parent = .notes
+                    self.nav.session.job = entry.jobObject
+                    self.nav.to(.tasks)
                 } label: {
-                    Text("Notes")
+                    Text(PageConfiguration.EntityType.tasks.label)
                 }
-                
+
                 Button {
-                    nav.view = AnyView(TaskDashboard(defaultSelectedJob: entry.jobObject!).environmentObject(jm))
-                    nav.parent = .tasks
+                    self.nav.session.job = entry.jobObject
+                    self.nav.to(.notes)
                 } label: {
-                    Text("Tasks")
+                    Text(PageConfiguration.EntityType.notes.label)
                 }
-                
-                if entry.jobObject!.project != nil {
+
+                if entry.jobObject?.project != nil {
                     Button {
-                        nav.view = AnyView(ProjectView(project: entry.jobObject!.project!).environmentObject(jm))
+                        nav.view = AnyView(ProjectView(project: entry.jobObject!.project!))
                         nav.parent = .projects
                         nav.sidebar = AnyView(ProjectsDashboardSidebar())
+                        // @TODO: uncomment once ProjectView is refactored so it doesn't require project on init
+//                        self.nav.session.project = entry.jobObject?.project
+//                        self.nav.to(.projects)
                     } label: {
-                        Text("Project")
+                        Text(PageConfiguration.EntityType.projects.enSingular)
                     }
                 }
                 
                 Button {
-                    nav.view = AnyView(JobDashboard(defaultSelectedJob: entry.jobObject!))
-                    nav.parent = .jobs
-                    nav.sidebar = AnyView(JobDashboardSidebar())
-                    nav.pageId = UUID()
+                    self.nav.session.job = entry.jobObject
+                    self.nav.to(.jobs)
                 } label: {
-                    Text("Job")
+                    Text(PageConfiguration.EntityType.jobs.enSingular)
                 }
             }
 
             Menu("Inspect") {
+                Button(action: self.actionInspectRecord, label: {
+                    Text(PageConfiguration.EntityType.records.enSingular)
+                })
+                Button(action: self.actionInspectCompany, label: {
+                    Text(PageConfiguration.EntityType.companies.enSingular)
+                })
+                Button(action: self.actionInspectProject, label: {
+                    Text(PageConfiguration.EntityType.projects.enSingular)
+                })
+                Button(action: self.actionInspectJob, label: {
+                    Text(PageConfiguration.EntityType.jobs.enSingular)
+                })
+
+                Divider()
                 Text("SR&ED Eligible: " + (entry.jobObject!.shredable ? "Yes" : "No"))
             }
             
             Divider()
 
-            if let jo = entry.jobObject {
-                Button(action: {setJob(jo.jid.string)}, label: {
-                    Text("Set job")
+            if entry.jobObject != nil {
+                Button(action: {self.nav.session.job = entry.jobObject!}, label: {
+                    Text("Set as Active Job")
                 })
             }
         }
     }
     
-    private func setJob(_ job: String) -> Void {
-//        let dotIndex = (job.range(of: ".")?.lowerBound)
-        
-//        if dotIndex != nil {
-//            selectedJob = String(job.prefix(upTo: dotIndex!))
-//            nav.session.setJob()
-            
-            if let jobIdDbl = Double(job) {
-                nav.session.setJob(CoreDataJob(moc: moc).byId(jobIdDbl))
-            }
-//        }
+    /// Inspect an entity
+    /// - Returns: Void
+    private func actionInspectRecord() -> Void {
+        if let inspectable = self.record {
+            self.actionInspect(inspectable)
+        }
     }
 
-    // TODO: remove?
-    private func setEditableValues() -> Void {
+    /// Inspect an entity
+    /// - Returns: Void
+    private func actionInspectCompany() -> Void {
+        if let inspectable = self.entry.jobObject?.project?.company {
+            self.actionInspect(inspectable)
+        }
+    }
+
+    /// Inspect an entity
+    /// - Returns: Void
+    private func actionInspectProject() -> Void {
+        if let inspectable = self.entry.jobObject?.project {
+            self.actionInspect(inspectable)
+        }
+    }
+
+    /// Inspect an entity
+    /// - Returns: Void
+    private func actionInspectJob() -> Void {
+        if let inspectable = self.entry.jobObject {
+            self.actionInspect(inspectable)
+        }
+    }
+
+    /// Inspect an entity
+    /// - Returns: Void
+    private func actionInspect(_ inspectable: NSManagedObject) -> Void {
+        self.nav.session.search.inspectingEntity = inspectable
+        nav.setInspector(AnyView(Inspector(entity: inspectable)))
+    }
+
+    private func actionOnAppear() -> Void {
         message = entry.message
         job = entry.job
         timestamp = entry.timestamp
         aIndex = adjustedIndexAsString()
 
-        // shows timestamp column on row hover
-        showingTimestampColumn = showColumnTimestamp
-
-        if !viewRequiresColumns.isEmpty {
-            columns = columns.union(viewRequiresColumns)
-        }
+        if self.showColumnIndex { self.required.insert(.index) } else { self.required.remove(.index)}
+        if self.showColumnTimestamp { self.required.insert(.timestamp) } else { self.required.remove(.timestamp)}
+        if self.showColumnExtendedTimestamp { self.required.insert(.extendedTimestamp) } else { self.required.remove(.extendedTimestamp)}
+        if self.showColumnJobId { self.required.insert(.job) } else { self.required.remove(.job)}
     }
 
     private func applyColour() -> Color {
@@ -290,11 +318,7 @@ struct LogRow: View, Identifiable {
 
         return colour
     }
-    
-    private func rowTextColour() -> Color {
-        return colour.isBright() ? Color.black : Color.white
-    }
-    
+
     private func adjustedIndex() -> Int {
         var adjusted: Int = Int(index!)
         adjusted += 1
@@ -316,7 +340,7 @@ struct LogRow: View, Identifiable {
                 rec.id = entry.id
                 
                 if let jid = Double(job) {
-                    if let match = CoreDataJob(moc: moc).byId(jid) {
+                    if let match = CoreDataJob(moc: self.nav.moc).byId(jid) {
                         rec.job = match
                         match.lastUpdate = Date()
                     }
@@ -344,16 +368,5 @@ struct LogRow: View, Identifiable {
         CoreDataRecords.softDelete(record!)
         isEditing.toggle()
         updater.updateOne("today.table")
-    }
-}
-
-struct LogTableRowPreview: PreviewProvider {
-    @State static public var sj: String = "11.0"
-    
-    static var previews: some View {
-        VStack {
-            LogRow(entry: Entry(timestamp: "2023-01-01 19:48", job: "88888", message: "Hello, world"), index: 0, colour: Theme.rowColour)
-            LogRow(entry: Entry(timestamp: "2023-01-01 19:49", job: "11", message: "Hello, world"), index: 1, colour: Theme.rowColour)
-        }
     }
 }
