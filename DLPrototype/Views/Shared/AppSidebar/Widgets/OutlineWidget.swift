@@ -234,7 +234,7 @@ extension ProjectOutline {
 
                         if notes > 0 {
                             HStack(spacing: 2) {
-                                FancyTextLink(text: "Show notes", destination: AnyView(NoteDashboard(project: project)), pageType: .notes, sidebar: AnyView(NoteDashboardSidebar()))
+                                FancyTextLink(text: "Show notes", destination: AnyView(NoteDashboard()), pageType: .notes, sidebar: AnyView(NoteDashboardSidebar()))
                                 Image(systemName: "arrow.right.square.fill")
                                 Spacer()
                             }

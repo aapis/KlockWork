@@ -28,6 +28,7 @@ struct DateSelectorWidget: View {
                         self.actionOpenSelector()
                     } label: {
                         ZStack {
+                            !areSameDate(nav.session.date, Date()) ? Theme.base :
                             (isDatePickerPresented ? Theme.secondary : Color.lightGray())
                             HStack(alignment: .center) {
                                 Image(systemName: self.isDatePickerPresented ? "chevron.up.chevron.down" : "calendar")
@@ -36,9 +37,10 @@ struct DateSelectorWidget: View {
                             .padding(8)
                         }
                         .clipShape(.capsule(style: .continuous))
-                        .foregroundColor(.black)
+                        .foregroundColor(!areSameDate(nav.session.date, Date()) ? .gray : Theme.base)
                         .font(Theme.fontSubTitle)
                         .padding(.top, 10)
+                        .frame(width: 210)
                     }
                     .buttonStyle(.plain)
                     .useDefaultHover({ inside in highlighted = inside})

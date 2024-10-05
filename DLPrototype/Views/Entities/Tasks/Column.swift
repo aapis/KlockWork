@@ -16,6 +16,7 @@ struct Column: View {
     public var alignment: Alignment = .leading
     public var url: URL?
     public var job: Job?
+    public var show: Bool = true
 
     @Binding public var text: String
 
@@ -25,20 +26,22 @@ struct Column: View {
     @AppStorage("tigerStriped") private var tigerStriped = false
 
     var body: some View {
-        Group {
-            ZStack(alignment: alignment) {
-                colour
-                switch type {
-                case .index:
-                    Index
-                case .timestamp:
-                    Timestamp
-                case .extendedTimestamp:
-                    ExtendedTimestamp
-                case .job:
-                    Job
-                case .message:
-                    Message
+        if self.show {
+            Group {
+                ZStack(alignment: alignment) {
+                    colour
+                    switch type {
+                    case .index:
+                        Index
+                    case .timestamp:
+                        Timestamp
+                    case .extendedTimestamp:
+                        ExtendedTimestamp
+                    case .job:
+                        Job
+                    case .message:
+                        Message
+                    }
                 }
             }
         }
@@ -86,9 +89,16 @@ struct Column: View {
     }
 
     @ViewBuilder private var Index: some View {
-        Text(text)
-            .foregroundColor(textColour)
-            .help(text)
+        ZStack(alignment: .center) {
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(self.job == self.nav.session.job ? .yellow : Theme.cPurple.opacity(0.8))
+                .frame(height: 23)
+            Text(self.text)
+                .opacity(0.5)
+                .foregroundStyle((self.job == self.nav.session.job ? Theme.base : .white).opacity(0.55))
+                .font(.system(.subheadline, design: .monospaced))
+        }
+        .padding(6)
     }
 
     @ViewBuilder private var Message: some View {

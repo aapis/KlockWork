@@ -533,13 +533,11 @@ struct UnifiedSidebar {
                         .cornerRadius(5)
 
                         Text(self.text)
-                            .font(.title3)
                             .multilineTextAlignment(.leading)
                         Spacer()
 
                         if !self.alive {
                             Image(systemName: "snowflake")
-                                .font(.title3)
                                 .opacity(0.5)
                                 .help("Unpublished")
                         }
@@ -572,7 +570,6 @@ struct UnifiedSidebar {
                         .cornerRadius(5)
 
                         Text(self.text)
-                            .font(.title3)
                             .multilineTextAlignment(.leading)
                         Spacer()
                     }
