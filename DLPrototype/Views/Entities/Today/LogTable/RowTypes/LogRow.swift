@@ -266,54 +266,51 @@ struct LogRow: View, Identifiable {
             
             Divider()
 
-            if let jo = entry.jobObject {
-                Button(action: {setJob(jo.jid.string)}, label: {
+            if entry.jobObject != nil {
+                Button(action: {self.nav.session.job = entry.jobObject!}, label: {
                     Text("Set as Active Job")
                 })
             }
         }
     }
-
+    
+    /// Inspect an entity
+    /// - Returns: Void
     private func actionInspectRecord() -> Void {
         if let inspectable = self.record {
             self.actionInspect(inspectable)
         }
     }
 
+    /// Inspect an entity
+    /// - Returns: Void
     private func actionInspectCompany() -> Void {
         if let inspectable = self.entry.jobObject?.project?.company {
             self.actionInspect(inspectable)
         }
     }
 
+    /// Inspect an entity
+    /// - Returns: Void
     private func actionInspectProject() -> Void {
         if let inspectable = self.entry.jobObject?.project {
             self.actionInspect(inspectable)
         }
     }
 
+    /// Inspect an entity
+    /// - Returns: Void
     private func actionInspectJob() -> Void {
         if let inspectable = self.entry.jobObject {
             self.actionInspect(inspectable)
         }
     }
 
+    /// Inspect an entity
+    /// - Returns: Void
     private func actionInspect(_ inspectable: NSManagedObject) -> Void {
         self.nav.session.search.inspectingEntity = inspectable
         nav.setInspector(AnyView(Inspector(entity: inspectable)))
-    }
-
-    private func setJob(_ job: String) -> Void {
-//        let dotIndex = (job.range(of: ".")?.lowerBound)
-        
-//        if dotIndex != nil {
-//            selectedJob = String(job.prefix(upTo: dotIndex!))
-//            nav.session.setJob()
-            
-            if let jobIdDbl = Double(job) {
-                nav.session.setJob(CoreDataJob(moc: moc).byId(jobIdDbl))
-            }
-//        }
     }
 
     // TODO: remove?
