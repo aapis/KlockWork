@@ -13,6 +13,7 @@ struct CreateEntitiesWidget: View {
     @EnvironmentObject public var nav: Navigation
     @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+    @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
     @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
     @State private var followingPlan: Bool = false
     @State private var doesPlanExist: Bool = false
@@ -31,7 +32,7 @@ struct CreateEntitiesWidget: View {
                 Buttons
             }
 
-            if isSearchStackShowing || isCreateStackShowing {
+            if isSearchStackShowing || isCreateStackShowing || isUpcomingTaskStackShowing {
                 FancyDivider(height: 20)
                 VStack(alignment: .leading) {
                     if isSearchStackShowing {
@@ -39,11 +40,15 @@ struct CreateEntitiesWidget: View {
                         Spacer()
                     } else if isCreateStackShowing {
                         CreateStack()
+                    } else if isUpcomingTaskStackShowing {
+                        ScrollView(showsIndicators: false) {
+                            Planning.Upcoming()
+                        }
                     }
                 }
-                .padding([.top, .bottom])
-                .padding([.leading, .trailing], 10)
-                .background(Theme.base.opacity(0.5))
+                .padding([.top, .bottom], self.isCreateStackShowing ? 16 : 0)
+                .padding([.leading, .trailing], self.isCreateStackShowing ? 10 : 0)
+                .background(Theme.base.opacity(0.6))
             }
         }
         .padding(self.isCreateStackShowing ? .top : [.top, .bottom])
@@ -62,7 +67,11 @@ struct CreateEntitiesWidget: View {
             CreateButton(active: $isCreateStackShowing)
             FindButton(active: $isSearchStackShowing)
                 .disabled(nav.parent == .dashboard)
-            Forecast(date: DateHelper.startOfDay(self.nav.session.date), isForecastMember: false, page: self.page)
+            Forecast(
+                date: DateHelper.startOfDay(self.nav.session.date),
+                isForecastMember: false,
+                page: self.page
+            )
         }
         .padding([.leading, .trailing], 15)
     }
@@ -151,6 +160,7 @@ struct CreateEntitiesWidget: View {
 
     struct CreateButton: View {
         @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+        @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
 
         @Binding public var active: Bool
         
@@ -163,7 +173,7 @@ struct CreateEntitiesWidget: View {
                         Theme.base.opacity(0.5)
                         FancyButtonv2(
                             text: "Create companies, jobs, notes, projects or tasks.",
-                            action: {active.toggle() ; isSearchStackShowing = false},
+                            action: {active.toggle() ; isSearchStackShowing = false; self.isUpcomingTaskStackShowing = false},
                             icon: "doc",
                             fgColour: nav.session.job?.colour_from_stored().isBright() ?? false ? .black : .white,
                             bgColour: nav.session.job?.colour_from_stored() ?? nil,
@@ -187,6 +197,7 @@ struct CreateEntitiesWidget: View {
 
     struct FindButton: View {
         @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
+        @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
         @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
 
         @Binding public var active: Bool
@@ -200,7 +211,7 @@ struct CreateEntitiesWidget: View {
                         Theme.base.opacity(0.5)
                         FancyButtonv2(
                             text: "Search",
-                            action: {active.toggle() ; isSearching.toggle() ; isCreateStackShowing = false ; nav.session.search.cancel()},
+                            action: {active.toggle() ; isSearching.toggle() ; isCreateStackShowing = false ; self.isUpcomingTaskStackShowing = false ; nav.session.search.cancel()},
                             icon: "magnifyingglass",
                             fgColour: nav.session.job?.colour_from_stored().isBright() ?? false ? .black : .white,
                             bgColour: nav.session.job?.colour_from_stored() ?? nil,
@@ -222,6 +233,7 @@ struct CreateEntitiesWidget: View {
     struct CreateStack: View {
         @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
         @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+        @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
 
         @EnvironmentObject private var nav: Navigation
 
@@ -230,7 +242,7 @@ struct CreateEntitiesWidget: View {
                 HStack(alignment: .top, spacing: 5) {
                     FancyButtonv2(
                         text: "Company",
-                        action: {isCreateStackShowing = false; isSearchStackShowing = false},
+                        action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
                         icon: "building.2",
                         fgColour: .white,
                         size: .link,
@@ -255,7 +267,7 @@ struct CreateEntitiesWidget: View {
                             HStack {
                                 FancyButtonv2(
                                     text: "Person",
-                                    action: {isCreateStackShowing = false; isSearchStackShowing = false},
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
                                     icon: "person",
                                     fgColour: .white,
                                     size: .link,
@@ -276,7 +288,7 @@ struct CreateEntitiesWidget: View {
                             HStack {
                                 FancyButtonv2(
                                     text: "Project",
-                                    action: {isCreateStackShowing = false; isSearchStackShowing = false},
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
                                     icon: "folder",
                                     fgColour: .white,
                                     size: .link,
@@ -296,7 +308,7 @@ struct CreateEntitiesWidget: View {
                             HStack {
                                 FancyButtonv2(
                                     text: "Job",
-                                    action: {isCreateStackShowing = false; isSearchStackShowing = false},
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
                                     icon: "hammer",
                                     fgColour: .white,
                                     size: .link,
@@ -316,7 +328,7 @@ struct CreateEntitiesWidget: View {
                             HStack {
                                 FancyButtonv2(
                                     text: "Note",
-                                    action: {isCreateStackShowing = false; isSearchStackShowing = false},
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
                                     icon: "note.text",
                                     fgColour: .white,
                                     size: .link,
@@ -336,7 +348,7 @@ struct CreateEntitiesWidget: View {
                             HStack {
                                 FancyButtonv2(
                                     text: "Task",
-                                    action: {isCreateStackShowing = false; isSearchStackShowing = false},
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
                                     icon: "checklist.checked",
                                     fgColour: .white,
                                     size: .link,
@@ -356,7 +368,7 @@ struct CreateEntitiesWidget: View {
                             HStack {
                                 FancyButtonv2(
                                     text: "Record",
-                                    action: {isCreateStackShowing = false; isSearchStackShowing = false},
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
                                     icon: "tray",
                                     fgColour: .white,
                                     size: .link,
@@ -376,7 +388,7 @@ struct CreateEntitiesWidget: View {
                             HStack {
                                 FancyButtonv2(
                                     text: "Definition",
-                                    action: {isCreateStackShowing = false; isSearchStackShowing = false},
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
                                     icon: "list.bullet.rectangle",
                                     fgColour: .white,
                                     size: .link,

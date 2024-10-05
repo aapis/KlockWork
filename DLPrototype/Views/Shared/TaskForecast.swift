@@ -47,7 +47,9 @@ struct TaskForecast: View {
 struct Forecast: View, Identifiable {
     @EnvironmentObject private var state: Navigation
     @Environment(\.colorScheme) var colourScheme
-
+    @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+    @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
     var id: UUID = UUID()
     var date: Date
     public var callback: (() -> Void)? = nil
@@ -113,7 +115,10 @@ struct Forecast: View, Identifiable {
                         Button {
                             // @TODO: works but looks funny, fix
 //                            self.isUpcomingTaskListPresented.toggle()
-                            self.state.to(.planning)
+                            self.isCreateStackShowing = false
+                            self.isSearchStackShowing = false
+                            self.isUpcomingTaskStackShowing.toggle()
+//                            self.state.to(.planning)
 
                             if self.isSelected {
                                 if let cb = self.callback { cb() }
