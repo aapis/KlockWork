@@ -180,7 +180,9 @@ struct UnifiedSidebar {
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 ZStack(alignment: .trailing) {
-                    RowButton(text: self.project.name ?? "_PROJECT_NAME", alive: self.project.alive, isPresented: $isPresented)
+                    RowButton(text: self.project.name ?? "_PROJECT_NAME", alive: self.project.alive, callback: {
+                        self.state.session.project = self.project
+                    }, isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
 
                     if self.project == self.state.session.job?.project {

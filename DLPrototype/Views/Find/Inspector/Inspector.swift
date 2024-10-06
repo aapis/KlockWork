@@ -10,9 +10,10 @@ import SwiftUI
 
 
 public struct Inspector: View, Identifiable {
+    @EnvironmentObject public var nav: Navigation
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
     public let id: UUID = UUID()
     public var entity: NSManagedObject
-
     private let panelWidth: CGFloat = 400
     private var job: Job? = nil
     private var project: Project? = nil
@@ -24,8 +25,6 @@ public struct Inspector: View, Identifiable {
     private var term: TaxonomyTerm?
     private var definition: TaxonomyTermDefinitions?
 
-    @EnvironmentObject public var nav: Navigation
-
     public var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -33,7 +32,7 @@ public struct Inspector: View, Identifiable {
                 Spacer()
                 FancyButtonv2(
                     text: "Close",
-                    action: {nav.session.search.cancel() ; nav.setInspector()},
+                    action: {nav.session.search.cancel() ; nav.setInspector() ; self.isSearchStackShowing = false},
                     icon: "xmark",
                     showLabel: false,
                     size: .tiny,
@@ -501,7 +500,7 @@ public struct Inspector: View, Identifiable {
                 if let date = item.created {
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
-                        Text(date.description)
+                        Text("Created: " + date.formatted(date: .abbreviated, time: .shortened))
                         Spacer()
                     }
                     .help("Created: \(date.description)")
@@ -510,18 +509,30 @@ public struct Inspector: View, Identifiable {
 
                 if let date = item.lastUpdate {
                     HStack(alignment: .top, spacing: 10) {
-                        Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
-                        Text(date.description)
+                        Image(systemName: "calendar").symbolRenderingMode(.hierarchical)
+                        Text("Last update: " + date.formatted(date: .abbreviated, time: .shortened))
                         Spacer()
                     }
                     .help("Last update: \(date.description)")
                     Divider()
                 }
 
+                if item.cancelledDate == nil && item.completedDate == nil {
+                    if let date = item.due {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
+                            Text("Due: " + date.formatted(date: .abbreviated, time: .shortened))
+                            Spacer()
+                        }
+                        .help("Due at: \(date.description)")
+                        Divider()
+                    }
+                }
+
                 if let date = item.completedDate {
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
-                        Text(date.description)
+                        Text("Completed on: " + date.formatted(date: .abbreviated, time: .shortened))
                         Spacer()
                     }
                     .help("Completed on \(date.description)")
@@ -531,7 +542,7 @@ public struct Inspector: View, Identifiable {
                 if let date = item.cancelledDate {
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
-                        Text(date.description)
+                        Text("Cancelled on: " + date.formatted(date: .abbreviated, time: .shortened))
                         Spacer()
                     }
                     .help("Cancelled on \(date.description)")

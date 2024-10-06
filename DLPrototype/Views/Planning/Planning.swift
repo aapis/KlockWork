@@ -22,12 +22,26 @@ struct Planning: View {
             labelText: "Daily",
             contents: AnyView(Planning.Today())
         ),
+//        ToolbarButton(
+//            id: 1,
+//            helpText: "Feature planning",
+//            icon: "list.bullet.below.rectangle",
+//            labelText: "Feature",
+//            contents: AnyView(Planning.Feature())
+//        )
         ToolbarButton(
             id: 1,
-            helpText: "Feature planning",
-            icon: "list.bullet.below.rectangle",
-            labelText: "Feature",
-            contents: AnyView(Planning.Feature())
+            helpText: "Upcoming",
+            icon: "hourglass",
+            labelText: "Upcoming",
+            contents: AnyView(Planning.Upcoming())
+        ),
+        ToolbarButton(
+            id: 2,
+            helpText: "Overdue",
+            icon: "alarm",
+            labelText: "Overdue",
+            contents: AnyView(Planning.Overdue())
         )
     ]
 

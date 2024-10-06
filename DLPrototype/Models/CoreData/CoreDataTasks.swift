@@ -259,6 +259,21 @@ public class CoreDataTasks {
         }
     }
     
+    /// Delay a task to a specific day
+    /// - Parameters:
+    ///   - task: LogTask
+    ///   - date: Date
+    /// - Returns: Void
+    public func delay(_ task: LogTask, to date: Date? = nil) -> Void {
+        if let due = task.due {
+            if let delayTargetDate = date {
+                self.due(on: delayTargetDate, task: task)
+            } else if let newDate = DateHelper.endOfTomorrow(due) {
+                self.due(on: newDate, task: task)
+            }
+        }
+    }
+
     public func cancel(_ task: LogTask) -> Void {
         task.cancelledDate = Date()
         task.lastUpdate = Date()
@@ -297,7 +312,35 @@ public class CoreDataTasks {
         }
     }
 
-    /// Find upcoming events
+    /// Find overdue tasks
+    /// - Returns: Array<LogTask>
+    public func overdue(_ date: Date = Date()) -> [LogTask] {
+        let predicate = NSPredicate(
+            format: "due < %@ && (completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false)",
+            date as CVarArg
+        )
+        let sort = [
+            NSSortDescriptor(keyPath: \LogTask.due, ascending: true)
+        ]
+
+        return query(predicate, sort)
+    }
+
+    /// Find upcoming tasks
+    /// - Returns: Array<LogTask>
+    public func upcoming(_ date: Date = Date()) -> [LogTask] {
+        let predicate = NSPredicate(
+            format: "due > %@ && (completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false)",
+            date as CVarArg
+        )
+        let sort = [
+            NSSortDescriptor(keyPath: \LogTask.due, ascending: true)
+        ]
+
+        return query(predicate, sort)
+    }
+
+    /// Find tasks due today
     /// - Returns: Array<LogTask>
     public func dueToday(_ date: Date = Date()) -> [LogTask] {
         let predicate = NSPredicate(

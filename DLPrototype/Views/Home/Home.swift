@@ -20,6 +20,7 @@ struct Home: View {
 
     @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+    @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
     @AppStorage("general.showSessionInspector") public var showSessionInspector: Bool = false
     @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
@@ -160,7 +161,7 @@ struct Home: View {
             VStack(alignment: .leading, spacing: 0) {
                 GlobalSidebarWidgets()
 
-                if !isSearchStackShowing {
+                if !isSearchStackShowing && !isUpcomingTaskStackShowing {
                     if isDatePickerPresented {
                         ZStack {
                             nav.sidebar
@@ -289,7 +290,7 @@ struct Home: View {
                         VStack(alignment: .leading, spacing: 0) {
                             GlobalSidebarWidgets()
                             
-                            if !isSearchStackShowing {
+                            if !isSearchStackShowing && !isUpcomingTaskStackShowing {
                                 if isDatePickerPresented {
                                     ZStack {
                                         nav.sidebar

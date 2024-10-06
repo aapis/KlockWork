@@ -71,6 +71,7 @@ public struct FancyButtonv2: View {
     public var iconAsImage: Image? = nil
     public var fgColour: Color?
     public var bgColour: Color?
+    public var iconFgColour: Color?
     public var highlightColour: Color?
     public var transparent: Bool? = false
     public var showLabel: Bool? = true
@@ -159,10 +160,12 @@ public struct FancyButtonv2: View {
                         Image(systemName: icon)
                             .symbolRenderingMode(.hierarchical)
                             .font(.title2)
+                            .foregroundStyle(self.iconFgColour ?? self.fgColour ?? .white)
                     } else if let ic = self.iconAsImage {
                         ic
                             .symbolRenderingMode(.hierarchical)
                             .font(.title2)
+                            .foregroundStyle(self.iconFgColour ?? self.fgColour ?? .white)
                     }
                 }
 
@@ -173,7 +176,7 @@ public struct FancyButtonv2: View {
             .padding(size.padding)
         }
         .frame(maxWidth: buttonFrameWidth(), maxHeight: size.height)
-        .foregroundColor(fgColour == nil ? (highlighted ? type.highlightColour : type.textColour) : fgColour)
+        .foregroundStyle(self.fgColour ?? (highlighted ? type.highlightColour : type.textColour))
         .font(size.font)
         .help(text)
         .underline((size == .link || size == .titleLink) && highlighted)
@@ -226,6 +229,6 @@ extension FancyButtonv2 {
 
     private func fgColourEffect() -> Color {
 //        let gradient = LinearGradient(colors: [fgColour, Color.black])
-        return Color.black
+        return Theme.base
     }
 }

@@ -90,7 +90,7 @@ extension FindDashboard {
                                         .font(.title2)
                                 }
                                 .padding()
-                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
+                                .background(hover ? Theme.rowColour : Theme.textBackground)
                             }
                         }
                         .buttonStyle(.plain)
@@ -191,7 +191,7 @@ extension FindDashboard {
                                         .font(.title2)
                                 }
                                 .padding()
-                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
+                                .background(hover ? Theme.rowColour : Theme.textBackground)
                             }
                         }
                         .buttonStyle(.plain)
@@ -280,7 +280,7 @@ extension FindDashboard {
                                         .font(.title2)
                                 }
                                 .padding()
-                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
+                                .background(hover ? Theme.rowColour : Theme.textBackground)
                             }
                         }
                         .buttonStyle(.plain)
@@ -378,7 +378,7 @@ extension FindDashboard {
                                         .font(.title2)
                                 }
                                 .padding()
-                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
+                                .background(hover ? Theme.rowColour : Theme.textBackground)
                             }
                         }
                         .buttonStyle(.plain)
@@ -457,7 +457,7 @@ extension FindDashboard {
                                         .font(.title2)
                                 }
                                 .padding()
-                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
+                                .background(hover ? Theme.rowColour : Theme.textBackground)
                             }
                         }
                         .buttonStyle(.plain)
@@ -544,7 +544,7 @@ extension FindDashboard {
                                         .font(.title2)
                                 }
                                 .padding()
-                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
+                                .background(hover ? Theme.rowColour : Theme.textBackground)
                             }
                         }
                         .buttonStyle(.plain)
@@ -630,7 +630,7 @@ extension FindDashboard {
                                         .font(.title2)
                                 }
                                 .padding()
-                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
+                                .background(hover ? Theme.rowColour : Theme.textBackground)
                             }
                         }
                         .buttonStyle(.plain)
@@ -708,7 +708,7 @@ extension FindDashboard {
                                         .font(.title2)
                                 }
                                 .padding()
-                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
+                                .background(hover ? Theme.rowColour : Theme.textBackground)
                             }
                         }
                         .buttonStyle(.plain)
@@ -795,7 +795,7 @@ extension FindDashboard {
                                         .font(.title2)
                                 }
                                 .padding()
-                                .background(hover ? Theme.rowColour : Theme.subHeaderColour)
+                                .background(hover ? Theme.rowColour : Theme.textBackground)
                             }
                         }
                         .buttonStyle(.plain)

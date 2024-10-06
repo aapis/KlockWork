@@ -15,8 +15,12 @@ struct TaskDetail: View {
     @State private var content: String = ""
     @State private var published: Bool = false
     @State private var isPresented: Bool = false
+    @State private var due: Date = Date()
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .tasks
+    private var isDisabled: Bool {
+        self.state.session.job == nil && self.task == nil
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -25,26 +29,28 @@ struct TaskDetail: View {
                 FancyDivider()
                 Toggle("Published", isOn: $published)
                 FancyDivider()
+                DatePicker("Due", selection: $due)
+                FancyDivider()
                 ZStack(alignment: .topTrailing) {
                     FancyTextField(
                         placeholder: "What needs to be done?",
                         lineLimit: 1,
                         onSubmit: self.actionOnSave,
-                        disabled: self.state.session.job == nil,
+                        disabled: self.isDisabled,
                         text: $content
                     )
 
                     RowAddButton(
-                        title: self.task != nil ? "Edit" : self.state.session.job != nil ? "Add" : "Save",
+                        title: self.task != nil ? "Save" : self.state.session.job != nil ? "Add" : "Save",
                         isPresented: $isPresented,
                         callback: self.actionOnSave
                     )
                         .frame(height: 45)
-                        .disabled(self.content.isEmpty || self.state.session.job == nil)
-                        .opacity(self.content.isEmpty || self.state.session.job == nil ? 0.5 : 1)
+                        .disabled(self.content.isEmpty || self.isDisabled)
+                        .opacity(self.content.isEmpty || self.isDisabled ? 0.5 : 1)
                 }
 
-                if self.state.session.job == nil {
+                if self.isDisabled {
                     FancyHelpText(
                         text: "Select a job first",
                         page: self.page
@@ -72,6 +78,7 @@ extension TaskDetail {
 
         self.content = self.task?.content ?? ""
         self.published = self.task?.cancelledDate == nil && self.task?.completedDate == nil
+        self.due = self.task?.due ?? Date()
     }
 
     /// Fires when enter/return hit while entering text in field or when add button tapped
@@ -79,10 +86,11 @@ extension TaskDetail {
     private func actionOnSave() -> Void {
         if self.task != nil {
             self.task?.content = self.content
-
+            self.task?.due = DateHelper.endOfDay(self.due) ?? Date()
             if self.published == false {
                 self.task?.cancelledDate = Date()
             }
+            self.task?.lastUpdate = Date()
         } else {
             CoreDataTasks(moc: self.state.moc).create(
                 content: self.content,
