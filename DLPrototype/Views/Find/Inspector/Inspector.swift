@@ -10,9 +10,10 @@ import SwiftUI
 
 
 public struct Inspector: View, Identifiable {
+    @EnvironmentObject public var nav: Navigation
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
     public let id: UUID = UUID()
     public var entity: NSManagedObject
-
     private let panelWidth: CGFloat = 400
     private var job: Job? = nil
     private var project: Project? = nil
@@ -24,8 +25,6 @@ public struct Inspector: View, Identifiable {
     private var term: TaxonomyTerm?
     private var definition: TaxonomyTermDefinitions?
 
-    @EnvironmentObject public var nav: Navigation
-
     public var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -33,7 +32,7 @@ public struct Inspector: View, Identifiable {
                 Spacer()
                 FancyButtonv2(
                     text: "Close",
-                    action: {nav.session.search.cancel() ; nav.setInspector()},
+                    action: {nav.session.search.cancel() ; nav.setInspector() ; self.isSearchStackShowing = false},
                     icon: "xmark",
                     showLabel: false,
                     size: .tiny,
