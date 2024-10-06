@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+enum ForecastUIType {
+    case button, row, member
+}
+
 struct TaskForecast: View {
     @EnvironmentObject private var state: Navigation
     @Environment(\.colorScheme) var colourScheme
@@ -46,18 +50,14 @@ struct TaskForecast: View {
 struct Forecast: View, Identifiable {
     @EnvironmentObject private var state: Navigation
     @Environment(\.colorScheme) var colourScheme
-    @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
-    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
-    @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
-    var id: UUID = UUID()
-    var date: Date
+    public var id: UUID = UUID()
+    public var date: Date
     public var callback: (() -> Void)? = nil
     public var isForecastMember: Bool = true
+    public var type: ForecastUIType = .member
     public let page: PageConfiguration.AppPage?
     @State public var itemsDue: Int = 0
     @State private var dateStrip: String = ""
-    @State private var dateStripMonth: String = ""
-    @State private var dateStripDay: String = ""
     @State private var isSelected: Bool = false
     @State private var isUpcomingTaskListPresented: Bool = false
     @State private var isHighlighted: Bool = false
@@ -65,16 +65,113 @@ struct Forecast: View, Identifiable {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if self.isForecastMember {
-                VStack(alignment: .center, spacing: 1) {
-                    Text(self.dateStrip)
-                        .multilineTextAlignment(.leading)
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundStyle(self.isSelected ? .yellow : .white)
-                        .opacity(self.itemsDue == 0 ? 0.4 : 1)
+            switch self.type {
+            case .member:
+                ForecastTypeMember(date: self.date, callback: self.callback, upcomingTasks: _upcomingTasks)
+            case .button:
+                ForecastTypeButton(date: self.date, callback: self.callback, upcomingTasks: _upcomingTasks)
+            case .row:
+                ForecastTypeRow(date: self.date, callback: self.callback, upcomingTasks: _upcomingTasks)
+            }
+        }
+        .padding(8)
+    }
 
+    init(date: Date, callback: (() -> Void)? = nil, type: ForecastUIType = .member, page: PageConfiguration.AppPage) {
+        self.date = date
+        self.callback = callback
+        self.type = type
+        self.page = page
+
+        _upcomingTasks = CoreDataTasks.fetchDue(on: date)
+    }
+
+    struct ForecastTypeMember: View {
+        @EnvironmentObject private var state: Navigation
+        public var date: Date
+        public var callback: (() -> Void)? = nil
+        @FetchRequest public var upcomingTasks: FetchedResults<LogTask>
+        @State public var itemsDue: Int = 0
+        @State private var dateStrip: String = ""
+        @State private var dateStripMonth: String = ""
+        @State private var dateStripDay: String = ""
+        @State private var isSelected: Bool = false
+        @State private var isUpcomingTaskListPresented: Bool = false
+        @State private var isHighlighted: Bool = false
+
+        var body: some View {
+            VStack(alignment: .center, spacing: 1) {
+                Text(self.dateStrip)
+                    .multilineTextAlignment(.leading)
+                    .font(.system(.caption, design: .monospaced))
+                    .foregroundStyle(self.isSelected ? .yellow : .white)
+                    .opacity(self.itemsDue == 0 ? 0.4 : 1)
+
+                Button {
+                    self.state.session.date = DateHelper.startOfDay(self.date)
+
+                    if self.isSelected {
+                        if let cb = self.callback { cb() }
+                    }
+                } label: {
+                    ZStack {
+                        VStack(alignment: .center, spacing: 0) {
+                            if self.upcomingTasks.count > 0 {
+                                ForEach(self.upcomingTasks, id: \.objectID) { task in
+                                    Rectangle()
+                                        .foregroundStyle(task.owner?.backgroundColor ?? Theme.rowColour)
+                                }
+                            } else {
+                                Color.green
+                            }
+                        }
+                        .mask(Circle().frame(width: 35))
+
+                        (self.isHighlighted ? Color.white : Theme.base)
+                            .mask(Circle().frame(width: 25))
+
+                        Text(String(self.itemsDue))
+                            .multilineTextAlignment(.leading)
+                            .font(.system(.headline, design: .monospaced))
+                            .bold()
+                            .foregroundStyle(self.itemsDue == 0 ? .gray : self.isHighlighted ? Theme.base : .white)
+                    }
+                    .frame(width: 50, height: 50)
+                    .useDefaultHover({ hover in self.isHighlighted = hover })
+                }
+                .buttonStyle(.plain)
+                .opacity(self.itemsDue == 0 ? 0.4 : 1)
+            }
+            .onAppear(perform: self.actionOnAppear)
+            .onChange(of: self.state.session.date) {
+                self.actionOnAppear()
+            }
+        }
+    }
+
+    struct ForecastTypeButton: View {
+        @EnvironmentObject private var state: Navigation
+        @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
+        @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+        @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+        public var date: Date
+        public var callback: (() -> Void)? = nil
+        @FetchRequest public var upcomingTasks: FetchedResults<LogTask>
+        @State public var itemsDue: Int = 0
+        @State private var dateStrip: String = ""
+        @State private var dateStripMonth: String = ""
+        @State private var dateStripDay: String = ""
+        @State private var isSelected: Bool = false
+        @State private var isUpcomingTaskListPresented: Bool = false
+        @State private var isHighlighted: Bool = false
+
+        var body: some View {
+            VStack(alignment: .center, spacing: 0) {
+                HStack(alignment: .center, spacing: 8) {
                     Button {
-                        self.state.session.date = DateHelper.startOfDay(self.date)
+                        self.isCreateStackShowing = false
+                        self.isSearchStackShowing = false
+                        self.isUpcomingTaskStackShowing.toggle()
 
                         if self.isSelected {
                             if let cb = self.callback { cb() }
@@ -91,10 +188,10 @@ struct Forecast: View, Identifiable {
                                     Color.green
                                 }
                             }
-                            .mask(Circle().frame(width: 35))
+                            .mask(Circle().frame(width: 40))
 
                             (self.isHighlighted ? Color.white : Theme.base)
-                                .mask(Circle().frame(width: 25))
+                                .mask(Circle().frame(width: 29))
 
                             Text(String(self.itemsDue))
                                 .multilineTextAlignment(.leading)
@@ -102,76 +199,112 @@ struct Forecast: View, Identifiable {
                                 .bold()
                                 .foregroundStyle(self.itemsDue == 0 ? .gray : self.isHighlighted ? Theme.base : .white)
                         }
-                        .frame(width: 50, height: 50)
                         .useDefaultHover({ hover in self.isHighlighted = hover })
                     }
                     .buttonStyle(.plain)
-                    .opacity(self.itemsDue == 0 ? 0.4 : 1)
                 }
-            } else {
-                VStack(alignment: .center, spacing: 0) {
-                    HStack(alignment: .center, spacing: 8) {
-                        Button {
-                            self.isCreateStackShowing = false
-                            self.isSearchStackShowing = false
-                            self.isUpcomingTaskStackShowing.toggle()
+                .frame(height: 40)
+                .padding(.top, 4)
 
-                            if self.isSelected {
-                                if let cb = self.callback { cb() }
-                            }
-                        } label: {
-                            ZStack {
-                                VStack(alignment: .center, spacing: 0) {
-                                    if self.upcomingTasks.count > 0 {
-                                        ForEach(self.upcomingTasks, id: \.objectID) { task in
-                                            Rectangle()
-                                                .foregroundStyle(task.owner?.backgroundColor ?? Theme.rowColour)
-                                        }
-                                    } else {
-                                        Color.green
-                                    }
-                                }
-                                .mask(Circle().frame(width: 40))
-
-                                (self.isHighlighted ? Color.white : Theme.base)
-                                    .mask(Circle().frame(width: 29))
-
-                                Text(String(self.itemsDue))
-                                    .multilineTextAlignment(.leading)
-                                    .font(.system(.headline, design: .monospaced))
-                                    .bold()
-                                    .foregroundStyle(self.itemsDue == 0 ? .gray : self.isHighlighted ? Theme.base : .white)
-                            }
-                            .useDefaultHover({ hover in self.isHighlighted = hover })
-                        }
-                        .buttonStyle(.plain)
-                    }
-                    .frame(height: 40)
-                    .padding(.top, 4)
-
-                    Text("Tasks")
-                        .padding(.top, 6)
-                        .opacity(0.4)
-                }
-                .frame(width: 40)
+                Text("Tasks")
+                    .padding(.top, 6)
+                    .opacity(0.4)
+            }
+            .frame(width: 40)
+            .onAppear(perform: self.actionOnAppear)
+            .onChange(of: self.state.session.date) {
+                self.actionOnAppear()
             }
         }
-        .padding(8)
-        .onAppear(perform: self.actionOnAppear)
-        .onChange(of: self.state.session.date) {
-            self.actionOnAppear()
+    }
+
+    struct ForecastTypeRow: View {
+        @EnvironmentObject private var state: Navigation
+        @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
+        @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+        @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+        public var date: Date
+        public var callback: (() -> Void)? = nil
+        @FetchRequest public var upcomingTasks: FetchedResults<LogTask>
+        @State public var itemsDue: Int = 0
+        @State private var dateStrip: String = ""
+        @State private var dateStripMonth: String = ""
+        @State private var dateStripDay: String = ""
+        @State private var isSelected: Bool = false
+        @State private var isUpcomingTaskListPresented: Bool = false
+        @State private var isHighlighted: Bool = false
+
+        var body: some View {
+            Button {
+                self.isCreateStackShowing = false
+                self.isSearchStackShowing = false
+                self.isUpcomingTaskStackShowing.toggle()
+
+                if let cb = self.callback { cb() }
+            } label: {
+                HStack(alignment: .center) {
+                    // Button
+                    ZStack {
+                        VStack(alignment: .center, spacing: 0) {
+                            if self.upcomingTasks.count > 0 {
+                                ForEach(self.upcomingTasks, id: \.objectID) { task in
+                                    Rectangle()
+                                        .foregroundStyle(task.owner?.backgroundColor ?? Theme.rowColour)
+                                }
+                            } else {
+                                Color.green
+                            }
+                        }
+                        .mask(Circle().frame(width: 40))
+
+                        (self.isHighlighted ? Color.white : Theme.base)
+                            .mask(Circle().frame(width: 29))
+
+                        Text(String(self.itemsDue))
+                            .multilineTextAlignment(.leading)
+                            .font(.system(.headline, design: .monospaced))
+                            .bold()
+                            .foregroundStyle(self.itemsDue == 0 ? .gray : self.isHighlighted ? Theme.base : .white)
+                    }
+                    .frame(width: 40)
+
+                    // Date string
+                    Text(self.dateStrip)
+                        .underline(self.isHighlighted)
+
+                    // Rating
+                    // @TODO: implement rating here when assessmentfactor stuff has been implemented from iOS
+                }
+                .useDefaultHover({ hover in self.isHighlighted = hover })
+                .frame(height: 40)
+            }
+            .buttonStyle(.plain)
+            .onAppear(perform: self.actionOnAppear)
+            .onChange(of: self.state.session.date) {
+                self.actionOnAppear()
+            }
         }
     }
+}
 
-    init(date: Date, callback: (() -> Void)? = nil, isForecastMember: Bool = true, page: PageConfiguration.AppPage) {
-        self.date = date
-        self.callback = callback
-        self.isForecastMember = isForecastMember
-        self.page = page
+extension Forecast.ForecastTypeMember {
+    /// Onload handler
+    /// - Returns: Void
+    public func actionOnAppear() -> Void {
+        self.itemsDue = self.upcomingTasks.count
 
-        _upcomingTasks = CoreDataTasks.fetchDue(on: date)
+        let df = DateFormatter()
+        df.dateFormat = "MM-dd"
+        df.timeZone = TimeZone.autoupdatingCurrent
+        df.locale = NSLocale.current
+
+        self.dateStrip = df.string(from: self.date)
+        let fSelected = df.string(from: self.state.session.date)
+        self.isSelected = self.dateStrip == fSelected
     }
+}
 
+extension Forecast.ForecastTypeButton {
     /// Onload handler
     /// - Returns: Void
     private func actionOnAppear() -> Void {
@@ -179,6 +312,23 @@ struct Forecast: View, Identifiable {
 
         let df = DateFormatter()
         df.dateFormat = "MM-dd"
+        df.timeZone = TimeZone.autoupdatingCurrent
+        df.locale = NSLocale.current
+
+        self.dateStrip = df.string(from: self.date)
+        let fSelected = df.string(from: self.state.session.date)
+        self.isSelected = self.dateStrip == fSelected
+    }
+}
+
+extension Forecast.ForecastTypeRow {
+    /// Onload handler
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.itemsDue = self.upcomingTasks.count
+
+        let df = DateFormatter()
+        df.dateFormat = "MMMM d"
         df.timeZone = TimeZone.autoupdatingCurrent
         df.locale = NSLocale.current
 

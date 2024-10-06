@@ -28,6 +28,7 @@ struct Widgets: View {
     @AppStorage("dashboard.widget.thismonth") public var showWidgetThisMonth: Bool = true
     @AppStorage("dashboard.widget.thisyear") public var showWidgetThisYear: Bool = true
     @AppStorage("dashboard.widget.intro") public var showWidgetIntro: Bool = true
+    @AppStorage("dashboard.widget.upcomingWork") public var showWidgetUpcomingWork: Bool = true
 
     private var columns: [GridItem] = Array(repeating: .init(.flexible(minimum: 100)), count: 3)
 
@@ -49,6 +50,10 @@ struct Widgets: View {
                     
                     if showWidgetIntro {
                         IntroToKlockWork()
+                    }
+
+                    if showWidgetUpcomingWork {
+                        UpcomingWork()
                     }
                 }
 

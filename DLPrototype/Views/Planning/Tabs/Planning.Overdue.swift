@@ -11,17 +11,18 @@ import SwiftUI
 extension Planning {
     struct Overdue: View {
         @EnvironmentObject public var nav: Navigation
-        @FetchRequest private var tasks: FetchedResults<LogTask>
+        @State private var tasks: [LogTask] = []
         @State private var overdue: [UpcomingRow] = []
+        @State private var id: UUID = UUID()
         private let page: PageConfiguration.AppPage = .planning
 
         var body: some View {
             VStack(alignment: .leading, spacing: 1) {
-                if !self.tasks.isEmpty {
+                if !self.overdue.isEmpty {
                     ForEach(self.overdue, id: \.id) { row in
                         Section {
                             ForEach(row.tasks) { task in
-                                TaskItem(task: task)
+                                TaskItem(task: task, callback: self.actionTaskActionTap)
                             }
                         } header: {
                             Timestamp(text: "\(row.tasks.count) on \(row.date)", fullWidth: true, alignment: .leading, clear: true)
@@ -42,11 +43,8 @@ extension Planning {
 
                 Spacer()
             }
+            .id(self.id)
             .onAppear(perform: self.actionOnAppear)
-        }
-
-        init() {
-            _tasks = CoreDataTasks.fetchOverdue()
         }
     }
 }
@@ -55,12 +53,21 @@ extension Planning.Overdue {
     /// Fires when the Forecast callback is fired
     /// - Returns: Void
     private func actionForecastCallback() -> Void {
+        self.actionTaskActionTap()
+    }
 
+    /// Fires when a task is interacted with
+    /// - Returns: Void
+    private func actionTaskActionTap() -> Void {
+        self.tasks = []
+        self.actionOnAppear()
     }
 
     /// Onload handler
     /// - Returns: Void
     private func actionOnAppear() -> Void {
+        self.id = UUID()
+        self.tasks = CoreDataTasks(moc: self.nav.moc).overdue()
         self.overdue = []
         let grouped = Dictionary(grouping: self.tasks, by: {$0.due!.formatted(date: .abbreviated, time: .omitted)})
         let sorted = Array(grouped)

@@ -71,6 +71,7 @@
 		5335448C2CB200400067A944 /* TypedListRowBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335448B2CB200340067A944 /* TypedListRowBackground.swift */; };
 		5335448E2CB21AFF0067A944 /* RowActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335448D2CB21AFC0067A944 /* RowActionButton.swift */; };
 		533544902CB2371E0067A944 /* KeyboardShortcutIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335448F2CB237150067A944 /* KeyboardShortcutIndicator.swift */; };
+		533544922CB302240067A944 /* UpcomingWork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533544912CB3021E0067A944 /* UpcomingWork.swift */; };
 		5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5AD296CFF83000051B1 /* FileHelper.swift */; };
 		5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B2296D17EB000051B1 /* TaskDashboard.swift */; };
 		5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B4296D1FA7000051B1 /* TaskView.swift */; };
@@ -341,6 +342,7 @@
 		5335448B2CB200340067A944 /* TypedListRowBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypedListRowBackground.swift; sourceTree = "<group>"; };
 		5335448D2CB21AFC0067A944 /* RowActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowActionButton.swift; sourceTree = "<group>"; };
 		5335448F2CB237150067A944 /* KeyboardShortcutIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardShortcutIndicator.swift; sourceTree = "<group>"; };
+		533544912CB3021E0067A944 /* UpcomingWork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingWork.swift; sourceTree = "<group>"; };
 		5335A5AD296CFF83000051B1 /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		5335A5B2296D17EB000051B1 /* TaskDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDashboard.swift; sourceTree = "<group>"; };
 		5335A5B4296D1FA7000051B1 /* TaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskView.swift; sourceTree = "<group>"; };
@@ -805,6 +807,7 @@
 				535C1AEF29F49AB100CD95FD /* Types */,
 				535C1AE529F48FD500CD95FD /* ThisWeek.swift */,
 				535C1AE729F4912800CD95FD /* ThisMonth.swift */,
+				533544912CB3021E0067A944 /* UpcomingWork.swift */,
 				535C1AE929F4913900CD95FD /* ThisYear.swift */,
 				539F68DC2BF70A260086F89A /* IntroToKlockWork.swift */,
 			);
@@ -1489,6 +1492,7 @@
 				53EFCE7629637CC6004E45EC /* Color.swift in Sources */,
 				53F5896629983FD100843B32 /* ProjectRow.swift in Sources */,
 				5334F2782B2CC9EE0079D2E7 /* CoreDataPerson.swift in Sources */,
+				533544922CB302240067A944 /* UpcomingWork.swift in Sources */,
 				53E9187B2B47C9A400912C6F /* ThreePanelGroup.swift in Sources */,
 				53C3418E299968160071B855 /* JobView.swift in Sources */,
 				537885742B44CB3300825B78 /* TaskDashboardByProject.swift in Sources */,

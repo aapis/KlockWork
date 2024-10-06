@@ -229,6 +229,6 @@ extension FancyButtonv2 {
 
     private func fgColourEffect() -> Color {
 //        let gradient = LinearGradient(colors: [fgColour, Color.black])
-        return Color.black
+        return Theme.base
     }
 }

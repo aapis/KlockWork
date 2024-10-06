@@ -15,6 +15,7 @@ struct TaskDetail: View {
     @State private var content: String = ""
     @State private var published: Bool = false
     @State private var isPresented: Bool = false
+    @State private var due: Date = Date()
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .tasks
     private var isDisabled: Bool {
@@ -27,6 +28,8 @@ struct TaskDetail: View {
                 Title(text: eType.enSingular, imageAsImage: eType.icon)
                 FancyDivider()
                 Toggle("Published", isOn: $published)
+                FancyDivider()
+                DatePicker("Due", selection: $due)
                 FancyDivider()
                 ZStack(alignment: .topTrailing) {
                     FancyTextField(
@@ -75,6 +78,7 @@ extension TaskDetail {
 
         self.content = self.task?.content ?? ""
         self.published = self.task?.cancelledDate == nil && self.task?.completedDate == nil
+        self.due = self.task?.due ?? Date()
     }
 
     /// Fires when enter/return hit while entering text in field or when add button tapped
@@ -82,10 +86,11 @@ extension TaskDetail {
     private func actionOnSave() -> Void {
         if self.task != nil {
             self.task?.content = self.content
-            self.task?.due = DateHelper.endOfTomorrow(Date()) ?? Date()
+            self.task?.due = DateHelper.endOfDay(self.due) ?? Date()
             if self.published == false {
                 self.task?.cancelledDate = Date()
             }
+            self.task?.lastUpdate = Date()
         } else {
             CoreDataTasks(moc: self.state.moc).create(
                 content: self.content,

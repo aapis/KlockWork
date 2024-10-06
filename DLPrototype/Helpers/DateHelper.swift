@@ -249,14 +249,14 @@ final public class DateHelper {
         return nil
     }
 
-    static public func bounds(_ date: Date) -> DateBounds {
+    static public func bounds(_ date: Date = Date(), limit: Int = 7) -> DateBounds {
         let start = Calendar.autoupdatingCurrent.startOfDay(for: date)
         var sComponents = DateComponents()
-        sComponents.day = -7
+        sComponents.day = -limit
 
         let end = Calendar.autoupdatingCurrent.startOfDay(for: date)
         var eComponents = DateComponents()
-        eComponents.day = +7
+        eComponents.day = +limit
 
         return DateBounds(
             upper: Calendar.autoupdatingCurrent.date(byAdding: sComponents, to: start)!,

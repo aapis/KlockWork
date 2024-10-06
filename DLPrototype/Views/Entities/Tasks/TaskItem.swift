@@ -8,10 +8,12 @@
 
 import SwiftUI
 
-struct TaskItem: View {
+struct TaskItem: View, Identifiable {
     @EnvironmentObject public var state: Navigation
+    public var id: UUID = UUID()
     public let task: LogTask
     public var includeDueDate: Bool = false
+    public var callback: (() -> Void)?
     @State private var isHighlighted: Bool = false
     private var rowBackground: TypedListRowBackground {
         TypedListRowBackground(colour: self.task.owner?.backgroundColor ?? Theme.rowColour, type: .tasks)
@@ -24,6 +26,7 @@ struct TaskItem: View {
         } label: {
             Row
         }
+        .id(self.id)
         .buttonStyle(.plain)
     }
 
@@ -72,15 +75,16 @@ struct TaskItem: View {
                     Spacer()
                     if self.isHighlighted {
                         VStack(alignment: .trailing, spacing: 0) {
-                            RowActionButton(callback: {CoreDataTasks(moc: self.state.moc).cancel(self.task)}, icon: "calendar.badge.minus", helpText: "Cancel task", highlightedColour: .red)
-                            RowActionButton(callback: {CoreDataTasks(moc: self.state.moc).delay(self.task)}, icon: "clock.fill", helpText: "Delay task 1 day", highlightedColour: .yellow)
-                            RowActionButton(callback: {CoreDataTasks(moc: self.state.moc).complete(self.task)}, icon: "checkmark.circle.fill", helpText: "Task complete!", highlightedColour: .green)
+                            RowActionButton(callback: self.actionOnTaskCancel, icon: "calendar.badge.minus", helpText: "Cancel task", highlightedColour: .red)
+                            RowActionButton(callback: self.actionOnTaskDelay, icon: "clock.fill", helpText: "Delay task 1 day", highlightedColour: .yellow)
+                            RowActionButton(callback: self.actionOnTaskComplete, icon: "checkmark.circle.fill", helpText: "Task complete!", highlightedColour: .green)
                         }
                         .frame(width: 30)
                     }
                 }
             }
         }
+        .onChange(of: self.task) { self.callback?() }
         .useDefaultHover({ hover in self.isHighlighted = hover })
         .contextMenu {
             Menu("Go to"){
@@ -119,7 +123,7 @@ struct TaskItem: View {
                 }
             }
             Button(action: self.actionInspect, label: {
-                Text("Inspect task")
+                Text("Inspect")
             })
         }
     }
@@ -131,5 +135,26 @@ extension TaskItem {
     private func actionInspect() -> Void {
         self.state.session.search.inspectingEntity = self.task
         self.state.setInspector(AnyView(Inspector(entity: self.task)))
+    }
+    
+    /// Cancel task and fire callback
+    /// - Returns: Void
+    private func actionOnTaskCancel() -> Void {
+        CoreDataTasks(moc: self.state.moc).cancel(self.task)
+        self.callback?()
+    }
+
+    /// Delay task and fire callback
+    /// - Returns: Void
+    private func actionOnTaskDelay() -> Void {
+        CoreDataTasks(moc: self.state.moc).delay(self.task)
+        self.callback?()
+    }
+
+    /// Delay task and fire callback
+    /// - Returns: Void
+    private func actionOnTaskComplete() -> Void {
+        CoreDataTasks(moc: self.state.moc).complete(self.task)
+        self.callback?()
     }
 }

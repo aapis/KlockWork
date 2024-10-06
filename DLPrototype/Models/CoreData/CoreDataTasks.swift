@@ -312,7 +312,35 @@ public class CoreDataTasks {
         }
     }
 
-    /// Find upcoming events
+    /// Find overdue tasks
+    /// - Returns: Array<LogTask>
+    public func overdue(_ date: Date = Date()) -> [LogTask] {
+        let predicate = NSPredicate(
+            format: "due < %@ && (completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false)",
+            date as CVarArg
+        )
+        let sort = [
+            NSSortDescriptor(keyPath: \LogTask.due, ascending: true)
+        ]
+
+        return query(predicate, sort)
+    }
+
+    /// Find upcoming tasks
+    /// - Returns: Array<LogTask>
+    public func upcoming(_ date: Date = Date()) -> [LogTask] {
+        let predicate = NSPredicate(
+            format: "due > %@ && (completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false)",
+            date as CVarArg
+        )
+        let sort = [
+            NSSortDescriptor(keyPath: \LogTask.due, ascending: true)
+        ]
+
+        return query(predicate, sort)
+    }
+
+    /// Find tasks due today
     /// - Returns: Array<LogTask>
     public func dueToday(_ date: Date = Date()) -> [LogTask] {
         let predicate = NSPredicate(

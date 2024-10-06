@@ -20,7 +20,6 @@ struct CreateEntitiesWidget: View {
     @State private var searching: Bool = false
     public var page: PageConfiguration.AppPage = .planning
 
-
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Buttons
@@ -62,7 +61,7 @@ struct CreateEntitiesWidget: View {
                 .disabled(nav.parent == .dashboard)
             Forecast(
                 date: DateHelper.startOfDay(self.nav.session.date),
-                isForecastMember: false,
+                type: .button,
                 page: self.page
             )
                 .disabled(nav.parent == .planning)
