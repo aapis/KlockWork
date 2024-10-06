@@ -11,7 +11,6 @@ import SwiftUI
 struct TaskForecast: View {
     @EnvironmentObject private var state: Navigation
     @Environment(\.colorScheme) var colourScheme
-
     public var callback: (() -> Void)? = nil
     public var daysToShow: Double = 14
     public var page: PageConfiguration.AppPage = .today
