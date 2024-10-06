@@ -31,8 +31,8 @@ struct SidebarButton: View, Identifiable {
     @State private var highlighted: Bool = false
 
     @EnvironmentObject public var nav: Navigation
-
     @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
+    @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
 
     var body: some View {
         let button = FancyButton
@@ -150,6 +150,10 @@ struct SidebarButton: View, Identifiable {
                 isDatePickerPresented = false
             }
 
+            if self.pageType == .planning {
+                self.isUpcomingTaskStackShowing = false
+            }
+
             self.nav.session.appPage = pageType.appPage
             nav.to(pageType)
         }, label: {
@@ -162,14 +166,14 @@ struct SidebarButton: View, Identifiable {
                 if nav.parent != pageType {
                     HStack {
                         Spacer()
-                        LinearGradient(gradient: Gradient(colors: [.clear, .black]), startPoint: .leading, endPoint: .trailing)
+                        LinearGradient(gradient: Gradient(colors: [.clear, Theme.base]), startPoint: .leading, endPoint: .trailing)
                             .opacity(0.6)
                             .blendMode(.softLight)
                             .frame(width: 12)
                     }
                 } else {
                     LinearGradient(
-                        colors: [(highlighted ? .black : .clear), Theme.toolbarColour],
+                        colors: [(highlighted ? Theme.base : .clear), Theme.toolbarColour],
                         startPoint: .bottomLeading,
                         endPoint: .topTrailing
                     )
@@ -193,11 +197,9 @@ struct SidebarButton: View, Identifiable {
     @ViewBuilder private var backgroundColour: some View {
         Theme.toolbarColour
 
-
         if nav.parent == pageType || self.nav.parent?.parentView == self.pageType {
             if let parent = nav.parent {
                 if isDatePickerPresented {
-                    //                    Theme.secondary
                     Color.white
                 } else {
                     parent.colour
@@ -207,6 +209,10 @@ struct SidebarButton: View, Identifiable {
             }
         } else {
             Theme.tabColour
+        }
+
+        if self.highlighted {
+            self.pageType.colour
         }
     }
 
