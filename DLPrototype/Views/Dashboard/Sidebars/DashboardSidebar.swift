@@ -12,10 +12,8 @@ struct DashboardSidebar: View {
     @State private var tabs: [ToolbarButton] = []
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            FancyGenericToolbar(buttons: tabs, standalone: true, location: .sidebar, mode: .compact)
-        }
-        .onAppear(perform: createToolbar)
+        FancyGenericToolbar(buttons: tabs, standalone: true, location: .sidebar, mode: .compact)
+            .onAppear(perform: createToolbar)
     }
 }
 

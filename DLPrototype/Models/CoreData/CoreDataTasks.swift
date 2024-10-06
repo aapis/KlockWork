@@ -259,6 +259,21 @@ public class CoreDataTasks {
         }
     }
     
+    /// Delay a task to a specific day
+    /// - Parameters:
+    ///   - task: LogTask
+    ///   - date: Date
+    /// - Returns: Void
+    public func delay(_ task: LogTask, to date: Date? = nil) -> Void {
+        if let due = task.due {
+            if let delayTargetDate = date {
+                self.due(on: delayTargetDate, task: task)
+            } else if let newDate = DateHelper.endOfTomorrow(due) {
+                self.due(on: newDate, task: task)
+            }
+        }
+    }
+
     public func cancel(_ task: LogTask) -> Void {
         task.cancelledDate = Date()
         task.lastUpdate = Date()

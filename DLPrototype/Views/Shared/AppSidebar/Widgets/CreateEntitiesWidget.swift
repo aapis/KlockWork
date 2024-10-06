@@ -23,18 +23,10 @@ struct CreateEntitiesWidget: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            ZStack(alignment: .top) {
-                LinearGradient(colors: [.white, .clear], startPoint: .top, endPoint: .bottom)
-                    .opacity(0.1)
-                    .blendMode(.softLight)
-                    .frame(height: 40)
-                    .padding(.top, 25)
-                Buttons
-            }
+            Buttons
 
             if isSearchStackShowing || isCreateStackShowing || isUpcomingTaskStackShowing {
-                FancyDivider(height: 20)
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 0) {
                     if isSearchStackShowing {
                         FindDashboard(searching: $searching, location: .sidebar)
                         Spacer()
@@ -61,7 +53,8 @@ struct CreateEntitiesWidget: View {
     }
 
     private var Buttons: some View {
-        HStack(alignment: .center, spacing: 10) {
+        HStack(alignment: .center, spacing: 5) {
+            Spacer()
             PlanButton(doesPlanExist: $doesPlanExist)
             PrivacyModeButton()
             CreateButton(active: $isCreateStackShowing)
@@ -72,6 +65,7 @@ struct CreateEntitiesWidget: View {
                 isForecastMember: false,
                 page: self.page
             )
+            Spacer()
         }
         .padding([.leading, .trailing], 15)
     }

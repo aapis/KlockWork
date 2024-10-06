@@ -29,11 +29,13 @@ extension Planning {
                         }
                     }
                 } else {
-                    HStack {
-                        Text("No overdue tasks!")
-                            .foregroundColor(.gray)
-                        Spacer()
+                    VStack(alignment: .center) {
+                        HStack(alignment: .center) {
+                            Text("No overdue tasks!")
+                                .foregroundColor(.gray)
+                        }
                     }
+
                     .padding()
                     .background(Theme.rowColour)
                 }

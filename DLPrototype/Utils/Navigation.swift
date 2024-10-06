@@ -9,20 +9,29 @@
 import SwiftUI
 
 public enum Page {
+    typealias Conf = PageConfiguration.AppPage
     case dashboard, today, notes, tasks, projects, projectDetail, jobs, companies, planning,
          terms, definitionDetail, taskDetail, noteDetail, people, peopleDetail
 
+    var appPage: Conf {
+        switch self {
+        case .dashboard: return Conf.find
+        case .today: return Conf.today
+        case .planning: return Conf.planning
+        default: return Conf.explore
+        }
+    }
 
     var colour: Color {
         switch self {
         case .dashboard:
-            return PageConfiguration.AppPage.find.primaryColour
+            return Conf.find.primaryColour
         case .today:
-            return PageConfiguration.AppPage.today.primaryColour
+            return Conf.today.primaryColour
         case .planning:
-            return PageConfiguration.AppPage.planning.primaryColour
+            return Conf.planning.primaryColour
         default:
-            return PageConfiguration.AppPage.explore.primaryColour
+            return Conf.explore.primaryColour
         }
     }
 
@@ -166,6 +175,7 @@ public class Navigation: Identifiable, ObservableObject {
         self.setView(hp.view)
         self.setParent(page)
         self.setSidebar(hp.sidebar)
+        self.session.appPage = page.appPage
 
         self.history.push(hp: hp)
         self.session.search.cancel()
@@ -206,6 +216,7 @@ extension Navigation {
         var term: TaxonomyTerm?
         var person: Person?
         var definition: TaxonomyTermDefinitions?
+        var appPage: PageConfiguration.AppPage = .find // "Home" colour, don't ask
         var date: Date = Date()
         var idate: IdentifiableDay = IdentifiableDay()
         var gif: PlanningState.GlobalInterfaceFilter = .normal

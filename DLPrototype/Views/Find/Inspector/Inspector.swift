@@ -501,7 +501,7 @@ public struct Inspector: View, Identifiable {
                 if let date = item.created {
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
-                        Text(date.description)
+                        Text("Created: " + date.formatted(date: .abbreviated, time: .shortened))
                         Spacer()
                     }
                     .help("Created: \(date.description)")
@@ -510,18 +510,30 @@ public struct Inspector: View, Identifiable {
 
                 if let date = item.lastUpdate {
                     HStack(alignment: .top, spacing: 10) {
-                        Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
-                        Text(date.description)
+                        Image(systemName: "calendar").symbolRenderingMode(.hierarchical)
+                        Text("Last update: " + date.formatted(date: .abbreviated, time: .shortened))
                         Spacer()
                     }
                     .help("Last update: \(date.description)")
                     Divider()
                 }
 
+                if item.cancelledDate == nil && item.completedDate == nil {
+                    if let date = item.due {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
+                            Text("Due: " + date.formatted(date: .abbreviated, time: .shortened))
+                            Spacer()
+                        }
+                        .help("Due at: \(date.description)")
+                        Divider()
+                    }
+                }
+
                 if let date = item.completedDate {
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
-                        Text(date.description)
+                        Text("Completed on: " + date.formatted(date: .abbreviated, time: .shortened))
                         Spacer()
                     }
                     .help("Completed on \(date.description)")
@@ -531,7 +543,7 @@ public struct Inspector: View, Identifiable {
                 if let date = item.cancelledDate {
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
-                        Text(date.description)
+                        Text("Cancelled on: " + date.formatted(date: .abbreviated, time: .shortened))
                         Spacer()
                     }
                     .help("Cancelled on \(date.description)")

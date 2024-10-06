@@ -150,6 +150,7 @@ struct SidebarButton: View, Identifiable {
                 isDatePickerPresented = false
             }
 
+            self.nav.session.appPage = pageType.appPage
             nav.to(pageType)
         }, label: {
             ZStack {

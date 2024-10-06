@@ -36,16 +36,15 @@ extension Planning {
                         }
                     }
                 } else {
-                    HStack {
-                        Text("No upcoming due dates")
-                            .foregroundColor(.gray)
-                        Spacer()
+                    VStack(alignment: .center) {
+                        HStack(alignment: .center) {
+                            Text("No upcoming due dates")
+                                .foregroundColor(.gray)
+                        }
                     }
                     .padding()
                     .background(Theme.rowColour)
                 }
-
-                Spacer()
             }
             .onAppear(perform: self.actionOnAppear)
         }
