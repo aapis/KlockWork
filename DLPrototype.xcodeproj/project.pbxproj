@@ -70,6 +70,7 @@
 		5335448A2CB1A15C0067A944 /* TaskItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533544892CB1A14E0067A944 /* TaskItem.swift */; };
 		5335448C2CB200400067A944 /* TypedListRowBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335448B2CB200340067A944 /* TypedListRowBackground.swift */; };
 		5335448E2CB21AFF0067A944 /* RowActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335448D2CB21AFC0067A944 /* RowActionButton.swift */; };
+		533544902CB2371E0067A944 /* KeyboardShortcutIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335448F2CB237150067A944 /* KeyboardShortcutIndicator.swift */; };
 		5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5AD296CFF83000051B1 /* FileHelper.swift */; };
 		5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B2296D17EB000051B1 /* TaskDashboard.swift */; };
 		5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B4296D1FA7000051B1 /* TaskView.swift */; };
@@ -339,6 +340,7 @@
 		533544892CB1A14E0067A944 /* TaskItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskItem.swift; sourceTree = "<group>"; };
 		5335448B2CB200340067A944 /* TypedListRowBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypedListRowBackground.swift; sourceTree = "<group>"; };
 		5335448D2CB21AFC0067A944 /* RowActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowActionButton.swift; sourceTree = "<group>"; };
+		5335448F2CB237150067A944 /* KeyboardShortcutIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardShortcutIndicator.swift; sourceTree = "<group>"; };
 		5335A5AD296CFF83000051B1 /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		5335A5B2296D17EB000051B1 /* TaskDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDashboard.swift; sourceTree = "<group>"; };
 		5335A5B4296D1FA7000051B1 /* TaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskView.swift; sourceTree = "<group>"; };
@@ -1226,6 +1228,7 @@
 		53EDDF9C29634840008D34C7 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				5335448F2CB237150067A944 /* KeyboardShortcutIndicator.swift */,
 				5335448D2CB21AFC0067A944 /* RowActionButton.swift */,
 				5335448B2CB200340067A944 /* TypedListRowBackground.swift */,
 				533544872CB1A0EE0067A944 /* Timestamp.swift */,
@@ -1622,6 +1625,7 @@
 				537AEB9F29627DCC00385787 /* LogTable.swift in Sources */,
 				53E918832B4A6D9600912C6F /* SessionInspector.swift in Sources */,
 				5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */,
+				533544902CB2371E0067A944 /* KeyboardShortcutIndicator.swift in Sources */,
 				533544802CB19C430067A944 /* Planning.Upcoming.swift in Sources */,
 				53E202612A7EC96D00B4DF70 /* DashboardSidebar.swift in Sources */,
 				532A722F299037AC0038C18B /* RecordResult.swift in Sources */,

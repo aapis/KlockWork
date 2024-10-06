@@ -239,7 +239,7 @@ struct CreateEntitiesWidget: View {
                         text: "Company",
                         action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
                         icon: "building.2",
-                        fgColour: .white,
+                        iconFgColour: self.nav.session.company?.backgroundColor,
                         size: .link,
                         type: nav.parent == .notes ? .secondary : .standard,
                         redirect: AnyView(CompanyCreate()),
@@ -247,6 +247,7 @@ struct CreateEntitiesWidget: View {
                         sidebar: AnyView(DefaultCompanySidebar())
                     )
                     Spacer()
+                    KeyboardShortcutIndicator(character: "C", requireShift: true)
                 }
 
                 ZStack(alignment: .topLeading) {
@@ -264,7 +265,7 @@ struct CreateEntitiesWidget: View {
                                     text: "Person",
                                     action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
                                     icon: "person",
-                                    fgColour: .white,
+                                    iconFgColour: self.nav.session.company?.backgroundColor,
                                     size: .link,
                                     type: nav.parent == .people ? .secondary : .standard,
                                     redirect: AnyView(PeopleDetail()),
@@ -273,6 +274,7 @@ struct CreateEntitiesWidget: View {
                                 )
                             }
                             Spacer()
+                            KeyboardShortcutIndicator(character: "U", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -285,7 +287,7 @@ struct CreateEntitiesWidget: View {
                                     text: "Project",
                                     action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
                                     icon: "folder",
-                                    fgColour: .white,
+                                    iconFgColour: self.nav.session.project?.backgroundColor,
                                     size: .link,
                                     type: nav.parent == .projects ? .secondary : .standard,
                                     redirect: AnyView(ProjectCreate()),
@@ -294,6 +296,7 @@ struct CreateEntitiesWidget: View {
                                 )
                             }
                             Spacer()
+                            KeyboardShortcutIndicator(character: "P", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -305,7 +308,7 @@ struct CreateEntitiesWidget: View {
                                     text: "Job",
                                     action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
                                     icon: "hammer",
-                                    fgColour: .white,
+                                    iconFgColour: self.nav.session.job?.backgroundColor,
                                     size: .link,
                                     type: nav.parent == .jobs ? .secondary : .standard,
                                     redirect: AnyView(JobCreate()),
@@ -314,6 +317,7 @@ struct CreateEntitiesWidget: View {
                                 )
                             }
                             Spacer()
+                            KeyboardShortcutIndicator(character: "J", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -325,7 +329,7 @@ struct CreateEntitiesWidget: View {
                                     text: "Note",
                                     action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
                                     icon: "note.text",
-                                    fgColour: .white,
+                                    iconFgColour: self.nav.session.job?.backgroundColor,
                                     size: .link,
                                     type: nav.parent == .notes ? .secondary : .standard,
                                     redirect: AnyView(NoteCreate()),
@@ -334,6 +338,7 @@ struct CreateEntitiesWidget: View {
                                 )
                             }
                             Spacer()
+                            KeyboardShortcutIndicator(character: "N", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -345,7 +350,7 @@ struct CreateEntitiesWidget: View {
                                     text: "Task",
                                     action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
                                     icon: "checklist.checked",
-                                    fgColour: .white,
+                                    iconFgColour: self.nav.session.job?.backgroundColor,
                                     size: .link,
                                     type: nav.parent == .tasks ? .secondary : .standard,
                                     redirect: AnyView(TaskDetail()),
@@ -354,6 +359,7 @@ struct CreateEntitiesWidget: View {
                                 )
                             }
                             Spacer()
+                            KeyboardShortcutIndicator(character: "T", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -365,7 +371,7 @@ struct CreateEntitiesWidget: View {
                                     text: "Record",
                                     action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
                                     icon: "tray",
-                                    fgColour: .white,
+                                    iconFgColour: self.nav.session.job?.backgroundColor,
                                     size: .link,
                                     type: nav.parent == .tasks ? .secondary : .standard,
                                     redirect: AnyView(Today()),
@@ -374,6 +380,7 @@ struct CreateEntitiesWidget: View {
                                 )
                             }
                             Spacer()
+                            KeyboardShortcutIndicator(character: "R", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -385,7 +392,7 @@ struct CreateEntitiesWidget: View {
                                     text: "Definition",
                                     action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
                                     icon: "list.bullet.rectangle",
-                                    fgColour: .white,
+                                    iconFgColour: self.nav.session.job?.backgroundColor,
                                     size: .link,
                                     type: nav.parent == .tasks ? .secondary : .standard,
                                     redirect: AnyView(DefinitionDetail()),
@@ -394,6 +401,7 @@ struct CreateEntitiesWidget: View {
                                 )
                             }
                             Spacer()
+                            KeyboardShortcutIndicator(character: "D", requireShift: true)
                         }
                     }
                 }
