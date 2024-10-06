@@ -65,6 +65,7 @@ struct CreateEntitiesWidget: View {
                 isForecastMember: false,
                 page: self.page
             )
+                .disabled(nav.parent == .planning)
             Spacer()
         }
         .padding([.leading, .trailing], 15)
