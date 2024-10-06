@@ -69,6 +69,7 @@
 		533544882CB1A0F00067A944 /* Timestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533544872CB1A0EE0067A944 /* Timestamp.swift */; };
 		5335448A2CB1A15C0067A944 /* TaskItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533544892CB1A14E0067A944 /* TaskItem.swift */; };
 		5335448C2CB200400067A944 /* TypedListRowBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335448B2CB200340067A944 /* TypedListRowBackground.swift */; };
+		5335448E2CB21AFF0067A944 /* RowActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335448D2CB21AFC0067A944 /* RowActionButton.swift */; };
 		5335A5AE296CFF83000051B1 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5AD296CFF83000051B1 /* FileHelper.swift */; };
 		5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B2296D17EB000051B1 /* TaskDashboard.swift */; };
 		5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B4296D1FA7000051B1 /* TaskView.swift */; };
@@ -337,6 +338,7 @@
 		533544872CB1A0EE0067A944 /* Timestamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timestamp.swift; sourceTree = "<group>"; };
 		533544892CB1A14E0067A944 /* TaskItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskItem.swift; sourceTree = "<group>"; };
 		5335448B2CB200340067A944 /* TypedListRowBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypedListRowBackground.swift; sourceTree = "<group>"; };
+		5335448D2CB21AFC0067A944 /* RowActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowActionButton.swift; sourceTree = "<group>"; };
 		5335A5AD296CFF83000051B1 /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		5335A5B2296D17EB000051B1 /* TaskDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDashboard.swift; sourceTree = "<group>"; };
 		5335A5B4296D1FA7000051B1 /* TaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskView.swift; sourceTree = "<group>"; };
@@ -1224,6 +1226,7 @@
 		53EDDF9C29634840008D34C7 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				5335448D2CB21AFC0067A944 /* RowActionButton.swift */,
 				5335448B2CB200340067A944 /* TypedListRowBackground.swift */,
 				533544872CB1A0EE0067A944 /* Timestamp.swift */,
 				53E9187D2B47C9CC00912C6F /* PanelGroup */,
@@ -1460,6 +1463,7 @@
 				5354C8EA2AA03C77001C1779 /* Tasks.swift in Sources */,
 				539F68DD2BF70A260086F89A /* IntroToKlockWork.swift in Sources */,
 				5371BA222A7B1C9D00DEEC21 /* RecentNotesWidget.swift in Sources */,
+				5335448E2CB21AFF0067A944 /* RowActionButton.swift in Sources */,
 				53C000AA2B41447600D5EC04 /* NoteFormWidget.swift in Sources */,
 				5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */,
 				53E202652A7ECE7A00B4DF70 /* DayInHistory.swift in Sources */,
