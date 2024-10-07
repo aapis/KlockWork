@@ -11,7 +11,7 @@ import KWCore
 
 public enum Page {
     typealias Conf = PageConfiguration.AppPage
-    case dashboard, today, notes, tasks, projects, projectDetail, jobs, companies, planning,
+    case dashboard, today, notes, tasks, projects, projectDetail, jobs, companies, companyDetail, planning,
          terms, definitionDetail, taskDetail, noteDetail, people, peopleDetail
 
     var appPage: Conf {
@@ -46,6 +46,7 @@ public enum Page {
         case .projectDetail: return "Project"
         case .jobs: return "Jobs"
         case .companies: return "Companies"
+        case .companyDetail: return "Company"
         case .planning: return "Planning"
         case .terms: return "Terms"
         case .definitionDetail: return "Definition"
@@ -66,6 +67,7 @@ public enum Page {
         case .projectDetail: return .projects
         case .jobs: return nil
         case .companies: return nil
+        case .companyDetail: return .companies
         case .planning: return nil
         case .terms: return nil
         case .definitionDetail: return .terms
@@ -559,6 +561,7 @@ extension Navigation {
             HistoryPage(page: .planning, view: AnyView(Planning()), sidebar: AnyView(DefaultPlanningSidebar()), title: "Planning"),
             HistoryPage(page: .today, view: AnyView(Today()), sidebar: AnyView(TodaySidebar()), title: "Today"),
             HistoryPage(page: .companies, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Companies & Projects"),
+            HistoryPage(page: .companyDetail, view: AnyView(CompanyView()), sidebar: AnyView(DefaultCompanySidebar()), title: "Companies & Projects"),
             HistoryPage(page: .jobs, view: AnyView(JobDashboardRedux()), sidebar: AnyView(JobDashboardSidebar()), title: "Jobs"),
             HistoryPage(page: .notes, view: AnyView(NoteDashboard()), sidebar: AnyView(NoteDashboardSidebar()), title: "Notes"),
             HistoryPage(page: .tasks, view: AnyView(TaskDashboard()), sidebar: AnyView(TaskDashboardSidebar()), title: "Tasks"),
