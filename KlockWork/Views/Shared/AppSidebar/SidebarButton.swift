@@ -88,8 +88,10 @@ struct SidebarButton: View, Identifiable {
                 }
             case .companies:
                 HStack(alignment: .top, spacing: 0) {
-                    if let colour = nav.session.job?.project?.company?.backgroundColor {
-                        ActiveIndicator(colour: colour, href: .companies)
+                    if let stored = self.nav.session.company {
+                        ActiveIndicator(colour: stored.backgroundColor, href: .companies)
+                    } else if let stored = nav.session.job?.project?.company {
+                        ActiveIndicator(colour: stored.backgroundColor, href: .companies)
                     }
                     button.frame(width: 50, height: 50)
 //                        .foregroundStyle(nav.session.job != nil ? nav.session.job!.backgroundColor : isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
