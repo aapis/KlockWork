@@ -59,22 +59,12 @@ public enum Page {
 
     var parentView: Page? {
         switch self {
-        case .dashboard: return nil
-        case .today: return nil
-        case .tasks: return nil
-        case .notes: return nil
-        case .projects: return nil
-        case .projectDetail: return .projects
-        case .jobs: return nil
-        case .companies: return nil
-        case .companyDetail: return .companies
-        case .planning: return nil
-        case .terms: return nil
+        case .companyDetail, .projectDetail: return .companies
         case .definitionDetail: return .terms
         case .taskDetail: return .tasks
         case .noteDetail: return .notes
-        case .people: return nil
         case .peopleDetail: return .people
+        default: return nil
         }
     }
 }
@@ -561,7 +551,7 @@ extension Navigation {
             HistoryPage(page: .planning, view: AnyView(Planning()), sidebar: AnyView(DefaultPlanningSidebar()), title: "Planning"),
             HistoryPage(page: .today, view: AnyView(Today()), sidebar: AnyView(TodaySidebar()), title: "Today"),
             HistoryPage(page: .companies, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Companies & Projects"),
-            HistoryPage(page: .companyDetail, view: AnyView(CompanyView()), sidebar: AnyView(DefaultCompanySidebar()), title: "Companies & Projects"),
+            HistoryPage(page: .companyDetail, view: AnyView(CompanyView()), sidebar: AnyView(DefaultCompanySidebar()), title: "Company"),
             HistoryPage(page: .jobs, view: AnyView(JobDashboardRedux()), sidebar: AnyView(JobDashboardSidebar()), title: "Jobs"),
             HistoryPage(page: .notes, view: AnyView(NoteDashboard()), sidebar: AnyView(NoteDashboardSidebar()), title: "Notes"),
             HistoryPage(page: .tasks, view: AnyView(TaskDashboard()), sidebar: AnyView(TaskDashboardSidebar()), title: "Tasks"),
@@ -571,7 +561,7 @@ extension Navigation {
             HistoryPage(page: .noteDetail, view: AnyView(NoteView()), sidebar: AnyView(NoteCreateSidebar()), title: "Note detail"),
             HistoryPage(page: .people, view: AnyView(PeopleDashboard()), sidebar: AnyView(PeopleDashboardSidebar()), title: "People"),
             HistoryPage(page: .peopleDetail, view: AnyView(PeopleDetail()), sidebar: AnyView(PeopleDashboardSidebar()), title: "Person"),
-            HistoryPage(page: .projectDetail, view: AnyView(CompanyView()), sidebar: AnyView(ProjectsDashboardSidebar()), title: "Project"),
+            HistoryPage(page: .projectDetail, view: AnyView(CompanyView()), sidebar: AnyView(DefaultCompanySidebar()), title: "Project"),
             HistoryPage(page: .projects, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Projects"),
         ]
         
