@@ -10,38 +10,32 @@ import SwiftUI
 import KWCore
 
 struct CompanyView: View {
-    public var company: Company
-
+    @EnvironmentObject public var nav: Navigation
+    @State private var id: UUID = UUID()
+    @State public var company: Company?
     @State private var name: String = ""
     @State private var abbreviation: String = ""
     @State private var created: Date? = nil
     @State private var updated: Date? = nil
-    @State private var colour: Color = .clear
+    @State private var colour: Color?
     @State private var hidden: Bool = false
     @State private var isDeleteAlertShowing: Bool = false
     @State private var tabs: [ToolbarButton] = []
-
-    @FetchRequest private var projects: FetchedResults<Project>
-
-    @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var nav: Navigation
+    @State private var projects: [Project] = []
+    @State private var isChangingCompanies: Bool = false
+    private let eType: PageConfiguration.EntityType = .companies
 
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 13) {
-                HStack {
-                    Image(systemName: "building.2").font(Theme.fontTitle)
-                    Title(text: "Editing: \(company.name!)")
-                    Spacer()
-                }
-
+                Title(text: self.name, imageAsImage: self.eType.icon)
                 FancyTextField(placeholder: "Legal name", lineLimit: 1, onSubmit: {}, showLabel: true, text: $name)
                 FancyTextField(placeholder: "Abbreviation", lineLimit: 1, onSubmit: {}, showLabel: true, text: $abbreviation)
                 HStack {
                     FancyLabel(text: "Hidden")
                     FancyBoundToggle(label: "Hidden", value: $hidden, showLabel: false, onChange: self.onChangeToggle)
                 }
-                FancyColourPicker(initialColour: company.colour ?? Theme.rowColourAsDouble, onChange: {newColour in colour = newColour})
+                FancyColourPicker(initialColour: self.colour ?? self.nav.session.company?.backgroundColor ?? .clear, onChange: {newColour in self.colour = newColour})
 
                 if let created = created {
                     HStack {
@@ -68,11 +62,8 @@ struct CompanyView: View {
                         .background(Theme.textBackground)
                     }
                 }
-
                 FancyDivider()
-                
                 FancyGenericToolbar(buttons: tabs)
-
                 HStack {
                     FancyButtonv2(
                         text: "Delete",
@@ -81,7 +72,7 @@ struct CompanyView: View {
                         showLabel: false,
                         type: .destructive
                     )
-                    .alert("Are you sure you want to delete company \(company.name ?? "Invalid company name")?", isPresented: $isDeleteAlertShowing) {
+                    .alert("Are you sure you want to delete company \(company?.name ?? "Invalid company name")?", isPresented: $isDeleteAlertShowing) {
                         Button("Yes", role: .destructive) {
                             actionSoftDelete()
                         }
@@ -104,68 +95,81 @@ struct CompanyView: View {
             }
             .padding()
         }
-        .background(Theme.toolbarColour)
-        .onAppear(perform: actionOnAppear)
-        .onChange(of: name) { newName in
-            abbreviation = StringHelper.abbreviate(newName)
-
-            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { _ in
-                self.save()
+        .id(self.id)
+        .background(self.nav.parent?.appPage.primaryColour)
+        .onAppear(perform: self.actionOnAppear)
+        .onChange(of: self.nav.session.company) { self.actionAttemptCompanyChange() }
+//        .onChange(of: self.name) {
+//            abbreviation = StringHelper.abbreviate(self.name)
+//
+//            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { _ in
+//                self.save()
+//            }
+//        }
+//        .onChange(of: colour) {
+//            self.save()
+//        }
+        .alert("Change companies? You're currently editing one.", isPresented: $isChangingCompanies, actions: {
+            Button("Cancel", role: .cancel) {
+                self.isChangingCompanies = false
             }
-        }
-        .onChange(of: colour) { newColour in
-            self.save()
-        }
+            Button("Yes", role: .destructive) {
+                self.isChangingCompanies = false
+                self.id = UUID()
+                self.actionOnAppear()
+            }
+        })
     }
 }
 
 extension CompanyView {
-    init(company: Company) {
-        self.company = company
-
-        let pRequest: NSFetchRequest<Project> = Project.fetchRequest()
-        pRequest.sortDescriptors = [
-            NSSortDescriptor(keyPath: \Project.name, ascending: true),
-        ]
-        pRequest.predicate = NSPredicate(format: "alive = true && company = %@", company)
-
-        _projects = FetchRequest(fetchRequest: pRequest, animation: .easeInOut)
-    }
-    
     private func actionOnAppear() -> Void {
-        name = company.name!
-        abbreviation = company.abbreviation!
-        created = company.createdDate!
-        colour = Color.fromStored(company.colour ?? Theme.rowColourAsDouble)
-        hidden = company.hidden
-
-        if let updatedAt = company.lastUpdate {
-            updated = updatedAt
+        if let stored = self.nav.session.company {
+            self.company = stored
         }
 
-        createToolbar()
+        self.projects = []
+        if let projects = self.company?.projects?.allObjects as? [Project] {
+            if projects.count > 0 {
+                self.projects = projects.filter({$0.alive == true})
+            }
+        }
+
+        self.name = self.company?.name ?? ""
+        self.abbreviation = self.company?.abbreviation ?? ""
+        self.created = self.company?.createdDate ?? Date()
+        self.colour = self.company?.backgroundColor ?? .clear
+        self.hidden = self.company?.hidden ?? false
+
+        if let updatedAt = self.company?.lastUpdate {
+            self.updated = updatedAt
+        }
+
+        self.createToolbar()
     }
 
     private func save() -> Void {
-        company.name = name
-        company.abbreviation = abbreviation
-        company.lastUpdate = Date()
-        company.colour = colour.toStored()
-        company.hidden = hidden
+        if self.company != nil {
+            self.company!.name = name
+            self.company!.abbreviation = abbreviation
+            self.company!.lastUpdate = Date()
+            if self.colour != nil { self.company!.colour = self.colour!.toStored() }
+            self.company!.hidden = hidden
 
-        // @TODO: possibly unnecessary, but sometimes projects disown themselves and this may fix it
-        // @TODO: many months later, this did not fix it
-        var projs: Set<Project> = []
-        for p in projects { projs.insert(p)}
-        company.projects = NSSet(set: projs)
+            // @TODO: possibly unnecessary, but sometimes projects disown themselves and this may fix it
+            // @TODO: many months later, this did not fix it
+            var projs: Set<Project> = []
+            for p in self.projects { projs.insert(p)}
+            self.company!.projects = NSSet(set: projs)
+        }
 
         PersistenceController.shared.save()
     }
 
     private func actionSoftDelete() -> Void {
-        company.alive = false
-        
-        if let projects = company.projects {
+        self.company?.alive = false
+
+        if let projects = self.company?.projects {
             let pArr = projects.allObjects as! [Project]
 
             for project in pArr {
@@ -182,7 +186,10 @@ extension CompanyView {
     }
 
     private func actionHardDelete() -> Void {
-        moc.delete(company)
+        if let company = self.company {
+            self.nav.moc.delete(company)
+        }
+
         PersistenceController.shared.save()
 
         nav.setId()
@@ -203,7 +210,7 @@ extension CompanyView {
                         Text("Projects")
                     }
                 ),
-                contents: AnyView(ManageOwnedProjects(company: company))
+                contents: AnyView(ManageOwnedProjects())
             ),
             ToolbarButton(
                 id: 1,
@@ -215,13 +222,21 @@ extension CompanyView {
                         Text("People")
                     }
                 ),
-                contents: AnyView(ManagePeople(company: company))
+                contents: AnyView(ManagePeople())
             )
         ]
     }
 
     private func onChangeToggle(value: Bool) -> Void {
-        company.hidden = value
+        self.company?.hidden = value
         PersistenceController.shared.save()
+    }
+    
+    /// Fires when company changes while editing
+    /// - Returns: Void
+    private func actionAttemptCompanyChange() -> Void {
+        if self.company != self.nav.session.company && self.nav.session.company != nil {
+            self.isChangingCompanies = true
+        }
     }
 }
