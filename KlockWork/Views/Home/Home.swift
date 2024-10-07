@@ -147,6 +147,7 @@ struct Home: View {
                 }
             }
         }
+        .onAppear(perform: self.onAppear)
     }
 
     @ViewBuilder var Sidebar: some View {
