@@ -123,9 +123,13 @@ struct CompanyView: View {
 }
 
 extension CompanyView {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
     private func actionOnAppear() -> Void {
         if let stored = self.nav.session.company {
             self.company = stored
+        } else if let stored = self.nav.session.project {
+            self.company = stored.company
         }
 
         self.projects = []
