@@ -8,7 +8,6 @@
 
 import Foundation
 import SwiftUI
-import KWCore
 import CoreData
 
 public struct IdentifiableDay: Identifiable, Equatable, Hashable {

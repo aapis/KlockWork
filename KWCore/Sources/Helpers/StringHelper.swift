@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import KWCore
 
 public final class StringHelper {
     static public func abbreviate(_ data: String) -> String {
