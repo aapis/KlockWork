@@ -126,7 +126,7 @@ struct JobDashboardRedux: View {
             }
             .padding()
         }
-        .background(Theme.toolbarColour)
+        .background(self.nav.session.job != nil ? self.nav.session.appPage.primaryColour : Theme.toolbarColour)
     }
 }
 
@@ -196,12 +196,9 @@ struct JobExplorer: View {
             
             if editorVisible {
                 if let job = nav.session.job {
-                    VStack {
-                        JobViewRedux(job: job)
-                    }
-                    .padding(5)
-                    .background(Theme.rowColour)
-                    .foregroundStyle(.white)
+                    JobViewRedux(job: job)
+                        .background(Theme.rowColour)
+                        .foregroundStyle(.white)
                 } else {
                     VStack(alignment: .leading, spacing: 1) {
                         HStack {
@@ -287,9 +284,6 @@ struct JobExplorer: View {
                             }
                         }
                     }
-                    .background(Theme.toolbarColour)
-                    .border(width: 1, edges: [.top, .bottom, .leading, .trailing], color: Theme.rowColour)
-                    .padding(8)
                 }
             }
             .onAppear(perform: self.actionOnAppear)
