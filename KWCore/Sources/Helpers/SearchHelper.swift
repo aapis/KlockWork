@@ -8,7 +8,6 @@
 
 import Foundation
 import SwiftUI
-import KWCore
 
 // TODO: replace this entire class with "CONTAINS[c]" predicates
 public final class SearchHelper {

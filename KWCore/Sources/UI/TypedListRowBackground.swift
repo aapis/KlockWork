@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import KWCore
 
 struct TypedListRowBackground: View {
     @EnvironmentObject private var state: Navigation

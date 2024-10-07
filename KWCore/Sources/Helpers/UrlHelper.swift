@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import KWCore
 
 public struct UrlParts {
     public var jid_double: Double? = 0.0

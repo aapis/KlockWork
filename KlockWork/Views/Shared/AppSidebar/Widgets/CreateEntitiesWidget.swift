@@ -87,6 +87,7 @@ struct CreateEntitiesWidget: View {
                                 text: nav.session.gif == .focus ? "Disable the global filter, show all items" : "Show only the items in your daily plan",
                                 action: actionOnChangeFocus,
                                 icon: nav.session.gif == .focus ? "circle.hexagongrid.fill" : "circle.hexagongrid",
+                                fgColour: Theme.base,
                                 showLabel: false,
                                 size: .small,
                                 type: .tsWhite
@@ -96,6 +97,7 @@ struct CreateEntitiesWidget: View {
                             FancyButtonv2(
                                 text: "You need to create a plan first, click here!",
                                 icon: "hexagon",
+                                fgColour: Theme.base,
                                 showLabel: false,
                                 size: .small,
                                 type: nav.parent == .planning ? .secondary : .tsWhite,
