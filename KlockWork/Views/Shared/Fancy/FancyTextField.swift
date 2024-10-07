@@ -35,11 +35,7 @@ struct FancyTextField: View {
     var body: some View {
         HStack(spacing: 5) {
             if showLabel {
-                Text(placeholder)
-                    .padding([.trailing], 10)
-                    .font(font)
-                    .frame(width: 120, height: 45, alignment: .trailing)
-                    .background(Theme.textLabelBackground)
+                FancyLabel(text: self.placeholder)
             }
             
             if lineLimit == 1 {
