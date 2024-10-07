@@ -106,7 +106,7 @@
 		5371BA2B2A7B279800DEEC21 /* NoteViewSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA2A2A7B279800DEEC21 /* NoteViewSidebar.swift */; };
 		5371BA2D2A7B27BB00DEEC21 /* NoteDashboardSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA2C2A7B27BB00DEEC21 /* NoteDashboardSidebar.swift */; };
 		5371BA302A7B2A8800DEEC21 /* JobDashboardSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA2F2A7B2A8800DEEC21 /* JobDashboardSidebar.swift */; };
-		5371BA322A7B2ADE00DEEC21 /* JobsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA312A7B2ADE00DEEC21 /* JobsWidget.swift */; };
+		5371BA322A7B2ADE00DEEC21 /* UnifiedSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA312A7B2ADE00DEEC21 /* UnifiedSidebar.swift */; };
 		5371BA342A7B2B8F00DEEC21 /* JobRowPlain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA332A7B2B8F00DEEC21 /* JobRowPlain.swift */; };
 		5371BA372A7B412300DEEC21 /* TodaySidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA362A7B412300DEEC21 /* TodaySidebar.swift */; };
 		5371BA3B2A7B490C00DEEC21 /* TasksWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA3A2A7B490C00DEEC21 /* TasksWidget.swift */; };
@@ -387,7 +387,7 @@
 		5371BA2A2A7B279800DEEC21 /* NoteViewSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteViewSidebar.swift; sourceTree = "<group>"; };
 		5371BA2C2A7B27BB00DEEC21 /* NoteDashboardSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDashboardSidebar.swift; sourceTree = "<group>"; };
 		5371BA2F2A7B2A8800DEEC21 /* JobDashboardSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobDashboardSidebar.swift; sourceTree = "<group>"; };
-		5371BA312A7B2ADE00DEEC21 /* JobsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobsWidget.swift; sourceTree = "<group>"; };
+		5371BA312A7B2ADE00DEEC21 /* UnifiedSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnifiedSidebar.swift; sourceTree = "<group>"; };
 		5371BA332A7B2B8F00DEEC21 /* JobRowPlain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobRowPlain.swift; sourceTree = "<group>"; };
 		5371BA362A7B412300DEEC21 /* TodaySidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaySidebar.swift; sourceTree = "<group>"; };
 		5371BA3A2A7B490C00DEEC21 /* TasksWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksWidget.swift; sourceTree = "<group>"; };
@@ -1065,7 +1065,7 @@
 				53013A952CAB82580024BA30 /* GlobalSidebar.swift */,
 				53B0DC112A79D7FC00DA1679 /* NoteVersionNavigationWidget.swift */,
 				5371BA212A7B1C9D00DEEC21 /* RecentNotesWidget.swift */,
-				5371BA312A7B2ADE00DEEC21 /* JobsWidget.swift */,
+				5371BA312A7B2ADE00DEEC21 /* UnifiedSidebar.swift */,
 				5371BA3A2A7B490C00DEEC21 /* TasksWidget.swift */,
 				53E202572A7E19B900B4DF70 /* NotesWidget.swift */,
 				53E202592A7EAE5B00B4DF70 /* ProjectsWidget.swift */,
@@ -1730,7 +1730,7 @@
 				5331FCB32A9E6ECE005CDE0E /* Plan.swift in Sources */,
 				53152CDA296B849200A14E43 /* FancyPickerWithRelativeNavigation.swift in Sources */,
 				53EFCE7B29637F49004E45EC /* Settings.swift in Sources */,
-				5371BA322A7B2ADE00DEEC21 /* JobsWidget.swift in Sources */,
+				5371BA322A7B2ADE00DEEC21 /* UnifiedSidebar.swift in Sources */,
 				53E202582A7E19B900B4DF70 /* NotesWidget.swift in Sources */,
 				537628A8296659DC00DE8ECF /* PersistenceController.swift in Sources */,
 				532C5FE32A83019C00F2AAD4 /* GlobalSidebarWidgets.swift in Sources */,
