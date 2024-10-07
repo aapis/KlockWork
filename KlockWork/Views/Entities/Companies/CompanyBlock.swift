@@ -10,18 +10,14 @@ import SwiftUI
 import KWCore
 
 struct CompanyBlock: View {
-    public var company: Company
-
-    @State private var highlighted: Bool = false
-
     @EnvironmentObject public var nav: Navigation
+    public var company: Company
+    @State private var highlighted: Bool = false
 
     var body: some View {
         Button {
-            nav.setView(AnyView(CompanyView(company: company)))
-            nav.setSidebar(AnyView(DefaultCompanySidebar()))
-            nav.setParent(.companies)
-            nav.setId()
+            self.nav.session.company = self.company
+            self.nav.to(.companyDetail)
         } label: {
             VStack(spacing: 0) {
                 ZStack(alignment: .topLeading) {

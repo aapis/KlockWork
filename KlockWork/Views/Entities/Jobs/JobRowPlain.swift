@@ -77,17 +77,13 @@ extension JobRowPlain {
 
         if let parent = nav.parent {
             if parent == .jobs {
-                nav.setParent(.jobs)
-                nav.session.setJob(job)
-                nav.setView(AnyView(JobDashboard(defaultSelectedJob: job)))
-                nav.setSidebar(AnyView(JobDashboardSidebar()))
+                self.nav.session.job = self.job
+                self.nav.to(.jobs)
             } else if parent == .planning {
                 actionUpdatePlanningStore()
             } else {
-                nav.setParent(.today)
-                nav.session.setJob(job)
-                nav.setView(AnyView(Today()))
-                nav.setSidebar(AnyView(TodaySidebar()))
+                self.nav.session.job = self.job
+                self.nav.to(.today)
             }
         }
     }

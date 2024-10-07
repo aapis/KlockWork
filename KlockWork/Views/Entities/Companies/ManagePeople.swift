@@ -10,8 +10,8 @@ import SwiftUI
 import KWCore
 
 struct ManagePeople: View {
-    public var company: Company
-
+    @EnvironmentObject public var state: Navigation
+    @State public var company: Company?
     private var columns: [GridItem] {
         Array(repeating: .init(.flexible(minimum: 100)), count: 2)
     }
@@ -19,25 +19,28 @@ struct ManagePeople: View {
     var body: some View {
         VStack(alignment: .leading) {
             About()
-            
-            LazyVGrid(columns: columns, alignment: .leading) {
-                VStack(alignment: .leading, spacing: 20) {
-                    FancySubTitle(text: "Associated people", image: "checkmark")
-                    Divider()
-                    PeopleList(company: company)
-                    Spacer()
-                }
 
-                VStack(alignment: .leading, spacing: 20) {
-                    FancySubTitle(text: "Add a new person", image: "plus")
-                    Divider()
-                    AddPerson(company: company)
-                    Spacer()
+            if self.company != nil {
+                LazyVGrid(columns: columns, alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 20) {
+                        FancySubTitle(text: "Associated people", image: "checkmark")
+                        Divider()
+                        PeopleList(company: company!)
+                        Spacer()
+                    }
+
+                    VStack(alignment: .leading, spacing: 20) {
+                        FancySubTitle(text: "Add a new person", image: "plus")
+                        Divider()
+                        AddPerson(company: company!)
+                        Spacer()
+                    }
                 }
             }
 
             Spacer()
         }
+        .onAppear(perform: self.actionOnAppear)
     }
 }
 
@@ -102,6 +105,16 @@ extension ManagePeople {
                     }
                 }
             }
+        }
+    }
+}
+
+extension ManagePeople {
+    /// Onload handler. Sets company
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        if let stored = self.state.session.company {
+            self.company = stored
         }
     }
 }

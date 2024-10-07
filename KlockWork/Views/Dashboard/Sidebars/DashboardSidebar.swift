@@ -33,7 +33,7 @@ extension DashboardSidebar {
                 helpText: "Resources",
                 icon: "globe",
                 labelText: "Resources",
-                contents: AnyView(JobsWidgetRedux())
+                contents: AnyView(UnifiedSidebar.Widget())
             ),
             ToolbarButton(
                 id: 2,

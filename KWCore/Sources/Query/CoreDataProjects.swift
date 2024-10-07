@@ -178,10 +178,10 @@ public class CoreDataProjects: ObservableObject {
     /// Find projects by company PID
     /// - Parameter id: Company PID
     /// - Returns: Array<Project>
-    public func byCompany(_ id: Int64) -> [Project] {
+    public func byCompany(_ company: Company) -> [Project] {
         let predicate = NSPredicate(
-            format: "company = %@",
-            id
+            format: "ANY company == %@",
+            company
         )
 
         return query(predicate)
@@ -235,6 +235,23 @@ public class CoreDataProjects: ObservableObject {
         return results.first
     }
 
+    /// Find projects by company PID
+    /// - Parameter id: Company PID
+    /// - Returns: Array<Project>
+    public func byOwnership(isOwned: Bool) -> [Project] {
+        var predicate = NSPredicate(
+            format: "alive == true && company == nil"
+        )
+
+        if isOwned {
+            predicate = NSPredicate(
+                format: "alive == true && company != nil"
+            )
+        }
+
+        return query(predicate)
+    }
+
     /// Find all projects
     /// - Returns: Array<Project>
     public func all() -> [Project] {
@@ -254,9 +271,9 @@ public class CoreDataProjects: ObservableObject {
     /// Find recently used projects
     /// - Parameter numWeeks: Number of weeks in the past to search
     /// - Returns: Array<Project>
-    public func recent(_ numWeeks: Double? = 2) -> [Project] {
+    public func recent(_ numWeeks: Double = 2) -> [Project] {
         var results: [Project] = []
-        let records = CoreDataRecords(moc: moc!).recent(numWeeks!)
+        let records = CoreDataRecords(moc: moc!).recent(numWeeks)
         
         for rec in records {
             if rec.job != nil {

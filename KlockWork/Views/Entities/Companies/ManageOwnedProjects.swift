@@ -10,10 +10,10 @@ import SwiftUI
 import KWCore
 
 struct ManageOwnedProjects: View {
-    public let company: Company
-
-    @FetchRequest private var projects: FetchedResults<Project>
-    @FetchRequest private var unowned: FetchedResults<Project>
+    @EnvironmentObject public var state: Navigation
+    @State private var company: Company?
+    @State private var projects: [Project] = []
+    @State private var unowned: [Project] = []
 
     var body: some View {
         VStack {
@@ -90,28 +90,22 @@ struct ManageOwnedProjects: View {
                 }
             }
         }
+        .onAppear(perform: self.actionOnAppear)
     }
 }
 
 extension ManageOwnedProjects {
-    init(company: Company) {
-        self.company = company
+    /// Onload handler. Sets owned/unowned projects and company
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        if let stored = self.state.session.company {
+            self.company = stored
+        }
 
-        let pRequest: NSFetchRequest<Project> = Project.fetchRequest()
-        pRequest.sortDescriptors = [
-            NSSortDescriptor(keyPath: \Project.name, ascending: true),
-        ]
-        pRequest.predicate = NSPredicate(format: "alive = true && company = %@", company)
-
-        _projects = FetchRequest(fetchRequest: pRequest, animation: .easeInOut)
-
-        let unownedReq: NSFetchRequest<Project> = Project.fetchRequest()
-        unownedReq.sortDescriptors = [
-            NSSortDescriptor(keyPath: \Project.name, ascending: true)
-        ]
-        unownedReq.predicate = NSPredicate(format: "alive = true && company.pid = nil")
-
-        _unowned = FetchRequest(fetchRequest: unownedReq, animation: .easeInOut)
+        if self.company != nil {
+            self.projects = CoreDataProjects(moc: self.state.moc).byCompany(self.company!)
+        }
+        self.unowned = CoreDataProjects(moc: self.state.moc).byOwnership(isOwned: false)
     }
 
     private func own(_ project: Project) -> Void {

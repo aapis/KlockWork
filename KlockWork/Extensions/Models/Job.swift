@@ -42,6 +42,9 @@ extension Job {
 
     var foregroundColor: Color { self.backgroundColor.isBright() ? .black : .white }
 
+    var pageType: Page { .jobs }
+    var pageDetailType: Page { .jobs }
+
 //    public static let attributes : [KeyPath<Job, Any>] = [
 //        \.name!, \.created!
 //    ]

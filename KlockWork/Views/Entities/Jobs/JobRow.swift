@@ -25,10 +25,8 @@ struct JobRow: View {
                 
                 HStack {
                     Button {
-                        nav.view = AnyView(JobDashboard(defaultSelectedJob: job))
-                        nav.parent = .jobs
-                        nav.sidebar = AnyView(JobDashboardSidebar())
-                        nav.pageId = UUID()
+                        self.nav.session.job = self.job
+                        self.nav.to(.jobs)
                     } label: {
                         Text(job.jid.string)
                             .foregroundColor(colour.isBright() ? Color.black : Color.white)

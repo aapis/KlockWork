@@ -203,10 +203,7 @@ extension JobView {
         moc.delete(job)
         PersistenceController.shared.save()
 
-        nav.setView(AnyView(JobDashboard()))
-        nav.setId()
-        nav.setParent(.jobs)
-        nav.setSidebar(AnyView(JobDashboardSidebar()))
+        self.nav.to(.jobs)
     }
     
     private func actionClearProject() -> Void {

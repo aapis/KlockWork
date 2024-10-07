@@ -10,21 +10,21 @@ import SwiftUI
 import KWCore
 
 struct FancyColourPicker: View {
-    public let initialColour: [Double]
+    public let initialColourAsDouble: [Double]?
+    public let initialColour: Color?
     public let onChange: ((Color) -> Void)
     public let showLabel: Bool
-
-    @State private var asColor: Color
+    @State private var asColour: Color
     @State private var asString: String = ""
 
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(alignment: .top, spacing: 0) {
             if showLabel {
                 FancyLabel(text: "Colour")
                     .padding([.trailing], 10)
             }
 
-            ColorPicker("", selection: $asColor)
+            ColorPicker("", selection: $asColour)
                 .rotationEffect(.degrees(90))
                 .frame(width: 20, height: 45)
 
@@ -36,23 +36,38 @@ struct FancyColourPicker: View {
                 bgColour: Color.clear,
                 text: $asString
             )
-            .border(Color.black.opacity(0.1), width: 2)
+            .border(Theme.base.opacity(0.3), width: 2)
             .frame(width: 200)
 
             Spacer()
-
-        }.frame(height: 40)
+        }
+        .frame(height: 45)
         .onAppear(perform: {
-            asString = asColor.description
+            self.asString = self.asColour.description
         })
-        .onChange(of: asColor) { newColour in
-            colourChanged(newColour)
+        .onChange(of: self.asColour) {
+            self.colourChanged(self.asColour)
         }
     }
 }
 
 extension FancyColourPicker {
     init(initialColour: [Double], onChange: @escaping ((Color) -> Void), showLabel: Bool? = true) {
+        self.initialColourAsDouble = initialColour
+        self.initialColour = nil
+        self.onChange = onChange
+
+        if let shouldShowLabel = showLabel {
+            self.showLabel = shouldShowLabel
+        } else {
+            self.showLabel = true
+        }
+
+        self.asColour = Color.fromStored(initialColour)
+    }
+
+    init(initialColour: Color, onChange: @escaping ((Color) -> Void), showLabel: Bool? = true) {
+        self.initialColourAsDouble = nil
         self.initialColour = initialColour
         self.onChange = onChange
 
@@ -62,13 +77,13 @@ extension FancyColourPicker {
             self.showLabel = true
         }
 
-        asColor = Color.fromStored(initialColour)
+        self.asColour = initialColour
     }
 
     private func colourChanged(_ newColour: Color) -> Void {
-        asColor = newColour
-        asString = asColor.description
-        
+        self.asColour = newColour
+        self.asString = self.asColour.description
+
         onChange(newColour)
     }
 }

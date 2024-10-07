@@ -33,4 +33,7 @@ extension Project {
 
         return Color.clear
     }
+
+    var pageType: Page { .projects }
+    var pageDetailType: Page { .projectDetail }
 }

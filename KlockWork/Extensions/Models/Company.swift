@@ -17,4 +17,7 @@ extension Company {
 
         return Color.clear
     }
+
+    var pageType: Page { .companies }
+    var pageDetailType: Page { .companyDetail }
 }

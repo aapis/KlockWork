@@ -52,7 +52,7 @@ struct ThreePanelGroup: View {
             }
         }
         .onAppear(perform: actionOnAppear)
-        .onChange(of: nav.session.job) { job in onChangeJob(job: job) }
+        .onChange(of: nav.session.job) { self.onChangeJob() }
     }
     
     init(orientation: Panel.Orientation, data: any Collection, lastColumnType: LastColumnType) {
@@ -74,27 +74,30 @@ extension ThreePanelGroup {
             nav.forms.tp.middle = []
             nav.forms.tp.last = []
         }
+
+        self.onChangeJob()
     }
     
     /// Changing the current session job value requires us to change which items are highlighted in each column. This is done by modifying the
     /// `nav.forms.tp.selected` array
     /// - Parameter job: A Job object
     /// - Returns: Void
-    private func onChangeJob(job: Job?) -> Void {
-        if job != nil {
-            editorVisible = true
-            nav.forms.tp.selected = []
+    private func onChangeJob() -> Void {
+        editorVisible = true
+        nav.forms.tp.selected = []
 
-            if let project = job!.project {
-                nav.forms.tp.last = (project.jobs?.allObjects as! [Job]).sorted(by: {$0.jid < $1.jid})
-                setSelected(config: Panel.SelectedValueCoordinates(position: .middle, item: project))
+        if let project = self.nav.session.project {
+            nav.forms.tp.last = (project.jobs?.allObjects as! [Job]).sorted(by: {$0.jid < $1.jid})
+            setSelected(config: Panel.SelectedValueCoordinates(position: .middle, item: project))
 
-                if let company = project.company {
-                    nav.forms.tp.middle = (company.projects?.allObjects as! [Project]).sorted(by: {$0.name! < $1.name!})
-                    setSelected(config: Panel.SelectedValueCoordinates(position: .first, item: company))
-                }
+            if let company = project.company {
+                nav.forms.tp.middle = (company.projects?.allObjects as! [Project]).sorted(by: {$0.name! < $1.name!})
+                setSelected(config: Panel.SelectedValueCoordinates(position: .first, item: company))
             }
-            setSelected(config: Panel.SelectedValueCoordinates(position: .last, item: job!))
+        }
+
+        if let job = self.nav.session.job {
+            setSelected(config: Panel.SelectedValueCoordinates(position: .last, item: job))
         }
     }
 
