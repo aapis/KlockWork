@@ -9,97 +9,45 @@
 import SwiftUI
 import KWCore
 
-struct JobsWidget: View {
-    public var title: String = "Jobs"
-    public var location: WidgetLocation = .sidebar
-
-    @FetchRequest public var resource: FetchedResults<Job>
-
-    @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var nav: Navigation
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                Text(title)
-                Spacer()
-            }
-            .padding(10)
-            .background(Theme.base.opacity(0.2))
-
-            VStack(alignment: .leading, spacing: 5) {
-                ForEach(resource) { job in
-                    JobRowPlain(job: job, location: location)
-                }
-            }
-            .padding(8)
-            .background(Theme.base.opacity(0.2))
-        }
-    }
-}
-
-extension JobsWidget {
-    public init(location: WidgetLocation? = nil) {
-        _resource = CoreDataJob.fetchAll()
-        
-        if let loc = location {
-            self.location = loc
-        }
-    }
-
-    private func actionSettings() -> Void {
-//        isSettingsPresented.toggle()
-    }
-
-}
-
-struct JobsWidgetRedux: View {
-    @EnvironmentObject public var state: Navigation
-    @State private var companies: [Company] = []
-    @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            ZStack {
-                Theme.base.opacity(0.2)
-
-                HStack(alignment: .center, spacing: 8) {
-                    Text("\(self.companies.count) Companies")
-                        .padding(6)
-                        .background(Theme.textBackground)
-                        .foregroundStyle(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
-                    Spacer()
-                    Toggle("Published", isOn: $showPublished)
-                        .padding(6)
-                        .background(self.showPublished ? Theme.textBackground : .white.opacity(0.5))
-                        .foregroundStyle(self.showPublished ? .white : Theme.base)
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
-                        .help("Show or hide unpublished items")
-                        .font(.caption)
-                }
-                .padding(8)
-            }
-            Divider()
-
-            ForEach(self.companies, id: \.objectID) { company in
-                UnifiedSidebar.SingleCompany(company: company)
-            }
-        }
-        .onAppear(perform: self.actionOnAppear)
-        .onChange(of: self.showPublished) { self.actionOnAppear() }
-    }
-}
-
-extension JobsWidgetRedux {
-    /// Onload handler. Finds companies
-    /// - Returns: Void
-    private func actionOnAppear() -> Void {
-        self.companies = CoreDataCompanies(moc: self.state.moc).all(allowKilled: self.showPublished)
-    }
-}
-
 struct UnifiedSidebar {
+    struct Widget: View {
+        @EnvironmentObject public var state: Navigation
+        @State private var companies: [Company] = []
+        @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                ZStack {
+                    Theme.base.opacity(0.2)
+
+                    HStack(alignment: .center, spacing: 8) {
+                        Text("\(self.companies.count) Companies")
+                            .padding(6)
+                            .background(Theme.textBackground)
+                            .foregroundStyle(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 5))
+                        Spacer()
+                        Toggle("Published", isOn: $showPublished)
+                            .padding(6)
+                            .background(self.showPublished ? Theme.textBackground : .white.opacity(0.5))
+                            .foregroundStyle(self.showPublished ? .white : Theme.base)
+                            .clipShape(RoundedRectangle(cornerRadius: 5))
+                            .help("Show or hide unpublished items")
+                            .font(.caption)
+                    }
+                    .padding(8)
+                }
+                Divider()
+
+                ForEach(self.companies, id: \.objectID) { company in
+                    UnifiedSidebar.SingleCompany(company: company)
+                }
+            }
+            .onAppear(perform: self.actionOnAppear)
+            .onChange(of: self.showPublished) { self.actionOnAppear() }
+        }
+    }
+
     struct SingleCompany: View {
         @EnvironmentObject private var state: Navigation
         public let company: Company
@@ -625,6 +573,14 @@ struct UnifiedSidebar {
             .help(self.noLinkAvailable ? "Link not found" : self.label)
             .buttonStyle(.plain)
         }
+    }
+}
+
+extension UnifiedSidebar.Widget {
+    /// Onload handler. Finds companies
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.companies = CoreDataCompanies(moc: self.state.moc).all(allowKilled: self.showPublished)
     }
 }
 
