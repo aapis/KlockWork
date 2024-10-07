@@ -32,7 +32,7 @@ struct CompanyPicker: View {
             if company.name != nil {
                 items.append(
                     CustomPickerItem(
-                        title: company.name!.capitalized,
+                        title: company.name!,
                         tag: Int(company.pid)
                     )
                 )

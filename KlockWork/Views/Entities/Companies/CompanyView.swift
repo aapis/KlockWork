@@ -31,7 +31,7 @@ struct CompanyView: View {
             VStack(alignment: .leading, spacing: 13) {
                 HStack {
                     Image(systemName: "building.2").font(Theme.fontTitle)
-                    Title(text: "Editing: \(company.name!.capitalized)")
+                    Title(text: "Editing: \(company.name!)")
                     Spacer()
                 }
 

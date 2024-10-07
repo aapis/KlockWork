@@ -107,9 +107,7 @@ extension PeopleDetail {
 
         if let stored = self.state.session.company {
             self.company = stored
-        }
-
-        if let stored = self.state.session.job {
+        } else if let stored = self.state.session.job {
             self.company = stored.project?.company
         }
     }

@@ -143,7 +143,7 @@ struct CompanyPanel: View {
                                     ForEach(firstColData, id: \.objectID) { company in
                                         Panel.Row(
                                             config: Panel.RowConfiguration(
-                                                text: company.name?.capitalized ?? "_COMPANY_NAME",
+                                                text: company.name ?? "_COMPANY_NAME",
                                                 action: {setMiddlePanel(data: company.projects!.allObjects)},
                                                 entity: company,
                                                 position: position,
@@ -180,7 +180,7 @@ struct CompanyPanel: View {
                                     ForEach(nav.forms.tp.middle, id: \.objectID) { project in
                                         Panel.Row(
                                             config: Panel.RowConfiguration(
-                                                text: project.name!.capitalized,
+                                                text: project.name!,
                                                 action: {setLastPanel(data: project.jobs!.allObjects)},
                                                 entity: project,
                                                 position: position
@@ -204,7 +204,7 @@ struct CompanyPanel: View {
                                         let job = job as! Job
                                         Panel.Row(
                                             config: Panel.RowConfiguration(
-                                                text: job.title?.capitalized ?? job.jid.string,
+                                                text: job.title ?? job.jid.string,
                                                 action: {nav.session.job = job},
                                                 entity: job,
                                                 position: position
@@ -433,7 +433,7 @@ public struct JobPanel: View {
                                     let job = job as! Job
                                     Panel.Row(
                                         config: Panel.RowConfiguration(
-                                            text: job.title?.capitalized ?? job.jid.string,
+                                            text: job.title ?? job.jid.string,
                                             action: {nav.session.job = job},
                                             entity: job,
                                             position: position
