@@ -211,7 +211,7 @@ struct Home: View {
                         .opacity(0.25)
                         .frame(width: 20)
 
-                    Theme.subHeaderColour
+                    self.nav.parent?.appPage.primaryColour.opacity(0.2) ?? Theme.subHeaderColour
 
                     nav.inspector
 
