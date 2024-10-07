@@ -31,6 +31,15 @@ struct TaskDetail: View {
                 Toggle("Published", isOn: $published)
                 FancyDivider()
                 DatePicker("Due", selection: $due)
+                HStack(alignment: .center) {
+                    FancyButtonv2(text: "+1 Day", action: {self.due = DateHelper.startOfDay(self.due + 86400)}, showIcon: false, size: .tiny)
+                        .frame(width: 70)
+                    FancyButtonv2(text: "+1 Week", action: {self.due = DateHelper.startOfDay(self.due + (86400 * 7))}, showIcon: false, size: .tiny)
+                        .frame(width: 70)
+                    FancyButtonv2(text: "+1 Month", action: {self.due = DateHelper.startOfDay(self.due + (86400 * 31))}, showIcon: false, size: .tiny)
+                            .frame(width: 80)
+                }
+                .frame(height: 30)
                 FancyDivider()
                 ZStack(alignment: .topTrailing) {
                     FancyTextField(
