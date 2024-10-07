@@ -40,7 +40,7 @@ struct UnifiedSidebar {
                 Divider()
 
                 ForEach(self.companies, id: \.objectID) { company in
-                    UnifiedSidebar.SingleCompany(company: company)
+                    SingleCompany(entity: company)
                 }
             }
             .onAppear(perform: self.actionOnAppear)
@@ -50,7 +50,7 @@ struct UnifiedSidebar {
 
     struct SingleCompany: View {
         @EnvironmentObject private var state: Navigation
-        public let company: Company
+        public let entity: Company
         @State private var isPresented: Bool = false
         @State private var highlighted: Bool = false
         @State private var bgColour: Color = .clear
@@ -60,21 +60,24 @@ struct UnifiedSidebar {
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 ZStack(alignment: .trailing) {
-                    RowButton(text: self.company.name ?? "_COMPANY_NAME", alive: self.company.alive, callback: {
-                        self.state.session.company = self.company
+                    RowButton(text: self.entity.name ?? "_COMPANY_NAME", alive: self.entity.alive, callback: {
+                        self.state.session.company = self.entity
                     }, isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
+                        .contextMenu {
+                            GroupHeaderContextMenu(page: self.entity.pageDetailType, entity: self.entity)
+                        }
 
-                    if self.company == self.state.session.job?.project?.company {
+                    if self.entity == self.state.session.company {
                         FancyStarv2()
-                            .help("Currently selected job")
+                            .help("Active company")
                     }
                 }
 
                 if self.isPresented {
                     HStack(alignment: .center, spacing: 0) {
-                        Text(self.company.abbreviation ?? "XXX")
-                            .foregroundStyle(self.company.backgroundColor.isBright() ? Theme.base : .white)
+                        Text(self.entity.abbreviation ?? "XXX")
+                            .foregroundStyle(self.entity.backgroundColor.isBright() ? Theme.base : .white)
                             .opacity(0.7)
                             .padding(.leading)
                         Spacer()
@@ -98,13 +101,13 @@ struct UnifiedSidebar {
                                 .opacity(0.6)
                                 .blendMode(.softLight)
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach((self.company.projects?.allObjects as? [Project] ?? []).sorted(by: {$0.created! > $1.created!}), id: \.objectID) { project in
+                                ForEach((self.entity.projects?.allObjects as? [Project] ?? []).sorted(by: {$0.created! > $1.created!}), id: \.objectID) { project in
                                     if !showPublished || project.alive {
-                                        SingleProject(project: project)
+                                        SingleProject(entity: project)
                                     }
                                 }
 
-                                People(entity: self.company)
+                                People(entity: self.entity)
                             }
                             .padding(.leading, 15)
                         }
@@ -126,7 +129,7 @@ struct UnifiedSidebar {
 
     struct SingleProject: View {
         @EnvironmentObject private var state: Navigation
-        public let project: Project
+        public let entity: Project
         @State private var isPresented: Bool = false
         @State private var highlighted: Bool = false
         @State private var bgColour: Color = .clear
@@ -136,21 +139,24 @@ struct UnifiedSidebar {
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 ZStack(alignment: .trailing) {
-                    RowButton(text: self.project.name ?? "_PROJECT_NAME", alive: self.project.alive, callback: {
-                        self.state.session.project = self.project
+                    RowButton(text: self.entity.name ?? "_PROJECT_NAME", alive: self.entity.alive, callback: {
+                        self.state.session.project = self.entity
                     }, isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
+                        .contextMenu {
+                            GroupHeaderContextMenu(page: self.entity.pageDetailType, entity: self.entity)
+                        }
 
-                    if self.project == self.state.session.job?.project {
+                    if self.entity == self.state.session.project {
                         FancyStarv2()
-                            .help("Currently selected job")
+                            .help("Active project")
                     }
                 }
 
                 if self.isPresented {
                     HStack(alignment: .center, spacing: 0) {
-                        Text("\(self.project.company?.abbreviation ?? "XXX").\(self.project.abbreviation ?? "YYY")")
-                            .foregroundStyle(self.project.backgroundColor.isBright() ? Theme.base : .white)
+                        Text("\(self.entity.company?.abbreviation ?? "XXX").\(self.entity.abbreviation ?? "YYY")")
+                            .foregroundStyle(self.entity.backgroundColor.isBright() ? Theme.base : .white)
                             .opacity(0.7)
                             .padding(.leading)
                         Spacer()
@@ -169,9 +175,9 @@ struct UnifiedSidebar {
                                 .opacity(0.6)
                                 .blendMode(.softLight)
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach((self.project.jobs?.allObjects as? [Job] ?? []).sorted(by: {$0.created ?? Date() > $1.created ?? Date()}), id: \.objectID) { job in
+                                ForEach((self.entity.jobs?.allObjects as? [Job] ?? []).sorted(by: {$0.created ?? Date() > $1.created ?? Date()}), id: \.objectID) { job in
                                     if !showPublished || job.alive {
-                                        SingleJob(job: job)
+                                        SingleJob(entity: job)
                                     }
                                 }
                             }
@@ -195,7 +201,7 @@ struct UnifiedSidebar {
 
     struct SingleJob: View {
         @EnvironmentObject private var state: Navigation
-        public let job: Job
+        public let entity: Job
         @State private var isPresented: Bool = false
         @State private var highlighted: Bool = false
         @State private var bgColour: Color = .clear
@@ -205,24 +211,27 @@ struct UnifiedSidebar {
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 ZStack(alignment: .trailing) {
-                    RowButton(text: self.job.title ?? self.job.jid.string, alive: self.job.alive, callback: {
-                        self.state.session.setJob(self.job)
+                    RowButton(text: self.entity.title ?? self.entity.jid.string, alive: self.entity.alive, callback: {
+                        self.state.session.setJob(self.entity)
 
                         if self.state.parent == .planning {
-                            self.state.planning.jobs.insert(job)
-                            self.state.planning.projects.insert(job.project!)
+                            self.state.planning.jobs.insert(entity)
+                            self.state.planning.projects.insert(entity.project!)
 
                             // projects are allowed to be unowned
-                            if let company = job.project!.company {
+                            if let company = entity.project!.company {
                                 self.state.planning.companies.insert(company)
                             }
                         }
                     }, isPresented: $isPresented)
                     .useDefaultHover({ inside in self.highlighted = inside})
+                    .contextMenu {
+                        GroupHeaderContextMenu(page: self.entity.pageDetailType, entity: self.entity)
+                    }
 
-                    if self.job == self.state.session.job {
+                    if self.entity == self.state.session.job {
                         FancyStarv2()
-                            .help("Currently selected job")
+                            .help("Active job")
                     }
                 }
 
@@ -233,24 +242,24 @@ struct UnifiedSidebar {
                                 .opacity(0.6)
                                 .blendMode(.softLight)
                             VStack(alignment: .leading, spacing: 0) {
-                                if let tasks = self.job.tasks?.allObjects as? [LogTask] {
+                                if let tasks = self.entity.tasks?.allObjects as? [LogTask] {
                                     if tasks.count > 0 {
-                                        Tasks(job: self.job, tasks: tasks)
+                                        Tasks(job: self.entity, tasks: tasks)
                                     }
                                 }
-                                if let notes = self.job.mNotes?.allObjects as? [Note] {
+                                if let notes = self.entity.mNotes?.allObjects as? [Note] {
                                     if notes.count > 0 {
-                                        Notes(job: self.job, notes: notes)
+                                        Notes(job: self.entity, notes: notes)
                                     }
                                 }
-                                if let definitions = self.job.definitions?.allObjects as? [TaxonomyTermDefinitions] {
+                                if let definitions = self.entity.definitions?.allObjects as? [TaxonomyTermDefinitions] {
                                     if definitions.count > 0 {
-                                        Definitions(job: self.job, definitions: definitions)
+                                        Definitions(job: self.entity, definitions: definitions)
                                     }
                                 }
-                                if let records = self.job.records?.allObjects as? [LogRecord] {
+                                if let records = self.entity.records?.allObjects as? [LogRecord] {
                                     if records.count > 0 {
-                                        Records(job: self.job, records: records)
+                                        Records(job: self.entity, records: records)
                                     }
                                 }
                             }
@@ -574,6 +583,22 @@ struct UnifiedSidebar {
             .buttonStyle(.plain)
         }
     }
+
+    struct GroupHeaderContextMenu: View {
+        @EnvironmentObject private var state: Navigation
+        public let page: Page
+        public let entity: NSManagedObject
+
+        var body: some View {
+            Button(action: self.actionEdit, label: {
+                Text("Edit...")
+            })
+            Divider()
+            Button(action: self.actionInspect, label: {
+                Text("Inspect")
+            })
+        }
+    }
 }
 
 extension UnifiedSidebar.Widget {
@@ -588,8 +613,8 @@ extension UnifiedSidebar.SingleCompany {
     /// Onload handler. Sets background colour for the row
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        if self.company.alive {
-            self.bgColour = self.company.backgroundColor
+        if self.entity.alive {
+            self.bgColour = self.entity.backgroundColor
             self.fgColour = self.bgColour.isBright() ? Theme.base : .white
         } else {
             self.bgColour = .gray
@@ -597,9 +622,9 @@ extension UnifiedSidebar.SingleCompany {
         }
 
         if let company = self.state.session.company {
-            self.isPresented = company == self.company
+            self.isPresented = company == self.entity
         } else if let job = self.state.session.job {
-            self.isPresented = job.project?.company == self.company
+            self.isPresented = job.project?.company == self.entity
         }
     }
     
@@ -607,17 +632,17 @@ extension UnifiedSidebar.SingleCompany {
     /// - Returns: Void
     private func actionOnChangeEntity() -> Void {
         if self.state.session.company != nil {
-            if self.state.session.company != self.company {
+            if self.state.session.company != self.entity {
                 self.isPresented = false
                 // @TODO: decide whether to attempt to finish this "focus on current open group" functionality
 //                self.bgColour = .gray
 //                self.fgColour = Theme.base
             } else {
-                self.bgColour = self.company.backgroundColor
+                self.bgColour = self.entity.backgroundColor
                 self.fgColour = self.bgColour.isBright() ? Theme.base : .white
             }
         } else {
-            self.bgColour = self.company.backgroundColor
+            self.bgColour = self.entity.backgroundColor
             self.fgColour = self.bgColour.isBright() ? Theme.base : .white
         }
     }
@@ -625,12 +650,12 @@ extension UnifiedSidebar.SingleCompany {
     /// Fires when a group is minimized
     /// - Returns: Void
     private func actionOnMinimize() -> Void {
-        if self.state.session.company == self.company {
+        if self.state.session.company == self.entity {
             self.state.session.company = nil
             self.state.session.project = nil
             self.state.session.job = nil
         }
-        self.bgColour = self.company.backgroundColor
+        self.bgColour = self.entity.backgroundColor
         self.fgColour = self.bgColour.isBright() ? Theme.base : .white
     }
 }
@@ -639,8 +664,8 @@ extension UnifiedSidebar.SingleProject {
     /// Onload handler. Sets background colour for the row
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        if self.project.alive {
-            self.bgColour = self.project.backgroundColor
+        if self.entity.alive {
+            self.bgColour = self.entity.backgroundColor
             self.fgColour = self.bgColour.isBright() ? Theme.base : .white
         } else {
             self.bgColour = .gray
@@ -648,9 +673,9 @@ extension UnifiedSidebar.SingleProject {
         }
 
         if let project = self.state.session.project {
-            self.isPresented = project == self.project
+            self.isPresented = project == self.entity
         } else if let job = self.state.session.job {
-            self.isPresented = job.project == self.project
+            self.isPresented = job.project == self.entity
         }
     }
 
@@ -658,17 +683,17 @@ extension UnifiedSidebar.SingleProject {
     /// - Returns: Void
     private func actionOnChangeEntity() -> Void {
         if self.state.session.project != nil {
-            if self.state.session.project != self.project {
+            if self.state.session.project != self.entity {
                 self.isPresented = false
                 // @TODO: decide whether to attempt to finish this "focus on current open group" functionality
 //                self.bgColour = .gray
 //                self.fgColour = Theme.base
             } else {
-                self.bgColour = self.project.backgroundColor
+                self.bgColour = self.entity.backgroundColor
                 self.fgColour = self.bgColour.isBright() ? Theme.base : .white
             }
         } else {
-            self.bgColour = self.project.backgroundColor
+            self.bgColour = self.entity.backgroundColor
             self.fgColour = self.bgColour.isBright() ? Theme.base : .white
         }
     }
@@ -676,11 +701,11 @@ extension UnifiedSidebar.SingleProject {
     /// Fires when a group is minimized
     /// - Returns: Void
     private func actionOnMinimize() -> Void {
-        if self.state.session.project == self.project {
+        if self.state.session.project == self.entity {
             self.state.session.project = nil
             self.state.session.job = nil
         }
-        self.bgColour = self.project.backgroundColor
+        self.bgColour = self.entity.backgroundColor
         self.fgColour = self.bgColour.isBright() ? Theme.base : .white
     }
 }
@@ -689,8 +714,8 @@ extension UnifiedSidebar.SingleJob {
     /// Onload handler. Sets background colour for the row
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        if self.job.alive {
-            self.bgColour = self.job.backgroundColor
+        if self.entity.alive {
+            self.bgColour = self.entity.backgroundColor
             self.fgColour = self.bgColour.isBright() ? Theme.base : .white
         } else {
             self.bgColour = .gray
@@ -698,7 +723,7 @@ extension UnifiedSidebar.SingleJob {
         }
 
         if let job = self.state.session.job {
-            self.isPresented = job == self.job
+            self.isPresented = job == self.entity
         }
     }
 
@@ -706,17 +731,17 @@ extension UnifiedSidebar.SingleJob {
     /// - Returns: Void
     private func actionOnChangeEntity() -> Void {
         if self.state.session.job != nil {
-            if self.state.session.job != self.job {
+            if self.state.session.job != self.entity {
                 self.isPresented = false
                 // @TODO: decide whether to attempt to finish this "focus on current open group" functionality
 //                self.bgColour = .gray
 //                self.fgColour = Theme.base
             } else {
-                self.bgColour = self.job.backgroundColor
+                self.bgColour = self.entity.backgroundColor
                 self.fgColour = self.bgColour.isBright() ? Theme.base : .white
             }
         } else {
-            self.bgColour = self.job.backgroundColor
+            self.bgColour = self.entity.backgroundColor
             self.fgColour = self.bgColour.isBright() ? Theme.base : .white
         }
     }
@@ -724,10 +749,10 @@ extension UnifiedSidebar.SingleJob {
     /// Fires when a group is minimized
     /// - Returns: Void
     private func actionOnMinimize() -> Void {
-        if self.state.session.job == self.job {
+        if self.state.session.job == self.entity {
             self.state.session.job = nil
         }
-        self.bgColour = self.job.backgroundColor
+        self.bgColour = self.entity.backgroundColor
         self.fgColour = self.bgColour.isBright() ? Theme.base : .white
     }
 }
@@ -759,5 +784,36 @@ extension UnifiedSidebar.EntityTypeRowButton {
         default:
             self.noLinkAvailable = true
         }
+    }
+}
+
+extension UnifiedSidebar.GroupHeaderContextMenu {
+    /// Navigate to an edit page
+    /// - Returns: Void
+    private func actionEdit() -> Void {
+        switch self.page {
+        case .companyDetail:
+            self.state.session.company = self.entity as? Company
+        case .projectDetail:
+            self.state.session.project = self.entity as? Project
+        case .definitionDetail:
+            self.state.session.definition = self.entity as? TaxonomyTermDefinitions
+        case .taskDetail:
+            self.state.session.task = self.entity as? LogTask
+        case .noteDetail:
+            self.state.session.note = self.entity as? Note
+        case .peopleDetail:
+            self.state.session.person = self.entity as? Person
+        default:
+            print("noop")
+        }
+        self.state.to(self.page)
+    }
+
+    /// Inspect an entity
+    /// - Returns: Void
+    private func actionInspect() -> Void {
+        self.state.session.search.inspectingEntity = self.entity
+        self.state.setInspector(AnyView(Inspector(entity: self.entity)))
     }
 }
