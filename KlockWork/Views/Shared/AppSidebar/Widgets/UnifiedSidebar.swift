@@ -792,6 +792,8 @@ extension UnifiedSidebar.GroupHeaderContextMenu {
     /// - Returns: Void
     private func actionEdit() -> Void {
         switch self.page {
+        case .jobs:
+            self.state.session.job = self.entity as? Job
         case .companyDetail:
             self.state.session.company = self.entity as? Company
         case .projectDetail:
