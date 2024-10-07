@@ -70,9 +70,9 @@ public struct FancyButtonv2: View {
     public var action: (() -> Void)?
     public var icon: String? = "checkmark.circle"
     public var iconAsImage: Image? = nil
+    public var iconFgColour: Color?
     public var fgColour: Color?
     public var bgColour: Color?
-    public var iconFgColour: Color?
     public var highlightColour: Color?
     public var transparent: Bool? = false
     public var showLabel: Bool? = true
