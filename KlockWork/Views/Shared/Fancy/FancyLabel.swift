@@ -18,5 +18,6 @@ struct FancyLabel: View {
             .font(Theme.font)
             .frame(width: 120, height: 45, alignment: .trailing)
             .background(Theme.textLabelBackground)
+            .foregroundStyle(.white.opacity(0.55))
     }
 }
