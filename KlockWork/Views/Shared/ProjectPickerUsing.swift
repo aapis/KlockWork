@@ -39,7 +39,7 @@ struct ProjectPickerUsing: View {
             if company.name != nil && company.projects?.count ?? 0 > 0 {
                 items.append(
                     CustomPickerItem(
-                        title: company.name!.capitalized,
+                        title: company.name!,
                         tag: Int(company.pid),
                         disabled: true
                     )
@@ -49,7 +49,7 @@ struct ProjectPickerUsing: View {
                     for project in (projects.allObjects as! [Project]).sorted(by: {$0.name! < $1.name!}) {
                         items.append(
                             CustomPickerItem(
-                                title: " - \(project.name!.capitalized)",
+                                title: " - \(project.name!)",
                                 tag: Int(project.pid),
                                 project: project
                             )

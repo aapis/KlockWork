@@ -46,8 +46,8 @@ struct OutlineWidget: View {
                                     if company.isDefault {
                                         Image(systemName: "building.2")
                                     }
-                                    FancyTextLink(text: company.name!.capitalized, destination: AnyView(CompanyView(company: company)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
-                                        .help("Edit company: \(company.name!.capitalized)")
+                                    FancyTextLink(text: company.name!, destination: AnyView(CompanyView(company: company)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
+                                        .help("Edit company: \(company.name!)")
                                     Spacer()
                                 }
                                 ProjectOutline(company: company)
@@ -67,8 +67,8 @@ struct OutlineWidget: View {
                             ForEach(unowned, id: \.objectID) { project in
                                 HStack {
                                     Image(systemName: "folder")
-                                    FancyTextLink(text: "[\(project.abbreviation != nil ? project.abbreviation!.uppercased() : "NOPE")] \(project.name!.capitalized)", destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
-                                        .help("Edit project: \(project.name!.capitalized)")
+                                    FancyTextLink(text: "[\(project.abbreviation != nil ? project.abbreviation!.uppercased() : "NOPE")] \(project.name!)", destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
+                                        .help("Edit project: \(project.name!)")
                                 }
                                 .padding([.leading], 10)
                             }
@@ -153,8 +153,8 @@ extension ProjectOutline {
                 Image(systemName: "folder.fill")
                     .foregroundStyle(project.backgroundColor)
 
-                FancyTextLink(text: "[\(project.abbreviation != nil ? project.abbreviation!.uppercased() : "XXX")] \(project.name!.capitalized)", destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
-                    .help("Edit project: \(project.name!.capitalized)")
+                FancyTextLink(text: "[\(project.abbreviation != nil ? project.abbreviation!.uppercased() : "XXX")] \(project.name!)", destination: AnyView(ProjectView(project: project)), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
+                    .help("Edit project: \(project.name!)")
                 Spacer()
                 FancyButtonv2(text: "Action", action: {aboutPanelOpen.toggle()}, icon: aboutPanelOpen ? "chevron.up.square.fill" : "chevron.down.square", showLabel: false, size: .tiny, type: .clear)
                     .useDefaultHover({_ in})

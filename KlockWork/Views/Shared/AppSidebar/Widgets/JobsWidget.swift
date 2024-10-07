@@ -105,6 +105,8 @@ struct UnifiedSidebar {
         public let company: Company
         @State private var isPresented: Bool = false
         @State private var highlighted: Bool = false
+        @State private var bgColour: Color = .clear
+        @State private var fgColour: Color = .clear
         @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
 
         var body: some View {
@@ -161,13 +163,16 @@ struct UnifiedSidebar {
                     }
                 }
             }
-            .background(self.company.alive ? self.highlighted ? self.company.backgroundColor.opacity(0.9) : self.company.backgroundColor : .gray.opacity(0.8))
-            .foregroundStyle((self.company.alive ? self.company.backgroundColor : .gray).isBright() ? Theme.base : .white)
-            .onAppear(perform: {
-                if let job = self.state.session.job {
-                    self.isPresented = job.project?.company == self.company
+            .background(self.highlighted ? self.bgColour.opacity(0.9) : self.bgColour)
+            .foregroundStyle(self.fgColour)
+            .onAppear(perform: self.actionOnAppear)
+            .onChange(of: self.state.session.company) { self.actionOnChangeEntity() }
+            .onChange(of: self.isPresented) {
+                // Group is minimized
+                if self.isPresented == false {
+                    self.actionOnMinimize()
                 }
-            })
+            }
         }
     }
 
@@ -176,6 +181,8 @@ struct UnifiedSidebar {
         public let project: Project
         @State private var isPresented: Bool = false
         @State private var highlighted: Bool = false
+        @State private var bgColour: Color = .clear
+        @State private var fgColour: Color = .clear
         @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
 
         var body: some View {
@@ -225,13 +232,16 @@ struct UnifiedSidebar {
                     }
                 }
             }
-            .background(self.project.alive ? self.highlighted ? self.project.backgroundColor.opacity(0.9) : self.project.backgroundColor : .gray.opacity(0.8))
-            .foregroundStyle((self.project.alive ? self.project.backgroundColor : .gray).isBright() ? Theme.base : .white)
-            .onAppear(perform: {
-                if let job = self.state.session.job {
-                    self.isPresented = job.project == self.project
+            .background(self.highlighted ? self.bgColour.opacity(0.9) : self.bgColour)
+            .foregroundStyle(self.fgColour)
+            .onAppear(perform: self.actionOnAppear)
+            .onChange(of: self.state.session.project) { self.actionOnChangeEntity() }
+            .onChange(of: self.isPresented) {
+                // Group is minimized
+                if self.isPresented == false {
+                    self.actionOnMinimize()
                 }
-            })
+            }
         }
     }
 
@@ -240,6 +250,8 @@ struct UnifiedSidebar {
         public let job: Job
         @State private var isPresented: Bool = false
         @State private var highlighted: Bool = false
+        @State private var bgColour: Color = .clear
+        @State private var fgColour: Color = .clear
         @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
 
         var body: some View {
@@ -299,13 +311,16 @@ struct UnifiedSidebar {
                     }
                 }
             }
-            .background(self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8))
-            .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white)
-            .onAppear(perform: {
-                if self.state.session.job == self.job {
-                    self.isPresented = true
+            .background(self.highlighted ? self.bgColour.opacity(0.9) : self.bgColour)
+            .foregroundStyle(self.fgColour)
+            .onAppear(perform: self.actionOnAppear)
+            .onChange(of: self.state.session.job) { self.actionOnChangeEntity() }
+            .onChange(of: self.isPresented) {
+                // Group is minimized
+                if self.isPresented == false {
+                    self.actionOnMinimize()
                 }
-            })
+            }
         }
     }
 
@@ -610,6 +625,154 @@ struct UnifiedSidebar {
             .help(self.noLinkAvailable ? "Link not found" : self.label)
             .buttonStyle(.plain)
         }
+    }
+}
+
+extension UnifiedSidebar.SingleCompany {
+    /// Onload handler. Sets background colour for the row
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        if self.company.alive {
+            self.bgColour = self.company.backgroundColor
+            self.fgColour = self.bgColour.isBright() ? Theme.base : .white
+        } else {
+            self.bgColour = .gray
+            self.fgColour = Theme.base
+        }
+
+        if let company = self.state.session.company {
+            self.isPresented = company == self.company
+        } else if let job = self.state.session.job {
+            self.isPresented = job.project?.company == self.company
+        }
+    }
+    
+    /// Fires when state entity changes
+    /// - Returns: Void
+    private func actionOnChangeEntity() -> Void {
+        if self.state.session.company != nil {
+            if self.state.session.company != self.company {
+                self.isPresented = false
+                // @TODO: decide whether to attempt to finish this "focus on current open group" functionality
+//                self.bgColour = .gray
+//                self.fgColour = Theme.base
+            } else {
+                self.bgColour = self.company.backgroundColor
+                self.fgColour = self.bgColour.isBright() ? Theme.base : .white
+            }
+        } else {
+            self.bgColour = self.company.backgroundColor
+            self.fgColour = self.bgColour.isBright() ? Theme.base : .white
+        }
+    }
+    
+    /// Fires when a group is minimized
+    /// - Returns: Void
+    private func actionOnMinimize() -> Void {
+        if self.state.session.company == self.company {
+            self.state.session.company = nil
+            self.state.session.project = nil
+            self.state.session.job = nil
+        }
+        self.bgColour = self.company.backgroundColor
+        self.fgColour = self.bgColour.isBright() ? Theme.base : .white
+    }
+}
+
+extension UnifiedSidebar.SingleProject {
+    /// Onload handler. Sets background colour for the row
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        if self.project.alive {
+            self.bgColour = self.project.backgroundColor
+            self.fgColour = self.bgColour.isBright() ? Theme.base : .white
+        } else {
+            self.bgColour = .gray
+            self.fgColour = Theme.base
+        }
+
+        if let project = self.state.session.project {
+            self.isPresented = project == self.project
+        } else if let job = self.state.session.job {
+            self.isPresented = job.project == self.project
+        }
+    }
+
+    /// Fires when state entity changes
+    /// - Returns: Void
+    private func actionOnChangeEntity() -> Void {
+        if self.state.session.project != nil {
+            if self.state.session.project != self.project {
+                self.isPresented = false
+                // @TODO: decide whether to attempt to finish this "focus on current open group" functionality
+//                self.bgColour = .gray
+//                self.fgColour = Theme.base
+            } else {
+                self.bgColour = self.project.backgroundColor
+                self.fgColour = self.bgColour.isBright() ? Theme.base : .white
+            }
+        } else {
+            self.bgColour = self.project.backgroundColor
+            self.fgColour = self.bgColour.isBright() ? Theme.base : .white
+        }
+    }
+
+    /// Fires when a group is minimized
+    /// - Returns: Void
+    private func actionOnMinimize() -> Void {
+        if self.state.session.project == self.project {
+            self.state.session.project = nil
+            self.state.session.job = nil
+        }
+        self.bgColour = self.project.backgroundColor
+        self.fgColour = self.bgColour.isBright() ? Theme.base : .white
+    }
+}
+
+extension UnifiedSidebar.SingleJob {
+    /// Onload handler. Sets background colour for the row
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        if self.job.alive {
+            self.bgColour = self.job.backgroundColor
+            self.fgColour = self.bgColour.isBright() ? Theme.base : .white
+        } else {
+            self.bgColour = .gray
+            self.fgColour = Theme.base
+        }
+
+        if let job = self.state.session.job {
+            self.isPresented = job == self.job
+        }
+    }
+
+    /// Fires when state entity changes
+    /// - Returns: Void
+    private func actionOnChangeEntity() -> Void {
+        if self.state.session.job != nil {
+            if self.state.session.job != self.job {
+                self.isPresented = false
+                // @TODO: decide whether to attempt to finish this "focus on current open group" functionality
+//                self.bgColour = .gray
+//                self.fgColour = Theme.base
+            } else {
+                self.bgColour = self.job.backgroundColor
+                self.fgColour = self.bgColour.isBright() ? Theme.base : .white
+            }
+        } else {
+            self.bgColour = self.job.backgroundColor
+            self.fgColour = self.bgColour.isBright() ? Theme.base : .white
+        }
+    }
+
+    /// Fires when a group is minimized
+    /// - Returns: Void
+    private func actionOnMinimize() -> Void {
+        if self.state.session.job == self.job {
+            self.state.session.job = nil
+        }
+        self.bgColour = self.job.backgroundColor
+        self.fgColour = self.bgColour.isBright() ? Theme.base : .white
     }
 }
 

@@ -108,7 +108,7 @@ struct TermBlock: View {
                         .opacity(highlighted ? 0.2 : 0.1)
 
                     VStack(alignment: .leading, spacing: 10) {
-                        Text(self.definition.term?.name?.capitalized ?? "_TERM_NAME")
+                        Text(self.definition.term?.name ?? "_TERM_NAME")
                             .font(.title3)
                             .fontWeight(.bold)
                             .padding([.leading, .trailing, .top])
