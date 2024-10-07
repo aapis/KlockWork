@@ -147,6 +147,7 @@ struct Home: View {
                 }
             }
         }
+        .onAppear(perform: self.onAppear)
     }
 
     @ViewBuilder var Sidebar: some View {
@@ -210,7 +211,7 @@ struct Home: View {
                         .opacity(0.25)
                         .frame(width: 20)
 
-                    Theme.subHeaderColour
+                    self.nav.parent?.appPage.primaryColour.opacity(0.2) ?? Theme.subHeaderColour
 
                     nav.inspector
 
@@ -223,38 +224,38 @@ struct Home: View {
             }
         } else {
             VStack {
-                //                                if nav.history.recent.count > 0 {
-                //                                    HStack {
-                //                                        Button {
-                //                                            if let previous = nav.history.previous() {
-                //                                                nav.to(previous.page)
-                //                                            }
-                //                                        } label: {
-                //                                            HStack(spacing: 5) {
-                //                                                Image(systemName: "arrow.left")
-                //                                                Text("Back")
-                //                                            }
-                //                                        }
-                //                                        .buttonStyle(.plain)
-                //                                        .background(Theme.subHeaderColour)
-                //
-                //                                        Spacer()
-                //                                        Button {
-                //                                            if let next = nav.history.next() {
-                //                                                nav.to(next.page)
-                //                                            }
-                //                                        } label: {
-                //                                            HStack(spacing: 5) {
-                //                                                Text("Next")
-                //                                                Image(systemName: "arrow.right")
-                //                                            }
-                //                                        }
-                //                                        .buttonStyle(.plain)
-                //                                        .background(Theme.subHeaderColour)
-                //                                    }
-                //                                    .background(Theme.base)
-                //                                    .frame(height: 70)
-                //                                }
+//                if nav.history.recent.count > 0 {
+//                    HStack {
+//                        Button {
+//                            if let previous = nav.history.previous() {
+//                                nav.to(previous.page)
+//                            }
+//                        } label: {
+//                            HStack(spacing: 5) {
+//                                Image(systemName: "arrow.left")
+//                                Text("Back")
+//                            }
+//                        }
+//                        .buttonStyle(.plain)
+//                        .background(Theme.subHeaderColour)
+//
+//                        Spacer()
+//                        Button {
+//                            if let next = nav.history.next() {
+//                                nav.to(next.page)
+//                            }
+//                        } label: {
+//                            HStack(spacing: 5) {
+//                                Text("Next")
+//                                Image(systemName: "arrow.right")
+//                            }
+//                        }
+//                        .buttonStyle(.plain)
+//                        .background(Theme.subHeaderColour)
+//                    }
+//                    .background(Theme.base)
+//                    .frame(height: 70)
+//                }
 
                 ZStack {
                     nav.view
@@ -265,140 +266,9 @@ struct Home: View {
             }
         }
     }
+}
 
-    var body2: some View {
-        VStack(alignment: .leading) {
-            HStack(alignment: .top, spacing: 0) {
-                VStack(alignment: .leading) {
-                    ZStack(alignment: .topTrailing) {
-                        Theme.toolbarColour
-                        LinearGradient(gradient: Gradient(colors: [Color.black, Theme.toolbarColour]), startPoint: .topTrailing, endPoint: .topLeading)
-                            .opacity(0.25)
-
-                        VStack(alignment: .trailing, spacing: 5) {
-                            FancyDivider()
-                            ForEach(buttons[.views]!) { button in button.environmentObject(nav) }
-
-                            FancyDivider()
-                            ForEach(buttons[.entities]!) { button in button.environmentObject(nav) }
-                        }
-                    }
-                }
-                .frame(width: 100)
-
-                HStack(alignment: .top, spacing: 0) {
-                    if nav.sidebar != nil {
-                        VStack(alignment: .leading, spacing: 0) {
-                            GlobalSidebarWidgets()
-                            
-                            if !isSearchStackShowing && !isUpcomingTaskStackShowing {
-                                if isDatePickerPresented {
-                                    ZStack {
-                                        nav.sidebar
-                                        Color.black.opacity(0.7)
-                                    }
-                                } else {
-                                    nav.sidebar
-                                }
-                            }
-                        }
-                        .frame(width: 320)
-                        .background(nav.parent != nil ? nav.parent!.colour : Theme.tabActiveColour)
-                    } else {
-                        HorizontalSeparator // TODO: maybe remove?
-                    }
-
-                    if nav.inspector != nil {
-                        ZStack(alignment: .topLeading) {
-                            nav.view
-                                .navigationTitle(nav.pageTitle())
-                                .disabled(isDatePickerPresented)
-                            Color.black.opacity(0.7)
-
-                            ZStack(alignment: .topLeading) {
-                                LinearGradient(gradient: Gradient(colors: [Color.clear, Color.black]), startPoint: .topTrailing, endPoint: .topLeading)
-                                    .opacity(0.25)
-                                    .frame(width: 20)
-
-                                Theme.subHeaderColour
-
-                                nav.inspector
-
-                                if isDatePickerPresented {
-                                    Color.black.opacity(0.7)
-                                }
-                            }
-                            .background(Theme.base)
-                            .frame(width: 340)
-                        }
-                    } else {
-                        VStack {
-//                                if nav.history.recent.count > 0 {
-//                                    HStack {
-//                                        Button {
-//                                            if let previous = nav.history.previous() {
-//                                                nav.to(previous.page)
-//                                            }
-//                                        } label: {
-//                                            HStack(spacing: 5) {
-//                                                Image(systemName: "arrow.left")
-//                                                Text("Back")
-//                                            }
-//                                        }
-//                                        .buttonStyle(.plain)
-//                                        .background(Theme.subHeaderColour)
-//
-//                                        Spacer()
-//                                        Button {
-//                                            if let next = nav.history.next() {
-//                                                nav.to(next.page)
-//                                            }
-//                                        } label: {
-//                                            HStack(spacing: 5) {
-//                                                Text("Next")
-//                                                Image(systemName: "arrow.right")
-//                                            }
-//                                        }
-//                                        .buttonStyle(.plain)
-//                                        .background(Theme.subHeaderColour)
-//                                    }
-//                                    .background(Theme.base)
-//                                    .frame(height: 70)
-//                                }
-
-                            ZStack {
-                                nav.view
-                                    .navigationTitle(nav.pageTitle())
-                                    .disabled(isDatePickerPresented)
-                                (isDatePickerPresented ? Color.black.opacity(0.7) : .clear)
-                            }
-                        }
-                    }
-                    
-                    if showSessionInspector {
-                        SessionInspector()
-                    }
-                }
-            }
-        }
-        .background(Theme.base)
-        .onAppear(perform: onAppear)
-        .onChange(of: nav.parent!) { buttonToHighlight in
-            selectedSidebarButton = buttonToHighlight
-        }
-        .onChange(of: nav.session.eventStatus) { status in
-
-        }
-    }
-
-    var HorizontalSeparator: some View {
-        // TODO: make draggable
-        ZStack {
-            Theme.headerColour
-        }
-        .frame(width: 3)
-    }
-
+extension Home {
     private func onAppear() -> Void {
         nav.parent = selectedSidebarButton
         checkForEvents()
@@ -429,8 +299,8 @@ struct Home: View {
             nav.session.eventStatus = updateIndicator()
         }
     }
-    
-    /// Updates the dashboard icon upcoming event indicator 
+
+    /// Updates the dashboard icon upcoming event indicator
     /// - Returns: EventIndicatorStatus
     private func updateIndicator() -> EventIndicatorStatus {
         let ce = CoreDataCalendarEvent(moc: moc)
