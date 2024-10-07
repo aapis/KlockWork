@@ -29,7 +29,7 @@ extension Today {
                     TypedListRowBackground(colour: self.nav.session.job?.backgroundColor ?? Theme.rowColour, type: .jobs)
                         .frame(height: 60)
                         .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
-                    ResourcePath()
+                    EntityTypeHeader()
                 }
 
                 ZStack(alignment: .topLeading) {
@@ -37,7 +37,7 @@ extension Today {
                         placeholder: "What are you working on?",
                         lineLimit: 11,
                         onSubmit: submitAction,
-                        fgColour: nav.session.job != nil ? nav.session.job!.colour_from_stored().isBright() ? .black : .white : .white,
+                        fgColour: nav.session.job != nil ? nav.session.job!.colour_from_stored().isBright() ? Theme.base : .white : .white,
                         text: $text
                     )
                     .background(nav.session.job != nil ? nav.session.job!.colour_from_stored() : .clear)
@@ -121,77 +121,6 @@ extension Today {
 //                    nav.save()
                 }
             }
-        }
-    }
-
-    struct ResourcePath: View {
-        @EnvironmentObject public var state: Navigation
-        @State private var resourcePath: String = ""
-        @State private var parts: [ResourcePathItem] = []
-
-        var body: some View {
-            HStack(alignment: .center, spacing: 8) {
-                if self.parts.count > 0 {
-                    ForEach(self.parts, id: \.id) { part in part }
-                } else {
-                    ResourcePathItem(text: "Choose a job from the sidebar, type into the field below. Enter/Return/+ to create records.")
-                }
-            }
-            .padding([.leading, .trailing])
-            .font(.title2)
-            .foregroundStyle((self.state.session.job?.backgroundColor ?? Theme.rowColour).isBright() ? Theme.base.opacity(0.55) : .white.opacity(0.55))
-            .onAppear(perform: self.actionSetViewState)
-            .onChange(of: self.state.session.job) { self.actionSetViewState() }
-            .onChange(of: self.state.session.project) { self.actionSetViewState() }
-            .onChange(of: self.state.session.company) { self.actionSetViewState() }
-        }
-
-        struct ResourcePathItem: View, Identifiable {
-            @EnvironmentObject public var state: Navigation
-            public var id: UUID = UUID()
-            public var text: String
-            public var target: Page = .dashboard
-            @State private var isHighlighted: Bool = false
-
-            var body: some View {
-                HStack(alignment: .center) {
-                    Button {
-                        self.state.to(self.target)
-                    } label: {
-                        Text(self.text)
-                            .underline(self.isHighlighted && self.target != .dashboard) // using .dashboard as "default"
-                    }
-                    .buttonStyle(.plain)
-
-                    if self.text != self.state.session.job?.title && self.target != .dashboard {
-                        Image(systemName: "chevron.right")
-                    }
-                }
-                .useDefaultHover({ hover in self.isHighlighted = hover})
-            }
-        }
-    }
-}
-
-extension Today.ResourcePath {
-    /// Fires onload and whenever the session job is changed. Compiles a breadcrumb based on selected job/project/company
-    /// - Returns: Void
-    private func actionSetViewState() -> Void {
-        self.parts = []
-        if let company = self.state.session.company {
-            if company.name != nil {
-                self.parts.append(ResourcePathItem(text: company.name!, target: company.pageDetailType))
-            }
-        }
-
-        if let project = self.state.session.project {
-            if project.name != nil {
-                self.parts.append(ResourcePathItem(text: project.name!, target: project.pageDetailType))
-            }
-        }
-
-        if let job = self.state.session.job {
-            self.parts.append(ResourcePathItem(text: job.title ?? job.jid.string, target: job.pageDetailType))
         }
     }
 }
