@@ -11,8 +11,8 @@ import SwiftUI
 import KWCore
 
 struct SearchBar: View {
+    @EnvironmentObject public var state: Navigation
     @Binding public var text: String
-    
     public var disabled: Bool = false
     public var placeholder: String? = "Search..."
     public var onSubmit: (() -> Void)? = nil
@@ -48,6 +48,7 @@ struct SearchBar: View {
                 }
             }
         }
+        .background(self.state.session.job?.backgroundColor.opacity(0.6) ?? .clear)
     }
 }
 
