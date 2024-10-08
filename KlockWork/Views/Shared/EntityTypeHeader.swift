@@ -31,7 +31,6 @@ struct EntityTypeHeader: View {
                 }
             }
         }
-        .padding(.leading)
         .font(.title2)
         .onAppear(perform: self.actionSetViewState)
         .onChange(of: self.state.session.job) { self.actionSetViewState() }
@@ -59,7 +58,7 @@ struct EntityTypeHeader: View {
                 .buttonStyle(.plain)
                 .disabled(self.target == .today)
 
-                if [.companyDetail, .projectDetail, .today].contains(where: {$0 == self.target}) {
+                if [.companyDetail, .projectDetail, .today, .jobs].contains(where: {$0 == self.target}) {
                     Image(systemName: "chevron.right")
                         .foregroundStyle((self.state.session.job?.backgroundColor ?? Theme.rowColour).isBright() ? Theme.base.opacity(0.3) : .white.opacity(0.3))
                 }
@@ -73,20 +72,46 @@ struct EntityTypeHeader: View {
         public var type: PageConfiguration.EntityType
         public var buttons: AnyView?
         public var title: String?
+        public var additionalDetails: AnyView?
 
         var body: some View {
-            ZStack(alignment: .leading) {
-                TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
-                    .frame(height: 60)
-                    .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
-                EntityTypeHeader(title: self.title)
-                HStack(alignment: .center) {
-                    Spacer()
-                    if let buttons = self.buttons {
-                        buttons
+            // @TODO: merge these two cases
+            if self.additionalDetails != nil {
+                ZStack(alignment: .topLeading) {
+                    TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
+                        .frame(height: 120)
+                        .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
+
+                    VStack(alignment: .leading) {
+                        HStack(alignment: .top) {
+                            EntityTypeHeader(title: self.title)
+
+                            HStack(alignment: .center) {
+                                Spacer()
+                                if let buttons = self.buttons {
+                                    buttons
+                                }
+                            }
+                        }
+                        self.additionalDetails!
                     }
+                    .padding()
                 }
-                .padding(.trailing)
+            } else {
+                ZStack(alignment: .leading) {
+                    TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
+                        .frame(height: 60)
+                        .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
+                    EntityTypeHeader(title: self.title)
+                        .padding(.leading)
+                    HStack(alignment: .center) {
+                        Spacer()
+                        if let buttons = self.buttons {
+                            buttons
+                        }
+                    }
+                    .padding(.trailing)
+                }
             }
         }
     }
