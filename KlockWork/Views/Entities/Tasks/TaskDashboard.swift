@@ -20,7 +20,7 @@ struct TaskDashboard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 0) {
-                EntityTypeHeader.Widget(
+                UniversalHeader.Widget(
                     type: self.eType,
                     buttons: AnyView(
                         WidgetLibrary.Buttons.ResetUserChoices()

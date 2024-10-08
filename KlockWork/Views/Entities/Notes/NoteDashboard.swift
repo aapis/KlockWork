@@ -28,7 +28,7 @@ struct NoteDashboard: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 1) {
-                EntityTypeHeader.Widget(
+                UniversalHeader.Widget(
                     type: self.eType,
                     buttons: AnyView(
                         HStack(alignment: .center) {

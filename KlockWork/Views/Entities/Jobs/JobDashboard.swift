@@ -120,7 +120,7 @@ struct JobDashboardRedux: View {
 //                
 //                FancyDivider()
 
-                EntityTypeHeader.Widget(
+                UniversalHeader.Widget(
                     type: self.eType,
                     buttons: AnyView(
                         HStack(alignment: .center) {

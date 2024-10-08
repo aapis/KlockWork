@@ -26,7 +26,7 @@ extension Today {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                EntityTypeHeader.Widget(
+                UniversalHeader.Widget(
                     type: self.eType,
                     buttons: AnyView(Buttons(text: $text, onActionSubmit: self.submitAction, onActionClear: self.clearAction))
                 )

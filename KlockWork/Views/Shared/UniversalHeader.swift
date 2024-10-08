@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct EntityTypeHeader: View {
+struct UniversalHeader: View {
     @EnvironmentObject public var state: Navigation
     @State private var resourcePath: String = ""
     @State private var parts: [Item] = []
@@ -84,7 +84,7 @@ struct EntityTypeHeader: View {
 
                     VStack(alignment: .leading) {
                         HStack(alignment: .top) {
-                            EntityTypeHeader(title: self.title)
+                            UniversalHeader(title: self.title)
 
                             HStack(alignment: .center) {
                                 Spacer()
@@ -102,7 +102,7 @@ struct EntityTypeHeader: View {
                     TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
                         .frame(height: 60)
                         .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
-                    EntityTypeHeader(title: self.title)
+                    UniversalHeader(title: self.title)
                         .padding(.leading)
                     HStack(alignment: .center) {
                         Spacer()
@@ -117,7 +117,7 @@ struct EntityTypeHeader: View {
     }
 }
 
-extension EntityTypeHeader {
+extension UniversalHeader {
     /// Fires onload and whenever the session job is changed. Compiles a breadcrumb based on selected job/project/company
     /// - Returns: Void
     private func actionSetViewState() -> Void {

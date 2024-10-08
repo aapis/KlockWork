@@ -41,7 +41,7 @@ struct FindDashboard: View {
         Grid(alignment: .topLeading, horizontalSpacing: 0, verticalSpacing: 0) {
             if self.location == .content {
                 GridRow {
-                    EntityTypeHeader.Widget(
+                    UniversalHeader.Widget(
                         type: self.eType,
                         title: "Welcome back!",
                         additionalDetails: AnyView(

@@ -55,7 +55,7 @@ struct Planning: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            EntityTypeHeader.Widget(
+            UniversalHeader.Widget(
                 type: self.eType,
                 title: "Planning",
                 additionalDetails: AnyView(
