@@ -101,7 +101,7 @@ extension Today {
                         .frame(width: 25)
                     }
 
-                    WidgetLibrary.ResetUserChoicesButton(onActionClear: self.onActionClear)
+                    WidgetLibrary.Buttons.ResetUserChoices(onActionClear: self.onActionClear)
 
                     FancyButtonv2(
                         text: self.state.session.job != nil ? "Log to job \(self.state.session.job!.title ?? self.state.session.job!.jid.string)" : "Log",
