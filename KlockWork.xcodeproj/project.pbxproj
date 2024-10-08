@@ -149,6 +149,7 @@
 		53967D8429EC6D14006616A0 /* TodaySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53967D8329EC6D14006616A0 /* TodaySettings.swift */; };
 		53967D8629EC7DEB006616A0 /* ViewModeSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53967D8529EC7DEB006616A0 /* ViewModeSelector.swift */; };
 		53999C1F29669C4E00125E65 /* NoteCreate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53999C1E29669C4E00125E65 /* NoteCreate.swift */; };
+		5399AF762CB4995A00211ECD /* EntityTypeHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5399AF752CB4995400211ECD /* EntityTypeHeader.swift */; };
 		539F68DB2BF6BD310086F89A /* FancyDropdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539F68DA2BF6BD310086F89A /* FancyDropdown.swift */; };
 		539F68DD2BF70A260086F89A /* IntroToKlockWork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539F68DC2BF70A260086F89A /* IntroToKlockWork.swift */; };
 		53B0BE7F2972542A007CB663 /* ProjectsDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE7E2972542A007CB663 /* ProjectsDashboard.swift */; };
@@ -432,6 +433,7 @@
 		53967D8329EC6D14006616A0 /* TodaySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaySettings.swift; sourceTree = "<group>"; };
 		53967D8529EC7DEB006616A0 /* ViewModeSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModeSelector.swift; sourceTree = "<group>"; };
 		53999C1E29669C4E00125E65 /* NoteCreate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteCreate.swift; sourceTree = "<group>"; };
+		5399AF752CB4995400211ECD /* EntityTypeHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityTypeHeader.swift; sourceTree = "<group>"; };
 		539F68DA2BF6BD310086F89A /* FancyDropdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyDropdown.swift; sourceTree = "<group>"; };
 		539F68DC2BF70A260086F89A /* IntroToKlockWork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroToKlockWork.swift; sourceTree = "<group>"; };
 		53B0BE7E2972542A007CB663 /* ProjectsDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsDashboard.swift; sourceTree = "<group>"; };
@@ -1248,6 +1250,7 @@
 		53EDDF9C29634840008D34C7 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				5399AF752CB4995400211ECD /* EntityTypeHeader.swift */,
 				53E9187D2B47C9CC00912C6F /* PanelGroup */,
 				53790C012A72F15200D3FFD4 /* AppSidebar */,
 				53B0BE822972610C007CB663 /* Fancy */,
@@ -1635,6 +1638,7 @@
 				53013A962CAB825B0024BA30 /* GlobalSidebar.swift in Sources */,
 				53C000962B3A7BD500D5EC04 /* String.swift in Sources */,
 				537628A22966525500DE8ECF /* ToolbarButtons.swift in Sources */,
+				5399AF762CB4995A00211ECD /* EntityTypeHeader.swift in Sources */,
 				537AEBA1296287B900385787 /* LogRow.swift in Sources */,
 				53C3419029996C070071B855 /* FancyRandomJobColourPicker.swift in Sources */,
 				537368D124B93DB600193E88 /* Today.swift in Sources */,
