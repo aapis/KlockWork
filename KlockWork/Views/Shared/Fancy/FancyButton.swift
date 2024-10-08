@@ -65,11 +65,14 @@ struct FancyButton: View {
     }
 }
 
-public struct FancyButtonv2: View {
+struct FancyButtonv2: View {
+    @EnvironmentObject public var nav: Navigation
     public var text: String
     public var action: (() -> Void)?
     public var icon: String? = "checkmark.circle"
     public var iconAsImage: Image? = nil
+    public var iconWhenHighlighted: String?
+    public var iconAsImageWhenHighlighted: Image? = nil
     public var iconFgColour: Color?
     public var fgColour: Color?
     public var bgColour: Color?
@@ -83,14 +86,11 @@ public struct FancyButtonv2: View {
     public var pageType: Page? = nil
     public var sidebar: AnyView? = nil
     public var twoStage: Bool = false
-
-    @EnvironmentObject public var nav: Navigation
-
     @State private var padding: CGFloat = 10
     @State private var highlighted: Bool = false
     @State private var active: Bool = false
 
-    public var body: some View {
+    var body: some View {
         if let destination = redirect {
             Button(action: {
                 if let ac = action {
@@ -158,14 +158,14 @@ public struct FancyButtonv2: View {
             HStack {
                 if showIcon! {
                     if let icon = self.icon {
-                        Image(systemName: icon)
+                        Image(systemName: self.highlighted && self.iconWhenHighlighted != nil ? self.iconWhenHighlighted! : icon)
                             .symbolRenderingMode(.hierarchical)
-                            .font(.title2)
+                            .font(.title)
                             .foregroundStyle(self.iconFgColour ?? self.fgColour ?? .white)
                     } else if let ic = self.iconAsImage {
-                        ic
+                        AnyView(self.highlighted && self.iconAsImageWhenHighlighted != nil ? self.iconAsImageWhenHighlighted!: ic)
                             .symbolRenderingMode(.hierarchical)
-                            .font(.title2)
+                            .font(.title)
                             .foregroundStyle(self.iconFgColour ?? self.fgColour ?? .white)
                     }
                 }
