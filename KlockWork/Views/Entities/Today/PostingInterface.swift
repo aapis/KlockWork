@@ -30,6 +30,7 @@ extension Today {
                         .frame(height: 60)
                         .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
                     EntityTypeHeader()
+                    Buttons(text: $text, onActionSubmit: self.submitAction, onActionClear: self.clearAction)
                 }
 
                 ZStack(alignment: .topLeading) {
@@ -37,10 +38,10 @@ extension Today {
                         placeholder: "What are you working on?",
                         lineLimit: 11,
                         onSubmit: submitAction,
-                        fgColour: nav.session.job != nil ? nav.session.job!.colour_from_stored().isBright() ? Theme.base : .white : .white,
+                        fgColour: self.nav.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
                         text: $text
                     )
-                    .background(nav.session.job != nil ? nav.session.job!.colour_from_stored() : .clear)
+                    .background(self.nav.session.job?.backgroundColor.opacity(0.6) ?? .clear)
                     .focused($primaryTextFieldInFocus)
                     .onAppear {
                         // thx https://www.kodeco.com/31569019-focus-management-in-swiftui-getting-started#toc-anchor-002
@@ -55,59 +56,11 @@ extension Today {
                         Button("Ok", role: .cancel) {}
                     }
 
-                    VStack(alignment: .trailing, spacing: 0) {
-                        Spacer()
-                        HStack(spacing: 1) {
-                            Spacer()
+                    LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                        .blendMode(.softLight)
+                        .frame(height: 80)
+                        .opacity(0.1)
 
-                            if allowCLIMode {
-                                FancyButtonv2(
-                                    text: "Command line mode",
-                                    action: {commandLineMode.toggle()},
-                                    icon: "apple.terminal",
-                                    fgColour: nav.session.job != nil ? Color.fromStored(nav.session.job!.colour!).isBright() ? Theme.base : .white : .white,
-                                    showLabel: false,
-                                    size: .tiny,
-                                    type: .clear
-                                )
-                                .help("Enter CLI mode")
-                                .frame(width: 30, height: 30)
-                                .background(nav.session.job != nil ? nav.session.job!.colour_from_stored() : self.page.primaryColour.opacity(0.5))
-                                .disabled(false)
-                            }
-
-                            FancyButtonv2(
-                                text: "Reset interface to default state",
-                                action: clearAction,
-                                icon: "arrow.clockwise",
-                                fgColour: nav.session.job != nil ? Color.fromStored(nav.session.job!.colour!).isBright() ? Theme.base : .white : .white,
-                                showLabel: false,
-                                size: .tiny,
-                                type: .clear
-                            )
-                            .help("Reset interface to default state")
-                            .frame(width: 30, height: 30)
-                            .background(nav.session.job != nil ? nav.session.job!.colour_from_stored() : self.page.primaryColour.opacity(0.5))
-                            .disabled(nav.session.job == nil)
-                            .opacity(nav.session.job == nil ? 0.5 : 1)
-
-                            FancyButtonv2(
-                                text: nav.session.job != nil ? "Log to job \(nav.session.job!.jid.string)" : "Log",
-                                action: submitAction,
-                                icon: "plus",
-                                fgColour: nav.session.job != nil ? Color.fromStored(nav.session.job!.colour!).isBright() ? Theme.base : .white : .white,
-                                showLabel: false,
-                                size: .tiny,
-                                type: .clear
-                            )
-                            .help("Create a new record (alternatively, press Return!)")
-                            .frame(width: 30, height: 30)
-                            .background(nav.session.job != nil ? nav.session.job!.colour_from_stored() : self.page.primaryColour.opacity(0.5))
-                            .disabled(nav.session.job == nil)
-                            .opacity(nav.session.job == nil ? 0.5 : 1)
-                        }
-                        Divider().frame(height: 1).foregroundStyle(.clear)
-                    }
                 }
                 .frame(height: 215)
             }
@@ -122,10 +75,75 @@ extension Today {
                 }
             }
         }
+
+        struct Buttons: View {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
+            @AppStorage("general.experimental.cli") private var allowCLIMode: Bool = false
+            @State private var errorNoJob: Bool = false
+            @State private var errorNoContent: Bool = false
+            private let page: PageConfiguration.AppPage = .today
+            @Binding public var text: String
+            public var onActionSubmit: (() -> Void) = {}
+            public var onActionClear: (() -> Void) = {}
+
+            var body: some View {
+                HStack(alignment: .center, spacing: 8) {
+                    Spacer()
+                    if allowCLIMode {
+                        FancyButtonv2(
+                            text: "Command line mode",
+                            action: {commandLineMode.toggle()},
+                            icon: "apple.terminal",
+                            iconWhenHighlighted: "apple.terminal.fill",
+                            fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
+                            showLabel: false,
+                            size: .small,
+                            type: .clear
+                        )
+                        .help("Enter CLI mode")
+                        .frame(width: 25)
+                    }
+
+                    FancyButtonv2(
+                        text: "Reset interface to default state",
+                        action: self.onActionClear,
+                        icon: "arrow.clockwise.square",
+                        iconWhenHighlighted: "arrow.clockwise.square.fill",
+                        fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
+                        showLabel: false,
+                        size: .small,
+                        type: .clear
+                    )
+                    .help("Reset interface to default state")
+                    .frame(width: 25)
+                    .disabled(self.state.session.job == nil)
+                    .opacity(self.state.session.job == nil ? 0.5 : 1)
+
+                    FancyButtonv2(
+                        text: self.state.session.job != nil ? "Log to job \(self.state.session.job!.title ?? self.state.session.job!.jid.string)" : "Log",
+                        action: self.onActionSubmit,
+                        icon: "plus.square",
+                        iconWhenHighlighted: "plus.square.fill",
+                        fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
+                        showLabel: false,
+                        size: .small,
+                        type: .clear
+                    )
+                    .help("Create a new record (alternatively, press Return!)")
+                    .frame(width: 25)
+                    .disabled(self.state.session.job == nil)
+                    .opacity(self.state.session.job == nil ? 0.5 : 1)
+                }
+                .padding(.trailing)
+            }
+        }
     }
 }
 
 extension Today.PostingInterface {
+    /// Begin the process of creating new entities
+    /// - Returns: Void
     private func submitAction() -> Void {
         if !text.isEmpty && nav.session.job != nil {
             Task {
@@ -141,7 +159,9 @@ extension Today.PostingInterface {
             }
         }
     }
-
+    
+    /// Fires during the submitAction process. Creates new records & other entities.
+    /// - Returns: Void
     private func save() async -> Void {
         if let job = nav.session.job {
             let record = LogRecord(context: moc)
@@ -196,8 +216,11 @@ extension Today.PostingInterface {
         }
     }
 
+    /// Clear the text field
+    /// - Returns: Void
     private func clearAction() -> Void {
         text = ""
-        nav.session.job = nil
+        self.nav.session.job = nil
+        self.nav.reset() // @TODO: yes?
     }
 }
