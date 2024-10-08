@@ -25,29 +25,15 @@ struct Dashboard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Header()
-                .environmentObject(updater)
+            FindDashboard(searching: $searching, location: .content)
+            FancyDivider()
 
-            VStack(alignment: .leading, spacing: 0) {
-                FindDashboard(searching: $searching, location: .content)
-                FancyDivider()
-
-                if !searching {
-                    Widgets()
-                }
-            }
-            .font(Theme.font)
-            .padding()
-            .focused($primaryTextFieldInFocus)
-            .background(Theme.toolbarColour)
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-                    self.primaryTextFieldInFocus = true
-                }
-                
-                isSearchStackShowing = false
+            if !searching {
+                Widgets()
             }
         }
+        .padding()
+        .background(Theme.toolbarColour)
     }
 }
 

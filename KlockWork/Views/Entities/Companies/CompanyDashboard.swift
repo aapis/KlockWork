@@ -29,34 +29,25 @@ struct CompanyDashboard: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
-            VStack(alignment: .leading) {
-                HStack {
-                    Title(text: "Companies & Projects", imageAsImage: eType.icon)
-                    Spacer()
-                    FancyButtonv2(
-                        text: "New Company",
-                        action: {},
-                        icon: "building.2",
-                        redirect: AnyView(CompanyCreate()),
-                        pageType: .companies,
-                        sidebar: AnyView(DefaultCompanySidebar())
-                    )
-                    FancyButtonv2(
-                        text: "New Project",
-                        action: {},
-                        icon: "folder.badge.plus",
-                        redirect: AnyView(ProjectCreate()),
-                        pageType: .companies,
-                        sidebar: AnyView(DefaultCompanySidebar())
-                    )
-                }
-
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 0) {
+                EntityTypeHeader.Widget(
+                    type: self.eType,
+                    buttons: AnyView(
+                        HStack(alignment: .center) {
+                            WidgetLibrary.Buttons.ResetUserChoices()
+                            WidgetLibrary.Buttons.CreateCompany()
+                            WidgetLibrary.Buttons.CreateProject()
+                        }
+                    ),
+                    title: self.eType.label
+                )
                 if companies.count > 0 {
                     FancyHelpText(
                         text: "Build your data hierarchy by creating companies, which own projects. Projects own jobs, which define what needs to be done.",
                         page: self.page
                     )
+                    FancyDivider()
                     Recent
                 } else {
                     FancyHelpText(
