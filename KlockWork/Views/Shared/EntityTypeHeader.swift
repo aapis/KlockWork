@@ -12,6 +12,9 @@ struct EntityTypeHeader: View {
     @EnvironmentObject public var state: Navigation
     @State private var resourcePath: String = ""
     @State private var parts: [Item] = []
+    @State private var defaultParts: [Item] = [
+        Item(text: "...")
+    ]
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -19,9 +22,7 @@ struct EntityTypeHeader: View {
                 if self.parts.count > 0 {
                     ForEach(self.parts, id: \.id) { part in part }
                 } else {
-                    Item(
-                        text: "Choose a job from the sidebar, type into the field below. Enter/Return/+ to create records."
-                    )
+                    ForEach(self.defaultParts, id: \.id) { part in part }
                 }
             }
         }
@@ -37,7 +38,7 @@ struct EntityTypeHeader: View {
         @EnvironmentObject public var state: Navigation
         public var id: UUID = UUID()
         public var text: String
-        public var target: Page = .dashboard
+        public var target: Page = .today
         @State private var isHighlighted: Bool = false
 
         var body: some View {
@@ -46,13 +47,14 @@ struct EntityTypeHeader: View {
                     self.state.to(self.target)
                 } label: {
                     Text(self.text)
-                        .underline(self.isHighlighted && self.target != .dashboard) // using .dashboard as "default"
+                        .underline(self.isHighlighted && self.target != .today) // using .today as "default"
                         .foregroundStyle((self.state.session.job?.backgroundColor ?? Theme.rowColour).isBright() ? Theme.base.opacity(0.55) : .white.opacity(0.55))
                         .multilineTextAlignment(.leading)
                 }
                 .buttonStyle(.plain)
+                .disabled(self.target == .today)
 
-                if ![.jobs, .dashboard].contains(where: {$0 == self.target}) {
+                if [.companyDetail, .projectDetail, .today].contains(where: {$0 == self.target}) {
                     Image(systemName: "chevron.right")
                         .foregroundStyle((self.state.session.job?.backgroundColor ?? Theme.rowColour).isBright() ? Theme.base.opacity(0.3) : .white.opacity(0.3))
                 }

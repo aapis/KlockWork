@@ -63,6 +63,11 @@ extension Today {
 
                 }
                 .frame(height: 215)
+
+                FancyHelpText(
+                    text: "Choose a job from the sidebar, type into the field below. Enter/Return/+ to create records.",
+                    page: self.page
+                )
             }
             .onChange(of: text) {
                 if self.text.isEmpty {
@@ -219,7 +224,9 @@ extension Today.PostingInterface {
     /// Clear the text field
     /// - Returns: Void
     private func clearAction() -> Void {
-        text = ""
+        self.text = ""
         self.nav.session.job = nil
+        self.nav.session.company = nil
+        self.nav.session.project = nil
     }
 }
