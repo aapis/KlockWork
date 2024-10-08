@@ -22,21 +22,25 @@ struct PeopleDashboard: View {
 
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 1) {
-                HStack(alignment: .center, spacing: 0) {
-                    Title(text: eType.label, imageAsImage: eType.icon)
-                    Spacer()
-                    FancyButtonv2(text: "New person", action: {self.state.to(.peopleDetail)}, icon: "plus", showLabel: false)
-                }
-                FancyDivider()
-
-                SearchBar(
-                    text: $searchText,
-                    disabled: false,
-                    placeholder: self.people.count > 1 ? "Search \(self.people.count) people" : "Find people"
+            VStack(alignment: .leading, spacing: 0) {
+                UniversalHeader.Widget(
+                    type: self.eType,
+                    buttons: AnyView(
+                        HStack(alignment: .center) {
+                            WidgetLibrary.Buttons.ResetUserChoices()
+                            WidgetLibrary.Buttons.CreatePerson()
+                        }
+                    ),
+                    title: self.eType.label
                 )
 
                 if self.people.count > 0 {
+                    SearchBar(
+                        text: $searchText,
+                        disabled: false,
+                        placeholder: self.people.count > 1 ? "Search \(self.people.count) people" : "Find people"
+                    )
+
                     ScrollView(showsIndicators: false) {
                         LazyVGrid(columns: columns, alignment: .leading) {
                             ForEach(self.filter(self.people), id: \Person.objectID) { person in
@@ -44,10 +48,9 @@ struct PeopleDashboard: View {
                             }
                         }
                     }
-                    .padding(.top)
                 } else {
                     FancyHelpText(
-                        text: "Unable to find any people associated with the selected company. Choose a job from the sidebar to get started.",
+                        text: "Find contacts. Choose a company from the sidebar to get started.",
                         page: self.page
                     )
                 }

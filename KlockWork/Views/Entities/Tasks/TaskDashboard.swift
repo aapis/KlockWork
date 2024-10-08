@@ -20,23 +20,17 @@ struct TaskDashboard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 0) {
-                HStack(alignment: .center, spacing: 0) {
-                    Title(text: eType.label, imageAsImage: eType.icon)
-                    if self.job == nil {
-                        Spacer()
-                        FancyButtonv2(
-                            text: "Create",
-                            action: self.actionOnTapCreate,
-                            icon: "plus",
-                            showLabel: false
-                        )
-                    }
-                }
-                FancyDivider()
+                UniversalHeader.Widget(
+                    type: self.eType,
+                    buttons: AnyView(
+                        WidgetLibrary.Buttons.ResetUserChoices()
+                    ),
+                    title: self.eType.label
+                )
 
                 if self.state.session.job == nil {
                     FancyHelpText(
-                        text: "No terms found for the selected job. Choose a job from the sidebar to get started.",
+                        text: "No tasks found. Choose a job from the sidebar to get started.",
                         page: self.page
                     )
                 } else {

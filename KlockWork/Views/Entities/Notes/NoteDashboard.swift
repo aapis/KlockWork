@@ -28,21 +28,16 @@ struct NoteDashboard: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 1) {
-                HStack(spacing: 10) {
-                    Title(text: eType.label, imageAsImage: eType.icon)
-                    Spacer()
-                    FancyButtonv2(
-                        text: "Create",
-                        action: {},
-                        icon: "plus",
-                        showLabel: false,
-                        redirect: AnyView(NoteCreate()),
-                        pageType: .notes,
-                        sidebar: AnyView(NoteCreateSidebar())
-                    )
-                }
-                .font(.title2)
-                FancyDivider()
+                UniversalHeader.Widget(
+                    type: self.eType,
+                    buttons: AnyView(
+                        HStack(alignment: .center) {
+                            WidgetLibrary.Buttons.ResetUserChoices()
+                            WidgetLibrary.Buttons.CreateNote()
+                        }
+                    ),
+                    title: self.eType.label
+                )
 
                 CompanyNotebooks()
 

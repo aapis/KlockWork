@@ -22,45 +22,35 @@ extension Today {
         @Environment(\.managedObjectContext) var moc
         @EnvironmentObject public var nav: Navigation
         private let page: PageConfiguration.AppPage = .today
+        private let eType: PageConfiguration.EntityType = .records
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                ZStack(alignment: .leading) {
-                    TypedListRowBackground(colour: self.nav.session.job?.backgroundColor ?? Theme.rowColour, type: .jobs)
-                        .frame(height: 60)
-                        .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
-                    EntityTypeHeader()
-                    Buttons(text: $text, onActionSubmit: self.submitAction, onActionClear: self.clearAction)
+                UniversalHeader.Widget(
+                    type: self.eType,
+                    buttons: AnyView(Buttons(text: $text, onActionSubmit: self.submitAction, onActionClear: self.clearAction))
+                )
+
+                FancyTextField(
+                    placeholder: "What are you working on?",
+                    lineLimit: 11,
+                    onSubmit: submitAction,
+                    fgColour: self.nav.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
+                    text: $text
+                )
+                .background(self.nav.session.job?.backgroundColor.opacity(0.6) ?? .clear)
+                .focused($primaryTextFieldInFocus)
+                .onAppear {
+                    // thx https://www.kodeco.com/31569019-focus-management-in-swiftui-getting-started#toc-anchor-002
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        self.primaryTextFieldInFocus = true
+                    }
                 }
-
-                ZStack(alignment: .topLeading) {
-                    FancyTextField(
-                        placeholder: "What are you working on?",
-                        lineLimit: 11,
-                        onSubmit: submitAction,
-                        fgColour: self.nav.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
-                        text: $text
-                    )
-                    .background(self.nav.session.job?.backgroundColor.opacity(0.6) ?? .clear)
-                    .focused($primaryTextFieldInFocus)
-                    .onAppear {
-                        // thx https://www.kodeco.com/31569019-focus-management-in-swiftui-getting-started#toc-anchor-002
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            self.primaryTextFieldInFocus = true
-                        }
-                    }
-                    .alert("Please select a job from the sidebar", isPresented: $errorNoJob) {
-                        Button("Ok", role: .cancel) {}
-                    }
-                    .alert("You need to write a message too. What are you working on?", isPresented: $errorNoContent) {
-                        Button("Ok", role: .cancel) {}
-                    }
-
-                    LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
-                        .blendMode(.softLight)
-                        .frame(height: 80)
-                        .opacity(0.1)
-
+                .alert("Please select a job from the sidebar", isPresented: $errorNoJob) {
+                    Button("Ok", role: .cancel) {}
+                }
+                .alert("You need to write a message too. What are you working on?", isPresented: $errorNoContent) {
+                    Button("Ok", role: .cancel) {}
                 }
                 .frame(height: 215)
 
@@ -104,26 +94,14 @@ extension Today {
                             fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
                             showLabel: false,
                             size: .small,
-                            type: .clear
+                            type: .clear,
+                            font: .title
                         )
                         .help("Enter CLI mode")
                         .frame(width: 25)
                     }
 
-                    FancyButtonv2(
-                        text: "Reset interface to default state",
-                        action: self.onActionClear,
-                        icon: "arrow.clockwise.square",
-                        iconWhenHighlighted: "arrow.clockwise.square.fill",
-                        fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
-                        showLabel: false,
-                        size: .small,
-                        type: .clear
-                    )
-                    .help("Reset interface to default state")
-                    .frame(width: 25)
-                    .disabled(self.state.session.job == nil)
-                    .opacity(self.state.session.job == nil ? 0.5 : 1)
+                    WidgetLibrary.Buttons.ResetUserChoices(onActionClear: self.onActionClear)
 
                     FancyButtonv2(
                         text: self.state.session.job != nil ? "Log to job \(self.state.session.job!.title ?? self.state.session.job!.jid.string)" : "Log",
@@ -133,14 +111,14 @@ extension Today {
                         fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
                         showLabel: false,
                         size: .small,
-                        type: .clear
+                        type: .clear,
+                        font: .title
                     )
                     .help("Create a new record (alternatively, press Return!)")
                     .frame(width: 25)
                     .disabled(self.state.session.job == nil)
                     .opacity(self.state.session.job == nil ? 0.5 : 1)
                 }
-                .padding(.trailing)
             }
         }
     }

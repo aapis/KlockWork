@@ -24,13 +24,17 @@ struct TermsDashboard: View {
 
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: 1) {
-                HStack(alignment: .center, spacing: 0) {
-                    Title(text: "Terms & Definitions", imageAsImage: eType.icon)
-                    Spacer()
-                    FancyButtonv2(text: "Create term", action: self.actionOnTap, icon: "plus", showLabel: false)
-                }
-                FancyDivider()
+            VStack(alignment: .leading, spacing: 0) {
+                UniversalHeader.Widget(
+                    type: self.eType,
+                    buttons: AnyView(
+                        HStack(alignment: .center) {
+                            WidgetLibrary.Buttons.ResetUserChoices()
+                            WidgetLibrary.Buttons.CreateDefinition()
+                        }
+                    ),
+                    title: self.eType.label
+                )
 
                 SearchBar(
                     text: $searchText,

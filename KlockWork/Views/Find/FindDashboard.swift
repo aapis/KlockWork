@@ -35,9 +35,21 @@ struct FindDashboard: View {
     private var columns: [GridItem] {
         Array(repeating: .init(.flexible(minimum: 100)), count: 2)
     }
+    private let eType: PageConfiguration.EntityType = .notes
 
     var body: some View {
-        Grid(alignment: .topLeading, horizontalSpacing: 0, verticalSpacing: 1) {
+        Grid(alignment: .topLeading, horizontalSpacing: 0, verticalSpacing: 0) {
+            if self.location == .content {
+                GridRow {
+                    UniversalHeader.Widget(
+                        type: self.eType,
+                        title: "Welcome back!",
+                        additionalDetails: AnyView(
+                            WidgetLibrary.UI.Meetings()
+                        )
+                    )
+                }
+            }
             GridRow {
                 ZStack(alignment: .topLeading) {
                     SearchBar(
@@ -116,7 +128,7 @@ struct FindDashboard: View {
                 if location == .content {
                     GridRow {
                         ZStack(alignment: .leading) {
-                            Theme.subHeaderColour
+                            self.nav.parent?.appPage.primaryColour ?? Theme.subHeaderColour
 
                             HStack {
                                 Toggle("Records", isOn: $showRecords)
@@ -134,6 +146,7 @@ struct FindDashboard: View {
                         }
                     }
                     .frame(height: 40)
+                    .foregroundStyle(.gray)
                 } else if location == .sidebar {
                     GridRow {
                         LazyVGrid(columns: columns, alignment: .leading) {
@@ -149,7 +162,8 @@ struct FindDashboard: View {
                         }
                         .padding(10)
                     }
-                    .background(location == .sidebar ? Theme.rowColour : Theme.subHeaderColour)
+                    .background(location == .sidebar ? Theme.rowColour : self.nav.parent?.appPage.primaryColour.opacity(0.2))
+                    .foregroundStyle(.gray)
                 }
             }
 

@@ -14,7 +14,8 @@ struct Planning: View {
     private let maxItems: Int = 6
     private let title: String = "Planning"
     private let page: PageConfiguration.AppPage = .planning
-    private let description: String = "Use the daily plan to organize your day. Feature plans allow you to define projects of any scope!"
+    private let eType: PageConfiguration.EntityType = .tasks
+    private let description: String = "Use the daily plan to organize your day, Upcoming to find out what's next, and Overdue to see what you've missed."
     private let buttons: [ToolbarButton] = [
         ToolbarButton(
             id: 0,
@@ -53,15 +54,16 @@ struct Planning: View {
     @State private var jobs: [Job] = []
 
     var body: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                Title(text: title)
-                Spacer()
-            }
-
-            Text(description)
-                .padding(.bottom, 10)
-
+        VStack(alignment: .leading, spacing: 0) {
+            UniversalHeader.Widget(
+                type: self.eType,
+                title: "Planning",
+                additionalDetails: AnyView(
+                    WidgetLibrary.UI.Meetings()
+                )
+            )
+            FancyHelpText(text: description, page: self.page)
+            FancyDivider()
             FancyGenericToolbar(buttons: buttons, standalone: true, mode: .compact, page: self.page)
         }
         .padding()

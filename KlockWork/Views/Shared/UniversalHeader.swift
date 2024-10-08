@@ -8,13 +8,14 @@
 
 import SwiftUI
 
-struct EntityTypeHeader: View {
+struct UniversalHeader: View {
     @EnvironmentObject public var state: Navigation
     @State private var resourcePath: String = ""
     @State private var parts: [Item] = []
     @State private var defaultParts: [Item] = [
         Item(text: "...")
     ]
+    public var title: String? = ""
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -22,11 +23,14 @@ struct EntityTypeHeader: View {
                 if self.parts.count > 0 {
                     ForEach(self.parts, id: \.id) { part in part }
                 } else {
-                    ForEach(self.defaultParts, id: \.id) { part in part }
+                    if self.title == nil {
+                        ForEach(self.defaultParts, id: \.id) { part in part }
+                    } else {
+                        Text(self.title!)
+                    }
                 }
             }
         }
-        .padding(.leading)
         .font(.title2)
         .onAppear(perform: self.actionSetViewState)
         .onChange(of: self.state.session.job) { self.actionSetViewState() }
@@ -54,7 +58,7 @@ struct EntityTypeHeader: View {
                 .buttonStyle(.plain)
                 .disabled(self.target == .today)
 
-                if [.companyDetail, .projectDetail, .today].contains(where: {$0 == self.target}) {
+                if [.companyDetail, .projectDetail, .today, .jobs].contains(where: {$0 == self.target}) {
                     Image(systemName: "chevron.right")
                         .foregroundStyle((self.state.session.job?.backgroundColor ?? Theme.rowColour).isBright() ? Theme.base.opacity(0.3) : .white.opacity(0.3))
                 }
@@ -62,9 +66,58 @@ struct EntityTypeHeader: View {
             .useDefaultHover({ hover in self.isHighlighted = hover})
         }
     }
+
+    struct Widget: View {
+        @EnvironmentObject public var state: Navigation
+        public var type: PageConfiguration.EntityType
+        public var buttons: AnyView?
+        public var title: String?
+        public var additionalDetails: AnyView?
+
+        var body: some View {
+            // @TODO: merge these two cases
+            if self.additionalDetails != nil {
+                ZStack(alignment: .topLeading) {
+                    TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
+                        .frame(height: 120)
+                        .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
+
+                    VStack(alignment: .leading) {
+                        HStack(alignment: .top) {
+                            UniversalHeader(title: self.title)
+
+                            HStack(alignment: .center) {
+                                Spacer()
+                                if let buttons = self.buttons {
+                                    buttons
+                                }
+                            }
+                        }
+                        self.additionalDetails!
+                    }
+                    .padding()
+                }
+            } else {
+                ZStack(alignment: .leading) {
+                    TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
+                        .frame(height: 60)
+                        .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
+                    UniversalHeader(title: self.title)
+                        .padding(.leading)
+                    HStack(alignment: .center) {
+                        Spacer()
+                        if let buttons = self.buttons {
+                            buttons
+                        }
+                    }
+                    .padding(.trailing)
+                }
+            }
+        }
+    }
 }
 
-extension EntityTypeHeader {
+extension UniversalHeader {
     /// Fires onload and whenever the session job is changed. Compiles a breadcrumb based on selected job/project/company
     /// - Returns: Void
     private func actionSetViewState() -> Void {
