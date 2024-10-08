@@ -221,6 +221,5 @@ extension Today.PostingInterface {
     private func clearAction() -> Void {
         text = ""
         self.nav.session.job = nil
-        self.nav.reset() // @TODO: yes?
     }
 }
