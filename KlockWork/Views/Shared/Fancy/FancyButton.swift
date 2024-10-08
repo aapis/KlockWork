@@ -69,7 +69,7 @@ struct FancyButtonv2: View {
     @EnvironmentObject public var nav: Navigation
     public var text: String
     public var action: (() -> Void)?
-    public var icon: String? = "checkmark.circle"
+    public var icon: String?
     public var iconAsImage: Image? = nil
     public var iconWhenHighlighted: String?
     public var iconAsImageWhenHighlighted: Image? = nil
