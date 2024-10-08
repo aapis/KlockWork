@@ -21,22 +21,17 @@ struct TaskDashboard: View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .center, spacing: 0) {
-                    Title(text: eType.label, imageAsImage: eType.icon)
-                    if self.job == nil {
-                        Spacer()
-                        FancyButtonv2(
-                            text: "Create",
-                            action: self.actionOnTapCreate,
-                            icon: "plus",
-                            showLabel: false
-                        )
-                    }
+                    EntityTypeHeader.Widget(
+                        type: self.eType,
+                        buttons: AnyView(
+                            WidgetLibrary.ResetUserChoicesButton()
+                        ),
+                        title: self.eType.label
+                    )
                 }
-                FancyDivider()
-
                 if self.state.session.job == nil {
                     FancyHelpText(
-                        text: "No terms found for the selected job. Choose a job from the sidebar to get started.",
+                        text: "No tasks found. Choose a job from the sidebar to get started.",
                         page: self.page
                     )
                 } else {

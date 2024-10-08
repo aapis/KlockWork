@@ -26,37 +26,35 @@ struct TaskListView: View {
         
         return ordered as! [LogTask]
     }
-    
+    private let page: PageConfiguration.AppPage = .explore
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack {
                 VStack(alignment: .leading, spacing: 0) {
                     ZStack(alignment: .topTrailing) {
-                        RowAddButton(isPresented: $isPresented, callback: self.actionOnCreate)
-                            .frame(height: 40)
-                            .disabled(self.content.isEmpty || self.state.session.job == nil)
-                            .opacity(self.content.isEmpty || self.state.session.job == nil ? 0.5 : 1)
-
                         FancyTextField(
                             placeholder: "What needs to be done?",
                             lineLimit: 1,
                             onSubmit: self.actionOnCreate,
                             disabled: self.state.session.job == nil,
+                            bgColour: self.state.session.job?.backgroundColor.opacity(0.6) ?? .clear,
                             text: $content
                         )
+
+                        RowAddButton(isPresented: $isPresented, callback: self.actionOnCreate)
+                            .frame(height: 42)
+                            .disabled(self.contfeaent.isEmpty || self.state.session.job == nil)
+                            .opacity(self.content.isEmpty || self.state.session.job == nil ? 0.5 : 1)
                     }
 
-                    Divider()
-                        .foregroundColor(.clear)
-                        .frame(height: 20)
-                        .overlay(.clear)
-                    
                     if job.tasks!.count == 0 {
-                        Text("No tasks associated with this list yet")
+                        FancyHelpText(
+                            text: "No tasks associated with this list yet",
+                            page: self.page
+                        )
                     } else {
                         VStack(alignment: .leading, spacing: 1) {
-                            header.font(Theme.font)
-
                             // @TODO: group task statuses (complete, cancelled, etc) into tabbed interface
                             ScrollView(showsIndicators: false) {
                                 VStack(spacing: 1) {
@@ -71,18 +69,7 @@ struct TaskListView: View {
             }
         }
     }
-    
-    @ViewBuilder
-    var header: some View {
-        HStack(alignment: .center, spacing: 0) {
-            Text("Tasks for \(self.job.title ?? self.job.jid.string) (#\(self.job.jid.string))")
-                .foregroundColor(self.job.backgroundColor.isBright() ? Theme.base : .white)
-            Spacer()
-        }
-        .padding()
-        .background(self.job.backgroundColor)
-    }
-    
+
     private func actionOnCreate() -> Void {
         CoreDataTasks(moc: self.state.moc).create(
             content: self.content,

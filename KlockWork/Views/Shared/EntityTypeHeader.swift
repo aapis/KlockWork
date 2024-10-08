@@ -15,6 +15,7 @@ struct EntityTypeHeader: View {
     @State private var defaultParts: [Item] = [
         Item(text: "...")
     ]
+    public var title: String? = ""
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -22,7 +23,11 @@ struct EntityTypeHeader: View {
                 if self.parts.count > 0 {
                     ForEach(self.parts, id: \.id) { part in part }
                 } else {
-                    ForEach(self.defaultParts, id: \.id) { part in part }
+                    if self.title == nil {
+                        ForEach(self.defaultParts, id: \.id) { part in part }
+                    } else {
+                        Text(self.title!)
+                    }
                 }
             }
         }
@@ -60,6 +65,29 @@ struct EntityTypeHeader: View {
                 }
             }
             .useDefaultHover({ hover in self.isHighlighted = hover})
+        }
+    }
+
+    struct Widget: View {
+        @EnvironmentObject public var state: Navigation
+        public var type: PageConfiguration.EntityType
+        public var buttons: AnyView?
+        public var title: String?
+
+        var body: some View {
+            ZStack(alignment: .leading) {
+                TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
+                    .frame(height: 60)
+                    .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
+                EntityTypeHeader(title: self.title)
+                HStack(alignment: .center) {
+                    Spacer()
+                    if let buttons = self.buttons {
+                        buttons
+                    }
+                }
+                .padding(.trailing)
+            }
         }
     }
 }

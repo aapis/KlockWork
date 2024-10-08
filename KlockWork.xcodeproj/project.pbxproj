@@ -150,6 +150,7 @@
 		53967D8629EC7DEB006616A0 /* ViewModeSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53967D8529EC7DEB006616A0 /* ViewModeSelector.swift */; };
 		53999C1F29669C4E00125E65 /* NoteCreate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53999C1E29669C4E00125E65 /* NoteCreate.swift */; };
 		5399AF762CB4995A00211ECD /* EntityTypeHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5399AF752CB4995400211ECD /* EntityTypeHeader.swift */; };
+		5399B0CC2CB4EC5A00211ECD /* WidgetLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5399B0CB2CB4EC4800211ECD /* WidgetLibrary.swift */; };
 		539F68DB2BF6BD310086F89A /* FancyDropdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539F68DA2BF6BD310086F89A /* FancyDropdown.swift */; };
 		539F68DD2BF70A260086F89A /* IntroToKlockWork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539F68DC2BF70A260086F89A /* IntroToKlockWork.swift */; };
 		53B0BE7F2972542A007CB663 /* ProjectsDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE7E2972542A007CB663 /* ProjectsDashboard.swift */; };
@@ -434,6 +435,7 @@
 		53967D8529EC7DEB006616A0 /* ViewModeSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModeSelector.swift; sourceTree = "<group>"; };
 		53999C1E29669C4E00125E65 /* NoteCreate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteCreate.swift; sourceTree = "<group>"; };
 		5399AF752CB4995400211ECD /* EntityTypeHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityTypeHeader.swift; sourceTree = "<group>"; };
+		5399B0CB2CB4EC4800211ECD /* WidgetLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLibrary.swift; sourceTree = "<group>"; };
 		539F68DA2BF6BD310086F89A /* FancyDropdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyDropdown.swift; sourceTree = "<group>"; };
 		539F68DC2BF70A260086F89A /* IntroToKlockWork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroToKlockWork.swift; sourceTree = "<group>"; };
 		53B0BE7E2972542A007CB663 /* ProjectsDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsDashboard.swift; sourceTree = "<group>"; };
@@ -1250,6 +1252,7 @@
 		53EDDF9C29634840008D34C7 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				5399B0CB2CB4EC4800211ECD /* WidgetLibrary.swift */,
 				5399AF752CB4995400211ECD /* EntityTypeHeader.swift */,
 				53E9187D2B47C9CC00912C6F /* PanelGroup */,
 				53790C012A72F15200D3FFD4 /* AppSidebar */,
@@ -1563,6 +1566,7 @@
 				53EFCE7929637F35004E45EC /* GeneralSettings.swift in Sources */,
 				5335A5B7296D2089000051B1 /* TaskListView.swift in Sources */,
 				5378857C2B450F2800825B78 /* EventIndicatorStatus.swift in Sources */,
+				5399B0CC2CB4EC5A00211ECD /* WidgetLibrary.swift in Sources */,
 				533544822CB19C480067A944 /* Planning.Overdue.swift in Sources */,
 				53814A8E2A9821C800A5A015 /* DefaultPlanningSidebar.swift in Sources */,
 				53E2025C2A7EAF6100B4DF70 /* ProjectRowPlain.swift in Sources */,

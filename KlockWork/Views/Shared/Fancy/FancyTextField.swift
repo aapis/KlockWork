@@ -37,13 +37,19 @@ struct FancyTextField: View {
             if showLabel {
                 FancyLabel(text: self.placeholder)
             }
-            
-            if lineLimit == 1 {
-                oneLine
-            } else if lineLimit < 15 {
-                oneBigLine
-            } else {
-                multiLine
+            ZStack(alignment: .topLeading) {
+                if lineLimit == 1 {
+                    oneLine
+                } else if lineLimit < 15 {
+                    oneBigLine
+                } else {
+                    multiLine
+                }
+
+                LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                    .blendMode(.softLight)
+                    .frame(height: self.lineLimit < 15 ? 40 : 80)
+                    .opacity(0.1)
             }
         }
     }

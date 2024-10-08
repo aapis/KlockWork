@@ -86,6 +86,7 @@ struct FancyButtonv2: View {
     public var pageType: Page? = nil
     public var sidebar: AnyView? = nil
     public var twoStage: Bool = false
+    public var font: Font = .title2
     @State private var padding: CGFloat = 10
     @State private var highlighted: Bool = false
     @State private var active: Bool = false
@@ -160,12 +161,12 @@ struct FancyButtonv2: View {
                     if let icon = self.icon {
                         Image(systemName: self.highlighted && self.iconWhenHighlighted != nil ? self.iconWhenHighlighted! : icon)
                             .symbolRenderingMode(.hierarchical)
-                            .font(.title)
+                            .font(self.font)
                             .foregroundStyle(self.iconFgColour ?? self.fgColour ?? .white)
                     } else if let ic = self.iconAsImage {
                         AnyView(self.highlighted && self.iconAsImageWhenHighlighted != nil ? self.iconAsImageWhenHighlighted!: ic)
                             .symbolRenderingMode(.hierarchical)
-                            .font(.title)
+                            .font(self.font)
                             .foregroundStyle(self.iconFgColour ?? self.fgColour ?? .white)
                     }
                 }
