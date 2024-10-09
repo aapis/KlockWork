@@ -26,7 +26,7 @@ extension WidgetLibrary {
                 public var onActionClear: (() -> Void)?
 
                 var body: some View {
-                    if self.state.session.job != nil {
+                    if self.state.session.job != nil || self.state.session.project != nil || self.state.session.company != nil {
                         FancyButtonv2(
                             text: "Reset interface to default state",
                             action: self.onActionClear != nil ? self.onActionClear : self.defaultClearAction,
@@ -40,8 +40,6 @@ extension WidgetLibrary {
                         )
                         .help("Reset interface to default state")
                         .frame(width: 25)
-                        .disabled(self.state.session.job == nil)
-                        .opacity(self.state.session.job == nil ? 0.5 : 1)
                     } else {
                         EmptyView()
                     }
@@ -274,6 +272,22 @@ extension WidgetLibrary {
                 .onAppear(perform: actionOnAppear)
                 .onChange(of: calendar) { self.actionOnChangeCalendar() }
                 .id(updater.get("dashboard.header"))
+            }
+        }
+
+        struct Chip: View {
+            public var type: PageConfiguration.EntityType
+            public var count: Int
+
+            var body: some View {
+                HStack(alignment: .center, spacing: 8) {
+                    Text(String(self.count))
+                    self.type.icon
+                }
+                .help("\(self.count) \(self.type.label)")
+                .padding(3)
+                .background(.white.opacity(0.4).blendMode(.softLight))
+                .clipShape(RoundedRectangle(cornerRadius: 3))
             }
         }
     }
