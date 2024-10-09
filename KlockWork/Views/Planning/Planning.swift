@@ -14,7 +14,7 @@ struct Planning: View {
     private let maxItems: Int = 6
     private let title: String = "Planning"
     private let page: PageConfiguration.AppPage = .planning
-    private let eType: PageConfiguration.EntityType = .tasks
+    private let eType: PageConfiguration.EntityType = .BruceWillis
     private let description: String = "Use the daily plan to organize your day, Upcoming to find out what's next, and Overdue to see what you've missed."
     private let buttons: [ToolbarButton] = [
         ToolbarButton(
