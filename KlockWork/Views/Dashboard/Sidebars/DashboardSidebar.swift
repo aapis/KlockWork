@@ -10,6 +10,7 @@ import SwiftUI
 import KWCore
 
 struct DashboardSidebar: View {
+    @AppStorage("today.calendar") public var calendar: Int = -1
     @State private var tabs: [ToolbarButton] = []
 
     var body: some View {
@@ -41,14 +42,19 @@ extension DashboardSidebar {
                 icon: "menucard",
                 labelText: "Outline",
                 contents: AnyView(OutlineWidget())
-            ),
-            ToolbarButton(
-                id: 3,
-                helpText: "Calendar events",
-                icon: "calendar",
-                labelText: "Calendar events",
-                contents: AnyView(WidgetLibrary.UI.Sidebar.EventsWidget())
-            ),
+            )
         ]
+
+        if self.calendar > -1 {
+            tabs.append(
+                ToolbarButton(
+                    id: 3,
+                    helpText: "Calendar events",
+                    icon: "calendar",
+                    labelText: "Calendar events",
+                    contents: AnyView(WidgetLibrary.UI.Sidebar.EventsWidget())
+                )
+            )
+        }
     }
 }
