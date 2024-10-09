@@ -6,8 +6,8 @@
 //  Copyright © 2020 YegCollective. All rights reserved.
 //
 
-import EventKit
 import SwiftUI
+import EventKit
 import KWCore
 
 struct Home: View {
@@ -41,6 +41,13 @@ struct Home: View {
             icon: "menucard",
             labelText: "Outline",
             contents: AnyView(OutlineWidget())
+        ),
+        ToolbarButton(
+            id: 2,
+            helpText: "Calendar events",
+            icon: "calendar",
+            labelText: "Calendar events",
+            contents: AnyView(WidgetLibrary.UI.Sidebar.EventsWidget())
         )
     ]
 
