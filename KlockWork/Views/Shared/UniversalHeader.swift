@@ -16,6 +16,7 @@ struct UniversalHeader: View {
         Item(text: "...")
     ]
     public var title: String? = ""
+    public var entityType: PageConfiguration.EntityType
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -42,28 +43,37 @@ struct UniversalHeader: View {
         @EnvironmentObject public var state: Navigation
         public var id: UUID = UUID()
         public var text: String
-        public var target: Page = .today
+        public var helpText: String = ""
+        public var target: Page?
         @State private var isHighlighted: Bool = false
 
         var body: some View {
             HStack(alignment: .center) {
-                Button {
-                    self.state.to(self.target)
-                } label: {
-                    Text(self.text)
-                        .underline(self.isHighlighted && self.target != .today) // using .today as "default"
-                        .foregroundStyle((self.state.session.job?.backgroundColor ?? Theme.rowColour).isBright() ? Theme.base.opacity(0.55) : .white.opacity(0.55))
-                        .multilineTextAlignment(.leading)
-                }
-                .buttonStyle(.plain)
-                .disabled(self.target == .today)
+                if self.target == nil {
+                    self.ItemText
+                        .opacity(0.5)
+                } else {
+                    Button {
+                        self.state.to(self.target!)
+                    } label: {
+                        self.ItemText
+                    }
+                    .useDefaultHover({ hover in self.isHighlighted = hover})
+                    .help(self.helpText)
+                    .buttonStyle(.plain)
+                    .disabled(self.target! == .today)
 
-                if [.companyDetail, .projectDetail, .today, .jobs].contains(where: {$0 == self.target}) {
                     Image(systemName: "chevron.right")
                         .foregroundStyle((self.state.session.job?.backgroundColor ?? Theme.rowColour).isBright() ? Theme.base.opacity(0.3) : .white.opacity(0.3))
                 }
             }
-            .useDefaultHover({ hover in self.isHighlighted = hover})
+        }
+
+        @ViewBuilder var ItemText: some View {
+            Text(self.text)
+                .underline(self.isHighlighted && self.target != .today) // using .today as "default"
+                .foregroundStyle(self.isHighlighted ? (self.state.session.job?.backgroundColor ?? Theme.rowColour).isBright() ? Theme.base : .white : (self.state.session.job?.backgroundColor ?? Theme.rowColour).isBright() ? Theme.base.opacity(0.55) : .white.opacity(0.55))
+                .multilineTextAlignment(.leading)
         }
     }
 
@@ -84,7 +94,7 @@ struct UniversalHeader: View {
 
                     VStack(alignment: .leading) {
                         HStack(alignment: .top) {
-                            UniversalHeader(title: self.title)
+                            UniversalHeader(title: self.title, entityType: self.type)
 
                             HStack(alignment: .center) {
                                 Spacer()
@@ -102,7 +112,7 @@ struct UniversalHeader: View {
                     TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
                         .frame(height: 60)
                         .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
-                    UniversalHeader(title: self.title)
+                    UniversalHeader(title: self.title, entityType: self.type)
                         .padding(.leading)
                     HStack(alignment: .center) {
                         Spacer()
@@ -123,21 +133,58 @@ extension UniversalHeader {
     private func actionSetViewState() -> Void {
         self.parts = []
         if let job = self.state.session.job {
-            self.parts.append(Item(text: job.project?.company?.abbreviation ?? job.project?.company?.name ?? "", target: self.state.session.company?.pageDetailType ?? .dashboard))
-            self.parts.append(Item(text: job.project?.abbreviation ?? job.project?.name ?? "", target: self.state.session.project?.pageDetailType ?? .dashboard))
-            self.parts.append(Item(text: job.title ?? job.jid.string, target: job.pageDetailType))
+            self.parts.append(contentsOf: [
+                Item(
+                    text: job.project?.company?.abbreviation ?? job.project?.company?.name ?? "",
+                    helpText: job.project?.company?.name ?? "",
+                    target: self.state.session.company?.pageDetailType ?? .dashboard
+                ),
+                Item(
+                    text: job.project?.abbreviation ?? job.project?.name ?? "",
+                    helpText: job.project?.name ?? "",
+                    target: self.state.session.project?.pageDetailType ?? .dashboard
+                ),
+                Item(
+                    text: job.title ?? job.jid.string,
+                    helpText: job.title ?? job.jid.string,
+                    target: job.pageDetailType
+                ),
+                Item(
+                    // Sets last breadcrumb item text to page title (instead of entity type label) when Bruce says "It's time to DIE HARD"
+                    text: self.entityType == .BruceWillis ? self.state.parent?.defaultTitle ?? "" : self.entityType.label
+                )
+            ]
+        )
         } else {
             if let company = self.state.session.company {
                 self.parts = []
                 if company.name != nil {
-                    self.parts.append(Item(text: company.abbreviation ?? company.name ?? "", target: company.pageDetailType))
+                    self.parts.append(
+                        Item(
+                            text: company.abbreviation ?? company.name ?? "",
+                            helpText: company.name ?? "",
+                            target: company.pageDetailType
+                        )
+                    )
                 }
             }
             if let project = self.state.session.project {
                 self.parts = []
                 if project.name != nil && project.company != nil {
-                    self.parts.append(Item(text: project.company!.abbreviation ?? project.company!.name ?? "", target: project.company!.pageDetailType))
-                    self.parts.append(Item(text: project.abbreviation ?? project.name ?? "", target: project.pageDetailType))
+                    self.parts.append(
+                        Item(
+                            text: project.company!.abbreviation ?? project.company!.name ?? "",
+                            helpText: project.company?.name ?? "",
+                            target: project.company!.pageDetailType
+                        )
+                    )
+                    self.parts.append(
+                        Item(
+                            text: project.abbreviation ?? project.name ?? "",
+                            helpText: project.name ?? "",
+                            target: project.pageDetailType
+                        )
+                    )
                 }
             }
         }
