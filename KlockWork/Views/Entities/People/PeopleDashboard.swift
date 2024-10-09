@@ -10,6 +10,7 @@ import SwiftUI
 import KWCore
 
 struct PeopleDashboard: View {
+    typealias Widget = WidgetLibrary.UI.Buttons
     @EnvironmentObject public var state: Navigation
     @AppStorage("notes.columns") private var numColumns: Int = 3
     private let page: PageConfiguration.AppPage = .explore
@@ -27,8 +28,8 @@ struct PeopleDashboard: View {
                     type: self.eType,
                     buttons: AnyView(
                         HStack(alignment: .center) {
-                            WidgetLibrary.Buttons.ResetUserChoices()
-                            WidgetLibrary.Buttons.CreatePerson()
+                            Widget.ResetUserChoices()
+                            Widget.CreatePerson()
                         }
                     ),
                     title: self.eType.label

@@ -11,6 +11,7 @@ import SwiftUI
 import KWCore
 
 struct TaskDashboard: View {
+    typealias Widget = WidgetLibrary.UI.Buttons
     @EnvironmentObject public var state: Navigation
     public var defaultSelectedJob: Job?
     private let page: PageConfiguration.AppPage = .explore
@@ -23,7 +24,7 @@ struct TaskDashboard: View {
                 UniversalHeader.Widget(
                     type: self.eType,
                     buttons: AnyView(
-                        WidgetLibrary.Buttons.ResetUserChoices()
+                        Widget.ResetUserChoices()
                     ),
                     title: self.eType.label
                 )

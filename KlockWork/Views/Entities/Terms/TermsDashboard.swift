@@ -11,6 +11,7 @@ import KWCore
 import KWCore
 
 struct TermsDashboard: View {
+    typealias Widget = WidgetLibrary.UI.Buttons
     @EnvironmentObject public var state: Navigation
     @AppStorage("notes.columns") private var numColumns: Int = 3
     private let page: PageConfiguration.AppPage = .explore
@@ -29,8 +30,8 @@ struct TermsDashboard: View {
                     type: self.eType,
                     buttons: AnyView(
                         HStack(alignment: .center) {
-                            WidgetLibrary.Buttons.ResetUserChoices()
-                            WidgetLibrary.Buttons.CreateDefinition()
+                            Widget.ResetUserChoices()
+                            Widget.CreateDefinition()
                         }
                     ),
                     title: self.eType.label
