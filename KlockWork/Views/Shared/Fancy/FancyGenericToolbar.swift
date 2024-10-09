@@ -227,5 +227,6 @@ struct FancyGenericToolbar: View {
 extension FancyGenericToolbar.TabView {
     private func setActive(_ button: ToolbarButton) -> Void {
         selected = button.id
+        self.nav.setInspector()
     }
 }
