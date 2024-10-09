@@ -356,6 +356,7 @@ public class CoreDataCompanies: ObservableObject {
         var results: [Company] = []
         let fetch: NSFetchRequest<Company> = Company.fetchRequest()
         fetch.sortDescriptors = [
+            NSSortDescriptor(keyPath: \Company.isDefault, ascending: false),
             NSSortDescriptor(keyPath: \Company.name?, ascending: true),
             NSSortDescriptor(keyPath: \Company.createdDate?, ascending: true)
         ]
