@@ -196,38 +196,55 @@ struct WidgetLibrary {
             @AppStorage("today.calendar") public var calendar: Int = -1
             @State private var upcomingEvents: [EKEvent] = []
             @State private var calendarName: String = ""
+            private let celebratoryStatements: [String] = [
+                "rejoice",
+                "booya",
+                "hallelujah",
+                "excellent"
+            ]
+            private let maxEventsToPreview: Int = 2
 
             var body: some View {
-                VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: 5) {
                     if calendar > -1 {
-                        HStack {
-                            Image(systemName: "calendar")
+                        HStack(alignment: .top) {
+                            if self.upcomingEvents.count == 0 {
+                                Text("No meetings today, \(self.celebratoryStatements.randomElement()!)!")
+                            } else if self.upcomingEvents.count > 1 {
+                                HStack(alignment: .center) {
+                                    FancyButtonv2(
+                                        text: "\(self.upcomingEvents.count) meetings",
+                                        action: {},
+                                        icon: "calendar",
+                                        fgColour: (self.state.session.job?.backgroundColor ?? .clear).isBright() ? Theme.lightBase : Theme.lightWhite,
+                                        size: .link,
+                                        type: .clear
+                                    )
+                                }
 
-                            if upcomingEvents.count == 0 || upcomingEvents.count > 1 {
-                                Text("\(upcomingEvents.count) meetings today")
-                                    .font(Theme.font)
                             } else {
-                                Text("\(upcomingEvents.count) meeting today")
-                                    .font(Theme.font)
+                                Text("1 meeting")
                             }
                         }
-                        .padding(5)
 
-                        if upcomingEvents.count <= 3 {
-                            VStack(alignment: .leading) {
-                                ForEach(upcomingEvents, id: \.objectSpecifier) { event in
+                        VStack(alignment: .leading, spacing: 5) {
+                            ForEach(upcomingEvents.prefix(self.maxEventsToPreview).sorted(by: {$0.startDate < $1.startDate}), id: \.self) { event in
+                                HStack {
+                                    let hasPassed = event.startDate >= Date()
+                                    Image(systemName: hasPassed ? "arrow.right" : "checkmark")
+                                        .padding(.leading, 10)
                                     HStack {
-                                        let hasPassed = event.startDate >= Date()
-                                        Image(systemName: hasPassed ? "arrow.right" : "checkmark")
-                                            .padding(.leading, 15)
-                                        Text("\(event.title) at \(event.startTime())")
-                                            .foregroundColor(hasPassed ? .white : .gray)
+                                        Text("\(event.startTime()) - \(event.endTime()):")
+                                        Text(event.title)
                                     }
+                                        .foregroundColor(hasPassed ? .white : .gray)
+                                        .multilineTextAlignment(.leading)
                                 }
                             }
                         }
                     }
                 }
+                .foregroundStyle((self.state.session.job?.backgroundColor ?? .clear).isBright() ? Theme.lightBase : Theme.lightWhite)
                 .onAppear(perform: actionOnAppear)
                 .onChange(of: calendar) { self.actionOnChangeCalendar() }
                 .id(updater.get("dashboard.header"))

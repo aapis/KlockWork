@@ -16,4 +16,11 @@ extension EKEvent {
 
         return df.string(from: self.startDate)
     }
+
+    func endTime() -> String {
+        let df = DateFormatter()
+        df.dateFormat = "h:mm a"
+
+        return df.string(from: self.endDate)
+    }
 }
