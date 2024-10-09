@@ -27,4 +27,51 @@ public final class StringHelper {
         
         return ""
     }
+
+    /// Converts a passed object into title text containing either a short or long string representing the consumed object
+    /// - Parameter entity: NSManagedObject
+    /// - Parameter max Int 30 by default
+    /// - Returns: Void
+    static public func titleFrom(_ entity: NSManagedObject?, max: Int = 30) -> String {
+        if entity == nil {
+            return ""
+        }
+
+        switch entity {
+        case is Company:
+            if let company = entity as? Company {
+                if let title = company.name {
+                    if title.count > max {
+                        return company.abbreviation ?? "XXX"
+                    } else {
+                        return title
+                    }
+                }
+            }
+        case is Project:
+            if let project = entity as? Project {
+                if let title = project.name {
+                    if title.count > max {
+                        return project.abbreviation ?? "YYY"
+                    } else {
+                        return title
+                    }
+                }
+            }
+        case is Job:
+            if let job = entity as? Job {
+                if let title = job.title {
+                    if title.count > max {
+                        return job.jid.string
+                    } else {
+                        return title
+                    }
+                }
+            }
+        default:
+            return ""
+        }
+
+        return ""
+    }
 }
