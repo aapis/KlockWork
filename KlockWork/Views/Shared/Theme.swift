@@ -26,7 +26,9 @@ struct Theme {
     static public var rowStatusRed: Color = Color.red.opacity(0.2)
     static public var textBackground: Color = Color.black.opacity(0.1)
     static public var textLabelBackground: Color = Color.black.opacity(0.05)
-    
+    static public var lightWhite: Color = .white.opacity(0.55)
+    static public var lightBase: Color = Theme.base.opacity(0.55)
+
     static public let font: Font = .system(.body, design: .default)
     static public let fontTextField: Font = .system(.body, design: .monospaced)
     static public let fontTitle: Font = .system(.title)
