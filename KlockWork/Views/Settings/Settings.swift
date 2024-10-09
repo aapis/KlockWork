@@ -32,7 +32,7 @@ struct SettingsView: View {
                 .environmentObject(ce)
                 .environmentObject(nav)
                 .tabItem {
-                    Label("Today", systemImage: "doc.append.fill")
+                    Label("Today", systemImage: "tray")
                 }
                 .tag(SettingsTabs.today)
 

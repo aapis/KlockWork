@@ -11,6 +11,7 @@ import SwiftUI
 import KWCore
 
 struct NoteDashboard: View {
+    typealias Widget = WidgetLibrary.UI.Buttons
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
     @AppStorage("notes.columns") private var numColumns: Int = 3
@@ -32,8 +33,8 @@ struct NoteDashboard: View {
                     type: self.eType,
                     buttons: AnyView(
                         HStack(alignment: .center) {
-                            WidgetLibrary.Buttons.ResetUserChoices()
-                            WidgetLibrary.Buttons.CreateNote()
+                            Widget.ResetUserChoices()
+                            Widget.CreateNote()
                         }
                     ),
                     title: self.eType.label

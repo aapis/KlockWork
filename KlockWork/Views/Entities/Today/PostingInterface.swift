@@ -72,6 +72,7 @@ extension Today {
         }
 
         struct Buttons: View {
+            typealias Widget = WidgetLibrary.UI.Buttons
             @EnvironmentObject public var state: Navigation
             @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
             @AppStorage("general.experimental.cli") private var allowCLIMode: Bool = false
@@ -101,7 +102,7 @@ extension Today {
                         .frame(width: 25)
                     }
 
-                    WidgetLibrary.Buttons.ResetUserChoices(onActionClear: self.onActionClear)
+                    Widget.ResetUserChoices(onActionClear: self.onActionClear)
 
                     FancyButtonv2(
                         text: self.state.session.job != nil ? "Log to job \(self.state.session.job!.title ?? self.state.session.job!.jid.string)" : "Log",

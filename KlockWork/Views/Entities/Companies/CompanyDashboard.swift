@@ -10,6 +10,7 @@ import SwiftUI
 import KWCore
 
 struct CompanyDashboard: View {
+    typealias Widget = WidgetLibrary.UI.Buttons
     @State private var searchText: String = ""
     @State private var selected: Int = 0
     @State private var allowHidden: Bool = false
@@ -35,9 +36,9 @@ struct CompanyDashboard: View {
                     type: self.eType,
                     buttons: AnyView(
                         HStack(alignment: .center) {
-                            WidgetLibrary.Buttons.ResetUserChoices()
-                            WidgetLibrary.Buttons.CreateCompany()
-                            WidgetLibrary.Buttons.CreateProject()
+                            Widget.ResetUserChoices()
+                            Widget.CreateCompany()
+                            Widget.CreateProject()
                         }
                     ),
                     title: self.eType.label

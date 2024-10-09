@@ -78,11 +78,11 @@ extension JobDashboard {
 }
 
 struct JobDashboardRedux: View {
-    @AppStorage("jobdashboard.explorerVisible") private var explorerVisible: Bool = true
-    @AppStorage("jobdashboard.editorVisible") private var editorVisible: Bool = true
-
+    typealias Widget = WidgetLibrary.UI.Buttons
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject private var nav: Navigation
+    @AppStorage("jobdashboard.explorerVisible") private var explorerVisible: Bool = true
+    @AppStorage("jobdashboard.editorVisible") private var editorVisible: Bool = true
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .jobs
 
@@ -93,8 +93,8 @@ struct JobDashboardRedux: View {
                     type: self.eType,
                     buttons: AnyView(
                         HStack(alignment: .center) {
-                            WidgetLibrary.Buttons.ResetUserChoices()
-                            WidgetLibrary.Buttons.CreateJob(onAction: {
+                            Widget.ResetUserChoices()
+                            Widget.CreateJob(onAction: {
                                 editorVisible = true
                                 explorerVisible = false
 

@@ -10,6 +10,7 @@ import SwiftUI
 import KWCore
 
 struct OutlineWidget: View {
+    typealias UI = WidgetLibrary.UI
     @AppStorage("general.defaultCompany") public var defaultCompany: Int = 0
 
     @FetchRequest public var companies: FetchedResults<Company>
@@ -19,22 +20,7 @@ struct OutlineWidget: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            ZStack(alignment: .topLeading) {
-                Theme.base.opacity(0.2)
-
-                VStack(alignment: .leading, spacing: 0) {
-                    HStack(alignment: .center, spacing: 0) {
-                        Text("Outline")
-                            .padding(6)
-                            .background(Theme.textBackground)
-                            .foregroundStyle(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 5))
-                        Spacer()
-                    }
-                    .padding(8)
-                    Divider()
-                }
-            }
+            UI.Sidebar.Title(text: "Outline")
 
             ZStack {
                 Theme.base.opacity(0.2)
