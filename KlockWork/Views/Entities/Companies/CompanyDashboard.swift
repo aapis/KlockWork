@@ -11,18 +11,13 @@ import KWCore
 
 struct CompanyDashboard: View {
     typealias Widget = WidgetLibrary.UI.Buttons
+    @EnvironmentObject public var state: Navigation
+    @AppStorage("notes.columns") private var numColumns: Int = 3
+    @AppStorage("general.defaultCompany") public var defaultCompany: Int = 0
     @State private var searchText: String = ""
     @State private var selected: Int = 0
     @State private var allowHidden: Bool = false
-
-    @AppStorage("notes.columns") private var numColumns: Int = 3
-    @AppStorage("general.defaultCompany") public var defaultCompany: Int = 0
-
-    @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var nav: Navigation
-
-    @FetchRequest public var companies: FetchedResults<Company>
-
+    @State private var companies: [Company] = []
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .companies
     private var columns: [GridItem] {
@@ -62,6 +57,8 @@ struct CompanyDashboard: View {
             .padding()
         }
         .background(Theme.toolbarColour)
+        .onAppear(perform: self.actionOnAppear)
+        .onChange(of: self.state.session.company) { self.actionOnAppear() }
     }
 
     @ViewBuilder private var Recent: some View {
@@ -76,14 +73,13 @@ struct CompanyDashboard: View {
 }
 
 extension CompanyDashboard {
-    init(company: Company? = nil) {
-        let request: NSFetchRequest<Company> = Company.fetchRequest()
-        request.sortDescriptors = [
-            NSSortDescriptor(keyPath: \Company.name, ascending: true)
-        ]
-
-        request.predicate = NSPredicate(format: "alive = true")
-
-        _companies = FetchRequest(fetchRequest: request, animation: .easeInOut)
+    /// Onload handler. Filters to current Company if one is selected
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        if let company = self.state.session.company {
+            self.companies = [company]
+        } else {
+            self.companies = CoreDataCompanies(moc: self.state.moc).alive()
+        }
     }
 }
