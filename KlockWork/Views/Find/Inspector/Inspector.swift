@@ -318,13 +318,11 @@ public struct Inspector: View, Identifiable {
                     HStack(alignment: .top, spacing: 10) {
                         FancyButtonv2(
                             text: "Open project",
+                            action: {self.nav.session.company = company ; self.nav.to(.companyDetail)},
                             icon: "arrow.right.square.fill",
                             showLabel: true,
                             size: .link,
-                            type: .clear,
-                            redirect: AnyView(CompanyDashboard(company: company)),
-                            pageType: .companies,
-                            sidebar: AnyView(DefaultCompanySidebar())
+                            type: .clear
                         )
                     }
                 }
@@ -361,13 +359,11 @@ public struct Inspector: View, Identifiable {
                 HStack(alignment: .top, spacing: 10) {
                     FancyButtonv2(
                         text: "Open company",
+                        action: {self.nav.session.company = self.item ; self.nav.to(.companyDetail)},
                         icon: "arrow.right.square.fill",
                         showLabel: true,
                         size: .link,
-                        type: .clear,
-                        redirect: AnyView(CompanyDashboard(company: item)),
-                        pageType: .companies,
-                        sidebar: AnyView(DefaultCompanySidebar())
+                        type: .clear
                     )
                 }
             }
