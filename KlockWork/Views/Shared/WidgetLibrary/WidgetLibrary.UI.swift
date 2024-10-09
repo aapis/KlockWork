@@ -240,16 +240,10 @@ extension WidgetLibrary {
                                 Text("No meetings today, \(UI.celebratoryStatements.randomElement()!)!")
                             } else if self.upcomingEvents.count > 1 {
                                 HStack(alignment: .center) {
-                                    FancyButtonv2(
-                                        text: "\(self.upcomingEvents.count) meetings",
-                                        action: {},
-                                        icon: "calendar",
-                                        fgColour: (self.state.session.job?.backgroundColor ?? .clear).isBright() ? Theme.lightBase : Theme.lightWhite,
-                                        size: .link,
-                                        type: .clear
-                                    )
+                                    Image(systemName: "calendar")
+                                        .symbolRenderingMode(.hierarchical)
+                                    Text("\(self.upcomingEvents.count) meetings")
                                 }
-
                             } else {
                                 Text("1 meeting")
                             }
