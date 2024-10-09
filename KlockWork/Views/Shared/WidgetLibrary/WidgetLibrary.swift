@@ -189,6 +189,13 @@ struct WidgetLibrary {
     }
 
     struct UI {
+        static public let celebratoryStatements: [String] = [
+            "rejoice",
+            "booya",
+            "hallelujah",
+            "excellent"
+        ]
+
         struct Meetings: View {
             @EnvironmentObject public var state: Navigation
             @EnvironmentObject public var updater: ViewUpdater
@@ -196,12 +203,7 @@ struct WidgetLibrary {
             @AppStorage("today.calendar") public var calendar: Int = -1
             @State private var upcomingEvents: [EKEvent] = []
             @State private var calendarName: String = ""
-            private let celebratoryStatements: [String] = [
-                "rejoice",
-                "booya",
-                "hallelujah",
-                "excellent"
-            ]
+
             private let maxEventsToPreview: Int = 2
 
             var body: some View {
@@ -209,7 +211,7 @@ struct WidgetLibrary {
                     if calendar > -1 {
                         HStack(alignment: .top) {
                             if self.upcomingEvents.count == 0 {
-                                Text("No meetings today, \(self.celebratoryStatements.randomElement()!)!")
+                                Text("No meetings today, \(UI.celebratoryStatements.randomElement()!)!")
                             } else if self.upcomingEvents.count > 1 {
                                 HStack(alignment: .center) {
                                     FancyButtonv2(

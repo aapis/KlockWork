@@ -24,7 +24,7 @@ extension DashboardSidebar {
             ToolbarButton(
                 id: 0,
                 helpText: "Today in history",
-                icon: "calendar",
+                icon: "clock.badge.questionmark.fill",
                 labelText: "History",
                 contents: AnyView(TodayInHistoryWidget())
             ),
@@ -41,6 +41,13 @@ extension DashboardSidebar {
                 icon: "menucard",
                 labelText: "Outline",
                 contents: AnyView(OutlineWidget())
+            ),
+            ToolbarButton(
+                id: 3,
+                helpText: "Calendar events",
+                icon: "calendar",
+                labelText: "Calendar events",
+                contents: AnyView(WidgetLibrary.UI.Sidebar.EventsWidget())
             ),
         ]
     }
