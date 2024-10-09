@@ -8,6 +8,7 @@
 
 import SwiftUI
 import KWCore
+import EventKit
 
 public enum Page {
     typealias Conf = PageConfiguration.AppPage
@@ -647,6 +648,7 @@ extension Navigation.Session {
         var moc: NSManagedObjectContext
         var hasResults: Bool = false
         var inspectingEntity: NSManagedObject? = nil
+        var inspectingEvent: EKEvent? = nil
     }
     
     public struct Toolbar: Identifiable {
