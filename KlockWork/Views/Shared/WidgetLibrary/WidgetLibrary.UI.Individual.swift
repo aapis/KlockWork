@@ -27,7 +27,7 @@ extension WidgetLibrary.UI {
                     showBorder: false,
                     showButton: false
                 )
-                .background(self.hasEventPassed ? Theme.lightWhite : .orange)
+                .background(self.hasEventPassed ? Theme.lightWhite : Color(event.calendar.color))
                 .foregroundStyle(self.hasEventPassed ? Theme.lightBase : Theme.base)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.search.inspectingEvent) {
