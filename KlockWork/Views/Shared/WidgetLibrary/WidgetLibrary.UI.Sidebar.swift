@@ -22,27 +22,18 @@ extension WidgetLibrary.UI {
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 1) {
-                    ForEach(self.upcomingEvents.sorted(by: {$0.startDate < $1.startDate}), id: \.self) { event in
-                        SidebarItem(
-                            data: "\(event.startTime()) - \(event.endTime()): \(event.title ?? "")",
-                            help: "\(event.startTime()) - \(event.endTime()): \(event.title ?? "")",
-                            icon: "chevron.right",
-                            orientation: .right,
-                            action: {},
-                            showBorder: false,
-                            showButton: false
-                        )
-//                        HStack {
-//                            let hasPassed = event.startDate >= Date()
-//                            Image(systemName: hasPassed ? "arrow.right" : "checkmark")
-//                                .padding(.leading, 10)
-//                            HStack {
-//                                Text("\(event.startTime()) - \(event.endTime()):")
-//                                Text(event.title)
-//                            }
-//                                .foregroundColor(hasPassed ? .white : .gray)
-//                                .multilineTextAlignment(.leading)
-//                        }
+                    if self.calendar > 0 {
+                        ForEach(self.upcomingEvents.sorted(by: {$0.startDate < $1.startDate}), id: \.self) { event in
+                            SingleEvent(event: event)
+                        }
+                    } else {
+                        HStack(alignment: .center, spacing: 0) {
+                            Text("No calendar selected. Choose one under Settings > Today > Active calendar.")
+                            Spacer()
+                        }
+                        .padding()
+                        .background(Theme.textBackground)
+                        .foregroundStyle(Theme.lightWhite)
                     }
                 }
                 .foregroundStyle((self.state.session.job?.backgroundColor ?? .clear).isBright() ? Theme.lightBase : Theme.lightWhite)
@@ -51,6 +42,35 @@ extension WidgetLibrary.UI {
                 .id(updater.get("dashboard.header"))
             }
         }
+
+        struct SingleEvent: View {
+            @EnvironmentObject public var state: Navigation
+            public let event: EKEvent
+            @State private var hasEventPassed: Bool = false
+
+            var body: some View {
+                SidebarItem(
+                    data: "\(event.startTime()) - \(event.endTime()): \(event.title ?? "")",
+                    help: "\(event.startTime()) - \(event.endTime()): \(event.title ?? "")",
+                    icon: "chevron.right",
+                    orientation: .right,
+                    action: {},
+                    showBorder: false,
+                    showButton: false
+                )
+                .background(self.hasEventPassed ? Theme.lightWhite : .orange)
+                .foregroundStyle(self.hasEventPassed ? Theme.lightBase : Theme.base)
+                .onAppear(perform: self.actionOnAppear)
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.Sidebar.SingleEvent {
+    /// Onload handler. Determines if event has passed or not
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.hasEventPassed = event.startDate < Date()
     }
 }
 
