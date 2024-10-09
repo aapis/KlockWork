@@ -18,6 +18,7 @@ struct UniversalHeader: View {
     public var title: String? = ""
     public var entityType: PageConfiguration.EntityType
     private let maxBreadcrumbItemLength: Int = 30
+    private let fontSize: Font = .title2
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -29,11 +30,13 @@ struct UniversalHeader: View {
                         ForEach(self.defaultParts, id: \.id) { part in part }
                     } else {
                         Text(self.title!)
+                            .multilineTextAlignment(.leading)
                     }
                 }
+                Spacer()
             }
         }
-        .font(.title2)
+        .font(self.fontSize)
         .onAppear(perform: self.actionSetViewState)
         .onChange(of: self.state.session.job) { self.actionSetViewState() }
         .onChange(of: self.state.session.project) { self.actionSetViewState() }
@@ -52,12 +55,15 @@ struct UniversalHeader: View {
             HStack(alignment: .center) {
                 if self.target == nil {
                     self.ItemText
+                        .multilineTextAlignment(.leading)
                         .opacity(0.5)
+                        .help(self.helpText)
                 } else {
                     Button {
                         self.state.to(self.target!)
                     } label: {
                         self.ItemText
+                            .multilineTextAlignment(.leading)
                     }
                     .useDefaultHover({ hover in self.isHighlighted = hover})
                     .help(self.helpText)
@@ -97,9 +103,9 @@ struct UniversalHeader: View {
                         HStack(alignment: .top) {
                             UniversalHeader(title: self.title, entityType: self.type)
 
-                            HStack(alignment: .center) {
-                                Spacer()
-                                if let buttons = self.buttons {
+                            if let buttons = self.buttons {
+                                HStack(alignment: .center) {
+                                    Spacer()
                                     buttons
                                 }
                             }
