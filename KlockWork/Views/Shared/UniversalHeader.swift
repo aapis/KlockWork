@@ -134,28 +134,29 @@ extension UniversalHeader {
     private func actionSetViewState() -> Void {
         self.parts = []
         if let job = self.state.session.job {
-            self.parts.append(contentsOf: [
-                Item(
-                    text: StringHelper.titleFrom(job.project?.company, max: self.maxBreadcrumbItemLength),
-                    helpText: job.project?.company?.name ?? "",
-                    target: self.state.session.company?.pageDetailType ?? .dashboard
-                ),
-                Item(
-                    text: StringHelper.titleFrom(job.project, max: self.maxBreadcrumbItemLength),
-                    helpText: job.project?.name ?? "",
-                    target: self.state.session.project?.pageDetailType ?? .dashboard
-                ),
-                Item(
-                    text: StringHelper.titleFrom(job, max: self.maxBreadcrumbItemLength),
-                    helpText: job.title ?? job.jid.string,
-                    target: job.pageDetailType
-                ),
-                Item(
-                    // Sets last breadcrumb item text to page title (instead of entity type label) when Bruce says "It's time to DIE HARD"
-                    text: self.entityType == .BruceWillis ? self.state.parent?.defaultTitle ?? "" : self.entityType.label
-                )
-            ]
-        )
+            self.parts.append(contentsOf:
+                [
+                    Item(
+                        text: StringHelper.titleFrom(job.project?.company, max: self.maxBreadcrumbItemLength),
+                        helpText: job.project?.company?.name ?? "",
+                        target: self.state.session.company?.pageDetailType ?? .dashboard
+                    ),
+                    Item(
+                        text: StringHelper.titleFrom(job.project, max: self.maxBreadcrumbItemLength),
+                        helpText: job.project?.name ?? "",
+                        target: self.state.session.project?.pageDetailType ?? .dashboard
+                    ),
+                    Item(
+                        text: StringHelper.titleFrom(job, max: self.maxBreadcrumbItemLength),
+                        helpText: job.title ?? job.jid.string,
+                        target: job.pageDetailType
+                    ),
+                    Item(
+                        // Sets last breadcrumb item text to page title (instead of entity type label) when Bruce says "It's time to DIE HARD"
+                        text: self.entityType == .BruceWillis ? self.state.parent?.defaultTitle ?? "" : self.entityType.label
+                    )
+                ]
+            )
         } else {
             if let company = self.state.session.company {
                 self.parts = []
@@ -188,5 +189,4 @@ extension UniversalHeader {
             }
         }
     }
-    
-    }
+}
