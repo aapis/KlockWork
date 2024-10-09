@@ -26,21 +26,25 @@ extension WidgetLibrary {
                 public var onActionClear: (() -> Void)?
 
                 var body: some View {
-                    FancyButtonv2(
-                        text: "Reset interface to default state",
-                        action: self.onActionClear != nil ? self.onActionClear : self.defaultClearAction,
-                        icon: "arrow.clockwise.square",
-                        iconWhenHighlighted: "arrow.clockwise.square.fill",
-                        fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
-                        showLabel: false,
-                        size: .small,
-                        type: .clear,
-                        font: .title
-                    )
-                    .help("Reset interface to default state")
-                    .frame(width: 25)
-                    .disabled(self.state.session.job == nil)
-                    .opacity(self.state.session.job == nil ? 0.5 : 1)
+                    if self.state.session.job != nil {
+                        FancyButtonv2(
+                            text: "Reset interface to default state",
+                            action: self.onActionClear != nil ? self.onActionClear : self.defaultClearAction,
+                            icon: "arrow.clockwise.square",
+                            iconWhenHighlighted: "arrow.clockwise.square.fill",
+                            fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
+                            showLabel: false,
+                            size: .small,
+                            type: .clear,
+                            font: .title
+                        )
+                        .help("Reset interface to default state")
+                        .frame(width: 25)
+                        .disabled(self.state.session.job == nil)
+                        .opacity(self.state.session.job == nil ? 0.5 : 1)
+                    } else {
+                        EmptyView()
+                    }
                 }
             }
 
