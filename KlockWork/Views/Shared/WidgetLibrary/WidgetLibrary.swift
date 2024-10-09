@@ -196,6 +196,33 @@ struct WidgetLibrary {
             "excellent"
         ]
 
+        struct ActiveIndicator: View {
+            public var colour: Color = .white
+            public var action: (() -> Void)? = nil
+            public var href: Page? = nil
+
+            @EnvironmentObject private var nav: Navigation
+
+            var body: some View {
+                Button {
+                    if let callback = action {
+                        callback()
+                    } else {
+                        if let href = href {
+                            nav.to(href)
+                        }
+                    }
+                } label: {
+                    ZStack {
+                        Theme.base
+                        colour
+                    }
+                }
+                .buttonStyle(.borderless)
+                .frame(width: 6, height: 50)
+            }
+        }
+
         struct Meetings: View {
             @EnvironmentObject public var state: Navigation
             @EnvironmentObject public var updater: ViewUpdater
@@ -239,7 +266,7 @@ struct WidgetLibrary {
                                         Text("\(event.startTime()) - \(event.endTime()):")
                                         Text(event.title)
                                     }
-                                        .foregroundColor(hasPassed ? .white : .gray)
+                                    .foregroundColor(hasPassed ? (self.state.session.job?.backgroundColor ?? .clear).isBright() ? Theme.lightBase : Theme.lightWhite : .gray.opacity(0.8))
                                         .multilineTextAlignment(.leading)
                                 }
                             }

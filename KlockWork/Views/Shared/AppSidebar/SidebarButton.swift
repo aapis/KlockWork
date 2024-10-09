@@ -18,6 +18,7 @@ struct PageAltMode: Identifiable {
 }
 
 struct SidebarButton: View, Identifiable {
+    typealias ActiveIndicator = WidgetLibrary.UI.ActiveIndicator
     public let id: UUID = UUID()
     public var destination: AnyView
     public let pageType: Page
@@ -214,33 +215,6 @@ struct SidebarButton: View, Identifiable {
 
         if self.highlighted {
             self.pageType.colour
-        }
-    }
-
-    struct ActiveIndicator: View {
-        public var colour: Color = .white
-        public var action: (() -> Void)? = nil
-        public var href: Page? = nil
-
-        @EnvironmentObject private var nav: Navigation
-
-        var body: some View {
-            Button {
-                if let callback = action {
-                    callback()
-                } else {
-                    if let href = href {
-                        nav.to(href)
-                    }
-                }
-            } label: {
-                ZStack {
-                    Theme.base
-                    colour
-                }
-            }
-            .buttonStyle(.borderless)
-            .frame(width: 6, height: 50)
         }
     }
 }
