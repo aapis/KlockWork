@@ -17,6 +17,7 @@ struct UniversalHeader: View {
     ]
     public var title: String? = ""
     public var entityType: PageConfiguration.EntityType
+    private let maxBreadcrumbItemLength: Int = 30
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -133,35 +134,36 @@ extension UniversalHeader {
     private func actionSetViewState() -> Void {
         self.parts = []
         if let job = self.state.session.job {
-            self.parts.append(contentsOf: [
-                Item(
-                    text: job.project?.company?.abbreviation ?? job.project?.company?.name ?? "",
-                    helpText: job.project?.company?.name ?? "",
-                    target: self.state.session.company?.pageDetailType ?? .dashboard
-                ),
-                Item(
-                    text: job.project?.abbreviation ?? job.project?.name ?? "",
-                    helpText: job.project?.name ?? "",
-                    target: self.state.session.project?.pageDetailType ?? .dashboard
-                ),
-                Item(
-                    text: job.title ?? job.jid.string,
-                    helpText: job.title ?? job.jid.string,
-                    target: job.pageDetailType
-                ),
-                Item(
-                    // Sets last breadcrumb item text to page title (instead of entity type label) when Bruce says "It's time to DIE HARD"
-                    text: self.entityType == .BruceWillis ? self.state.parent?.defaultTitle ?? "" : self.entityType.label
-                )
-            ]
-        )
+            self.parts.append(contentsOf:
+                [
+                    Item(
+                        text: StringHelper.titleFrom(job.project?.company, max: self.maxBreadcrumbItemLength),
+                        helpText: job.project?.company?.name ?? "",
+                        target: self.state.session.company?.pageDetailType ?? .dashboard
+                    ),
+                    Item(
+                        text: StringHelper.titleFrom(job.project, max: self.maxBreadcrumbItemLength),
+                        helpText: job.project?.name ?? "",
+                        target: self.state.session.project?.pageDetailType ?? .dashboard
+                    ),
+                    Item(
+                        text: StringHelper.titleFrom(job, max: self.maxBreadcrumbItemLength),
+                        helpText: job.title ?? job.jid.string,
+                        target: job.pageDetailType
+                    ),
+                    Item(
+                        // Sets last breadcrumb item text to page title (instead of entity type label) when Bruce says "It's time to DIE HARD"
+                        text: self.entityType == .BruceWillis ? self.state.parent?.defaultTitle ?? "" : self.entityType.label
+                    )
+                ]
+            )
         } else {
             if let company = self.state.session.company {
                 self.parts = []
                 if company.name != nil {
                     self.parts.append(
                         Item(
-                            text: company.abbreviation ?? company.name ?? "",
+                            text: StringHelper.titleFrom(company, max: self.maxBreadcrumbItemLength),
                             helpText: company.name ?? "",
                             target: company.pageDetailType
                         )
@@ -171,20 +173,18 @@ extension UniversalHeader {
             if let project = self.state.session.project {
                 self.parts = []
                 if project.name != nil && project.company != nil {
-                    self.parts.append(
+                    self.parts.append(contentsOf: [
                         Item(
-                            text: project.company!.abbreviation ?? project.company!.name ?? "",
+                            text: StringHelper.titleFrom(project.company, max: self.maxBreadcrumbItemLength),
                             helpText: project.company?.name ?? "",
                             target: project.company!.pageDetailType
-                        )
-                    )
-                    self.parts.append(
+                        ),
                         Item(
-                            text: project.abbreviation ?? project.name ?? "",
+                            text: StringHelper.titleFrom(project, max: self.maxBreadcrumbItemLength),
                             helpText: project.name ?? "",
                             target: project.pageDetailType
                         )
-                    )
+                    ])
                 }
             }
         }
