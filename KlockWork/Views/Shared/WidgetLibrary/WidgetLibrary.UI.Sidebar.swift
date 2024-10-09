@@ -14,6 +14,7 @@ extension WidgetLibrary.UI {
     struct Sidebar {
         struct EventsWidget: View {
             typealias Event = WidgetLibrary.UI.Individual.Event
+            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var state: Navigation
             @EnvironmentObject public var updater: ViewUpdater
             @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
@@ -23,13 +24,24 @@ extension WidgetLibrary.UI {
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 1) {
-                    if self.calendar > 0 {
-                        ForEach(self.upcomingEvents.sorted(by: {$0.startDate < $1.startDate}), id: \.self) { event in
-                            Event(event: event)
+                    UI.Sidebar.Title(text: "Calendar Events")
+                    if self.upcomingEvents.count > 0 {
+                        if self.calendar > 0 {
+                            ForEach(self.upcomingEvents.sorted(by: {$0.startDate < $1.startDate}), id: \.self) { event in
+                                Event(event: event)
+                            }
+                        } else {
+                            HStack(alignment: .center, spacing: 0) {
+                                Text("No calendar selected. Choose one under Settings > Today > Active calendar.")
+                                Spacer()
+                            }
+                            .padding()
+                            .background(Theme.textBackground)
+                            .foregroundStyle(Theme.lightWhite)
                         }
                     } else {
                         HStack(alignment: .center, spacing: 0) {
-                            Text("No calendar selected. Choose one under Settings > Today > Active calendar.")
+                            Text("Your day is clear")
                             Spacer()
                         }
                         .padding()
@@ -41,6 +53,28 @@ extension WidgetLibrary.UI {
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.calendar) { self.actionOnChangeCalendar() }
                 .id(updater.get("dashboard.header"))
+            }
+        }
+
+        struct Title: View {
+            public var text: String
+
+            var body: some View {
+                ZStack(alignment: .topLeading) {
+                    Theme.base.opacity(0.2)
+                    VStack(alignment: .leading, spacing: 0) {
+                        HStack(alignment: .center, spacing:  0) {
+                            Text(self.text)
+                                .padding(6)
+                                .background(Theme.textBackground)
+                                .foregroundStyle(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 5))
+                            Spacer()
+                        }
+                        .padding(8)
+                        Divider()
+                    }
+                }
             }
         }
     }

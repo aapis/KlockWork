@@ -23,13 +23,20 @@ extension WidgetLibrary.UI {
                     help: "\(event.startTime()) - \(event.endTime()): \(event.title ?? "")",
                     icon: "chevron.right",
                     orientation: .right,
-                    action: {},
+                    action: {self.state.session.search.inspectingEvent = self.event},
                     showBorder: false,
                     showButton: false
                 )
                 .background(self.hasEventPassed ? Theme.lightWhite : .orange)
                 .foregroundStyle(self.hasEventPassed ? Theme.lightBase : Theme.base)
                 .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.search.inspectingEvent) {
+                    if let event = self.state.session.search.inspectingEvent {
+                        self.state.setInspector(AnyView(Inspector(event: event)))
+                    } else {
+                        self.state.setInspector()
+                    }
+                }
             }
         }
     }
