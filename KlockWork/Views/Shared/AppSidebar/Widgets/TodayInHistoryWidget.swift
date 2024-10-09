@@ -42,7 +42,7 @@ struct TodayInHistoryWidget: View {
                         showBorder: false,
                         showButton: false
                     )
-                    .background(day.highlight ? Color.white.opacity(0.5) : .yellow.opacity(0.8))
+                    .background(day.highlight ? Theme.lightWhite : .yellow.opacity(0.8))
                     .foregroundStyle(Theme.base.opacity(day.highlight ? 0.4 : 1))
                 }
             }
