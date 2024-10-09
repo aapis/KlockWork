@@ -35,7 +35,7 @@ struct FindDashboard: View {
     private var columns: [GridItem] {
         Array(repeating: .init(.flexible(minimum: 100)), count: 2)
     }
-    private let eType: PageConfiguration.EntityType = .notes
+    private let eType: PageConfiguration.EntityType = .BruceWillis
 
     var body: some View {
         Grid(alignment: .topLeading, horizontalSpacing: 0, verticalSpacing: 0) {
