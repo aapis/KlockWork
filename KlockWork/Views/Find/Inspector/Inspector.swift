@@ -8,13 +8,14 @@
 
 import SwiftUI
 import KWCore
-
+import EventKit
 
 public struct Inspector: View, Identifiable {
     @EnvironmentObject public var nav: Navigation
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
     public let id: UUID = UUID()
-    public var entity: NSManagedObject
+    public var entity: NSManagedObject? = nil
+    public var event: EKEvent? = nil
     private let panelWidth: CGFloat = 400
     private var job: Job? = nil
     private var project: Project? = nil
@@ -41,8 +42,20 @@ public struct Inspector: View, Identifiable {
                 )
             }
             Divider()
-                .padding(.bottom, 10)
+            FancyDivider(height: 5)
 
+            if self.entity != nil {
+                EntityInspectorBody
+            } else if let event = self.event {
+                InspectingEvent(item: event)
+            }
+            Spacer()
+        }
+        .padding()
+        .frame(maxWidth: panelWidth)
+    }
+    public var EntityInspectorBody: some View {
+        VStack(alignment: .leading) {
             if let job = job {
                 InspectingJob(item: job)
             } else if let record = record {
@@ -64,26 +77,26 @@ public struct Inspector: View, Identifiable {
             } else {
                 Text("Unable to inspect this item")
             }
-            Spacer()
         }
-        .padding()
-        .frame(maxWidth: panelWidth)
     }
 
-    init(entity: NSManagedObject) {
+    init(entity: NSManagedObject? = nil, event: EKEvent? = nil) {
         self.entity = entity
+        self.event = event
 
-        switch self.entity {
-        case let en as Job: self.job = en
-        case let en as Project: self.project = en
-        case let en as LogRecord: self.record = en
-        case let en as Company: self.company = en
-        case let en as Person: self.person = en
-        case let en as Note: self.note = en
-        case let en as LogTask: self.task = en
-        case let en as TaxonomyTerm: self.term = en
-        case let en as TaxonomyTermDefinitions: self.definition = en
-        default: print("[error] FindDashboard.Inspector Unknown entity type=\(self.entity)")
+        if entity != nil {
+            switch self.entity {
+            case let en as Job: self.job = en
+            case let en as Project: self.project = en
+            case let en as LogRecord: self.record = en
+            case let en as Company: self.company = en
+            case let en as Person: self.person = en
+            case let en as Note: self.note = en
+            case let en as LogTask: self.task = en
+            case let en as TaxonomyTerm: self.term = en
+            case let en as TaxonomyTermDefinitions: self.definition = en
+            default: print("[error] FindDashboard.Inspector Unknown entity type=\(self.entity?.description ?? "nil")")
+            }
         }
     }
 
@@ -132,25 +145,27 @@ public struct Inspector: View, Identifiable {
                     }
 
                     if let uri = item.uri {
-                        VStack(alignment: .leading) {
-                            HStack(alignment: .top, spacing: 10) {
-                                Image(systemName: "link").symbolRenderingMode(.hierarchical)
-                                Link(destination: uri, label: {
-                                    Text(uri.absoluteString)
-                                })
-                                .help("Open in browser")
-                                .underline()
-                                .useDefaultHover({_ in})
-                                .contextMenu {
-                                    Button {
-                                        ClipboardHelper.copy(uri.absoluteString)
-                                    } label: {
-                                        Text("Copy to clipboard")
+                        if uri.absoluteString != "https://" {
+                            VStack(alignment: .leading) {
+                                HStack(alignment: .top, spacing: 10) {
+                                    Image(systemName: "link").symbolRenderingMode(.hierarchical)
+                                    Link(destination: uri, label: {
+                                        Text(uri.absoluteString)
+                                    })
+                                    .help("Open in browser")
+                                    .underline()
+                                    .useDefaultHover({_ in})
+                                    .contextMenu {
+                                        Button {
+                                            ClipboardHelper.copy(uri.absoluteString)
+                                        } label: {
+                                            Text("Copy to clipboard")
+                                        }
                                     }
+                                    Spacer()
                                 }
-                                Spacer()
+                                Divider()
                             }
-                            Divider()
                         }
                     }
 
@@ -743,5 +758,81 @@ public struct Inspector: View, Identifiable {
             }
         }
     }
-}
 
+    struct InspectingEvent: View {
+        public var item: EKEvent
+
+        @EnvironmentObject public var nav: Navigation
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                    Text("Type: Calendar event")
+                    Spacer()
+                }
+                .help("Type: Calendar event")
+                Divider()
+
+                if let date = item.startDate {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
+                        Text(date.description)
+                        Spacer()
+                    }
+                    .help("Starts at \(date.description)")
+                    Divider()
+                }
+
+                if let date = item.endDate {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
+                        Text(date.description)
+                        Spacer()
+                    }
+                    .help("Ends at \(date.description)")
+                    Divider()
+                }
+
+                if item.isAllDay {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "arrow.trianglehead.clockwise.rotate.90").symbolRenderingMode(.hierarchical)
+                        Text("All day event")
+                        Spacer()
+                    }
+                    .help("All-day event")
+                    Divider()
+                }
+
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                    Text("Title: \(item.title)")
+                    Spacer()
+                }
+                .help("Title: \(item.title)")
+                Divider()
+
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                    Text("Calendar: \(item.calendar.title)")
+                    Spacer()
+                }
+                .help("Calendar: \(item.calendar.title)")
+                Divider()
+
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: "camera.filters").symbolRenderingMode(.hierarchical)
+                    ZStack {
+                        Theme.base
+                        Color(item.calendar.color)
+                    }
+                    .frame(width: 15, height: 15)
+                    Text("Colour")
+                    Spacer()
+                }
+                .help("Colour: \(item.calendar.cgColor.debugDescription)")
+                Divider()
+            }
+        }
+    }
+}
