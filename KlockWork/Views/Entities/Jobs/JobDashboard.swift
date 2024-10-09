@@ -89,37 +89,6 @@ struct JobDashboardRedux: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading, spacing: 1) {
-//                HStack {
-//                    Title(text: eType.label, imageAsImage: eType.icon)
-//                    Spacer()
-//                    FancyButtonv2(
-//                        text: "Create",
-//                        action: {
-//                            editorVisible = true
-//                            explorerVisible = false
-//
-//                            // Creates a new job entity so the user can customize it
-//                            // @TODO: move to new method CoreDataJobs.create
-//                            let newJob = Job(context: moc)
-//                            newJob.id = UUID()
-//                            newJob.jid = 1.0
-//                            newJob.colour = Color.randomStorable()
-//                            newJob.alive = true
-//                            newJob.project = CoreDataProjects(moc: moc).alive().first(where: {$0.company?.isDefault == true})
-//                            newJob.created = Date()
-//                            newJob.lastUpdate = newJob.created
-//                            newJob.overview = ""
-//                            newJob.title = ""
-//                            nav.session.job = newJob
-//                            nav.forms.tp.editor.job = newJob
-//                        },
-//                        icon: "plus",
-//                        showLabel: false
-//                    )
-//                }
-//                
-//                FancyDivider()
-
                 UniversalHeader.Widget(
                     type: self.eType,
                     buttons: AnyView(
@@ -296,7 +265,7 @@ struct JobExplorer: View {
                                     FancyDivider()
                                     HStack(alignment: .bottom) {
                                         FancySimpleButton(text: "Delete", action: {isDeletePresented = true}, icon: "trash", showLabel: false, showIcon: true, type: .destructive)
-                                            .alert("Are you sure you want to delete job ID \(job!.jid.string)? This is irreversible.", isPresented: $isDeletePresented) {
+                                            .alert("Are you sure you want to delete this job? This is irreversible.", isPresented: $isDeletePresented) {
                                                 Button("Yes", role: .destructive) {
                                                     self.triggerDelete()
                                                 }
@@ -315,6 +284,7 @@ struct JobExplorer: View {
                 }
             }
             .onAppear(perform: self.actionOnAppear)
+            .onChange(of: self.nav.session.job) { self.actionOnAppear() }
         }
         
         struct SaveMessage: View {
