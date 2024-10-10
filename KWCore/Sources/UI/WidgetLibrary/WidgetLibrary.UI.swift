@@ -226,6 +226,34 @@ extension WidgetLibrary {
                     .useDefaultHover({ hover in self.isHighlighted = hover})
                 }
             }
+
+            struct Settings: View {
+                @EnvironmentObject public var state: Navigation
+                public var onAction: (() -> Void)? = {}
+                @State private var isHighlighted: Bool = false
+                @State private var selectedPage: Page = .dashboard
+
+                var body: some View {
+                    Button {
+                        if let previous = self.state.history.previous() {
+                            self.state.to(previous.page, addToHistory: false)
+                            self.selectedPage = previous.page
+                            self.onAction?()
+                        }
+                    } label: {
+                        Image(systemName: "gear")
+
+                            .padding(8)
+                            .background(self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.6))
+                            .foregroundStyle(self.isHighlighted ? .white : Theme.lightWhite)
+                            .clipShape(.rect(cornerRadius: 5))
+                             .padding(10)
+                    }
+                    .keyboardShortcut(KeyEquivalent.leftArrow, modifiers: [.command])
+                    .buttonStyle(.plain)
+                    .useDefaultHover({ hover in self.isHighlighted = hover})
+                }
+            }
         }
 
         struct ActiveIndicator: View {
@@ -336,8 +364,8 @@ extension WidgetLibrary {
                         VStack(alignment: .leading, spacing: 0) {
                             HStack {
                                 Buttons.HistoryPrevious(icon: "chevron.left")
-
                                 Spacer()
+                                Buttons.Settings()
                             }
                             Divider()
                         }
