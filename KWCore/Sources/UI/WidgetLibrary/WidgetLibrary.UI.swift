@@ -476,11 +476,13 @@ extension WidgetLibrary {
                         action: self.actionPreviousDay,
                         icon: "chevron.left",
                         fgColour: .gray,
+                        highlightColour: .white,
                         showLabel: false,
                         size: .titleLink,
                         type: .titleLink
                     )
                     .help("Previous day")
+                    .frame(height: 20)
 
                     Button {
                         self.showDateOverlay.toggle()
@@ -523,6 +525,7 @@ extension WidgetLibrary {
                         type: .titleLink
                     )
                     .help("Next day")
+                    .frame(height: 20)
                 }
                 .padding(12)
                 .onAppear(perform: self.actionOnAppear)
