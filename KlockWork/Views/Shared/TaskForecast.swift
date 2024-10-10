@@ -69,13 +69,14 @@ struct Forecast: View, Identifiable {
             switch self.type {
             case .member:
                 ForecastTypeMember(date: self.date, callback: self.callback, upcomingTasks: _upcomingTasks)
+                    .padding(8)
             case .button:
                 ForecastTypeButton(date: self.date, callback: self.callback, upcomingTasks: _upcomingTasks)
             case .row:
                 ForecastTypeRow(date: self.date, callback: self.callback, upcomingTasks: _upcomingTasks)
+                    .padding(8)
             }
         }
-        .padding(8)
     }
 
     init(date: Date, callback: (() -> Void)? = nil, type: ForecastUIType = .member, page: PageConfiguration.AppPage) {
@@ -168,7 +169,7 @@ struct Forecast: View, Identifiable {
 
         var body: some View {
             VStack(alignment: .center, spacing: 0) {
-                HStack(alignment: .center, spacing: 8) {
+                HStack(alignment: .center, spacing: 0) {
                     Button {
                         self.isCreateStackShowing = false
                         self.isSearchStackShowing = false
@@ -189,10 +190,10 @@ struct Forecast: View, Identifiable {
                                     Color.green
                                 }
                             }
-                            .mask(Circle().frame(width: 40))
+                            .mask(Circle().frame(width: 44))
 
                             (self.isHighlighted ? Color.white : Theme.base)
-                                .mask(Circle().frame(width: 29))
+                                .mask(Circle().frame(width: 30))
 
                             Text(String(self.itemsDue))
                                 .multilineTextAlignment(.leading)
@@ -200,18 +201,15 @@ struct Forecast: View, Identifiable {
                                 .bold()
                                 .foregroundStyle(self.itemsDue == 0 ? .gray : self.isHighlighted ? Theme.base : .white)
                         }
+                        .frame(width: 50, height: 50)
                         .useDefaultHover({ hover in self.isHighlighted = hover })
                     }
                     .buttonStyle(.plain)
                 }
-                .frame(height: 40)
-                .padding(.top, 4)
 
                 Text("Tasks")
-                    .padding(.top, 6)
                     .opacity(0.4)
             }
-            .frame(width: 40)
             .onAppear(perform: self.actionOnAppear)
             .onChange(of: self.state.session.date) {
                 self.actionOnAppear()
