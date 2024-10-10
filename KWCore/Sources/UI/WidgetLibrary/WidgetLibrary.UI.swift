@@ -23,7 +23,7 @@ extension WidgetLibrary {
         public struct Buttons {
             public enum UIButtonType {
                 case resetUserChoices, createNote, createTask, createRecord, createPerson, createCompany, createProject,
-                createJob, createTerm, createDefinition, historyPrevious, settings, CLIMode
+                createJob, createTerm, createDefinition, historyPrevious, settings, CLIMode, CLIFilter
             }
 
             struct ResetUserChoices: View {
@@ -297,6 +297,28 @@ extension WidgetLibrary {
                     }
                 }
             }
+
+            struct CLIFilter: View {
+                @EnvironmentObject public var state: Navigation
+                @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
+                @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
+                @AppStorage("today.cli.showFilter") private var showCLIFilter: Bool = false
+
+                var body: some View {
+                    if self.cliEnabled && self.commandLineMode {
+                        FancyButtonv2(
+                            text: "Filter",
+                            action: {self.showCLIFilter.toggle()},
+                            icon: "line.3.horizontal.decrease",
+                            bgColour: self.state.session.appPage.primaryColour.opacity(0.2),
+                            showLabel: false,
+                            size: .small,
+                            type: .clear
+                        )
+                        .mask(Circle())
+                    }
+                }
+            }
         }
 
         struct ActiveIndicator: View {
@@ -412,6 +434,7 @@ extension WidgetLibrary {
                             ForEach(self.state.navButtons, id: \.self) { type in
                                 switch type {
                                 case .CLIMode: Buttons.CLIMode()
+                                case .CLIFilter: Buttons.CLIFilter()
                                 case .historyPrevious: Buttons.HistoryPrevious()
                                 case .resetUserChoices: Buttons.ResetUserChoices()
                                 case .settings: Buttons.Settings()
