@@ -22,10 +22,17 @@ struct SessionInspector: View {
                 }
                 
                 Text(form.debugDescription)
+
+                Text("\(self.nav.history.recent.count) Pages in history")
+                VStack {
+                    ForEach(self.nav.history.recent, id: \.id) { histItem in
+                        Text(histItem.title)
+                    }
+                }
             }
         }
         .padding()
-        .onChange(of: nav.forms.tp.selected) { _ in
+        .onChange(of: nav.forms.tp.selected) {
             form = nav.forms.tp
         }
         .frame(width: 500)
