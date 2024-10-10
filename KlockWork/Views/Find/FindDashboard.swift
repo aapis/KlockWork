@@ -59,6 +59,7 @@ struct FindDashboard: View {
                         onSubmit: onSubmit,
                         onReset: onReset
                     )
+                    .border(width: self.activeSearchText.count == 0 ? 4 : 0, edges: [.bottom], color: self.nav.parent?.appPage.primaryColour ?? .clear)
 
                     if activeSearchText.count == 0 {
                         VStack(alignment: .trailing) {
