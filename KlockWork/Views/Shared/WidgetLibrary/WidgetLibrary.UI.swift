@@ -195,6 +195,37 @@ extension WidgetLibrary {
                     .frame(width: 25)
                 }
             }
+
+            struct HistoryPrevious: View {
+                @EnvironmentObject public var state: Navigation
+                public let icon: String
+                public var onAction: (() -> Void)? = {}
+                @State private var isHighlighted: Bool = false
+                @State private var selectedPage: Page = .dashboard
+
+                var body: some View {
+                    Button {
+                        if let previous = self.state.history.previous() {
+                            self.state.to(previous.page, addToHistory: false)
+                            self.selectedPage = previous.page
+                            self.onAction?()
+                        }
+                    } label: {
+                        HStack(alignment: .center) {
+                            Image(systemName: "chevron.left")
+                            Text("Back")
+                        }
+                        .padding(8)
+                        .background(self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.6))
+                        .foregroundStyle(self.isHighlighted ? .white : Theme.lightWhite)
+                        .clipShape(.rect(cornerRadius: 5))
+                        .padding(10)
+                    }
+                    .keyboardShortcut(KeyEquivalent.leftArrow, modifiers: [.command])
+                    .buttonStyle(.plain)
+                    .useDefaultHover({ hover in self.isHighlighted = hover})
+                }
+            }
         }
 
         struct ActiveIndicator: View {
@@ -288,6 +319,32 @@ extension WidgetLibrary {
                 .padding(3)
                 .background(.white.opacity(0.4).blendMode(.softLight))
                 .clipShape(RoundedRectangle(cornerRadius: 3))
+            }
+        }
+
+        struct AppNavigation: View {
+            @EnvironmentObject public var state: Navigation
+
+            var body: some View {
+                if self.state.history.recent.count > 0 {
+                    ZStack {
+                        Theme.toolbarColour
+                        LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
+                            .opacity(0.6)
+                            .blendMode(.softLight)
+
+                        VStack(alignment: .leading, spacing: 0) {
+                            HStack {
+                                Buttons.HistoryPrevious(icon: "chevron.left")
+
+                                Spacer()
+                            }
+                            Divider()
+                        }
+
+                    }
+                    .frame(height: 55)
+                }
             }
         }
     }
