@@ -82,6 +82,7 @@ public class Navigation: Identifiable, ObservableObject {
     @Published public var parent: Page? = .dashboard
     @Published public var sidebar: AnyView? = AnyView(DashboardSidebar())
     @Published public var inspector: AnyView? = nil
+    @Published public var navButtons: [WidgetLibrary.UI.Buttons.UIButtonType] = []
     @Published public var title: String? = ""
     @Published public var pageId: UUID? = UUID()
     @Published public var session: Session = Session()
@@ -169,6 +170,7 @@ public class Navigation: Identifiable, ObservableObject {
         self.setParent(page)
         self.setSidebar(hp.sidebar)
         self.session.appPage = page.appPage
+        self.setNavButtons(hp.navButtons)
 
         if addToHistory {
             self.history.push(hp: hp)
@@ -192,6 +194,13 @@ public class Navigation: Identifiable, ObservableObject {
 //        state = State()
         history = History()
         forms = Forms()
+    }
+    
+    /// Set navigation buttons for the current view
+    /// - Parameter buttons: [WidgetLibrary.UI.Buttons.UIButtonType]
+    /// - Returns: Void
+    public func setNavButtons(_ buttons: [WidgetLibrary.UI.Buttons.UIButtonType]) -> Void {
+        self.navButtons = buttons
     }
 }
 
@@ -534,6 +543,7 @@ extension Navigation {
     }
     
     public struct History {
+        typealias Button = WidgetLibrary.UI.Buttons
         // How far back you can go by clicking "back". Max: 10
         var recent: [HistoryPage] = []
         var currentIndex: Int = 0
@@ -547,20 +557,20 @@ extension Navigation {
         public let all: [HistoryPage] = [
             HistoryPage(page: .dashboard, view: AnyView(Dashboard()), sidebar: AnyView(DashboardSidebar()), title: "Dashboard"),
             HistoryPage(page: .planning, view: AnyView(Planning()), sidebar: AnyView(DefaultPlanningSidebar()), title: "Planning"),
-            HistoryPage(page: .today, view: AnyView(Today()), sidebar: AnyView(TodaySidebar()), title: "Today"),
-            HistoryPage(page: .companies, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Companies & Projects"),
+            HistoryPage(page: .today, view: AnyView(Today()), sidebar: AnyView(TodaySidebar()), title: "Today", navButtons: [.CLIMode, .createRecord, .resetUserChoices]),
+            HistoryPage(page: .companies, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Companies & Projects", navButtons: [.createCompany, .createProject]),
             HistoryPage(page: .companyDetail, view: AnyView(CompanyView()), sidebar: AnyView(DefaultCompanySidebar()), title: "Company"),
-            HistoryPage(page: .jobs, view: AnyView(JobDashboardRedux()), sidebar: AnyView(JobDashboardSidebar()), title: "Jobs"),
-            HistoryPage(page: .notes, view: AnyView(NoteDashboard()), sidebar: AnyView(NoteDashboardSidebar()), title: "Notes"),
-            HistoryPage(page: .tasks, view: AnyView(TaskDashboard()), sidebar: AnyView(TaskDashboardSidebar()), title: "Tasks"),
-            HistoryPage(page: .terms, view: AnyView(TermsDashboard()), sidebar: AnyView(TermsDashboardSidebar()), title: "Terms"),
+            HistoryPage(page: .jobs, view: AnyView(JobDashboardRedux()), sidebar: AnyView(JobDashboardSidebar()), title: "Jobs", navButtons: [.resetUserChoices, .createJob]),
+            HistoryPage(page: .notes, view: AnyView(NoteDashboard()), sidebar: AnyView(NoteDashboardSidebar()), title: "Notes", navButtons: [.resetUserChoices, .createNote]),
+            HistoryPage(page: .tasks, view: AnyView(TaskDashboard()), sidebar: AnyView(TaskDashboardSidebar()), title: "Tasks", navButtons: [.resetUserChoices, .createTask]),
+            HistoryPage(page: .terms, view: AnyView(TermsDashboard()), sidebar: AnyView(TermsDashboardSidebar()), title: "Terms", navButtons: [.resetUserChoices, .createDefinition]),
             HistoryPage(page: .definitionDetail, view: AnyView(DefinitionDetail()), sidebar: AnyView(TermsDashboardSidebar()), title: "Definition detail"),
             HistoryPage(page: .taskDetail, view: AnyView(TaskDetail()), sidebar: AnyView(TermsDashboardSidebar()), title: "Task detail"),
             HistoryPage(page: .noteDetail, view: AnyView(NoteView()), sidebar: AnyView(NoteCreateSidebar()), title: "Note detail"),
-            HistoryPage(page: .people, view: AnyView(PeopleDashboard()), sidebar: AnyView(PeopleDashboardSidebar()), title: "People"),
+            HistoryPage(page: .people, view: AnyView(PeopleDashboard()), sidebar: AnyView(PeopleDashboardSidebar()), title: "People", navButtons: [.resetUserChoices, .createPerson]),
             HistoryPage(page: .peopleDetail, view: AnyView(PeopleDetail()), sidebar: AnyView(PeopleDashboardSidebar()), title: "Person"),
             HistoryPage(page: .projectDetail, view: AnyView(CompanyView()), sidebar: AnyView(DefaultCompanySidebar()), title: "Project"),
-            HistoryPage(page: .projects, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Projects"),
+            HistoryPage(page: .projects, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Projects", navButtons: [.resetUserChoices, .createProject]),
         ]
         
         /// A single page representing a page the user navigated to
@@ -570,6 +580,9 @@ extension Navigation {
             var view: AnyView
             var sidebar: AnyView
             var title: String
+            var navButtons: [WidgetLibrary.UI.Buttons.UIButtonType] = [
+                .resetUserChoices
+            ]
         }
     }
 }
