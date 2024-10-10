@@ -300,9 +300,9 @@ extension WidgetLibrary {
                     }
                 }
                 .foregroundStyle((self.state.session.job?.backgroundColor ?? .clear).isBright() ? Theme.lightBase : Theme.lightWhite)
-                .onAppear(perform: actionOnAppear)
-                .onChange(of: calendar) { self.actionOnChangeCalendar() }
-                .id(updater.get("dashboard.header"))
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.calendar) { self.actionOnChangeCalendar() }
+                .id(self.updater.get("dashboard.header"))
             }
         }
 
@@ -362,7 +362,7 @@ extension WidgetLibrary.UI.Meetings {
     private func actionOnAppear() -> Void {
         if let chosenCalendar = ce.selectedCalendar() {
             calendarName = chosenCalendar
-            upcomingEvents = ce.events(chosenCalendar)
+            upcomingEvents = ce.events(chosenCalendar).filter {$0.startDate > Date()}
         }
     }
 
