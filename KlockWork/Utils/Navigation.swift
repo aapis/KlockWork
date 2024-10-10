@@ -161,8 +161,7 @@ public class Navigation: Identifiable, ObservableObject {
         }
     }
 
-    // @TODO: this doesn't really work yet
-    public func to(_ page: Page) -> Void {
+    public func to(_ page: Page, addToHistory: Bool = true) -> Void {
         let hp = self.history.get(page: page)
 
         self.setId()
@@ -171,12 +170,10 @@ public class Navigation: Identifiable, ObservableObject {
         self.setSidebar(hp.sidebar)
         self.session.appPage = page.appPage
 
-        self.history.push(hp: hp)
-        self.session.search.cancel()
-
-        if self.history.recent.count > 20 {
-            self.history.recent = []
+        if addToHistory {
+            self.history.push(hp: hp)
         }
+        self.session.search.cancel()
     }
 
     public func link(to page: Page) -> AnyView {
@@ -539,7 +536,7 @@ extension Navigation {
     public struct History {
         // How far back you can go by clicking "back". Max: 10
         var recent: [HistoryPage] = []
-        
+        var currentIndex: Int = 0
         private let defaultHistoryPage: HistoryPage = HistoryPage(
             page: .dashboard,
             view: AnyView(Dashboard()),
@@ -574,14 +571,6 @@ extension Navigation {
             var sidebar: AnyView
             var title: String
         }
-        
-        public struct Breadcrumb {
-            var id: UUID = UUID()
-            var current: Page
-            var history: [HistoryPage] = []
-            
-            
-        }
     }
 }
 
@@ -591,45 +580,33 @@ extension Navigation.History {
     }
     
     mutating func push(hp: HistoryPage) -> Void {
-        recent.append(hp)
-        
-        if recent.count > 10 {
-            let _ = recent.popLast()
+        self.recent.append(hp)
+
+        if self.recent.count == 10 {
+            let last = self.recent.popLast()
+            self.recent = []
+
+            if last != nil {
+                self.recent.append(last!)
+            }
         }
+
+        self.currentIndex = self.recent.endIndex
     }
 
-    func previous() -> HistoryPage? {
-        print("DERPO recent=\(recent.count)")
-        var index = recent.endIndex
-        index -= 1
-        
-        if index <= 10 {
-            print("DERPO previousIndex=\(index)")
-            
-            if recent.indices.contains(index) {
-                return recent[index]
-            }
+    mutating func previous() -> HistoryPage? {
+        if self.currentIndex > -1 {
+            self.currentIndex -= 1
         } else {
-            index = recent.startIndex
+            self.currentIndex = self.recent.endIndex
         }
 
-        return nil
-    }
-    
-    func next() -> HistoryPage? {
-        var index = recent.endIndex
-        index -= 1
-
-        if index <= 10 {
-            print("DERPO nextIndex=\(index)")
-            
-            if recent.indices.contains(index) {
-                return recent[index]
+        if self.currentIndex <= 10 {
+            if recent.indices.contains(self.currentIndex - 1) {
+                return recent[self.currentIndex - 1]
             }
-        } else {
-            index = recent.endIndex
         }
-        
+
         return nil
     }
 }
