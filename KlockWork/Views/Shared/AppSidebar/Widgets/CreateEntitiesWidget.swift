@@ -24,6 +24,7 @@ struct CreateEntitiesWidget: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Buttons
+                .padding(.bottom, isSearchStackShowing || isCreateStackShowing || isUpcomingTaskStackShowing ? 16 : 0)
 
             if isSearchStackShowing || isCreateStackShowing || isUpcomingTaskStackShowing {
                 VStack(alignment: .leading, spacing: 0) {
@@ -53,8 +54,7 @@ struct CreateEntitiesWidget: View {
     }
 
     private var Buttons: some View {
-        HStack(alignment: .center, spacing: 5) {
-            Spacer()
+        HStack(alignment: .center, spacing: 8) {
             PlanButton(doesPlanExist: $doesPlanExist)
             PrivacyModeButton()
             CreateButton(active: $isCreateStackShowing)
