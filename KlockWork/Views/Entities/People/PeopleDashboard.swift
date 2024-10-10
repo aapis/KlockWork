@@ -26,12 +26,6 @@ struct PeopleDashboard: View {
             VStack(alignment: .leading, spacing: 0) {
                 UniversalHeader.Widget(
                     type: self.eType,
-                    buttons: AnyView(
-                        HStack(alignment: .center) {
-                            Widget.ResetUserChoices()
-                            Widget.CreatePerson()
-                        }
-                    ),
                     title: self.eType.label
                 )
 
@@ -39,7 +33,7 @@ struct PeopleDashboard: View {
                     SearchBar(
                         text: $searchText,
                         disabled: false,
-                        placeholder: self.people.count > 1 ? "Search \(self.people.count) people" : "Find people"
+                        placeholder: self.people.count > 1 ? "Filter \(self.people.count) people" : "Filter by name"
                     )
 
                     ScrollView(showsIndicators: false) {
@@ -63,6 +57,7 @@ struct PeopleDashboard: View {
         .background(Theme.toolbarColour)
         .onChange(of: self.state.session.job) { self.actionOnAppear() }
         .onChange(of: self.state.session.person) { self.actionOnAppear() }
+        .onChange(of: self.state.session.company) { self.actionOnAppear() }
         .onAppear(perform: self.actionOnAppear)
     }
 }
@@ -79,6 +74,8 @@ extension PeopleDashboard {
             if let company = job.project?.company {
                 self.people = CoreDataPerson(moc: self.state.moc).byCompany(company)
             }
+        } else if let company = self.state.session.company {
+            self.people = CoreDataPerson(moc: self.state.moc).byCompany(company)
         } else {
             self.people = []
         }

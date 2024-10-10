@@ -150,10 +150,6 @@
 		53967D8629EC7DEB006616A0 /* ViewModeSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53967D8529EC7DEB006616A0 /* ViewModeSelector.swift */; };
 		53999C1F29669C4E00125E65 /* NoteCreate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53999C1E29669C4E00125E65 /* NoteCreate.swift */; };
 		5399AF762CB4995A00211ECD /* UniversalHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5399AF752CB4995400211ECD /* UniversalHeader.swift */; };
-		5399B0CC2CB4EC5A00211ECD /* WidgetLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5399B0CB2CB4EC4800211ECD /* WidgetLibrary.swift */; };
-		5399B2CD2CB619B000211ECD /* WidgetLibrary.UI.Sidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5399B2CC2CB619A600211ECD /* WidgetLibrary.UI.Sidebar.swift */; };
-		5399B2CF2CB6253900211ECD /* WidgetLibrary.UI.Individual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5399B2CE2CB6252B00211ECD /* WidgetLibrary.UI.Individual.swift */; };
-		5399B2D12CB6267C00211ECD /* WidgetLibrary.UI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5399B2D02CB6267800211ECD /* WidgetLibrary.UI.swift */; };
 		539F68DB2BF6BD310086F89A /* FancyDropdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539F68DA2BF6BD310086F89A /* FancyDropdown.swift */; };
 		539F68DD2BF70A260086F89A /* IntroToKlockWork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539F68DC2BF70A260086F89A /* IntroToKlockWork.swift */; };
 		53B0BE7F2972542A007CB663 /* ProjectsDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B0BE7E2972542A007CB663 /* ProjectsDashboard.swift */; };
@@ -438,10 +434,6 @@
 		53967D8529EC7DEB006616A0 /* ViewModeSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModeSelector.swift; sourceTree = "<group>"; };
 		53999C1E29669C4E00125E65 /* NoteCreate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteCreate.swift; sourceTree = "<group>"; };
 		5399AF752CB4995400211ECD /* UniversalHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalHeader.swift; sourceTree = "<group>"; };
-		5399B0CB2CB4EC4800211ECD /* WidgetLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLibrary.swift; sourceTree = "<group>"; };
-		5399B2CC2CB619A600211ECD /* WidgetLibrary.UI.Sidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLibrary.UI.Sidebar.swift; sourceTree = "<group>"; };
-		5399B2CE2CB6252B00211ECD /* WidgetLibrary.UI.Individual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLibrary.UI.Individual.swift; sourceTree = "<group>"; };
-		5399B2D02CB6267800211ECD /* WidgetLibrary.UI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetLibrary.UI.swift; sourceTree = "<group>"; };
 		539F68DA2BF6BD310086F89A /* FancyDropdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyDropdown.swift; sourceTree = "<group>"; };
 		539F68DC2BF70A260086F89A /* IntroToKlockWork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroToKlockWork.swift; sourceTree = "<group>"; };
 		53B0BE7E2972542A007CB663 /* ProjectsDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsDashboard.swift; sourceTree = "<group>"; };
@@ -539,6 +531,10 @@
 				Sources/Query/CoreDataTaxonomyTermDefinitions.swift,
 				Sources/Query/CoreDataTaxonomyTerms.swift,
 				Sources/UI/TypedListRowBackground.swift,
+				Sources/UI/WidgetLibrary/WidgetLibrary.swift,
+				Sources/UI/WidgetLibrary/WidgetLibrary.UI.Individual.swift,
+				Sources/UI/WidgetLibrary/WidgetLibrary.UI.Sidebar.swift,
+				Sources/UI/WidgetLibrary/WidgetLibrary.UI.swift,
 			);
 			publicHeaders = (
 				KWCore.h,
@@ -570,6 +566,10 @@
 				Sources/Query/CoreDataTaxonomyTermDefinitions.swift,
 				Sources/Query/CoreDataTaxonomyTerms.swift,
 				Sources/UI/TypedListRowBackground.swift,
+				Sources/UI/WidgetLibrary/WidgetLibrary.swift,
+				Sources/UI/WidgetLibrary/WidgetLibrary.UI.Individual.swift,
+				Sources/UI/WidgetLibrary/WidgetLibrary.UI.Sidebar.swift,
+				Sources/UI/WidgetLibrary/WidgetLibrary.UI.swift,
 			);
 			target = 53218D4324B7F6EB0088ABE9 /* KlockWork */;
 		};
@@ -1024,17 +1024,6 @@
 			path = Sidebars;
 			sourceTree = "<group>";
 		};
-		5399B2CB2CB6199F00211ECD /* WidgetLibrary */ = {
-			isa = PBXGroup;
-			children = (
-				5399B2D02CB6267800211ECD /* WidgetLibrary.UI.swift */,
-				5399B2CE2CB6252B00211ECD /* WidgetLibrary.UI.Individual.swift */,
-				5399B2CC2CB619A600211ECD /* WidgetLibrary.UI.Sidebar.swift */,
-				5399B0CB2CB4EC4800211ECD /* WidgetLibrary.swift */,
-			);
-			path = WidgetLibrary;
-			sourceTree = "<group>";
-		};
 		53B0BE7D29725413007CB663 /* Projects */ = {
 			isa = PBXGroup;
 			children = (
@@ -1269,7 +1258,6 @@
 		53EDDF9C29634840008D34C7 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				5399B2CB2CB6199F00211ECD /* WidgetLibrary */,
 				5399AF752CB4995400211ECD /* UniversalHeader.swift */,
 				53E9187D2B47C9CC00912C6F /* PanelGroup */,
 				53790C012A72F15200D3FFD4 /* AppSidebar */,
@@ -1583,7 +1571,6 @@
 				53EFCE7929637F35004E45EC /* GeneralSettings.swift in Sources */,
 				5335A5B7296D2089000051B1 /* TaskListView.swift in Sources */,
 				5378857C2B450F2800825B78 /* EventIndicatorStatus.swift in Sources */,
-				5399B0CC2CB4EC5A00211ECD /* WidgetLibrary.swift in Sources */,
 				533544822CB19C480067A944 /* Planning.Overdue.swift in Sources */,
 				53814A8E2A9821C800A5A015 /* DefaultPlanningSidebar.swift in Sources */,
 				53E2025C2A7EAF6100B4DF70 /* ProjectRowPlain.swift in Sources */,
@@ -1661,7 +1648,6 @@
 				537628A22966525500DE8ECF /* ToolbarButtons.swift in Sources */,
 				5399AF762CB4995A00211ECD /* UniversalHeader.swift in Sources */,
 				537AEBA1296287B900385787 /* LogRow.swift in Sources */,
-				5399B2CD2CB619B000211ECD /* WidgetLibrary.UI.Sidebar.swift in Sources */,
 				53C3419029996C070071B855 /* FancyRandomJobColourPicker.swift in Sources */,
 				537368D124B93DB600193E88 /* Today.swift in Sources */,
 				53C000AD2B41490F00D5EC04 /* NoteTemplates.swift in Sources */,
@@ -1752,7 +1738,6 @@
 				53E202562A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift in Sources */,
 				532A722B298F1CB70038C18B /* Results.swift in Sources */,
 				53196AC92A168E7200FE49FC /* CalendarIndividualEvent.swift in Sources */,
-				5399B2CF2CB6253900211ECD /* WidgetLibrary.UI.Individual.swift in Sources */,
 				5333E7A12A0ECE0D00EE4A36 /* FancyTab.swift in Sources */,
 				5331FCB32A9E6ECE005CDE0E /* Plan.swift in Sources */,
 				53152CDA296B849200A14E43 /* FancyPickerWithRelativeNavigation.swift in Sources */,
@@ -1761,7 +1746,6 @@
 				53E202582A7E19B900B4DF70 /* NotesWidget.swift in Sources */,
 				537628A8296659DC00DE8ECF /* PersistenceController.swift in Sources */,
 				532C5FE32A83019C00F2AAD4 /* GlobalSidebarWidgets.swift in Sources */,
-				5399B2D12CB6267C00211ECD /* WidgetLibrary.UI.swift in Sources */,
 				53790C072A74408D00D3FFD4 /* Navigation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -28,22 +28,16 @@ struct TermsDashboard: View {
             VStack(alignment: .leading, spacing: 0) {
                 UniversalHeader.Widget(
                     type: self.eType,
-                    buttons: AnyView(
-                        HStack(alignment: .center) {
-                            Widget.ResetUserChoices()
-                            Widget.CreateDefinition()
-                        }
-                    ),
                     title: self.eType.label
                 )
 
-                SearchBar(
-                    text: $searchText,
-                    disabled: false,
-                    placeholder: self.definitions.count > 1 ? "Search \(self.definitions.count) terms" : "Find in terms & definitions"
-                )
-
                 if self.definitions.count > 0 {
+                    SearchBar(
+                        text: $searchText,
+                        disabled: false,
+                        placeholder: self.definitions.count > 1 ? "Filter \(self.definitions.count) terms & definitions" : "Filter terms & definitions"
+                    )
+
                     ScrollView(showsIndicators: false) {
                         LazyVGrid(columns: columns, alignment: .leading) {
                             ForEach(self.filter(self.definitions), id: \TaxonomyTermDefinitions.objectID) { def in

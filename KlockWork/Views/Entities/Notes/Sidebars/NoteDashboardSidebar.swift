@@ -31,7 +31,7 @@ extension NoteDashboardSidebar {
         self.tabs.append(contentsOf: Home.standardSidebarWidgets)
         self.tabs.append(
             ToolbarButton(
-                id: 2,
+                id: 3,
                 helpText: "Favourites notes",
                 icon: "star.fill",
                 labelText: "Favourite Notes",

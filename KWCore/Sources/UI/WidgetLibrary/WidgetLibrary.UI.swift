@@ -11,7 +11,7 @@ import KWCore
 import EventKit
 
 extension WidgetLibrary {
-    struct UI {
+    public struct UI {
         /// Add some random flair to a message
         static public let celebratoryStatements: [String] = [
             "rejoice",
@@ -20,7 +20,12 @@ extension WidgetLibrary {
             "excellent"
         ]
 
-        struct Buttons {
+        public struct Buttons {
+            public enum UIButtonType {
+                case resetUserChoices, createNote, createTask, createRecord, createPerson, createCompany, createProject,
+                createJob, createTerm, createDefinition, historyPrevious, settings, CLIMode
+            }
+
             struct ResetUserChoices: View {
                 @EnvironmentObject public var state: Navigation
                 public var onActionClear: (() -> Void)?
@@ -32,7 +37,6 @@ extension WidgetLibrary {
                             action: self.onActionClear != nil ? self.onActionClear : self.defaultClearAction,
                             icon: "arrow.clockwise.square",
                             iconWhenHighlighted: "arrow.clockwise.square.fill",
-                            fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
                             showLabel: false,
                             size: .small,
                             type: .clear,
@@ -56,7 +60,6 @@ extension WidgetLibrary {
                         action: self.onAction,
                         icon: "plus.square",
                         iconWhenHighlighted: "plus.square.fill",
-                        fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
                         showLabel: false,
                         size: .small,
                         type: .clear,
@@ -80,7 +83,6 @@ extension WidgetLibrary {
                         action: { self.onAction?() ; self.state.to(.peopleDetail) },
                         icon: "plus.square",
                         iconWhenHighlighted: "plus.square.fill",
-                        fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
                         showLabel: false,
                         size: .small,
                         type: .clear,
@@ -101,7 +103,6 @@ extension WidgetLibrary {
                         action: { self.onAction?() ; self.state.to(.companyDetail) },
                         icon: "building.2.crop.circle",
                         iconWhenHighlighted: "building.2.crop.circle.fill",
-                        fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
                         showLabel: false,
                         size: .small,
                         type: .clear,
@@ -122,7 +123,6 @@ extension WidgetLibrary {
                         action: { self.onAction?() ; self.state.to(.projectDetail) },
                         icon: "folder.badge.plus",
                         iconWhenHighlighted: "folder.fill.badge.plus",
-                        fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
                         showLabel: false,
                         size: .small,
                         type: .clear,
@@ -135,15 +135,15 @@ extension WidgetLibrary {
 
             struct CreateJob: View {
                 @EnvironmentObject public var state: Navigation
-                public var onAction: (() -> Void)? = {}
+                @AppStorage("jobdashboard.explorerVisible") private var explorerVisible: Bool = true
+                @AppStorage("jobdashboard.editorVisible") private var editorVisible: Bool = true
 
                 var body: some View {
                     FancyButtonv2(
                         text: "Create",
-                        action: { self.onAction?() ; self.state.to(.jobs) },
+                        action: self.actionOnTap,
                         iconAsImage: Conf.jobs.icon,
                         iconAsImageWhenHighlighted: Conf.jobs.selectedIcon,
-                        fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
                         showLabel: false,
                         size: .small,
                         type: .clear,
@@ -164,7 +164,6 @@ extension WidgetLibrary {
                         action: { self.onAction?() ; self.state.to(.terms) },
                         iconAsImage: Conf.terms.selectedIcon,
                         iconAsImageWhenHighlighted: Conf.terms.selectedIcon,
-                        fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
                         showLabel: false,
                         size: .small,
                         type: .clear,
@@ -185,7 +184,6 @@ extension WidgetLibrary {
                         action: { self.onAction?() ; self.state.to(.definitionDetail) },
                         iconAsImage: Conf.terms.selectedIcon,
                         iconAsImageWhenHighlighted: Conf.terms.selectedIcon,
-                        fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
                         showLabel: false,
                         size: .small,
                         type: .clear,
@@ -196,9 +194,32 @@ extension WidgetLibrary {
                 }
             }
 
+            struct CreateRecord: View {
+                @EnvironmentObject public var state: Navigation
+                public var onAction: (() -> Void)? = {}
+                @State private var isHighlighted: Bool = false
+                @State private var selectedPage: Page = .dashboard
+
+                var body: some View {
+                    FancyButtonv2(
+                        text: self.state.session.job != nil ? "Log to job \(self.state.session.job!.title ?? self.state.session.job!.jid.string)" : "Log",
+                        action: self.onAction,
+                        icon: "plus.square",
+                        iconWhenHighlighted: "plus.square.fill",
+                        showLabel: false,
+                        size: .small,
+                        type: .clear,
+                        font: .title
+                    )
+                    .help("Create a new record")
+                    .frame(width: 25)
+                    .disabled(self.state.session.job == nil)
+                    .opacity(self.state.session.job == nil ? 0.5 : 1)
+                }
+            }
+
             struct HistoryPrevious: View {
                 @EnvironmentObject public var state: Navigation
-                public let icon: String
                 public var onAction: (() -> Void)? = {}
                 @State private var isHighlighted: Bool = false
                 @State private var selectedPage: Page = .dashboard
@@ -219,11 +240,57 @@ extension WidgetLibrary {
                         .background(self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.6))
                         .foregroundStyle(self.isHighlighted ? .white : Theme.lightWhite)
                         .clipShape(.rect(cornerRadius: 5))
-                        .padding(10)
+                        .padding([.top, .bottom], 10)
                     }
                     .keyboardShortcut(KeyEquivalent.leftArrow, modifiers: [.command])
                     .buttonStyle(.plain)
                     .useDefaultHover({ hover in self.isHighlighted = hover})
+                }
+            }
+
+            struct Settings: View {
+                @EnvironmentObject public var state: Navigation
+                public var onAction: (() -> Void)? = {}
+                @State private var isHighlighted: Bool = false
+                @State private var selectedPage: Page = .dashboard
+
+                var body: some View {
+                    Button {
+                        self.onAction?()
+                    } label: {
+                        Image(systemName: "gear")
+                            .font(.title)
+                            .foregroundStyle(self.isHighlighted ? .white : Theme.lightWhite)
+                            .padding([.leading, .trailing])
+                            .padding([.top, .bottom], 10)
+                    }
+                    .keyboardShortcut(KeyEquivalent.leftArrow, modifiers: [.command])
+                    .buttonStyle(.plain)
+                    .useDefaultHover({ hover in self.isHighlighted = hover})
+                }
+            }
+
+            struct CLIMode: View {
+                @EnvironmentObject public var state: Navigation
+                @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
+                @AppStorage("general.experimental.cli") private var allowCLIMode: Bool = false
+                public var onAction: (() -> Void)? = {}
+                @State private var isHighlighted: Bool = false
+                @State private var selectedPage: Page = .dashboard
+
+                var body: some View {
+                    FancyButtonv2(
+                        text: "Command line mode",
+                        action: {commandLineMode.toggle() ; self.onAction?()},
+                        icon: self.commandLineMode ? "apple.terminal.fill" : "apple.terminal",
+                        iconWhenHighlighted: self.commandLineMode ? "apple.terminal" : "apple.terminal.fill",
+                        showLabel: false,
+                        size: .small,
+                        type: .clear,
+                        font: .title
+                    )
+                    .help("Enter CLI mode")
+                    .frame(width: 25)
                 }
             }
         }
@@ -335,13 +402,33 @@ extension WidgetLibrary {
 
                         VStack(alignment: .leading, spacing: 0) {
                             HStack {
-                                Buttons.HistoryPrevious(icon: "chevron.left")
-
+                                Buttons.HistoryPrevious()
                                 Spacer()
+                                ForEach(self.state.navButtons, id: \.self) { type in
+                                    switch type {
+                                    case .CLIMode: Buttons.CLIMode()
+                                    case .historyPrevious: Buttons.HistoryPrevious()
+                                    case .resetUserChoices: Buttons.ResetUserChoices()
+                                    case .settings: Buttons.Settings()
+                                    case .createJob: Buttons.CreateJob()
+                                    case .createNote: Buttons.CreateNote()
+//                                    case .createTask: Buttons.CreateTask()
+                                    case .createTerm: Buttons.CreateTerm()
+                                    case .createPerson: Buttons.CreatePerson()
+                                    case .createRecord: Buttons.CreateRecord()
+                                    case .createCompany: Buttons.CreateCompany()
+                                    case .createProject: Buttons.CreateProject()
+                                    case .createDefinition: Buttons.CreateDefinition()
+                                    default: EmptyView()
+                                    }
+                                }
+//                                Buttons.Settings()
+//                                Buttons.CLIMode()
+//                                Buttons.ResetUserChoices(onActionClear: {})
                             }
+                            .padding([.leading, .trailing])
                             Divider()
                         }
-
                     }
                     .frame(height: 55)
                 }
@@ -355,6 +442,30 @@ extension WidgetLibrary.UI.Buttons.ResetUserChoices {
         self.state.session.job = nil
         self.state.session.project = nil
         self.state.session.company = nil
+    }
+}
+
+extension WidgetLibrary.UI.Buttons.CreateJob {
+    /// Fires when the button is clicked/tapped.
+    /// - Returns: Void
+    private func actionOnTap() -> Void {
+        self.editorVisible = true
+        self.explorerVisible = false
+
+        // Creates a new job entity so the user can customize it
+        // @TODO: move to new method CoreDataJobs.create
+        let newJob = Job(context: self.state.moc)
+        newJob.id = UUID()
+        newJob.jid = 1.0
+        newJob.colour = Color.randomStorable()
+        newJob.alive = true
+        newJob.project = CoreDataProjects(moc: self.state.moc).alive().first(where: {$0.company?.isDefault == true})
+        newJob.created = Date()
+        newJob.lastUpdate = newJob.created
+        newJob.overview = "Sample job overview"
+        newJob.title = "Sample job title"
+        self.state.session.job = newJob
+        self.state.forms.tp.editor.job = newJob
     }
 }
 

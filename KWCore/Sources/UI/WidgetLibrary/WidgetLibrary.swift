@@ -10,6 +10,6 @@ import SwiftUI
 import KWCore
 import EventKit
 
-struct WidgetLibrary {
+public struct WidgetLibrary {
     typealias Conf = PageConfiguration.EntityType
 }
