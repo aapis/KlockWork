@@ -33,7 +33,7 @@ struct PeopleDashboard: View {
                     SearchBar(
                         text: $searchText,
                         disabled: false,
-                        placeholder: self.people.count > 1 ? "Search \(self.people.count) people" : "Find people"
+                        placeholder: self.people.count > 1 ? "Filter \(self.people.count) people" : "Filter by name"
                     )
 
                     ScrollView(showsIndicators: false) {
