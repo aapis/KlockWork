@@ -49,7 +49,7 @@ struct Home: View {
             icon: "calendar",
             labelText: "Calendar events",
             contents: AnyView(WidgetLibrary.UI.Sidebar.EventsWidget())
-        )
+        ),
     ]
 
     private let page: APage = .find
@@ -70,7 +70,13 @@ struct Home: View {
                     label: "Planning",
                     sidebar: AnyView(DefaultPlanningSidebar())
                 ),
-                // @TODO: Explore page
+                SidebarButton(
+                    destination: AnyView(Explore()),
+                    pageType: .explore,
+                    icon: "globe.desk",
+                    label: "Explore",
+                    sidebar: AnyView(ExploreSidebar())
+                ),
             ],
             .entities: [
                 SidebarButton(
