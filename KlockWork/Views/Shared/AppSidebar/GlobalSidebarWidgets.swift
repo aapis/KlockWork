@@ -13,10 +13,6 @@ struct GlobalSidebarWidgets: View {
     @EnvironmentObject public var nav: Navigation
 
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            CreateEntitiesWidget()
-                .padding(.top, 53)
-            DateSelectorWidget()
-        }
+        CreateEntitiesWidget()
     }
 }
