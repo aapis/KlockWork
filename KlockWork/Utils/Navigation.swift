@@ -557,7 +557,7 @@ extension Navigation {
         public let all: [HistoryPage] = [
             HistoryPage(page: .dashboard, view: AnyView(Dashboard()), sidebar: AnyView(DashboardSidebar()), title: "Dashboard"),
             HistoryPage(page: .planning, view: AnyView(Planning()), sidebar: AnyView(DefaultPlanningSidebar()), title: "Planning"),
-            HistoryPage(page: .today, view: AnyView(Today()), sidebar: AnyView(TodaySidebar()), title: "Today", navButtons: [.CLIMode, .createRecord, .resetUserChoices]),
+            HistoryPage(page: .today, view: AnyView(Today()), sidebar: AnyView(TodaySidebar()), title: "Today", navButtons: [.CLIFilter, .CLIMode, .resetUserChoices]),
             HistoryPage(page: .companies, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Companies & Projects", navButtons: [.createCompany, .createProject]),
             HistoryPage(page: .companyDetail, view: AnyView(CompanyView()), sidebar: AnyView(DefaultCompanySidebar()), title: "Company"),
             HistoryPage(page: .jobs, view: AnyView(JobDashboardRedux()), sidebar: AnyView(JobDashboardSidebar()), title: "Jobs", navButtons: [.resetUserChoices, .createJob]),

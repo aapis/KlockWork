@@ -23,7 +23,7 @@ extension WidgetLibrary {
         public struct Buttons {
             public enum UIButtonType {
                 case resetUserChoices, createNote, createTask, createRecord, createPerson, createCompany, createProject,
-                createJob, createTerm, createDefinition, historyPrevious, settings, CLIMode
+                createJob, createTerm, createDefinition, historyPrevious, settings, CLIMode, CLIFilter
             }
 
             struct ResetUserChoices: View {
@@ -223,6 +223,7 @@ extension WidgetLibrary {
                 public var onAction: (() -> Void)? = {}
                 @State private var isHighlighted: Bool = false
                 @State private var selectedPage: Page = .dashboard
+                private var isEmpty: Bool { self.state.history.recent.count == 0 }
 
                 var body: some View {
                     Button {
@@ -242,9 +243,10 @@ extension WidgetLibrary {
                         .clipShape(.rect(cornerRadius: 5))
                         .padding([.top, .bottom], 10)
                     }
+                    .disabled(self.isEmpty)
                     .keyboardShortcut(KeyEquivalent.leftArrow, modifiers: [.command])
                     .buttonStyle(.plain)
-                    .useDefaultHover({ hover in self.isHighlighted = hover})
+                    .useDefaultHover({ hover in !self.isEmpty ? self.isHighlighted = hover : nil})
                 }
             }
 
@@ -272,25 +274,49 @@ extension WidgetLibrary {
 
             struct CLIMode: View {
                 @EnvironmentObject public var state: Navigation
+                @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
                 @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
-                @AppStorage("general.experimental.cli") private var allowCLIMode: Bool = false
                 public var onAction: (() -> Void)? = {}
                 @State private var isHighlighted: Bool = false
                 @State private var selectedPage: Page = .dashboard
 
                 var body: some View {
-                    FancyButtonv2(
-                        text: "Command line mode",
-                        action: {commandLineMode.toggle() ; self.onAction?()},
-                        icon: self.commandLineMode ? "apple.terminal.fill" : "apple.terminal",
-                        iconWhenHighlighted: self.commandLineMode ? "apple.terminal" : "apple.terminal.fill",
-                        showLabel: false,
-                        size: .small,
-                        type: .clear,
-                        font: .title
-                    )
-                    .help("Enter CLI mode")
-                    .frame(width: 25)
+                    if self.cliEnabled {
+                        FancyButtonv2(
+                            text: "Command line mode",
+                            action: {self.commandLineMode.toggle() ; self.onAction?()},
+                            icon: self.commandLineMode ? "apple.terminal.fill" : "apple.terminal",
+                            iconWhenHighlighted: self.commandLineMode ? "apple.terminal" : "apple.terminal.fill",
+                            showLabel: false,
+                            size: .small,
+                            type: .clear,
+                            font: .title
+                        )
+                        .help(self.commandLineMode ? "Exit CLI mode" : "Enter CLI mode")
+                        .frame(width: 25)
+                    }
+                }
+            }
+
+            struct CLIFilter: View {
+                @EnvironmentObject public var state: Navigation
+                @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
+                @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
+                @AppStorage("today.cli.showFilter") private var showCLIFilter: Bool = false
+
+                var body: some View {
+                    if self.cliEnabled && self.commandLineMode {
+                        FancyButtonv2(
+                            text: "Filter",
+                            action: {self.showCLIFilter.toggle()},
+                            icon: "line.3.horizontal.decrease",
+                            bgColour: self.state.session.appPage.primaryColour.opacity(0.2),
+                            showLabel: false,
+                            size: .small,
+                            type: .clear
+                        )
+                        .mask(Circle())
+                    }
                 }
             }
         }
@@ -393,47 +419,172 @@ extension WidgetLibrary {
             @EnvironmentObject public var state: Navigation
 
             var body: some View {
-                if self.state.history.recent.count > 0 {
-                    ZStack {
-                        Theme.toolbarColour
-                        LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
-                            .opacity(0.6)
-                            .blendMode(.softLight)
+                ZStack {
+                    Theme.toolbarColour
+                    LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
+                        .opacity(0.6)
+                        .blendMode(.softLight)
 
-                        VStack(alignment: .leading, spacing: 0) {
-                            HStack {
-                                Buttons.HistoryPrevious()
-                                Spacer()
-                                ForEach(self.state.navButtons, id: \.self) { type in
-                                    switch type {
-                                    case .CLIMode: Buttons.CLIMode()
-                                    case .historyPrevious: Buttons.HistoryPrevious()
-                                    case .resetUserChoices: Buttons.ResetUserChoices()
-                                    case .settings: Buttons.Settings()
-                                    case .createJob: Buttons.CreateJob()
-                                    case .createNote: Buttons.CreateNote()
+                    VStack(alignment: .leading, spacing: 0) {
+                        HStack {
+                            Buttons.HistoryPrevious()
+                            Spacer()
+                            SimpleDateSelector()
+                            Spacer()
+                            ForEach(self.state.navButtons, id: \.self) { type in
+                                switch type {
+                                case .CLIMode: Buttons.CLIMode()
+                                case .CLIFilter: Buttons.CLIFilter()
+                                case .historyPrevious: Buttons.HistoryPrevious()
+                                case .resetUserChoices: Buttons.ResetUserChoices()
+                                case .settings: Buttons.Settings()
+                                case .createJob: Buttons.CreateJob()
+                                case .createNote: Buttons.CreateNote()
 //                                    case .createTask: Buttons.CreateTask()
-                                    case .createTerm: Buttons.CreateTerm()
-                                    case .createPerson: Buttons.CreatePerson()
-                                    case .createRecord: Buttons.CreateRecord()
-                                    case .createCompany: Buttons.CreateCompany()
-                                    case .createProject: Buttons.CreateProject()
-                                    case .createDefinition: Buttons.CreateDefinition()
-                                    default: EmptyView()
+                                case .createTerm: Buttons.CreateTerm()
+                                case .createPerson: Buttons.CreatePerson()
+                                case .createRecord: Buttons.CreateRecord()
+                                case .createCompany: Buttons.CreateCompany()
+                                case .createProject: Buttons.CreateProject()
+                                case .createDefinition: Buttons.CreateDefinition()
+                                default: EmptyView()
+                                }
+                            }
+                        }
+                        .padding([.leading, .trailing])
+                        Divider()
+                    }
+                }
+                .frame(height: 55)
+            }
+        }
+
+        struct SimpleDateSelector: View {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("today.numPastDates") public var numPastDates: Int = 20
+            @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
+            @State private var isToday: Bool = false
+            @State private var isHighlighted: Bool = false
+            @State private var date: String = ""
+            @State private var showDateOverlay: Bool = false
+            @State private var sDate: Date = Date()
+
+            var body: some View {
+                HStack(alignment: .center) {
+                    FancyButtonv2(
+                        text: "Previous day",
+                        action: self.actionPreviousDay,
+                        icon: "chevron.left",
+                        fgColour: .gray,
+                        highlightColour: .white,
+                        showLabel: false,
+                        size: .titleLink,
+                        type: .titleLink
+                    )
+                    .help("Previous day")
+                    .frame(height: 20)
+
+                    Button {
+                        self.showDateOverlay.toggle()
+                    } label: {
+                        HStack(alignment: .center) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 5)
+                                    .strokeBorder(self.isToday ? .yellow.opacity(0.6) : .gray, lineWidth: 1)
+                                    .fill(.white.opacity(self.isHighlighted ? 0.2 : 0.1))
+                                if !self.showDateOverlay {
+                                    HStack {
+                                        Image(systemName: "calendar")
+                                            .foregroundStyle(.gray)
+                                        Text(self.date)
                                     }
                                 }
-//                                Buttons.Settings()
-//                                Buttons.CLIMode()
-//                                Buttons.ResetUserChoices(onActionClear: {})
                             }
-                            .padding([.leading, .trailing])
-                            Divider()
+                            .frame(width: 200)
                         }
                     }
-                    .frame(height: 55)
+                    .foregroundStyle(self.isHighlighted ? .white : self.isToday ? .yellow.opacity(0.6) : .gray)
+                    .buttonStyle(.plain)
+                    .useDefaultHover({ hover in self.isHighlighted = hover})
+                    .overlay {
+                        if self.showDateOverlay {
+                            HStack {
+                                DatePicker("", selection: $sDate)
+                                Image(systemName: "xmark")
+                            }
+                        }
+                    }
+
+                    FancyButtonv2(
+                        text: "Next day",
+                        action: self.actionNextDay,
+                        icon: "chevron.right",
+                        fgColour: .gray,
+                        showLabel: false,
+                        size: .titleLink,
+                        type: .titleLink
+                    )
+                    .help("Next day")
+                    .frame(height: 20)
+                }
+                .padding(12)
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.date) { self.actionOnChangeDate() }
+                .onChange(of: self.sDate) { self.state.session.date = self.sDate }
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.SimpleDateSelector {
+    /// Onload handler. Sets up a timer to advance to the next day and sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.actionOnChangeDate()
+
+        // Auto-advance date to tomorrow when the clock strikes midnight
+        Timer.scheduledTimer(withTimeInterval: 3600, repeats: true) { timer in
+            let components = Calendar.autoupdatingCurrent.dateComponents([.hour], from: Date())
+
+            if let hour = components.hour {
+                if hour == 24 {
+                    self.actionNextDay()
                 }
             }
         }
+    }
+    
+    /// Fires when the date is changed.
+    /// - Returns: Void
+    private func actionOnChangeDate() -> Void {
+        self.date = DateHelper.todayShort(self.state.session.date, format: "MMMM d, yyyy")
+        self.isToday = self.areSameDate(self.state.session.date, Date())
+    }
+
+    /// Determine if two dates are the same
+    /// - Parameters:
+    ///   - lhs: Date
+    ///   - rhs: Date
+    /// - Returns: Void
+    private func areSameDate(_ lhs: Date, _ rhs: Date) -> Bool {
+        let df = DateFormatter()
+        df.dateFormat = "MMMM d"
+        let fmtDate = df.string(from: lhs)
+        let fmtSessionDate = df.string(from: rhs)
+
+        return fmtDate == fmtSessionDate
+    }
+    
+    /// Decrement the current day
+    /// - Returns: Void
+    private func actionPreviousDay() -> Void {
+        self.state.session.date -= 86400
+    }
+    
+    /// Increment the current day
+    /// - Returns: Void
+    private func actionNextDay() -> Void {
+        self.state.session.date += 86400
     }
 }
 

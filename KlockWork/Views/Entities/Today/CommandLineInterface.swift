@@ -20,7 +20,6 @@ struct CommandLineInterface: View {
     @State private var selected: CLIApp.AppType = .log
     @State private var command: String = ""
     @State private var showSelectorPanel: Bool = false
-    @State private var showSearch: Bool = false
 
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
@@ -30,8 +29,9 @@ struct CommandLineInterface: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 1) {
-            Filters(showSearch: $showSearch)
-            Display(showSearch: $showSearch)
+            // @TODO: maybe uncomment when other filters have been implemented?
+//            Filters()
+            Display()
 
             // Prompt + app selector
             if showSelectorPanel {
@@ -46,17 +46,6 @@ struct CommandLineInterface: View {
                 }
                 HStack {
                     Spacer()
-                    FancyButtonv2(
-                        text: "Exit CLI mode",
-                        action: {commandLineMode.toggle()},
-                        icon: "apple.terminal",
-                        fgColour: .white,
-                        showLabel: false,
-                        size: .tiny,
-                        type: .clear
-                    )
-                    .help("Exit CLI mode")
-                    .frame(width: 30, height: 30)
                 }
                 .padding(.trailing)
             }
@@ -331,7 +320,7 @@ extension CommandLineInterface {
     
     // @TODO: https://github.com/aapis/KlockWork/issues/240
     struct Filters: View {
-        @Binding public var showSearch: Bool
+        @AppStorage("today.cli.showFilter") private var showCLIFilter: Bool = false
 
         @EnvironmentObject public var nav: Navigation
 
@@ -342,15 +331,6 @@ extension CommandLineInterface {
 //                    FancyDropdown(label: "Type", items: App.AppType.allCases)
 //                    FancyDropdown(label: "Date format", items: ["Date: Abbreviated, Time: Complete", "Date: Complete, Time: Complete"])
                     Spacer()
-                    FancyButtonv2(
-                        text: "Filter",
-                        action: {showSearch.toggle()},
-                        icon: "line.3.horizontal.decrease",
-                        bgColour: .white.opacity(0.15),
-                        showLabel: false,
-                        showIcon: true
-                    )
-                    .mask(Circle())
                 }
                 .padding([.leading, .trailing])
                 .frame(height: 78)
@@ -444,7 +424,7 @@ extension CommandLineInterface {
     }
     
     struct Display: View {
-        @Binding public var showSearch: Bool
+        @AppStorage("today.cli.showFilter") private var showCLIFilter: Bool = false
         @State private var searchText: String = ""
         @State private var searchFilteredResults: [Navigation.CommandLineSession.History] = []
         @State private var searchResults: [Navigation.CommandLineSession.History] = []
@@ -457,11 +437,11 @@ extension CommandLineInterface {
                     .opacity(0.25)
                     .frame(height: 100)
                 VStack {
-                    if showSearch {
+                    if self.showCLIFilter {
                         SearchBar(text: $searchText, placeholder: "Filter entries...", onReset: onReset)
                             .border(width: 1, edges: [.bottom], color: Theme.cPurple)
-                            .onChange(of: searchText) { text in
-                                onSearch(text)
+                            .onChange(of: searchText) {
+                                onSearch(self.searchText)
                             }
                     }
 
@@ -518,7 +498,6 @@ extension CommandLineInterface {
                             }
                         }
                     }
-                    .padding()
                     .font(Theme.fontTextField)
                 }
             }
