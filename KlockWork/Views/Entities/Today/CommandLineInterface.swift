@@ -46,17 +46,6 @@ struct CommandLineInterface: View {
                 }
                 HStack {
                     Spacer()
-                    FancyButtonv2(
-                        text: "Exit CLI mode",
-                        action: {commandLineMode.toggle()},
-                        icon: "apple.terminal",
-                        fgColour: .white,
-                        showLabel: false,
-                        size: .tiny,
-                        type: .clear
-                    )
-                    .help("Exit CLI mode")
-                    .frame(width: 30, height: 30)
                 }
                 .padding(.trailing)
             }

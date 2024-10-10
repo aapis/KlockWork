@@ -274,25 +274,27 @@ extension WidgetLibrary {
 
             struct CLIMode: View {
                 @EnvironmentObject public var state: Navigation
+                @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
                 @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
-                @AppStorage("general.experimental.cli") private var allowCLIMode: Bool = false
                 public var onAction: (() -> Void)? = {}
                 @State private var isHighlighted: Bool = false
                 @State private var selectedPage: Page = .dashboard
 
                 var body: some View {
-                    FancyButtonv2(
-                        text: "Command line mode",
-                        action: {commandLineMode.toggle() ; self.onAction?()},
-                        icon: self.commandLineMode ? "apple.terminal.fill" : "apple.terminal",
-                        iconWhenHighlighted: self.commandLineMode ? "apple.terminal" : "apple.terminal.fill",
-                        showLabel: false,
-                        size: .small,
-                        type: .clear,
-                        font: .title
-                    )
-                    .help("Enter CLI mode")
-                    .frame(width: 25)
+                    if self.cliEnabled {
+                        FancyButtonv2(
+                            text: "Command line mode",
+                            action: {self.commandLineMode.toggle() ; self.onAction?()},
+                            icon: self.commandLineMode ? "apple.terminal.fill" : "apple.terminal",
+                            iconWhenHighlighted: self.commandLineMode ? "apple.terminal" : "apple.terminal.fill",
+                            showLabel: false,
+                            size: .small,
+                            type: .clear,
+                            font: .title
+                        )
+                        .help(self.commandLineMode ? "Exit CLI mode" : "Enter CLI mode")
+                        .frame(width: 25)
+                    }
                 }
             }
         }
