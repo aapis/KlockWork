@@ -76,10 +76,15 @@ final public class DateHelper {
 
         return entries
     }
-
-    static public func todayShort(_ date: Date? = Date()) -> String {
+    
+    /// Format today's date
+    /// - Parameters:
+    ///   - date: Date
+    ///   - format: String
+    /// - Returns: Void
+    static public func todayShort(_ date: Date? = Date(), format: String = "yyyy-MM-dd") -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.dateFormat = format
         formatter.timeZone = TimeZone.autoupdatingCurrent
         formatter.locale = NSLocale.current
         
