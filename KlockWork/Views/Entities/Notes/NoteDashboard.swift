@@ -31,12 +31,6 @@ struct NoteDashboard: View {
             VStack(alignment: .leading, spacing: 1) {
                 UniversalHeader.Widget(
                     type: self.eType,
-                    buttons: AnyView(
-                        HStack(alignment: .center) {
-                            Widget.ResetUserChoices()
-                            Widget.CreateNote()
-                        }
-                    ),
                     title: self.eType.label
                 )
 

@@ -23,9 +23,6 @@ struct TaskDashboard: View {
             VStack(alignment: .leading, spacing: 0) {
                 UniversalHeader.Widget(
                     type: self.eType,
-                    buttons: AnyView(
-                        Widget.ResetUserChoices()
-                    ),
                     title: self.eType.label
                 )
 

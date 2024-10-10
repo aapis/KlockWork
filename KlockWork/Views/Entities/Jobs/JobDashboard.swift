@@ -91,30 +91,6 @@ struct JobDashboardRedux: View {
             VStack(alignment: .leading, spacing: 1) {
                 UniversalHeader.Widget(
                     type: self.eType,
-                    buttons: AnyView(
-                        HStack(alignment: .center) {
-                            Widget.ResetUserChoices()
-                            Widget.CreateJob(onAction: {
-                                editorVisible = true
-                                explorerVisible = false
-
-                                // Creates a new job entity so the user can customize it
-                                // @TODO: move to new method CoreDataJobs.create
-                                let newJob = Job(context: moc)
-                                newJob.id = UUID()
-                                newJob.jid = 1.0
-                                newJob.colour = Color.randomStorable()
-                                newJob.alive = true
-                                newJob.project = CoreDataProjects(moc: moc).alive().first(where: {$0.company?.isDefault == true})
-                                newJob.created = Date()
-                                newJob.lastUpdate = newJob.created
-                                newJob.overview = ""
-                                newJob.title = ""
-                                nav.session.job = newJob
-                                nav.forms.tp.editor.job = newJob
-                            })
-                        }
-                    ),
                     title: self.eType.label
                 )
                 JobExplorer()

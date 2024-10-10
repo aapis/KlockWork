@@ -27,8 +27,7 @@ extension Today {
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 UniversalHeader.Widget(
-                    type: self.eType,
-                    buttons: AnyView(Buttons(text: $text, onActionSubmit: self.submitAction, onActionClear: self.clearAction))
+                    type: self.eType
                 )
 
                 FancyTextField(
@@ -67,58 +66,6 @@ extension Today {
 //                    })
 //                    let _ = nav.state.advance()
 //                    nav.save()
-                }
-            }
-        }
-
-        struct Buttons: View {
-            typealias Widget = WidgetLibrary.UI.Buttons
-            @EnvironmentObject public var state: Navigation
-            @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
-            @AppStorage("general.experimental.cli") private var allowCLIMode: Bool = false
-            @State private var errorNoJob: Bool = false
-            @State private var errorNoContent: Bool = false
-            private let page: PageConfiguration.AppPage = .today
-            @Binding public var text: String
-            public var onActionSubmit: (() -> Void) = {}
-            public var onActionClear: (() -> Void) = {}
-
-            var body: some View {
-                HStack(alignment: .center, spacing: 8) {
-                    Spacer()
-                    if allowCLIMode {
-                        FancyButtonv2(
-                            text: "Command line mode",
-                            action: {commandLineMode.toggle()},
-                            icon: "apple.terminal",
-                            iconWhenHighlighted: "apple.terminal.fill",
-                            fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
-                            showLabel: false,
-                            size: .small,
-                            type: .clear,
-                            font: .title
-                        )
-                        .help("Enter CLI mode")
-                        .frame(width: 25)
-                    }
-
-                    Widget.ResetUserChoices(onActionClear: self.onActionClear)
-
-                    FancyButtonv2(
-                        text: self.state.session.job != nil ? "Log to job \(self.state.session.job!.title ?? self.state.session.job!.jid.string)" : "Log",
-                        action: self.onActionSubmit,
-                        icon: "plus.square",
-                        iconWhenHighlighted: "plus.square.fill",
-                        fgColour: self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
-                        showLabel: false,
-                        size: .small,
-                        type: .clear,
-                        font: .title
-                    )
-                    .help("Create a new record (alternatively, press Return!)")
-                    .frame(width: 25)
-                    .disabled(self.state.session.job == nil)
-                    .opacity(self.state.session.job == nil ? 0.5 : 1)
                 }
             }
         }

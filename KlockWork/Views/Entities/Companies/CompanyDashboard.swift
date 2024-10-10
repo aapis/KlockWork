@@ -29,13 +29,6 @@ struct CompanyDashboard: View {
             VStack(alignment: .leading, spacing: 0) {
                 UniversalHeader.Widget(
                     type: self.eType,
-                    buttons: AnyView(
-                        HStack(alignment: .center) {
-                            Widget.ResetUserChoices()
-                            Widget.CreateCompany()
-                            Widget.CreateProject()
-                        }
-                    ),
                     title: self.eType.label
                 )
                 if companies.count > 0 {

@@ -26,12 +26,6 @@ struct PeopleDashboard: View {
             VStack(alignment: .leading, spacing: 0) {
                 UniversalHeader.Widget(
                     type: self.eType,
-                    buttons: AnyView(
-                        HStack(alignment: .center) {
-                            Widget.ResetUserChoices()
-                            Widget.CreatePerson()
-                        }
-                    ),
                     title: self.eType.label
                 )
 

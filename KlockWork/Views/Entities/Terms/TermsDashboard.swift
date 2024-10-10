@@ -28,12 +28,6 @@ struct TermsDashboard: View {
             VStack(alignment: .leading, spacing: 0) {
                 UniversalHeader.Widget(
                     type: self.eType,
-                    buttons: AnyView(
-                        HStack(alignment: .center) {
-                            Widget.ResetUserChoices()
-                            Widget.CreateDefinition()
-                        }
-                    ),
                     title: self.eType.label
                 )
 
