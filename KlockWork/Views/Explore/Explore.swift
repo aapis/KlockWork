@@ -42,6 +42,7 @@ struct Explore: View {
                         .frame(height: 150)
                         .padding()
                         .background(Theme.textBackground)
+//                        .background(self.state.session.job?.backgroundColor.opacity(0.2) ?? Theme.textBackground)
                         .clipShape(.rect(cornerRadius: 5))
                     }
                 }

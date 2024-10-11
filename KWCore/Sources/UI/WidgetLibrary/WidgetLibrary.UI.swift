@@ -546,10 +546,10 @@ extension WidgetLibrary {
                     HStack(alignment: .center) {
                         if let image = activity.iconAsImage {
                             image
-                                .foregroundStyle(.yellow)
+                                .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
                         } else if let icon = activity.icon {
                             Image(systemName: icon)
-                                .foregroundStyle(.yellow)
+                                .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
                         }
                         Text(activity.name)
                         Spacer()
@@ -602,6 +602,7 @@ extension WidgetLibrary {
                 }
                 .padding()
                 .background(Theme.textBackground)
+//                .background(self.state.session.job?.backgroundColor.opacity(0.2) ?? Theme.textBackground)
                 .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
                 .onAppear(perform: self.actionOnAppear)
             }
