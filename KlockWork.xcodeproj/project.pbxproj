@@ -98,7 +98,6 @@
 		536040902CB89F540030D72D /* Explore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5360408F2CB89F530030D72D /* Explore.swift */; };
 		536040932CB89F8C0030D72D /* ExploreSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536040922CB89F880030D72D /* ExploreSidebar.swift */; };
 		536040952CB906F70030D72D /* RecentSearches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536040942CB906F30030D72D /* RecentSearches.swift */; };
-		5363B6752A6B4A9A00C2FBB8 /* NoteDashboardSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B6742A6B4A9A00C2FBB8 /* NoteDashboardSettings.swift */; };
 		5363B6782A6BB2CC00C2FBB8 /* CompanyDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B6772A6BB2CC00C2FBB8 /* CompanyDashboard.swift */; };
 		5363B67A2A6BB75F00C2FBB8 /* CompanyBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B6792A6BB75F00C2FBB8 /* CompanyBlock.swift */; };
 		5363B67C2A6BB78900C2FBB8 /* CompanyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B67B2A6BB78900C2FBB8 /* CompanyView.swift */; };
@@ -383,7 +382,6 @@
 		5360408F2CB89F530030D72D /* Explore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Explore.swift; sourceTree = "<group>"; };
 		536040922CB89F880030D72D /* ExploreSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreSidebar.swift; sourceTree = "<group>"; };
 		536040942CB906F30030D72D /* RecentSearches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentSearches.swift; sourceTree = "<group>"; };
-		5363B6742A6B4A9A00C2FBB8 /* NoteDashboardSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDashboardSettings.swift; sourceTree = "<group>"; };
 		5363B6772A6BB2CC00C2FBB8 /* CompanyDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyDashboard.swift; sourceTree = "<group>"; };
 		5363B6792A6BB75F00C2FBB8 /* CompanyBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyBlock.swift; sourceTree = "<group>"; };
 		5363B67B2A6BB78900C2FBB8 /* CompanyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyView.swift; sourceTree = "<group>"; };
@@ -1176,7 +1174,6 @@
 				53967D8329EC6D14006616A0 /* TodaySettings.swift */,
 				53EFCE7829637F35004E45EC /* GeneralSettings.swift */,
 				53C036EE29F8A59900539C3C /* DashboardSettings.swift */,
-				5363B6742A6B4A9A00C2FBB8 /* NoteDashboardSettings.swift */,
 			);
 			path = Tabs;
 			sourceTree = "<group>";
@@ -1668,7 +1665,6 @@
 				5363B67A2A6BB75F00C2FBB8 /* CompanyBlock.swift in Sources */,
 				531B8DF22A847BE8005D911B /* NoteGroup.swift in Sources */,
 				538A535E2C704E5800711639 /* TermsDashboard.swift in Sources */,
-				5363B6752A6B4A9A00C2FBB8 /* NoteDashboardSettings.swift in Sources */,
 				535C1AE129F48EF700CD95FD /* Dashboard.swift in Sources */,
 				53013A962CAB825B0024BA30 /* GlobalSidebar.swift in Sources */,
 				53C000962B3A7BD500D5EC04 /* String.swift in Sources */,

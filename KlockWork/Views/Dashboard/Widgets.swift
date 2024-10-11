@@ -25,6 +25,7 @@ struct WidgetLoading: View {
 }
 
 struct Widgets: View {
+    typealias UI = WidgetLibrary.UI
     @AppStorage("dashboard.widget.thisweek") public var showWidgetThisWeek: Bool = true
     @AppStorage("dashboard.widget.thismonth") public var showWidgetThisMonth: Bool = true
     @AppStorage("dashboard.widget.thisyear") public var showWidgetThisYear: Bool = true
@@ -36,6 +37,7 @@ struct Widgets: View {
 
     var body: some View {
         VStack(alignment: .leading) {
+            UI.ListLinkTitle(text: "Widgets")
             ScrollView(showsIndicators: false) {
                 LazyVGrid(columns: columns, alignment: .leading) {
                     if showWidgetThisWeek {
@@ -66,5 +68,8 @@ struct Widgets: View {
                 Spacer()
             }
         }
+        .padding()
+        .background(Theme.textBackground)
+        .clipShape(.rect(cornerRadius: 5))
     }
 }

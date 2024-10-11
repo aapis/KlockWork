@@ -560,6 +560,28 @@ extension WidgetLibrary {
                 .useDefaultHover({ hover in self.isHighlighted = hover })
             }
         }
+
+        struct ListLinkTitle: View {
+            @EnvironmentObject private var state: Navigation
+            public var type: ExploreActivityType?
+            public var text: String?
+
+            var body: some View {
+                HStack {
+                    if let type = self.type {
+                        Text(type.title.uppercased())
+                    } else if let text = self.text {
+                        Text(text.uppercased())
+                    } else {
+                        Text("Title")
+                    }
+                    Spacer()
+                }
+                .foregroundStyle(.gray)
+                .font(.caption)
+                .padding(.bottom)
+            }
+        }
     }
 }
 
