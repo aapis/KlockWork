@@ -29,7 +29,7 @@ struct CreateEntitiesWidget: View {
             if isSearchStackShowing || isCreateStackShowing || isUpcomingTaskStackShowing {
                 VStack(alignment: .leading, spacing: 0) {
                     if isSearchStackShowing {
-                        FindDashboard(searching: $searching, location: .sidebar)
+                        FindDashboard(location: .sidebar)
                         Spacer()
                     } else if isCreateStackShowing {
                         CreateStack()
