@@ -18,7 +18,6 @@ struct Explore: View {
             Activity(name: "Flashcards", page: .dashboard, type: .activity, icon: "person.text.rectangle"),
         ]
     }
-    private var columns: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -29,26 +28,22 @@ struct Explore: View {
             FancyDivider()
             HStack(alignment: .top) {
                 ForEach(ExploreActivityType.allCases, id: \.hashValue) { type in
-                    VStack(alignment: .leading) {
-                        HStack {
-                            Text(type.title.uppercased())
-                                .foregroundStyle(.gray)
-                                .font(.caption)
-                                .padding(.bottom)
-                            Spacer()
-                        }
+                    VStack(alignment: .leading, spacing: 5) {
+                        UI.ListLinkTitle(type: type)
 
                         ForEach(self.activities.filter({$0.type == type}), id: \.id) { activity in
                             UI.ListLinkItem(activity: activity)
                         }
+                        Spacer()
                     }
-                    .padding(8)
+                    .frame(height: 150)
+                    .padding()
                     .background(Theme.textBackground)
                     .clipShape(.rect(cornerRadius: 5))
                 }
             }
-
             // @TODO: tmp disabled
+            FancyDivider()
 //            Widgets()
             Spacer()
         }
