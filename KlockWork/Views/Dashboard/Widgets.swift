@@ -30,6 +30,7 @@ struct Widgets: View {
     @AppStorage("dashboard.widget.thisyear") public var showWidgetThisYear: Bool = true
     @AppStorage("dashboard.widget.intro") public var showWidgetIntro: Bool = true
     @AppStorage("dashboard.widget.upcomingWork") public var showWidgetUpcomingWork: Bool = true
+    @AppStorage("dashboard.widget.recentSearches") public var showRecentSearches: Bool = true
 
     private var columns: [GridItem] = Array(repeating: .init(.flexible(minimum: 100)), count: 3)
 
@@ -55,6 +56,10 @@ struct Widgets: View {
 
                     if showWidgetUpcomingWork {
                         UpcomingWork()
+                    }
+
+                    if showRecentSearches {
+                        RecentSearches()
                     }
                 }
 
