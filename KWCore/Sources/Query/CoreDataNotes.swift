@@ -277,11 +277,21 @@ public class CoreDataNotes {
         return query(predicate)
     }
 
-    /// Count up all the jobs referenced for a given day
+    /// Count up all the notes referenced for a given day
     /// - Parameter date: Date
     /// - Returns: Int
     public func countByDate(for date: Date) -> Int {
         return self.find(for: date).count
+    }
+
+    /// Count all notes
+    /// - Returns: Int
+    public func countAll() -> Int {
+        return self.count(
+            NSPredicate(
+                format: "alive == true"
+            )
+        )
     }
 
     /// Updates a single NSManagedObject
