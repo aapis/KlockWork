@@ -46,6 +46,8 @@ public final class StringHelper {
                     } else {
                         return title
                     }
+                } else {
+                    return company.abbreviation ?? "XXX"
                 }
             }
         case is Project:
@@ -56,6 +58,8 @@ public final class StringHelper {
                     } else {
                         return title
                     }
+                } else {
+                    return project.abbreviation ?? "YYY"
                 }
             }
         case is Job:
@@ -66,6 +70,8 @@ public final class StringHelper {
                     } else {
                         return title
                     }
+                } else {
+                    return job.jid.string
                 }
             }
         default:
