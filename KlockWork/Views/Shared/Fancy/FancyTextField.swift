@@ -33,11 +33,15 @@ struct FancyTextField: View {
     @FocusState public var hasFocus: Bool
 
     var body: some View {
-        HStack(spacing: 5) {
+        HStack {
             if showLabel {
                 FancyLabel(text: self.placeholder)
             }
             ZStack(alignment: .topLeading) {
+                LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                    .blendMode(.softLight)
+                    .frame(height: self.lineLimit < 15 ? 40 : 80)
+                    .opacity(0.1)
                 if lineLimit == 1 {
                     oneLine
                 } else if lineLimit < 15 {
@@ -45,11 +49,6 @@ struct FancyTextField: View {
                 } else {
                     multiLine
                 }
-
-                LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
-                    .blendMode(.softLight)
-                    .frame(height: self.lineLimit < 15 ? 40 : 80)
-                    .opacity(0.1)
             }
         }
     }
@@ -63,7 +62,6 @@ struct FancyTextField: View {
             .onSubmit(onSubmit ?? {})
             .onChange(of: text) { self.onChange != nil ? self.onChange!(self.text) : nil }
             .background(fieldStatus == .standard ? (transparent! ? Color.clear : bgColour) : fieldStatus == .unsaved ? Color.yellow : Theme.cGreen) // sorry
-            .frame(height: 45)
             .lineLimit(1)
             .disabled(disabled ?? false)
             .foregroundColor(disabled ?? false ? Color.gray : fieldStatus == .unsaved ? .black : fgColour)
