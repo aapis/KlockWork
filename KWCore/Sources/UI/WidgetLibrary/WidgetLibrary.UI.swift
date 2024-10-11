@@ -533,6 +533,33 @@ extension WidgetLibrary {
                 .onChange(of: self.sDate) { self.state.session.date = self.sDate }
             }
         }
+
+        struct ListLinkItem: View {
+            @EnvironmentObject private var state: Navigation
+            public let activity: Activity
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                Button {
+                    self.state.to(activity.page)
+                } label: {
+                    HStack(alignment: .center) {
+                        if let image = activity.iconAsImage {
+                            image
+                                .foregroundStyle(.yellow)
+                        } else if let icon = activity.icon {
+                            Image(systemName: icon)
+                                .foregroundStyle(.yellow)
+                        }
+                        Text(activity.name)
+                            .underline(self.isHighlighted)
+                        Spacer()
+                    }
+                }
+                .buttonStyle(.plain)
+                .useDefaultHover({ hover in self.isHighlighted = hover })
+            }
+        }
     }
 }
 
