@@ -14,8 +14,8 @@ struct Explore: View {
     @EnvironmentObject public var state: Navigation
     private var activities: [Activity] {
         [
-            Activity(name: "Activity Calendar", page: .dashboard, type: .visualize, icon: "calendar"),
-            Activity(name: "Flashcards", page: .dashboard, type: .activity, icon: "person.text.rectangle"),
+            Activity(name: "Activity Calendar", page: .activityCalendar, type: .visualize, icon: "calendar"),
+            Activity(name: "Flashcards", page: .activityFlashcards, type: .activity, icon: "person.text.rectangle"),
         ]
     }
 
@@ -28,6 +28,7 @@ struct Explore: View {
                 )
                 UI.EntityStatistics()
             }
+            // @TODO: move to UI
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top) {
                     ForEach(ExploreActivityType.allCases, id: \.hashValue) { type in
@@ -37,9 +38,7 @@ struct Explore: View {
                             ForEach(self.activities.filter({$0.type == type}), id: \.id) { activity in
                                 UI.ListLinkItem(activity: activity)
                             }
-                            Spacer()
                         }
-                        .frame(height: 150)
                         .padding()
                         .background(Theme.textBackground)
 //                        .background(self.state.session.job?.backgroundColor.opacity(0.2) ?? Theme.textBackground)
