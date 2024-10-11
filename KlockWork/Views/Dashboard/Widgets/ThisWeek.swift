@@ -100,16 +100,16 @@ struct ThisWeek: View {
 //            ]
 //        ]
         
-        let file = Bundle.main.url(forResource: "job_ids", withExtension: ".json")
-        
-        if file == nil {
-            print("[error] No file with name job_ids.json")
-            return
-        } else {
-            let contents = try? String(contentsOf: file!)
-            print("[debug] Contents: \(contents)")
-        }
-        
-        let kw = Keywords(from: file!)
+//        let file = Bundle.main.url(forResource: "job_ids", withExtension: ".json")
+//        
+//        if file == nil {
+//            print("[error] No file with name job_ids.json")
+//            return
+//        } else {
+//            let contents = try? String(contentsOf: file!)
+//            print("[debug] Contents: \(contents)")
+//        }
+//        
+//        let kw = Keywords(from: file!)
     }
 }
