@@ -602,7 +602,7 @@ extension WidgetLibrary {
                 }
                 .padding()
                 .background(Theme.textBackground)
-                .clipShape(.rect(cornerRadius: 5))
+                .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
                 .onAppear(perform: self.actionOnAppear)
             }
 
@@ -645,7 +645,6 @@ extension WidgetLibrary {
                             }
                             .frame(height: 25)
                         }
-//                        .frame(height: 90)
                         .clipShape(.rect(cornerRadius: 5))
                         .useDefaultHover({ hover in self.isHighlighted = hover })
                     }
@@ -692,7 +691,7 @@ extension WidgetLibrary.UI.EntityStatistics.Statistic {
         case .jobs: self.count = CoreDataJob(moc: self.state.moc).countAll()
         case .records: self.count = CoreDataRecords(moc: self.state.moc).countAll()
         case .tasks: self.count = CoreDataTasks(moc: self.state.moc).countAll()
-//        case .notes: self.count = CoreDataNotes(moc: self.state.moc).countAll()
+        case .notes: self.count = CoreDataNotes(moc: self.state.moc).countAll()
         case .people: self.count = CoreDataPerson(moc: self.state.moc).countAll()
         case .companies: self.count = CoreDataCompanies(moc: self.state.moc).countAll()
         case .projects: self.count = CoreDataProjects(moc: self.state.moc).countAll()

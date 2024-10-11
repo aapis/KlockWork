@@ -21,25 +21,29 @@ struct Explore: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            UniversalHeader.StandaloneWidget(
-                type: .BruceWillis,
-                title: "Explore"
-            )
-            UI.EntityStatistics()
-            HStack(alignment: .top) {
-                ForEach(ExploreActivityType.allCases, id: \.hashValue) { type in
-                    VStack(alignment: .leading, spacing: 5) {
-                        UI.ListLinkTitle(type: type)
+            VStack(alignment: .leading, spacing: 0) {
+                UniversalHeader.Widget(
+                    type: .BruceWillis,
+                    title: "Explore"
+                )
+                UI.EntityStatistics()
+            }
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(alignment: .top) {
+                    ForEach(ExploreActivityType.allCases, id: \.hashValue) { type in
+                        VStack(alignment: .leading, spacing: 5) {
+                            UI.ListLinkTitle(type: type)
 
-                        ForEach(self.activities.filter({$0.type == type}), id: \.id) { activity in
-                            UI.ListLinkItem(activity: activity)
+                            ForEach(self.activities.filter({$0.type == type}), id: \.id) { activity in
+                                UI.ListLinkItem(activity: activity)
+                            }
+                            Spacer()
                         }
-                        Spacer()
+                        .frame(height: 150)
+                        .padding()
+                        .background(Theme.textBackground)
+                        .clipShape(.rect(cornerRadius: 5))
                     }
-                    .frame(height: 150)
-                    .padding()
-                    .background(Theme.textBackground)
-                    .clipShape(.rect(cornerRadius: 5))
                 }
             }
             // @TODO: tmp disabled
