@@ -592,11 +592,17 @@ extension WidgetLibrary {
             @State private var statistics: [Statistic] = []
 
             var body: some View {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(alignment: .center) {
-                        ForEach(self.statistics, id: \.id) { type in type }
+                VStack(spacing: 0) {
+                    ListLinkTitle(text: "Overview")
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(alignment: .center) {
+                            ForEach(self.statistics, id: \.id) { type in type }
+                        }
                     }
                 }
+                .padding()
+                .background(Theme.textBackground)
+                .clipShape(.rect(cornerRadius: 5))
                 .onAppear(perform: self.actionOnAppear)
             }
 

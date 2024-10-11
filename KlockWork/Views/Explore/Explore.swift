@@ -16,7 +16,6 @@ struct Explore: View {
         [
             Activity(name: "Activity Calendar", page: .dashboard, type: .visualize, icon: "calendar"),
             Activity(name: "Flashcards", page: .dashboard, type: .activity, icon: "person.text.rectangle"),
-            Activity(name: "Flashcards", page: .dashboard, type: .activity, icon: "person.text.rectangle"),
         ]
     }
 
@@ -26,9 +25,7 @@ struct Explore: View {
                 type: .BruceWillis,
                 title: "Explore"
             )
-            FancyDivider()
             UI.EntityStatistics()
-            FancyDivider()
             HStack(alignment: .top) {
                 ForEach(ExploreActivityType.allCases, id: \.hashValue) { type in
                     VStack(alignment: .leading, spacing: 5) {
@@ -46,7 +43,6 @@ struct Explore: View {
                 }
             }
             // @TODO: tmp disabled
-            FancyDivider()
 //            Widgets()
             Spacer()
         }
