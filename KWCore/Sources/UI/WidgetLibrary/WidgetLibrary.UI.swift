@@ -420,7 +420,7 @@ extension WidgetLibrary {
 
             var body: some View {
                 ZStack {
-                    Theme.toolbarColour
+                    self.state.session.appPage.primaryColour
                     LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
                         .opacity(0.6)
                         .blendMode(.softLight)
