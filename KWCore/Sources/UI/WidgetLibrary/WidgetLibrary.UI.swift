@@ -552,9 +552,13 @@ extension WidgetLibrary {
                                 .foregroundStyle(.yellow)
                         }
                         Text(activity.name)
-                            .underline(self.isHighlighted)
                         Spacer()
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(.gray)
                     }
+                    .padding(8)
+                    .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .clipShape(.rect(cornerRadius: 5))
                 }
                 .buttonStyle(.plain)
                 .useDefaultHover({ hover in self.isHighlighted = hover })
@@ -581,6 +585,113 @@ extension WidgetLibrary {
                 .font(.caption)
                 .padding(.bottom)
             }
+        }
+
+        struct EntityStatistics: View {
+            @EnvironmentObject private var state: Navigation
+            @State private var statistics: [Statistic] = []
+
+            var body: some View {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .center) {
+                        ForEach(self.statistics, id: \.id) { type in type }
+                    }
+                }
+                .onAppear(perform: self.actionOnAppear)
+            }
+
+            struct Statistic: View, Identifiable {
+                @EnvironmentObject private var state: Navigation
+                var id: UUID = UUID()
+                var type: Conf
+                @State private var count: Int = 0
+                @State private var isLoading: Bool = false
+                @State private var isHighlighted: Bool = false
+
+                var body: some View {
+                    Button {
+                        self.state.to(self.type.page)
+                    } label: {
+                        VStack(alignment: .center, spacing: 0) {
+                            ZStack(alignment: .center) {
+                                self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.7)
+                                VStack(alignment: .center, spacing: 0) {
+                                    if self.isLoading {
+                                        ProgressView()
+                                    } else {
+                                        (self.isHighlighted ? self.type.selectedIcon : self.type.icon)
+                                            .font(.largeTitle)
+                                            .padding()
+                                            .frame(height: 30)
+                                    }
+                                }
+                                Spacer()
+                            }
+                            .frame(height: 65)
+
+                            ZStack(alignment: .center) {
+                                (self.isHighlighted ? self.state.session.appPage.primaryColour.opacity(0.4) : Theme.lightWhite)
+                                VStack(alignment: .center, spacing: 0) {
+                                    Text(String(self.count))
+                                        .font(.system(.title3, design: .monospaced))
+                                        .foregroundStyle(self.isHighlighted ? .white : self.state.session.appPage.primaryColour)
+                                }
+                            }
+                            .frame(height: 25)
+                        }
+//                        .frame(height: 90)
+                        .clipShape(.rect(cornerRadius: 5))
+                        .useDefaultHover({ hover in self.isHighlighted = hover })
+                    }
+                    .buttonStyle(.plain)
+                    .onAppear(perform: self.actionOnAppear)
+                    .help("\(self.count) \(self.type.label)")
+                }
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.EntityStatistics {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        let types = PageConfiguration.EntityType.allCases.filter({ $0 != .BruceWillis })
+
+        for type in types {
+            self.statistics.append(
+                Statistic(type: type)
+            )
+        }
+    }
+}
+
+extension WidgetLibrary.UI.EntityStatistics.Statistic {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        Task {
+            await self.determineCount()
+
+            self.isLoading.toggle()
+        }
+    }
+    
+    /// Async method to determine count for each entity type
+    /// - Returns: Void
+    private func determineCount() async -> Void {
+        self.isLoading.toggle()
+
+        switch self.type {
+        case .jobs: self.count = CoreDataJob(moc: self.state.moc).countAll()
+        case .records: self.count = CoreDataRecords(moc: self.state.moc).countAll()
+        case .tasks: self.count = CoreDataTasks(moc: self.state.moc).countAll()
+//        case .notes: self.count = CoreDataNotes(moc: self.state.moc).countAll()
+        case .people: self.count = CoreDataPerson(moc: self.state.moc).countAll()
+        case .companies: self.count = CoreDataCompanies(moc: self.state.moc).countAll()
+        case .projects: self.count = CoreDataProjects(moc: self.state.moc).countAll()
+        case .terms: self.count = CoreDataTaxonomyTerms(moc: self.state.moc).countAll()
+        default: self.count = 0
         }
     }
 }
