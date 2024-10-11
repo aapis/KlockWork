@@ -72,7 +72,6 @@ extension WidgetLibrary.UI {
                             Spacer()
                         }
                         .padding(8)
-                        Divider()
                     }
                 }
             }
