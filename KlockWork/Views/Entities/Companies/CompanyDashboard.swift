@@ -12,7 +12,7 @@ import KWCore
 struct CompanyDashboard: View {
     typealias Widget = WidgetLibrary.UI.Buttons
     @EnvironmentObject public var state: Navigation
-    @AppStorage("notes.columns") private var numColumns: Int = 3
+    @AppStorage("general.columns") private var numColumns: Int = 3
     @AppStorage("general.defaultCompany") public var defaultCompany: Int = 0
     @State private var searchText: String = ""
     @State private var selected: Int = 0

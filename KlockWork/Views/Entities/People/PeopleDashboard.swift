@@ -12,7 +12,7 @@ import KWCore
 struct PeopleDashboard: View {
     typealias Widget = WidgetLibrary.UI.Buttons
     @EnvironmentObject public var state: Navigation
-    @AppStorage("notes.columns") private var numColumns: Int = 3
+    @AppStorage("general.columns") private var numColumns: Int = 3
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .people
     private var columns: [GridItem] {

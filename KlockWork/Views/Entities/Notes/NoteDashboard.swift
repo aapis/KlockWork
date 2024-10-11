@@ -14,7 +14,7 @@ struct NoteDashboard: View {
     typealias Widget = WidgetLibrary.UI.Buttons
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
-    @AppStorage("notes.columns") private var numColumns: Int = 3
+    @AppStorage("general.columns") private var numColumns: Int = 3
     @AppStorage("notedashboard.listVisible") private var listVisible: Bool = true
     @State private var searchText: String = ""
     @State private var selected: Int = 0
