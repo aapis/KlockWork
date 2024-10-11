@@ -11,17 +11,14 @@ import SwiftUI
 import KWCore
 
 struct ThisMonth: View {
+    @EnvironmentObject public var state: Navigation
+    @AppStorage("dashboard.widget.thismonth") public var showWidgetThisMonth: Bool = true
+    @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
     public let title: String = "This Month"
-    
     @State private var wordCount: Int = 0
     @State private var jobCount: Int = 0
     @State private var recordCount: Int = 0
-    
-    @AppStorage("dashboard.widget.thismonth") public var showWidgetThisMonth: Bool = true
-    
-    @Environment(\.managedObjectContext) var moc
-    @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -48,7 +45,7 @@ struct ThisMonth: View {
             
             Spacer()
         }
-        .background(Theme.cPurple)
+        .background(self.state.session.appPage.primaryColour)
         .onAppear(perform: onAppear)
         .frame(height: 250)
     }

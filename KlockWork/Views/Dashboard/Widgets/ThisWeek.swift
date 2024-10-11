@@ -12,17 +12,14 @@ import KWCore
 import CreateML
 
 struct ThisWeek: View {
+    @EnvironmentObject private var state: Navigation
+    @AppStorage("dashboard.widget.thisweek") public var showWidgetThisWeek: Bool = true
+    @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
     public let title: String = "This Week"
-    
     @State private var wordCount: Int = 0
     @State private var jobCount: Int = 0
     @State private var recordCount: Int = 0
-    
-    @AppStorage("dashboard.widget.thisweek") public var showWidgetThisWeek: Bool = true
-    
-    @Environment(\.managedObjectContext) var moc
-    @StateObject public var crm: CoreDataRecords = CoreDataRecords(moc: PersistenceController.shared.container.viewContext)
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -49,7 +46,7 @@ struct ThisWeek: View {
             
             Spacer()
         }
-        .background(Theme.cPurple)
+        .background(self.state.session.appPage.primaryColour)
         .onAppear(perform: onAppear)
         .frame(height: 250)
     }
