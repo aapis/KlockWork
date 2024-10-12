@@ -9,6 +9,7 @@
 import SwiftUI
 import KWCore
 import CoreSpotlight
+import UserNotifications
 
 @main
 struct DLPrototype: App {
@@ -65,7 +66,6 @@ struct DLPrototype: App {
                 .environmentObject(nav)
         }
 
-        // TODO: temp commented out, too early to include this
         MenuBarExtra("name", systemImage: "clock.fill") {
             let appName = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
             // @TODO: temp commented out until I build a compatible search view
@@ -76,9 +76,7 @@ struct DLPrototype: App {
             //            }.keyboardShortcut("1")
 
             Button("Search") {
-                nav.setView(AnyView(Dashboard()))
-                nav.setSidebar(AnyView(DashboardSidebar()))
-                nav.setParent(.dashboard)
+                self.nav.to(.dashboard)
             }
 
             Divider()
@@ -119,7 +117,9 @@ struct DLPrototype: App {
             }
         }
 
-        self.onApplicationBoot()
+        self.createAssessments()
+        NotificationHelper.clean() // @TODO: shouldn't be necessary here
+        NotificationHelper.requestAuthorization()
     }
 
     func application(application: any App, continueUserActivity userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {
@@ -137,9 +137,9 @@ struct DLPrototype: App {
         print("[debug][Spotlight] Item tapped: \(uniqueIdentifier)")
     }
 
-    /// Fires when application has loaded and view appears
+    /// Creates assessment factors
     /// - Returns: Void
-    private func onApplicationBoot() -> Void {
+    private func createAssessments() -> Void {
         // Create the default set of assessment factors if necessary (aka, if there are no AFs)
         let factors = CDAssessmentFactor(moc: self.nav.moc).all(limit: 1).first
         if factors == nil {

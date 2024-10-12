@@ -16,6 +16,7 @@ struct TaskDetail: View {
     @State private var content: String = ""
     @State private var published: Bool = false
     @State private var isPresented: Bool = false
+    @State private var shouldCreateNotification: Bool = true
     @State private var due: Date = Date()
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .tasks
@@ -29,6 +30,11 @@ struct TaskDetail: View {
                 Title(text: eType.enSingular, imageAsImage: eType.icon)
                 FancyDivider()
                 Toggle("Published", isOn: $published)
+                if let task = self.task {
+                    if !task.hasScheduledNotification {
+                        Toggle("Create notification", isOn: $shouldCreateNotification)
+                    }
+                }
                 FancyDivider()
                 DatePicker("Due", selection: $due)
                 HStack(alignment: .center) {
@@ -89,6 +95,7 @@ extension TaskDetail {
         self.content = self.task?.content ?? ""
         self.published = self.task?.cancelledDate == nil && self.task?.completedDate == nil
         self.due = self.task?.due ?? Date()
+        self.shouldCreateNotification = ((self.task?.hasScheduledNotification ?? false) ? false : true)
     }
 
     /// Fires when enter/return hit while entering text in field or when add button tapped
@@ -110,11 +117,23 @@ extension TaskDetail {
             )
         }
 
-        self.content = ""
+        if self.shouldCreateNotification {
+            self.task?.hasScheduledNotification = true
+//            let currHour = Calendar.autoupdatingCurrent.component(.hour, from: self.due)
+//            let currMin = Calendar.autoupdatingCurrent.component(.minute, from: self.due)
+//
+//            var dc = DateComponents()
+//            dc.hour = currHour
+//            dc.minute = currMin - (5*60)
 
-        PersistenceController.shared.save()
-        self.dismiss()
-        self.state.to(.tasks)
+//            NotificationHelper.create(title: "Task Due!", body: self.content, dateComponents: dc, identifier: self.task?.id?.uuidString ?? "no-id")
+            NotificationHelper.clean()
+        }
+
+        self.content = ""
+//        PersistenceController.shared.save()
+//        self.dismiss()
+//        self.state.to(.tasks)
     }
 
     private func actionChangePublishStatus() -> Void {
