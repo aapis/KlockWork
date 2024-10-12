@@ -165,11 +165,6 @@ struct LogRow: View, Identifiable {
             }
             .disabled(entry.jobObject?.jid ?? 0 == 0)
 
-            Button("Edit...") {
-                self.nav.to(.recordDetail)
-            }
-            .disabled(entry.jobObject?.jid ?? 0 == 0)
-
             if let uri = entry.jobObject!.uri {
                 if uri.absoluteString != "" && uri.absoluteString != "https://" {
                     Link(destination: uri, label: {
@@ -203,6 +198,15 @@ struct LogRow: View, Identifiable {
             }
             
             Menu("Go to"){
+                Button {
+                    self.nav.session.job = entry.jobObject
+                    self.nav.session.record = self.record
+                    self.nav.to(.recordDetail)
+                } label: {
+                    Text(PageConfiguration.EntityType.records.enSingular)
+                }
+                .disabled(entry.jobObject?.jid ?? 0 == 0)
+
                 Button {
                     self.nav.session.job = entry.jobObject
                     self.nav.to(.tasks)
