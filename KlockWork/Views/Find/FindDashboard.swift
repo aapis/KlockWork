@@ -13,7 +13,7 @@ struct FindDashboard: View {
     typealias Entity = PageConfiguration.EntityType
 
     @EnvironmentObject public var nav: Navigation
-    @Binding public var searching: Bool
+    @State public var searching: Bool = false
     public var location: WidgetLocation = .content
     @State private var searchText: String = ""
     @State private var activeSearchText: String = ""
@@ -31,7 +31,7 @@ struct FindDashboard: View {
     @State private var advancedSearchResults: [SearchLanguage.Results.Result] = []
     @State private var buttons: [ToolbarButton] = []
     @State private var loading: Bool = false
-    @State private var showingTypes: Bool = false
+    @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
     private var columns: [GridItem] {
         Array(repeating: .init(.flexible(minimum: 100)), count: 2)
     }
@@ -54,32 +54,31 @@ struct FindDashboard: View {
                 ZStack(alignment: .topLeading) {
                     SearchBar(
                         text: $activeSearchText,
-                        disabled: false,
                         placeholder: location == .content ? "Search \(counts.0) records, \(counts.1) jobs, and \(counts.2) tasks in \(counts.3) projects" : "Search for anything",
                         onSubmit: onSubmit,
                         onReset: onReset
                     )
-                    .border(width: self.activeSearchText.count  == 0 && self.location == .content ? 4 : 0, edges: [.bottom], color: self.nav.parent?.appPage.primaryColour ?? .clear)
-
-                    if activeSearchText.count == 0 {
-                        VStack(alignment: .trailing) {
-                            Spacer()
-                            HStack(spacing: 5) {
-                                Spacer()
-                                FancyButtonv2(
-                                    text: "Entities",
-                                    action: {showingTypes.toggle()},
-                                    icon: showingTypes ? "arrow.up.square.fill" : "arrow.down.square.fill",
-                                    showLabel: false,
-                                    size: .tiny,
-                                    type: .clear
-                                )
-                                .help("Choose the entities you want to search")
-                                .padding(.trailing, 15)
-                            }
-                        }
-                        .frame(height: 28)
-                    }
+//                    .border(width: self.activeSearchText.count  == 0 && self.location == .content ? 4 : 0, edges: [.bottom], color: self.nav.parent?.appPage.primaryColour ?? .clear)
+//
+//                    if activeSearchText.count == 0 {
+////                        VStack(alignment: .trailing) {
+////                            Spacer()
+//                            HStack(spacing: 5) {
+//                                Spacer()
+//                                FancyButtonv2(
+//                                    text: "Entities",
+//                                    action: {showingTypes.toggle()},
+//                                    icon: showingTypes ? "arrow.up.square.fill" : "arrow.down.square.fill",
+//                                    showLabel: false,
+////                                    size: .tiny,
+//                                    type: .clear
+//                                )
+//                                .help("Choose the entities you want to search")
+//                                .padding(.trailing, 15)
+//                            }
+////                        }
+////                        .frame(height: 28)
+//                    }
                 }
             }
             

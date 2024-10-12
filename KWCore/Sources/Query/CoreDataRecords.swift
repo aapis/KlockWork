@@ -705,7 +705,9 @@ public class CoreDataRecords: ObservableObject {
         fetch.returnsDistinctResults = true
         
         do {
-            results = try moc!.fetch(fetch)
+            if let model = self.moc {
+                results = try model.fetch(fetch)
+            }
         } catch {
             print("[error] CoreDataRecords.query Unable to find records for predicate \(predicate.predicateFormat)")
         }

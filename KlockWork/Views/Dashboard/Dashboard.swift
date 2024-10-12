@@ -25,12 +25,8 @@ struct Dashboard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            FindDashboard(searching: $searching, location: .content)
-            FancyDivider()
-
-            if !searching {
-                Widgets()
-            }
+            FindDashboard(location: .content)
+            Spacer()
         }
         .padding()
         .background(Theme.toolbarColour)

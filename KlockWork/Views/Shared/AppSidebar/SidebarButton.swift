@@ -24,6 +24,8 @@ struct SidebarButton: View, Identifiable {
     public let pageType: Page
     public var icon: String?
     public var iconAsImage: Image?
+    public var iconWhenSelected: String?
+    public var iconAsImageWhenSelected: Image?
     public var label: String
     public var sidebar: AnyView?
     public var showLabel: Bool = true

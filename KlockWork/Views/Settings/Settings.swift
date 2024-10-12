@@ -41,12 +41,6 @@ struct SettingsView: View {
                     Label("Dashboard", systemImage: "house")
                 }
                 .tag(SettingsTabs.dashboard)
-
-            NoteDashboardSettings()
-                .tabItem {
-                    Label("Notes", systemImage: "note.text")
-                }
-                .tag(SettingsTabs.notedashboard)
         }
         .padding(20)
     }

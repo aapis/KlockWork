@@ -1,19 +1,18 @@
 //
-//  NextThreeDays.swift
-//  DLPrototype
+//  RecentSearches.swift
+//  KlockWork
 //
-//  Created by Ryan Priebe on 2024-10-06.
+//  Created by Ryan Priebe on 2024-10-11.
 //  Copyright © 2024 YegCollective. All rights reserved.
 //
 
 import SwiftUI
 import KWCore
 
-struct UpcomingWork: View {
+struct RecentSearches: View {
     @EnvironmentObject public var state: Navigation
-    @AppStorage("dashboard.maxDaysUpcomingWork") public var maxDaysUpcomingWork: Double = 5
-    @AppStorage("dashboard.widget.upcomingWork") public var showWidgetUpcomingWork: Bool = true
-    public let title: String = "Upcoming Work"
+    @AppStorage("dashboard.widget.recentSearches") public var showRecentSearches: Bool = true
+    public let title: String = "Recent Searches"
     public var page: PageConfiguration.AppPage = .find
     @State private var forecast: [Forecast] = []
 
@@ -40,35 +39,21 @@ struct UpcomingWork: View {
         .background(self.state.session.appPage.primaryColour)
 //        .frame(height: 250)
         .onAppear(perform: self.actionOnAppear)
-        .onChange(of: self.maxDaysUpcomingWork) { self.actionOnAppear() }
     }
 }
 
-extension UpcomingWork {
+extension RecentSearches {
     /// Onload handler. Creates forecast
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        self.forecast = []
-        let dates = Date()..<DateHelper.daysAhead(self.maxDaysUpcomingWork)
-        let hrs24: TimeInterval = 60*60*24
 
-        for date in stride(from: Date(), to: dates.upperBound, by: hrs24) {
-            self.forecast.append(
-                Forecast(
-                    date: DateHelper.startOfDay(date),
-                    callback: self.actionOnForecastTap,
-                    type: .row,
-                    page: self.page
-                )
-            )
-        }
     }
 
     private func actionOnForecastTap() -> Void {
-        self.state.to(.planning)
+
     }
 
     private func actionOnCloseWidget() -> Void {
-        self.showWidgetUpcomingWork.toggle()
+        
     }
 }

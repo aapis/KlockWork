@@ -13,7 +13,7 @@ import EventKit
 public enum Page {
     typealias Conf = PageConfiguration.AppPage
     case dashboard, today, notes, tasks, projects, projectDetail, jobs, companies, companyDetail, planning,
-         terms, definitionDetail, taskDetail, noteDetail, people, peopleDetail
+    terms, definitionDetail, taskDetail, noteDetail, people, peopleDetail, explore, activityFlashcards, activityCalendar
 
     var appPage: Conf {
         switch self {
@@ -55,6 +55,9 @@ public enum Page {
         case .noteDetail: return "Note"
         case .people: return "People"
         case .peopleDetail: return "Person"
+        case .explore: return "Explore"
+        case .activityCalendar: return "Activity Calendar"
+        case .activityFlashcards: return "Flashcards"
         }
     }
 
@@ -65,9 +68,15 @@ public enum Page {
         case .taskDetail: return .tasks
         case .noteDetail: return .notes
         case .peopleDetail: return .people
+        case .activityCalendar, .activityFlashcards: return .explore
         default: return nil
         }
     }
+}
+
+public struct AppTheme {
+    var tint: Color = .yellow
+    var page: PageConfiguration.AppPage = .planning
 }
 
 public enum PageGroup: Hashable {
@@ -92,6 +101,12 @@ public class Navigation: Identifiable, ObservableObject {
     @Published public var history: History = History()
     @Published public var forms: Forms = Forms()
     @Published public var events: SysEvents = SysEvents()
+    @Published var activities: Activities = Activities()
+    @Published public var theme: AppTheme = AppTheme()
+
+    init() {
+        self.activities.state = self
+    }
 
     public func pageTitle() -> String {
         if title!.isEmpty {
@@ -543,7 +558,8 @@ extension Navigation {
     }
     
     public struct History {
-        typealias Button = WidgetLibrary.UI.Buttons
+        typealias UI = WidgetLibrary.UI
+        typealias Button = UI.Buttons
         // How far back you can go by clicking "back". Max: 10
         var recent: [HistoryPage] = []
         var currentIndex: Int = 0
@@ -571,6 +587,9 @@ extension Navigation {
             HistoryPage(page: .peopleDetail, view: AnyView(PeopleDetail()), sidebar: AnyView(PeopleDashboardSidebar()), title: "Person"),
             HistoryPage(page: .projectDetail, view: AnyView(CompanyView()), sidebar: AnyView(DefaultCompanySidebar()), title: "Project"),
             HistoryPage(page: .projects, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Projects", navButtons: [.resetUserChoices, .createProject]),
+            HistoryPage(page: .explore, view: AnyView(Explore()), sidebar: AnyView(ExploreSidebar()), title: "Explore"),
+            HistoryPage(page: .activityFlashcards, view: AnyView(UI.FlashcardActivity()), sidebar: AnyView(ExploreSidebar()), title: "Flashcards"),
+            HistoryPage(page: .activityCalendar, view: AnyView(UI.ActivityCalendar()), sidebar: AnyView(ExploreSidebar()), title: "Activity Calendar"),
         ]
         
         /// A single page representing a page the user navigated to

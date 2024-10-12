@@ -84,6 +84,55 @@ struct UniversalHeader: View {
         }
     }
 
+    struct StandaloneWidget: View {
+        @EnvironmentObject public var state: Navigation
+        public var type: PageConfiguration.EntityType
+        public var buttons: AnyView?
+        public var title: String?
+        public var additionalDetails: AnyView?
+
+        var body: some View {
+            // @TODO: merge these two cases
+            if self.additionalDetails != nil {
+                ZStack(alignment: .topLeading) {
+                    TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
+                        .frame(height: 120)
+                        .clipShape(.rect(cornerRadius: 5))
+
+                    VStack(alignment: .leading) {
+                        HStack(alignment: .top) {
+                            UniversalHeader(title: self.title, entityType: self.type)
+
+                            if let buttons = self.buttons {
+                                HStack(alignment: .center) {
+                                    Spacer()
+                                    buttons
+                                }
+                            }
+                        }
+                        self.additionalDetails!
+                    }
+                    .padding()
+                }
+            } else {
+                ZStack(alignment: .leading) {
+                    TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
+                        .frame(height: 60)
+                        .clipShape(.rect(cornerRadius: 5))
+                    UniversalHeader(title: self.title, entityType: self.type)
+                        .padding(.leading)
+                    HStack(alignment: .center) {
+                        Spacer()
+                        if let buttons = self.buttons {
+                            buttons
+                        }
+                    }
+                    .padding(.trailing)
+                }
+            }
+        }
+    }
+
     struct Widget: View {
         @EnvironmentObject public var state: Navigation
         public var type: PageConfiguration.EntityType

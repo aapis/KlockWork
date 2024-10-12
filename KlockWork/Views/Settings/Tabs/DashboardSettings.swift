@@ -18,6 +18,7 @@ struct DashboardSettings: View {
     @AppStorage("dashboard.widget.thisyear") public var showWidgetThisYear: Bool = true
     @AppStorage("dashboard.widget.intro") public var showWidgetIntro: Bool = true
     @AppStorage("dashboard.widget.upcomingWork") public var showWidgetUpcomingWork: Bool = true
+    @AppStorage("dashboard.widget.recentSearches") public var showRecentSearches: Bool = true
 
     var body: some View {
         Form {
@@ -27,6 +28,7 @@ struct DashboardSettings: View {
                 Toggle("This year", isOn: $showWidgetThisYear)
                 Toggle("Introduction to KlockWork", isOn: $showWidgetIntro)
                 Toggle("Upcoming Work", isOn: $showWidgetUpcomingWork)
+                Toggle("Recent searches", isOn: $showRecentSearches)
             }
 
             if self.showWidgetUpcomingWork {

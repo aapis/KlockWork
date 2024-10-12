@@ -20,6 +20,7 @@ struct GeneralSettings: View {
     @AppStorage("general.defaultCompany") public var defaultCompany: Int = 0
     @AppStorage("general.showSessionInspector") public var showSessionInspector: Bool = false
     @AppStorage("general.spotlightIndex") public var spotlightIndex: Bool = false
+    @AppStorage("general.columns") private var columns: Int = 3
 
     var body: some View {
         Form {
@@ -52,14 +53,23 @@ struct GeneralSettings: View {
 //            }
 
             Group {
+                Picker("Number of columns to display", selection: $columns) {
+                    Text("2").tag(2)
+                    Text("3").tag(3)
+                    Text("4").tag(4)
+                    Text("5").tag(5)
+                }
+            }
+
+            Group {
                 Text("Defaults")
                 CompanyPicker(onChange: self.companyPickerCallback, selected: defaultCompany)
                     .padding([.leading], 10)
             }
         }
         .padding(20)
-        .onChange(of: spotlightIndex) { shouldIndex in
-            if shouldIndex {
+        .onChange(of: self.spotlightIndex) {
+            if self.spotlightIndex {
                 self.index()
             } else {
                 self.deindex()

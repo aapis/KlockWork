@@ -569,10 +569,10 @@ struct UnifiedSidebar {
                 self.setSessionParameter()
             } label: {
                 HStack(alignment: .center, spacing: 8) {
-                    Image(systemName: self.noLinkAvailable ? "questionmark.square.fill" : "link")
-                        .opacity(0.4)
                     Text(self.label)
                     Spacer()
+                    Image(systemName: self.noLinkAvailable ? "" : "chevron.right")
+                        .foregroundStyle(.gray)
                 }
                 .padding(8)
                 .background(self.highlighted ? .white.opacity(0.2) : .clear)
