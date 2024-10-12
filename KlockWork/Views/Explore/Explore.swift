@@ -28,30 +28,13 @@ struct Explore: View {
                 )
                 UI.EntityStatistics()
             }
-            // @TODO: move to UI
-            VStack(alignment: .leading, spacing: 0) {
-                HStack(alignment: .top) {
-                    ForEach(ExploreActivityType.allCases, id: \.hashValue) { type in
-                        VStack(alignment: .leading, spacing: 5) {
-                            UI.ListLinkTitle(type: type)
-
-                            ForEach(self.activities.filter({$0.type == type}), id: \.id) { activity in
-                                UI.ListLinkItem(activity: activity)
-                            }
-                        }
-                        .padding()
-                        .background(Theme.textBackground)
-//                        .background(self.state.session.job?.backgroundColor.opacity(0.2) ?? Theme.textBackground)
-                        .clipShape(.rect(cornerRadius: 5))
-                    }
-                }
-            }
+            UI.ExploreLinks()
             // @TODO: tmp disabled
 //            Widgets()
             Spacer()
         }
         .padding()
-        .background(Theme.toolbarColour)
+        .background(self.state.session.appPage.primaryColour)
     }
 }
 

@@ -74,6 +74,11 @@ public enum Page {
     }
 }
 
+public struct AppTheme {
+    var tint: Color = .yellow
+    var page: PageConfiguration.AppPage = .planning
+}
+
 public enum PageGroup: Hashable {
     case views, entities
 }
@@ -96,6 +101,12 @@ public class Navigation: Identifiable, ObservableObject {
     @Published public var history: History = History()
     @Published public var forms: Forms = Forms()
     @Published public var events: SysEvents = SysEvents()
+    @Published var activities: Activities = Activities()
+    @Published public var theme: AppTheme = AppTheme()
+
+    init() {
+        self.activities.state = self
+    }
 
     public func pageTitle() -> String {
         if title!.isEmpty {
@@ -547,7 +558,8 @@ extension Navigation {
     }
     
     public struct History {
-        typealias Button = WidgetLibrary.UI.Buttons
+        typealias UI = WidgetLibrary.UI
+        typealias Button = UI.Buttons
         // How far back you can go by clicking "back". Max: 10
         var recent: [HistoryPage] = []
         var currentIndex: Int = 0
@@ -577,7 +589,7 @@ extension Navigation {
             HistoryPage(page: .projects, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Projects", navButtons: [.resetUserChoices, .createProject]),
             HistoryPage(page: .explore, view: AnyView(Explore()), sidebar: AnyView(ExploreSidebar()), title: "Explore"),
             HistoryPage(page: .activityFlashcards, view: AnyView(Explore()), sidebar: AnyView(ExploreSidebar()), title: "Flashcards"),
-            HistoryPage(page: .activityCalendar, view: AnyView(Explore()), sidebar: AnyView(ExploreSidebar()), title: "Activity Calendar"),
+            HistoryPage(page: .activityCalendar, view: AnyView(UI.ActivityCalendar()), sidebar: AnyView(ExploreSidebar()), title: "Activity Calendar"),
         ]
         
         /// A single page representing a page the user navigated to
