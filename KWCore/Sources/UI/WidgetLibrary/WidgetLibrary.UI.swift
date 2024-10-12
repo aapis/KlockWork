@@ -838,7 +838,7 @@ extension WidgetLibrary {
             @EnvironmentObject private var state: Navigation
             private var page: PageConfiguration.AppPage = .explore
             @State private var isJobSelectorPresented: Bool = false
-            @State private var job: Job?
+            @State private var job: Job? // @TODO: rewrite to use self.state.session.job
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {

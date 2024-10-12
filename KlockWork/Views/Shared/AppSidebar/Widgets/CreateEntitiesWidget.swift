@@ -216,6 +216,7 @@ struct CreateEntitiesWidget: View {
                             size: .small,
                             type: active ? .secondary : .standard
                         )
+                        .keyboardShortcut("f", modifiers: .command)
                         .mask(Circle())
                     }
                     .mask(Circle())
