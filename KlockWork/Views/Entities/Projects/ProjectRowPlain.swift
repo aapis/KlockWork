@@ -11,7 +11,7 @@ import KWCore
 
 struct ProjectRowPlain: View {
     public var project: Project
-    public var icon: String = "arrow.right"
+    public var icon: String = "chevron.right"
 
     var body: some View {
         VStack(alignment: .leading) {

@@ -51,7 +51,7 @@ public struct Panel {
                         Text(config.text)
                             .multilineTextAlignment(.leading)
                         Spacer()
-                        Image(systemName: "arrow.right")
+                        Image(systemName: "chevron.right")
                             .opacity(config.position == .last ? 0 : 1)
                     }
                     .padding(10)
