@@ -343,7 +343,7 @@ extension WidgetLibrary {
                         colour
                     }
                 }
-                .buttonStyle(.borderless)
+                .buttonStyle(.plain)
                 .frame(width: 6, height: 50)
             }
         }
@@ -621,15 +621,14 @@ extension WidgetLibrary {
                     } label: {
                         VStack(alignment: .center, spacing: 0) {
                             ZStack(alignment: .center) {
-                                self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.7)
+                                Color.gray.opacity(self.isHighlighted ? 1 : 0.7)
                                 VStack(alignment: .center, spacing: 0) {
                                     if self.isLoading {
                                         ProgressView()
                                     } else {
                                         (self.isHighlighted ? self.type.selectedIcon : self.type.icon)
+                                            .symbolRenderingMode(.hierarchical)
                                             .font(.largeTitle)
-                                            .padding()
-                                            .frame(height: 30)
                                     }
                                 }
                                 Spacer()
@@ -637,15 +636,16 @@ extension WidgetLibrary {
                             .frame(height: 65)
 
                             ZStack(alignment: .center) {
-                                (self.isHighlighted ? self.state.session.appPage.primaryColour.opacity(0.4) : Theme.lightWhite)
+                                (self.isHighlighted ? Color.yellow : Theme.textBackground)
                                 VStack(alignment: .center, spacing: 0) {
                                     Text(String(self.count))
                                         .font(.system(.title3, design: .monospaced))
-                                        .foregroundStyle(self.isHighlighted ? .white : self.state.session.appPage.primaryColour)
+                                        .foregroundStyle(self.isHighlighted ? Theme.base : .gray)
                                 }
                             }
                             .frame(height: 25)
                         }
+                        .frame(width: 65)
                         .clipShape(.rect(cornerRadius: 5))
                         .useDefaultHover({ hover in self.isHighlighted = hover })
                     }
@@ -655,8 +655,480 @@ extension WidgetLibrary {
                 }
             }
         }
+
+        struct ExploreLinks: View {
+            private var activities: [Activity] {
+                [
+                    Activity(name: "Activity Calendar", page: .activityCalendar, type: .visualize, icon: "calendar"),
+                    Activity(name: "Flashcards", page: .activityFlashcards, type: .activity, icon: "person.text.rectangle"),
+                ]
+            }
+
+            var body: some View {
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(alignment: .top) {
+                        ForEach(ExploreActivityType.allCases, id: \.hashValue) { type in
+                            VStack(alignment: .leading, spacing: 5) {
+                                UI.ListLinkTitle(type: type)
+
+                                ForEach(self.activities.filter({$0.type == type}), id: \.id) { activity in
+                                    UI.ListLinkItem(activity: activity)
+                                }
+                            }
+                            .padding()
+                            .background(Theme.textBackground)
+    //                        .background(self.state.session.job?.backgroundColor.opacity(0.2) ?? Theme.textBackground)
+                            .clipShape(.rect(cornerRadius: 5))
+                        }
+                    }
+                }
+            }
+        }
+
+        struct ActivityCalendar: View {
+            @EnvironmentObject private var state: Navigation
+            @State public var month: String = "_DEFAULT_MONTH"
+            @State private var date: Date = Date()
+            @State private var legendId: UUID = UUID() // @TODO: remove this gross hack once views refresh properly
+            @State private var calendarId: UUID = UUID() // @TODO: remove this gross hack once views refresh properly
+            public var weekdays: [DayOfWeek] = [
+                DayOfWeek(symbol: "Sun"),
+                DayOfWeek(symbol: "Mon"),
+                DayOfWeek(symbol: "Tues"),
+                DayOfWeek(symbol: "Wed"),
+                DayOfWeek(symbol: "Thurs"),
+                DayOfWeek(symbol: "Fri"),
+                DayOfWeek(symbol: "Sat")
+            ]
+            public var columns: [GridItem] {
+                return Array(repeating: GridItem(.flexible(), spacing: 1), count: 7)
+            }
+
+            var body: some View {
+                NavigationStack {
+                    VStack {
+                        Grid(alignment: .topLeading, horizontalSpacing: 5, verticalSpacing: 0) {
+                            MonthNav(date: $date)
+
+                            // Day of week
+                            GridRow {
+                                ZStack(alignment: .bottomLeading) {
+                                    LinearGradient(colors: [.white, .clear], startPoint: .top, endPoint: .bottom)
+                                        .frame(height: 50)
+                                        .opacity(0.05)
+                                    LazyVGrid(columns: self.columns, alignment: .center) {
+                                        ForEach(weekdays) {sym in
+                                            Text(sym.symbol)
+                                                .foregroundStyle(sym.current ? self.state.theme.tint : .white)
+                                        }
+                                        .font(.caption)
+                                    }
+                                    .padding([.leading, .trailing, .top])
+                                    .padding(.bottom, 5)
+                                }
+                            }
+                            .background(Theme.rowColour)
+
+                            VStack {
+                                // List of days representing 1 month
+                                Month(month: $month, id: $calendarId)
+                                    .id(self.calendarId)
+
+                                Spacer() // @TODO: put a new set of stats or something here?
+                            }
+                            .background(Theme.rowColour)
+
+                            // Legend
+                            Legend(id: $legendId, calendarId: $calendarId)
+                                .border(width: 1, edges: [.top], color: .gray.opacity(0.7))
+                                .id(self.legendId)
+                        }
+                        Spacer()
+                    }
+                    .background(Theme.cGreen)
+                    .scrollDismissesKeyboard(.immediately)
+                    .onAppear(perform: self.actionOnAppear)
+                    .onChange(of: self.date) { self.actionChangeDate()}
+                    .navigationTitle("Activity Calendar")
+    #if os(iOS)
+                    .toolbarBackground(.visible, for: .navigationBar)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button {
+                                self.state.date = DateHelper.startOfDay()
+                                self.date = self.state.date
+                            } label: {
+                                Image(systemName: "clock.arrow.circlepath")
+                            }
+                        }
+                    }
+    #endif
+                }
+            }
+
+            struct MonthNav: View {
+                @EnvironmentObject private var state: Navigation
+                @Binding public var date: Date
+                @State private var isCurrentMonth: Bool = false // @TODO: implement
+
+                var body: some View {
+                    GridRow {
+                        HStack {
+                            MonthNavButton(orientation: .leading, date: $date)
+                            Spacer()
+                            MonthNavButton(orientation: .trailing, date: $date)
+                        }
+                    }
+                    .border(width: 1, edges: [.bottom], color: .gray)
+                    .background(Theme.cGreen)
+                }
+            }
+
+            struct MonthNavButton: View {
+                @EnvironmentObject private var state: Navigation
+                public var orientation: UnitPoint
+                @Binding public var date: Date
+                @State private var previousMonth: String = ""
+                @State private var nextMonth: String = ""
+                @State private var isHighlighted: Bool = false
+
+                var body: some View {
+                    HStack {
+                        ZStack {
+                            LinearGradient(gradient: Gradient(colors: [Theme.base.opacity(0.6), .clear]), startPoint: self.orientation, endPoint: self.orientation == .leading ? .trailing : .leading)
+                                .blendMode(.softLight)
+                            Button {
+                                self.actionOnTap()
+                            } label: {
+                                HStack {
+                                    Spacer()
+                                    Image(systemName: self.orientation == .leading ? "chevron.left" : "chevron.right")
+                                        .padding([.top, .bottom], 12)
+                                    Spacer()
+                                }
+                                .useDefaultHover({ hover in self.isHighlighted = hover })
+                            }
+                            .buttonStyle(.plain)
+                            .frame(width: 50)
+                            .background(Theme.cPurple.opacity(self.isHighlighted ? 1 : 0.8))
+                            .clipShape(.capsule(style: .continuous))
+                            .shadow(color: .black.opacity(0.2), radius: 2, x: 1, y: 1)
+                        }
+                    }
+                    .frame(width: 80, height: 75)
+                }
+
+                /// Navigate between months by tapping on the button
+                /// @TODO: shared functionality with ActivityCalendar.actionOnSwipe, refactor!
+                /// - Returns: Void
+                private func actionOnTap() -> Void {
+                    let oneMonthMs: Double = 2592000
+
+                    if self.orientation == .leading {
+                        self.date = self.state.session.date - oneMonthMs
+                    } else {
+                        self.date = self.state.session.date + oneMonthMs
+                    }
+                }
+            }
+        }
+
+        struct FlashcardActivity: View {
+            @EnvironmentObject private var state: Navigation
+            private var page: PageConfiguration.AppPage = .explore
+            @State private var isJobSelectorPresented: Bool = false
+            @State private var job: Job?
+
+            var body: some View {
+                VStack(alignment: .leading, spacing: 0) {
+                    FlashcardDeck(job: $job)
+                }
+                .onAppear(perform: {
+                    if self.state.session.job != nil {
+                        self.job = self.state.session.job
+                        self.isJobSelectorPresented = false
+                    } else {
+                        self.isJobSelectorPresented = true
+                    }
+                })
+                .onChange(of: self.state.session.job) { self.job = self.state.session.job }
+                .background(self.page.primaryColour)
+                .navigationTitle(job != nil ? self.job!.title ?? self.job!.jid.string: "Activity: Flashcard")
+        #if os(iOS)
+                .toolbarBackground(job != nil ? self.job!.backgroundColor : Theme.textBackground.opacity(0.7), for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
+        #endif
+            }
+
+            struct FlashcardDeck: View {
+                @EnvironmentObject private var state: Navigation
+                @Binding public var job: Job?
+                @State private var terms: Array<TaxonomyTerm> = []
+                @State private var current: TaxonomyTerm? = nil
+                @State private var isAnswerCardShowing: Bool = false
+                @State private var clue: String = ""
+                @State private var viewed: Set<TaxonomyTerm> = []
+                @State private var definitions: [TaxonomyTermDefinitions] = []
+
+                var body: some View {
+                    VStack(alignment: .center, spacing: 0) {
+                        Card(
+                            isAnswerCardShowing: $isAnswerCardShowing,
+                            definitions: $definitions,
+                            current: $current,
+                            job: $job
+                        )
+                        Actions(
+                            isAnswerCardShowing: $isAnswerCardShowing,
+                            definitions: $definitions,
+                            current: $current,
+                            terms: $terms,
+                            viewed: $viewed
+                        )
+                    }
+                    .onAppear(perform: self.actionOnAppear)
+                    .onChange(of: job) {
+                        self.actionOnAppear()
+                    }
+                }
+
+                struct Actions: View {
+                    @EnvironmentObject private var state: Navigation
+                    @Binding public var isAnswerCardShowing: Bool
+                    @Binding public var definitions: [TaxonomyTermDefinitions]
+                    @Binding public var current: TaxonomyTerm?
+                    @Binding public var terms: [TaxonomyTerm]
+                    @Binding public var viewed: Set<TaxonomyTerm>
+
+                    var body: some View {
+                        ZStack(alignment: .topLeading) {
+                            LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom)
+                                .frame(height: 50)
+                                .opacity(0.06)
+
+                            Buttons
+                        }
+                    }
+
+                    var Buttons: some View {
+                        HStack(alignment: .center) {
+                            Button {
+                                self.isAnswerCardShowing.toggle()
+                            } label: {
+                                ZStack(alignment: .center) {
+                                    LinearGradient(colors: [.black.opacity(0.2), .clear], startPoint: .top, endPoint: .bottom)
+                                    Image(systemName: "rectangle.landscape.rotate")
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            .padding()
+                            .mask(Circle().frame(width: 50, height: 50))
+
+                            Button {
+                                self.isAnswerCardShowing = false
+                            } label: {
+                                ZStack(alignment: .center) {
+                                    LinearGradient(colors: [.black.opacity(0.2), .clear], startPoint: .top, endPoint: .bottom)
+                                    Image(systemName: "hand.thumbsup.fill")
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            .padding()
+                            .mask(Circle().frame(width: 50, height: 50))
+
+                            Button {
+                                self.isAnswerCardShowing = false
+                            } label: {
+                                ZStack(alignment: .center) {
+                                    LinearGradient(colors: [.black.opacity(0.2), .clear], startPoint: .top, endPoint: .bottom)
+                                    Image(systemName: "hand.thumbsdown.fill")
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            .padding()
+                            .mask(Circle().frame(width: 50, height: 50))
+
+                            Button {
+                                self.isAnswerCardShowing = false
+
+                                if let next = self.terms.randomElement() {
+                                    if next != current {
+                                        // Pick another random element if we've seen the next item already
+                                        if !self.viewed.contains(next) {
+                                            current = next
+                                        } else {
+                                            current = self.terms.randomElement()
+                                        }
+                                    }
+                                }
+
+                                if self.current != nil {
+                                    viewed.insert(self.current!)
+                                }
+                            } label: {
+                                ZStack(alignment: .center) {
+                                    LinearGradient(colors: [.black.opacity(0.2), .clear], startPoint: .top, endPoint: .bottom)
+                                    Image(systemName: "chevron.right")
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            .padding()
+                            .mask(Circle().frame(width: 50, height: 50))
+                        }
+                        .frame(height: 90)
+                        .border(width: 1, edges: [.top], color: self.state.theme.tint)
+                    }
+                }
+
+                struct Card: View {
+                    @Binding public var isAnswerCardShowing: Bool
+                    @Binding public var definitions: [TaxonomyTermDefinitions] // @TODO: convert this to dict grouped by job
+                    @Binding public var current: TaxonomyTerm?
+                    @Binding public var job: Job?
+                    @State private var clue: String = ""
+
+                    var body: some View {
+                        VStack(alignment: .leading, spacing: 0) {
+                            if self.isAnswerCardShowing {
+                                // Definitions
+                                HStack(alignment: .center, spacing: 0) {
+                                    Text("\(self.definitions.count) Jobs define \"\(self.clue)\"")
+                                        .textCase(.uppercase)
+                                        .font(.caption)
+                                        .padding(5)
+                                    Spacer()
+                                }
+                                .background(self.job?.backgroundColor ?? Theme.rowColour)
+
+                                VStack(alignment: .leading, spacing: 0) {
+                                    ScrollView {
+                                        VStack(alignment: .leading, spacing: 1) {
+                                            ForEach(Array(definitions.enumerated()), id: \.element) { idx, term in
+                                                VStack(alignment: .leading, spacing: 0) {
+                                                    HStack(alignment: .top) {
+                                                        Text((term.job?.title ?? term.job?.jid.string) ?? "_JOB_NAME")
+                                                            .multilineTextAlignment(.leading)
+                                                            .padding(14)
+                                                            .foregroundStyle((term.job?.backgroundColor ?? Theme.rowColour).isBright() ? .white.opacity(0.75) : .gray)
+                                                        Spacer()
+                                                    }
+
+
+                                                    ZStack(alignment: .topLeading) {
+                                                        LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom)
+                                                            .frame(height: 50)
+                                                            .opacity(0.1)
+
+                                                        NavigationLink {
+                                                            DefinitionDetail(definition: term)
+                                                        } label: {
+                                                            HStack(alignment: .center) {
+                                                                Text(term.definition ?? "Definition not found")
+                                                                    .multilineTextAlignment(.leading)
+                                                                Spacer()
+                                                                Image(systemName: "chevron.right")
+                                                            }
+                                                            .padding(14)
+                                                        }
+                                                        .buttonStyle(.plain)
+                                                    }
+                                                }
+                                                .background(term.job?.backgroundColor)
+                                                .foregroundStyle((term.job?.backgroundColor ?? Theme.rowColour).isBright() ? .black : .white)
+                                            }
+                                        }
+                                    }
+                                }
+                            } else {
+                                // Answer
+                                if self.current != nil {
+                                    VStack(alignment: .leading, spacing: 0) {
+                                        Spacer()
+                                        VStack(alignment: .center) {
+                                            Text("Clue")
+                                                .foregroundStyle((self.job?.backgroundColor ?? Theme.rowColour).isBright() ? .white.opacity(0.75) : .gray)
+                                            Text(clue)
+                                                .font(.title2)
+                                                .bold()
+                                                .multilineTextAlignment(.center)
+                                        }
+                                        Spacer()
+                                    }
+                                }
+                            }
+                            Spacer()
+                        }
+                        .onChange(of: current) {
+                            if self.current != nil {
+                                self.clue = current?.name ?? "Clue"
+
+                                if let defs = self.current!.definitions {
+                                    if let ttds = defs.allObjects as? [TaxonomyTermDefinitions] {
+                                        self.definitions = ttds
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            struct Flashcard {
+                var term: TaxonomyTerm
+            }
+        }
     }
 }
+
+extension WidgetLibrary.UI.FlashcardActivity.FlashcardDeck {
+    /// Onload/onChangeJob handler
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.isAnswerCardShowing = false
+        self.terms = []
+        self.definitions = []
+        self.current = nil
+        self.clue = ""
+
+        if self.job != nil {
+            if let termsForJob = CoreDataTaxonomyTerms(moc: self.state.moc).byJob(self.job!) {
+                self.terms = termsForJob
+            }
+        }
+
+        if !self.terms.isEmpty {
+            self.current = self.terms.randomElement()
+            self.clue = self.current?.name ?? "_TERM_NAME"
+            self.viewed.insert(self.current!)
+//            self.definitions = []
+
+            if let defs = self.current!.definitions {
+                if let ttds = defs.allObjects as? [TaxonomyTermDefinitions] {
+                    self.definitions = ttds
+                }
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.ActivityCalendar {
+    /// Get month string from date
+    /// - Returns: Void
+    private func actionChangeDate() -> Void {
+        let df = DateFormatter()
+        df.dateFormat = "MMM"
+        self.month = df.string(from: self.date)
+        self.state.session.date = DateHelper.startOfDay(self.date)
+    }
+
+    /// Onload handler. Used by DatePicker, should be AppState.date by default
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.date = self.state.session.date
+    }
+}
+
 
 extension WidgetLibrary.UI.EntityStatistics {
     /// Onload handler. Sets view state
