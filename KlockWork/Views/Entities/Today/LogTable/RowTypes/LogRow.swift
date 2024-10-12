@@ -160,9 +160,15 @@ struct LogRow: View, Identifiable {
     
     @ViewBuilder private var contextMenu: some View {
         if entry.jobObject != nil {
-            Button("Edit record") {
+            Button("Quick edit") {
                 isEditing = true
             }
+            .disabled(entry.jobObject?.jid ?? 0 == 0)
+
+            Button("Edit...") {
+                self.nav.to(.recordDetail)
+            }
+            .disabled(entry.jobObject?.jid ?? 0 == 0)
 
             if let uri = entry.jobObject!.uri {
                 if uri.absoluteString != "" && uri.absoluteString != "https://" {
