@@ -431,7 +431,7 @@ struct UnifiedSidebar {
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(self.records, id: \.objectID) { record in
                                     if record.message != nil {
-                                        EntityTypeRowButton(label: record.message!, redirect: .today, resource: record)
+                                        EntityTypeRowButton(label: record.message!, redirect: .recordDetail, resource: record)
                                     }
                                 }
                             }
@@ -762,9 +762,8 @@ extension UnifiedSidebar.EntityTypeRowButton {
     /// - Returns: Void
     private func setSessionParameter() -> Void {
         switch self.redirect {
-            // @TODO: uncomment after this detail view has been implemented
-//        case .today:
-//            self.state.session.record = self.resource as? LogRecord
+        case .recordDetail:
+            self.state.session.record = self.resource as? LogRecord
         case .projects:
             self.state.session.project = self.resource as? Project
         case .jobs:
@@ -792,6 +791,8 @@ extension UnifiedSidebar.GroupHeaderContextMenu {
     /// - Returns: Void
     private func actionEdit() -> Void {
         switch self.page {
+        case .recordDetail:
+            self.state.session.record = self.entity as? LogRecord
         case .jobs:
             self.state.session.job = self.entity as? Job
         case .companyDetail:
