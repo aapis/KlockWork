@@ -13,7 +13,7 @@ import EventKit
 public enum Page {
     typealias Conf = PageConfiguration.AppPage
     case dashboard, today, notes, tasks, projects, projectDetail, jobs, companies, companyDetail, planning,
-    terms, definitionDetail, taskDetail, noteDetail, people, peopleDetail, explore, activityFlashcards, activityCalendar
+    terms, definitionDetail, taskDetail, noteDetail, people, peopleDetail, explore, activityFlashcards, activityCalendar, recordDetail
 
     var appPage: Conf {
         switch self {
@@ -58,6 +58,7 @@ public enum Page {
         case .explore: return "Explore"
         case .activityCalendar: return "Activity Calendar"
         case .activityFlashcards: return "Flashcards"
+        case .recordDetail: return "Record"
         }
     }
 
@@ -69,6 +70,7 @@ public enum Page {
         case .noteDetail: return .notes
         case .peopleDetail: return .people
         case .activityCalendar, .activityFlashcards: return .explore
+        case .recordDetail: return .today
         default: return nil
         }
     }
@@ -574,6 +576,7 @@ extension Navigation {
             HistoryPage(page: .dashboard, view: AnyView(Dashboard()), sidebar: AnyView(DashboardSidebar()), title: "Dashboard"),
             HistoryPage(page: .planning, view: AnyView(Planning()), sidebar: AnyView(DefaultPlanningSidebar()), title: "Planning"),
             HistoryPage(page: .today, view: AnyView(Today()), sidebar: AnyView(TodaySidebar()), title: "Today", navButtons: [.CLIFilter, .CLIMode, .resetUserChoices]),
+            HistoryPage(page: .recordDetail, view: AnyView(Today()), sidebar: AnyView(TodaySidebar()), title: "Record"),
             HistoryPage(page: .companies, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Companies & Projects", navButtons: [.createCompany, .createProject]),
             HistoryPage(page: .companyDetail, view: AnyView(CompanyView()), sidebar: AnyView(DefaultCompanySidebar()), title: "Company"),
             HistoryPage(page: .jobs, view: AnyView(JobDashboardRedux()), sidebar: AnyView(JobDashboardSidebar()), title: "Jobs", navButtons: [.resetUserChoices, .createJob]),
