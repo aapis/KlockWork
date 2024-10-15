@@ -6,18 +6,18 @@
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
 import KWCore
 
 struct SearchBar: View {
     @EnvironmentObject public var state: Navigation
+    @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
     @Binding public var text: String
     public var disabled: Bool = false
     public var placeholder: String? = "Search..."
     public var onSubmit: (() -> Void)? = nil
     public var onReset: (() -> Void)? = nil
-    @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
     @FocusState private var primaryTextFieldInFocus: Bool
     // @TODO: this will remember the search text between pages, but I think instead I need some kind of search history
 //    @AppStorage("shared.searchbar") private var text: String = ""
@@ -42,7 +42,7 @@ struct SearchBar: View {
                     if text.count > 0 {
                         FancySimpleButton(
                             text: "Reset",
-                            action: reset,
+                            action: self.actionOnReset,
                             icon: "xmark",
                             showLabel: false,
                             showIcon: true,
@@ -69,7 +69,9 @@ struct SearchBar: View {
 }
 
 extension SearchBar {
-    private func reset() -> Void {
+    /// Reset field text
+    /// - Returns: Void
+    private func actionOnReset() -> Void {
         text = ""
 
         if onReset != nil {

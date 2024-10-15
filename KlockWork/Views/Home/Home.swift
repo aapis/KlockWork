@@ -256,21 +256,12 @@ extension Home {
         nav.parent = selectedSidebarButton
         checkForEvents()
 
-        // Thank you https://blog.rampatra.com/how-to-detect-escape-key-pressed-in-macos-apps
-        NSEvent.addLocalMonitorForEvents(matching: .keyDown) {
-            if self.isEscapeKey(with: $0) {
-                isDatePickerPresented = false
-                nav.session.search.inspectingEntity = nil
-                nav.setInspector()
-                return nil
-            } else {
-                return $0
-            }
-        }
-    }
-
-    private func isEscapeKey(with event: NSEvent) -> Bool {
-        return Int(event.keyCode) == 53
+        KeyboardHelper.monitor(key: .keyDown, callback: {
+            self.isSearchStackShowing = false
+            self.isDatePickerPresented = false
+            self.nav.session.search.inspectingEntity = nil
+            self.nav.setInspector()
+        })
     }
 
     private func checkForEvents() -> Void {

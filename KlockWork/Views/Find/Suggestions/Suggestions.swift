@@ -30,7 +30,7 @@ extension FindDashboard {
         @EnvironmentObject public var nav: Navigation
 
         var body: some View {
-            VStack {
+            VStack(alignment: .leading) {
                 if searchText.count >= 2 || isSearching {
                     ScrollView(showsIndicators: false) {
                         VStack {
