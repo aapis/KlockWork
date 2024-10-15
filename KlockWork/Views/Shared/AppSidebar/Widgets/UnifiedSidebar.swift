@@ -103,8 +103,14 @@ struct UnifiedSidebar {
                                 .blendMode(.softLight)
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach((self.entity.projects?.allObjects as? [Project] ?? []).sorted(by: {$0.created! > $1.created!}), id: \.objectID) { project in
-                                    if !showPublished || project.alive {
-                                        SingleProject(entity: project)
+                                    if self.state.session.gif == .focus {
+                                        if self.state.planning.projects.contains(project) && (!showPublished || project.alive) {
+                                            SingleProject(entity: project)
+                                        }
+                                    } else {
+                                        if !showPublished || project.alive {
+                                            SingleProject(entity: project)
+                                        }
                                     }
                                 }
 
@@ -119,6 +125,7 @@ struct UnifiedSidebar {
             .foregroundStyle(self.fgColour)
             .onAppear(perform: self.actionOnAppear)
             .onChange(of: self.state.session.company) { self.actionOnChangeEntity() }
+            .onChange(of: self.state.session.gif) { self.actionOnAppear() }
             .onChange(of: self.isPresented) {
                 // Group is minimized
                 if self.isPresented == false {
@@ -177,8 +184,14 @@ struct UnifiedSidebar {
                                 .blendMode(.softLight)
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach((self.entity.jobs?.allObjects as? [Job] ?? []).sorted(by: {$0.created ?? Date() > $1.created ?? Date()}), id: \.objectID) { job in
-                                    if !showPublished || job.alive {
-                                        SingleJob(entity: job)
+                                    if self.state.session.gif == .focus {
+                                        if self.state.planning.jobs.contains(job) && (!showPublished || job.alive) {
+                                            SingleJob(entity: job)
+                                        }
+                                    } else {
+                                        if !showPublished || job.alive {
+                                            SingleJob(entity: job)
+                                        }
                                     }
                                 }
                             }
