@@ -19,6 +19,8 @@ struct CompanyView: View {
     @State private var updated: Date? = nil
     @State private var colour: Color?
     @State private var hidden: Bool = false
+    @State private var alive: Bool = false
+    @State private var isDefault: Bool = false
     @State private var isDeleteAlertShowing: Bool = false
     @State private var tabs: [ToolbarButton] = []
     @State private var projects: [Project] = []
@@ -34,6 +36,14 @@ struct CompanyView: View {
                 HStack {
                     FancyLabel(text: "Hidden")
                     FancyBoundToggle(label: "Hidden", value: $hidden, showLabel: false, onChange: self.onChangeToggle)
+                }
+                HStack {
+                    FancyLabel(text: "Published")
+                    FancyBoundToggle(label: "Published", value: $alive, showLabel: false, onChange: self.onChangePublishStatus)
+                }
+                HStack {
+                    FancyLabel(text: "Default?")
+                    FancyBoundToggle(label: "Default", value: $isDefault, showLabel: false, onChange: self.onChangeDefaultStatus)
                 }
                 FancyColourPicker(initialColour: self.colour ?? self.nav.session.company?.backgroundColor ?? .clear, onChange: {newColour in self.colour = newColour})
 
@@ -144,6 +154,8 @@ extension CompanyView {
         self.created = self.company?.createdDate ?? Date()
         self.colour = self.company?.backgroundColor ?? .clear
         self.hidden = self.company?.hidden ?? false
+        self.alive = self.company?.alive ?? false
+        self.isDefault = self.company?.isDefault ?? false
 
         if let updatedAt = self.company?.lastUpdate {
             self.updated = updatedAt
@@ -158,7 +170,7 @@ extension CompanyView {
             self.company!.abbreviation = abbreviation
             self.company!.lastUpdate = Date()
             if self.colour != nil { self.company!.colour = self.colour!.toStored() }
-            self.company!.hidden = hidden
+            // Note: we don't set the boolean fields here because they are set on change
 
             // @TODO: possibly unnecessary, but sometimes projects disown themselves and this may fix it
             // @TODO: many months later, this did not fix it
@@ -236,6 +248,23 @@ extension CompanyView {
         PersistenceController.shared.save()
     }
     
+    /// Publish or unpublish a company
+    /// - Parameter value: Bool
+    /// - Returns: Void
+    private func onChangePublishStatus(value: Bool) -> Void {
+        self.company?.alive = value
+        PersistenceController.shared.save()
+    }
+
+    /// Set or unset company as default
+    /// - Parameter value: Bool
+    /// - Returns: Void
+    private func onChangeDefaultStatus(value: Bool) -> Void {
+        self.company?.isDefault = value
+        PersistenceController.shared.save()
+    }
+
+
     /// Fires when company changes while editing
     /// - Returns: Void
     private func actionAttemptCompanyChange() -> Void {

@@ -425,7 +425,7 @@ public class CoreDataJob: ObservableObject {
     ///   - project: Optional(Project)
     ///   - saveByDefault: Bool(true) - Save immediately after creating the obejct, or not
     /// - Returns: Void
-    public func create(alive: Bool, colour: [Double], created: Date = Date(), jid: Double, overview: String?, shredable: Bool, title: String?, uri: String, project: Project?, saveByDefault: Bool = true) -> Void {
+    public func create(alive: Bool, colour: [Double], created: Date = Date(), jid: Double, overview: String?, shredable: Bool, title: String?, uri: String, project: Project? = nil, saveByDefault: Bool = true) -> Void {
         let _ = self.make(
             alive: alive,
             colour: colour,
@@ -452,7 +452,7 @@ public class CoreDataJob: ObservableObject {
     ///   - project: Optional(Project)
     ///   - saveByDefault: Bool(true) - Save immediately after creating the obejct, or not
     /// - Returns: Void
-    public func createAndReturn(alive: Bool, colour: [Double], created: Date = Date(), jid: Double, overview: String?, shredable: Bool, title: String?, uri: String, project: Project?, saveByDefault: Bool = true) -> Job {
+    public func createAndReturn(alive: Bool, colour: [Double], created: Date = Date(), jid: Double, overview: String?, shredable: Bool, title: String?, uri: String, project: Project? = nil, saveByDefault: Bool = true) -> Job {
         return self.make(
             alive: alive,
             colour: colour,
@@ -479,7 +479,7 @@ public class CoreDataJob: ObservableObject {
     ///   - project: Optional(Project)
     ///   - saveByDefault: Bool(true)
     /// - Returns: Void
-    private func make(alive: Bool, colour: [Double], created: Date = Date(), id: UUID = UUID(), jid: Double, lastUpdate: Date = Date(), overview: String?, shredable: Bool, title: String?, uri: String, project: Project?, saveByDefault: Bool = true) -> Job {
+    private func make(alive: Bool, colour: [Double], created: Date = Date(), id: UUID = UUID(), jid: Double, lastUpdate: Date = Date(), overview: String?, shredable: Bool, title: String?, uri: String, project: Project? = nil, saveByDefault: Bool = true) -> Job {
         let newJob = Job(context: self.moc!)
         newJob.alive = alive
         newJob.colour = colour

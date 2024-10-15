@@ -11,12 +11,12 @@ import KWCore
 
 struct NoteCreate: View {
     @EnvironmentObject public var state: Navigation
-    public var note: Note? = nil
-    private var mode: EntityViewMode = .ready
-    private let page: PageConfiguration.AppPage = .explore
-    private let eType: PageConfiguration.EntityType = .notes
+    @State public var note: Note?
+    @State private var mode: EntityViewMode = .ready
     @State private var title: String = ""
     @State private var content: String = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sit amet libero eu...\n\n"
+    private let page: PageConfiguration.AppPage = .explore
+    private let eType: PageConfiguration.EntityType = .notes
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -48,24 +48,26 @@ struct NoteCreate: View {
         .onChange(of: self.state.saved) {
             if self.state.saved {
                 self.save()
+                self.state.to(.notes)
             }
-        }
-    }
-    
-    init(note: Note? = nil) {
-        self.note = note
-
-        if self.note != nil {
-            self.mode = .update
-        } else {
-            self.mode = .create
         }
     }
 }
 
 extension NoteCreate {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
     private func actionOnAppear() -> Void {
+        if let stored = self.state.session.note {
+            self.note = stored
+        }
+
+        if let job = self.state.session.job {
+            self.state.forms.note.job = job
+        }
+
         if note != nil {
+            self.mode = .update
             if let body = note!.body {
                 let versions = note!.versions!.allObjects as! [NoteVersion]
                 if let mostRecentVersion = versions.last {
@@ -78,32 +80,46 @@ extension NoteCreate {
 
                 title = StringHelper.titleFromContent(from: content)
             }
+        } else {
+            self.mode = .create
         }
     }
-
+    
+    /// Fires when save button/action is triggered
+    /// - Parameter source: SaveSource
+    /// - Returns: Void
     private func save(source: SaveSource = .manual) -> Void {
         if let title = content.lines.first {
-            var note = note
             if mode == .create {
-                note = Note(context: self.state.moc)
-                note!.postedDate = self.state.session.date
+                self.note = CoreDataNotes(moc: self.state.moc).createAndReturn(
+                    alive: true,
+                    body: self.content,
+                    lastUpdate: Date(),
+                    postedDate: self.note?.postedDate ?? Date(),
+                    starred: false,
+                    title: StringHelper.titleFromContent(from: title),
+                    job: self.state.forms.note.job ?? self.state.session.job
+                )
+
+                self.note?.addToVersions(
+                    CoreDataNoteVersions(moc: self.state.moc).from(self.note!, source: source)
+                )
+            } else if mode == .update {
+                let noteVersion = CoreDataNoteVersions(moc: self.state.moc).from(note!, source: source)
+                noteVersion.content = self.content
+
                 note!.lastUpdate = Date()
-                note!.id = UUID()
-                note!.alive = true
+                note!.title = StringHelper.titleFromContent(from: title)
+                note!.body = noteVersion.content!
 
                 if let job = self.state.forms.note.job {
-                    job.addToMNotes(note!)
+                    job.addToMNotes(self.note!)
+                } else if let job = self.state.session.job {
+                    job.addToMNotes(self.note!)
                 }
-            } else if mode == .update {
-                note!.lastUpdate = Date()
+                note!.addToVersions(noteVersion)
             }
 
-            // Title is pulled directly from note content now
-            note!.title = StringHelper.titleFromContent(from: title)
-            self.title = note!.title ?? "Unnamed note"
-            note!.body = content
-
-            CoreDataNoteVersions(moc: self.state.moc).from(note!, source: source)
             PersistenceController.shared.save()
             
             // the last note you interacted with

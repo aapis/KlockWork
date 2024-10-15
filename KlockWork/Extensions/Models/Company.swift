@@ -20,4 +20,16 @@ extension Company {
 
     var pageType: Page { .companies }
     var pageDetailType: Page { .companyDetail }
+
+    var defaultProject: Project? {
+        if let company = CoreDataCompanies(moc: PersistenceController.shared.container.viewContext).findDefault() {
+            if let projects = company.projects?.allObjects as? [Project] {
+                if projects.count > 0 {
+                    return projects.sorted(by: {$0.created ?? Date() > $1.created ?? Date()}).first
+                }
+            }
+        }
+
+        return nil
+    }
 }

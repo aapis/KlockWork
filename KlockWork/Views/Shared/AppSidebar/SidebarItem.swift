@@ -80,6 +80,7 @@ struct SidebarItem: View, Identifiable {
     public var action: (() -> Void)?
     public var showBorder: Bool = true
     public var showButton: Bool = true
+    public var contextMenu: AnyView?
 
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
 
@@ -112,16 +113,20 @@ struct SidebarItem: View, Identifiable {
         .border(.black.opacity(0.2), width: (showBorder ? 1 : 0))
         .onAppear(perform: actionOnAppear)
         .contextMenu {
-            Button("Copy \(data)") {
-                ClipboardHelper.copy(data)
+            if let contextMenu = self.contextMenu {
+                contextMenu
+            } else {
+                Button("Copy \(data)") {
+                    ClipboardHelper.copy(data)
+                }
+                Divider()
+                Button(action: {
+                    isSearching = true
+                    nav.session.search.text = data
+                }, label: {
+                    Text("Inspect")
+                })
             }
-            Divider()
-            Button(action: {
-                isSearching = true
-                nav.session.search.text = data
-            }, label: {
-                Text("Inspect")
-            })
         }
     }
 

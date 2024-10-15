@@ -236,7 +236,7 @@ public class CoreDataCompanies: ObservableObject {
     /// - Returns: Company|nil
     public func findDefault() -> Company? {
         let predicate = NSPredicate(
-            format: "isDefault == true"
+            format: "isDefault == true && alive == true"
         )
 
         let results = query(predicate)

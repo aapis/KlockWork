@@ -437,7 +437,7 @@ public class CoreDataTasks {
     ///   - job: Job
     ///   - saveByDefault: Bool
     /// - Returns: LogTask
-    public func create(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job?, saveByDefault: Bool = true) -> Void {
+    public func create(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job? = nil, saveByDefault: Bool = true) -> Void {
         let _ = self.make(cancelledDate: cancelledDate, completedDate: completedDate, content: content, created: created, due: due, lastUpdate: lastUpdate, job: job, saveByDefault: saveByDefault)
     }
 
@@ -452,7 +452,7 @@ public class CoreDataTasks {
     ///   - job: Job
     ///   - saveByDefault: Bool
     /// - Returns: LogTask
-    public func createAndReturn(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job?, saveByDefault: Bool = true) -> LogTask {
+    public func createAndReturn(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job? = nil, saveByDefault: Bool = true) -> LogTask {
         return self.make(cancelledDate: cancelledDate, completedDate: completedDate, content: content, created: created, due: due, lastUpdate: lastUpdate, job: job, saveByDefault: saveByDefault)
     }
 

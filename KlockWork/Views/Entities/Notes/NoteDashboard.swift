@@ -16,6 +16,7 @@ struct NoteDashboard: View {
     @EnvironmentObject public var updater: ViewUpdater
     @AppStorage("general.columns") private var numColumns: Int = 3
     @AppStorage("notedashboard.listVisible") private var listVisible: Bool = true
+    @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
     @State private var searchText: String = ""
     @State private var selected: Int = 0
     @State private var showAllNotes: Bool = false
@@ -67,6 +68,7 @@ struct NoteDashboard: View {
                         disabled: false,
                         placeholder: notes.count > 1 ? "Search \(self.notes.count) notes" : "Search 1 note"
                     )
+                    FancyDivider(height: 20)
 
                     ScrollView(showsIndicators: false) {
                         LazyVGrid(columns: self.columns, alignment: .leading) {
@@ -83,6 +85,7 @@ struct NoteDashboard: View {
         .background(Theme.toolbarColour)
         .onAppear(perform: self.actionOnAppear)
         .onChange(of: self.nav.session.job) { self.actionOnAppear() }
+        .onChange(of: self.showPublished) { self.actionOnAppear() }
     }
 }
 
@@ -100,9 +103,9 @@ extension NoteDashboard {
         self.notes = CoreDataNotes(moc: self.nav.moc).alive()
 
         if let stored = self.nav.session.job {
-            self.notes = CoreDataNotes(moc: self.nav.moc).find(by: stored)
+            self.notes = CoreDataNotes(moc: self.nav.moc).find(by: stored, allowKilled: self.showPublished)
         } else if let stored = self.nav.session.project {
-            self.notes = CoreDataNotes(moc: self.nav.moc).find(by: stored)
+            self.notes = CoreDataNotes(moc: self.nav.moc).find(by: stored, allowKilled: self.showPublished)
         }
     }
 }

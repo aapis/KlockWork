@@ -255,12 +255,20 @@ public class CoreDataNotes {
     
     /// Find notes by Job
     /// - Parameter job: Job
-    /// - Returns: [Note]]
-    public func find(by job: Job) -> [Note] {
-        let predicate = NSPredicate(
-            format: "ANY mJob == %@",
-            job
-        )
+    /// - Returns: [Note]
+    public func find(by job: Job, allowKilled: Bool = false) -> [Note] {
+        var predicate: NSPredicate
+        if !allowKilled {
+            predicate = NSPredicate(
+                format: "ANY mJob == %@",
+                job
+            )
+        } else {
+            predicate = NSPredicate(
+                format: "alive == true && ANY mJob == %@",
+                job
+            )
+        }
 
         return query(predicate)
     }
@@ -268,11 +276,21 @@ public class CoreDataNotes {
     /// Find notes by Job
     /// - Parameter project: Project
     /// - Returns: [Note]
-    public func find(by project: Project) -> [Note] {
-        let predicate = NSPredicate(
-            format: "ANY mJob.project == %@",
-            project
-        )
+    public func find(by project: Project, allowKilled: Bool = false) -> [Note] {
+        var predicate: NSPredicate
+
+        if !allowKilled {
+            predicate = NSPredicate(
+                format: "mJob.project == %@",
+                project
+            )
+        } else {
+            predicate = NSPredicate(
+                format: "alive == true && mJob.project == %@",
+                project
+            )
+        }
+
 
         return query(predicate)
     }
