@@ -52,6 +52,7 @@ struct CompanyBlock: View {
                 }
             }
         }
+        .clipShape(.rect(cornerRadius: 5))
         .onAppear(perform: self.actionOnAppear)
         .useDefaultHover({inside in highlighted = inside})
         .help(self.company.isDefault ? "This is your default company." : "")
