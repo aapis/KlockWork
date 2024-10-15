@@ -33,17 +33,24 @@ struct Planning: View {
 //        )
         ToolbarButton(
             id: 1,
-            helpText: "Upcoming",
+            helpText: "Incomplete tasks",
             icon: "hourglass",
             labelText: "Upcoming",
             contents: AnyView(Planning.Upcoming())
         ),
         ToolbarButton(
             id: 2,
-            helpText: "Overdue",
+            helpText: "Overdue tasks",
             icon: "alarm",
             labelText: "Overdue",
             contents: AnyView(Planning.Overdue())
+        ),
+        ToolbarButton(
+            id: 3,
+            helpText: "Tasks that have no due date",
+            icon: "exclamationmark.triangle",
+            labelText: "No Due Date",
+            contents: AnyView(Planning.NoDueDate())
         )
     ]
 

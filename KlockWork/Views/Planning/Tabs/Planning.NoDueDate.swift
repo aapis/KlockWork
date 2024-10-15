@@ -1,8 +1,8 @@
 //
-//  Planning.Overdue.swift
-//  DLPrototype
+//  Planning.NoDueDate.swift
+//  KlockWork
 //
-//  Created by Ryan Priebe on 2024-10-05.
+//  Created by Ryan Priebe on 2024-10-14.
 //  Copyright © 2024 YegCollective. All rights reserved.
 //
 
@@ -10,7 +10,7 @@ import SwiftUI
 import KWCore
 
 extension Planning {
-    struct Overdue: View {
+    struct NoDueDate: View {
         @EnvironmentObject public var nav: Navigation
         @State private var tasks: [LogTask] = []
         @State private var overdue: [UpcomingRow] = []
@@ -33,7 +33,7 @@ extension Planning {
                 } else {
                     VStack(alignment: .center) {
                         HStack(alignment: .center) {
-                            Text("No overdue tasks!")
+                            Text("All tasks have due dates, well done.")
                                 .foregroundColor(.gray)
                             Spacer()
                         }
@@ -51,7 +51,7 @@ extension Planning {
     }
 }
 
-extension Planning.Overdue {
+extension Planning.NoDueDate {
     /// Fires when the Forecast callback is fired
     /// - Returns: Void
     private func actionForecastCallback() -> Void {
@@ -69,7 +69,7 @@ extension Planning.Overdue {
     /// - Returns: Void
     private func actionOnAppear() -> Void {
         self.id = UUID()
-        self.tasks = CoreDataTasks(moc: self.nav.moc).overdue()
+        self.tasks = CoreDataTasks(moc: self.nav.moc).noDueDate()
         self.overdue = []
         let grouped = Dictionary(grouping: self.tasks, by: {$0.due!.formatted(date: .abbreviated, time: .omitted)})
         let sorted = Array(grouped)

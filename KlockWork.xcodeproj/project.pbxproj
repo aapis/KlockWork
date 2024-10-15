@@ -112,6 +112,7 @@
 		5360429D2CBA35050030D72D /* RecordDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5360429C2CBA35020030D72D /* RecordDetail.swift */; };
 		536043CA2CBE06A60030D72D /* LogTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536043C92CBE06A40030D72D /* LogTask.swift */; };
 		536043CC2CBE0E6C0030D72D /* NotificationSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536043CB2CBE0E670030D72D /* NotificationSettings.swift */; };
+		536044332CBE1B1F0030D72D /* Planning.NoDueDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536044322CBE1B170030D72D /* Planning.NoDueDate.swift */; };
 		5363B6782A6BB2CC00C2FBB8 /* CompanyDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B6772A6BB2CC00C2FBB8 /* CompanyDashboard.swift */; };
 		5363B67A2A6BB75F00C2FBB8 /* CompanyBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B6792A6BB75F00C2FBB8 /* CompanyBlock.swift */; };
 		5363B67C2A6BB78900C2FBB8 /* CompanyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B67B2A6BB78900C2FBB8 /* CompanyView.swift */; };
@@ -410,6 +411,7 @@
 		5360429C2CBA35020030D72D /* RecordDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordDetail.swift; sourceTree = "<group>"; };
 		536043C92CBE06A40030D72D /* LogTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTask.swift; sourceTree = "<group>"; };
 		536043CB2CBE0E670030D72D /* NotificationSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettings.swift; sourceTree = "<group>"; };
+		536044322CBE1B170030D72D /* Planning.NoDueDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Planning.NoDueDate.swift; sourceTree = "<group>"; };
 		5363B6772A6BB2CC00C2FBB8 /* CompanyDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyDashboard.swift; sourceTree = "<group>"; };
 		5363B6792A6BB75F00C2FBB8 /* CompanyBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyBlock.swift; sourceTree = "<group>"; };
 		5363B67B2A6BB78900C2FBB8 /* CompanyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyView.swift; sourceTree = "<group>"; };
@@ -865,6 +867,7 @@
 		5354C8F42AA045C2001C1779 /* Tabs */ = {
 			isa = PBXGroup;
 			children = (
+				536044322CBE1B170030D72D /* Planning.NoDueDate.swift */,
 				533544812CB19C450067A944 /* Planning.Overdue.swift */,
 				5335447F2CB19C3F0067A944 /* Planning.Upcoming.swift */,
 				5354C8F52AA045CA001C1779 /* Planning.Today.swift */,
@@ -1759,6 +1762,7 @@
 				535DDE5E2A7982F3008350D4 /* SidebarItem.swift in Sources */,
 				53E202702A80984400B4DF70 /* DateSelectorWidget.swift in Sources */,
 				53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */,
+				536044332CBE1B1F0030D72D /* Planning.NoDueDate.swift in Sources */,
 				53E2026C2A80457400B4DF70 /* JobProjectGroup.swift in Sources */,
 				535C1AE329F48F6800CD95FD /* Widgets.swift in Sources */,
 				53C000942B38E5C500D5EC04 /* TodayViewTab.swift in Sources */,

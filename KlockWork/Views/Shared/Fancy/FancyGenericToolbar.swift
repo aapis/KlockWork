@@ -100,6 +100,7 @@ struct FancyGenericToolbar: View {
                                     }
                                 }
                             }
+                            .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
                         }
                     }
                 }
@@ -118,6 +119,7 @@ struct FancyGenericToolbar: View {
                                 ForEach(buttons, id: \ToolbarButton.id) { button in
                                     if button.id == selected && button.contents != nil {
                                         button.contents
+                                            .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
                                     }
                                 }
                             }
