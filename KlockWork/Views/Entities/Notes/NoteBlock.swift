@@ -49,6 +49,7 @@ struct NoteBlock: View {
                 }
             }
         }
+        .clipShape(.rect(cornerRadius: 5))
         .useDefaultHover({ inside in highlighted = inside})
         .buttonStyle(.plain)
     }

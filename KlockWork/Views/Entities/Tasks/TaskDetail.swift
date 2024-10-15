@@ -12,10 +12,12 @@ import KWCore
 struct TaskDetail: View {
     @EnvironmentObject public var state: Navigation
     @Environment(\.dismiss) private var dismiss
+    @AppStorage("notifications.interval") private var notificationInterval: Int = 0
     @State public var task: LogTask?
     @State private var content: String = ""
     @State private var published: Bool = false
     @State private var isPresented: Bool = false
+    @State private var shouldCreateNotification: Bool = true
     @State private var due: Date = Date()
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .tasks
@@ -29,6 +31,7 @@ struct TaskDetail: View {
                 Title(text: eType.enSingular, imageAsImage: eType.icon)
                 FancyDivider()
                 Toggle("Published", isOn: $published)
+                Toggle("Create notification", isOn: $shouldCreateNotification)
                 FancyDivider()
                 DatePicker("Due", selection: $due)
                 HStack(alignment: .center) {
@@ -89,6 +92,7 @@ extension TaskDetail {
         self.content = self.task?.content ?? ""
         self.published = self.task?.cancelledDate == nil && self.task?.completedDate == nil
         self.due = self.task?.due ?? Date()
+        self.shouldCreateNotification = !(self.task?.hasScheduledNotification ?? false)
     }
 
     /// Fires when enter/return hit while entering text in field or when add button tapped
@@ -96,22 +100,25 @@ extension TaskDetail {
     private func actionOnSave() -> Void {
         if self.task != nil {
             self.task?.content = self.content
-            self.task?.due = DateHelper.endOfDay(self.due) ?? Date()
+            self.task?.due = self.due
             if self.published == false {
                 self.task?.cancelledDate = Date()
             }
             self.task?.lastUpdate = Date()
         } else {
-            CoreDataTasks(moc: self.state.moc).create(
+            self.task = CoreDataTasks(moc: self.state.moc).createAndReturn(
                 content: self.content,
                 created: Date(),
-                due: DateHelper.endOfTomorrow(Date()) ?? Date(),
+                due: DateHelper.endOfDay(Date()) ?? Date(),
                 job: self.state.session.job
             )
         }
 
-        self.content = ""
+        if self.shouldCreateNotification && self.task != nil {
+            NotificationHelper.createInterval(interval: self.notificationInterval, task: self.task!)
+        }
 
+        self.content = ""
         PersistenceController.shared.save()
         self.dismiss()
         self.state.to(.tasks)

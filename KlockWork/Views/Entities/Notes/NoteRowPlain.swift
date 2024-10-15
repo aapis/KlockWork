@@ -12,7 +12,7 @@ import KWCore
 struct NoteRowPlain: View {
     public var note: Note
     public var moc: NSManagedObjectContext
-    public var icon: String = "arrow.right"
+    public var icon: String = "chevron.right"
 
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
 
