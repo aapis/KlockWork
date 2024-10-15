@@ -10,6 +10,7 @@ import SwiftUI
 import KWCore
 
 struct AllJobsPickerWidget: View {
+    typealias UI = WidgetLibrary.UI
     public let title: String = "All Jobs"
     public var location: WidgetLocation = .sidebar
 
@@ -74,7 +75,7 @@ struct AllJobsPickerWidget: View {
                     } else {
                         if showSearch {
                             VStack {
-                                SearchBar(text: $query, disabled: minimized, placeholder: "Job ID or URL")
+                                UI.BoundSearchBar(text: $query, disabled: minimized, placeholder: "Job ID or URL")
                                     .onChange(of: query, perform: actionOnSearch)
                                     .onChange(of: nav.session.job, perform: actionOnChangeJob)
                             }

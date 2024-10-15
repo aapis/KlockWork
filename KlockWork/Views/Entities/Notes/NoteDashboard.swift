@@ -12,6 +12,7 @@ import KWCore
 
 struct NoteDashboard: View {
     typealias Widget = WidgetLibrary.UI.Buttons
+    typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
     @AppStorage("general.columns") private var numColumns: Int = 3
@@ -63,7 +64,7 @@ struct NoteDashboard: View {
                 .foregroundStyle(.white)
                 
                 if listVisible && self.notes.count > 0 {
-                    SearchBar(
+                    UI.BoundSearchBar(
                         text: $searchText,
                         disabled: false,
                         placeholder: notes.count > 1 ? "Search \(self.notes.count) notes" : "Search 1 note"

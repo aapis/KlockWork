@@ -132,7 +132,6 @@
 		5372C02A2A105AA1008CB120 /* FancyChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5372C0292A105AA1008CB120 /* FancyChip.swift */; };
 		537368D124B93DB600193E88 /* Today.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537368D024B93DB600193E88 /* Today.swift */; };
 		53759E0829678DC700DCDC4B /* Import.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53759E0729678DC700DCDC4B /* Import.swift */; };
-		5376289B2966467100DE8ECF /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376289A2966467100DE8ECF /* SearchBar.swift */; };
 		5376289E29664F8C00DE8ECF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376289D29664F8C00DE8ECF /* Theme.swift */; };
 		537628A02966518B00DE8ECF /* ToolbarTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376289F2966518B00DE8ECF /* ToolbarTabs.swift */; };
 		537628A22966525500DE8ECF /* ToolbarButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537628A12966525500DE8ECF /* ToolbarButtons.swift */; };
@@ -430,7 +429,6 @@
 		5372C0292A105AA1008CB120 /* FancyChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyChip.swift; sourceTree = "<group>"; };
 		537368D024B93DB600193E88 /* Today.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Today.swift; sourceTree = "<group>"; };
 		53759E0729678DC700DCDC4B /* Import.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Import.swift; sourceTree = "<group>"; };
-		5376289A2966467100DE8ECF /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		5376289D29664F8C00DE8ECF /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		5376289F2966518B00DE8ECF /* ToolbarTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarTabs.swift; sourceTree = "<group>"; };
 		537628A12966525500DE8ECF /* ToolbarButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarButtons.swift; sourceTree = "<group>"; };
@@ -1347,7 +1345,6 @@
 				53EDDF9F2963487A008D34C7 /* CustomPickerItem.swift */,
 				5376289D29664F8C00DE8ECF /* Theme.swift */,
 				531B38FB29674EC400E74013 /* Title.swift */,
-				5376289A2966467100DE8ECF /* SearchBar.swift */,
 				53B0BE8729726400007CB663 /* GenericToolbar.swift */,
 				53529A06299F38C0000D2FCB /* JobPickerUsing.swift */,
 				53561F8429F1FC7900D828AD /* ProjectPickerUsing.swift */,
@@ -1724,7 +1721,6 @@
 				53790C142A758A7200D3FFD4 /* RecordTableColumn.swift in Sources */,
 				53529A07299F38C0000D2FCB /* JobPickerUsing.swift in Sources */,
 				53E202722A80BAD500B4DF70 /* ButtonType.swift in Sources */,
-				5376289B2966467100DE8ECF /* SearchBar.swift in Sources */,
 				530B1D782CAFA4DD0033E81F /* PeopleDashboadSidebar.swift in Sources */,
 				5363B67A2A6BB75F00C2FBB8 /* CompanyBlock.swift in Sources */,
 				531B8DF22A847BE8005D911B /* NoteGroup.swift in Sources */,

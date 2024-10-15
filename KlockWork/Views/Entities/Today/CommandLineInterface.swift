@@ -424,6 +424,7 @@ extension CommandLineInterface {
     }
     
     struct Display: View {
+        typealias UI = WidgetLibrary.UI
         @AppStorage("today.cli.showFilter") private var showCLIFilter: Bool = false
         @State private var searchText: String = ""
         @State private var searchFilteredResults: [Navigation.CommandLineSession.History] = []
@@ -438,7 +439,7 @@ extension CommandLineInterface {
                     .frame(height: 100)
                 VStack {
                     if self.showCLIFilter {
-                        SearchBar(text: $searchText, placeholder: "Filter entries...", onReset: onReset)
+                        UI.BoundSearchBar(text: $searchText, placeholder: "Filter entries...", onReset: onReset)
                             .border(width: 1, edges: [.bottom], color: Theme.cPurple)
                             .onChange(of: searchText) {
                                 onSearch(self.searchText)
