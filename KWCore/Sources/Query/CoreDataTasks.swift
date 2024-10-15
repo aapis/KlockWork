@@ -246,7 +246,9 @@ public class CoreDataTasks {
     public func complete(_ task: LogTask) -> Void {
         task.completedDate = Date()
         task.lastUpdate = Date()
-        
+        task.hasScheduledNotification = false
+        NotificationHelper.clean(identifier: task.id?.uuidString ?? "no-id")
+
         do {
             try moc!.save()
 
@@ -278,7 +280,9 @@ public class CoreDataTasks {
     public func cancel(_ task: LogTask) -> Void {
         task.cancelledDate = Date()
         task.lastUpdate = Date()
-        
+        task.hasScheduledNotification = false
+        NotificationHelper.clean(identifier: task.id?.uuidString ?? "no-id")
+
         do {
             try moc!.save()
 
@@ -299,6 +303,7 @@ public class CoreDataTasks {
     /// - Returns: Void
     public func due(on date: Date, task: LogTask) -> Void {
         task.due = date
+        task.hasScheduledNotification = true
 
         do {
             try moc!.save()
