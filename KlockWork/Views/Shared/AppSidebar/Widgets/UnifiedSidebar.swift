@@ -307,6 +307,7 @@ struct UnifiedSidebar {
                 ZStack(alignment: .trailing) {
                     EntityRowButton(text: "\(self.tasks.count) Tasks", isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
+                        .disabled(self.tasks.count == 0)
                     RowAddNavLink(
                         target: AnyView(TaskDetail())
                     )
@@ -348,6 +349,7 @@ struct UnifiedSidebar {
                 ZStack(alignment: .trailing) {
                     EntityRowButton(text: "\(self.notes.count) Notes", isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
+                        .disabled(self.notes.count == 0)
                     RowAddNavLink(
                         target: AnyView(NoteCreate())
                     )
@@ -389,6 +391,7 @@ struct UnifiedSidebar {
                 ZStack(alignment: .trailing) {
                     EntityRowButton(text: "\(self.definitions.count) Definitions", isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
+                        .disabled(self.definitions.count == 0)
                     RowAddNavLink(
                         target: AnyView(DefinitionDetail())
                     )
@@ -430,6 +433,7 @@ struct UnifiedSidebar {
                 ZStack(alignment: .trailing) {
                     EntityRowButton(text: "\(self.records.count) Records", isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
+                        .disabled(self.records.count == 0)
                 }
                 .background(Theme.base.opacity(0.6).blendMode(.softLight))
 
@@ -538,11 +542,14 @@ struct UnifiedSidebar {
         public let text: String
         public var callback: (() -> Void)?
         @Binding public var isPresented: Bool
+        private var hasChildren: Bool { self.text[text.startIndex] != "0" }
 
         var body: some View {
             Button {
-                isPresented.toggle()
-                self.callback?()
+                if self.hasChildren {
+                    isPresented.toggle()
+                    self.callback?()
+                }
             } label: {
                 ZStack(alignment: .topLeading) {
                     Theme.base.opacity(0.6).blendMode(.softLight)
