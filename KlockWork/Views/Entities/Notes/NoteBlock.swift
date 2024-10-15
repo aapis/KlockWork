@@ -95,6 +95,8 @@ struct NoteBlock: View {
                 let description = String(body[...i]).trimmingCharacters(in: .whitespacesAndNewlines)
 
                 return description + "..."
+            } else {
+                return body
             }
         }
 
