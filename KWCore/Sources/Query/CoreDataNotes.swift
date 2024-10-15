@@ -255,7 +255,7 @@ public class CoreDataNotes {
     
     /// Find notes by Job
     /// - Parameter job: Job
-    /// - Returns: [Note]]
+    /// - Returns: [Note]
     public func find(by job: Job) -> [Note] {
         let predicate = NSPredicate(
             format: "ANY mJob == %@",
@@ -270,7 +270,7 @@ public class CoreDataNotes {
     /// - Returns: [Note]
     public func find(by project: Project) -> [Note] {
         let predicate = NSPredicate(
-            format: "ANY mJob.project == %@",
+            format: "mJob.project == %@",
             project
         )
 
