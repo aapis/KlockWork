@@ -40,8 +40,9 @@ extension Planning {
                 } else {
                     VStack(alignment: .center) {
                         HStack(alignment: .center) {
-                            Text("No upcoming due dates")
+                            Text("No tasks with upcoming due dates")
                                 .foregroundColor(.gray)
+                            Spacer()
                         }
                     }
                     .padding()

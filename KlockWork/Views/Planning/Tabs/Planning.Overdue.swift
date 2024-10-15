@@ -35,6 +35,7 @@ extension Planning {
                         HStack(alignment: .center) {
                             Text("No overdue tasks!")
                                 .foregroundColor(.gray)
+                            Spacer()
                         }
                     }
 
