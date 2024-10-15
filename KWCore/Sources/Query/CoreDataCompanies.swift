@@ -157,13 +157,38 @@ public class CoreDataCompanies: ObservableObject {
 
     /// Fetch request to find all items
     /// - Returns: FetchRequest<Company>
-    public func all(allowKilled: Bool = false) -> [Company] {
-        let predicate = NSPredicate(
-            format: !allowKilled ? "createdDate < %@" : "alive == true && createdDate < %@",
-            Date() as CVarArg
-        )
+    public func all(allowKilled: Bool = false, allowPlanMembersOnly: Bool = false, planMembers: Set<Company>) -> [Company] {
+        if allowPlanMembersOnly {
+            var subpredicates: [NSPredicate] = []
 
-        return query(predicate)
+            // Add alive check if required
+            if !allowKilled {
+                subpredicates.append(
+                    NSPredicate(format: "alive == true")
+                )
+            }
+
+            // Add plan members to query
+            for member in planMembers {
+                subpredicates.append(
+                    NSPredicate(format: "name == %@", member.name!)
+                )
+            }
+
+            let filterPredicate = NSCompoundPredicate(
+                type: NSCompoundPredicate.LogicalType.or,
+                subpredicates: subpredicates
+            )
+
+            return query(filterPredicate)
+        } else {
+            let predicate = NSPredicate(
+                format: !allowKilled ? "createdDate < %@" : "alive == true && createdDate < %@",
+                Date() as CVarArg
+            )
+
+            return query(predicate)
+        }
     }
 
     /// Retreive all companies by pid

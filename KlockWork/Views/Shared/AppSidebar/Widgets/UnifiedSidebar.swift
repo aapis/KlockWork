@@ -45,6 +45,7 @@ struct UnifiedSidebar {
             }
             .onAppear(perform: self.actionOnAppear)
             .onChange(of: self.showPublished) { self.actionOnAppear() }
+            .onChange(of: self.state.session.gif) { self.actionOnAppear() }
         }
     }
 
@@ -605,7 +606,11 @@ extension UnifiedSidebar.Widget {
     /// Onload handler. Finds companies
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        self.companies = CoreDataCompanies(moc: self.state.moc).all(allowKilled: self.showPublished)
+        self.companies = CoreDataCompanies(moc: self.state.moc).all(
+            allowKilled: self.showPublished,
+            allowPlanMembersOnly: self.state.session.gif == .focus,
+            planMembers: self.state.planning.companies
+        )
     }
 }
 
