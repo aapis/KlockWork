@@ -10,10 +10,9 @@ import SwiftUI
 import KWCore
 
 struct NoteFormWidget: View {
-    public var note: Note? = nil
-    private var currentVersion: NoteVersion? = nil
-    private var mode: EntityViewMode = .ready
-    
+    @State public var note: Note?
+    @State private var currentVersion: NoteVersion?
+    @State private var mode: EntityViewMode = .ready
     @State private var isDeleteAlertShowing: Bool = false
 
     @EnvironmentObject private var nav: Navigation
@@ -43,10 +42,10 @@ struct NoteFormWidget: View {
                 TemplateChooser()
             }
             
-            StarChooser(note: note)
+            StarChooser()
             
             if mode == .update {
-                VersionChooser(note: note)
+                VersionChooser()
             }
 
             JobChooser()
@@ -54,7 +53,7 @@ struct NoteFormWidget: View {
             HStack {
                 if mode == .create {
                     FancySimpleButton(text: "Close", type: .clear, href: .notes)
-                } else {
+                } else if self.mode == .update {
                     FancySimpleButton(
                         text: "Delete",
                         action: {isDeleteAlertShowing = true},
@@ -63,7 +62,7 @@ struct NoteFormWidget: View {
                         showIcon: true,
                         type: .destructive
                     )
-                    .alert("Delete note titled \(note!.title!)", isPresented: $isDeleteAlertShowing) {
+                    .alert("Delete note \"\(note!.title!)\"", isPresented: $isDeleteAlertShowing) {
                         Button("Yes", role: .destructive) {
                             if let n = note {
                                 n.alive = false
@@ -80,8 +79,7 @@ struct NoteFormWidget: View {
                     FancySimpleButton(
                         text: "Save & Close",
                         action: {nav.save()},
-                        type: nav.forms.note.job == nil ? .error : .standard,
-                        href: .notes
+                        type: nav.forms.note.job == nil ? .error : .standard
                     )
                     .disabled(nav.forms.note.job == nil)
                 }
@@ -99,21 +97,11 @@ struct NoteFormWidget: View {
         .padding(8)
         .background(Theme.base.opacity(0.2))
         .onAppear(perform: actionOnAppear)
-    }
-    
-    init(note: Note? = nil) {
-        self.note = note
-        
-        if let note = self.note {
-            self.mode = .update
-            
-            let versions = note.versions?.allObjects as! [NoteVersion]
-            self.currentVersion = versions.sorted(by: {$0.created! > $1.created!}).first
-        } else {
-            self.mode = .create
+        .onChange(of: self.nav.session.job) {
+            self.nav.forms.note.job = self.nav.session.job
         }
     }
-    
+
     struct StarChooser: View {
         public var note: Note?
 
@@ -152,9 +140,9 @@ struct NoteFormWidget: View {
                     starred = n.starred
                 }
             })
-            .onChange(of: starred) { newStatus in
+            .onChange(of: starred) {
                 if let n = note {
-                    n.starred = newStatus
+                    n.starred = self.starred
                 }
             }
         }
@@ -236,8 +224,8 @@ struct NoteFormWidget: View {
                 
                 FancyDivider()
             }
-            .onChange(of: selectedTemplate) { tmpl in
-                if tmpl != nil {
+            .onChange(of: selectedTemplate) {
+                if self.selectedTemplate != nil {
                     allowChangeTemplate = true
                 }
             }
@@ -317,9 +305,9 @@ struct NoteFormWidget: View {
                 
                 FancyDivider()
             }
-            .onChange(of: jobSearchText) { query in
-                if query.count >= 2 {
-                    filteredJobs = jobs.filter {$0.jid.string.starts(with: query)}
+            .onChange(of: self.jobSearchText) {
+                if self.jobSearchText.count >= 2 {
+                    filteredJobs = jobs.filter {$0.jid.string.starts(with: self.jobSearchText)}
                 } else {
                     filteredJobs = []
                 }
@@ -444,11 +432,23 @@ struct NoteFormWidget: View {
 }
 
 extension NoteFormWidget {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
     private func actionOnAppear() -> Void {
-        if let n = note {
+        if let stored = self.nav.session.note {
+            self.note = stored
+            self.mode = .update
+
+            let versions = stored.versions?.allObjects as! [NoteVersion]
+            self.currentVersion = versions.sorted(by: {$0.created! > $1.created!}).first
+        } else {
+            self.mode = .create
+        }
+
+        if let job = nav.session.job {
+            nav.forms.note.job = job
+        } else if let n = note {
             nav.forms.note.job = n.mJob
-        } else if nav.session.job != nil {
-            nav.forms.note.job = nav.session.job!
         }
 
         nav.forms.note.version = currentVersion
