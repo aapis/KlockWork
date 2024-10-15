@@ -10,8 +10,8 @@ import SwiftUI
 import KWCore
 
 struct NoteCreateSidebar: View {
-    public var note: Note? = nil
-
+    @EnvironmentObject public var state: Navigation
+    @State public var note: Note?
     @State private var tabs: [ToolbarButton] = []
     @State private var searching: Bool = false
 
@@ -30,14 +30,25 @@ struct NoteCreateSidebar: View {
 
 extension NoteCreateSidebar {
     private func createToolbar() -> Void {
+        if let stored = self.state.session.note {
+            self.note = stored
+        }
+
         tabs = [
             ToolbarButton(
                 id: 0,
                 helpText: "Canvas: Note",
                 icon: "doc.text",
                 labelText: "Notes",
-                contents: AnyView(NoteFormWidget(note: note))
-            )
+                contents: AnyView(NoteFormWidget())
+            ),
+            ToolbarButton(
+                id: 1,
+                helpText: "Resources",
+                icon: "globe",
+                labelText: "Resources",
+                contents: AnyView(UnifiedSidebar.Widget())
+            ),
         ]
     }
 }
