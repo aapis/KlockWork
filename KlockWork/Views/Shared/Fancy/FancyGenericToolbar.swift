@@ -100,7 +100,7 @@ struct FancyGenericToolbar: View {
                                     }
                                 }
                             }
-                            .clipShape(.rect(bottomLeadingRadius: self.location == .content ? 5 : 0, bottomTrailingRadius: self.location == .content ? 5 : 0))
+                            .clipShape(.rect(topLeadingRadius: self.location == .content ? 5 : 0, topTrailingRadius: self.location == .content ? 5 : 0))
                         }
                     }
                 }
