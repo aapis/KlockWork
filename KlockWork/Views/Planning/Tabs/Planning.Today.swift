@@ -12,13 +12,13 @@ import KWCore
 extension Planning {
     struct Today: View {
         @EnvironmentObject public var nav: Navigation
-        @EnvironmentObject public var updater: ViewUpdater
+        @State private var jobs: Set<Job> = []
 
         var body: some View {
             VStack(alignment: .leading, spacing: 1) {
                 Menu()
                 ScrollView(.vertical, showsIndicators: false) {
-                    let jobs = Array(nav.planning.jobs).sorted(by: {$0.jid > $1.jid})
+                    let jobs = self.jobs.sorted(by: {$0.title ?? $0.jid.string > $1.title ?? $1.jid.string})
                     if jobs.count > 0 {
                         ForEach(jobs, id: \.objectID) { job in
                             VStack(spacing: 1) {
@@ -36,14 +36,16 @@ extension Planning {
                     }
                 }
             }
-            .onAppear(perform: actionOnAppear)
-            .id(updater.get("planning.daily"))
+            .onAppear(perform: self.actionOnAppear)
+            .onChange(of: self.nav.planning.jobs) { self.actionOnAppear() }
         }
     }
 }
 
 extension Planning.Today {
+    /// Onload handler. Sets view state (jobs)
+    /// - Returns: Void
     private func actionOnAppear() -> Void {
-
+        self.jobs = self.nav.planning.jobs
     }
 }
