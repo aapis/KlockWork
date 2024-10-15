@@ -25,27 +25,47 @@ final class NotificationHelper {
     /// Create a new notification
     /// - Parameters:
     ///   - title: String
-    ///   - body: String
-    ///   - dateComponents: DateComponents
+    ///   - task: LogTask
+    ///   - minutesBefore: Int
     ///   - identifier: String
     ///   - repeats: Bool(false)
-    static public func create(title: String, body: String, dateComponents: DateComponents, identifier: String, repeats: Bool = false) {
+    static public func create(title: String, task: LogTask, minutesBefore: Int = 5, repeats: Bool = false) -> Void {
+        if task.due == nil {
+            return
+        }
+
+        let currHour = Calendar.autoupdatingCurrent.component(.hour, from: task.due!)
+        let currMin = Calendar.autoupdatingCurrent.component(.minute, from: task.due!)
+
+        // Don't create notifications for items whose due time is the very end of the day. Mainly to prevent
+        // notification spam at midnight.
+        if currHour == 23 && currMin == 59 {
+            return
+        }
+
+        var dc = DateComponents()
+        dc.hour = currHour
+        if currMin > minutesBefore {
+            dc.minute = currMin - minutesBefore
+        } else {
+            dc.minute = currMin
+        }
+
         let notificationCenter = UNUserNotificationCenter.current()
         let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
+        content.title = task.content!
+        content.body = task.notificationBody
         content.sound = UNNotificationSound.default
 
-        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: repeats)
-        let request = UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)
-
-        self.clean(identifier: identifier)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dc, repeats: repeats)
+        let request = UNNotificationRequest(identifier: task.id?.uuidString ?? "no-id", content: content, trigger: trigger)
+        self.clean(identifier: task.id?.uuidString ?? "no-id")
 
         notificationCenter.add(request) { error in
             if let error = error {
                 print("Error scheduling notification: \(error)")
             } else {
-                print("Notification \(content.title) added")
+                task.hasScheduledNotification = false
             }
         }
     }
@@ -74,6 +94,34 @@ final class NotificationHelper {
             default:
                 return
             }
+        }
+    }
+    
+    /// Create notifications based on the user's chosen notification interval
+    /// - Parameters:
+    ///   - interval: Int
+    ///   - task: LogTask
+    /// - Returns: Void
+    static public func createInterval(interval: Int, task: LogTask) -> Void {
+        switch interval {
+        case 1:
+            NotificationHelper.create(title: "In 1 hour", task: task, minutesBefore: 60)
+        case 2:
+            NotificationHelper.create(title: "In 1 hour", task: task, minutesBefore: 60)
+            NotificationHelper.create(title: "In 15 minutes", task: task, minutesBefore: 15)
+        case 3:
+            NotificationHelper.create(title: "In 1 hour", task: task, minutesBefore: 60)
+            NotificationHelper.create(title: "In 15 minutes", task: task, minutesBefore: 15)
+            NotificationHelper.create(title: "In 5 minutes", task: task)
+        case 4:
+            NotificationHelper.create(title: "In 15 minutes", task: task, minutesBefore: 15)
+        case 5:
+            NotificationHelper.create(title: "In 5 minutes", task: task)
+        case 6:
+            NotificationHelper.create(title: "In 15 minutes", task: task, minutesBefore: 15)
+            NotificationHelper.create(title: "In 5 minutes", task: task)
+        default:
+            print("[warning] User has not set notifications.interval yet")
         }
     }
 }

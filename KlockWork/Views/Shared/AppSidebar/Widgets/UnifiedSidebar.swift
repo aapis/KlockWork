@@ -50,12 +50,12 @@ struct UnifiedSidebar {
 
     struct SingleCompany: View {
         @EnvironmentObject private var state: Navigation
+        @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
         public let entity: Company
         @State private var isPresented: Bool = false
         @State private var highlighted: Bool = false
         @State private var bgColour: Color = .clear
         @State private var fgColour: Color = .clear
-        @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
@@ -129,12 +129,12 @@ struct UnifiedSidebar {
 
     struct SingleProject: View {
         @EnvironmentObject private var state: Navigation
+        @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
         public let entity: Project
         @State private var isPresented: Bool = false
         @State private var highlighted: Bool = false
         @State private var bgColour: Color = .clear
         @State private var fgColour: Color = .clear
-        @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
@@ -201,12 +201,12 @@ struct UnifiedSidebar {
 
     struct SingleJob: View {
         @EnvironmentObject private var state: Navigation
+        @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
         public let entity: Job
         @State private var isPresented: Bool = false
         @State private var highlighted: Bool = false
         @State private var bgColour: Color = .clear
         @State private var fgColour: Color = .clear
-        @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
@@ -244,22 +244,22 @@ struct UnifiedSidebar {
                             VStack(alignment: .leading, spacing: 0) {
                                 if let tasks = self.entity.tasks?.allObjects as? [LogTask] {
                                     if tasks.count > 0 {
-                                        Tasks(job: self.entity, tasks: tasks)
+                                        Tasks(job: self.entity, tasks: tasks.sorted(by: {$0.due ?? Date() > $1.due ?? Date()}).filter({self.showPublished ? $0.completedDate != nil && $0.cancelledDate != nil : $0.created != nil}))
                                     }
                                 }
                                 if let notes = self.entity.mNotes?.allObjects as? [Note] {
                                     if notes.count > 0 {
-                                        Notes(job: self.entity, notes: notes)
+                                        Notes(job: self.entity, notes: notes.filter({self.showPublished ? $0.alive == true : $0.postedDate != nil}))
                                     }
                                 }
                                 if let definitions = self.entity.definitions?.allObjects as? [TaxonomyTermDefinitions] {
                                     if definitions.count > 0 {
-                                        Definitions(job: self.entity, definitions: definitions)
+                                        Definitions(job: self.entity, definitions: definitions.sorted(by: {$0.definition ?? "" > $1.definition ?? ""}).filter({self.showPublished ? $0.alive == true : $0.created != nil}))
                                     }
                                 }
                                 if let records = self.entity.records?.allObjects as? [LogRecord] {
                                     if records.count > 0 {
-                                        Records(job: self.entity, records: records)
+                                        Records(job: self.entity, records: records.sorted(by: {$0.timestamp ?? Date() > $1.timestamp ?? Date()}).filter({self.showPublished ? $0.alive == true : $0.timestamp != nil}))
                                     }
                                 }
                             }

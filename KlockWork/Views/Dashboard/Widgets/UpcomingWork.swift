@@ -38,7 +38,6 @@ struct UpcomingWork: View {
             ForEach(self.forecast, id: \.id) { row in row }
         }
         .background(self.state.session.appPage.primaryColour)
-//        .frame(height: 250)
         .onAppear(perform: self.actionOnAppear)
         .onChange(of: self.maxDaysUpcomingWork) { self.actionOnAppear() }
     }

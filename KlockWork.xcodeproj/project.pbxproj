@@ -110,6 +110,8 @@
 		536040AA2CB9F5F10030D72D /* ActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536040A92CB9F5F10030D72D /* ActionType.swift */; };
 		536040AC2CB9FC850030D72D /* FactorProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536040AB2CB9FC850030D72D /* FactorProxy.swift */; };
 		5360429D2CBA35050030D72D /* RecordDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5360429C2CBA35020030D72D /* RecordDetail.swift */; };
+		536043CA2CBE06A60030D72D /* LogTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536043C92CBE06A40030D72D /* LogTask.swift */; };
+		536043CC2CBE0E6C0030D72D /* NotificationSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536043CB2CBE0E670030D72D /* NotificationSettings.swift */; };
 		5363B6782A6BB2CC00C2FBB8 /* CompanyDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B6772A6BB2CC00C2FBB8 /* CompanyDashboard.swift */; };
 		5363B67A2A6BB75F00C2FBB8 /* CompanyBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B6792A6BB75F00C2FBB8 /* CompanyBlock.swift */; };
 		5363B67C2A6BB78900C2FBB8 /* CompanyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B67B2A6BB78900C2FBB8 /* CompanyView.swift */; };
@@ -406,6 +408,8 @@
 		536040A92CB9F5F10030D72D /* ActionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionType.swift; sourceTree = "<group>"; };
 		536040AB2CB9FC850030D72D /* FactorProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FactorProxy.swift; sourceTree = "<group>"; };
 		5360429C2CBA35020030D72D /* RecordDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordDetail.swift; sourceTree = "<group>"; };
+		536043C92CBE06A40030D72D /* LogTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTask.swift; sourceTree = "<group>"; };
+		536043CB2CBE0E670030D72D /* NotificationSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettings.swift; sourceTree = "<group>"; };
 		5363B6772A6BB2CC00C2FBB8 /* CompanyDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyDashboard.swift; sourceTree = "<group>"; };
 		5363B6792A6BB75F00C2FBB8 /* CompanyBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyBlock.swift; sourceTree = "<group>"; };
 		5363B67B2A6BB78900C2FBB8 /* CompanyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyView.swift; sourceTree = "<group>"; };
@@ -705,6 +709,7 @@
 		531EB6E62A9FDA5000B3059C /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				536043C92CBE06A40030D72D /* LogTask.swift */,
 				53013A972CAC601F0024BA30 /* Company.swift */,
 				5331FCB22A9E6ECE005CDE0E /* Plan.swift */,
 				531EB6E72A9FDA5A00B3059C /* Job.swift */,
@@ -1210,6 +1215,7 @@
 		53C036ED29F8A58600539C3C /* Tabs */ = {
 			isa = PBXGroup;
 			children = (
+				536043CB2CBE0E670030D72D /* NotificationSettings.swift */,
 				53967D8329EC6D14006616A0 /* TodaySettings.swift */,
 				53EFCE7829637F35004E45EC /* GeneralSettings.swift */,
 				53C036EE29F8A59900539C3C /* DashboardSettings.swift */,
@@ -1626,6 +1632,7 @@
 				5372C02A2A105AA1008CB120 /* FancyChip.swift in Sources */,
 				53450CEC2BF46ECF007F45FB /* CommandLineInterface.swift in Sources */,
 				537628B429665F4E00DE8ECF /* Data.xcdatamodeld in Sources */,
+				536043CC2CBE0E6C0030D72D /* NotificationSettings.swift in Sources */,
 				538A535A2C704E2B00711639 /* TermsDashboardSidebar.swift in Sources */,
 				53F5896429983FA300843B32 /* ProjectResult.swift in Sources */,
 				536040AA2CB9F5F10030D72D /* ActionType.swift in Sources */,
@@ -1680,6 +1687,7 @@
 				5354C8F82AA045F5001C1779 /* Planning.Feature.swift in Sources */,
 				5354C8E82AA03C56001C1779 /* Header.swift in Sources */,
 				5326AE9A2B27FFB8009F1349 /* CompanyPicker.swift in Sources */,
+				536043CA2CBE06A60030D72D /* LogTask.swift in Sources */,
 				536040AC2CB9FC850030D72D /* FactorProxy.swift in Sources */,
 				53152CC929690E7300A14E43 /* LosslessStringConvertible.swift in Sources */,
 				536040932CB89F8C0030D72D /* ExploreSidebar.swift in Sources */,

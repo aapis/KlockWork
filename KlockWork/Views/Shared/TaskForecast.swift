@@ -51,6 +51,7 @@ struct TaskForecast: View {
 struct Forecast: View, Identifiable {
     @EnvironmentObject private var state: Navigation
     @Environment(\.colorScheme) var colourScheme
+    @AppStorage("notifications.interval") private var notificationInterval: Int = 0
     public var id: UUID = UUID()
     public var date: Date
     public var callback: (() -> Void)? = nil
@@ -76,6 +77,11 @@ struct Forecast: View, Identifiable {
                 ForecastTypeRow(date: self.date, callback: self.callback, upcomingTasks: _upcomingTasks)
                     .padding(8)
             }
+        }
+        .onAppear(perform: self.actionOnAppear)
+        .onChange(of: self.state.session.date) {
+            NotificationHelper.clean()
+            self.actionOnAppear()
         }
     }
 
@@ -281,6 +287,18 @@ struct Forecast: View, Identifiable {
             .onAppear(perform: self.actionOnAppear)
             .onChange(of: self.state.session.date) {
                 self.actionOnAppear()
+            }
+        }
+    }
+}
+
+extension Forecast {
+    /// Onload handler
+    /// - Returns: Void
+    public func actionOnAppear() -> Void {
+        for task in self.upcomingTasks {
+            if task.hasScheduledNotification {
+                NotificationHelper.createInterval(interval: self.notificationInterval, task: task)
             }
         }
     }
