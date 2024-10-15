@@ -215,9 +215,13 @@ struct Home: View {
     @ViewBuilder var InspectorAndMain: some View {
         if nav.inspector != nil {
             ZStack(alignment: .topLeading) {
-                nav.view
-                    .navigationTitle(nav.pageTitle())
-                    .disabled(isDatePickerPresented)
+                VStack {
+                    UI.AppNavigation()
+                    nav.view
+                        .navigationTitle(nav.pageTitle())
+                        .disabled(isDatePickerPresented)
+
+                }
                 Color.black.opacity(0.7)
 
                 ZStack(alignment: .topLeading) {
