@@ -308,7 +308,6 @@ struct UnifiedSidebar {
                     EntityRowButton(text: "\(self.tasks.count) Tasks", isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
                     RowAddNavLink(
-                        title: "Add",
                         target: AnyView(TaskDetail())
                     )
                     .buttonStyle(.plain)
@@ -350,7 +349,6 @@ struct UnifiedSidebar {
                     EntityRowButton(text: "\(self.notes.count) Notes", isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
                     RowAddNavLink(
-                        title: "Add",
                         target: AnyView(NoteCreate())
                     )
                     .buttonStyle(.plain)
@@ -392,7 +390,6 @@ struct UnifiedSidebar {
                     EntityRowButton(text: "\(self.definitions.count) Definitions", isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
                     RowAddNavLink(
-                        title: "Add",
                         target: AnyView(DefinitionDetail())
                     )
                     .buttonStyle(.plain)
@@ -470,7 +467,6 @@ struct UnifiedSidebar {
                     EntityRowButton(text: "People", isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
                     RowAddNavLink(
-                        title: "Add",
                         target: AnyView(PeopleDetail())
                     )
                     .buttonStyle(.plain)
