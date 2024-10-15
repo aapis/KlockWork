@@ -21,10 +21,8 @@ struct NoteBlock: View {
 
     var body: some View {
         Button {
-            nav.view = AnyView(NoteCreate(note: note))
-            nav.parent = .notes
-            nav.sidebar = AnyView(NoteCreateSidebar(note: note))
-            nav.pageId = UUID()
+            self.nav.session.note = self.note
+            self.nav.to(.noteDetail)
         } label: {
             VStack(spacing: 0) {
                 ZStack(alignment: .topLeading) {
