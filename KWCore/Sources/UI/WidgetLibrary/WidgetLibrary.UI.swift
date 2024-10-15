@@ -1208,6 +1208,61 @@ extension WidgetLibrary {
                 .onAppear(perform: self.actionOnAppear)
             }
         }
+
+        struct ResourcePath: View {
+            @EnvironmentObject public var state: Navigation
+            public var company: Company?
+            public var project: Project?
+            public var job: Job?
+
+            var body: some View {
+                HStack(alignment: .center, spacing: 0) {
+                    if let company = self.company {
+                        if let project = self.project {
+                            ZStack(alignment: .leading) {
+                                if let cJob = self.job {
+                                    cJob.backgroundColor
+
+                                    if let cAbb = company.abbreviation {
+                                        if let pAbb = project.abbreviation {
+                                            HStack(alignment: .center, spacing: 8) {
+                                                HStack(spacing: 0) {
+                                                    Text("\(cAbb)")
+                                                        .padding(7)
+                                                        .background(company.backgroundColor)
+                                                        .foregroundStyle(company.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
+                                                    Image(systemName: "chevron.right")
+                                                        .padding([.top, .bottom], 8)
+                                                        .padding([.leading, .trailing], 4)
+                                                        .background(company.backgroundColor.opacity(0.9))
+                                                        .foregroundStyle(company.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
+                                                    Text("\(pAbb)")
+                                                        .padding(7)
+                                                        .background(project.backgroundColor)
+                                                        .foregroundStyle(project.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
+                                                    Image(systemName: "chevron.right")
+                                                        .padding([.top, .bottom], 8)
+                                                        .padding([.leading, .trailing], 4)
+                                                        .background(project.backgroundColor.opacity(0.9))
+                                                        .foregroundStyle(project.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
+                                                }
+
+                                                Text("\(self.job?.title ?? self.job?.jid.string ?? "")")
+                                                    .foregroundStyle(cJob.backgroundColor.isBright() ? .black : .white)
+                                                Spacer()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            .foregroundStyle((self.state.session.job?.project?.backgroundColor ?? .clear).isBright() ? .black : .white)
+                        }
+                    }
+                }
+                .frame(height: 30)
+                .background(self.state.session.job?.backgroundColor ?? .clear)
+            }
+        }
     }
 }
 
@@ -1300,7 +1355,7 @@ extension WidgetLibrary.UI.EntityStatistics {
     /// Onload handler. Sets view state
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        let types = PageConfiguration.EntityType.allCases.filter({ $0 != .BruceWillis })
+        let types = PageConfiguration.EntityType.allCases.filter({ ![.BruceWillis, .definitions].contains($0) })
 
         for type in types {
             self.statistics.append(

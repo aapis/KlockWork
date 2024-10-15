@@ -93,6 +93,7 @@ extension TermsDashboard {
 }
 
 struct TermBlock: View {
+    typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var state: Navigation
     public let definition: TaxonomyTermDefinitions
     @State private var highlighted: Bool = false
@@ -116,7 +117,11 @@ struct TermBlock: View {
                             .foregroundStyle(.white.opacity(0.55))
                             .padding([.leading, .trailing, .bottom])
                         Spacer()
-                        ResourcePath()
+                        UI.ResourcePath(
+                            company: self.state.session.job?.project?.company,
+                            project: self.state.session.job?.project,
+                            job: self.state.session.job
+                        )
                     }
                 }
             }
@@ -125,58 +130,6 @@ struct TermBlock: View {
         .clipShape(.rect(cornerRadius: 5))
         .useDefaultHover({ inside in highlighted = inside})
         .buttonStyle(.plain)
-    }
-}
-
-struct ResourcePath: View {
-    @EnvironmentObject public var state: Navigation
-
-    var body: some View {
-        HStack(alignment: .center, spacing: 0) {
-            if let company = self.state.session.job?.project?.company {
-                if let project = self.state.session.job?.project {
-                    ZStack(alignment: .leading) {
-                        if let cJob = self.state.session.job {
-                            cJob.backgroundColor
-
-                            if let cAbb = company.abbreviation {
-                                if let pAbb = project.abbreviation {
-                                    HStack(alignment: .center, spacing: 8) {
-                                        HStack(spacing: 0) {
-                                            Text("\(cAbb)")
-                                                .padding(7)
-                                                .background(company.backgroundColor)
-                                                .foregroundStyle(company.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
-                                            Image(systemName: "chevron.right")
-                                                .padding([.top, .bottom], 8)
-                                                .padding([.leading, .trailing], 4)
-                                                .background(company.backgroundColor.opacity(0.9))
-                                                .foregroundStyle(company.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
-                                            Text("\(pAbb)")
-                                                .padding(7)
-                                                .background(project.backgroundColor)
-                                                .foregroundStyle(project.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
-                                            Image(systemName: "chevron.right")
-                                                .padding([.top, .bottom], 8)
-                                                .padding([.leading, .trailing], 4)
-                                                .background(project.backgroundColor.opacity(0.9))
-                                                .foregroundStyle(project.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
-                                        }
-
-                                        Text("\(self.state.session.job?.title ?? self.state.session.job?.jid.string ?? "")")
-                                            .foregroundStyle(cJob.backgroundColor.isBright() ? .black : .white)
-                                        Spacer()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .foregroundStyle((self.state.session.job?.project?.backgroundColor ?? .clear).isBright() ? .black : .white)
-                }
-            }
-        }
-        .frame(height: 30)
-        .background(self.state.session.job?.backgroundColor ?? .clear)
     }
 }
 
