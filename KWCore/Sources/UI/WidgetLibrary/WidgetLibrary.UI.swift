@@ -381,12 +381,18 @@ extension WidgetLibrary {
                                     let hasPassed = event.startDate >= Date()
                                     Image(systemName: hasPassed ? "arrow.right" : "checkmark")
                                         .padding(.leading, 10)
-                                    HStack {
-                                        Text("\(event.startTime()) - \(event.endTime()):")
-                                        Text(event.title)
-                                    }
-                                    .foregroundColor(hasPassed ? (self.state.session.job?.backgroundColor ?? .clear).isBright() ? Theme.lightBase : Theme.lightWhite : .gray.opacity(0.8))
+                                    Button {
+                                        self.state.session.search.inspectingEvent = event
+                                    } label: {
+                                        HStack {
+                                            Text("\(event.startTime()) - \(event.endTime()):")
+                                            Text(event.title)
+                                        }
+                                        .foregroundColor(hasPassed ? (self.state.session.job?.backgroundColor ?? .clear).isBright() ? Theme.lightBase : .white : .gray.opacity(0.8))
                                         .multilineTextAlignment(.leading)
+                                    }
+                                    .useDefaultHover({_ in})
+                                    .buttonStyle(.plain)
                                 }
                             }
                         }
@@ -395,6 +401,13 @@ extension WidgetLibrary {
                 .foregroundStyle((self.state.session.job?.backgroundColor ?? .clear).isBright() ? Theme.lightBase : Theme.lightWhite)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.calendar) { self.actionOnChangeCalendar() }
+                .onChange(of: self.state.session.search.inspectingEvent) {
+                    if let event = self.state.session.search.inspectingEvent {
+                        self.state.setInspector(AnyView(Inspector(event: event)))
+                    } else {
+                        self.state.setInspector()
+                    }
+                }
                 .id(self.updater.get("dashboard.header"))
             }
         }
