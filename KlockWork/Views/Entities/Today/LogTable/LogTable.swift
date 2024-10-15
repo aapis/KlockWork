@@ -217,7 +217,6 @@ extension Today.LogTable {
                         } else {
                             LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: Theme.rowColour)
                         }
-                        Spacer()
                     }
                 }
                 .onAppear(perform: self.findRecords)
