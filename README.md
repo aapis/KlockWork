@@ -1,14 +1,17 @@
-#  KlockWork (formerly DLPrototype)
+#  KlockWork
 
-The productivity app for ADHD people. Well that's the goal, anyways.
+A productivity app & personal database for people who need help remembering things.
 
 ## Major Features
 
 * Simple task tracking
 * Simple note taking
-* People, Companies, Projects and Jobs. These are your high level organizational items.
-* Lastly, the activity log (Today view) where you log what you're working on.
+* Companies, Projects and Jobs. These are your high level organizational items.
+* People, Terms & Definitions, Banned Words and Ignored Jobs provide additional context and customization for the main data types.
+* Plan your day and track your progress.
+* Set your own success metrics and gain insight into your daily activities.
 
-See the [wiki](https://github.com/aapis/DLPrototype/wiki) for more details.
+See the [wiki](https://github.com/aapis/KlockWork/wiki) for more details.
 
-![Dashboard view](Screenshots/dashboard.png)
+![Dashboard view](Screenshots/dashboard-1.12.png)
+![Explore view](Screenshots/explore-1.12.png)
