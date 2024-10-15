@@ -84,7 +84,7 @@ extension FindDashboard {
                             ZStack {
                                 Theme.base
                                 HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) Jobs" : "Showing \(items.prefix(5).count)/\(items.count) Jobs")
+                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.jobs.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.jobs.label)")
                                         .font(Theme.fontSubTitle)
                                     Spacer()
                                     Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
@@ -185,7 +185,7 @@ extension FindDashboard {
                             ZStack {
                                 Theme.base
                                 HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) Projects" : "Showing \(items.prefix(5).count)/\(items.count) Projects")
+                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.projects.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.projects.label)")
                                         .font(Theme.fontSubTitle)
                                     Spacer()
                                     Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
@@ -274,7 +274,7 @@ extension FindDashboard {
                             ZStack {
                                 Theme.base
                                 HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) Notes" : "Showing \(items.prefix(5).count)/\(items.count) Notes")
+                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.notes.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.notes.label)")
                                         .font(Theme.fontSubTitle)
                                     Spacer()
                                     Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
@@ -372,7 +372,7 @@ extension FindDashboard {
                             ZStack {
                                 Theme.base
                                 HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) Tasks" : "Showing \(items.prefix(5).count)/\(items.count) Tasks")
+                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.tasks.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.tasks.label)")
                                         .font(Theme.fontSubTitle)
                                     Spacer()
                                     Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
@@ -451,7 +451,7 @@ extension FindDashboard {
                             ZStack {
                                 Theme.base
                                 HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) Records" : "Showing \(items.prefix(5).count)/\(items.count) Records")
+                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.records.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.records.label)")
                                         .font(Theme.fontSubTitle)
                                     Spacer()
                                     Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
@@ -538,7 +538,7 @@ extension FindDashboard {
                             ZStack {
                                 Theme.base
                                 HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) Companies" : "Showing \(items.prefix(5).count)/\(items.count) Companies")
+                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.companies.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.companies.label)")
                                         .font(Theme.fontSubTitle)
                                     Spacer()
                                     Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
@@ -624,7 +624,7 @@ extension FindDashboard {
                             ZStack {
                                 Theme.base
                                 HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) People" : "Showing \(items.prefix(5).count)/\(items.count) People")
+                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.people.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.people.label)")
                                         .font(Theme.fontSubTitle)
                                     Spacer()
                                     Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
@@ -702,7 +702,7 @@ extension FindDashboard {
                             ZStack {
                                 Theme.base
                                 HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) Terms" : "Showing \(items.prefix(5).count)/\(items.count) Terms")
+                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.terms.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.terms.label)")
                                         .font(Theme.fontSubTitle)
                                     Spacer()
                                     Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
@@ -789,7 +789,7 @@ extension FindDashboard {
                             ZStack {
                                 Theme.base
                                 HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) Definitions" : "Showing \(items.prefix(5).count)/\(items.count) Definitions")
+                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.definitions.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.definitions.label)")
                                         .font(Theme.fontSubTitle)
                                     Spacer()
                                     Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
