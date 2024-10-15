@@ -11,7 +11,7 @@ import KWCore
 
 struct FindDashboard: View {
     typealias Entity = PageConfiguration.EntityType
-
+    typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var nav: Navigation
     @State public var searching: Bool = false
     public var location: WidgetLocation = .content
@@ -52,7 +52,7 @@ struct FindDashboard: View {
             }
             GridRow {
                 ZStack(alignment: .topLeading) {
-                    SearchBar(
+                    UI.BoundSearchBar(
                         text: $activeSearchText,
                         placeholder: location == .content ? "Search \(counts.0) records, \(counts.1) jobs, and \(counts.2) tasks in \(counts.3) projects" : "Search for anything",
                         onSubmit: onSubmit,
@@ -178,13 +178,6 @@ struct FindDashboard: View {
             }
         }
         .onAppear(perform: actionOnAppear)
-        .onChange(of: searchText) {
-            if searchText.count >= 2 {
-                onSubmit()
-            } else {
-                onReset()
-            }
-        }
         .onChange(of: activeSearchText) {
             nav.session.search.inspectingEntity = nil
 
@@ -194,7 +187,9 @@ struct FindDashboard: View {
         }
         .onChange(of: nav.session.search.text) {
             if let sq = nav.session.search.text {
-                activeSearchText = sq
+                if !sq.isEmpty {
+                    activeSearchText = sq
+                }
             }
         }
         .onChange(of: nav.session.search.inspectingEntity) {
@@ -241,8 +236,7 @@ extension FindDashboard {
             createTabs()
         }
 
-        searchText = activeSearchText
-        loading = false
+        self.loading = false
     }
 
     private func onReset() -> Void {
@@ -280,7 +274,7 @@ extension FindDashboard {
                     helpText: Entity.records.label,
                     icon: Entity.records.icon,
                     labelText: Entity.records.label,
-                    contents: AnyView(RecordsMatchingString(searchText))
+                    contents: AnyView(RecordsMatchingString(activeSearchText))
                 )
             )
         }
@@ -292,7 +286,7 @@ extension FindDashboard {
                     helpText: Entity.notes.label,
                     icon: Entity.notes.icon,
                     labelText: Entity.notes.label,
-                    contents: AnyView(NotesMatchingString(searchText))
+                    contents: AnyView(NotesMatchingString(activeSearchText))
                 )
             )
         }
@@ -304,7 +298,7 @@ extension FindDashboard {
                     helpText: Entity.tasks.label,
                     icon: Entity.tasks.icon,
                     labelText: Entity.tasks.label,
-                    contents: AnyView(TasksMatchingString(searchText))
+                    contents: AnyView(TasksMatchingString(activeSearchText))
                 )
             )
         }
@@ -316,7 +310,7 @@ extension FindDashboard {
                     helpText: Entity.projects.label,
                     icon: Entity.projects.icon,
                     labelText: Entity.projects.label,
-                    contents: AnyView(ProjectsMatchingString(searchText))
+                    contents: AnyView(ProjectsMatchingString(activeSearchText))
                 )
             )
         }
@@ -328,7 +322,7 @@ extension FindDashboard {
                     helpText: Entity.jobs.label,
                     icon: Entity.jobs.icon,
                     labelText: Entity.jobs.label,
-                    contents: AnyView(JobsMatchingString(searchText))
+                    contents: AnyView(JobsMatchingString(activeSearchText))
                 )
             )
         }
@@ -340,7 +334,7 @@ extension FindDashboard {
                     helpText: Entity.companies.label,
                     icon: Entity.companies.icon,
                     labelText: Entity.companies.label,
-                    contents: AnyView(CompaniesMatchingString(searchText))
+                    contents: AnyView(CompaniesMatchingString(activeSearchText))
                 )
             )
         }
@@ -352,7 +346,7 @@ extension FindDashboard {
                     helpText: Entity.people.label,
                     icon: Entity.people.icon,
                     labelText: Entity.people.label,
-                    contents: AnyView(PeopleMatchingString(searchText))
+                    contents: AnyView(PeopleMatchingString(activeSearchText))
                 )
             )
         }
@@ -364,7 +358,7 @@ extension FindDashboard {
                     helpText: Entity.terms.label,
                     icon: Entity.terms.icon,
                     labelText: "Terms & Definitions",
-                    contents: AnyView(TermsMatchingString(searchText))
+                    contents: AnyView(TermsMatchingString(activeSearchText))
                 )
             )
         }
