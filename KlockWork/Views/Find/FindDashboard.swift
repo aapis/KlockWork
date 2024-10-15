@@ -177,6 +177,7 @@ struct FindDashboard: View {
                 }
             }
         }
+        .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
         .onAppear(perform: actionOnAppear)
         .onChange(of: activeSearchText) {
             nav.session.search.inspectingEntity = nil
