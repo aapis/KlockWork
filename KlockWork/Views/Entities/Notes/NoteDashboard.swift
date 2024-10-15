@@ -67,6 +67,7 @@ struct NoteDashboard: View {
                         disabled: false,
                         placeholder: notes.count > 1 ? "Search \(self.notes.count) notes" : "Search 1 note"
                     )
+                    FancyDivider(height: 20)
 
                     ScrollView(showsIndicators: false) {
                         LazyVGrid(columns: self.columns, alignment: .leading) {

@@ -35,6 +35,7 @@ struct PeopleDashboard: View {
                         disabled: false,
                         placeholder: self.people.count > 1 ? "Filter \(self.people.count) people" : "Filter by name"
                     )
+                    FancyDivider()
 
                     ScrollView(showsIndicators: false) {
                         LazyVGrid(columns: columns, alignment: .leading) {
@@ -128,6 +129,7 @@ struct PersonBlock: View {
         .frame(height: 150)
         .useDefaultHover({ inside in highlighted = inside})
         .buttonStyle(.plain)
+        .clipShape(.rect(cornerRadius: 5))
     }
 
     struct ResourcePath: View {
