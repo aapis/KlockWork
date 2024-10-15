@@ -9,19 +9,20 @@
 import SwiftUI
 import KWCore
 
+// @TODO: REMOVE ME, deprecated (replaced by UI.SearchBar/.BoundSearchBar
 struct SearchBar: View {
     @EnvironmentObject public var state: Navigation
     @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
+    @AppStorage("searchbar.shared") private var searchText: String = ""
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+    @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
     @Binding public var text: String
     public var disabled: Bool = false
     public var placeholder: String? = "Search..."
     public var onSubmit: (() -> Void)? = nil
     public var onReset: (() -> Void)? = nil
     @FocusState private var primaryTextFieldInFocus: Bool
-    // @TODO: this will remember the search text between pages, but I think instead I need some kind of search history
-//    @AppStorage("shared.searchbar") private var text: String = ""
-    
+
     var body: some View {
         GridRow {
             ZStack(alignment: .trailing)  {
@@ -51,11 +52,12 @@ struct SearchBar: View {
                     } else {
                         FancyButtonv2(
                             text: "Entities",
-                            action: {showingTypes.toggle()},
-                            icon: showingTypes ? "arrow.up.square.fill" : "arrow.down.square.fill",
+                            action: {self.showingTypes.toggle()},
+                            icon: self.showingTypes ? "arrow.up.square.fill" : "arrow.down.square.fill",
                             showLabel: false,
-                            type: .clear,
-                            font: .title2
+                            type: .white
+//                            type: .clear,
+//                            font: .title2
                         )
                         .help("Choose the entities you want to search")
                     }
@@ -65,17 +67,29 @@ struct SearchBar: View {
             .frame(height: 57)
         }
         .background(self.state.session.job?.backgroundColor.opacity(0.6) ?? Theme.textBackground)
+        .onAppear(perform: self.actionOnAppear)
     }
 }
 
 extension SearchBar {
+    /// Onload handler. Starts monitoring keyboard for esc key
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        print("Remove me") // @TODO: KeyboardHelper.monitor doesn't seem to run if it's the only contents of this method
+//        KeyboardHelper.monitor(key: .keyDown, callback: {
+//            self.actionOnReset()
+//        })
+        print("Remove me after") // @TODO: KeyboardHelper.monitor doesn't seem to run if it's the only contents of this method
+    }
     /// Reset field text
     /// - Returns: Void
     private func actionOnReset() -> Void {
-        text = ""
+        self.text = ""
 
         if onReset != nil {
             onReset!()
         }
     }
 }
+
+

@@ -1091,6 +1091,159 @@ extension WidgetLibrary {
                 var term: TaxonomyTerm
             }
         }
+
+        struct SearchBar: View {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
+            @AppStorage("searchbar.shared") private var searchText: String = ""
+            @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+            @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
+            public var disabled: Bool = false
+            public var placeholder: String? = "Search..."
+            public var onSubmit: (() -> Void)? = nil
+            public var onReset: (() -> Void)? = nil
+            @FocusState private var primaryTextFieldInFocus: Bool
+
+            var body: some View {
+                ZStack(alignment: .trailing)  {
+                    FancyTextField(placeholder: placeholder!, lineLimit: 1, onSubmit: onSubmit, transparent: true, disabled: disabled, font: .title3, text: $searchText)
+                        .padding(.leading, 35)
+                        .focused($primaryTextFieldInFocus)
+                        .onAppear {
+                            // thx https://www.kodeco.com/31569019-focus-management-in-swiftui-getting-started#toc-anchor-002
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                self.primaryTextFieldInFocus = true
+                            }
+                        }
+
+                    HStack(alignment: .center) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.title2)
+                        Spacer()
+                        if self.searchText.count > 0 {
+                            FancyButtonv2(
+                                text: "Reset",
+                                action: self.actionOnReset,
+                                icon: "xmark",
+                                showLabel: false,
+                                type: .clear,
+                                font: .title2
+                            )
+                        } else {
+                            FancyButtonv2(
+                                text: "Entities",
+                                action: {self.showingTypes.toggle()},
+                                icon: self.showingTypes ? "arrow.up.square.fill" : "arrow.down.square.fill",
+                                showLabel: false,
+                                type: .clear,
+                                font: .title2
+                            )
+                            .help("Choose the entities you want to search")
+                        }
+                    }
+                    .padding([.leading, .trailing])
+                }
+                .frame(height: 57)
+                .background(self.state.session.job?.backgroundColor.opacity(0.6) ?? Theme.textBackground)
+                .onAppear(perform: self.actionOnAppear)
+            }
+        }
+
+        struct BoundSearchBar: View {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
+            @AppStorage("searchbar.shared") private var searchText: String = ""
+            @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+            @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
+            @Binding public var text: String
+            public var disabled: Bool = false
+            public var placeholder: String? = "Search..."
+            public var onSubmit: (() -> Void)? = nil
+            public var onReset: (() -> Void)? = nil
+            @FocusState private var primaryTextFieldInFocus: Bool
+
+            var body: some View {
+                ZStack(alignment: .trailing)  {
+                    FancyTextField(placeholder: placeholder!, lineLimit: 1, onSubmit: onSubmit, transparent: true, disabled: disabled, font: .title3, text: $text)
+                        .padding(.leading, 35)
+                        .focused($primaryTextFieldInFocus)
+                        .onAppear {
+                            // thx https://www.kodeco.com/31569019-focus-management-in-swiftui-getting-started#toc-anchor-002
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                self.primaryTextFieldInFocus = true
+                            }
+                        }
+
+                    HStack(alignment: .center) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.title2)
+                        Spacer()
+                        if self.text.count > 0 {
+                            FancyButtonv2(
+                                text: "Reset",
+                                action: self.actionOnReset,
+                                icon: "xmark",
+                                showLabel: false,
+                                type: .clear,
+                                font: .title2
+                            )
+                            .frame(width: 18)
+                        } else {
+                            FancyButtonv2(
+                                text: "Entities",
+                                action: {self.showingTypes.toggle()},
+                                icon: self.showingTypes ? "arrow.up.square.fill" : "arrow.down.square.fill",
+                                showLabel: false,
+                                type: .clear,
+                                font: .title2
+                            )
+                            .frame(width: 18)
+                            .help("Choose the entities you want to search")
+                        }
+                    }
+                    .padding([.leading, .trailing])
+                }
+                .frame(height: 57)
+                .background(self.state.session.job?.backgroundColor.opacity(0.6) ?? Theme.textBackground)
+                .onAppear(perform: self.actionOnAppear)
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.BoundSearchBar {
+    /// Onload handler. Starts monitoring keyboard for esc key
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.text = self.state.session.search.text ?? ""
+    }
+
+    /// Reset field text
+    /// - Returns: Void
+    private func actionOnReset() -> Void {
+        self.text = ""
+
+        if onReset != nil {
+            onReset!()
+        }
+    }
+}
+
+extension WidgetLibrary.UI.SearchBar {
+    /// Onload handler. Starts monitoring keyboard for esc key
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.searchText = self.state.session.search.text ?? ""
+    }
+
+    /// Reset field text
+    /// - Returns: Void
+    private func actionOnReset() -> Void {
+        self.searchText = ""
+
+        if onReset != nil {
+            onReset!()
+        }
     }
 }
 
