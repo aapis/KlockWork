@@ -25,7 +25,8 @@ extension WidgetLibrary.UI {
                     orientation: .right,
                     action: {self.state.session.search.inspectingEvent = self.event},
                     showBorder: false,
-                    showButton: false
+                    showButton: false,
+                    contextMenu: AnyView(self.contextMenu)
                 )
                 .background(self.hasEventPassed ? Theme.lightWhite : Color(event.calendar.color))
                 .foregroundStyle(self.hasEventPassed ? Theme.lightBase : Theme.base)
@@ -36,6 +37,75 @@ extension WidgetLibrary.UI {
                     } else {
                         self.state.setInspector()
                     }
+                }
+            }
+
+            @ViewBuilder var contextMenu: some View {
+                Menu("Create for event") {
+                    Button("Task...") {
+                        let task = CoreDataTasks(moc: self.state.moc).createAndReturn(
+                            content: self.event.title,
+                            created: Date(),
+                            due: self.event.startDate,
+                            saveByDefault: false
+                        )
+
+                        self.state.session.task = task
+                        self.state.to(.taskDetail)
+                    }
+
+                    if let defaultCompany = CoreDataCompanies(moc: PersistenceController.shared.container.viewContext).findDefault() {
+                        Button("Project...") {
+                            let project = CoreDataProjects(moc: self.state.moc).createAndReturn(
+                                name: self.event.title,
+                                abbreviation: StringHelper.abbreviate(self.event.title),
+                                colour: Color.randomStorable(),
+                                created: Date(),
+                                pid: Int64(Int.random(in: 1...9999999))
+                            )
+
+                            self.state.session.company = defaultCompany
+                            self.state.session.project = project
+                            self.state.to(.projectDetail)
+                        }
+
+                        Button("Company...") {
+                            let company = CoreDataCompanies(moc: self.state.moc).createAndReturn(
+                                name: self.event.title,
+                                abbreviation: StringHelper.abbreviate(self.event.title),
+                                colour: Color.randomStorable(),
+                                created: Date(),
+                                projects: [],
+                                isDefault: false,
+                                pid: Int64(Int.random(in: 1...9999999))
+                            )
+
+                            self.state.session.company = company
+                            self.state.to(.companyDetail)
+                        }
+
+                        Button("Job...") {
+                            let job = CoreDataJob(moc: self.state.moc).createAndReturn(
+                                alive: true,
+                                colour: Color.randomStorable(),
+                                jid: Double(Int.random(in: 1...9999999)),
+                                overview: "Work related to calendar event \"\(self.event.title ?? "Invalid event name")\" on \(self.event.startDate.formatted(date: .abbreviated, time: .omitted)) from \(self.event.startTime()) - \(self.event.endTime())",
+                                shredable: false,
+                                title: self.event.title,
+                                uri: "https://",
+                                project: defaultCompany.defaultProject
+                            )
+
+                            self.state.session.company = defaultCompany
+                            self.state.session.project = defaultCompany.defaultProject
+                            self.state.session.job = job
+                            self.state.to(.jobs)
+                        }
+                    }
+                }
+                Divider()
+                Button("Inspect") {
+                    self.state.session.search.inspectingEvent = self.event
                 }
             }
         }
