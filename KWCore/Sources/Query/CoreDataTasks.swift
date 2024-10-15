@@ -247,6 +247,7 @@ public class CoreDataTasks {
         task.completedDate = Date()
         task.lastUpdate = Date()
         task.hasScheduledNotification = false
+        NotificationHelper.clean(identifier: task.id?.uuidString ?? "no-id")
 
         do {
             try moc!.save()
@@ -280,6 +281,7 @@ public class CoreDataTasks {
         task.cancelledDate = Date()
         task.lastUpdate = Date()
         task.hasScheduledNotification = false
+        NotificationHelper.clean(identifier: task.id?.uuidString ?? "no-id")
 
         do {
             try moc!.save()
