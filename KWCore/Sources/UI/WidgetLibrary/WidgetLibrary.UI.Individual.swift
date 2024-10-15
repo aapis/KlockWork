@@ -54,6 +54,20 @@ extension WidgetLibrary.UI {
                         self.state.to(.taskDetail)
                     }
 
+                    Button("Note...") {
+                        let note = CoreDataNotes(moc: self.state.moc).createAndReturn(
+                            alive: true,
+                            body: "# Notes for \(self.event.title ?? "Invalid event name")\n\n",
+                            lastUpdate: Date(),
+                            postedDate: Date(),
+                            starred: false,
+                            title: "Notes for \(self.event.title ?? "Invalid event name")"
+                        )
+
+                        self.state.session.note = note
+                        self.state.to(.noteDetail)
+                    }
+
                     if let defaultCompany = CoreDataCompanies(moc: PersistenceController.shared.container.viewContext).findDefault() {
                         Button("Project...") {
                             let project = CoreDataProjects(moc: self.state.moc).createAndReturn(
