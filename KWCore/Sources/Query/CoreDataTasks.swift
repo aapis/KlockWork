@@ -327,6 +327,19 @@ public class CoreDataTasks {
         return query(predicate, sort)
     }
 
+    /// Find tasks that have no due date
+    /// - Returns: Array<LogTask>
+    public func noDueDate() -> [LogTask] {
+        let predicate = NSPredicate(
+            format: "due == nil && (completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false)"
+        )
+        let sort = [
+            NSSortDescriptor(keyPath: \LogTask.owner?.title, ascending: true)
+        ]
+
+        return query(predicate, sort)
+    }
+
     /// Find upcoming tasks
     /// - Returns: Array<LogTask>
     public func upcoming(_ date: Date = Date()) -> [LogTask] {
