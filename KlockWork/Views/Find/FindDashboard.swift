@@ -128,7 +128,7 @@ struct FindDashboard: View {
                 if location == .content {
                     GridRow {
                         ZStack(alignment: .leading) {
-                            self.nav.parent?.appPage.primaryColour ?? Theme.subHeaderColour
+                            self.nav.parent?.appPage.primaryColour.opacity(0.6) ?? Theme.subHeaderColour
 
                             HStack {
                                 Toggle("Records", isOn: $showRecords)
