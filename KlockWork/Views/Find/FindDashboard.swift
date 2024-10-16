@@ -72,7 +72,7 @@ struct FindDashboard: View {
                         UI.Links(location: self.location)
                             .padding()
                     }
-                    .frame(height: 250)
+                    .frame(height: 200)
                 }
                 .background(Theme.rowColour)
                 .foregroundStyle(.gray)
