@@ -606,7 +606,7 @@ extension WidgetLibrary {
                         Spacer()
                         if let actionIcon = self.actionIcon {
                             Image(systemName: actionIcon)
-                                .foregroundStyle(.gray)
+                                .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
                         }
                     }
                     .padding(8)
