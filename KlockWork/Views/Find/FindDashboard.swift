@@ -61,6 +61,22 @@ struct FindDashboard: View {
                     )
                 }
             }
+            Divider()
+
+            if self.showingTypes {
+                GridRow {
+                    ZStack(alignment: .topLeading) {
+                        LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                            .blendMode(.softLight)
+                            .opacity(0.3)
+                        UI.Links(location: self.location)
+                            .padding()
+                    }
+                    .frame(height: self.location == .content ? 200 : 400)
+                }
+                .background(Theme.rowColour)
+                .foregroundStyle(.gray)
+            }
 
             if !searching && activeSearchText.count >= 2 {
                 GridRow {

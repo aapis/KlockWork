@@ -587,7 +587,7 @@ extension WidgetLibrary {
             public var name: String
             public var icon: String?
             public var iconAsImage: Image?
-            public var actionIcon: String = "chevron.right"
+            public var actionIcon: String?
             @State private var isHighlighted: Bool = false
 
             var body: some View {
@@ -604,8 +604,10 @@ extension WidgetLibrary {
                         }
                         Text(self.name)
                         Spacer()
-                        Image(systemName: self.actionIcon)
-                            .foregroundStyle(.gray)
+                        if let actionIcon = self.actionIcon {
+                            Image(systemName: actionIcon)
+                                .foregroundStyle(.gray)
+                        }
                     }
                     .padding(8)
                     .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
@@ -778,38 +780,55 @@ extension WidgetLibrary {
 
             var LinkList: some View {
                 ForEach(Column.allCases, id: \.hashValue) { column in
-                    VStack(alignment: .leading, spacing: 5) {
-                        UI.ListLinkTitle(text: column.title)
+                    ZStack(alignment: .bottom) {
+                        LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
+                            .blendMode(.softLight)
+                            .opacity(0.4)
+                            .frame(height: 20)
 
-                        ForEach(self.links.filter({$0.column == column}).sorted(by: {$0.label < $1.label}), id: \.id) { link in
-                            UI.ListButtonItem(
-                                callback: self.actionOnTap,
-                                name: link.label,
-                                actionIcon: "magnifyingglass"
-                            )
-                            .contextMenu {
-                                if link.column == .recent {
-                                    Button("Save search term") {
-                                        self.state.session.search.addToHistory(link.label)
-                                        CDSavedSearch(moc: self.state.moc).create(
-                                            term: link.label,
-                                            created: Date()
-                                        )
-                                        self.actionOnAppear()
-                                    }
-                                } else {
-                                    Button("Delete saved search term") {
-                                        CDSavedSearch(moc: self.state.moc).destroy(link.label)
-                                        self.actionOnAppear()
+                        ScrollView(showsIndicators: false) {
+                            VStack(alignment: .leading, spacing: 5) {
+                                UI.ListLinkTitle(text: column.title)
+
+                                if self.links.filter({$0.column == column}).count == 0 {
+                                    UI.ListButtonItem(
+                                        callback: {_ in},
+                                        name: "Nothing yet"
+                                    )
+                                    .disabled(true)
+                                }
+
+                                ForEach(self.links.filter({$0.column == column}).sorted(by: {$0.label < $1.label}), id: \.id) { link in
+                                    UI.ListButtonItem(
+                                        callback: self.actionOnTap,
+                                        name: link.label,
+                                        actionIcon: "magnifyingglass"
+                                    )
+                                    .contextMenu {
+                                        if link.column == .recent {
+                                            Button("Save search term") {
+                                                self.state.session.search.addToHistory(link.label)
+                                                CDSavedSearch(moc: self.state.moc).create(
+                                                    term: link.label,
+                                                    created: Date()
+                                                )
+                                                self.actionOnAppear()
+                                            }
+                                        } else {
+                                            Button("Delete saved search term") {
+                                                CDSavedSearch(moc: self.state.moc).destroy(link.label)
+                                                self.actionOnAppear()
+                                            }
+                                        }
                                     }
                                 }
                             }
+                            .padding(self.location == .content ? 16 : 8)
                         }
                     }
-                    .padding(self.location == .content ? 16 : 8)
-                    .background(Theme.textBackground)
-                    .clipShape(.rect(cornerRadius: 5))
                 }
+                .background(Theme.textBackground)
+                .clipShape(.rect(cornerRadius: 5))
             }
         }
 
@@ -1319,7 +1338,7 @@ extension WidgetLibrary {
                     .padding([.leading, .trailing])
                 }
                 .frame(height: 57)
-                .background(self.state.session.job?.backgroundColor.opacity(0.6) ?? Theme.textBackground)
+                .background(Theme.textBackground)
                 .onAppear(perform: self.actionOnAppear)
             }
         }
