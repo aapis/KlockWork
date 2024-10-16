@@ -96,22 +96,15 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.jobs.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.jobs.label)")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.jobs.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.jobs.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
-                        
+                        .clipShape(.rect(cornerRadius: 5))
+
                         if showChildren {
                             VStack(alignment: .leading) {
                                 ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
@@ -195,21 +188,14 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.projects.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.projects.label)")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.projects.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.projects.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
+                        .clipShape(.rect(cornerRadius: 5))
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
@@ -282,22 +268,15 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.notes.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.notes.label)")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.notes.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.notes.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
-                        
+                        .clipShape(.rect(cornerRadius: 5))
+
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
@@ -378,21 +357,14 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.tasks.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.tasks.label)")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.tasks.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.tasks.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
+                        .clipShape(.rect(cornerRadius: 5))
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
@@ -455,21 +427,14 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.records.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.records.label)")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.records.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.records.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
+                        .clipShape(.rect(cornerRadius: 5))
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
@@ -540,21 +505,14 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.companies.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.companies.label)")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.companies.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.companies.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
+                        .clipShape(.rect(cornerRadius: 5))
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
@@ -624,21 +582,14 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.people.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.people.label)")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.people.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.people.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
+                        .clipShape(.rect(cornerRadius: 5))
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
@@ -700,21 +651,14 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.terms.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.terms.label)")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.terms.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.terms.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
+                        .clipShape(.rect(cornerRadius: 5))
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
@@ -785,21 +729,14 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.definitions.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.definitions.label)")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.definitions.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.definitions.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
+                        .clipShape(.rect(cornerRadius: 5))
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {

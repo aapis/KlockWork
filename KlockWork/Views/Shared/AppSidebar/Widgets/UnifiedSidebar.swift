@@ -541,6 +541,7 @@ struct UnifiedSidebar {
     struct EntityRowButton: View {
         public let text: String
         public var callback: (() -> Void)?
+        public var colour: Color? = Theme.base
         @Binding public var isPresented: Bool
 
         var body: some View {
@@ -549,10 +550,10 @@ struct UnifiedSidebar {
                 self.callback?()
             } label: {
                 ZStack(alignment: .topLeading) {
-                    Theme.base.opacity(0.6).blendMode(.softLight)
+                    self.colour!.opacity(0.6).blendMode(.softLight)
                     HStack(alignment: .center, spacing: 8) {
                         ZStack(alignment: .center) {
-                            Theme.base.opacity(0.6).blendMode(.softLight)
+                            self.colour!.opacity(0.6).blendMode(.softLight)
                             Image(systemName: self.isPresented ? "minus" : "plus")
                         }
                         .frame(width: 30, height: 30)
