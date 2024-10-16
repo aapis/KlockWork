@@ -662,6 +662,7 @@ extension Navigation.Session {
         var hasResults: Bool = false
         var inspectingEntity: NSManagedObject? = nil
         var inspectingEvent: EKEvent? = nil
+        var history: Set<String> = []
     }
     
     public struct Toolbar: Identifiable {
@@ -674,14 +675,37 @@ extension Navigation.Session {
 }
 
 extension Navigation.Session.Search {
+    /// Perform a search
+    /// - Returns: [SearchLanguage.Results.Result[
     mutating func results() -> [SearchLanguage.Results.Result] {
         let results = SearchLanguage.Results(components: components, moc: moc).find()
 
         if results.count > 0 {
             hasResults = true
+
+            if let text = self.text {
+                self.addToHistory(text)
+            }
         }
 
         return results
+    }
+    
+    /// Add search term to history
+    /// - Parameter label: String
+    /// - Returns: Void
+    mutating func addToHistory(_ label: String) -> Void {
+        if self.history.count > 20 {
+            let _ = self.history.popFirst()
+        }
+
+        self.history.insert(label)
+    }
+    
+    /// Empty history
+    /// - Returns: Void
+    mutating func clearHistory() -> Void {
+        self.history = []
     }
 
     // @TODO: do we need this AND cancel?
