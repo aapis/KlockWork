@@ -30,20 +30,22 @@ extension FindDashboard {
         @EnvironmentObject public var nav: Navigation
 
         var body: some View {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 0) {
                 if searchText.count >= 2 || isSearching {
                     ScrollView(showsIndicators: false) {
                         VStack {
                             HStack {
                                 if location == .content {
-                                    Text("Hit \"return\" to perform a search and see all results")
+                                    Text("Hit enter/return to see the full results of your query")
                                 } else {
                                     Text("Suggestions for your query")
                                 }
                                 Spacer()
                             }
+                            .foregroundStyle(.gray)
+                            Divider()
 
-                            // @TODO: reduce this with a loop, each view is basically identical...
+//                             @TODO: reduce this with a loop, each view is basically identical...
                             if showRecords {SuggestedRecords(searchText: $searchText, publishedOnly: $publishedOnly)}
                             if showNotes {SuggestedNotes(searchText: $searchText, publishedOnly: $publishedOnly)}
                             if showTasks {SuggestedTasks(searchText: $searchText)}
@@ -54,6 +56,16 @@ extension FindDashboard {
                             if showTerms {SuggestedTerms(searchText: $searchText, publishedOnly: $publishedOnly)}
                             if showDefinitions {SuggestedDefinitions(searchText: $searchText, publishedOnly: $publishedOnly)}
                         }
+
+                        Divider()
+                        RecentSearches.SearchWidget()
+                            .onAppear(perform: {
+                                Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { _ in
+                                    if self.searchText.count > 2 {
+                                        self.nav.session.search.addToHistory(self.searchText)
+                                    }
+                                }
+                            })
                     }
                     .padding()
                 }
@@ -130,8 +142,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
             
@@ -223,8 +233,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
             
@@ -322,8 +330,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
             
@@ -410,8 +416,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
             
@@ -489,8 +493,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
             
@@ -576,8 +578,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
             
@@ -662,8 +662,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
             
@@ -740,8 +738,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
 
@@ -806,7 +802,6 @@ extension FindDashboard {
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
                                     VStack {
-                                        Divider()
                                         HStack {
                                             FancyButtonv2(
                                                 text: item.definition ?? "",
@@ -820,6 +815,7 @@ extension FindDashboard {
                                             .help("Inspect")
                                             Spacer()
                                         }
+                                        Divider()
                                     }
                                     .padding(.bottom, 10)
                                 }
@@ -827,8 +823,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
 
