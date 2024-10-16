@@ -307,8 +307,8 @@ struct UnifiedSidebar {
                 ZStack(alignment: .trailing) {
                     EntityRowButton(text: "\(self.tasks.count) Tasks", isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
+                        .disabled(self.tasks.count == 0)
                     RowAddNavLink(
-                        title: "Add",
                         target: AnyView(TaskDetail())
                     )
                     .buttonStyle(.plain)
@@ -349,8 +349,8 @@ struct UnifiedSidebar {
                 ZStack(alignment: .trailing) {
                     EntityRowButton(text: "\(self.notes.count) Notes", isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
+                        .disabled(self.notes.count == 0)
                     RowAddNavLink(
-                        title: "Add",
                         target: AnyView(NoteCreate())
                     )
                     .buttonStyle(.plain)
@@ -391,8 +391,8 @@ struct UnifiedSidebar {
                 ZStack(alignment: .trailing) {
                     EntityRowButton(text: "\(self.definitions.count) Definitions", isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
+                        .disabled(self.definitions.count == 0)
                     RowAddNavLink(
-                        title: "Add",
                         target: AnyView(DefinitionDetail())
                     )
                     .buttonStyle(.plain)
@@ -433,6 +433,7 @@ struct UnifiedSidebar {
                 ZStack(alignment: .trailing) {
                     EntityRowButton(text: "\(self.records.count) Records", isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
+                        .disabled(self.records.count == 0)
                 }
                 .background(Theme.base.opacity(0.6).blendMode(.softLight))
 
@@ -470,7 +471,6 @@ struct UnifiedSidebar {
                     EntityRowButton(text: "People", isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
                     RowAddNavLink(
-                        title: "Add",
                         target: AnyView(PeopleDetail())
                     )
                     .buttonStyle(.plain)
@@ -541,6 +541,7 @@ struct UnifiedSidebar {
     struct EntityRowButton: View {
         public let text: String
         public var callback: (() -> Void)?
+        public var colour: Color? = Theme.base
         @Binding public var isPresented: Bool
 
         var body: some View {
@@ -549,10 +550,10 @@ struct UnifiedSidebar {
                 self.callback?()
             } label: {
                 ZStack(alignment: .topLeading) {
-                    Theme.base.opacity(0.6).blendMode(.softLight)
+                    self.colour!.opacity(0.6).blendMode(.softLight)
                     HStack(alignment: .center, spacing: 8) {
                         ZStack(alignment: .center) {
-                            Theme.base.opacity(0.6).blendMode(.softLight)
+                            self.colour!.opacity(0.6).blendMode(.softLight)
                             Image(systemName: self.isPresented ? "minus" : "plus")
                         }
                         .frame(width: 30, height: 30)

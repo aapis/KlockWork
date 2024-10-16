@@ -152,6 +152,7 @@ extension Today.LogTable {
     public struct TabContent {
         /// A list of rows in reverse-chronologic order for a given day
         public struct Chronologic: View {
+            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             public var date: Date? = Date()
             private let page: PageConfiguration.AppPage = .today
@@ -184,7 +185,7 @@ extension Today.LogTable {
                     Divider().foregroundStyle(.white)
                     // TODO: fix search
                     //                if nav.session.toolbar.showSearch {
-                    //                    SearchBar(text: $searchText, disabled: (records.count == 0))
+                    //                    UI.BoundSearchBar(text: $searchText, disabled: (records.count == 0))
                     //                }
                     
                     if nav.session.toolbar.mode == .plain {
@@ -216,7 +217,6 @@ extension Today.LogTable {
                         } else {
                             LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: Theme.rowColour)
                         }
-                        Spacer()
                     }
                 }
                 .onAppear(perform: self.findRecords)
@@ -228,6 +228,7 @@ extension Today.LogTable {
         // TODO: do some kind of ML/AI summarization here. Initially it will just ignore records that are likely too short to be useful
         // TODO: i.e. ignore records whose ML tokens are LUNCH|MEETING|HEALTH (and similar)
         public struct Summarized: View {
+            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             public var date: Date? = nil
             private let page: PageConfiguration.AppPage = .today
@@ -243,7 +244,7 @@ extension Today.LogTable {
 
                     // TODO: fix search
                     //                if nav.session.toolbar.showSearch {
-                    //                    SearchBar(text: $searchText, disabled: (records.count == 0))
+                    //                    UI.BoundSearchBar(text: $searchText, disabled: (records.count == 0))
                     //                }
                     
                     if nav.session.toolbar.mode == .plain {

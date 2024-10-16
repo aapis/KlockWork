@@ -26,9 +26,9 @@ struct FancyHelpText: View {
             Spacer()
         }
         .padding(8)
-        .foregroundColor(self.highlighted ? .white : .gray)
+        .foregroundColor(.gray)
         .font(.callout)
         .background(self.page.primaryColour.opacity(0.5))
-        .useDefaultHoverNoCursor({ hover in self.highlighted = hover})
+        .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
     }
 }

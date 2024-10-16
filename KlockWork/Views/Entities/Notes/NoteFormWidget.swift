@@ -233,6 +233,7 @@ struct NoteFormWidget: View {
     }
     
     struct JobChooser: View {
+        typealias UI = WidgetLibrary.UI
         @State private var jobSearchText: String = ""
         @State public var filteredJobs: [Job] = []
         
@@ -280,7 +281,7 @@ struct NoteFormWidget: View {
                         .background(Color.accentColor)
                     }
                 }
-                SearchBar(text: $jobSearchText, placeholder: "Find jobs by ID...")
+                UI.BoundSearchBar(text: $jobSearchText, placeholder: "Find jobs by ID...")
 
                 if filteredJobs.count > 0 {
                     ScrollView {

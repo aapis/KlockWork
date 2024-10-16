@@ -97,6 +97,7 @@ extension Panel.Row {
 }
 
 struct CompanyPanel: View {
+    typealias UI = WidgetLibrary.UI
     public var position: Panel.Position
 
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
@@ -131,7 +132,7 @@ struct CompanyPanel: View {
             .padding(10)
             
             if showSearch {
-                SearchBar(text: $searchText, onSubmit: search)
+                UI.BoundSearchBar(text: $searchText, onSubmit: search)
             }
 
             if let firstColData = nav.forms.tp.first {
@@ -262,6 +263,7 @@ extension CompanyPanel {
 }
 
 struct ProjectPanel: View {
+    typealias UI = WidgetLibrary.UI
     public var position: Panel.Position
 
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
@@ -300,7 +302,7 @@ struct ProjectPanel: View {
             .padding(10)
             
             if showSearch {
-                SearchBar(text: $searchText)
+                UI.BoundSearchBar(text: $searchText)
             }
 
             if let _ = nav.forms.tp.first {
@@ -383,6 +385,7 @@ extension ProjectPanel {
 }
 
 public struct JobPanel: View {
+    typealias UI = WidgetLibrary.UI
     public var position: Panel.Position
 
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
@@ -421,7 +424,7 @@ public struct JobPanel: View {
             .padding(10)
             
             if showSearch {
-                SearchBar(text: $searchText)
+                UI.BoundSearchBar(text: $searchText)
             }
 
             if let _ = nav.forms.tp.first {
@@ -484,6 +487,7 @@ extension JobPanel {
 }
 
 public struct NotePanel: View {
+    typealias UI = WidgetLibrary.UI
     public var position: Panel.Position
 
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
@@ -522,7 +526,7 @@ public struct NotePanel: View {
             .padding(10)
 
             if showSearch {
-                SearchBar(text: $searchText)
+                UI.BoundSearchBar(text: $searchText)
             }
 
             if let _ = nav.forms.tp.first {

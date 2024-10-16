@@ -59,7 +59,6 @@ struct CreateEntitiesWidget: View {
             PrivacyModeButton()
             CreateButton(active: $isCreateStackShowing)
             FindButton(active: $isSearchStackShowing)
-                .disabled(nav.parent == .dashboard)
             Forecast(
                 date: DateHelper.startOfDay(self.nav.session.date),
                 type: .button,

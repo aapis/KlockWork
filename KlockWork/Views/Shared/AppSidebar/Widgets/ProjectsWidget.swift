@@ -10,6 +10,7 @@ import SwiftUI
 import KWCore
 
 struct ProjectsWidget: View {
+    typealias UI = WidgetLibrary.UI
     public let title: String = "Search all projects"
 
     @State private var minimized: Bool = false
@@ -66,7 +67,7 @@ struct ProjectsWidget: View {
                         )
                     } else {
                         if showSearch {
-                            SearchBar(text: $query, disabled: minimized, placeholder: "Statue of Liberty 2.0, Extreme Roofing League")
+                            UI.BoundSearchBar(text: $query, disabled: minimized, placeholder: "Statue of Liberty 2.0, Extreme Roofing League")
                                 .onChange(of: query, perform: actionOnSearch)
                         } else {
                             HStack {Spacer()}

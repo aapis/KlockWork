@@ -23,6 +23,7 @@ extension FindDashboard {
         @Binding public var showTerms: Bool
         @Binding public var showDefinitions: Bool
         public var location: WidgetLocation
+        @State private var timer: Timer? = nil
 
         @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
 
@@ -30,38 +31,52 @@ extension FindDashboard {
         @EnvironmentObject public var nav: Navigation
 
         var body: some View {
-            VStack(alignment: .leading) {
-                if searchText.count >= 2 || isSearching {
-                    ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                ScrollView(showsIndicators: false) {
+                    VStack {
                         VStack {
-                            HStack {
-                                if location == .content {
-                                    Text("Hit \"return\" to perform a search and see all results")
-                                } else {
-                                    Text("Suggestions for your query")
-                                }
-                                Spacer()
-                            }
+                            if searchText.count >= 2 || isSearching {
+                                UI.ListLinkTitle(text: location == .content ? "Hit enter/return to see all results" : "Suggestions for your query")
 
-                            // @TODO: reduce this with a loop, each view is basically identical...
-                            if showRecords {SuggestedRecords(searchText: $searchText, publishedOnly: $publishedOnly)}
-                            if showNotes {SuggestedNotes(searchText: $searchText, publishedOnly: $publishedOnly)}
-                            if showTasks {SuggestedTasks(searchText: $searchText)}
-                            if showProjects {SuggestedProjects(searchText: $searchText, publishedOnly: $publishedOnly)}
-                            if showJobs {SuggestedJobs(searchText: $searchText, publishedOnly: $publishedOnly)}
-                            if showCompanies {SuggestedCompanies(searchText: $searchText, publishedOnly: $publishedOnly)}
-                            if showPeople {SuggestedPeople(searchText: $searchText)}
-                            if showTerms {SuggestedTerms(searchText: $searchText, publishedOnly: $publishedOnly)}
-                            if showDefinitions {SuggestedDefinitions(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                // @TODO: reduce this with a loop, each view is basically identical...
+                                if showRecords {SuggestedRecords(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                if showNotes {SuggestedNotes(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                if showTasks {SuggestedTasks(searchText: $searchText)}
+                                if showProjects {SuggestedProjects(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                if showJobs {SuggestedJobs(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                if showCompanies {SuggestedCompanies(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                if showPeople {SuggestedPeople(searchText: $searchText)}
+                                if showTerms {SuggestedTerms(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                if showDefinitions {SuggestedDefinitions(searchText: $searchText, publishedOnly: $publishedOnly)}
+                            }
                         }
+                        .padding(self.location == .content ? 16 : 5)
+                        .background(Theme.textBackground)
+                        .clipShape(.rect(cornerRadius: 5))
+
+                        UI.Links(location: self.location)
                     }
-                    .padding()
+                    .padding(self.location == .content ? 16 : 8)
                 }
             }
             .background(location == .content ? Theme.rowColour : Color.clear)
             .onChange(of: isSearching) {
                 nav.session.search.cancel()
                 nav.setInspector()
+            }
+            .onChange(of: self.searchText) {
+                self.timer?.invalidate()
+
+                if self.searchText.count > 2 {
+                    self.timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { _ in
+                        let termIsSaved = CDSavedSearch(moc: self.nav.moc).find(by: self.searchText) == nil
+                        let termIsRecent = self.nav.session.search.history.contains(where: {$0 == self.searchText})
+
+                        guard termIsSaved && termIsRecent else {
+                            return self.nav.session.search.addToHistory(self.searchText)
+                        }
+                    }
+                }
             }
         }
         
@@ -81,22 +96,15 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) Jobs" : "Showing \(items.prefix(5).count)/\(items.count) Jobs")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.jobs.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.jobs.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
-                        
+                        .clipShape(.rect(cornerRadius: 5))
+
                         if showChildren {
                             VStack(alignment: .leading) {
                                 ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
@@ -130,8 +138,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
             
@@ -182,21 +188,14 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) Projects" : "Showing \(items.prefix(5).count)/\(items.count) Projects")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.projects.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.projects.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
+                        .clipShape(.rect(cornerRadius: 5))
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
@@ -223,8 +222,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
             
@@ -271,22 +268,15 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) Notes" : "Showing \(items.prefix(5).count)/\(items.count) Notes")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.notes.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.notes.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
-                        
+                        .clipShape(.rect(cornerRadius: 5))
+
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
@@ -322,8 +312,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
             
@@ -369,21 +357,14 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) Tasks" : "Showing \(items.prefix(5).count)/\(items.count) Tasks")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.tasks.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.tasks.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
+                        .clipShape(.rect(cornerRadius: 5))
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
@@ -410,8 +391,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
             
@@ -448,21 +427,14 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) Records" : "Showing \(items.prefix(5).count)/\(items.count) Records")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.records.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.records.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
+                        .clipShape(.rect(cornerRadius: 5))
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
@@ -489,8 +461,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
             
@@ -535,21 +505,14 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) Companies" : "Showing \(items.prefix(5).count)/\(items.count) Companies")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.companies.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.companies.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
+                        .clipShape(.rect(cornerRadius: 5))
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
@@ -576,8 +539,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
             
@@ -621,21 +582,14 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) People" : "Showing \(items.prefix(5).count)/\(items.count) People")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.people.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.people.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
+                        .clipShape(.rect(cornerRadius: 5))
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
@@ -662,8 +616,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
             
@@ -699,21 +651,14 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) Terms" : "Showing \(items.prefix(5).count)/\(items.count) Terms")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.terms.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.terms.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
+                        .clipShape(.rect(cornerRadius: 5))
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
@@ -740,8 +685,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
 
@@ -786,27 +729,19 @@ extension FindDashboard {
                             showChildren.toggle()
                             self.showAll.toggle()
                         } label: {
-                            ZStack {
-                                Theme.base
-                                HStack(spacing: 1) {
-                                    Text(self.showAll ? "Showing \(items.count) Definitions" : "Showing \(items.prefix(5).count)/\(items.count) Definitions")
-                                        .font(Theme.fontSubTitle)
-                                    Spacer()
-                                    Image(systemName: showChildren ? "minus.square.fill" : "plus.square.fill").symbolRenderingMode(.hierarchical)
-                                        .font(.title2)
-                                }
-                                .padding()
-                                .background(hover ? Theme.rowColour : Theme.textBackground)
-                            }
+                            UnifiedSidebar.EntityRowButton(
+                                text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.definitions.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.definitions.label)",
+                                isPresented: $showChildren
+                            )
                         }
                         .buttonStyle(.plain)
                         .useDefaultHover({inside in hover = inside})
+                        .clipShape(.rect(cornerRadius: 5))
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
                                     VStack {
-                                        Divider()
                                         HStack {
                                             FancyButtonv2(
                                                 text: item.definition ?? "",
@@ -820,6 +755,7 @@ extension FindDashboard {
                                             .help("Inspect")
                                             Spacer()
                                         }
+                                        Divider()
                                     }
                                     .padding(.bottom, 10)
                                 }
@@ -827,8 +763,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    EmptyView()
                 }
             }
 

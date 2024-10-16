@@ -59,8 +59,8 @@ struct Home: View {
                 SidebarButton(
                     destination: AnyView(Dashboard()),
                     pageType: .dashboard,
-                    icon: "house",
-                    label: "Dashboard",
+                    icon: "magnifyingglass",
+                    label: "Find anything",
                     sidebar: AnyView(DashboardSidebar())
                 ),
                 SidebarButton(
@@ -215,9 +215,13 @@ struct Home: View {
     @ViewBuilder var InspectorAndMain: some View {
         if nav.inspector != nil {
             ZStack(alignment: .topLeading) {
-                nav.view
-                    .navigationTitle(nav.pageTitle())
-                    .disabled(isDatePickerPresented)
+                VStack {
+                    UI.AppNavigation()
+                    nav.view
+                        .navigationTitle(nav.pageTitle())
+                        .disabled(isDatePickerPresented)
+
+                }
                 Color.black.opacity(0.7)
 
                 ZStack(alignment: .topLeading) {
@@ -259,6 +263,7 @@ extension Home {
         KeyboardHelper.monitor(key: .keyDown, callback: {
             self.isSearchStackShowing = false
             self.isDatePickerPresented = false
+            self.nav.session.search.reset()
             self.nav.session.search.inspectingEntity = nil
             self.nav.setInspector()
         })

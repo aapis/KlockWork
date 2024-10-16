@@ -73,7 +73,7 @@ extension WidgetLibrary.UI {
                             let project = CoreDataProjects(moc: self.state.moc).createAndReturn(
                                 name: self.event.title,
                                 abbreviation: StringHelper.abbreviate(self.event.title),
-                                colour: Color.randomStorable(),
+                                colour: Color(self.event.calendar.color).toStored(),
                                 created: Date(),
                                 pid: Int64(Int.random(in: 1...9999999))
                             )
@@ -87,7 +87,7 @@ extension WidgetLibrary.UI {
                             let company = CoreDataCompanies(moc: self.state.moc).createAndReturn(
                                 name: self.event.title,
                                 abbreviation: StringHelper.abbreviate(self.event.title),
-                                colour: Color.randomStorable(),
+                                colour: Color(self.event.calendar.color).toStored(),
                                 created: Date(),
                                 projects: [],
                                 isDefault: false,
@@ -101,7 +101,7 @@ extension WidgetLibrary.UI {
                         Button("Job...") {
                             let job = CoreDataJob(moc: self.state.moc).createAndReturn(
                                 alive: true,
-                                colour: Color.randomStorable(),
+                                colour: Color(self.event.calendar.color).toStored(),
                                 jid: Double(Int.random(in: 1...9999999)),
                                 overview: "Work related to calendar event \"\(self.event.title ?? "Invalid event name")\" on \(self.event.startDate.formatted(date: .abbreviated, time: .omitted)) from \(self.event.startTime()) - \(self.event.endTime())",
                                 shredable: false,

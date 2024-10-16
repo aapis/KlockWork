@@ -37,6 +37,7 @@ struct SidebarButton: View, Identifiable {
     @EnvironmentObject public var nav: Navigation
     @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
     @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
 
     var body: some View {
         let button = FancyButton
@@ -150,16 +151,19 @@ struct SidebarButton: View, Identifiable {
 
     private var FancyButton: some View {
         Button(action: {
-            if isDatePickerPresented {
-                isDatePickerPresented = false
-            }
+            self.isDatePickerPresented = false
+
 
             if self.pageType == .planning {
                 self.isUpcomingTaskStackShowing = false
             }
 
+            if self.pageType == .dashboard {
+                self.isSearching = false
+            }
+
             self.nav.session.appPage = pageType.appPage
-            nav.to(pageType)
+            self.nav.to(pageType)
         }, label: {
             ZStack {
                 highlighted ? backgroundColour.opacity(0.9) : backgroundColour.opacity(1)

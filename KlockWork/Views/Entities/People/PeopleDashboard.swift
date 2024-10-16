@@ -11,6 +11,7 @@ import KWCore
 
 struct PeopleDashboard: View {
     typealias Widget = WidgetLibrary.UI.Buttons
+    typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var state: Navigation
     @AppStorage("general.columns") private var numColumns: Int = 3
     private let page: PageConfiguration.AppPage = .explore
@@ -30,7 +31,7 @@ struct PeopleDashboard: View {
                 )
 
                 if self.people.count > 0 {
-                    SearchBar(
+                    UI.BoundSearchBar(
                         text: $searchText,
                         disabled: false,
                         placeholder: self.people.count > 1 ? "Filter \(self.people.count) people" : "Filter by name"

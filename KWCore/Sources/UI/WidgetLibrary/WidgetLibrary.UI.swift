@@ -549,24 +549,62 @@ extension WidgetLibrary {
 
         struct ListLinkItem: View {
             @EnvironmentObject private var state: Navigation
-            public let activity: Activity
+            public var page: Page
+            public var name: String
+            public var icon: String?
+            public var iconAsImage: Image?
             @State private var isHighlighted: Bool = false
 
             var body: some View {
                 Button {
-                    self.state.to(activity.page)
+                    self.state.to(self.page)
                 } label: {
                     HStack(alignment: .center) {
-                        if let image = activity.iconAsImage {
+                        if let image = self.iconAsImage {
                             image
                                 .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
-                        } else if let icon = activity.icon {
+                        } else if let icon = self.icon {
                             Image(systemName: icon)
                                 .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
                         }
-                        Text(activity.name)
+                        Text(self.name)
                         Spacer()
                         Image(systemName: "chevron.right")
+                            .foregroundStyle(.gray)
+                    }
+                    .padding(8)
+                    .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .clipShape(.rect(cornerRadius: 5))
+                }
+                .buttonStyle(.plain)
+                .useDefaultHover({ hover in self.isHighlighted = hover })
+            }
+        }
+
+        struct ListButtonItem: View {
+            @EnvironmentObject private var state: Navigation
+            public var callback: (String) -> Void
+            public var name: String
+            public var icon: String?
+            public var iconAsImage: Image?
+            public var actionIcon: String = "chevron.right"
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                Button {
+                    self.callback(self.name)
+                } label: {
+                    HStack(alignment: .center) {
+                        if let image = self.iconAsImage {
+                            image
+                                .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
+                        } else if let icon = self.icon {
+                            Image(systemName: icon)
+                                .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
+                        }
+                        Text(self.name)
+                        Spacer()
+                        Image(systemName: self.actionIcon)
                             .foregroundStyle(.gray)
                     }
                     .padding(8)
@@ -596,7 +634,7 @@ extension WidgetLibrary {
                 }
                 .foregroundStyle(.gray)
                 .font(.caption)
-                .padding(.bottom)
+                .padding(.bottom, 5)
             }
         }
 
@@ -615,7 +653,6 @@ extension WidgetLibrary {
                 }
                 .padding()
                 .background(Theme.textBackground)
-//                .background(self.state.session.job?.backgroundColor.opacity(0.2) ?? Theme.textBackground)
                 .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
                 .onAppear(perform: self.actionOnAppear)
             }
@@ -685,15 +722,93 @@ extension WidgetLibrary {
                                 UI.ListLinkTitle(type: type)
 
                                 ForEach(self.activities.filter({$0.type == type}), id: \.id) { activity in
-                                    UI.ListLinkItem(activity: activity)
+                                    UI.ListLinkItem(
+                                        page: activity.page,
+                                        name: activity.name,
+                                        icon: activity.icon
+                                    )
                                 }
                             }
                             .padding()
                             .background(Theme.textBackground)
-    //                        .background(self.state.session.job?.backgroundColor.opacity(0.2) ?? Theme.textBackground)
                             .clipShape(.rect(cornerRadius: 5))
                         }
                     }
+                }
+            }
+        }
+
+        // @TODO: move to another namespace
+        struct Link: Identifiable, Hashable {
+            var id: UUID = UUID()
+            var label: String
+            var column: Column
+            var page: Page?
+        }
+
+        enum Column: CaseIterable {
+            case recent, saved
+
+            var title: String {
+                switch self {
+                case .recent: "Recent Searches"
+                case .saved: "Saved Searches"
+                }
+            }
+        }
+
+        struct Links: View {
+            @EnvironmentObject private var state: Navigation
+            @State private var links: Set<Link> = []
+            public var location: WidgetLocation
+
+            var body: some View {
+                VStack(alignment: .leading) {
+                    if self.location == .content {
+                        HStack(alignment: .top) {
+                            LinkList
+                        }
+                    } else if self.location == .sidebar {
+                        LinkList
+                    }
+                }
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.search.history) { self.actionOnAppear() }
+            }
+
+            var LinkList: some View {
+                ForEach(Column.allCases, id: \.hashValue) { column in
+                    VStack(alignment: .leading, spacing: 5) {
+                        UI.ListLinkTitle(text: column.title)
+
+                        ForEach(self.links.filter({$0.column == column}).sorted(by: {$0.label < $1.label}), id: \.id) { link in
+                            UI.ListButtonItem(
+                                callback: self.actionOnTap,
+                                name: link.label,
+                                actionIcon: "magnifyingglass"
+                            )
+                            .contextMenu {
+                                if link.column == .recent {
+                                    Button("Save search term") {
+                                        self.state.session.search.addToHistory(link.label)
+                                        CDSavedSearch(moc: self.state.moc).create(
+                                            term: link.label,
+                                            created: Date()
+                                        )
+                                        self.actionOnAppear()
+                                    }
+                                } else {
+                                    Button("Delete saved search term") {
+                                        CDSavedSearch(moc: self.state.moc).destroy(link.label)
+                                        self.actionOnAppear()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .padding(self.location == .content ? 16 : 8)
+                    .background(Theme.textBackground)
+                    .clipShape(.rect(cornerRadius: 5))
                 }
             }
         }
@@ -1091,6 +1206,243 @@ extension WidgetLibrary {
                 var term: TaxonomyTerm
             }
         }
+
+        struct SearchBar: View {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
+            @AppStorage("searchbar.shared") private var searchText: String = ""
+            @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+            @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
+            public var disabled: Bool = false
+            public var placeholder: String? = "Search..."
+            public var onSubmit: (() -> Void)? = nil
+            public var onReset: (() -> Void)? = nil
+            @FocusState private var primaryTextFieldInFocus: Bool
+
+            var body: some View {
+                ZStack(alignment: .trailing)  {
+                    FancyTextField(placeholder: placeholder!, lineLimit: 1, onSubmit: onSubmit, transparent: true, disabled: disabled, font: .title3, text: $searchText)
+                        .padding(.leading, 35)
+                        .focused($primaryTextFieldInFocus)
+                        .onAppear {
+                            // thx https://www.kodeco.com/31569019-focus-management-in-swiftui-getting-started#toc-anchor-002
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                self.primaryTextFieldInFocus = true
+                            }
+                        }
+
+                    HStack(alignment: .center) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.title2)
+                        Spacer()
+                        if self.searchText.count > 0 {
+                            FancyButtonv2(
+                                text: "Reset",
+                                action: self.actionOnReset,
+                                icon: "xmark",
+                                showLabel: false,
+                                type: .clear,
+                                font: .title2
+                            )
+                        } else {
+                            FancyButtonv2(
+                                text: "Entities",
+                                action: {self.showingTypes.toggle()},
+                                icon: self.showingTypes ? "arrow.up.square.fill" : "arrow.down.square.fill",
+                                showLabel: false,
+                                type: .clear,
+                                font: .title2
+                            )
+                            .help("Choose the entities you want to search")
+                        }
+                    }
+                    .padding([.leading, .trailing])
+                }
+                .frame(height: 57)
+                .background(self.state.session.job?.backgroundColor.opacity(0.6) ?? Theme.textBackground)
+                .onAppear(perform: self.actionOnAppear)
+            }
+        }
+
+        struct BoundSearchBar: View {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
+            @AppStorage("searchbar.shared") private var searchText: String = ""
+            @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+            @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
+            @Binding public var text: String
+            public var disabled: Bool = false
+            public var placeholder: String? = "Search..."
+            public var onSubmit: (() -> Void)? = nil
+            public var onReset: (() -> Void)? = nil
+            @FocusState private var primaryTextFieldInFocus: Bool
+
+            var body: some View {
+                ZStack(alignment: .trailing)  {
+                    FancyTextField(placeholder: placeholder!, lineLimit: 1, onSubmit: onSubmit, transparent: true, disabled: disabled, font: .title3, text: $text)
+                        .padding(.leading, 35)
+                        .focused($primaryTextFieldInFocus)
+                        .onAppear {
+                            // thx https://www.kodeco.com/31569019-focus-management-in-swiftui-getting-started#toc-anchor-002
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                self.primaryTextFieldInFocus = true
+                            }
+                        }
+
+                    HStack(alignment: .center) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.title2)
+                        Spacer()
+                        if self.text.count > 0 {
+                            FancyButtonv2(
+                                text: "Reset",
+                                action: self.actionOnReset,
+                                icon: "xmark",
+                                showLabel: false,
+                                type: .clear,
+                                font: .title2
+                            )
+                            .frame(width: 18)
+                        } else {
+                            FancyButtonv2(
+                                text: "Entities",
+                                action: {self.showingTypes.toggle()},
+                                icon: self.showingTypes ? "arrow.up.square.fill" : "arrow.down.square.fill",
+                                showLabel: false,
+                                type: .clear,
+                                font: .title2
+                            )
+                            .frame(width: 18)
+                            .help("Choose the entities you want to search")
+                        }
+                    }
+                    .padding([.leading, .trailing])
+                }
+                .frame(height: 57)
+                .background(self.state.session.job?.backgroundColor.opacity(0.6) ?? Theme.textBackground)
+                .onAppear(perform: self.actionOnAppear)
+            }
+        }
+
+        struct ResourcePath: View {
+            @EnvironmentObject public var state: Navigation
+            public var company: Company?
+            public var project: Project?
+            public var job: Job?
+
+            var body: some View {
+                HStack(alignment: .center, spacing: 0) {
+                    if let company = self.company {
+                        if let project = self.project {
+                            ZStack(alignment: .leading) {
+                                if let cJob = self.job {
+                                    cJob.backgroundColor
+
+                                    if let cAbb = company.abbreviation {
+                                        if let pAbb = project.abbreviation {
+                                            HStack(alignment: .center, spacing: 8) {
+                                                HStack(spacing: 0) {
+                                                    Text("\(cAbb)")
+                                                        .padding(7)
+                                                        .background(company.backgroundColor)
+                                                        .foregroundStyle(company.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
+                                                    Image(systemName: "chevron.right")
+                                                        .padding([.top, .bottom], 8)
+                                                        .padding([.leading, .trailing], 4)
+                                                        .background(company.backgroundColor.opacity(0.9))
+                                                        .foregroundStyle(company.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
+                                                    Text("\(pAbb)")
+                                                        .padding(7)
+                                                        .background(project.backgroundColor)
+                                                        .foregroundStyle(project.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
+                                                    Image(systemName: "chevron.right")
+                                                        .padding([.top, .bottom], 8)
+                                                        .padding([.leading, .trailing], 4)
+                                                        .background(project.backgroundColor.opacity(0.9))
+                                                        .foregroundStyle(project.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
+                                                }
+
+                                                Text("\(self.job?.title ?? self.job?.jid.string ?? "")")
+                                                    .foregroundStyle(cJob.backgroundColor.isBright() ? .black : .white)
+                                                Spacer()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            .foregroundStyle((self.state.session.job?.project?.backgroundColor ?? .clear).isBright() ? .black : .white)
+                        }
+                    }
+                }
+                .frame(height: 30)
+                .background(self.state.session.job?.backgroundColor ?? .clear)
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.Links {
+    /// Onload handler. Starts monitoring keyboard for esc key
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.links = []
+        let savedSearchTerms = CDSavedSearch(moc: self.state.moc).all()
+
+        for link in self.state.session.search.history.sorted(by: {$0 > $1}) {
+            if !savedSearchTerms.contains(where: {$0.term == link}) {
+                self.links.insert(
+                    WidgetLibrary.UI.Link(label: link, column: .recent)
+                )
+            }
+        }
+
+        for link in savedSearchTerms {
+            self.links.insert(
+                WidgetLibrary.UI.Link(label: link.term!, column: .saved)
+            )
+        }
+    }
+    
+    /// Fires when a link is tapped on
+    /// - Returns: Void
+    private func actionOnTap(searchText: String) -> Void {
+        self.state.session.search.text = searchText
+    }
+}
+
+extension WidgetLibrary.UI.BoundSearchBar {
+    /// Onload handler. Starts monitoring keyboard for esc key
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.text = self.state.session.search.text ?? ""
+    }
+
+    /// Reset field text
+    /// - Returns: Void
+    private func actionOnReset() -> Void {
+        self.text = ""
+
+        if onReset != nil {
+            onReset!()
+        }
+    }
+}
+
+extension WidgetLibrary.UI.SearchBar {
+    /// Onload handler. Starts monitoring keyboard for esc key
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.searchText = self.state.session.search.text ?? ""
+    }
+
+    /// Reset field text
+    /// - Returns: Void
+    private func actionOnReset() -> Void {
+        self.searchText = ""
+
+        if onReset != nil {
+            onReset!()
+        }
     }
 }
 
@@ -1147,7 +1499,7 @@ extension WidgetLibrary.UI.EntityStatistics {
     /// Onload handler. Sets view state
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        let types = PageConfiguration.EntityType.allCases.filter({ $0 != .BruceWillis })
+        let types = PageConfiguration.EntityType.allCases.filter({ ![.BruceWillis, .definitions].contains($0) })
 
         for type in types {
             self.statistics.append(

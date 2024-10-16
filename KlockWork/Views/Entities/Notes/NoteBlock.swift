@@ -10,6 +10,7 @@ import SwiftUI
 import KWCore
 
 struct NoteBlock: View {
+    typealias UI = WidgetLibrary.UI
     public var note: Note
 
     @State private var highlighted: Bool = false
@@ -27,8 +28,6 @@ struct NoteBlock: View {
             VStack(spacing: 0) {
                 ZStack(alignment: .topLeading) {
                     (note.starred ? Color.yellow : Color.white)
-                    // TODO: not sure I want this or not
-//                    (note.starred ? LinearGradient(colors: [Color.yellow, Color.clear], startPoint: .topLeading, endPoint: .bottomTrailing) : LinearGradient(colors: [Color.white, Color.clear], startPoint: .topLeading, endPoint: .bottomTrailing))
                         .shadow(color: .black.opacity(1), radius: 3)
                         .opacity(highlighted ? 0.2 : 0.1)
 
@@ -42,7 +41,12 @@ struct NoteBlock: View {
                             .padding([.leading, .trailing, .bottom])
 
                         Spacer()
-                        jobAndProject
+                        UI.ResourcePath(
+                            company: self.note.mJob?.project?.company,
+                            project: self.note.mJob?.project,
+                            job: self.note.mJob
+                        )
+                        .help(self.projectDescription())
                     }
                 }
             }
@@ -51,43 +55,11 @@ struct NoteBlock: View {
         .useDefaultHover({ inside in highlighted = inside})
         .buttonStyle(.plain)
     }
+}
 
-    @ViewBuilder private var jobAndProject: some View {
-        HStack(spacing: 0) {
-            ZStack {
-                if let job = note.mJob {
-                    if let project = job.project {
-                        Color.fromStored(project.colour ?? Theme.rowColourAsDouble)
-                    }
-                }
-            }
-            .frame(width: 5)
-
-            ZStack {
-                if note.mJob != nil {
-                    let colour = Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble)
-                    colour
-                    Text(note.mJob!.jid.string)
-                        .foregroundColor(colour.isBright() ? Color.black : Color.white)
-                } else {
-                    Color.white.opacity(0.1)
-                    Text("No job assigned")
-                }
-            }
-
-            if note.starred {
-                ZStack {
-                    Color.yellow
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.black)
-                }
-                .frame(width: 30)
-            }
-        }
-        .frame(height: 30)
-        .help(projectDescription())
-    }
-
+extension NoteBlock {
+    /// Determines note body content
+    /// - Returns: String
     private func noteBody() -> String {
         if let body = note.body {
             if body.count > 100 {
@@ -102,7 +74,9 @@ struct NoteBlock: View {
 
         return "No preview available"
     }
-
+    
+    /// Determines project description
+    /// - Returns: String
     private func projectDescription() -> String {
         if let job = note.mJob {
             if let project = job.project {
