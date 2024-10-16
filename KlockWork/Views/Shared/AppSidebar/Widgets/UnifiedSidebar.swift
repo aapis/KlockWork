@@ -542,14 +542,11 @@ struct UnifiedSidebar {
         public let text: String
         public var callback: (() -> Void)?
         @Binding public var isPresented: Bool
-        private var hasChildren: Bool { self.text[text.startIndex] != "0" }
 
         var body: some View {
             Button {
-                if self.hasChildren {
-                    isPresented.toggle()
-                    self.callback?()
-                }
+                isPresented.toggle()
+                self.callback?()
             } label: {
                 ZStack(alignment: .topLeading) {
                     Theme.base.opacity(0.6).blendMode(.softLight)

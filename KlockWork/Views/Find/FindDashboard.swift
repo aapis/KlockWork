@@ -13,6 +13,8 @@ struct FindDashboard: View {
     typealias Entity = PageConfiguration.EntityType
     typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var nav: Navigation
+    @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
+    @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
     @State public var searching: Bool = false
     public var location: WidgetLocation = .content
     @State private var searchText: String = ""
@@ -31,7 +33,6 @@ struct FindDashboard: View {
     @State private var advancedSearchResults: [SearchLanguage.Results.Result] = []
     @State private var buttons: [ToolbarButton] = []
     @State private var loading: Bool = false
-    @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
     private var columns: [GridItem] {
         Array(repeating: .init(.flexible(minimum: 100)), count: 2)
     }
@@ -60,7 +61,7 @@ struct FindDashboard: View {
                     )
                 }
             }
-            
+
             if !searching && activeSearchText.count >= 2 {
                 GridRow {
                     if location == .content {
@@ -102,7 +103,7 @@ struct FindDashboard: View {
                     }
                 }
             }
-            
+
             if showingTypes {
                 if location == .content {
                     GridRow {
@@ -152,7 +153,6 @@ struct FindDashboard: View {
                 } else {
                     FancyDivider()
                     FancyGenericToolbar(buttons: buttons, standalone: true, location: location, mode: .compact)
-                    Spacer()
                 }
             }
         }

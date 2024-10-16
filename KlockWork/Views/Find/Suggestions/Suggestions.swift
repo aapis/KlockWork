@@ -31,34 +31,9 @@ extension FindDashboard {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                if searchText.count >= 2 || isSearching {
-                    ScrollView(showsIndicators: false) {
-                        VStack {
-                            HStack {
-                                if location == .content {
-                                    Text("Hit enter/return to see the full results of your query")
-                                } else {
-                                    Text("Suggestions for your query")
-                                }
-                                Spacer()
-                            }
-                            .foregroundStyle(.gray)
-                            Divider()
-
-//                             @TODO: reduce this with a loop, each view is basically identical...
-                            if showRecords {SuggestedRecords(searchText: $searchText, publishedOnly: $publishedOnly)}
-                            if showNotes {SuggestedNotes(searchText: $searchText, publishedOnly: $publishedOnly)}
-                            if showTasks {SuggestedTasks(searchText: $searchText)}
-                            if showProjects {SuggestedProjects(searchText: $searchText, publishedOnly: $publishedOnly)}
-                            if showJobs {SuggestedJobs(searchText: $searchText, publishedOnly: $publishedOnly)}
-                            if showCompanies {SuggestedCompanies(searchText: $searchText, publishedOnly: $publishedOnly)}
-                            if showPeople {SuggestedPeople(searchText: $searchText)}
-                            if showTerms {SuggestedTerms(searchText: $searchText, publishedOnly: $publishedOnly)}
-                            if showDefinitions {SuggestedDefinitions(searchText: $searchText, publishedOnly: $publishedOnly)}
-                        }
-
-                        Divider()
-                        RecentSearches.SearchWidget()
+                ScrollView(showsIndicators: false) {
+                    VStack {
+                        UI.Links(location: self.location)
                             .onAppear(perform: {
                                 Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { _ in
                                     if self.searchText.count > 2 {
@@ -66,8 +41,28 @@ extension FindDashboard {
                                     }
                                 }
                             })
+
+                        VStack {
+                            if searchText.count >= 2 || isSearching {
+                                UI.ListLinkTitle(text: location == .content ? "Hit enter/return to see all results" : "Suggestions for your query")
+
+                                // @TODO: reduce this with a loop, each view is basically identical...
+                                if showRecords {SuggestedRecords(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                if showNotes {SuggestedNotes(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                if showTasks {SuggestedTasks(searchText: $searchText)}
+                                if showProjects {SuggestedProjects(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                if showJobs {SuggestedJobs(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                if showCompanies {SuggestedCompanies(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                if showPeople {SuggestedPeople(searchText: $searchText)}
+                                if showTerms {SuggestedTerms(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                if showDefinitions {SuggestedDefinitions(searchText: $searchText, publishedOnly: $publishedOnly)}
+                            }
+                        }
+                        .padding(self.location == .content ? 16 : 5)
+                        .background(Theme.textBackground)
+                        .clipShape(.rect(cornerRadius: 5))
                     }
-                    .padding()
+                    .padding(self.location == .content ? 16 : 8)
                 }
             }
             .background(location == .content ? Theme.rowColour : Color.clear)

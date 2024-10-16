@@ -549,22 +549,59 @@ extension WidgetLibrary {
 
         struct ListLinkItem: View {
             @EnvironmentObject private var state: Navigation
-            public let activity: Activity
+            public var page: Page
+            public var name: String
+            public var icon: String?
+            public var iconAsImage: Image?
             @State private var isHighlighted: Bool = false
 
             var body: some View {
                 Button {
-                    self.state.to(activity.page)
+                    self.state.to(self.page)
                 } label: {
                     HStack(alignment: .center) {
-                        if let image = activity.iconAsImage {
+                        if let image = self.iconAsImage {
                             image
                                 .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
-                        } else if let icon = activity.icon {
+                        } else if let icon = self.icon {
                             Image(systemName: icon)
                                 .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
                         }
-                        Text(activity.name)
+                        Text(self.name)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(.gray)
+                    }
+                    .padding(8)
+                    .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .clipShape(.rect(cornerRadius: 5))
+                }
+                .buttonStyle(.plain)
+                .useDefaultHover({ hover in self.isHighlighted = hover })
+            }
+        }
+
+        struct ListButtonItem: View {
+            @EnvironmentObject private var state: Navigation
+            public var callback: (String) -> Void
+            public var name: String
+            public var icon: String?
+            public var iconAsImage: Image?
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                Button {
+                    self.callback(self.name)
+                } label: {
+                    HStack(alignment: .center) {
+                        if let image = self.iconAsImage {
+                            image
+                                .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
+                        } else if let icon = self.icon {
+                            Image(systemName: icon)
+                                .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
+                        }
+                        Text(self.name)
                         Spacer()
                         Image(systemName: "chevron.right")
                             .foregroundStyle(.gray)
@@ -596,7 +633,7 @@ extension WidgetLibrary {
                 }
                 .foregroundStyle(.gray)
                 .font(.caption)
-                .padding(.bottom)
+                .padding(.bottom, 5)
             }
         }
 
@@ -615,7 +652,6 @@ extension WidgetLibrary {
                 }
                 .padding()
                 .background(Theme.textBackground)
-//                .background(self.state.session.job?.backgroundColor.opacity(0.2) ?? Theme.textBackground)
                 .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
                 .onAppear(perform: self.actionOnAppear)
             }
@@ -685,15 +721,91 @@ extension WidgetLibrary {
                                 UI.ListLinkTitle(type: type)
 
                                 ForEach(self.activities.filter({$0.type == type}), id: \.id) { activity in
-                                    UI.ListLinkItem(activity: activity)
+                                    UI.ListLinkItem(
+                                        page: activity.page,
+                                        name: activity.name,
+                                        icon: activity.icon
+                                    )
                                 }
                             }
                             .padding()
                             .background(Theme.textBackground)
-    //                        .background(self.state.session.job?.backgroundColor.opacity(0.2) ?? Theme.textBackground)
                             .clipShape(.rect(cornerRadius: 5))
                         }
                     }
+                }
+            }
+        }
+
+        // @TODO: move to another namespace
+        struct Link: Identifiable, Hashable {
+            var id: UUID = UUID()
+            var label: String
+            var column: Column
+            var page: Page?
+        }
+
+        enum Column: CaseIterable {
+            case recent, saved
+
+            var title: String {
+                switch self {
+                case .recent: "Recent Searches"
+                case .saved: "Saved Searches"
+                }
+            }
+        }
+
+        struct Links: View {
+            @EnvironmentObject private var state: Navigation
+            @State private var links: Set<Link> = []
+            public var location: WidgetLocation
+
+            var body: some View {
+                VStack(alignment: .leading) {
+                    if self.location == .content {
+                        HStack(alignment: .top) {
+                            LinkList
+                        }
+                    } else if self.location == .sidebar {
+                        LinkList
+                    }
+                }
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.search.history) { self.actionOnAppear() }
+            }
+
+            var LinkList: some View {
+                ForEach(Column.allCases, id: \.hashValue) { type in
+                    VStack(alignment: .leading, spacing: 5) {
+                        UI.ListLinkTitle(text: type.title)
+
+                        ForEach(self.links.filter({$0.column == type}), id: \.id) { link in
+                            UI.ListButtonItem(
+                                callback: self.actionOnTap,
+                                name: link.label
+                            )
+                            .contextMenu {
+                                if link.column == .recent {
+                                    Button("Save search term") {
+                                        self.state.session.search.addToHistory(link.label)
+                                        CDSavedSearch(moc: self.state.moc).create(
+                                            term: link.label,
+                                            created: Date()
+                                        )
+                                    }
+                                } else {
+                                    Button("Delete") {
+//                                                self.state.session.search.addToHistory(link.label)
+//                                                CDSavedSearch(moc: self.state.moc).destroy(link)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    .padding(self.location == .content ? 16 : 8)
+                    .background(Theme.textBackground)
+                    .clipShape(.rect(cornerRadius: 5))
                 }
             }
         }
@@ -1263,6 +1375,30 @@ extension WidgetLibrary {
                 .background(self.state.session.job?.backgroundColor ?? .clear)
             }
         }
+    }
+}
+
+extension WidgetLibrary.UI.Links {
+    /// Onload handler. Starts monitoring keyboard for esc key
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        for link in self.state.session.search.history {
+            self.links.insert(
+                WidgetLibrary.UI.Link(label: link, column: .recent)
+            )
+        }
+
+        for link in CDSavedSearch(moc: self.state.moc).all() {
+            self.links.insert(
+                WidgetLibrary.UI.Link(label: link.term!, column: .saved)
+            )
+        }
+    }
+    
+    /// Fires when a link is tapped on
+    /// - Returns: Void
+    private func actionOnTap(searchText: String) -> Void {
+        self.state.session.search.text = searchText
     }
 }
 
