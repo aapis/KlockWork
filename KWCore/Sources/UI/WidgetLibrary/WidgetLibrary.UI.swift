@@ -587,6 +587,7 @@ extension WidgetLibrary {
             public var name: String
             public var icon: String?
             public var iconAsImage: Image?
+            public var actionIcon: String = "chevron.right"
             @State private var isHighlighted: Bool = false
 
             var body: some View {
@@ -603,7 +604,7 @@ extension WidgetLibrary {
                         }
                         Text(self.name)
                         Spacer()
-                        Image(systemName: "chevron.right")
+                        Image(systemName: self.actionIcon)
                             .foregroundStyle(.gray)
                     }
                     .padding(8)
@@ -776,14 +777,15 @@ extension WidgetLibrary {
             }
 
             var LinkList: some View {
-                ForEach(Column.allCases, id: \.hashValue) { type in
+                ForEach(Column.allCases, id: \.hashValue) { column in
                     VStack(alignment: .leading, spacing: 5) {
-                        UI.ListLinkTitle(text: type.title)
+                        UI.ListLinkTitle(text: column.title)
 
-                        ForEach(self.links.filter({$0.column == type}), id: \.id) { link in
+                        ForEach(self.links.filter({$0.column == column}).sorted(by: {$0.label < $1.label}), id: \.id) { link in
                             UI.ListButtonItem(
                                 callback: self.actionOnTap,
-                                name: link.label
+                                name: link.label,
+                                actionIcon: "magnifyingglass"
                             )
                             .contextMenu {
                                 if link.column == .recent {
@@ -793,11 +795,12 @@ extension WidgetLibrary {
                                             term: link.label,
                                             created: Date()
                                         )
+                                        self.actionOnAppear()
                                     }
                                 } else {
-                                    Button("Delete") {
-//                                                self.state.session.search.addToHistory(link.label)
-//                                                CDSavedSearch(moc: self.state.moc).destroy(link)
+                                    Button("Delete saved search term") {
+                                        CDSavedSearch(moc: self.state.moc).destroy(link.label)
+                                        self.actionOnAppear()
                                     }
                                 }
                             }
@@ -1382,13 +1385,18 @@ extension WidgetLibrary.UI.Links {
     /// Onload handler. Starts monitoring keyboard for esc key
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        for link in self.state.session.search.history {
-            self.links.insert(
-                WidgetLibrary.UI.Link(label: link, column: .recent)
-            )
+        self.links = []
+        let savedSearchTerms = CDSavedSearch(moc: self.state.moc).all()
+
+        for link in self.state.session.search.history.sorted(by: {$0 > $1}) {
+            if !savedSearchTerms.contains(where: {$0.term == link}) {
+                self.links.insert(
+                    WidgetLibrary.UI.Link(label: link, column: .recent)
+                )
+            }
         }
 
-        for link in CDSavedSearch(moc: self.state.moc).all() {
+        for link in savedSearchTerms {
             self.links.insert(
                 WidgetLibrary.UI.Link(label: link.term!, column: .saved)
             )
