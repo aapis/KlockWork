@@ -62,6 +62,15 @@ struct FindDashboard: View {
                 }
             }
 
+            if self.showingTypes {
+                GridRow {
+                    UI.Links(location: self.location)
+                }
+                .padding()
+                .background(Theme.rowColour)
+                .foregroundStyle(.gray)
+            }
+
             if !searching && activeSearchText.count >= 2 {
                 GridRow {
                     if location == .content {

@@ -66,10 +66,10 @@ extension FindDashboard {
                         .padding(self.location == .content ? 16 : 5)
                         .background(Theme.textBackground)
                         .clipShape(.rect(cornerRadius: 5))
-
-                        UI.Links(location: self.location)
                     }
-                    .padding(self.location == .content ? 16 : 8)
+                    .padding(.leading, self.location == .content ? 16 : 8)
+                    .padding(.trailing, self.location == .content ? 16 : 8)
+                    .padding(.bottom, self.location == .content ? 16 : 8)
                 }
             }
             .background(location == .content ? Theme.rowColour : Color.clear)
