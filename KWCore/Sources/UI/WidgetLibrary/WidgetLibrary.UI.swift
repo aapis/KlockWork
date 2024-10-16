@@ -1319,7 +1319,7 @@ extension WidgetLibrary {
                     .padding([.leading, .trailing])
                 }
                 .frame(height: 57)
-                .background(self.state.session.job?.backgroundColor.opacity(0.6) ?? Theme.textBackground)
+                .background(Theme.textBackground)
                 .onAppear(perform: self.actionOnAppear)
             }
         }

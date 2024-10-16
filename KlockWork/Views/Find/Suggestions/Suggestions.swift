@@ -85,7 +85,6 @@ extension FindDashboard {
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
-            @State private var showAll: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Job>
             
@@ -94,7 +93,6 @@ extension FindDashboard {
                     VStack(alignment: .leading) {
                         Button {
                             showChildren.toggle()
-                            self.showAll.toggle()
                         } label: {
                             UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.jobs.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.jobs.label)",
@@ -107,7 +105,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading) {
-                                ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
+                                ForEach(self.items, id: \.objectID) { item in
                                     VStack(alignment: .leading, spacing: 10) {
                                         Divider()
                                         HStack {
@@ -124,7 +122,7 @@ extension FindDashboard {
                                             FancyButtonv2(
                                                 text: item.title ?? item.jid.string,
                                                 action: {setContext(item)},
-                                                icon: "arrow.right.square.fill",
+                                                icon: "command.square.fill",
                                                 showLabel: false,
                                                 showIcon: true,
                                                 size: .tinyLink,
@@ -135,6 +133,7 @@ extension FindDashboard {
                                     }
                                 }
                             }
+                            .padding([.leading, .bottom], 10)
                         }
                     }
                     .onAppear(perform: appear)
@@ -177,7 +176,6 @@ extension FindDashboard {
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
-            @State private var showAll: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Project>
 
@@ -186,7 +184,6 @@ extension FindDashboard {
                     VStack {
                         Button {
                             showChildren.toggle()
-                            self.showAll.toggle()
                         } label: {
                             UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.projects.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.projects.label)",
@@ -199,7 +196,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
+                                ForEach(self.items, id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -216,7 +213,7 @@ extension FindDashboard {
                                             Spacer()
                                         }
                                     }
-                                    .padding(.bottom, 10)
+                                    .padding([.leading, .bottom], 10)
                                 }
                             }
                         }
@@ -257,7 +254,6 @@ extension FindDashboard {
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
-            @State private var showAll: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Note>
 
@@ -266,7 +262,6 @@ extension FindDashboard {
                     VStack {
                         Button {
                             showChildren.toggle()
-                            self.showAll.toggle()
                         } label: {
                             UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.notes.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.notes.label)",
@@ -279,7 +274,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
+                                ForEach(self.items, id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -297,7 +292,7 @@ extension FindDashboard {
                                             FancyButtonv2(
                                                 text: item.title ?? "",
                                                 action: {setContext(item)},
-                                                icon: "arrow.right.square.fill",
+                                                icon: "command.square.fill",
                                                 showLabel: false,
                                                 showIcon: true,
                                                 size: .tinyLink,
@@ -306,7 +301,7 @@ extension FindDashboard {
                                             .help("Set associated job as Active Job")
                                         }
                                     }
-                                    .padding(.bottom, 10)
+                                    .padding([.leading, .bottom], 10)
                                 }
                             }
                         }
@@ -346,7 +341,6 @@ extension FindDashboard {
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @State private var showChildren: Bool = false
-            @State private var showAll: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<LogTask>
 
@@ -355,7 +349,6 @@ extension FindDashboard {
                     VStack {
                         Button {
                             showChildren.toggle()
-                            self.showAll.toggle()
                         } label: {
                             UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.tasks.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.tasks.label)",
@@ -368,7 +361,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
+                                ForEach(self.items, id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -383,9 +376,19 @@ extension FindDashboard {
                                             )
                                             .help("Inspect")
                                             Spacer()
+                                            FancyButtonv2(
+                                                text: "",
+                                                action: {setContext(item)},
+                                                icon: "command.square.fill",
+                                                showLabel: false,
+                                                showIcon: true,
+                                                size: .tinyLink,
+                                                type: .clear
+                                            )
+                                            .help("Set associated job as Active Job")
                                         }
                                     }
-                                    .padding(.bottom, 10)
+                                    .padding([.leading, .bottom], 10)
                                 }
                             }
                         }
@@ -416,7 +419,6 @@ extension FindDashboard {
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
-            @State private var showAll: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<LogRecord>
 
@@ -425,7 +427,6 @@ extension FindDashboard {
                     VStack {
                         Button {
                             showChildren.toggle()
-                            self.showAll.toggle()
                         } label: {
                             UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.records.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.records.label)",
@@ -438,7 +439,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
+                                ForEach(self.items, id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -453,9 +454,19 @@ extension FindDashboard {
                                             )
                                             .help("Inspect")
                                             Spacer()
+                                            FancyButtonv2(
+                                                text: "",
+                                                action: {setContext(item)},
+                                                icon: "command.square.fill",
+                                                showLabel: false,
+                                                showIcon: true,
+                                                size: .tinyLink,
+                                                type: .clear
+                                            )
+                                            .help("Set associated job as Active Job")
                                         }
                                     }
-                                    .padding(.bottom, 10)
+                                    .padding([.leading, .bottom], 10)
                                 }
                             }
                         }
@@ -494,7 +505,6 @@ extension FindDashboard {
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
-            @State private var showAll: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Company>
 
@@ -503,7 +513,6 @@ extension FindDashboard {
                     VStack {
                         Button {
                             showChildren.toggle()
-                            self.showAll.toggle()
                         } label: {
                             UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.companies.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.companies.label)",
@@ -516,7 +525,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(5), id: \.objectID) { item in
+                                ForEach(self.items, id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -531,9 +540,19 @@ extension FindDashboard {
                                             )
                                             .help("Inspect")
                                             Spacer()
+                                            FancyButtonv2(
+                                                text: "",
+                                                action: {setContext(item)},
+                                                icon: "command.square.fill",
+                                                showLabel: false,
+                                                showIcon: true,
+                                                size: .tinyLink,
+                                                type: .clear
+                                            )
+                                            .help("Set as Active Company")
                                         }
                                     }
-                                    .padding(.bottom, 10)
+                                    .padding([.leading, .bottom], 10)
                                 }
                             }
                         }
@@ -571,7 +590,6 @@ extension FindDashboard {
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @State private var showChildren: Bool = false
-            @State private var showAll: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<Person>
 
@@ -580,7 +598,6 @@ extension FindDashboard {
                     VStack {
                         Button {
                             showChildren.toggle()
-                            self.showAll.toggle()
                         } label: {
                             UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.people.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.people.label)",
@@ -593,7 +610,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
+                                ForEach(self.items, id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -610,7 +627,7 @@ extension FindDashboard {
                                             Spacer()
                                         }
                                     }
-                                    .padding(.bottom, 10)
+                                    .padding([.leading, .bottom], 10)
                                 }
                             }
                         }
@@ -640,7 +657,6 @@ extension FindDashboard {
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
-            @State private var showAll: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<TaxonomyTerm>
 
@@ -649,7 +665,6 @@ extension FindDashboard {
                     VStack {
                         Button {
                             showChildren.toggle()
-                            self.showAll.toggle()
                         } label: {
                             UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.terms.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.terms.label)",
@@ -662,7 +677,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
+                                ForEach(self.items, id: \.objectID) { item in
                                     VStack {
                                         Divider()
                                         HStack {
@@ -679,7 +694,7 @@ extension FindDashboard {
                                             Spacer()
                                         }
                                     }
-                                    .padding(.bottom, 10)
+                                    .padding([.leading, .bottom], 10)
                                 }
                             }
                         }
@@ -718,7 +733,6 @@ extension FindDashboard {
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
-            @State private var showAll: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<TaxonomyTermDefinitions>
 
@@ -727,7 +741,6 @@ extension FindDashboard {
                     VStack {
                         Button {
                             showChildren.toggle()
-                            self.showAll.toggle()
                         } label: {
                             UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.definitions.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.definitions.label)",
@@ -740,7 +753,7 @@ extension FindDashboard {
 
                         if showChildren {
                             VStack(alignment: .leading, spacing: 0) {
-                                ForEach(items.prefix(self.showAll ? items.count : 5), id: \.objectID) { item in
+                                ForEach(self.items, id: \.objectID) { item in
                                     VStack {
                                         HStack {
                                             FancyButtonv2(
@@ -757,7 +770,7 @@ extension FindDashboard {
                                         }
                                         Divider()
                                     }
-                                    .padding(.bottom, 10)
+                                    .padding([.leading, .bottom], 10)
                                 }
                             }
                         }
@@ -826,7 +839,6 @@ extension FindDashboard.Suggestions.SuggestedJobs {
 
     private func appear() -> Void {
         if items.count <= 5 {
-            self.showAll = true
             showChildren = true
         }
     }
@@ -839,7 +851,6 @@ extension FindDashboard.Suggestions.SuggestedProjects {
 
     private func appear() -> Void {
         if items.count <= 5 {
-            self.showAll = true
             showChildren = true
         }
     }
@@ -875,7 +886,6 @@ extension FindDashboard.Suggestions.SuggestedNotes {
 
     private func appear() -> Void {
         if items.count <= 5 {
-            self.showAll = true
             showChildren = true
         }
     }
@@ -888,8 +898,23 @@ extension FindDashboard.Suggestions.SuggestedTasks {
 
     private func appear() -> Void {
         if items.count <= 5 {
-            self.showAll = true
             showChildren = true
+        }
+    }
+
+    /// Set a different Navigation value based on the current page
+    /// - Parameter item: NSManagedObject>
+    /// - Returns: Void
+    private func setContext(_ item: LogTask) -> Void {
+        switch nav.parent {
+        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today, .terms:
+            nav.session.job = item.owner
+        case .planning:
+            if let job = item.owner {
+                nav.planning.jobs.insert(job)
+            }
+        default:
+            print("no op")
         }
     }
 }
@@ -901,8 +926,21 @@ extension FindDashboard.Suggestions.SuggestedCompanies {
 
     private func appear() -> Void {
         if items.count <= 5 {
-            self.showAll = true
             showChildren = true
+        }
+    }
+
+    /// Set a different Navigation value based on the current page
+    /// - Parameter item: NSManagedObject
+    /// - Returns: Void
+    private func setContext(_ item: Company) -> Void {
+        switch nav.parent {
+        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today, .terms:
+            nav.session.company = item
+        case .planning:
+            nav.planning.companies.insert(item)
+        default:
+            print("no op")
         }
     }
 }
@@ -914,7 +952,6 @@ extension FindDashboard.Suggestions.SuggestedPeople {
 
     private func appear() -> Void {
         if items.count <= 5 {
-            self.showAll = true
             showChildren = true
         }
     }
@@ -927,8 +964,23 @@ extension FindDashboard.Suggestions.SuggestedRecords {
 
     private func appear() -> Void {
         if items.count <= 5 {
-            self.showAll = true
             showChildren = true
+        }
+    }
+
+    /// Set a different Navigation value based on the current page
+    /// - Parameter item: NSManagedObject>
+    /// - Returns: Void
+    private func setContext(_ item: LogRecord) -> Void {
+        switch nav.parent {
+        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today, .terms:
+            nav.session.job = item.job
+        case .planning:
+            if let job = item.job {
+                nav.planning.jobs.insert(job)
+            }
+        default:
+            print("no op")
         }
     }
 }
@@ -940,7 +992,6 @@ extension FindDashboard.Suggestions.SuggestedTerms {
 
     private func appear() -> Void {
         if items.count <= 5 {
-            self.showAll = true
             showChildren = true
         }
     }
@@ -953,7 +1004,6 @@ extension FindDashboard.Suggestions.SuggestedDefinitions {
 
     private func appear() -> Void {
         if items.count <= 5 {
-            self.showAll = true
             showChildren = true
         }
     }
