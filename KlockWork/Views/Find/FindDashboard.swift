@@ -61,12 +61,19 @@ struct FindDashboard: View {
                     )
                 }
             }
+            Divider()
 
             if self.showingTypes {
                 GridRow {
-                    UI.Links(location: self.location)
+                    ZStack(alignment: .topLeading) {
+                        LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                            .blendMode(.softLight)
+                            .opacity(0.3)
+                        UI.Links(location: self.location)
+                            .padding()
+                    }
+                    .frame(height: 250)
                 }
-                .padding()
                 .background(Theme.rowColour)
                 .foregroundStyle(.gray)
             }

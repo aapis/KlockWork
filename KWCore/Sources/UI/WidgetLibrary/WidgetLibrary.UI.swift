@@ -780,45 +780,47 @@ extension WidgetLibrary {
 
             var LinkList: some View {
                 ForEach(Column.allCases, id: \.hashValue) { column in
-                    VStack(alignment: .leading, spacing: 5) {
-                        UI.ListLinkTitle(text: column.title)
+                    ScrollView(showsIndicators: false) {
+                        VStack(alignment: .leading, spacing: 5) {
+                            UI.ListLinkTitle(text: column.title)
 
-                        if self.links.filter({$0.column == column}).count == 0 {
-                            UI.ListButtonItem(
-                                callback: {_ in},
-                                name: "Nothing yet"
-                            )
-                            .disabled(true)
-                        }
+                            if self.links.filter({$0.column == column}).count == 0 {
+                                UI.ListButtonItem(
+                                    callback: {_ in},
+                                    name: "Nothing yet"
+                                )
+                                .disabled(true)
+                            }
 
-                        ForEach(self.links.filter({$0.column == column}).sorted(by: {$0.label < $1.label}), id: \.id) { link in
-                            UI.ListButtonItem(
-                                callback: self.actionOnTap,
-                                name: link.label,
-                                actionIcon: "magnifyingglass"
-                            )
-                            .contextMenu {
-                                if link.column == .recent {
-                                    Button("Save search term") {
-                                        self.state.session.search.addToHistory(link.label)
-                                        CDSavedSearch(moc: self.state.moc).create(
-                                            term: link.label,
-                                            created: Date()
-                                        )
-                                        self.actionOnAppear()
-                                    }
-                                } else {
-                                    Button("Delete saved search term") {
-                                        CDSavedSearch(moc: self.state.moc).destroy(link.label)
-                                        self.actionOnAppear()
+                            ForEach(self.links.filter({$0.column == column}).sorted(by: {$0.label < $1.label}), id: \.id) { link in
+                                UI.ListButtonItem(
+                                    callback: self.actionOnTap,
+                                    name: link.label,
+                                    actionIcon: "magnifyingglass"
+                                )
+                                .contextMenu {
+                                    if link.column == .recent {
+                                        Button("Save search term") {
+                                            self.state.session.search.addToHistory(link.label)
+                                            CDSavedSearch(moc: self.state.moc).create(
+                                                term: link.label,
+                                                created: Date()
+                                            )
+                                            self.actionOnAppear()
+                                        }
+                                    } else {
+                                        Button("Delete saved search term") {
+                                            CDSavedSearch(moc: self.state.moc).destroy(link.label)
+                                            self.actionOnAppear()
+                                        }
                                     }
                                 }
                             }
                         }
+                        .padding(self.location == .content ? 16 : 8)
+                        .background(Theme.textBackground)
+                        .clipShape(.rect(cornerRadius: 5))
                     }
-                    .padding(self.location == .content ? 16 : 8)
-                    .background(Theme.textBackground)
-                    .clipShape(.rect(cornerRadius: 5))
                 }
             }
         }
