@@ -33,15 +33,6 @@ extension FindDashboard {
             VStack(alignment: .leading, spacing: 0) {
                 ScrollView(showsIndicators: false) {
                     VStack {
-                        UI.Links(location: self.location)
-                            .onAppear(perform: {
-                                Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { _ in
-                                    if self.searchText.count > 2 {
-                                        self.nav.session.search.addToHistory(self.searchText)
-                                    }
-                                }
-                            })
-
                         VStack {
                             if searchText.count >= 2 || isSearching {
                                 UI.ListLinkTitle(text: location == .content ? "Hit enter/return to see all results" : "Suggestions for your query")
@@ -61,6 +52,15 @@ extension FindDashboard {
                         .padding(self.location == .content ? 16 : 5)
                         .background(Theme.textBackground)
                         .clipShape(.rect(cornerRadius: 5))
+
+                        UI.Links(location: self.location)
+                            .onAppear(perform: {
+                                Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { _ in
+                                    if self.searchText.count > 2 {
+                                        self.nav.session.search.addToHistory(self.searchText)
+                                    }
+                                }
+                            })
                     }
                     .padding(self.location == .content ? 16 : 8)
                 }
