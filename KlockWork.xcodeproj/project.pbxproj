@@ -549,6 +549,7 @@
 				Sources/Helpers/UrlHelper.swift,
 				Sources/Query/CDAssessmentFactor.swift,
 				Sources/Query/CDAssessmentThreshold.swift,
+				Sources/Query/CDSavedSearch.swift,
 				Sources/Query/CoreDataCalendarEvent.swift,
 				Sources/Query/CoreDataCompanies.swift,
 				Sources/Query/CoreDataJob.swift,
@@ -586,6 +587,7 @@
 				Sources/Helpers/UrlHelper.swift,
 				Sources/Query/CDAssessmentFactor.swift,
 				Sources/Query/CDAssessmentThreshold.swift,
+				Sources/Query/CDSavedSearch.swift,
 				Sources/Query/CoreDataCalendarEvent.swift,
 				Sources/Query/CoreDataCompanies.swift,
 				Sources/Query/CoreDataJob.swift,
@@ -1525,7 +1527,7 @@
 					New,
 				);
 				LastSwiftUpdateCheck = 1600;
-				LastUpgradeCheck = 1510;
+				LastUpgradeCheck = 1600;
 				ORGANIZATIONNAME = YegCollective;
 				TargetAttributes = {
 					53218D4324B7F6EB0088ABE9 = {
@@ -2185,8 +2187,7 @@
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -2231,7 +2232,7 @@
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;

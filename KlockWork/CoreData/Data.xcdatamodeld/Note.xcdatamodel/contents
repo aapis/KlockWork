@@ -163,6 +163,10 @@
         <relationship name="bannedWords" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="BannedWord" inverseName="configurations" inverseEntity="BannedWord"/>
         <relationship name="projects" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Project" inverseName="configuration" inverseEntity="Project"/>
     </entity>
+    <entity name="SavedSearch" representedClassName="SavedSearch" syncable="YES" codeGenerationType="class">
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="term" attributeType="String" defaultValueString="Term"/>
+    </entity>
     <entity name="SharedConfiguration" representedClassName="SharedConfiguration" syncable="YES" codeGenerationType="class">
         <attribute name="accentColour" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" customClassName="[Double]"/>
     </entity>
