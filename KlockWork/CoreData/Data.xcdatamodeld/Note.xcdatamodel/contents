@@ -201,5 +201,6 @@
         <memberEntity name="AssessmentFactor"/>
         <memberEntity name="TaxonomyTerm"/>
         <memberEntity name="TaxonomyTermDefinitions"/>
+        <memberEntity name="SavedSearch"/>
     </configuration>
 </model>
