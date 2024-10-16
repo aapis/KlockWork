@@ -23,6 +23,7 @@ extension FindDashboard {
         @Binding public var showTerms: Bool
         @Binding public var showDefinitions: Bool
         public var location: WidgetLocation
+        @State private var timer: Timer? = nil
 
         @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
 
@@ -54,13 +55,6 @@ extension FindDashboard {
                         .clipShape(.rect(cornerRadius: 5))
 
                         UI.Links(location: self.location)
-                            .onAppear(perform: {
-                                Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { _ in
-                                    if self.searchText.count > 2 {
-                                        self.nav.session.search.addToHistory(self.searchText)
-                                    }
-                                }
-                            })
                     }
                     .padding(self.location == .content ? 16 : 8)
                 }
@@ -69,6 +63,20 @@ extension FindDashboard {
             .onChange(of: isSearching) {
                 nav.session.search.cancel()
                 nav.setInspector()
+            }
+            .onChange(of: self.searchText) {
+                self.timer?.invalidate()
+
+                if self.searchText.count > 2 {
+                    self.timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { _ in
+                        let termIsSaved = CDSavedSearch(moc: self.nav.moc).find(by: self.searchText) == nil
+                        let termIsRecent = self.nav.session.search.history.contains(where: {$0 == self.searchText})
+
+                        guard termIsSaved && termIsRecent else {
+                            return self.nav.session.search.addToHistory(self.searchText)
+                        }
+                    }
+                }
             }
         }
         
