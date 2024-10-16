@@ -34,13 +34,33 @@ public class CDSavedSearch: ObservableObject {
         return self.query(predicate)
     }
     
+    /// Find SavedSearch objects by term
+    /// - Parameter term: String
+    /// - Returns: Optional(SavedSearch
+    public func find(by term: String) -> SavedSearch? {
+        let predicate = NSPredicate(
+            format: "term == %@",
+            term
+        )
+
+        let results = self.query(predicate)
+
+        if let result = results.first {
+            return result
+        }
+
+        return nil
+    }
+
     /// Destroy a saved search term
     /// - Parameter term: SavedSearch
     /// - Returns: Void
-    public func destroy(_ term: SavedSearch) -> Void {
-        self.moc!.delete(term)
+    public func destroy(_ term: String) -> Void {
+        if let entity = self.query(NSPredicate(format: "term == %@", term)).first {
+            self.moc!.delete(entity)
 
-        PersistenceController.shared.save()
+            PersistenceController.shared.save()
+        }
     }
 
     /// Create and return a new saved search term
@@ -83,16 +103,14 @@ public class CDSavedSearch: ObservableObject {
 
     /// Query companies
     /// - Parameter predicate: Query predicate
+    /// - Parameter sort: [NSSortDescriptor]
     /// - Returns: Array<SavedSearch>
-    private func query(_ predicate: NSPredicate? = nil) -> [SavedSearch] {
+    private func query(_ predicate: NSPredicate? = nil, _ sort: [NSSortDescriptor] = [NSSortDescriptor(keyPath: \SavedSearch.term?, ascending: true)]) -> [SavedSearch] {
         lock.lock()
 
         var results: [SavedSearch] = []
         let fetch: NSFetchRequest<SavedSearch> = SavedSearch.fetchRequest()
-        fetch.sortDescriptors = [
-            NSSortDescriptor(keyPath: \SavedSearch.term, ascending: false),
-            NSSortDescriptor(keyPath: \SavedSearch.created?, ascending: true),
-        ]
+        fetch.sortDescriptors = sort
         fetch.returnsDistinctResults = true
         if predicate != nil {
             fetch.predicate = predicate
@@ -117,13 +135,14 @@ public class CDSavedSearch: ObservableObject {
 
     /// Count companies
     /// - Parameter predicate: Query predicate
+    /// - Parameter sort: [NSSortDescriptor]
     /// - Returns: Int
-    private func count(_ predicate: NSPredicate) -> Int {
+    private func count(_ predicate: NSPredicate, sort: [NSSortDescriptor] = [NSSortDescriptor(keyPath: \SavedSearch.term?, ascending: true)]) -> Int {
         lock.lock()
 
         var count = 0
         let fetch: NSFetchRequest<SavedSearch> = SavedSearch.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \SavedSearch.created, ascending: true)]
+        fetch.sortDescriptors = sort
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
 
