@@ -587,7 +587,7 @@ extension WidgetLibrary {
             public var name: String
             public var icon: String?
             public var iconAsImage: Image?
-            public var actionIcon: String = "chevron.right"
+            public var actionIcon: String?
             @State private var isHighlighted: Bool = false
 
             var body: some View {
@@ -604,8 +604,10 @@ extension WidgetLibrary {
                         }
                         Text(self.name)
                         Spacer()
-                        Image(systemName: self.actionIcon)
-                            .foregroundStyle(.gray)
+                        if let actionIcon = self.actionIcon {
+                            Image(systemName: actionIcon)
+                                .foregroundStyle(.gray)
+                        }
                     }
                     .padding(8)
                     .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
@@ -780,6 +782,14 @@ extension WidgetLibrary {
                 ForEach(Column.allCases, id: \.hashValue) { column in
                     VStack(alignment: .leading, spacing: 5) {
                         UI.ListLinkTitle(text: column.title)
+
+                        if self.links.filter({$0.column == column}).count == 0 {
+                            UI.ListButtonItem(
+                                callback: {_ in},
+                                name: "Nothing yet"
+                            )
+                            .disabled(true)
+                        }
 
                         ForEach(self.links.filter({$0.column == column}).sorted(by: {$0.label < $1.label}), id: \.id) { link in
                             UI.ListButtonItem(

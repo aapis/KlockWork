@@ -11,6 +11,8 @@ import KWCore
 
 extension FindDashboard {
     struct Suggestions: View {
+        @EnvironmentObject public var nav: Navigation
+        @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
         @Binding public var searchText: String
         @Binding public var publishedOnly: Bool
         @Binding public var showRecords: Bool
@@ -24,11 +26,7 @@ extension FindDashboard {
         @Binding public var showDefinitions: Bool
         public var location: WidgetLocation
         @State private var timer: Timer? = nil
-
-        @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
-
-        @Environment(\.managedObjectContext) var moc
-        @EnvironmentObject public var nav: Navigation
+        @State private var isMinimized: Bool = false
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
@@ -36,18 +34,33 @@ extension FindDashboard {
                     VStack {
                         VStack {
                             if searchText.count >= 2 || isSearching {
-                                UI.ListLinkTitle(text: location == .content ? "Hit enter/return to see all results" : "Suggestions for your query")
+                                HStack {
+                                    UI.ListLinkTitle(text: location == .content ? "Hit enter/return to see all results" : "Suggestions for your query")
+                                    Spacer()
+                                    FancyButtonv2(
+                                        text: "",
+                                        action: {self.isMinimized.toggle()},
+                                        icon: self.isMinimized ? "plus.square.fill" : "minus.square.fill",
+                                        showLabel: false,
+                                        showIcon: true,
+                                        size: .tinyLink,
+                                        type: .clear
+                                    )
+                                    .help("Minimize suggestions")
+                                }
 
-                                // @TODO: reduce this with a loop, each view is basically identical...
-                                if showRecords {SuggestedRecords(searchText: $searchText, publishedOnly: $publishedOnly)}
-                                if showNotes {SuggestedNotes(searchText: $searchText, publishedOnly: $publishedOnly)}
-                                if showTasks {SuggestedTasks(searchText: $searchText)}
-                                if showProjects {SuggestedProjects(searchText: $searchText, publishedOnly: $publishedOnly)}
-                                if showJobs {SuggestedJobs(searchText: $searchText, publishedOnly: $publishedOnly)}
-                                if showCompanies {SuggestedCompanies(searchText: $searchText, publishedOnly: $publishedOnly)}
-                                if showPeople {SuggestedPeople(searchText: $searchText)}
-                                if showTerms {SuggestedTerms(searchText: $searchText, publishedOnly: $publishedOnly)}
-                                if showDefinitions {SuggestedDefinitions(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                if !self.isMinimized {
+                                    // @TODO: reduce this with a loop, each view is basically identical...
+                                    if showRecords {SuggestedRecords(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                    if showNotes {SuggestedNotes(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                    if showTasks {SuggestedTasks(searchText: $searchText)}
+                                    if showProjects {SuggestedProjects(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                    if showJobs {SuggestedJobs(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                    if showCompanies {SuggestedCompanies(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                    if showPeople {SuggestedPeople(searchText: $searchText)}
+                                    if showTerms {SuggestedTerms(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                    if showDefinitions {SuggestedDefinitions(searchText: $searchText, publishedOnly: $publishedOnly)}
+                                }
                             }
                         }
                         .padding(self.location == .content ? 16 : 5)
