@@ -61,7 +61,7 @@ struct Widgets: View {
                     }
 
                     if showRecentSearches {
-                        RecentSearches()
+                        RecentSearches.Widget()
                     }
                 }
 

@@ -58,27 +58,6 @@ struct FindDashboard: View {
                         onSubmit: onSubmit,
                         onReset: onReset
                     )
-//                    .border(width: self.activeSearchText.count  == 0 && self.location == .content ? 4 : 0, edges: [.bottom], color: self.nav.parent?.appPage.primaryColour ?? .clear)
-//
-//                    if activeSearchText.count == 0 {
-////                        VStack(alignment: .trailing) {
-////                            Spacer()
-//                            HStack(spacing: 5) {
-//                                Spacer()
-//                                FancyButtonv2(
-//                                    text: "Entities",
-//                                    action: {showingTypes.toggle()},
-//                                    icon: showingTypes ? "arrow.up.square.fill" : "arrow.down.square.fill",
-//                                    showLabel: false,
-////                                    size: .tiny,
-//                                    type: .clear
-//                                )
-//                                .help("Choose the entities you want to search")
-//                                .padding(.trailing, 15)
-//                            }
-////                        }
-////                        .frame(height: 28)
-//                    }
                 }
             }
             
