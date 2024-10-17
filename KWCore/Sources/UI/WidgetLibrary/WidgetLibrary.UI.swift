@@ -355,6 +355,7 @@ extension WidgetLibrary {
             @AppStorage("today.calendar") public var calendar: Int = -1
             @State private var upcomingEvents: [EKEvent] = []
             @State private var calendarName: String = ""
+            @State private var randomCelebratoryStatement: String = ""
 
             private let maxEventsToPreview: Int = 2
 
@@ -363,7 +364,7 @@ extension WidgetLibrary {
                     if calendar > -1 {
                         HStack(alignment: .top) {
                             if self.upcomingEvents.count == 0 {
-                                Text("No meetings today, \(UI.celebratoryStatements.randomElement()!)!")
+                                Text("No meetings today, \(self.randomCelebratoryStatement)!")
                             } else if self.upcomingEvents.count > 1 {
                                 HStack(alignment: .center) {
                                     Image(systemName: "calendar")
@@ -603,6 +604,7 @@ extension WidgetLibrary {
                                 .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
                         }
                         Text(self.name)
+                            .foregroundStyle(self.isHighlighted ? .white : Theme.lightWhite)
                         Spacer()
                         if let actionIcon = self.actionIcon {
                             Image(systemName: actionIcon)
@@ -746,6 +748,7 @@ extension WidgetLibrary {
             var label: String
             var column: Column
             var page: Page?
+            var date: Date = Date.now
         }
 
         enum Column: CaseIterable {
@@ -788,7 +791,25 @@ extension WidgetLibrary {
 
                         ScrollView(showsIndicators: false) {
                             VStack(alignment: .leading, spacing: 5) {
-                                UI.ListLinkTitle(text: column.title)
+                                HStack(alignment: .top) {
+                                    UI.ListLinkTitle(text: column.title)
+                                    Button {
+                                        self.state.session.search.clearHistory()
+                                        if column == .saved {
+                                            CDSavedSearch(moc: self.state.moc).destroyAll()
+                                        }
+                                        self.actionOnAppear()
+                                    } label: {
+                                        Image(systemName: "arrow.clockwise.square.fill")
+                                            .font(.title3)
+                                    }
+                                    .help("Clear all \(column.title)")
+                                    .disabled(self.links.filter({$0.column == column}).count == 0)
+                                    .buttonStyle(.plain)
+                                    .useDefaultHover({_ in})
+
+                                }
+                                .padding(.bottom, 5)
 
                                 if self.links.filter({$0.column == column}).count == 0 {
                                     UI.ListButtonItem(
@@ -798,7 +819,7 @@ extension WidgetLibrary {
                                     .disabled(true)
                                 }
 
-                                ForEach(self.links.filter({$0.column == column}).sorted(by: {$0.label < $1.label}), id: \.id) { link in
+                                ForEach(self.links.filter({$0.column == column}).sorted(by: {$0.date > $1.date}), id: \.id) { link in
                                     UI.ListButtonItem(
                                         callback: self.actionOnTap,
                                         name: link.label,
@@ -814,8 +835,13 @@ extension WidgetLibrary {
                                                 )
                                                 self.actionOnAppear()
                                             }
+                                            Divider()
+                                            Button("Delete") {
+                                                self.state.session.search.removeFromHistory(link.label)
+                                                self.actionOnAppear()
+                                            }
                                         } else {
-                                            Button("Delete saved search term") {
+                                            Button("Delete") {
                                                 CDSavedSearch(moc: self.state.moc).destroy(link.label)
                                                 self.actionOnAppear()
                                             }
@@ -1407,7 +1433,7 @@ extension WidgetLibrary.UI.Links {
         self.links = []
         let savedSearchTerms = CDSavedSearch(moc: self.state.moc).all()
 
-        for link in self.state.session.search.history.sorted(by: {$0 > $1}) {
+        for link in self.state.session.search.history {
             if !savedSearchTerms.contains(where: {$0.term == link}) {
                 self.links.insert(
                     WidgetLibrary.UI.Link(label: link, column: .recent)
@@ -1417,7 +1443,7 @@ extension WidgetLibrary.UI.Links {
 
         for link in savedSearchTerms {
             self.links.insert(
-                WidgetLibrary.UI.Link(label: link.term!, column: .saved)
+                WidgetLibrary.UI.Link(label: link.term!, column: .saved, date: link.created ?? Date.now)
             )
         }
     }
@@ -1647,6 +1673,10 @@ extension WidgetLibrary.UI.Meetings {
         if let chosenCalendar = ce.selectedCalendar() {
             calendarName = chosenCalendar
             upcomingEvents = ce.events(chosenCalendar).filter {$0.startDate > Date()}
+        }
+
+        if let statement = WidgetLibrary.UI.celebratoryStatements.randomElement() {
+            self.randomCelebratoryStatement = statement
         }
     }
 
