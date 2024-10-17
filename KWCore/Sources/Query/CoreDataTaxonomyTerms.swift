@@ -18,7 +18,25 @@ public class CoreDataTaxonomyTerms {
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
     }
-    
+
+    /// Find tasks whose content matches a given string exactly
+    /// - Parameter name: String
+    /// - Returns: FetchRequest<TaxonomyTerm>
+    static public func fetchExactMatch(name: String) -> FetchRequest<TaxonomyTerm> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \TaxonomyTerm.created, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<TaxonomyTerm> = TaxonomyTerm.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "alive == true && name LIKE[cd] %@",
+            name
+        )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
     /// Find tasks whose content matches a given string
     /// - Parameter term: String
     /// - Returns: FetchRequest<TaxonomyTerm>
