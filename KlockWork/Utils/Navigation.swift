@@ -701,7 +701,22 @@ extension Navigation.Session.Search {
 
         self.history.insert(label)
     }
-    
+
+    /// Remove search term from history
+    /// - Parameter label: String
+    /// - Returns: Void
+    mutating func removeFromHistory(_ label: String) -> Void {
+        if self.history.count > 20 {
+            let _ = self.history.popFirst()
+        }
+
+        for text in self.history {
+            if text == label {
+                self.history.remove(label)
+            }
+        }
+    }
+
     /// Empty history
     /// - Returns: Void
     mutating func clearHistory() -> Void {
