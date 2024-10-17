@@ -63,13 +63,14 @@ extension FindDashboard {
                                 }
                             }
                         }
-                        .padding(self.location == .content ? 16 : 5)
+                        .padding(self.location == .content ? 16 : 8)
                         .background(Theme.textBackground)
                         .clipShape(.rect(cornerRadius: 5))
                     }
                     .padding(.leading, self.location == .content ? 16 : 8)
                     .padding(.trailing, self.location == .content ? 16 : 8)
                     .padding(.bottom, self.location == .content ? 16 : 8)
+                    .padding(.top, self.location == .content ? 16 : 8)
                 }
             }
             .background(location == .content ? Theme.rowColour : Color.clear)

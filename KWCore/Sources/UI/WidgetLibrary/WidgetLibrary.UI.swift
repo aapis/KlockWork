@@ -764,11 +764,13 @@ extension WidgetLibrary {
 
         struct Links: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("searchbar.shared") private var searchText: String = ""
             @State private var links: Set<Link> = []
             public var location: WidgetLocation
+            public var isSearching: Bool = false
 
             var body: some View {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 0) {
                     if self.location == .content {
                         HStack(alignment: .top) {
                             LinkList
@@ -777,85 +779,89 @@ extension WidgetLibrary {
                         LinkList
                     }
                 }
+                .padding([.top, .leading, .trailing], self.location == .content ? 16 : 8)
+                .padding(.bottom, self.isSearching ? 0 : self.location == .content ? 16 : 8)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.search.history) { self.actionOnAppear() }
             }
 
             var LinkList: some View {
                 ForEach(Column.allCases, id: \.hashValue) { column in
-                    ZStack(alignment: .bottom) {
-                        LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
-                            .blendMode(.softLight)
-                            .opacity(0.4)
-                            .frame(height: 20)
-
-                        ScrollView(showsIndicators: false) {
-                            VStack(alignment: .leading, spacing: 5) {
-                                HStack(alignment: .top) {
-                                    UI.ListLinkTitle(text: column.title)
-                                    Button {
-                                        self.state.session.search.clearHistory()
-                                        if column == .saved {
-                                            CDSavedSearch(moc: self.state.moc).destroyAll()
-                                        }
-                                        self.actionOnAppear()
-                                    } label: {
-                                        Image(systemName: "arrow.clockwise.square.fill")
-                                            .symbolRenderingMode(.hierarchical)
-                                            .font(.title2)
-                                    }
-                                    .help("Clear all \(column.title)")
-                                    .disabled(self.links.filter({$0.column == column}).count == 0)
-                                    .buttonStyle(.plain)
-                                    .useDefaultHover({_ in})
-
+                    VStack(spacing: 0) {
+                        HStack(alignment: .center) {
+                            UI.ListLinkTitle(text: column.title)
+                            Button {
+                                self.state.session.search.clearHistory()
+                                if column == .saved {
+                                    CDSavedSearch(moc: self.state.moc).destroyAll()
                                 }
-                                .padding(.bottom, 5)
-
-                                if self.links.filter({$0.column == column}).count == 0 {
-                                    UI.ListButtonItem(
-                                        callback: {_ in},
-                                        name: "Nothing yet"
-                                    )
-                                    .disabled(true)
-                                }
-
-                                ForEach(self.links.filter({$0.column == column}).sorted(by: {$0.date > $1.date}), id: \.id) { link in
-                                    UI.ListButtonItem(
-                                        callback: self.actionOnTap,
-                                        name: link.label,
-                                        actionIcon: "magnifyingglass"
-                                    )
-                                    .contextMenu {
-                                        if link.column == .recent {
-                                            Button("Save search term") {
-                                                self.state.session.search.addToHistory(link.label)
-                                                CDSavedSearch(moc: self.state.moc).create(
-                                                    term: link.label,
-                                                    created: Date()
-                                                )
-                                                self.actionOnAppear()
-                                            }
-                                            Divider()
-                                            Button("Delete") {
-                                                self.state.session.search.removeFromHistory(link.label)
-                                                self.actionOnAppear()
-                                            }
-                                        } else {
-                                            Button("Delete") {
-                                                CDSavedSearch(moc: self.state.moc).destroy(link.label)
-                                                self.actionOnAppear()
-                                            }
-                                        }
-                                    }
-                                }
+                                self.actionOnAppear()
+                            } label: {
+                                Image(systemName: "arrow.clockwise.square.fill")
+                                    .symbolRenderingMode(.hierarchical)
+                                    .font(.title2)
+                                    .foregroundStyle(.white)
                             }
-                            .padding(self.location == .content ? 16 : 8)
+                            .help("Clear all \(column.title)")
+                            .disabled(self.links.filter({$0.column == column}).count == 0)
+                            .buttonStyle(.plain)
+                            .useDefaultHover({_ in})
                         }
+                        .padding(8)
+
+                        ZStack(alignment: .bottom) {
+                            LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
+                                .blendMode(.softLight)
+                                .opacity(0.4)
+                                .frame(height: 20)
+
+                            ScrollView(showsIndicators: false) {
+                                VStack(alignment: .leading, spacing: 5) {
+                                    if self.links.filter({$0.column == column}).count == 0 {
+                                        UI.ListButtonItem(
+                                            callback: {_ in},
+                                            name: "Nothing yet"
+                                        )
+                                        .disabled(true)
+                                    }
+
+                                    ForEach(self.links.filter({$0.column == column}).sorted(by: {$0.date > $1.date}), id: \.id) { link in
+                                        UI.ListButtonItem(
+                                            callback: self.actionOnTap,
+                                            name: link.label,
+                                            actionIcon: "magnifyingglass"
+                                        )
+                                        .contextMenu {
+                                            if link.column == .recent {
+                                                Button("Save search term") {
+                                                    self.state.session.search.addToHistory(link.label)
+                                                    CDSavedSearch(moc: self.state.moc).create(
+                                                        term: link.label,
+                                                        created: Date()
+                                                    )
+                                                    self.actionOnAppear()
+                                                }
+                                                Divider()
+                                                Button("Delete") {
+                                                    self.state.session.search.removeFromHistory(link.label)
+                                                    self.actionOnAppear()
+                                                }
+                                            } else {
+                                                Button("Delete") {
+                                                    CDSavedSearch(moc: self.state.moc).destroy(link.label)
+                                                    self.actionOnAppear()
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                .padding(self.location == .content ? 16 : 8)
+                            }
+                        }
+                        .background(Theme.textBackground)
+                        .clipShape(.rect(cornerRadius: 5))
                     }
                 }
-                .background(Theme.textBackground)
-                .clipShape(.rect(cornerRadius: 5))
             }
         }
 

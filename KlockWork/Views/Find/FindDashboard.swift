@@ -61,18 +61,18 @@ struct FindDashboard: View {
                     )
                 }
             }
-            Divider()
 
-            if self.showingTypes {
+            Divider()
+            /// When installed in content areas, display above suggestions
+            if showingTypes && self.location == .content {
                 GridRow {
                     ZStack(alignment: .topLeading) {
                         LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                             .blendMode(.softLight)
                             .opacity(0.3)
-                        UI.Links(location: self.location)
-                            .padding()
+                        UI.Links(location: self.location, isSearching: !searching && activeSearchText.count >= 2)
                     }
-                    .frame(height: self.location == .content ? 200 : 400)
+                    .frame(height: self.location == .content ? 250 : 400)
                 }
                 .background(Theme.rowColour)
                 .foregroundStyle(.gray)
@@ -144,6 +144,19 @@ struct FindDashboard: View {
                     .frame(height: 40)
                     .foregroundStyle(.gray)
                 } else if location == .sidebar {
+                    /// When installed the sidebar, display below suggestions
+                    GridRow {
+                        ZStack(alignment: .topLeading) {
+                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                .blendMode(.softLight)
+                                .opacity(0.3)
+                            UI.Links(location: self.location)
+                        }
+                        .frame(height: self.location == .content ? 250 : 400)
+                    }
+                    .background(Theme.rowColour)
+                    .foregroundStyle(.gray)
+
                     GridRow {
                         LazyVGrid(columns: columns, alignment: .leading) {
                             Toggle("Records", isOn: $showRecords)
