@@ -32,6 +32,7 @@ struct LogRow: View, Identifiable {
     @State public var projectColHelpText: String = ""
     @State public var required: Set<RecordTableColumn> = [.message]
     @State private var isDeleteAlertShowing: Bool = false
+    @State private var words: [CustomMessage] = []
 
     var body: some View {
         if isEditing {
@@ -42,6 +43,7 @@ struct LogRow: View, Identifiable {
                         .opacity(0.5)
                 }
             }
+//            .onAppear(perform: self.actionOnAppear)
             ViewModeEdit
         } else {
             ViewModeNormal
@@ -61,7 +63,6 @@ struct LogRow: View, Identifiable {
                     text: $aIndex
                 )
                 .frame(minWidth: 23, maxWidth: 45)
-
 
                 Column(
                     type: .timestamp,
@@ -255,7 +256,20 @@ struct LogRow: View, Identifiable {
                 Button(action: self.actionInspectJob, label: {
                     Text(PageConfiguration.EntityType.jobs.enSingular)
                 })
-
+                Divider()
+                Menu("Linked Terms") {
+                    ForEach(self.words, id: \.id) { word in
+                        Button {
+                            self.actionInspectTerm(word)
+                        } label: {
+                            word.view
+                        }
+//                        Button(action: self.actionInspectJob, label: {
+//                            //                            Text(word)
+//                            word.view
+//                        })
+                    }
+                }
                 Divider()
                 Text("SR&ED Eligible: " + (entry.jobObject!.shredable ? "Yes" : "No"))
             }
@@ -269,7 +283,7 @@ struct LogRow: View, Identifiable {
             }
         }
     }
-    
+
     /// Inspect an entity
     /// - Returns: Void
     private func actionInspectRecord() -> Void {
@@ -304,6 +318,15 @@ struct LogRow: View, Identifiable {
 
     /// Inspect an entity
     /// - Returns: Void
+    private func actionInspectTerm(_ message: CustomMessage) -> Void {
+//        if let inspectable = message {
+//            self.actionInspect(inspectable)
+//        }
+//        self.actionInspect(message)
+    }
+
+    /// Inspect an entity
+    /// - Returns: Void
     private func actionInspect(_ inspectable: NSManagedObject) -> Void {
         self.nav.session.search.inspectingEntity = inspectable
         nav.setInspector(AnyView(Inspector(entity: inspectable)))
@@ -314,6 +337,22 @@ struct LogRow: View, Identifiable {
         job = entry.job
         timestamp = entry.timestamp
         aIndex = adjustedIndexAsString()
+
+        self.words = []
+        let wordsFromText = self.message.split(separator: /\s/)
+
+        for word in wordsFromText {
+            self.words.append(
+                CustomMessage(
+                    word: String(word),
+                    view: AnyView(
+                        Text(word)
+                            .lineLimit(4)
+    //                            .fixedSize(horizontal: true, vertical: true)
+                    )
+                )
+            )
+        }
 
         if self.showColumnIndex { self.required.insert(.index) } else { self.required.remove(.index)}
         if self.showColumnTimestamp { self.required.insert(.timestamp) } else { self.required.remove(.timestamp)}

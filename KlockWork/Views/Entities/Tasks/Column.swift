@@ -9,6 +9,47 @@
 import SwiftUI
 import KWCore
 
+struct CustomMessage: View, Identifiable {
+    @EnvironmentObject public var state: Navigation
+    public var id: UUID = UUID()
+    public var word: String
+    public var view: AnyView
+    @FetchRequest public var term: FetchedResults<TaxonomyTerm>
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 0) {
+            if let term = self.term.first {
+                Button {
+                    if self.term.count == 1 {
+                        self.state.session.search.inspectingEntity = term
+                        self.state.setInspector(AnyView(Inspector(entity: term)))
+                    }
+                } label: {
+                    HStack(alignment: .center, spacing: 0) {
+                        self.view
+                            .underline(self.term.first?.alive ?? false)
+                    }
+                }
+                .useDefaultHover({_ in})
+                .buttonStyle(.plain)
+
+                if self.term.count > 1 {
+                    Image(systemName: "questionmark.square.fill")
+                }
+            } else {
+                self.view
+            }
+        }
+        .multilineTextAlignment(.leading)
+    }
+
+    init(word: String, view: AnyView) {
+        self.word = word
+        self.view = view
+        _term = CoreDataTaxonomyTerms.fetchExactMatch(name: word)
+    }
+}
+
 struct Column: View {
     public var type: RecordTableColumn = .message
     public var colour: Color
@@ -18,6 +59,7 @@ struct Column: View {
     public var url: URL?
     public var job: Job?
     public var show: Bool = true
+    @State private var words: [CustomMessage] = []
 
     @Binding public var text: String
 
@@ -45,6 +87,7 @@ struct Column: View {
                     }
                 }
             }
+            .onAppear(perform: self.actionOnAppear)
         }
     }
 
@@ -100,13 +143,49 @@ struct Column: View {
         .padding(6)
     }
 
+    @ViewBuilder private var MessageEXPERIMENTAL: some View {
+        HStack(alignment: .top, spacing: 3) {
+            if self.words.count < 60 {
+                ForEach(self.words, id: \.id) { word in word }
+            } else {
+                Text(self.text)
+            }
+        }
+//        .fixedSize(horizontal: false, vertical: true)
+        .foregroundStyle(self.textColour)
+        .help(self.text)
+    }
+
     @ViewBuilder private var Message: some View {
         Text(text)
             .padding(10)
-            .foregroundColor(textColour)
+            .foregroundStyle(textColour)
             .help(text)
     }
+}
 
+extension Column {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        let wordsFromText = self.text.split(separator: /\s/)
+
+        for word in wordsFromText {
+            self.words.append(
+                CustomMessage(
+                    word: String(word),
+                    view: AnyView(
+                        Text(word)
+                            .lineLimit(4)
+//                            .fixedSize(horizontal: true, vertical: true)
+                    )
+                )
+            )
+        }
+    }
+    
+    /// Formats date for UI
+    /// - Returns: String
     private func formatted() -> String {
         let inputDateFormatter = DateFormatter()
         inputDateFormatter.timeZone = TimeZone.autoupdatingCurrent
