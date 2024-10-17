@@ -801,7 +801,8 @@ extension WidgetLibrary {
                                         self.actionOnAppear()
                                     } label: {
                                         Image(systemName: "arrow.clockwise.square.fill")
-                                            .font(.title3)
+                                            .symbolRenderingMode(.hierarchical)
+                                            .font(.title2)
                                     }
                                     .help("Clear all \(column.title)")
                                     .disabled(self.links.filter({$0.column == column}).count == 0)
