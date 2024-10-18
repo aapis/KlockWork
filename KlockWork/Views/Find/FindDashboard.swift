@@ -15,6 +15,7 @@ struct FindDashboard: View {
     @EnvironmentObject public var nav: Navigation
     @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
     @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
+    @AppStorage("dashboard.showWelcomeHeader") private var showWelcomeHeader: Bool = true
     @State public var searching: Bool = false
     public var location: WidgetLocation = .content
     @State private var searchText: String = ""
@@ -40,7 +41,7 @@ struct FindDashboard: View {
 
     var body: some View {
         Grid(alignment: .topLeading, horizontalSpacing: 0, verticalSpacing: 0) {
-            if self.location == .content {
+            if self.location == .content && self.showWelcomeHeader {
                 GridRow {
                     UniversalHeader.Widget(
                         type: self.eType,
@@ -59,6 +60,7 @@ struct FindDashboard: View {
                         onSubmit: onSubmit,
                         onReset: onReset
                     )
+                    .clipShape(.rect(topLeadingRadius: self.showWelcomeHeader ? 0 : 5, topTrailingRadius: self.showWelcomeHeader ? 0 : 5))
                 }
             }
 

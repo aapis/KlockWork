@@ -19,6 +19,7 @@ struct DashboardSettings: View {
     @AppStorage("dashboard.widget.intro") public var showWidgetIntro: Bool = true
     @AppStorage("dashboard.widget.upcomingWork") public var showWidgetUpcomingWork: Bool = true
     @AppStorage("dashboard.widget.recentSearches") public var showRecentSearches: Bool = true
+    @AppStorage("dashboard.showWelcomeHeader") private var showWelcomeHeader: Bool = true
 
     var body: some View {
         Form {
@@ -29,6 +30,10 @@ struct DashboardSettings: View {
                 Toggle("Introduction to KlockWork", isOn: $showWidgetIntro)
                 Toggle("Upcoming Work", isOn: $showWidgetUpcomingWork)
                 Toggle("Recent searches", isOn: $showRecentSearches)
+            }
+
+            Section("Display Settings") {
+                Toggle("Show \"Welcome\" header", isOn: $showWelcomeHeader)
             }
 
             if self.showWidgetUpcomingWork {

@@ -764,7 +764,6 @@ extension WidgetLibrary {
 
         struct Links: View {
             @EnvironmentObject private var state: Navigation
-            @AppStorage("searchbar.shared") private var searchText: String = ""
             @State private var links: Set<Link> = []
             public var location: WidgetLocation
             public var isSearching: Bool = false
@@ -779,7 +778,8 @@ extension WidgetLibrary {
                         LinkList
                     }
                 }
-                .padding([.top, .leading, .trailing], self.location == .content ? 16 : 8)
+                .padding(.top, 8)
+                .padding([.leading, .trailing], self.location == .content ? 16 : 8)
                 .padding(.bottom, self.isSearching ? 0 : self.location == .content ? 16 : 8)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.search.history) { self.actionOnAppear() }
@@ -1344,6 +1344,7 @@ extension WidgetLibrary {
                     HStack(alignment: .center) {
                         Image(systemName: "magnifyingglass")
                             .font(.title2)
+                            .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
                         Spacer()
                         if self.text.count > 0 {
                             FancyButtonv2(
