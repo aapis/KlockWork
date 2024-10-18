@@ -16,6 +16,7 @@ struct FindDashboard: View {
     @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
     @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
     @AppStorage("dashboard.showWelcomeHeader") private var showWelcomeHeader: Bool = true
+    @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
     @State public var searching: Bool = false
     public var location: WidgetLocation = .content
     @State private var searchText: String = ""
@@ -29,7 +30,6 @@ struct FindDashboard: View {
     @State private var showPeople: Bool = true
     @State private var showTerms: Bool = true
     @State private var showDefinitions: Bool = true
-    @State private var allowAlive: Bool = true
     @State private var counts: (Int, Int, Int, Int) = (0, 0, 0, 0)
     @State private var advancedSearchResults: [SearchLanguage.Results.Result] = []
     @State private var buttons: [ToolbarButton] = []
@@ -129,7 +129,7 @@ struct FindDashboard: View {
                             self.nav.parent?.appPage.primaryColour.opacity(0.6) ?? Theme.subHeaderColour
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                                 .blendMode(.softLight)
-                                .opacity(0.2)
+                                .opacity(0.3)
                                 .frame(height: 20)
 
                             HStack(alignment: .center) {
@@ -143,6 +143,7 @@ struct FindDashboard: View {
                                 UI.Toggle(isOn: $showTerms, eType: .terms)
                                 Spacer()
                                 UI.Toggle(isOn: $allowAlive, icon: "heart", selectedIcon: "heart.fill")
+                                    .help("Published only")
                             }
                             .padding(.top, 8)
                             .padding([.leading, .trailing], 10)
