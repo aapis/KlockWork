@@ -1444,23 +1444,19 @@ extension WidgetLibrary {
                 Button {
                     self.isOn.toggle()
                 } label: {
-                    HStack(spacing: 4) {
+                    HStack(alignment: .center, spacing: 4) {
                         if let title = self.title {
                             Text(title)
                         } else if let icon = self.icon {
                             (self.isOn ? Image(systemName: self.selectedIcon ?? "xmark") : Image(systemName: icon))
                         } else {
-                            if self.isOn {
-                                self.eType?.selectedIcon ?? Image(systemName: "xmark")
-                            } else {
-                                self.eType?.icon ?? Image(systemName: "xmark")
-                            }
+                            (self.isOn ? self.eType?.selectedIcon : self.eType?.icon)
                         }
                     }
                     .foregroundStyle(self.isOn ? .yellow : .gray)
                     .padding(3)
                 }
-                .help(self.title ?? "")
+                .help(self.title ?? self.eType?.label ?? "")
                 .buttonStyle(.plain)
                 .useDefaultHover({ hover in self.isHighlighted = hover })
             }

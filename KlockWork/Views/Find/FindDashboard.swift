@@ -125,10 +125,14 @@ struct FindDashboard: View {
             if showingTypes {
                 if location == .content || location == .sidebar {
                     GridRow {
-                        ZStack(alignment: .leading) {
+                        ZStack(alignment: .topLeading) {
                             self.nav.parent?.appPage.primaryColour.opacity(0.6) ?? Theme.subHeaderColour
+                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                .blendMode(.softLight)
+                                .opacity(0.2)
+                                .frame(height: 20)
 
-                            HStack {
+                            HStack(alignment: .center) {
                                 UI.Toggle(isOn: $showRecords, eType: .records)
                                 UI.Toggle(isOn: $showNotes, eType: .notes)
                                 UI.Toggle(isOn: $showTasks, eType: .tasks)
@@ -140,43 +144,13 @@ struct FindDashboard: View {
                                 Spacer()
                                 UI.Toggle(isOn: $allowAlive, icon: "heart", selectedIcon: "heart.fill")
                             }
+                            .padding(.top, 8)
                             .padding([.leading, .trailing], 10)
                         }
                     }
                     .frame(height: 40)
                     .foregroundStyle(.gray)
                 }
-//                else if 1==2 {
-//                    /// When installed the sidebar, display below suggestions
-//                    GridRow {
-//                        ZStack(alignment: .topLeading) {
-//                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
-//                                .blendMode(.softLight)
-//                                .opacity(0.3)
-//                            UI.Links(location: self.location)
-//                        }
-//                        .frame(height: self.location == .content ? 250 : 400)
-//                    }
-//                    .background(Theme.rowColour)
-//                    .foregroundStyle(.gray)
-//
-//                    GridRow {
-//                        LazyVGrid(columns: columns, alignment: .leading) {
-//                            UI.Toggle(isOn: $showRecords, eType: .records)
-//                            UI.Toggle(isOn: $showNotes, eType: .notes)
-//                            UI.Toggle(isOn: $showTasks, eType: .tasks)
-//                            UI.Toggle(isOn: $showProjects, eType: .projects)
-//                            UI.Toggle(isOn: $showJobs, eType: .jobs)
-//                            UI.Toggle(isOn: $showCompanies, eType: .companies)
-//                            UI.Toggle(isOn: $showPeople, eType: .people)
-//                            UI.Toggle(isOn: $showTerms, eType: .terms)
-//                            UI.Toggle("Published Only", isOn: $allowAlive)
-//                        }
-//                        .padding(10)
-//                    }
-//                    .background(location == .sidebar ? Theme.rowColour : self.nav.parent?.appPage.primaryColour.opacity(0.2))
-//                    .foregroundStyle(.gray)
-//                }
             }
 
             if searching {
