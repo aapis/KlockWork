@@ -121,9 +121,6 @@ extension NoteCreate {
             }
 
             PersistenceController.shared.save()
-            
-            // the last note you interacted with
-            self.state.session.note = note
         } else {
             print("[error][note.create] A title is required to save")
         }
