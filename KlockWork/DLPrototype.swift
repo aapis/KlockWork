@@ -14,6 +14,7 @@ import UserNotifications
 @main
 struct DLPrototype: App {
     private let persistenceController = PersistenceController.shared
+    @AppStorage("notifications.interval") private var notificationInterval: Int = 0
     @StateObject public var updater: ViewUpdater = ViewUpdater()
     @StateObject public var nav: Navigation = Navigation()
     @State private var searching: Bool = false
@@ -117,8 +118,9 @@ struct DLPrototype: App {
             }
         }
 
+        self.createNotifications()
         self.createAssessments()
-        NotificationHelper.clean() // @TODO: shouldn't be necessary here
+//        NotificationHelper.clean() // @TODO: shouldn't be necessary here, remove if still commented out
         NotificationHelper.requestAuthorization()
     }
 
@@ -156,5 +158,15 @@ struct DLPrototype: App {
 
         self.nav.activities.statuses = allStatuses
         self.nav.activities.assess()
+    }
+    
+    /// Create notifications for upcoming due dates
+    /// - Returns: Void
+    private func createNotifications() -> Void {
+        let upcoming = CoreDataTasks(moc: self.nav.moc).upcoming(hasScheduledNotification: false).prefix(10)
+
+        for task in upcoming {
+            NotificationHelper.createInterval(interval: self.notificationInterval, task: task)
+        }
     }
 }

@@ -63,11 +63,14 @@ final class NotificationHelper {
 
         notificationCenter.add(request) { error in
             if let error = error {
-                print("Error scheduling notification: \(error)")
-            } else {
+                print("[error] Error scheduling notification: \(error)")
                 task.hasScheduledNotification = false
+            } else {
+                task.hasScheduledNotification = true
             }
         }
+
+        PersistenceController.shared.save()
     }
 
     /// Request notification auth so we can send user notifications

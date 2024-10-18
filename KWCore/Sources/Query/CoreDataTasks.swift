@@ -359,6 +359,32 @@ public class CoreDataTasks {
         return query(predicate, sort)
     }
 
+    /// Find upcoming tasks by their scheduled notification status
+    /// - Returns: Array<LogTask>
+    public func upcoming(_ date: Date = Date(), hasScheduledNotification: Bool) -> [LogTask] {
+        var predicate: NSPredicate
+
+        if hasScheduledNotification {
+            predicate = NSPredicate(
+                format: "due > %@ && hasScheduledNotification == true && (completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false)",
+                date as CVarArg,
+                hasScheduledNotification as NSNumber
+            )
+        } else {
+            predicate = NSPredicate(
+                format: "due > %@ && hasScheduledNotification == false && (completedDate == nil && cancelledDate == nil && owner.project.company.hidden == false)",
+                date as CVarArg,
+                hasScheduledNotification as NSNumber
+            )
+        }
+
+        let sort = [
+            NSSortDescriptor(keyPath: \LogTask.due, ascending: true)
+        ]
+
+        return query(predicate, sort)
+    }
+
     /// Find tasks due today
     /// - Returns: Array<LogTask>
     public func dueToday(_ date: Date = Date()) -> [LogTask] {
