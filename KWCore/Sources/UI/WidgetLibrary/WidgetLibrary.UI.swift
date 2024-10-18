@@ -1470,6 +1470,17 @@ extension WidgetLibrary {
                 _isOn = isOn
             }
         }
+
+        struct ThemeGradient: View {
+            public var reverse: Bool = false
+
+            var body: some View {
+                LinearGradient(gradient: Gradient(colors: [.clear, Theme.base]), startPoint: self.reverse ? .bottom : .top, endPoint: self.reverse ? .top : .bottom)
+                    .opacity(0.2)
+                    .blendMode(.softLight)
+                    .frame(height: 12)
+            }
+        }
     }
 }
 
