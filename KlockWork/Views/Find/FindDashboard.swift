@@ -15,6 +15,8 @@ struct FindDashboard: View {
     @EnvironmentObject public var nav: Navigation
     @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
     @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
+    @AppStorage("dashboard.showWelcomeHeader") private var showWelcomeHeader: Bool = true
+    @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
     @State public var searching: Bool = false
     public var location: WidgetLocation = .content
     @State private var searchText: String = ""
@@ -28,7 +30,6 @@ struct FindDashboard: View {
     @State private var showPeople: Bool = true
     @State private var showTerms: Bool = true
     @State private var showDefinitions: Bool = true
-    @State private var allowAlive: Bool = true
     @State private var counts: (Int, Int, Int, Int) = (0, 0, 0, 0)
     @State private var advancedSearchResults: [SearchLanguage.Results.Result] = []
     @State private var buttons: [ToolbarButton] = []
@@ -40,7 +41,7 @@ struct FindDashboard: View {
 
     var body: some View {
         Grid(alignment: .topLeading, horizontalSpacing: 0, verticalSpacing: 0) {
-            if self.location == .content {
+            if self.location == .content && self.showWelcomeHeader {
                 GridRow {
                     UniversalHeader.Widget(
                         type: self.eType,
@@ -59,20 +60,21 @@ struct FindDashboard: View {
                         onSubmit: onSubmit,
                         onReset: onReset
                     )
+                    .clipShape(.rect(topLeadingRadius: self.showWelcomeHeader ? 0 : 5, topTrailingRadius: self.showWelcomeHeader ? 0 : 5))
                 }
             }
-            Divider()
 
-            if self.showingTypes {
+            Divider()
+            /// When installed in content areas, display above suggestions
+            if showingTypes && self.location == .content {
                 GridRow {
                     ZStack(alignment: .topLeading) {
                         LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                             .blendMode(.softLight)
                             .opacity(0.3)
-                        UI.Links(location: self.location)
-                            .padding()
+                        UI.Links(location: self.location, isSearching: !searching && activeSearchText.count >= 2)
                     }
-                    .frame(height: self.location == .content ? 200 : 400)
+                    .frame(height: self.location == .content ? 250 : 400)
                 }
                 .background(Theme.rowColour)
                 .foregroundStyle(.gray)
@@ -121,44 +123,33 @@ struct FindDashboard: View {
             }
 
             if showingTypes {
-                if location == .content {
+                if location == .content || location == .sidebar {
                     GridRow {
-                        ZStack(alignment: .leading) {
+                        ZStack(alignment: .topLeading) {
                             self.nav.parent?.appPage.primaryColour.opacity(0.6) ?? Theme.subHeaderColour
+                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                .blendMode(.softLight)
+                                .opacity(0.3)
+                                .frame(height: 20)
 
-                            HStack {
-                                Toggle("Records", isOn: $showRecords)
-                                Toggle("Notes", isOn: $showNotes)
-                                Toggle("Tasks", isOn: $showTasks)
-                                Toggle("Projects", isOn: $showProjects)
-                                Toggle("Jobs", isOn: $showJobs)
-                                Toggle("Companies", isOn: $showCompanies)
-                                Toggle("People", isOn: $showPeople)
-                                Toggle("Terms & Definitions", isOn: $showTerms)
+                            HStack(alignment: .center) {
+                                UI.Toggle(isOn: $showRecords, eType: .records)
+                                UI.Toggle(isOn: $showNotes, eType: .notes)
+                                UI.Toggle(isOn: $showTasks, eType: .tasks)
+                                UI.Toggle(isOn: $showProjects, eType: .projects)
+                                UI.Toggle(isOn: $showJobs, eType: .jobs)
+                                UI.Toggle(isOn: $showCompanies, eType: .companies)
+                                UI.Toggle(isOn: $showPeople, eType: .people)
+                                UI.Toggle(isOn: $showTerms, eType: .terms)
                                 Spacer()
-                                Toggle("Published Only", isOn: $allowAlive)
+                                UI.Toggle(isOn: $allowAlive, icon: "heart", selectedIcon: "heart.fill")
+                                    .help("Published only")
                             }
+                            .padding(.top, 8)
                             .padding([.leading, .trailing], 10)
                         }
                     }
                     .frame(height: 40)
-                    .foregroundStyle(.gray)
-                } else if location == .sidebar {
-                    GridRow {
-                        LazyVGrid(columns: columns, alignment: .leading) {
-                            Toggle("Records", isOn: $showRecords)
-                            Toggle("Notes", isOn: $showNotes)
-                            Toggle("Tasks", isOn: $showTasks)
-                            Toggle("Projects", isOn: $showProjects)
-                            Toggle("Jobs", isOn: $showJobs)
-                            Toggle("Companies", isOn: $showCompanies)
-                            Toggle("People", isOn: $showPeople)
-                            Toggle("Terms & Definitions", isOn: $showTerms)
-                            Toggle("Published Only", isOn: $allowAlive)
-                        }
-                        .padding(10)
-                    }
-                    .background(location == .sidebar ? Theme.rowColour : self.nav.parent?.appPage.primaryColour.opacity(0.2))
                     .foregroundStyle(.gray)
                 }
             }

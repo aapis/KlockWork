@@ -25,7 +25,6 @@ struct FancyStarv2: View {
         Image(systemName: "star.fill")
             .padding(.trailing, 8)
             .foregroundStyle(.yellow)
-            .font(.title3)
-            .shadow(color: .black.opacity(0.5), radius: 3)
+            .shadow(color: Theme.base, radius: 1, x: 1, y: 1)
     }
 }

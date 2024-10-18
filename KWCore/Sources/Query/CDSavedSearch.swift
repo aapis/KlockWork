@@ -52,6 +52,18 @@ public class CDSavedSearch: ObservableObject {
         return nil
     }
 
+    /// Destroy all saved search terms
+    /// - Returns: Void
+    public func destroyAll() -> Void {
+        let entities = self.query(NSPredicate(format: "created < %@", Date.now as CVarArg))
+
+        for entity in entities {
+            self.moc!.delete(entity)
+        }
+
+        PersistenceController.shared.save()
+    }
+
     /// Destroy a saved search term
     /// - Parameter term: SavedSearch
     /// - Returns: Void
@@ -105,7 +117,7 @@ public class CDSavedSearch: ObservableObject {
     /// - Parameter predicate: Query predicate
     /// - Parameter sort: [NSSortDescriptor]
     /// - Returns: Array<SavedSearch>
-    private func query(_ predicate: NSPredicate? = nil, _ sort: [NSSortDescriptor] = [NSSortDescriptor(keyPath: \SavedSearch.term?, ascending: true)]) -> [SavedSearch] {
+    private func query(_ predicate: NSPredicate? = nil, _ sort: [NSSortDescriptor] = [NSSortDescriptor(keyPath: \SavedSearch.created?, ascending: true)]) -> [SavedSearch] {
         lock.lock()
 
         var results: [SavedSearch] = []
@@ -137,7 +149,7 @@ public class CDSavedSearch: ObservableObject {
     /// - Parameter predicate: Query predicate
     /// - Parameter sort: [NSSortDescriptor]
     /// - Returns: Int
-    private func count(_ predicate: NSPredicate, sort: [NSSortDescriptor] = [NSSortDescriptor(keyPath: \SavedSearch.term?, ascending: true)]) -> Int {
+    private func count(_ predicate: NSPredicate, sort: [NSSortDescriptor] = [NSSortDescriptor(keyPath: \SavedSearch.created?, ascending: true)]) -> Int {
         lock.lock()
 
         var count = 0

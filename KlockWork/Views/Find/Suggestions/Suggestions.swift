@@ -32,23 +32,26 @@ extension FindDashboard {
             VStack(alignment: .leading, spacing: 0) {
                 ScrollView(showsIndicators: false) {
                     VStack {
-                        VStack {
-                            if searchText.count >= 2 || isSearching {
-                                HStack {
-                                    UI.ListLinkTitle(text: location == .content ? "Hit enter/return to see all results" : "Suggestions for your query")
-                                    Spacer()
-                                    FancyButtonv2(
-                                        text: "",
-                                        action: {self.isMinimized.toggle()},
-                                        icon: self.isMinimized ? "plus.square.fill" : "minus.square.fill",
-                                        showLabel: false,
-                                        showIcon: true,
-                                        size: .tinyLink,
-                                        type: .clear
-                                    )
-                                    .help("Minimize suggestions")
-                                }
+                        if searchText.count >= 2 || isSearching {
+                            HStack {
+                                UI.ListLinkTitle(text: location == .content ? "Hit enter/return to see all results" : "Suggestions for your query")
+                                Spacer()
+                                FancyButtonv2(
+                                    text: "",
+                                    action: {self.isMinimized.toggle()},
+                                    icon: self.isMinimized ? "plus.square.fill" : "minus.square.fill",
+                                    showLabel: false,
+                                    showIcon: true,
+                                    size: .tinyLink,
+                                    type: .clear
+                                )
+                                .help("Minimize suggestions")
+                            }
+                            .padding([.leading, .trailing], 8)
+                        }
 
+                        if searchText.count >= 2 || isSearching {
+                            VStack {
                                 if !self.isMinimized {
                                     // @TODO: reduce this with a loop, each view is basically identical...
                                     if showRecords {SuggestedRecords(searchText: $searchText, publishedOnly: $publishedOnly)}
@@ -62,14 +65,15 @@ extension FindDashboard {
                                     if showDefinitions {SuggestedDefinitions(searchText: $searchText, publishedOnly: $publishedOnly)}
                                 }
                             }
+                            .padding(self.location == .content ? 16 : 8)
+                            .background(Theme.textBackground)
+                            .clipShape(.rect(cornerRadius: 5))
                         }
-                        .padding(self.location == .content ? 16 : 5)
-                        .background(Theme.textBackground)
-                        .clipShape(.rect(cornerRadius: 5))
                     }
                     .padding(.leading, self.location == .content ? 16 : 8)
                     .padding(.trailing, self.location == .content ? 16 : 8)
                     .padding(.bottom, self.location == .content ? 16 : 8)
+                    .padding(.top, self.location == .content ? 16 : 8)
                 }
             }
             .background(location == .content ? Theme.rowColour : Color.clear)
@@ -81,7 +85,7 @@ extension FindDashboard {
                 self.timer?.invalidate()
 
                 if self.searchText.count > 2 {
-                    self.timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { _ in
+                    self.timer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: false) { _ in
                         let termIsSaved = CDSavedSearch(moc: self.nav.moc).find(by: self.searchText) == nil
                         let termIsRecent = self.nav.session.search.history.contains(where: {$0 == self.searchText})
 
