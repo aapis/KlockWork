@@ -123,59 +123,60 @@ struct FindDashboard: View {
             }
 
             if showingTypes {
-                if location == .content {
+                if location == .content || location == .sidebar {
                     GridRow {
                         ZStack(alignment: .leading) {
                             self.nav.parent?.appPage.primaryColour.opacity(0.6) ?? Theme.subHeaderColour
 
                             HStack {
-                                Toggle("Records", isOn: $showRecords)
-                                Toggle("Notes", isOn: $showNotes)
-                                Toggle("Tasks", isOn: $showTasks)
-                                Toggle("Projects", isOn: $showProjects)
-                                Toggle("Jobs", isOn: $showJobs)
-                                Toggle("Companies", isOn: $showCompanies)
-                                Toggle("People", isOn: $showPeople)
-                                Toggle("Terms & Definitions", isOn: $showTerms)
+                                UI.Toggle(isOn: $showRecords, eType: .records)
+                                UI.Toggle(isOn: $showNotes, eType: .notes)
+                                UI.Toggle(isOn: $showTasks, eType: .tasks)
+                                UI.Toggle(isOn: $showProjects, eType: .projects)
+                                UI.Toggle(isOn: $showJobs, eType: .jobs)
+                                UI.Toggle(isOn: $showCompanies, eType: .companies)
+                                UI.Toggle(isOn: $showPeople, eType: .people)
+                                UI.Toggle(isOn: $showTerms, eType: .terms)
                                 Spacer()
-                                Toggle("Published Only", isOn: $allowAlive)
+                                UI.Toggle(isOn: $allowAlive, icon: "heart", selectedIcon: "heart.fill")
                             }
                             .padding([.leading, .trailing], 10)
                         }
                     }
                     .frame(height: 40)
                     .foregroundStyle(.gray)
-                } else if location == .sidebar {
-                    /// When installed the sidebar, display below suggestions
-                    GridRow {
-                        ZStack(alignment: .topLeading) {
-                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
-                                .blendMode(.softLight)
-                                .opacity(0.3)
-                            UI.Links(location: self.location)
-                        }
-                        .frame(height: self.location == .content ? 250 : 400)
-                    }
-                    .background(Theme.rowColour)
-                    .foregroundStyle(.gray)
-
-                    GridRow {
-                        LazyVGrid(columns: columns, alignment: .leading) {
-                            Toggle("Records", isOn: $showRecords)
-                            Toggle("Notes", isOn: $showNotes)
-                            Toggle("Tasks", isOn: $showTasks)
-                            Toggle("Projects", isOn: $showProjects)
-                            Toggle("Jobs", isOn: $showJobs)
-                            Toggle("Companies", isOn: $showCompanies)
-                            Toggle("People", isOn: $showPeople)
-                            Toggle("Terms & Definitions", isOn: $showTerms)
-                            Toggle("Published Only", isOn: $allowAlive)
-                        }
-                        .padding(10)
-                    }
-                    .background(location == .sidebar ? Theme.rowColour : self.nav.parent?.appPage.primaryColour.opacity(0.2))
-                    .foregroundStyle(.gray)
                 }
+//                else if 1==2 {
+//                    /// When installed the sidebar, display below suggestions
+//                    GridRow {
+//                        ZStack(alignment: .topLeading) {
+//                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+//                                .blendMode(.softLight)
+//                                .opacity(0.3)
+//                            UI.Links(location: self.location)
+//                        }
+//                        .frame(height: self.location == .content ? 250 : 400)
+//                    }
+//                    .background(Theme.rowColour)
+//                    .foregroundStyle(.gray)
+//
+//                    GridRow {
+//                        LazyVGrid(columns: columns, alignment: .leading) {
+//                            UI.Toggle(isOn: $showRecords, eType: .records)
+//                            UI.Toggle(isOn: $showNotes, eType: .notes)
+//                            UI.Toggle(isOn: $showTasks, eType: .tasks)
+//                            UI.Toggle(isOn: $showProjects, eType: .projects)
+//                            UI.Toggle(isOn: $showJobs, eType: .jobs)
+//                            UI.Toggle(isOn: $showCompanies, eType: .companies)
+//                            UI.Toggle(isOn: $showPeople, eType: .people)
+//                            UI.Toggle(isOn: $showTerms, eType: .terms)
+//                            UI.Toggle("Published Only", isOn: $allowAlive)
+//                        }
+//                        .padding(10)
+//                    }
+//                    .background(location == .sidebar ? Theme.rowColour : self.nav.parent?.appPage.primaryColour.opacity(0.2))
+//                    .foregroundStyle(.gray)
+//                }
             }
 
             if searching {

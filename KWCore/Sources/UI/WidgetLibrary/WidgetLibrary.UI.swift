@@ -1431,6 +1431,48 @@ extension WidgetLibrary {
                 .background(self.state.session.job?.backgroundColor ?? .clear)
             }
         }
+
+        struct Toggle: View {
+            public var title: String? = nil
+            @Binding public var isOn: Bool
+            public var eType: PageConfiguration.EntityType? = .BruceWillis
+            public var icon: String? = nil
+            public var selectedIcon: String? = nil
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                Button {
+                    self.isOn.toggle()
+                } label: {
+                    HStack(spacing: 4) {
+                        if let title = self.title {
+                            Text(title)
+                        } else if let icon = self.icon {
+                            (self.isOn ? Image(systemName: self.selectedIcon ?? "xmark") : Image(systemName: icon))
+                        } else {
+                            if self.isOn {
+                                self.eType?.selectedIcon ?? Image(systemName: "xmark")
+                            } else {
+                                self.eType?.icon ?? Image(systemName: "xmark")
+                            }
+                        }
+                    }
+                    .foregroundStyle(self.isOn ? .yellow : .gray)
+                    .padding(3)
+                }
+                .help(self.title ?? "")
+                .buttonStyle(.plain)
+                .useDefaultHover({ hover in self.isHighlighted = hover })
+            }
+
+            init(_ title: String? = nil, isOn: Binding<Bool>, eType: PageConfiguration.EntityType? = .BruceWillis, icon: String? = nil, selectedIcon: String? = nil) {
+                self.title = title
+                self.eType = eType
+                self.icon = icon
+                self.selectedIcon = selectedIcon
+                _isOn = isOn
+            }
+        }
     }
 }
 
