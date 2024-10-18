@@ -11,6 +11,7 @@ import KWCore
 
 struct UnifiedSidebar {
     struct Widget: View {
+        typealias UI = WidgetLibrary.UI
         @EnvironmentObject public var state: Navigation
         @State private var companies: [Company] = []
         @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
@@ -27,13 +28,8 @@ struct UnifiedSidebar {
                             .foregroundStyle(.white)
                             .clipShape(RoundedRectangle(cornerRadius: 5))
                         Spacer()
-                        Toggle("Published", isOn: $showPublished)
-                            .padding(6)
-                            .background(self.showPublished ? Theme.textBackground : .white.opacity(0.5))
-                            .foregroundStyle(self.showPublished ? .white : Theme.base)
-                            .clipShape(RoundedRectangle(cornerRadius: 5))
+                        UI.Toggle(isOn: $showPublished, icon: "heart", selectedIcon: "heart.fill")
                             .help("Show or hide unpublished items")
-                            .font(.caption)
                     }
                     .padding(8)
                 }
