@@ -1459,6 +1459,7 @@ extension WidgetLibrary {
                 .help(self.title ?? self.eType?.label ?? "")
                 .buttonStyle(.plain)
                 .useDefaultHover({ hover in self.isHighlighted = hover })
+                .shadow(color: self.isOn ? Theme.base : .clear, radius: 1, x: 1, y: 1)
             }
 
             init(_ title: String? = nil, isOn: Binding<Bool>, eType: PageConfiguration.EntityType? = .BruceWillis, icon: String? = nil, selectedIcon: String? = nil) {
