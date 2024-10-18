@@ -85,7 +85,7 @@ extension FindDashboard {
                 self.timer?.invalidate()
 
                 if self.searchText.count > 2 {
-                    self.timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: false) { _ in
+                    self.timer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: false) { _ in
                         let termIsSaved = CDSavedSearch(moc: self.nav.moc).find(by: self.searchText) == nil
                         let termIsRecent = self.nav.session.search.history.contains(where: {$0 == self.searchText})
 
