@@ -22,7 +22,7 @@ struct UnifiedSidebar {
                     Theme.base.opacity(0.2)
 
                     HStack(alignment: .center, spacing: 8) {
-                        Text("\(self.companies.count) Companies")
+                        Text("Explore")
                             .padding(6)
                             .background(Theme.textBackground)
                             .foregroundStyle(.white)
