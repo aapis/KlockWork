@@ -124,7 +124,6 @@ extension NoteCreate {
             
             // the last note you interacted with
             self.state.session.note = note
-            self.state.save()
         } else {
             print("[error][note.create] A title is required to save")
         }

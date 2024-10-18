@@ -87,8 +87,8 @@ struct NoteFormWidget: View {
                 FancySimpleButton(
                     text: note == nil ? "Create" : "Save",
                     action: {nav.save()},
-                    type: nav.forms.note.job == nil ? .error : .primary,
-                    href: note == nil ? .notes : nil
+                    type: nav.forms.note.job == nil ? .error : .primary
+//                    href: note == nil ? .notes : nil
                 )
                 .keyboardShortcut("s", modifiers: .command)
                 .disabled(nav.forms.note.job == nil)
@@ -438,6 +438,8 @@ extension NoteFormWidget {
     private func actionOnAppear() -> Void {
         if let stored = self.nav.session.note {
             self.note = stored
+            self.nav.session.note = nil
+            self.nav.forms.note.job = stored.mJob
             self.mode = .update
 
             let versions = stored.versions?.allObjects as! [NoteVersion]
@@ -448,8 +450,6 @@ extension NoteFormWidget {
 
         if let job = nav.session.job {
             nav.forms.note.job = job
-        } else if let n = note {
-            nav.forms.note.job = n.mJob
         }
 
         nav.forms.note.version = currentVersion
