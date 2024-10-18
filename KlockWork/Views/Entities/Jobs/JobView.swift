@@ -76,12 +76,12 @@ struct JobView: View {
                 PersistenceController.shared.save()
             }
         }
-        .onChange(of: alive) { status in
-            job.alive = status
+        .onChange(of: self.alive) {
+            job.alive = self.alive
             PersistenceController.shared.save()
         }
-        .onChange(of: nav.saved) { status in
-            if status {
+        .onChange(of: self.nav.saved) {
+            if self.nav.saved {
                 self.update()
             }
         }

@@ -67,7 +67,7 @@ struct NoteDashboard: View {
                     UI.BoundSearchBar(
                         text: $searchText,
                         disabled: false,
-                        placeholder: notes.count > 1 ? "Search \(self.notes.count) notes" : "Search 1 note"
+                        placeholder: notes.count > 1 ? "Filter \(self.notes.count) notes" : "Filter 1 note"
                     )
                     FancyDivider(height: 20)
 
