@@ -162,6 +162,7 @@ struct Home: View {
             }
         }
         .onAppear(perform: self.onAppear)
+        .onChange(of: self.nav.session.company) { self.actionOnChangeCompany() }
     }
 
     @ViewBuilder var Sidebar: some View {
@@ -310,5 +311,12 @@ extension Home {
         }
 
         return .ready
+    }
+    
+    /// Fires when you change companies, resets children
+    /// - Returns: Void
+    private func actionOnChangeCompany() -> Void {
+        self.nav.session.project = nil
+        self.nav.session.job = nil
     }
 }
