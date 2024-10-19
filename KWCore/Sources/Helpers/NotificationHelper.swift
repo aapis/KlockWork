@@ -11,7 +11,7 @@ import UserNotifications
 
 final class NotificationHelper {
     /// Remove delivered notifications with the same ID
-    /// - Parameter identifier: String
+    /// - Parameter identifier: Optional(String)
     /// - Returns: Void
     static public func clean(identifier: String? = nil) -> Void {
         if let id = identifier {
@@ -21,7 +21,23 @@ final class NotificationHelper {
             UNUserNotificationCenter.current().removeAllDeliveredNotifications()
         }
     }
-    
+
+    /// Remove notifications and set task.hasScheduledNotification to false
+    /// - Parameter identifier: Optional(String)
+    /// - Parameter task: LogTask
+    /// - Returns: Void
+    static public func clean(identifier: String? = nil, task: LogTask) -> Void {
+        if let id = identifier {
+            UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [id])
+        } else {
+            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+            UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        }
+
+        task.hasScheduledNotification = false
+        PersistenceController.shared.save()
+    }
+
     /// Create a new notification
     /// - Parameters:
     ///   - title: String
@@ -30,7 +46,7 @@ final class NotificationHelper {
     ///   - identifier: String
     ///   - repeats: Bool(false)
     static public func create(title: String, task: LogTask, minutesBefore: Int = 5, repeats: Bool = false) -> Void {
-        if task.due == nil {
+        if task.due == nil /*|| task.hasScheduledNotification == true*/ {
             return
         }
 
@@ -53,20 +69,21 @@ final class NotificationHelper {
 
         let notificationCenter = UNUserNotificationCenter.current()
         let content = UNMutableNotificationContent()
-        content.title = task.content!
+        content.title = title
         content.body = task.notificationBody
         content.sound = UNNotificationSound.default
 
         let trigger = UNCalendarNotificationTrigger(dateMatching: dc, repeats: repeats)
         let request = UNNotificationRequest(identifier: task.id?.uuidString ?? "no-id", content: content, trigger: trigger)
         self.clean(identifier: task.id?.uuidString ?? "no-id")
-
+        
         notificationCenter.add(request) { error in
-            if let error = error {
-                print("[error] Error scheduling notification: \(error)")
-                task.hasScheduledNotification = false
-            } else {
+            if error == nil {
+                print("DERPO task=\(task.content ?? "Invalid") \(task.due?.formatted() ?? "No date") hsn=\(task.hasScheduledNotification)")
                 task.hasScheduledNotification = true
+            } else {
+                print("[error] Unable to create notification for task \(task.content ?? task.id?.uuidString ?? "Invalid")")
+                print("[error] Error: \(String(describing: error?.localizedDescription))")
             }
         }
 
@@ -125,6 +142,15 @@ final class NotificationHelper {
             NotificationHelper.create(title: "In 5 minutes", task: task)
         default:
             print("[warning] User has not set notifications.interval yet")
+        }
+    }
+
+    /// Create notifications for upcoming due dates
+    /// - Returns: Void
+    static public func createNotifications(from upcoming: [LogTask], interval: Int) -> Void {
+        print("DERPO createNotifications")
+        for task in upcoming.prefix(10) {
+            NotificationHelper.createInterval(interval: interval, task: task)
         }
     }
 }
