@@ -695,6 +695,10 @@ extension Navigation.Session.Search {
     /// - Parameter label: String
     /// - Returns: Void
     mutating func addToHistory(_ label: String) -> Void {
+        if label.isEmpty {
+            return
+        }
+
         if self.history.count > 20 {
             let _ = self.history.popFirst()
         }
