@@ -34,7 +34,11 @@ struct DLPrototype: App {
             FactorProxy(date: self.nav.session.date, weight: 1, type: .people, action: .create),
             FactorProxy(date: self.nav.session.date, weight: 1, type: .people, action: .interaction),
             FactorProxy(date: self.nav.session.date, weight: 1, type: .projects, action: .create),
-            FactorProxy(date: self.nav.session.date, weight: 1, type: .projects, action: .interaction)
+            FactorProxy(date: self.nav.session.date, weight: 1, type: .projects, action: .interaction),
+            FactorProxy(date: self.nav.session.date, weight: 1, type: .definitions, action: .create),
+            FactorProxy(date: self.nav.session.date, weight: 1, type: .definitions, action: .interaction),
+            FactorProxy(date: self.nav.session.date, weight: 1, type: .terms, action: .create),
+            FactorProxy(date: self.nav.session.date, weight: 1, type: .terms, action: .interaction)
         ]
     }
 
@@ -118,10 +122,12 @@ struct DLPrototype: App {
             }
         }
 
-        self.createNotifications()
         self.createAssessments()
-//        NotificationHelper.clean() // @TODO: shouldn't be necessary here, remove if still commented out
         NotificationHelper.requestAuthorization()
+        NotificationHelper.createNotifications(
+            from: CoreDataTasks(moc: self.nav.moc).upcoming(hasScheduledNotification: false),
+            interval: self.notificationInterval
+        )
     }
 
     func application(application: any App, continueUserActivity userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {
@@ -158,15 +164,5 @@ struct DLPrototype: App {
 
         self.nav.activities.statuses = allStatuses
         self.nav.activities.assess()
-    }
-    
-    /// Create notifications for upcoming due dates
-    /// - Returns: Void
-    private func createNotifications() -> Void {
-        let upcoming = CoreDataTasks(moc: self.nav.moc).upcoming(hasScheduledNotification: false).prefix(10)
-
-        for task in upcoming {
-            NotificationHelper.createInterval(interval: self.notificationInterval, task: task)
-        }
     }
 }
