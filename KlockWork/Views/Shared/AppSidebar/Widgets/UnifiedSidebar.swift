@@ -144,6 +144,7 @@ struct UnifiedSidebar {
             VStack(alignment: .leading, spacing: 0) {
                 ZStack(alignment: .trailing) {
                     RowButton(text: self.entity.name ?? "_PROJECT_NAME", alive: self.entity.alive, callback: {
+                        self.state.session.company = self.entity.company
                         self.state.session.project = self.entity
                     }, isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
@@ -232,6 +233,9 @@ struct UnifiedSidebar {
                             if let company = entity.project!.company {
                                 self.state.planning.companies.insert(company)
                             }
+                        } else {
+                            self.state.session.company = self.entity.project?.company
+                            self.state.session.project = self.entity.project
                         }
                     }, isPresented: $isPresented)
                     .useDefaultHover({ inside in self.highlighted = inside})
