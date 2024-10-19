@@ -88,7 +88,6 @@ struct NoteFormWidget: View {
                     text: note == nil ? "Create" : "Save",
                     action: {nav.save()},
                     type: nav.forms.note.job == nil ? .error : .primary
-//                    href: note == nil ? .notes : nil
                 )
                 .keyboardShortcut("s", modifiers: .command)
                 .disabled(nav.forms.note.job == nil)
