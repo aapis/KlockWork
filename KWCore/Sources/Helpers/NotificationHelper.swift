@@ -79,7 +79,6 @@ final class NotificationHelper {
         
         notificationCenter.add(request) { error in
             if error == nil {
-                print("DERPO task=\(task.content ?? "Invalid") \(task.due?.formatted() ?? "No date") hsn=\(task.hasScheduledNotification)")
                 task.hasScheduledNotification = true
             } else {
                 print("[error] Unable to create notification for task \(task.content ?? task.id?.uuidString ?? "Invalid")")
@@ -148,7 +147,6 @@ final class NotificationHelper {
     /// Create notifications for upcoming due dates
     /// - Returns: Void
     static public func createNotifications(from upcoming: [LogTask], interval: Int) -> Void {
-        print("DERPO createNotifications")
         for task in upcoming.prefix(10) {
             NotificationHelper.createInterval(interval: interval, task: task)
         }
