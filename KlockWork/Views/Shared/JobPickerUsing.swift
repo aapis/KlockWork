@@ -86,7 +86,7 @@ struct JobPickerUsing: View {
                     bgColour: jobIdFieldColour,
                     text: $jobId
                 )
-                .border(jobIdFieldColour == Color.clear ? Color.black.opacity(0.1) : Color.clear, width: 2)
+                .border(jobIdFieldColour == Color.clear ? Theme.base.opacity(0.1) : Color.clear, width: 2)
                 .onChange(of: jobId) {
                     if jobId != "" {
                         if let iJid = Int(jobId) {
@@ -135,7 +135,7 @@ struct JobPickerUsing: View {
     private func applyStyle() -> Void {
         if let selectedJob = jm.byId(Double(jobId)!) {
             jobIdFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
-            jobIdFieldTextColour = jobIdFieldColour.isBright() ? Color.black : Color.white
+            jobIdFieldTextColour = jobIdFieldColour.isBright() ? Theme.base : Color.white
             self.nav.session.job = selectedJob
         } else {
             jobIdFieldColour = Color.clear

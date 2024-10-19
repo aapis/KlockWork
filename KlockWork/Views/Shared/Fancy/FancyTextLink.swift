@@ -17,7 +17,7 @@ struct FancyTextLink: View {
     public var showIcon: Bool? = false
     public var destination: AnyView?
     public var fgColour: Color? = Color.white
-    public var bgColour: Color? = Color.black.opacity(0.2)
+    public var bgColour: Color? = Theme.base.opacity(0.2)
     public var pageType: Page = .today
     public var sidebar: AnyView? = nil
     @State private var highlighted: Bool = false

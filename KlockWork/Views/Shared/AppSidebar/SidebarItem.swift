@@ -17,7 +17,7 @@ public enum ItemRole {
         case .important:
             return Color.red
         case .standard:
-            return Color.black
+            return Theme.base
         case .action:
             return Color.green
         }

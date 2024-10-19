@@ -137,7 +137,7 @@ struct ProjectCreate: View {
                                 colour
                                 Text(colour.description.debugDescription)
                                     .padding(5)
-                                    .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                                    .foregroundColor(colour.isBright() ? Theme.base : Color.white)
                             }
                         }
                     }

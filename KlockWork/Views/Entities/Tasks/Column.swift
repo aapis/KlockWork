@@ -111,7 +111,7 @@ struct Column: View {
                     self.nav.to(.jobs)
                 } label: {
                     Text(text.replacingOccurrences(of: ".0", with: ""))
-                        .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                        .foregroundColor(colour.isBright() ? Theme.base : Color.white)
 
                         .help("Edit job")
                 }
@@ -123,7 +123,7 @@ struct Column: View {
             // TODO: move to new statuses column
 //            if job!.shredable {
 //                Image(systemName: "dollarsign.circle")
-//                    .foregroundColor(colour.isBright() ? Color.black : Color.white)
+//                    .foregroundColor(colour.isBright() ? Theme.base : Color.white)
 //                    .help("Eligible for SR&ED")
 //            }
         }

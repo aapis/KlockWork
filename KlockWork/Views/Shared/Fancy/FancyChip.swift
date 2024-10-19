@@ -41,7 +41,7 @@ struct FancyChip: View {
                     .font(Theme.font)
             }
         }
-        .foregroundColor(type.colour.isBright() ? Color.black : Color.gray)
+        .foregroundColor(type.colour.isBright() ? Theme.base : Color.gray)
         .buttonStyle(.borderless)
         .padding(5)
         .background(type.colour)

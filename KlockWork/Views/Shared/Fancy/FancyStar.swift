@@ -15,7 +15,7 @@ struct FancyStar: View {
     var body: some View {
         Image(systemName: "star.fill")
             .foregroundColor(background.isBright() ? .black : .yellow)
-            .shadow(color: (background.isBright() ? Color.yellow : Color.black).opacity(0.4), radius: 3)
+            .shadow(color: (background.isBright() ? Color.yellow : Theme.base).opacity(0.4), radius: 3)
     }
 }
 

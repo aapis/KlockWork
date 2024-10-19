@@ -74,7 +74,7 @@ struct ProjectPickerUsing: View {
                         bgColour: idFieldColour,
                         text: $projectName
                     )
-                    .border(idFieldColour == Color.clear ? Color.black.opacity(0.1) : Color.clear, width: 2)
+                    .border(idFieldColour == Color.clear ? Theme.base.opacity(0.1) : Color.clear, width: 2)
                     
                     HStack {
                         FancyPicker(
@@ -101,7 +101,7 @@ struct ProjectPickerUsing: View {
                         )
                     }
                     .padding()
-                    .border(idFieldColour == Color.clear ? Color.black.opacity(0.1) : Color.clear, width: 2)
+                    .border(idFieldColour == Color.clear ? Theme.base.opacity(0.1) : Color.clear, width: 2)
                 }
             }
         }
@@ -133,7 +133,7 @@ extension ProjectPickerUsing {
 
         if let selectedJob = CoreDataProjects(moc: moc).byId(Int64(exactly: selected)!) {
             idFieldColour = Color.fromStored(selectedJob.colour ?? Theme.rowColourAsDouble)
-            idFieldTextColour = idFieldColour.isBright() ? Color.black : Color.white
+            idFieldTextColour = idFieldColour.isBright() ? Theme.base : Color.white
         } else {
             idFieldColour = Color.clear
             idFieldTextColour = Color.white

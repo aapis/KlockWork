@@ -35,7 +35,7 @@ struct FancyRandomJobColourPicker: View {
                 bgColour: Color.clear,
                 text: $colour
             )
-            .border(Color.black.opacity(0.1), width: 2)
+            .border(Theme.base.opacity(0.1), width: 2)
             .frame(width: 200)
             .onAppear(perform: {
                 colour = backgroundColour().description
