@@ -10,6 +10,18 @@ import SwiftUI
 import UserNotifications
 
 final class NotificationHelper {
+    static public let notificationTypeTask = UNNotificationCategory(
+        identifier: "TASK",
+        actions: [
+            UNNotificationAction(identifier: "COMPLETE_ACTION", title: "Complete", options: []),
+            UNNotificationAction(identifier: "DELAY_ACTION", title: "Delay", options: []),
+            UNNotificationAction(identifier: "CANCEL_ACTION", title: "Cancel", options: [])
+        ],
+        intentIdentifiers: [],
+        hiddenPreviewsBodyPlaceholder: "",
+        options: .customDismissAction
+    )
+
     /// Remove delivered notifications with the same ID
     /// - Parameter identifier: Optional(String)
     /// - Returns: Void
@@ -72,11 +84,18 @@ final class NotificationHelper {
         content.title = title
         content.body = task.notificationBody
         content.sound = UNNotificationSound.default
+        content.categoryIdentifier = "TASK"
 
         let trigger = UNCalendarNotificationTrigger(dateMatching: dc, repeats: repeats)
         let request = UNNotificationRequest(identifier: task.id?.uuidString ?? "no-id", content: content, trigger: trigger)
         self.clean(identifier: task.id?.uuidString ?? "no-id")
-        
+
+        notificationCenter.setNotificationCategories(
+            [
+                NotificationHelper.notificationTypeTask
+            ]
+        )
+
         notificationCenter.add(request) { error in
             if error == nil {
                 task.hasScheduledNotification = true
@@ -150,5 +169,31 @@ final class NotificationHelper {
         for task in upcoming.prefix(10) {
             NotificationHelper.createInterval(interval: interval, task: task)
         }
+    }
+
+    // @TODO: from https://developer.apple.com/documentation/usernotifications/declaring-your-actionable-notification-types
+    static public func handleNotificationActions(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        // Get the meeting ID from the original notification.
+        let userInfo = response.notification.request.content.userInfo
+        let meetingID = userInfo["MEETING_ID"] as! String
+        let userID = userInfo["USER_ID"] as! String
+
+        // Perform the task associated with the action.
+        switch response.actionIdentifier {
+        case "COMPLETE_ACTION":
+//          sharedMeetingManager.acceptMeeting(user: userID, meetingID: meetingID)
+          break
+
+        case "DECLINE_ACTION":
+//          sharedMeetingManager.declineMeeting(user: userID, meetingID: meetingID)
+          break
+
+        // Handle other actions...
+        default:
+          break
+        }
+
+        // Always call the completion handler when done.
+        completionHandler()
     }
 }
