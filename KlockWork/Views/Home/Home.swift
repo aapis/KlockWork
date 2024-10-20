@@ -119,6 +119,13 @@ struct Home: View {
                     sidebar: AnyView(DefaultCompanySidebar())
                 ),
                 SidebarButton(
+                    destination: AnyView(ProjectsDashboard()),
+                    pageType: .projects,
+                    iconAsImage: Entity.projects.icon,
+                    label: Entity.projects.label,
+                    sidebar: AnyView(DefaultCompanySidebar())
+                ),
+                SidebarButton(
                     destination: AnyView(JobDashboard()),
                     pageType: .jobs,
                     iconAsImage: Entity.jobs.icon,
