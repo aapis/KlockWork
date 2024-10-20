@@ -165,4 +165,29 @@ struct DLPrototype: App {
         self.nav.activities.statuses = allStatuses
         self.nav.activities.assess()
     }
+
+    private func handleNotificationActions(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        // Get the meeting ID from the original notification.
+        let userInfo = response.notification.request.content.userInfo
+        let meetingID = userInfo["MEETING_ID"] as! String
+        let userID = userInfo["USER_ID"] as! String
+
+        // Perform the task associated with the action.
+        switch response.actionIdentifier {
+        case "COMPLETE_ACTION":
+//          sharedMeetingManager.acceptMeeting(user: userID, meetingID: meetingID)
+          break
+
+        case "DECLINE_ACTION":
+//          sharedMeetingManager.declineMeeting(user: userID, meetingID: meetingID)
+          break
+
+        // Handle other actions...
+        default:
+          break
+        }
+
+        // Always call the completion handler when done.
+        completionHandler()
+    }
 }
