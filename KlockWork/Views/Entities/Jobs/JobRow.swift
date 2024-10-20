@@ -29,7 +29,7 @@ struct JobRow: View {
                         self.nav.to(.jobs)
                     } label: {
                         Text(job.jid.string)
-                            .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                            .foregroundColor(colour.isBright() ? Theme.base : Color.white)
                             .padding([.leading, .trailing], 10)
                             .useDefaultHover({_ in})
                             .help("Edit job")
@@ -41,7 +41,7 @@ struct JobRow: View {
                         Spacer()
                         Link(destination: job.uri!, label: {
                             Image(systemName: "link")
-                                .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                                .foregroundColor(colour.isBright() ? Theme.base : Color.white)
                                 .onHover { inside in
                                     if inside {
                                         NSCursor.pointingHand.push()
@@ -61,7 +61,7 @@ struct JobRow: View {
                 
                 Text(colour.description.debugDescription)
                     .padding(10)
-                    .foregroundColor(colour.isBright() ? Color.black : Color.white)
+                    .foregroundColor(colour.isBright() ? Theme.base : Color.white)
                     .contextMenu {
                         Button(action: {ClipboardHelper.copy("\(colour)".debugDescription)}, label: {
                             Text("Copy colour code")

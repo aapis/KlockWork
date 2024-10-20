@@ -21,15 +21,15 @@ public enum ButtonType {
         case .star:
             return [Color.yellow, Color.orange]
         case .standard:
-            return [Theme.headerColour, Color.black]
+            return [Theme.headerColour, Theme.base]
         case .secondary:
-            return [Theme.secondary, Color.black]
+            return [Theme.secondary, Theme.base]
         case .white, .tsWhite:
             return [Color.white, Color.gray]
         case .titleLink, .clear:
             return [.clear, .clear]
         case .error:
-            return [.red, .black]
+            return [.red, Theme.base]
         }
     }
 
@@ -40,11 +40,11 @@ public enum ButtonType {
         case .destructive:
             return Color.white
         case .star:
-            return Color.black
+            return Theme.base
         case .standard, .secondary:
             return Color.white
         case .white, .tsWhite, .error:
-            return Color.black
+            return Theme.base
         case .titleLink, .clear:
             return Color.white
         }
@@ -53,17 +53,17 @@ public enum ButtonType {
     var highlightColour: Color {
         switch self {
         case .primary:
-            return Color.black.opacity(0.2)
+            return Theme.base.opacity(0.2)
         case .destructive:
-            return Color.black.opacity(0.2)
+            return Theme.base.opacity(0.2)
         case .star:
-            return Color.black.opacity(0.2)
+            return Theme.base.opacity(0.2)
         case .standard, .secondary:
-            return Color.black.opacity(0.2)
+            return Theme.base.opacity(0.2)
         case .white, .tsWhite:
-            return Color.black.opacity(0.2)
+            return Theme.base.opacity(0.2)
         case .titleLink, .clear, .error:
-            return Color.black.opacity(0.2)
+            return Theme.base.opacity(0.2)
         }
     }
 

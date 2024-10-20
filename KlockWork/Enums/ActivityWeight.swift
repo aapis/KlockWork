@@ -19,7 +19,7 @@ enum ActivityWeight: CaseIterable {
         case .light: Theme.rowColour
         case .medium: Theme.cYellow
         case .heavy: Theme.cRed
-        case .significant: .black
+        case .significant: Theme.base
         }
     }
 

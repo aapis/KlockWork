@@ -70,7 +70,7 @@ struct NoteRow: View {
                 FancyTextLink(
                     text: note.title!,
                     destination: AnyView(NoteCreate(note: note)),
-                    fgColour: (note.mJob != nil ? (Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white) : Color.white),
+                    fgColour: (note.mJob != nil ? (Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble).isBright() ? Theme.base : Color.white) : Color.white),
                     pageType: .notes,
                     sidebar: AnyView(NoteCreateSidebar(note: note))
                 )
@@ -91,7 +91,7 @@ struct NoteRow: View {
                 if note.starred {
                     Image(systemName: "star.fill")
                         .padding()
-                        .foregroundColor(note.mJob != nil ? (Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white)  : Color.white)
+                        .foregroundColor(note.mJob != nil ? (Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble).isBright() ? Theme.base : Color.white)  : Color.white)
                 }
             }
         }
@@ -109,7 +109,7 @@ struct NoteRow: View {
                 
                 Text("\(note.versions!.count)")
                     .padding()
-                    .foregroundColor(note.mJob != nil ? (Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble).isBright() ? Color.black : Color.white)  : Color.white)
+                    .foregroundColor(note.mJob != nil ? (Color.fromStored(note.mJob!.colour ?? Theme.rowColourAsDouble).isBright() ? Theme.base : Color.white)  : Color.white)
             }
         }
         .frame(width: 100)

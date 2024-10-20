@@ -48,7 +48,7 @@ struct FancyButton: View {
             }
         })
         .buttonStyle(.borderless)
-        .background(transparent! ? Color.clear : Color.black.opacity(0.2))
+        .background(transparent! ? Color.clear : Theme.base.opacity(0.2))
         .onAppear(perform: onAppear)
     }
     
@@ -230,7 +230,7 @@ extension FancyButtonv2 {
     }
 
     private func fgColourEffect() -> Color {
-//        let gradient = LinearGradient(colors: [fgColour, Color.black])
+//        let gradient = LinearGradient(colors: [fgColour, Theme.base])
         return Theme.base
     }
 }

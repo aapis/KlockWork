@@ -173,7 +173,7 @@ struct TaskView: View {
                 return Color.white
             }
         
-            return (Color.fromStored(task.owner!.colour!).isBright() ? Color.black : Color.white)
+            return (Color.fromStored(task.owner!.colour!).isBright() ? Theme.base : Color.white)
         }
         
         return Color.white

@@ -10,8 +10,20 @@ import SwiftUI
 import UserNotifications
 
 final class NotificationHelper {
+    static public let notificationTypeTask = UNNotificationCategory(
+        identifier: "TASK",
+        actions: [
+            UNNotificationAction(identifier: "COMPLETE_ACTION", title: "Complete", options: []),
+            UNNotificationAction(identifier: "DELAY_ACTION", title: "Delay", options: []),
+            UNNotificationAction(identifier: "CANCEL_ACTION", title: "Cancel", options: [])
+        ],
+        intentIdentifiers: [],
+        hiddenPreviewsBodyPlaceholder: "",
+        options: .customDismissAction
+    )
+
     /// Remove delivered notifications with the same ID
-    /// - Parameter identifier: String
+    /// - Parameter identifier: Optional(String)
     /// - Returns: Void
     static public func clean(identifier: String? = nil) -> Void {
         if let id = identifier {
@@ -21,7 +33,23 @@ final class NotificationHelper {
             UNUserNotificationCenter.current().removeAllDeliveredNotifications()
         }
     }
-    
+
+    /// Remove notifications and set task.hasScheduledNotification to false
+    /// - Parameter identifier: Optional(String)
+    /// - Parameter task: LogTask
+    /// - Returns: Void
+    static public func clean(identifier: String? = nil, task: LogTask) -> Void {
+        if let id = identifier {
+            UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: [id])
+        } else {
+            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+            UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        }
+
+        task.hasScheduledNotification = false
+        PersistenceController.shared.save()
+    }
+
     /// Create a new notification
     /// - Parameters:
     ///   - title: String
@@ -30,7 +58,7 @@ final class NotificationHelper {
     ///   - identifier: String
     ///   - repeats: Bool(false)
     static public func create(title: String, task: LogTask, minutesBefore: Int = 5, repeats: Bool = false) -> Void {
-        if task.due == nil {
+        if task.due == nil /*|| task.hasScheduledNotification == true*/ {
             return
         }
 
@@ -53,21 +81,31 @@ final class NotificationHelper {
 
         let notificationCenter = UNUserNotificationCenter.current()
         let content = UNMutableNotificationContent()
-        content.title = task.content!
+        content.title = title
         content.body = task.notificationBody
         content.sound = UNNotificationSound.default
+        content.categoryIdentifier = "TASK"
 
         let trigger = UNCalendarNotificationTrigger(dateMatching: dc, repeats: repeats)
         let request = UNNotificationRequest(identifier: task.id?.uuidString ?? "no-id", content: content, trigger: trigger)
         self.clean(identifier: task.id?.uuidString ?? "no-id")
 
+        notificationCenter.setNotificationCategories(
+            [
+                NotificationHelper.notificationTypeTask
+            ]
+        )
+
         notificationCenter.add(request) { error in
-            if let error = error {
-                print("Error scheduling notification: \(error)")
+            if error == nil {
+                task.hasScheduledNotification = true
             } else {
-                task.hasScheduledNotification = false
+                print("[error] Unable to create notification for task \(task.content ?? task.id?.uuidString ?? "Invalid")")
+                print("[error] Error: \(String(describing: error?.localizedDescription))")
             }
         }
+
+        PersistenceController.shared.save()
     }
 
     /// Request notification auth so we can send user notifications
@@ -123,5 +161,39 @@ final class NotificationHelper {
         default:
             print("[warning] User has not set notifications.interval yet")
         }
+    }
+
+    /// Create notifications for upcoming due dates
+    /// - Returns: Void
+    static public func createNotifications(from upcoming: [LogTask], interval: Int) -> Void {
+        for task in upcoming.prefix(10) {
+            NotificationHelper.createInterval(interval: interval, task: task)
+        }
+    }
+
+    // @TODO: from https://developer.apple.com/documentation/usernotifications/declaring-your-actionable-notification-types
+    static public func handleNotificationActions(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        // Get the meeting ID from the original notification.
+        let userInfo = response.notification.request.content.userInfo
+        let meetingID = userInfo["MEETING_ID"] as! String
+        let userID = userInfo["USER_ID"] as! String
+
+        // Perform the task associated with the action.
+        switch response.actionIdentifier {
+        case "COMPLETE_ACTION":
+//          sharedMeetingManager.acceptMeeting(user: userID, meetingID: meetingID)
+          break
+
+        case "DECLINE_ACTION":
+//          sharedMeetingManager.declineMeeting(user: userID, meetingID: meetingID)
+          break
+
+        // Handle other actions...
+        default:
+          break
+        }
+
+        // Always call the completion handler when done.
+        completionHandler()
     }
 }

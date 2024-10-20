@@ -16,16 +16,15 @@ struct Home: View {
     typealias UI = WidgetLibrary.UI
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
-
-    @State public var selectedSidebarButton: Page = .dashboard
-    @State private var timer: Timer? = nil
-
     @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
     @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
     @AppStorage("general.showSessionInspector") public var showSessionInspector: Bool = false
     @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
+    @AppStorage("notifications.interval") private var notificationInterval: Int = 0
+    @State public var selectedSidebarButton: Page = .dashboard
+    @State private var timer: Timer? = nil
 
     /// Sidebar widgets that live in every sidebar
     static public let standardSidebarWidgets: [ToolbarButton] = [
@@ -182,7 +181,7 @@ struct Home: View {
                     if isDatePickerPresented {
                         ZStack {
                             nav.sidebar
-                            Color.black.opacity(0.7)
+                            Theme.base.opacity(0.7)
                         }
                     } else {
                         nav.sidebar
@@ -198,7 +197,7 @@ struct Home: View {
         VStack(alignment: .leading) {
             ZStack(alignment: .topTrailing) {
                 Theme.toolbarColour
-                LinearGradient(gradient: Gradient(colors: [Color.black, Theme.toolbarColour]), startPoint: .topTrailing, endPoint: .topLeading)
+                LinearGradient(gradient: Gradient(colors: [Theme.base, Theme.toolbarColour]), startPoint: .topTrailing, endPoint: .topLeading)
                     .opacity(0.25)
 
                 VStack(alignment: .trailing, spacing: 5) {
@@ -223,10 +222,10 @@ struct Home: View {
                         .disabled(isDatePickerPresented)
 
                 }
-                Color.black.opacity(0.7)
+                Theme.base.opacity(0.7)
 
                 ZStack(alignment: .topLeading) {
-                    LinearGradient(gradient: Gradient(colors: [Color.clear, Color.black]), startPoint: .topTrailing, endPoint: .topLeading)
+                    LinearGradient(gradient: Gradient(colors: [Color.clear, Theme.base]), startPoint: .topTrailing, endPoint: .topLeading)
                         .opacity(0.25)
                         .frame(width: 20)
 
@@ -235,7 +234,7 @@ struct Home: View {
                     nav.inspector
 
                     if isDatePickerPresented {
-                        Color.black.opacity(0.7)
+                        Theme.base.opacity(0.7)
                     }
                 }
                 .background(Theme.base)
@@ -249,7 +248,7 @@ struct Home: View {
                     nav.view
                         .navigationTitle(nav.pageTitle())
                         .disabled(isDatePickerPresented)
-                    (isDatePickerPresented ? Color.black.opacity(0.7) : .clear)
+                    (isDatePickerPresented ? Theme.base.opacity(0.7) : .clear)
                 }
             }
         }
@@ -269,14 +268,20 @@ extension Home {
             self.nav.setInspector()
         })
     }
-
+    
+    /// Check for upcoming events and create notifications
+    /// - Returns: Void
     private func checkForEvents() -> Void {
-        timer?.invalidate()
+        self.timer?.invalidate()
+        self.nav.session.eventStatus = updateIndicator()
+        self.timer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { _ in
+            self.nav.session.eventStatus = updateIndicator()
 
-        nav.session.eventStatus = updateIndicator()
-
-        timer = Timer.scheduledTimer(withTimeInterval: 60.0, repeats: true) { _ in
-            nav.session.eventStatus = updateIndicator()
+            // Create notifications for new events
+            NotificationHelper.createNotifications(
+                from: CoreDataTasks(moc: self.nav.moc).upcoming(hasScheduledNotification: false),
+                interval: self.notificationInterval
+            )
         }
     }
 

@@ -41,7 +41,7 @@ struct CreateEntitiesWidget: View {
                 }
                 .padding([.top, .bottom], self.isCreateStackShowing ? 16 : 0)
                 .padding([.leading, .trailing], self.isCreateStackShowing ? 10 : 0)
-                .background(Theme.base.opacity(0.6))
+                .background(self.isUpcomingTaskStackShowing || self.isCreateStackShowing ? Theme.base.opacity(0.6) : .clear)
             }
         }
         .padding(self.isCreateStackShowing ? .top : [.top, .bottom])

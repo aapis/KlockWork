@@ -14,6 +14,7 @@ import UserNotifications
 @main
 struct DLPrototype: App {
     private let persistenceController = PersistenceController.shared
+    @AppStorage("notifications.interval") private var notificationInterval: Int = 0
     @StateObject public var updater: ViewUpdater = ViewUpdater()
     @StateObject public var nav: Navigation = Navigation()
     @State private var searching: Bool = false
@@ -33,7 +34,11 @@ struct DLPrototype: App {
             FactorProxy(date: self.nav.session.date, weight: 1, type: .people, action: .create),
             FactorProxy(date: self.nav.session.date, weight: 1, type: .people, action: .interaction),
             FactorProxy(date: self.nav.session.date, weight: 1, type: .projects, action: .create),
-            FactorProxy(date: self.nav.session.date, weight: 1, type: .projects, action: .interaction)
+            FactorProxy(date: self.nav.session.date, weight: 1, type: .projects, action: .interaction),
+            FactorProxy(date: self.nav.session.date, weight: 1, type: .definitions, action: .create),
+            FactorProxy(date: self.nav.session.date, weight: 1, type: .definitions, action: .interaction),
+            FactorProxy(date: self.nav.session.date, weight: 1, type: .terms, action: .create),
+            FactorProxy(date: self.nav.session.date, weight: 1, type: .terms, action: .interaction)
         ]
     }
 
@@ -118,8 +123,11 @@ struct DLPrototype: App {
         }
 
         self.createAssessments()
-        NotificationHelper.clean() // @TODO: shouldn't be necessary here
         NotificationHelper.requestAuthorization()
+        NotificationHelper.createNotifications(
+            from: CoreDataTasks(moc: self.nav.moc).upcoming(hasScheduledNotification: false),
+            interval: self.notificationInterval
+        )
     }
 
     func application(application: any App, continueUserActivity userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {

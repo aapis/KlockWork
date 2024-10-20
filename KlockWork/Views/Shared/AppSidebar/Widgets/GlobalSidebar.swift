@@ -121,7 +121,7 @@ struct GlobalSidebar: View {
                 if isDatePickerPresented {
                     ZStack {
                         nav.sidebar
-                        Color.black.opacity(0.7)
+                        Theme.base.opacity(0.7)
                     }
                 } else {
                     nav.sidebar
@@ -136,7 +136,7 @@ struct GlobalSidebar: View {
         VStack(alignment: .leading) {
             ZStack(alignment: .topTrailing) {
                 Theme.toolbarColour
-                LinearGradient(gradient: Gradient(colors: [Color.black, Theme.toolbarColour]), startPoint: .topTrailing, endPoint: .topLeading)
+                LinearGradient(gradient: Gradient(colors: [Theme.base, Theme.toolbarColour]), startPoint: .topTrailing, endPoint: .topLeading)
                     .opacity(0.25)
 
                 VStack(alignment: .trailing, spacing: 5) {
@@ -157,10 +157,10 @@ struct GlobalSidebar: View {
                 nav.view
                     .navigationTitle(nav.pageTitle())
                     .disabled(isDatePickerPresented)
-                Color.black.opacity(0.7)
+                Theme.base.opacity(0.7)
 
                 ZStack(alignment: .topLeading) {
-                    LinearGradient(gradient: Gradient(colors: [Color.clear, Color.black]), startPoint: .topTrailing, endPoint: .topLeading)
+                    LinearGradient(gradient: Gradient(colors: [Color.clear, Theme.base]), startPoint: .topTrailing, endPoint: .topLeading)
                         .opacity(0.25)
                         .frame(width: 20)
 
@@ -169,7 +169,7 @@ struct GlobalSidebar: View {
                     nav.inspector
 
                     if isDatePickerPresented {
-                        Color.black.opacity(0.7)
+                        Theme.base.opacity(0.7)
                     }
                 }
                 .background(Theme.base)
@@ -214,7 +214,7 @@ struct GlobalSidebar: View {
                     nav.view
                         .navigationTitle(nav.pageTitle())
                         .disabled(isDatePickerPresented)
-                    (isDatePickerPresented ? Color.black.opacity(0.7) : .clear)
+                    (isDatePickerPresented ? Theme.base.opacity(0.7) : .clear)
                 }
             }
         }
@@ -226,7 +226,7 @@ struct GlobalSidebar: View {
                 VStack(alignment: .leading) {
                     ZStack(alignment: .topTrailing) {
                         Theme.toolbarColour
-                        LinearGradient(gradient: Gradient(colors: [Color.black, Theme.toolbarColour]), startPoint: .topTrailing, endPoint: .topLeading)
+                        LinearGradient(gradient: Gradient(colors: [Theme.base, Theme.toolbarColour]), startPoint: .topTrailing, endPoint: .topLeading)
                             .opacity(0.25)
 
                         VStack(alignment: .trailing, spacing: 5) {
@@ -249,7 +249,7 @@ struct GlobalSidebar: View {
                                 if isDatePickerPresented {
                                     ZStack {
                                         nav.sidebar
-                                        Color.black.opacity(0.7)
+                                        Theme.base.opacity(0.7)
                                     }
                                 } else {
                                     nav.sidebar
@@ -267,10 +267,10 @@ struct GlobalSidebar: View {
                             nav.view
                                 .navigationTitle(nav.pageTitle())
                                 .disabled(isDatePickerPresented)
-                            Color.black.opacity(0.7)
+                            Theme.base.opacity(0.7)
 
                             ZStack(alignment: .topLeading) {
-                                LinearGradient(gradient: Gradient(colors: [Color.clear, Color.black]), startPoint: .topTrailing, endPoint: .topLeading)
+                                LinearGradient(gradient: Gradient(colors: [Color.clear, Theme.base]), startPoint: .topTrailing, endPoint: .topLeading)
                                     .opacity(0.25)
                                     .frame(width: 20)
 
@@ -279,7 +279,7 @@ struct GlobalSidebar: View {
                                 nav.inspector
 
                                 if isDatePickerPresented {
-                                    Color.black.opacity(0.7)
+                                    Theme.base.opacity(0.7)
                                 }
                             }
                             .background(Theme.base)
@@ -324,7 +324,7 @@ struct GlobalSidebar: View {
                                 nav.view
                                     .navigationTitle(nav.pageTitle())
                                     .disabled(isDatePickerPresented)
-                                (isDatePickerPresented ? Color.black.opacity(0.7) : .clear)
+                                (isDatePickerPresented ? Theme.base.opacity(0.7) : .clear)
                             }
                         }
                     }

@@ -8,20 +8,12 @@
 
 import SwiftUI
 import KWCore
-import EventKit
 
 struct Dashboard: View {
-    static public let id: UUID = UUID()
-    private let page: PageConfiguration.AppPage = .find
-    @State public var searching: Bool = false
-
-    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
-    
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
-    
-    @FocusState private var primaryTextFieldInFocus: Bool
+    private let page: PageConfiguration.AppPage = .find
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {

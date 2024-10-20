@@ -40,74 +40,77 @@ struct SidebarButton: View, Identifiable {
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
 
     var body: some View {
-        let button = FancyButton
-        switch(size) {
-        case .large:
-            switch pageType {
-            case .dashboard:
-                HStack(alignment: .top, spacing: 0) {
-                    if nav.session.eventStatus == .upcoming {
-                        ActiveIndicator(colour: .gray, href: .dashboard)
-                    } else if nav.session.eventStatus == .imminent {
-                        ActiveIndicator(colour: .orange, href: .dashboard)
-                    } else if nav.session.eventStatus == .inProgress {
-                        ActiveIndicator(colour: .green, href: .dashboard)
-                    }
+        VStack(spacing: 0) {
+            let button = FancyButton
+            switch(size) {
+            case .large:
+                switch pageType {
+                case .dashboard:
+                    HStack(alignment: .top, spacing: 0) {
+                        if nav.session.eventStatus == .upcoming {
+                            ActiveIndicator(colour: .gray, href: .dashboard)
+                        } else if nav.session.eventStatus == .imminent {
+                            ActiveIndicator(colour: .orange, href: .dashboard)
+                        } else if nav.session.eventStatus == .inProgress {
+                            ActiveIndicator(colour: .green, href: .dashboard)
+                        }
 
-                    button.frame(width: 50, height: 50)
-                }
-            case .planning:
-                HStack(alignment: .top, spacing: 0) {
-                    if nav.session.gif == .focus {
-                        ActiveIndicator(href: .planning)
+                        button.frame(width: 50, height: 50)
                     }
-                    button.frame(width: 50, height: 50)
-                }
-            case .jobs:
-                HStack(alignment: .top, spacing: 0) {
-                    if nav.session.job != nil {
-                        ActiveIndicator(colour: nav.session.job!.colour_from_stored(), href: .jobs)
+                case .planning:
+                    HStack(alignment: .top, spacing: 0) {
+                        if nav.session.gif == .focus {
+                            ActiveIndicator(href: .planning)
+                        }
+                        button.frame(width: 50, height: 50)
                     }
-                    button
-                        .frame(width: 50, height: 50)
+                case .jobs:
+                    HStack(alignment: .top, spacing: 0) {
+                        if nav.session.job != nil {
+                            ActiveIndicator(colour: nav.session.job!.colour_from_stored(), href: .jobs)
+                        }
+                        button
+                            .frame(width: 50, height: 50)
                         // Log job change events to the CLI/History
-                        .onChange(of: nav.session.job) {
-                            // Create a history item (used by CLI mode and, eventually, LogTable)
-                            if nav.session.cli.history.count <= CommandLineInterface.maxItems {
-                                if let job = nav.session.job {
-                                    nav.session.cli.history.append(
-                                        Navigation.CommandLineSession.History(
-                                            command: "@session.job=\(job.jid.string)",
-                                            status: .success,
-                                            message: "",
-                                            appType: .set,
-                                            job: nav.session.job
+                            .onChange(of: nav.session.job) {
+                                // Create a history item (used by CLI mode and, eventually, LogTable)
+                                if nav.session.cli.history.count <= CommandLineInterface.maxItems {
+                                    if let job = nav.session.job {
+                                        nav.session.cli.history.append(
+                                            Navigation.CommandLineSession.History(
+                                                command: "@session.job=\(job.jid.string)",
+                                                status: .success,
+                                                message: "",
+                                                appType: .set,
+                                                job: nav.session.job
+                                            )
                                         )
-                                    )
+                                    }
                                 }
                             }
-                        }
-//                        .foregroundStyle(nav.session.job != nil ? nav.session.job!.backgroundColor : isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
-                        .foregroundStyle(isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
-                }
-            case .companies:
-                HStack(alignment: .top, spacing: 0) {
-                    if let stored = self.nav.session.company {
-                        ActiveIndicator(colour: stored.backgroundColor, href: .companies)
+                        //                        .foregroundStyle(nav.session.job != nil ? nav.session.job!.backgroundColor : isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
+                            .foregroundStyle(isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
                     }
-                    button.frame(width: 50, height: 50)
-//                        .foregroundStyle(nav.session.job != nil ? nav.session.job!.backgroundColor : isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
-                        .foregroundStyle(isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
+                case .companies:
+                    HStack(alignment: .top, spacing: 0) {
+                        if let stored = self.nav.session.company {
+                            ActiveIndicator(colour: stored.backgroundColor, href: .companies)
+                        }
+                        button.frame(width: 50, height: 50)
+                        //                        .foregroundStyle(nav.session.job != nil ? nav.session.job!.backgroundColor : isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
+                            .foregroundStyle(isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
+                    }
+                default: button.frame(width: 50, height: 50)
                 }
-            default: button.frame(width: 50, height: 50)
+            case .medium:
+                button.frame(width: 40, height: 40)
+            case .small:
+                button.frame(width: 20, height: 20)
+            case .link, .tiny, .titleLink, .tinyLink, .none:
+                button
             }
-        case .medium:
-            button.frame(width: 40, height: 40)
-        case .small:
-            button.frame(width: 20, height: 20)
-        case .link, .tiny, .titleLink, .tinyLink, .none:
-            button
         }
+        .clipShape(.rect(topLeadingRadius: 5, bottomLeadingRadius: 5))
     }
 
     private var FancyLink: some View {

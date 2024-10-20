@@ -434,7 +434,7 @@ extension CommandLineInterface {
         
         var body: some View {
             ZStack(alignment: .topLeading) {
-                LinearGradient(gradient: Gradient(colors: [.clear, Color.black]), startPoint: .bottom, endPoint: .top)
+                LinearGradient(gradient: Gradient(colors: [.clear, Theme.base]), startPoint: .bottom, endPoint: .top)
                     .opacity(0.25)
                     .frame(height: 100)
                 VStack {

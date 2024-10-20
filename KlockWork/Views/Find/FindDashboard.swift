@@ -53,18 +53,20 @@ struct FindDashboard: View {
                 }
             }
             GridRow {
-                ZStack(alignment: .topLeading) {
-                    UI.BoundSearchBar(
-                        text: $activeSearchText,
-                        placeholder: location == .content ? "Search \(counts.0) records, \(counts.1) jobs, and \(counts.2) tasks in \(counts.3) projects" : "Search for anything",
-                        onSubmit: onSubmit,
-                        onReset: onReset
-                    )
-                    .clipShape(.rect(topLeadingRadius: self.showWelcomeHeader ? 0 : 5, topTrailingRadius: self.showWelcomeHeader ? 0 : 5))
-                }
+                UI.BoundSearchBar(
+                    text: $activeSearchText,
+                    placeholder: location == .content ? "Search \(counts.0) records, \(counts.1) jobs, and \(counts.2) tasks in \(counts.3) projects" : "Search for anything",
+                    onSubmit: onSubmit,
+                    onReset: onReset
+                )
+                .clipShape(.rect(topLeadingRadius: self.showWelcomeHeader ? 0 : 5, topTrailingRadius: self.showWelcomeHeader ? 0 : 5))
+            }
+            Divider()
+
+            if self.location == .sidebar {
+                self.TypeFilter
             }
 
-            Divider()
             /// When installed in content areas, display above suggestions
             if showingTypes && self.location == .content {
                 GridRow {
@@ -123,34 +125,8 @@ struct FindDashboard: View {
             }
 
             if showingTypes {
-                if location == .content || location == .sidebar {
-                    GridRow {
-                        ZStack(alignment: .topLeading) {
-                            self.nav.parent?.appPage.primaryColour.opacity(0.6) ?? Theme.subHeaderColour
-                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
-                                .blendMode(.softLight)
-                                .opacity(0.3)
-                                .frame(height: 20)
-
-                            HStack(alignment: .center) {
-                                UI.Toggle(isOn: $showRecords, eType: .records)
-                                UI.Toggle(isOn: $showNotes, eType: .notes)
-                                UI.Toggle(isOn: $showTasks, eType: .tasks)
-                                UI.Toggle(isOn: $showProjects, eType: .projects)
-                                UI.Toggle(isOn: $showJobs, eType: .jobs)
-                                UI.Toggle(isOn: $showCompanies, eType: .companies)
-                                UI.Toggle(isOn: $showPeople, eType: .people)
-                                UI.Toggle(isOn: $showTerms, eType: .terms)
-                                Spacer()
-                                UI.Toggle(isOn: $allowAlive, icon: "heart", selectedIcon: "heart.fill")
-                                    .help("Published only")
-                            }
-                            .padding(.top, 8)
-                            .padding([.leading, .trailing], 10)
-                        }
-                    }
-                    .frame(height: 40)
-                    .foregroundStyle(.gray)
+                if location == .content {
+                    self.TypeFilter
                 }
             }
 
@@ -188,6 +164,36 @@ struct FindDashboard: View {
                 }
             }
         }
+    }
+
+    @ViewBuilder var TypeFilter: some View {
+        GridRow {
+            ZStack(alignment: .topLeading) {
+                self.nav.parent?.appPage.primaryColour.opacity(0.6) ?? Theme.subHeaderColour
+                LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                    .blendMode(.softLight)
+                    .opacity(0.3)
+                    .frame(height: 20)
+
+                HStack(alignment: .center) {
+                    UI.Toggle(isOn: $showRecords, eType: .records)
+                    UI.Toggle(isOn: $showNotes, eType: .notes)
+                    UI.Toggle(isOn: $showTasks, eType: .tasks)
+                    UI.Toggle(isOn: $showProjects, eType: .projects)
+                    UI.Toggle(isOn: $showJobs, eType: .jobs)
+                    UI.Toggle(isOn: $showCompanies, eType: .companies)
+                    UI.Toggle(isOn: $showPeople, eType: .people)
+                    UI.Toggle(isOn: $showTerms, eType: .terms)
+                    Spacer()
+                    UI.Toggle(isOn: $allowAlive, icon: "heart", selectedIcon: "heart.fill")
+                        .help("Published only")
+                }
+                .padding(.top, 8)
+                .padding([.leading, .trailing], 10)
+            }
+        }
+        .frame(height: 40)
+        .foregroundStyle(.gray)
     }
 }
 
