@@ -133,6 +133,12 @@ extension WidgetLibrary.UI.Navigator {
                     ForEach(self.companies, id: \.objectID) { company in
                         Row(entity: company)
                     }
+
+//                    HStack {
+//                        Text("\(self.companies.count) Companies")
+//                            .font(.caption)
+//                    }
+//                    .padding(4)
                 } else {
                     FancyHelpText(text: "Create a company first.")
                 }
@@ -153,15 +159,14 @@ extension WidgetLibrary.UI.Navigator {
         struct Row: View {
             typealias UI = WidgetLibrary.UI
             @EnvironmentObject private var state: Navigation
+            @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
             @AppStorage("widget.viewModeIndex") private var viewModeIndex: Int = 0
             public let entity: NSManagedObject
-            public let stripe: Bool = false
             @State private var label: String = ""
             @State private var lastModified: Date? = nil
             @State private var created: Date? = nil
             @State private var children: [NSManagedObject]? = nil
             @State private var colour: Color = .white
-            @State private var backgroundColour: Color = .gray.opacity(0.1)
             @State private var relatedEntities: [PageConfiguration.EntityType] = []
             @State private var isPresented: Bool = false
             @State private var isHighlighted: Bool = false
@@ -227,6 +232,7 @@ extension WidgetLibrary.UI.Navigator {
                 }
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.viewModeIndex) { self.actionOnAppear() }
+                .onChange(of: self.showPublished) { self.actionOnAppear() }
             }
 
             var ButtonContent: some View {
@@ -258,7 +264,9 @@ extension WidgetLibrary.UI.Navigator {
                     .foregroundStyle(.gray)
                 }
                 .padding(8)
-                .background(self.backgroundColour)
+                .background(
+                    self.viewModeIndex == 1 ? self.isHighlighted ? self.colour.opacity(0.9) : self.colour : Color.gray.opacity(self.isPresented ? 0.3 : self.isHighlighted ? 0.3 : 0.1)
+                )
                 .useDefaultHover({ hover in self.isHighlighted = hover })
             }
         }
@@ -287,28 +295,35 @@ extension WidgetLibrary.UI.Navigator.List.Row {
     /// Onload handler. Sets view state
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        self.backgroundColour = Color.gray.opacity(self.isPresented ? 0.3 : self.isHighlighted ? 0.3 : 0.1)
-        if self.viewModeIndex == 1 {
-            self.backgroundColour = self.isHighlighted ? self.colour.opacity(0.9) : self.colour
-        }
-
         switch self.entity {
         case is Company:
             let company = self.entity as! Company
+            let projects = company.projects?.allObjects as? [Project] ?? []
             self.label = company.name ?? "Error: Invalid company name"
-            self.children = (company.projects?.allObjects as? [Project] ?? []).sorted(by: {$0.lastUpdate ?? Date.now > $1.lastUpdate ?? Date.now})
+            self.children = projects.sorted(by: {$0.lastUpdate ?? Date.now > $1.lastUpdate ?? Date.now})
+            if self.showPublished {
+                self.children = projects
+                    .filter({$0.alive == true})
+                    .sorted(by: {$0.lastUpdate ?? Date.now > $1.lastUpdate ?? Date.now})
+            }
             self.lastModified = company.lastUpdate
             self.created = company.createdDate
-            self.colour = company.backgroundColor
+            self.colour = company.alive ? company.backgroundColor : .gray.opacity(0.7)
             self.relatedEntities = [.people]
             self.isPresented = company == self.state.session.company
         case is Project:
             let project = self.entity as! Project
+            let jobs = project.jobs?.allObjects as? [Job] ?? []
             self.label = project.name ?? "Error: Invalid project name"
-            self.children = (project.jobs?.allObjects as? [Job] ?? []).sorted(by: {$0.lastUpdate ?? Date.now > $1.lastUpdate ?? Date.now})
+            self.children = jobs.sorted(by: {$0.lastUpdate ?? Date.now > $1.lastUpdate ?? Date.now})
+            if self.showPublished {
+                self.children = jobs
+                    .filter({$0.alive == true})
+                    .sorted(by: {$0.lastUpdate ?? Date.now > $1.lastUpdate ?? Date.now})
+            }
             self.lastModified = project.lastUpdate
             self.created = project.created
-            self.colour = project.backgroundColor
+            self.colour = project.alive ? project.backgroundColor : .gray.opacity(0.7)
             self.isPresented = project == self.state.session.project
         case is Job:
             let job = self.entity as! Job
@@ -316,7 +331,7 @@ extension WidgetLibrary.UI.Navigator.List.Row {
             self.children = []
             self.lastModified = job.lastUpdate
             self.created = job.created
-            self.colour = job.backgroundColor
+            self.colour = job.alive ? job.backgroundColor : .gray.opacity(0.7)
             self.relatedEntities = [.tasks, .records, .notes, .definitions]
             self.isPresented = job == self.state.session.job
         default:
