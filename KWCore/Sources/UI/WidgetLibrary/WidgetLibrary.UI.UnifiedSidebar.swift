@@ -259,22 +259,22 @@ extension WidgetLibrary.UI {
                                 VStack(alignment: .leading, spacing: 0) {
                                     if let tasks = self.entity.tasks?.allObjects as? [LogTask] {
                                         if tasks.count > 0 {
-                                            Tasks(job: self.entity, tasks: tasks.sorted(by: {$0.due ?? Date() > $1.due ?? Date()}).filter({self.showPublished ? $0.completedDate != nil && $0.cancelledDate != nil : $0.created != nil}))
+                                            Tasks(job: self.entity)
                                         }
                                     }
                                     if let notes = self.entity.mNotes?.allObjects as? [Note] {
                                         if notes.count > 0 {
-                                            Notes(job: self.entity, notes: notes.filter({self.showPublished ? $0.alive == true : $0.postedDate != nil}))
+                                            Notes(job: self.entity)
                                         }
                                     }
                                     if let definitions = self.entity.definitions?.allObjects as? [TaxonomyTermDefinitions] {
                                         if definitions.count > 0 {
-                                            Definitions(job: self.entity, definitions: definitions.sorted(by: {$0.definition ?? "" > $1.definition ?? ""}).filter({self.showPublished ? $0.alive == true : $0.created != nil}))
+                                            Definitions(job: self.entity)
                                         }
                                     }
                                     if let records = self.entity.records?.allObjects as? [LogRecord] {
                                         if records.count > 0 {
-                                            Records(job: self.entity, records: records.sorted(by: {$0.timestamp ?? Date() > $1.timestamp ?? Date()}).filter({self.showPublished ? $0.alive == true : $0.timestamp != nil}))
+                                            Records(job: self.entity)
                                         }
                                     }
                                 }
@@ -299,16 +299,17 @@ extension WidgetLibrary.UI {
         struct Tasks: View {
             @EnvironmentObject private var state: Navigation
             public let job: Job
-            public let tasks: [LogTask]
+            public let tasks: [LogTask]?
             @State private var isPresented: Bool = false
             @State private var highlighted: Bool = false
+            @FetchRequest private var childrenFromJob: FetchedResults<LogTask>
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
                     ZStack(alignment: .trailing) {
-                        EntityRowButton(text: "\(self.tasks.count) Tasks", isPresented: $isPresented)
+                        EntityRowButton(text: "\((self.tasks?.count ?? self.childrenFromJob.count)) Tasks", isPresented: $isPresented)
                             .useDefaultHover({ inside in self.highlighted = inside})
-                            .disabled(self.tasks.count == 0)
+                            .disabled((self.tasks?.count ?? self.childrenFromJob.count) == 0)
                         RowAddNavLink(
                             target: AnyView(TaskDetail())
                         )
@@ -323,9 +324,17 @@ extension WidgetLibrary.UI {
                                     .opacity(0.6)
                                     .blendMode(.softLight)
                                 VStack(alignment: .leading, spacing: 0) {
-                                    ForEach(self.tasks, id: \.objectID) { task in
-                                        if task.content != nil {
-                                            EntityTypeRowButton(label: task.content!, redirect: .taskDetail, resource: task)
+                                    if let tasks = self.tasks {
+                                        ForEach(tasks, id: \.objectID) { task in
+                                            if task.content != nil {
+                                                EntityTypeRowButton(label: task.content!, redirect: .taskDetail, resource: task)
+                                            }
+                                        }
+                                    } else {
+                                        ForEach(self.childrenFromJob, id: \.objectID) { task in
+                                            if task.content != nil {
+                                                EntityTypeRowButton(label: task.content!, redirect: .taskDetail, resource: task)
+                                            }
                                         }
                                     }
                                 }
@@ -336,21 +345,28 @@ extension WidgetLibrary.UI {
                 .background(self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8))
                 .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white)
             }
+
+            init(job: Job, tasks: [LogTask]? = nil) {
+                self.job = job
+                self.tasks = tasks
+                _childrenFromJob = CoreDataTasks.fetch(by: job)
+            }
         }
 
         struct Notes: View {
             @EnvironmentObject private var state: Navigation
             public let job: Job
-            public let notes: [Note]
+            public let notes: [Note]?
             @State private var isPresented: Bool = false
             @State private var highlighted: Bool = false
+            @FetchRequest private var childrenFromJob: FetchedResults<Note>
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
                     ZStack(alignment: .trailing) {
-                        EntityRowButton(text: "\(self.notes.count) Notes", isPresented: $isPresented)
+                        EntityRowButton(text: "\((self.notes?.count ?? self.childrenFromJob.count)) Notes", isPresented: $isPresented)
                             .useDefaultHover({ inside in self.highlighted = inside})
-                            .disabled(self.notes.count == 0)
+                            .disabled((self.notes?.count ?? self.childrenFromJob.count) == 0)
                         RowAddNavLink(
                             target: AnyView(NoteCreate())
                         )
@@ -365,9 +381,17 @@ extension WidgetLibrary.UI {
                                     .opacity(0.6)
                                     .blendMode(.softLight)
                                 VStack(alignment: .leading, spacing: 0) {
-                                    ForEach(self.notes, id: \.objectID) { note in
-                                        if note.title != nil {
-                                            EntityTypeRowButton(label: note.title!, redirect: .noteDetail, resource: note)
+                                    if let notes = self.notes {
+                                        ForEach(notes, id: \.objectID) { note in
+                                            if note.title != nil {
+                                                EntityTypeRowButton(label: note.title!, redirect: .noteDetail, resource: note)
+                                            }
+                                        }
+                                    } else {
+                                        ForEach(self.childrenFromJob, id: \.objectID) { note in
+                                            if note.title != nil {
+                                                EntityTypeRowButton(label: note.title!, redirect: .noteDetail, resource: note)
+                                            }
                                         }
                                     }
                                 }
@@ -378,21 +402,28 @@ extension WidgetLibrary.UI {
                 .background(self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8))
                 .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white)
             }
+
+            init(job: Job, notes: [Note]? = nil) {
+                self.job = job
+                self.notes = notes
+                _childrenFromJob = CoreDataNotes.fetch(by: job)
+            }
         }
 
         struct Definitions: View {
             @EnvironmentObject private var state: Navigation
             public let job: Job
-            public let definitions: [TaxonomyTermDefinitions]
+            public let definitions: [TaxonomyTermDefinitions]?
             @State private var isPresented: Bool = false
             @State private var highlighted: Bool = false
+            @FetchRequest private var childrenFromJob: FetchedResults<TaxonomyTermDefinitions>
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
                     ZStack(alignment: .trailing) {
-                        EntityRowButton(text: "\(self.definitions.count) Definitions", isPresented: $isPresented)
+                        EntityRowButton(text: "\((self.definitions?.count ?? self.childrenFromJob.count)) Definitions", isPresented: $isPresented)
                             .useDefaultHover({ inside in self.highlighted = inside})
-                            .disabled(self.definitions.count == 0)
+                            .disabled((self.definitions?.count ?? self.childrenFromJob.count) == 0)
                         RowAddNavLink(
                             target: AnyView(DefinitionDetail())
                         )
@@ -407,9 +438,17 @@ extension WidgetLibrary.UI {
                                     .opacity(0.6)
                                     .blendMode(.softLight)
                                 VStack(alignment: .leading, spacing: 0) {
-                                    ForEach(self.definitions, id: \.objectID) { def in
-                                        if def.definition != nil {
-                                            EntityTypeRowButton(label: def.definition!, redirect: .definitionDetail, resource: def)
+                                    if let definitions = self.definitions {
+                                        ForEach(definitions, id: \.objectID) { def in
+                                            if def.definition != nil {
+                                                EntityTypeRowButton(label: def.definition!, redirect: .definitionDetail, resource: def)
+                                            }
+                                        }
+                                    } else {
+                                        ForEach(self.childrenFromJob, id: \.objectID) { def in
+                                            if def.definition != nil {
+                                                EntityTypeRowButton(label: def.definition!, redirect: .definitionDetail, resource: def)
+                                            }
                                         }
                                     }
                                 }
@@ -420,21 +459,28 @@ extension WidgetLibrary.UI {
                 .background(self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8))
                 .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white)
             }
+
+            init(job: Job, definitions: [TaxonomyTermDefinitions]? = nil) {
+                self.job = job
+                self.definitions = definitions
+                _childrenFromJob = CoreDataTaxonomyTermDefinitions.fetch(by: job)
+            }
         }
 
         struct Records: View {
             @EnvironmentObject private var state: Navigation
             public let job: Job
-            public let records: [LogRecord]
+            public let records: [LogRecord]?
             @State private var isPresented: Bool = false
             @State private var highlighted: Bool = false
+            @FetchRequest private var childrenFromJob: FetchedResults<LogRecord>
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
                     ZStack(alignment: .trailing) {
-                        EntityRowButton(text: "\(self.records.count) Records", isPresented: $isPresented)
+                        EntityRowButton(text: "\((self.records?.count ?? self.childrenFromJob.count)) Records", isPresented: $isPresented)
                             .useDefaultHover({ inside in self.highlighted = inside})
-                            .disabled(self.records.count == 0)
+                            .disabled((self.records?.count ?? self.childrenFromJob.count) == 0)
                     }
                     .background(Theme.base.opacity(0.6).blendMode(.softLight))
 
@@ -445,9 +491,17 @@ extension WidgetLibrary.UI {
                                     .opacity(0.6)
                                     .blendMode(.softLight)
                                 VStack(alignment: .leading, spacing: 0) {
-                                    ForEach(self.records, id: \.objectID) { record in
-                                        if record.message != nil {
-                                            EntityTypeRowButton(label: record.message!, redirect: .recordDetail, resource: record)
+                                    if let records = self.records {
+                                        ForEach(records, id: \.objectID) { record in
+                                            if record.message != nil {
+                                                EntityTypeRowButton(label: record.message!, redirect: .recordDetail, resource: record)
+                                            }
+                                        }
+                                    } else {
+                                        ForEach(self.childrenFromJob, id: \.objectID) { record in
+                                            if record.message != nil {
+                                                EntityTypeRowButton(label: record.message!, redirect: .recordDetail, resource: record)
+                                            }
                                         }
                                     }
                                 }
@@ -457,6 +511,12 @@ extension WidgetLibrary.UI {
                 }
                 .background(self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8))
                 .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white)
+            }
+
+            init(job: Job, records: [LogRecord]? = nil) {
+                self.job = job
+                self.records = records
+                _childrenFromJob = CoreDataRecords.fetch(job: job)
             }
         }
 
