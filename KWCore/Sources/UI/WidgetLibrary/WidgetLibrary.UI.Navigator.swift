@@ -59,6 +59,17 @@ extension WidgetLibrary.UI {
         }
     }
 
+    enum Style {
+        case plain, fullColour
+
+        var id: Int {
+            switch self {
+            case .fullColour: return 1
+            default: return 0
+            }
+        }
+    }
+
     struct Navigator: View {
         private var buttons: [ToolbarButton] = []
 
@@ -89,10 +100,25 @@ extension WidgetLibrary.UI.Navigator {
         typealias US = UI.UnifiedSidebar
         @EnvironmentObject private var state: Navigation
         @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
+        @AppStorage("widget.viewModeB") private var viewModeB: Bool = true
+        @AppStorage("widget.viewModeIndex") private var viewModeIndex: Int = 0
         @State private var companies: [Company] = []
+        public let location: WidgetLocation = .content
 
         var body: some View {
             VStack(alignment: .leading, spacing: 1) {
+                HStack {
+                    UI.Toggle(isOn: $showPublished, icon: "heart", selectedIcon: "heart.fill")
+                        .help("Show or hide unpublished items")
+                        .padding(3)
+                        .background(Theme.lightWhite.blendMode(.softLight))
+                        .clipShape(.rect(cornerRadius: 5))
+
+                    UI.Toggle(isOn: $viewModeB, icon: "star")
+                }
+                .padding(8)
+                .font(.title)
+
                 HStack {
                     Text("Name")
                     Spacer()
@@ -113,11 +139,21 @@ extension WidgetLibrary.UI.Navigator {
             }
             .background(Theme.textBackground)
             .onAppear(perform: self.actionOnAppear)
+            .onChange(of: self.showPublished) { self.actionOnAppear() }
+            .onChange(of: self.state.session.gif) { self.actionOnAppear() }
+            .onChange(of: self.viewModeB) {
+                if self.viewModeB {
+                    self.viewModeIndex = 0
+                } else {
+                    self.viewModeIndex = 1
+                }
+            }
         }
 
         struct Row: View {
             typealias UI = WidgetLibrary.UI
             @EnvironmentObject private var state: Navigation
+            @AppStorage("widget.viewModeIndex") private var viewModeIndex: Int = 0
             public let entity: NSManagedObject
             public let stripe: Bool = false
             @State private var label: String = ""
@@ -125,6 +161,7 @@ extension WidgetLibrary.UI.Navigator {
             @State private var created: Date? = nil
             @State private var children: [NSManagedObject]? = nil
             @State private var colour: Color = .white
+            @State private var backgroundColour: Color = .gray.opacity(0.1)
             @State private var relatedEntities: [PageConfiguration.EntityType] = []
             @State private var isPresented: Bool = false
             @State private var isHighlighted: Bool = false
@@ -135,63 +172,94 @@ extension WidgetLibrary.UI.Navigator {
                         self.actionOnTap()
                         self.isPresented.toggle()
                     } label: {
-                        HStack {
-                            ZStack(alignment: .center) {
-                                if self.isPresented {
-                                    Theme.base.opacity(0.6).blendMode(.softLight)
-                                }
-                                Image(systemName: self.isPresented ? "minus" : self.isHighlighted ? "folder.fill" : "folder")
-                                    .foregroundStyle(self.isPresented ? .white : self.colour)
-                            }
-                            .frame(width: 30, height: 30)
-                            .cornerRadius(5)
-
-                            Text(self.label)
-                                .multilineTextAlignment(.leading)
-                                .foregroundStyle(self.isPresented ? .white : self.isHighlighted ? .white : Theme.lightWhite)
-                            Spacer()
-
-                            HStack {
-                                if let modifiedDate = self.lastModified {
-                                    Text(modifiedDate.formatted())
-                                }
-
-                                if let createdDate = self.created {
-                                    Text(createdDate.formatted())
-                                }
-                            }
-                            .foregroundStyle(.gray)
-                        }
-                        .padding(8)
-                        .background(.gray.opacity(self.isPresented ? 0.3 : self.isHighlighted ? 0.3 : 0.1))
-                        .useDefaultHover({ hover in self.isHighlighted = hover })
+                        self.ButtonContent
                     }
                     .buttonStyle(.plain)
-                    .onAppear(perform: self.actionOnAppear)
 
                     if self.isPresented {
                         if self.children != nil && self.children?.count ?? 0 > 0 {
                             ForEach(self.children!, id: \.objectID) { child in
-                                Row(entity: child)
+                                if self.state.session.gif == .focus {
+                                    switch self.entity {
+                                    case is Company:
+                                        if self.state.planning.companies.contains(child as! Company) {
+                                            Row(entity: child)
+                                        }
+                                    case is Project:
+                                        if self.state.planning.projects.contains(child as! Project) {
+                                            Row(entity: child)
+                                        }
+                                    case is Job:
+                                        if self.state.planning.jobs.contains(child as! Job) {
+                                            Row(entity: child)
+                                        }
+                                    default: EmptyView()
+                                    }
+                                } else {
+                                    Row(entity: child)
+                                }
                             }
                             .padding(.leading)
                         }
 
                         if self.relatedEntities.count > 0 {
                             ForEach(self.relatedEntities, id: \.self) { entity in
-                                switch entity {
-                                case .people: US.People(entity: self.state.session.company!)
-                                case .tasks: US.Tasks(job: self.state.session.job!, tasks: [])
-                                case .records: US.Records(job: self.state.session.job!, records: [])
-                                case .notes: US.Notes(job: self.state.session.job!, notes: [])
-                                case .definitions: US.Definitions(job: self.state.session.job!, definitions: [])
-                                default: EmptyView()
+                                if self.state.session.company != nil {
+                                    switch entity {
+                                    case .people: US.People(entity: self.state.session.company!)
+                                    default: EmptyView()
+                                    }
+                                }
+
+                                if self.state.session.job != nil {
+                                    switch entity {
+                                    case .tasks: US.Tasks(job: self.state.session.job!, tasks: [])
+                                    case .records: US.Records(job: self.state.session.job!, records: [])
+                                    case .notes: US.Notes(job: self.state.session.job!, notes: [])
+                                    case .definitions: US.Definitions(job: self.state.session.job!, definitions: [])
+                                    default: EmptyView()
+                                    }
                                 }
                             }
                             .padding(.leading)
                         }
                     }
                 }
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.viewModeIndex) { self.actionOnAppear() }
+            }
+
+            var ButtonContent: some View {
+                HStack {
+                    ZStack(alignment: .center) {
+                        if self.isPresented {
+                            Theme.base.opacity(0.6).blendMode(.softLight)
+                        }
+                        Image(systemName: self.isPresented ? "minus" : self.isHighlighted ? "folder.fill" : "folder")
+                            .foregroundStyle(self.isPresented ? .white : self.viewModeIndex == 1 ? self.colour.isBright() ? Theme.base : .white : self.colour)
+                    }
+                    .frame(width: 30, height: 30)
+                    .cornerRadius(5)
+
+                    Text(self.label)
+                        .multilineTextAlignment(.leading)
+                        .foregroundStyle(self.isPresented ? .white : self.isHighlighted ? .white : Theme.lightWhite)
+                    Spacer()
+
+                    HStack {
+                        if let modifiedDate = self.lastModified {
+                            Text(modifiedDate.formatted())
+                        }
+
+                        if let createdDate = self.created {
+                            Text(createdDate.formatted())
+                        }
+                    }
+                    .foregroundStyle(.gray)
+                }
+                .padding(8)
+                .background(self.backgroundColour)
+                .useDefaultHover({ hover in self.isHighlighted = hover })
             }
         }
     }
@@ -219,6 +287,11 @@ extension WidgetLibrary.UI.Navigator.List.Row {
     /// Onload handler. Sets view state
     /// - Returns: Void
     private func actionOnAppear() -> Void {
+        self.backgroundColour = Color.gray.opacity(self.isPresented ? 0.3 : self.isHighlighted ? 0.3 : 0.1)
+        if self.viewModeIndex == 1 {
+            self.backgroundColour = self.isHighlighted ? self.colour.opacity(0.9) : self.colour
+        }
+
         switch self.entity {
         case is Company:
             let company = self.entity as! Company
@@ -228,6 +301,7 @@ extension WidgetLibrary.UI.Navigator.List.Row {
             self.created = company.createdDate
             self.colour = company.backgroundColor
             self.relatedEntities = [.people]
+            self.isPresented = company == self.state.session.company
         case is Project:
             let project = self.entity as! Project
             self.label = project.name ?? "Error: Invalid project name"
@@ -235,6 +309,7 @@ extension WidgetLibrary.UI.Navigator.List.Row {
             self.lastModified = project.lastUpdate
             self.created = project.created
             self.colour = project.backgroundColor
+            self.isPresented = project == self.state.session.project
         case is Job:
             let job = self.entity as! Job
             self.label = job.title ?? job.jid.string
@@ -243,6 +318,7 @@ extension WidgetLibrary.UI.Navigator.List.Row {
             self.created = job.created
             self.colour = job.backgroundColor
             self.relatedEntities = [.tasks, .records, .notes, .definitions]
+            self.isPresented = job == self.state.session.job
         default:
             self.label = "Error: Invalid company name"
             self.children = []
