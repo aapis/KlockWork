@@ -656,7 +656,12 @@ extension WidgetLibrary {
                     }
                 }
                 .padding()
-                .background(Theme.textBackground)
+                .background(
+                    ZStack {
+                        self.state.session.appPage.primaryColour
+                        Theme.textBackground
+                    }
+                )
                 .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
                 .onAppear(perform: self.actionOnAppear)
             }
@@ -711,6 +716,7 @@ extension WidgetLibrary {
         }
 
         struct ExploreLinks: View {
+            @EnvironmentObject private var state: Navigation
             private var activities: [Activity] {
                 [
                     Activity(name: "Activity Calendar", page: .activityCalendar, type: .visualize, icon: "calendar"),
@@ -734,7 +740,12 @@ extension WidgetLibrary {
                                 }
                             }
                             .padding()
-                            .background(Theme.textBackground)
+                            .background(
+                                ZStack {
+                                    self.state.session.appPage.primaryColour
+                                    Theme.textBackground
+                                }
+                            )
                             .clipShape(.rect(cornerRadius: 5))
                         }
                     }
@@ -1447,7 +1458,9 @@ extension WidgetLibrary {
                     HStack(alignment: .center, spacing: 4) {
                         if let title = self.title {
                             Text(title)
-                        } else if let icon = self.icon {
+                        }
+
+                        if let icon = self.icon {
                             (self.isOn ? Image(systemName: self.selectedIcon ?? "xmark") : Image(systemName: icon))
                         } else {
                             (self.isOn ? self.eType?.selectedIcon : self.eType?.icon)
@@ -1459,7 +1472,7 @@ extension WidgetLibrary {
                 .help(self.title ?? self.eType?.label ?? "")
                 .buttonStyle(.plain)
                 .useDefaultHover({ hover in self.isHighlighted = hover })
-                .shadow(color: self.isOn ? Theme.base : .clear, radius: 1, x: 1, y: 1)
+                .shadow(color: self.isOn && self.title == nil ? Theme.base : .clear, radius: 1, x: 1, y: 1)
             }
 
             init(_ title: String? = nil, isOn: Binding<Bool>, eType: PageConfiguration.EntityType? = .BruceWillis, icon: String? = nil, selectedIcon: String? = nil) {

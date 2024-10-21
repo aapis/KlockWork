@@ -23,21 +23,21 @@ extension WidgetLibrary.UI {
         var helpText: String {
             switch self {
             case .list: return "Entities as a list"
-            case .folders: return "Entities as files and folders"
+            case .folders: return "Entities as icons"
             }
         }
 
         var icon: String {
             switch self {
-            case .folders: return "folder"
-            default: return "list.bullet.indent"
+            case .folders: return "square.grid.3x3.square"
+            default: return "list.bullet"
             }
         }
 
         var labelText: String {
             switch self {
             case .list: return "List"
-            case .folders: return "Files & Folders"
+            case .folders: return "Icons"
             }
         }
 
@@ -74,16 +74,13 @@ extension WidgetLibrary.UI {
         private var buttons: [ToolbarButton] = []
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 0) {
-                FancyGenericToolbar(
-                    buttons: buttons,
-                    standalone: true,
-                    location: .content,
-                    mode: .compact
-                )
-            }
-            .padding()
-            .background(Theme.toolbarColour)
+            FancyGenericToolbar(
+                buttons: buttons,
+                standalone: true,
+                location: .content,
+                mode: .compact,
+                page: .explore
+            )
         }
 
         init() {
@@ -100,7 +97,7 @@ extension WidgetLibrary.UI.Navigator {
         typealias US = UI.UnifiedSidebar
         @EnvironmentObject private var state: Navigation
         @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
-        @AppStorage("widget.navigator.viewModeB") private var viewModeB: Bool = true
+        @AppStorage("widget.navigator.altViewModeEnabled") private var altViewModeEnabled: Bool = true
         @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
         @AppStorage("widget.navigator.sortModifiedOrder") private var navigatorSortModifiedOrder: Bool = false
         @AppStorage("widget.navigator.sortCreatedOrder") private var navigatorSortCreatedOrder: Bool = false
@@ -110,16 +107,21 @@ extension WidgetLibrary.UI.Navigator {
         var body: some View {
             VStack(alignment: .leading, spacing: 1) {
                 HStack {
-                    UI.Toggle(isOn: $showPublished, icon: "heart", selectedIcon: "heart.fill")
+                    UI.Toggle("Published", isOn: $showPublished, icon: "checkmark.square", selectedIcon: "checkmark.square.fill")
                         .help("Show or hide unpublished items")
                         .padding(3)
-                        .background(Theme.lightWhite.blendMode(.softLight))
+                        .background(Theme.textBackground)
                         .clipShape(.rect(cornerRadius: 5))
 
-                    UI.Toggle(isOn: $viewModeB, icon: "star")
+                    UI.Toggle("Full Colour", isOn: $altViewModeEnabled, icon: "checkmark.square", selectedIcon: "checkmark.square.fill")
+                        .help("Navigator becomes colourful")
+                        .padding(3)
+                        .background(Theme.textBackground)
+                        .clipShape(.rect(cornerRadius: 5))
+                    Spacer()
                 }
                 .padding(8)
-                .font(.title)
+                .background(self.state.session.appPage.primaryColour)
 
                 HStack {
                     Text("Name")
@@ -159,11 +161,11 @@ extension WidgetLibrary.UI.Navigator {
             .onAppear(perform: self.actionOnAppear)
             .onChange(of: self.showPublished) { self.actionOnAppear() }
             .onChange(of: self.state.session.gif) { self.actionOnAppear() }
-            .onChange(of: self.viewModeB) {
-                if self.viewModeB {
-                    self.viewModeIndex = 0
-                } else {
+            .onChange(of: self.altViewModeEnabled) {
+                if self.altViewModeEnabled {
                     self.viewModeIndex = 1
+                } else {
+                    self.viewModeIndex = 0
                 }
             }
         }
@@ -258,6 +260,7 @@ extension WidgetLibrary.UI.Navigator {
                             Theme.base.opacity(0.6).blendMode(.softLight)
                         }
                         Image(systemName: self.isPresented ? "minus" : self.isHighlighted ? "folder.fill" : "folder")
+                            // @TODO: create a ShapeStyle for this
                             .foregroundStyle(self.isPresented ? .white : self.viewModeIndex == 1 ? self.colour.isBright() ? Theme.base : .white : self.colour)
                     }
                     .frame(width: 30, height: 30)
@@ -265,7 +268,10 @@ extension WidgetLibrary.UI.Navigator {
 
                     Text(self.label)
                         .multilineTextAlignment(.leading)
-                        .foregroundStyle(self.isPresented ? .white : self.isHighlighted ? .white : Theme.lightWhite)
+                        // @TODO: create a ShapeStyle for this
+                        .foregroundStyle(
+                            self.isPresented ? .white : self.isHighlighted ? .white : self.viewModeIndex == 1 ? self.colour.isBright() ? Theme.base : .white : .white
+                        )
                     Spacer()
 
                     HStack {
@@ -281,7 +287,7 @@ extension WidgetLibrary.UI.Navigator {
                 }
                 .padding(8)
                 .background(
-                    self.viewModeIndex == 1 ? self.isHighlighted ? self.colour.opacity(0.9) : self.colour : Color.gray.opacity(self.isPresented ? 0.3 : self.isHighlighted ? 0.3 : 0.1)
+                    self.viewModeIndex == 1 ? self.isHighlighted ? self.colour.opacity(0.9) : self.colour : Color.white.opacity(self.isPresented ? 0.3 : self.isHighlighted ? 0.3 : 0.1)
                 )
                 .useDefaultHover({ hover in self.isHighlighted = hover })
             }
@@ -299,6 +305,7 @@ extension WidgetLibrary.UI.Navigator.List {
     /// Onload handler. Finds companies
     /// - Returns: Void
     private func actionOnAppear() -> Void {
+
         self.companies = CoreDataCompanies(moc: self.state.moc).all(
             allowKilled: self.showPublished,
             allowPlanMembersOnly: self.state.session.gif == .focus,
@@ -367,15 +374,18 @@ extension WidgetLibrary.UI.Navigator.List.Row {
     private func actionOnTap() -> Void {
         switch self.entity {
         case is Company:
+            self.state.session.company = nil
             let company = self.entity as! Company
             self.state.session.company = company
             self.state.session.project = nil
             self.state.session.job = nil
         case is Project:
+            self.state.session.project = nil
             let project = self.entity as! Project
             self.state.session.project = project
             self.state.session.job = nil
         case is Job:
+            self.state.session.job = nil
             let job = self.entity as! Job
             self.state.session.setJob(job)
         default:
