@@ -23,7 +23,7 @@ open class CoreDataTaxonomyTermDefinitions {
     /// - Parameters:
     ///   - job: Job
     /// - Returns: FetchRequest<NSManagedObject>
-    static public func fetch(job: Job) -> FetchRequest<TaxonomyTermDefinitions> {
+    static public func fetch(by job: Job) -> FetchRequest<TaxonomyTermDefinitions> {
         let descriptors = [
             NSSortDescriptor(keyPath: \TaxonomyTermDefinitions.created, ascending: false)
         ]
