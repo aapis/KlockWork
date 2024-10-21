@@ -100,8 +100,10 @@ extension WidgetLibrary.UI.Navigator {
         typealias US = UI.UnifiedSidebar
         @EnvironmentObject private var state: Navigation
         @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
-        @AppStorage("widget.viewModeB") private var viewModeB: Bool = true
-        @AppStorage("widget.viewModeIndex") private var viewModeIndex: Int = 0
+        @AppStorage("widget.navigator.viewModeB") private var viewModeB: Bool = true
+        @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
+        @AppStorage("widget.navigator.sortModifiedOrder") private var navigatorSortModifiedOrder: Bool = false
+        @AppStorage("widget.navigator.sortCreatedOrder") private var navigatorSortCreatedOrder: Bool = false
         @State private var companies: [Company] = []
         public let location: WidgetLocation = .content
 
@@ -122,8 +124,18 @@ extension WidgetLibrary.UI.Navigator {
                 HStack {
                     Text("Name")
                     Spacer()
-                    Text("Modified")
-                    Text("Created")
+                    Button {
+                        self.navigatorSortModifiedOrder.toggle()
+                    } label: {
+                        Text("Modified")
+                    }
+                    .buttonStyle(.plain)
+                    Button {
+                        self.navigatorSortCreatedOrder.toggle()
+                    } label: {
+                        Text("Created")
+                    }
+                    .buttonStyle(.plain)
                 }
                 .font(.caption)
                 .padding(4)
@@ -160,7 +172,9 @@ extension WidgetLibrary.UI.Navigator {
             typealias UI = WidgetLibrary.UI
             @EnvironmentObject private var state: Navigation
             @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
-            @AppStorage("widget.viewModeIndex") private var viewModeIndex: Int = 0
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
+            @AppStorage("widget.navigator.sortModifiedOrder") private var navigatorSortModifiedOrder: Bool = false
+            @AppStorage("widget.navigator.sortCreatedOrder") private var navigatorSortCreatedOrder: Bool = false
             public let entity: NSManagedObject
             @State private var label: String = ""
             @State private var lastModified: Date? = nil
@@ -233,6 +247,8 @@ extension WidgetLibrary.UI.Navigator {
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.viewModeIndex) { self.actionOnAppear() }
                 .onChange(of: self.showPublished) { self.actionOnAppear() }
+//                .onChange(of: self.navigatorSortCreatedOrder) { self.actionOnAppear() }
+//                .onChange(of: self.navigatorSortModifiedOrder) { self.actionOnAppear() }
             }
 
             var ButtonContent: some View {
@@ -298,13 +314,19 @@ extension WidgetLibrary.UI.Navigator.List.Row {
         switch self.entity {
         case is Company:
             let company = self.entity as! Company
-            let projects = company.projects?.allObjects as? [Project] ?? []
+            let projects = (company.projects?.allObjects as? [Project] ?? [])
+                .sorted(by: {
+                    if self.navigatorSortCreatedOrder {
+                        return $0.created ?? Date.now > $1.created ?? Date.now
+                    } else {
+                        return $0.lastUpdate ?? Date.now > $1.lastUpdate ?? Date.now
+                    }
+                })
             self.label = company.name ?? "Error: Invalid company name"
-            self.children = projects.sorted(by: {$0.lastUpdate ?? Date.now > $1.lastUpdate ?? Date.now})
+            self.children = projects
             if self.showPublished {
                 self.children = projects
                     .filter({$0.alive == true})
-                    .sorted(by: {$0.lastUpdate ?? Date.now > $1.lastUpdate ?? Date.now})
             }
             self.lastModified = company.lastUpdate
             self.created = company.createdDate
@@ -313,13 +335,13 @@ extension WidgetLibrary.UI.Navigator.List.Row {
             self.isPresented = company == self.state.session.company
         case is Project:
             let project = self.entity as! Project
-            let jobs = project.jobs?.allObjects as? [Job] ?? []
+            let jobs = (project.jobs?.allObjects as? [Job] ?? [])
+                .sorted(by: {$0.lastUpdate ?? Date.now > $1.lastUpdate ?? Date.now})
             self.label = project.name ?? "Error: Invalid project name"
-            self.children = jobs.sorted(by: {$0.lastUpdate ?? Date.now > $1.lastUpdate ?? Date.now})
+            self.children = jobs
             if self.showPublished {
                 self.children = jobs
                     .filter({$0.alive == true})
-                    .sorted(by: {$0.lastUpdate ?? Date.now > $1.lastUpdate ?? Date.now})
             }
             self.lastModified = project.lastUpdate
             self.created = project.created
