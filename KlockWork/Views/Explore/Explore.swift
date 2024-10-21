@@ -20,21 +20,24 @@ struct Explore: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
-            VStack(alignment: .leading, spacing: 0) {
-                UniversalHeader.Widget(
-                    type: .BruceWillis,
-                    title: "Explore"
-                )
-                UI.EntityStatistics()
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 0) {
+                    UniversalHeader.Widget(
+                        type: .BruceWillis,
+                        title: "Explore"
+                    )
+                    UI.EntityStatistics()
+                }
+                UI.ExploreLinks()
+                UI.Navigator()
+                // @TODO: tmp disabled
+                //            Widgets()
+                Spacer()
             }
-            UI.ExploreLinks()
-            // @TODO: tmp disabled
-//            Widgets()
-            Spacer()
         }
         .padding()
-        .background(self.state.session.appPage.primaryColour)
+        .background(Theme.toolbarColour)
     }
 }
 
