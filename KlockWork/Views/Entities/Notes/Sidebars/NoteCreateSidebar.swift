@@ -10,6 +10,7 @@ import SwiftUI
 import KWCore
 
 struct NoteCreateSidebar: View {
+    typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var state: Navigation
     @State public var note: Note?
     @State private var tabs: [ToolbarButton] = []
@@ -29,6 +30,8 @@ struct NoteCreateSidebar: View {
 }
 
 extension NoteCreateSidebar {
+    /// Onload handler. Creates toolbar buttons
+    /// - Returns: Void
     private func createToolbar() -> Void {
         if let stored = self.state.session.note {
             self.note = stored
@@ -47,7 +50,7 @@ extension NoteCreateSidebar {
                 helpText: "Resources",
                 icon: "globe",
                 labelText: "Resources",
-                contents: AnyView(UnifiedSidebar.Widget())
+                contents: AnyView(UI.UnifiedSidebar.Widget())
             ),
         ]
     }

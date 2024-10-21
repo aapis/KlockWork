@@ -33,7 +33,7 @@ struct Home: View {
             helpText: "Resources",
             icon: "globe",
             labelText: "Resources",
-            contents: AnyView(UnifiedSidebar.Widget())
+            contents: AnyView(UI.UnifiedSidebar.Widget())
         ),
         ToolbarButton(
             id: 1,

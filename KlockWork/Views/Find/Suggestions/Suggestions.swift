@@ -98,6 +98,7 @@ extension FindDashboard {
         }
         
         struct SuggestedJobs: View {
+            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -111,7 +112,7 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            UnifiedSidebar.EntityRowButton(
+                            UI.UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.jobs.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.jobs.label)",
                                 isPresented: $showChildren
                             )
@@ -189,6 +190,7 @@ extension FindDashboard {
         }
         
         struct SuggestedProjects: View {
+            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -202,7 +204,7 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            UnifiedSidebar.EntityRowButton(
+                            UI.UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.projects.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.projects.label)",
                                 isPresented: $showChildren
                             )
@@ -267,6 +269,7 @@ extension FindDashboard {
         }
         
         struct SuggestedNotes: View {
+            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -280,7 +283,7 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            UnifiedSidebar.EntityRowButton(
+                            UI.UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.notes.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.notes.label)",
                                 isPresented: $showChildren
                             )
@@ -355,6 +358,7 @@ extension FindDashboard {
         }
         
         struct SuggestedTasks: View {
+            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @State private var showChildren: Bool = false
@@ -367,7 +371,7 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            UnifiedSidebar.EntityRowButton(
+                            UI.UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.tasks.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.tasks.label)",
                                 isPresented: $showChildren
                             )
@@ -432,6 +436,7 @@ extension FindDashboard {
         }
         
         struct SuggestedRecords: View {
+            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -445,7 +450,7 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            UnifiedSidebar.EntityRowButton(
+                            UI.UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.records.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.records.label)",
                                 isPresented: $showChildren
                             )
@@ -518,6 +523,7 @@ extension FindDashboard {
         }
         
         struct SuggestedCompanies: View {
+            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -531,7 +537,7 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            UnifiedSidebar.EntityRowButton(
+                            UI.UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.companies.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.companies.label)",
                                 isPresented: $showChildren
                             )
@@ -604,6 +610,7 @@ extension FindDashboard {
         }
         
         struct SuggestedPeople: View {
+            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @State private var showChildren: Bool = false
@@ -616,7 +623,7 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            UnifiedSidebar.EntityRowButton(
+                            UI.UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.people.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.people.label)",
                                 isPresented: $showChildren
                             )
@@ -670,6 +677,7 @@ extension FindDashboard {
         }
 
         struct SuggestedTerms: View {
+            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -683,7 +691,7 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            UnifiedSidebar.EntityRowButton(
+                            UI.UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.terms.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.terms.label)",
                                 isPresented: $showChildren
                             )
@@ -746,6 +754,7 @@ extension FindDashboard {
         }
 
         struct SuggestedDefinitions: View {
+            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -759,7 +768,7 @@ extension FindDashboard {
                         Button {
                             showChildren.toggle()
                         } label: {
-                            UnifiedSidebar.EntityRowButton(
+                            UI.UnifiedSidebar.EntityRowButton(
                                 text: self.items.count == 1 ? "\(items.count) \(PageConfiguration.EntityType.definitions.enSingular)" : "\(items.count) \(PageConfiguration.EntityType.definitions.label)",
                                 isPresented: $showChildren
                             )

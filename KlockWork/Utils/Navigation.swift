@@ -590,7 +590,7 @@ extension Navigation {
             HistoryPage(page: .people, view: AnyView(PeopleDashboard()), sidebar: AnyView(PeopleDashboardSidebar()), title: "People", navButtons: [.resetUserChoices, .createPerson]),
             HistoryPage(page: .peopleDetail, view: AnyView(PeopleDetail()), sidebar: AnyView(PeopleDashboardSidebar()), title: "Person"),
             HistoryPage(page: .projectDetail, view: AnyView(CompanyView()), sidebar: AnyView(DefaultCompanySidebar()), title: "Project"),
-            HistoryPage(page: .projects, view: AnyView(ProjectsDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Projects", navButtons: [.resetUserChoices, .createProject]),
+            HistoryPage(page: .projects, view: AnyView(WidgetLibrary.UI.Navigator()), sidebar: AnyView(DefaultCompanySidebar()), title: "Projects", navButtons: [.resetUserChoices, .createProject]),
             HistoryPage(page: .explore, view: AnyView(Explore()), sidebar: AnyView(ExploreSidebar()), title: "Explore"),
             HistoryPage(page: .activityFlashcards, view: AnyView(UI.FlashcardActivity()), sidebar: AnyView(ExploreSidebar()), title: "Flashcards"),
             HistoryPage(page: .activityCalendar, view: AnyView(UI.ActivityCalendar()), sidebar: AnyView(ExploreSidebar()), title: "Activity Calendar"),
