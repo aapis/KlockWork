@@ -52,96 +52,7 @@ struct Home: View {
     ]
 
     private let page: APage = .find
-    private var buttons: [PageGroup: [SidebarButton]] {
-        [
-            .views: [
-                SidebarButton(
-                    destination: AnyView(Dashboard()),
-                    pageType: .dashboard,
-                    icon: "magnifyingglass",
-                    label: "Find anything",
-                    sidebar: AnyView(DashboardSidebar())
-                ),
-                SidebarButton(
-                    destination: AnyView(Planning()),
-                    pageType: .planning,
-                    icon: nav.planning.jobs.count == 0 ? "hexagon" : (nav.session.gif == .focus ? "circle.hexagongrid.fill" : "circle.hexagongrid"),
-                    label: "Planning",
-                    sidebar: AnyView(DefaultPlanningSidebar())
-                ),
-                SidebarButton(
-                    destination: AnyView(Explore()),
-                    pageType: .explore,
-                    icon: "globe.desk",
-                    label: "Explore",
-                    sidebar: AnyView(ExploreSidebar())
-                ),
-            ],
-            .entities: [
-                SidebarButton(
-                    destination: AnyView(Today()),
-                    pageType: .today,
-                    iconAsImage: Entity.records.icon,
-                    label: "Today",
-                    sidebar: AnyView(TodaySidebar()),
-                    altMode: PageAltMode(
-                        name: "CLI Mode",
-                        icon: "apple.terminal",
-                        condition: cliEnabled && commandLineMode
-                    )
-                ),
-                SidebarButton(
-                    destination: AnyView(TaskDashboard()),
-                    pageType: .tasks,
-                    iconAsImage: Entity.tasks.icon,
-                    label: Entity.tasks.label,
-                    sidebar: AnyView(TaskDashboardSidebar())
-                ),
-                SidebarButton(
-                    destination: AnyView(NoteDashboard()),
-                    pageType: .notes,
-                    iconAsImage: Entity.notes.icon,
-                    label: Entity.notes.label,
-                    sidebar: AnyView(NoteDashboardSidebar())
-                ),
-                SidebarButton(
-                    destination: AnyView(PeopleDashboard()),
-                    pageType: .people,
-                    iconAsImage: Entity.people.icon,
-                    label: Entity.people.label,
-                    sidebar: AnyView(PeopleDashboardSidebar())
-                ),
-                SidebarButton(
-                    destination: AnyView(CompanyDashboard()),
-                    pageType: .companies,
-                    iconAsImage: Entity.companies.icon,
-                    label: Entity.companies.label,
-                    sidebar: AnyView(DefaultCompanySidebar())
-                ),
-                SidebarButton(
-                    destination: AnyView(ProjectsDashboard()),
-                    pageType: .projects,
-                    iconAsImage: Entity.projects.icon,
-                    label: Entity.projects.label,
-                    sidebar: AnyView(DefaultCompanySidebar())
-                ),
-                SidebarButton(
-                    destination: AnyView(JobDashboard()),
-                    pageType: .jobs,
-                    iconAsImage: Entity.jobs.icon,
-                    label: Entity.jobs.label,
-                    sidebar: AnyView(JobDashboardSidebar())
-                ),
-                SidebarButton(
-                    destination: AnyView(TermsDashboard()),
-                    pageType: .terms,
-                    iconAsImage: Entity.terms.icon,
-                    label: Entity.terms.label,
-                    sidebar: AnyView(TermsDashboardSidebar())
-                )
-            ]
-        ]
-    }
+    @State private var buttons: [PageGroup: [SidebarButton]] = [:]
 
     var body: some View {
         NavigationStack {
@@ -169,6 +80,8 @@ struct Home: View {
         }
         .onAppear(perform: self.onAppear)
         .onChange(of: self.nav.session.company) { self.actionOnChangeCompany() }
+        .onChange(of: self.nav.session.project) { self.createToolbarButtons() }
+        .onChange(of: self.nav.session.job) { self.createToolbarButtons() }
     }
 
     @ViewBuilder var Sidebar: some View {
@@ -208,11 +121,15 @@ struct Home: View {
                     .opacity(0.25)
 
                 VStack(alignment: .trailing, spacing: 5) {
-                    FancyDivider()
-                    ForEach(buttons[.views]!) { button in button.environmentObject(nav) }
+                    if let buttons = self.buttons[.views] {
+                        FancyDivider()
+                        ForEach(buttons) { button in button.environmentObject(nav) }
+                    }
 
-                    FancyDivider()
-                    ForEach(buttons[.entities]!) { button in button.environmentObject(nav) }
+                    if let buttons = self.buttons[.entities] {
+                        FancyDivider()
+                        ForEach(buttons) { button in button.environmentObject(nav) }
+                    }
                 }
             }
         }
@@ -266,6 +183,7 @@ extension Home {
     private func onAppear() -> Void {
         nav.parent = selectedSidebarButton
         checkForEvents()
+        self.createToolbarButtons()
 
         KeyboardHelper.monitor(key: .keyDown, callback: {
             self.isSearchStackShowing = false
@@ -275,7 +193,84 @@ extension Home {
             self.nav.setInspector()
         })
     }
-    
+
+    private func createToolbarButtons() -> Void {
+        self.buttons = [
+            .views: [
+                SidebarButton(
+                    destination: AnyView(Dashboard()),
+                    pageType: .dashboard,
+                    icon: "magnifyingglass",
+                    label: "Find anything",
+                    sidebar: AnyView(DashboardSidebar())
+                ),
+                SidebarButton(
+                    destination: AnyView(Planning()),
+                    pageType: .planning,
+                    icon: nav.planning.jobs.count == 0 ? "hexagon" : (nav.session.gif == .focus ? "circle.hexagongrid.fill" : "circle.hexagongrid"),
+                    label: "Planning",
+                    sidebar: AnyView(DefaultPlanningSidebar())
+                ),
+                SidebarButton(
+                    destination: AnyView(Explore()),
+                    pageType: .explore,
+                    icon: "globe.desk",
+                    label: "Explore",
+                    sidebar: AnyView(ExploreSidebar())
+                ),
+                SidebarButton(
+                    destination: AnyView(Today()),
+                    pageType: .today,
+                    iconAsImage: Entity.records.icon,
+                    label: "Today",
+                    sidebar: AnyView(TodaySidebar()),
+                    altMode: PageAltMode(
+                        name: "CLI Mode",
+                        icon: "apple.terminal",
+                        condition: cliEnabled && commandLineMode
+                    )
+                ),
+            ],
+            .entities: []
+        ]
+
+        if self.nav.session.company != nil {
+            self.buttons[.entities]!.append(
+                SidebarButton(
+                    destination: AnyView(CompanyDashboard()),
+                    pageType: .companies,
+                    iconAsImage: Entity.companies.icon,
+                    label: Entity.companies.label,
+                    sidebar: AnyView(DefaultCompanySidebar())
+                )
+            )
+        }
+
+        if self.nav.session.project != nil {
+            self.buttons[.entities]!.append(
+                SidebarButton(
+                    destination: AnyView(ProjectsDashboard()),
+                    pageType: .projects,
+                    iconAsImage: Entity.projects.icon,
+                    label: Entity.projects.label,
+                    sidebar: AnyView(DefaultCompanySidebar())
+                )
+            )
+        }
+
+        if self.nav.session.job != nil {
+            self.buttons[.entities]!.append(
+                SidebarButton(
+                    destination: AnyView(JobDashboard()),
+                    pageType: .jobs,
+                    iconAsImage: Entity.jobs.icon,
+                    label: Entity.jobs.label,
+                    sidebar: AnyView(JobDashboardSidebar())
+                )
+            )
+        }
+    }
+
     /// Check for upcoming events and create notifications
     /// - Returns: Void
     private func checkForEvents() -> Void {
@@ -330,5 +325,6 @@ extension Home {
     private func actionOnChangeCompany() -> Void {
         self.nav.session.project = nil
         self.nav.session.job = nil
+        self.createToolbarButtons()
     }
 }
