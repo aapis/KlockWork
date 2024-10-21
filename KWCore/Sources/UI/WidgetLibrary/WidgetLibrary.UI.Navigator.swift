@@ -106,56 +106,20 @@ extension WidgetLibrary.UI.Navigator {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 1) {
-                HStack {
-                    UI.Toggle("Published", isOn: $showPublished, icon: "checkmark.square", selectedIcon: "checkmark.square.fill")
-                        .help("Show or hide unpublished items")
-                        .padding(3)
-                        .background(Theme.textBackground)
-                        .clipShape(.rect(cornerRadius: 5))
-
-                    UI.Toggle("Full Colour", isOn: $altViewModeEnabled, icon: "checkmark.square", selectedIcon: "checkmark.square.fill")
-                        .help("Navigator becomes colourful")
-                        .padding(3)
-                        .background(Theme.textBackground)
-                        .clipShape(.rect(cornerRadius: 5))
-                    Spacer()
+                VStack(spacing: 0) {
+                    self.ListHeader
+                    self.ListLegend
                 }
-                .padding(8)
-                .background(self.state.session.appPage.primaryColour)
-
-                HStack {
-                    Text("Name")
-                    Spacer()
-                    Button {
-                        self.navigatorSortModifiedOrder.toggle()
-                    } label: {
-                        Text("Modified")
-                    }
-                    .buttonStyle(.plain)
-                    Button {
-                        self.navigatorSortCreatedOrder.toggle()
-                    } label: {
-                        Text("Created")
-                    }
-                    .buttonStyle(.plain)
-                }
-                .font(.caption)
-                .padding(4)
-                Divider()
 
                 if self.companies.count(where: {$0.alive == true}) > 0 {
                     ForEach(self.companies, id: \.objectID) { company in
                         Row(entity: company)
                     }
-
-//                    HStack {
-//                        Text("\(self.companies.count) Companies")
-//                            .font(.caption)
-//                    }
-//                    .padding(4)
                 } else {
                     FancyHelpText(text: "Create a company first.")
                 }
+
+//                self.ListFooter
             }
             .background(Theme.textBackground)
             .onAppear(perform: self.actionOnAppear)
@@ -168,6 +132,62 @@ extension WidgetLibrary.UI.Navigator {
                     self.viewModeIndex = 0
                 }
             }
+        }
+
+        var ListHeader: some View {
+            HStack {
+                UI.Toggle("Published", isOn: $showPublished, icon: "checkmark.square", selectedIcon: "checkmark.square.fill")
+                    .help("Show or hide unpublished items")
+                    .padding(3)
+                    .background(Theme.textBackground)
+                    .clipShape(.rect(cornerRadius: 5))
+
+                UI.Toggle("Full Colour", isOn: $altViewModeEnabled, icon: "checkmark.square", selectedIcon: "checkmark.square.fill")
+                    .help("Navigator becomes colourful")
+                    .padding(3)
+                    .background(Theme.textBackground)
+                    .clipShape(.rect(cornerRadius: 5))
+                Spacer()
+            }
+            .padding(8)
+            .background(self.state.session.appPage.primaryColour)
+        }
+
+        @ViewBuilder var ListLegend: some View {
+            HStack {
+                Text("Name")
+                Spacer()
+                Button {
+                    self.navigatorSortModifiedOrder.toggle()
+                } label: {
+                    Text("Modified")
+                }
+                .buttonStyle(.plain)
+                Button {
+                    self.navigatorSortCreatedOrder.toggle()
+                } label: {
+                    Text("Created")
+                }
+                .buttonStyle(.plain)
+            }
+            .font(.caption)
+            .padding(4)
+            .background(
+                ZStack(alignment: .topLeading) {
+                    self.state.session.appPage.primaryColour
+                    LinearGradient(colors: [Theme.base.opacity(0.2), .clear], startPoint: .top, endPoint: .bottom)
+                        .blendMode(.softLight)
+                        .frame(height: 10)
+                }
+            )
+        }
+
+        var ListFooter: some View {
+            HStack {
+                Text("\(self.companies.count) Companies")
+                    .font(.caption)
+            }
+            .padding(4)
         }
 
         struct Row: View {
@@ -295,8 +315,17 @@ extension WidgetLibrary.UI.Navigator {
     }
 
     struct Folders: View {
+        @EnvironmentObject private var state: Navigation
+
         var body: some View {
-            Text("Folder view to come")
+            VStack(alignment: .leading, spacing: 0) {
+                HStack {
+                    Text("Folder view to come")
+                    Spacer()
+                }
+                .padding(8)
+                .background(self.state.session.appPage.primaryColour)
+            }
         }
     }
 }
@@ -305,7 +334,6 @@ extension WidgetLibrary.UI.Navigator.List {
     /// Onload handler. Finds companies
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-
         self.companies = CoreDataCompanies(moc: self.state.moc).all(
             allowKilled: self.showPublished,
             allowPlanMembersOnly: self.state.session.gif == .focus,

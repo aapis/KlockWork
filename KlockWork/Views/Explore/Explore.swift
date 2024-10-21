@@ -20,21 +20,19 @@ struct Explore: View {
     }
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 16) {
-                VStack(alignment: .leading, spacing: 0) {
-                    UniversalHeader.Widget(
-                        type: .BruceWillis,
-                        title: "Explore"
-                    )
-                    UI.EntityStatistics()
-                }
-                UI.ExploreLinks()
-                UI.Navigator()
-                // @TODO: tmp disabled
-                //            Widgets()
-                Spacer()
+        VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 0) {
+                UniversalHeader.Widget(
+                    type: .BruceWillis,
+                    title: "Explore"
+                )
+                UI.EntityStatistics()
             }
+            UI.ExploreLinks()
+            UI.Navigator()
+            // @TODO: tmp disabled
+            //            Widgets()
+            Spacer()
         }
         .padding()
         .background(Theme.toolbarColour)
