@@ -715,6 +715,46 @@ extension WidgetLibrary {
             }
         }
 
+        struct IconBlock: View, Identifiable {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
+            public var id: UUID = UUID()
+            public var type: Conf
+            public var text: String
+            public var colour: Color
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                VStack(alignment: .center, spacing: 0) {
+                    ZStack(alignment: .center) {
+                        (self.viewModeIndex == 0 ? Color.gray.opacity(self.isHighlighted ? 1 : 0.7) : self.colour.opacity(self.isHighlighted ? 1 : 0.7))
+                        VStack(alignment: .center, spacing: 0) {
+                            (self.isHighlighted ? self.type.selectedIcon : self.type.icon)
+                                .symbolRenderingMode(.hierarchical)
+                                .font(.largeTitle)
+//                                .foregroundStyle(self.viewModeIndex == 0 ? self.colour : self.colour.isBright() ? Theme.base : .white)
+                                .foregroundStyle(self.viewModeIndex == 0 ? self.colour : .white)
+                        }
+                        Spacer()
+                    }
+                    .frame(height: 65)
+
+                    ZStack(alignment: .center) {
+                        (self.isHighlighted ? Color.yellow : Theme.textBackground)
+                        VStack(alignment: .center, spacing: 0) {
+                            Text(self.text)
+                                .font(.system(.title3, design: .monospaced))
+                                .foregroundStyle(self.isHighlighted ? Theme.base : .gray)
+                        }
+                    }
+                    .frame(height: 25)
+                }
+                .frame(width: 65)
+                .clipShape(.rect(cornerRadius: 5))
+                .useDefaultHover({ hover in self.isHighlighted = hover })
+            }
+        }
+
         struct ExploreLinks: View {
             @EnvironmentObject private var state: Navigation
             private var activities: [Activity] {
@@ -1393,53 +1433,59 @@ extension WidgetLibrary {
             public var company: Company?
             public var project: Project?
             public var job: Job?
+            public var showRoot: Bool = false
 
             var body: some View {
                 HStack(alignment: .center, spacing: 0) {
-                    if let company = self.company {
-                        if let project = self.project {
-                            ZStack(alignment: .leading) {
-                                if let cJob = self.job {
-                                    cJob.backgroundColor
+                    ZStack(alignment: .leading) {
+                        HStack(alignment: .center, spacing: 8) {
+                            HStack(spacing: 0) {
+                                if self.showRoot {
+                                    Text("...")
+                                        .padding(7)
+                                        .background(Theme.base)
+                                        .foregroundStyle(.white.opacity(0.55))
+                                    Image(systemName: "chevron.right")
+                                        .padding([.top, .bottom], 8)
+                                        .padding([.leading, .trailing], 4)
+                                        .background(Theme.base.opacity(0.9))
+                                        .foregroundStyle(.white.opacity(0.55))
+                                }
 
-                                    if let cAbb = company.abbreviation {
-                                        if let pAbb = project.abbreviation {
-                                            HStack(alignment: .center, spacing: 8) {
-                                                HStack(spacing: 0) {
-                                                    Text("\(cAbb)")
-                                                        .padding(7)
-                                                        .background(company.backgroundColor)
-                                                        .foregroundStyle(company.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
-                                                    Image(systemName: "chevron.right")
-                                                        .padding([.top, .bottom], 8)
-                                                        .padding([.leading, .trailing], 4)
-                                                        .background(company.backgroundColor.opacity(0.9))
-                                                        .foregroundStyle(company.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
-                                                    Text("\(pAbb)")
-                                                        .padding(7)
-                                                        .background(project.backgroundColor)
-                                                        .foregroundStyle(project.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
-                                                    Image(systemName: "chevron.right")
-                                                        .padding([.top, .bottom], 8)
-                                                        .padding([.leading, .trailing], 4)
-                                                        .background(project.backgroundColor.opacity(0.9))
-                                                        .foregroundStyle(project.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
-                                                }
+                                if let abbreviation = self.company?.abbreviation {
+                                    Text(abbreviation)
+                                        .padding(7)
+                                        .background(self.company?.backgroundColor ?? Theme.base)
+                                        .foregroundStyle((self.company?.backgroundColor.isBright() ?? false) ? Theme.base.opacity(0.55) : .white.opacity(0.55))
+                                    Image(systemName: "chevron.right")
+                                        .padding([.top, .bottom], 8)
+                                        .padding([.leading, .trailing], 4)
+                                        .background((self.company?.backgroundColor ?? Theme.base).opacity(0.9))
+                                        .foregroundStyle((self.company?.backgroundColor  ?? Theme.base).isBright() ? Theme.base.opacity(0.55) : .white.opacity(0.55))
+                                }
 
-                                                Text("\(self.job?.title ?? self.job?.jid.string ?? "")")
-                                                    .foregroundStyle(cJob.backgroundColor.isBright() ? .black : .white)
-                                                Spacer()
-                                            }
-                                        }
-                                    }
+                                if let abbreviation = self.project?.abbreviation {
+                                    Text(abbreviation)
+                                        .padding(7)
+                                        .background(self.project?.backgroundColor ?? Theme.base)
+                                        .foregroundStyle((self.project?.backgroundColor ?? Theme.base).isBright() ? Theme.base.opacity(0.55) : .white.opacity(0.55))
+                                    Image(systemName: "chevron.right")
+                                        .padding([.top, .bottom], 8)
+                                        .padding([.leading, .trailing], 4)
+                                        .background((self.project?.backgroundColor ?? Theme.base).opacity(0.9))
+                                        .foregroundStyle((self.project?.backgroundColor ?? Theme.base).isBright() ? Theme.base.opacity(0.55) : .white.opacity(0.55))
                                 }
                             }
-                            .foregroundStyle((self.state.session.job?.project?.backgroundColor ?? .clear).isBright() ? .black : .white)
+
+                            Text("\(self.job?.title ?? self.job?.jid.string ?? "")")
+                                .foregroundStyle((self.job?.backgroundColor ?? Theme.base).isBright() ? Theme.base : .white)
+                            Spacer()
                         }
+                        .foregroundStyle((self.project?.backgroundColor ?? .clear).isBright() ? Theme.base : .white)
                     }
                 }
                 .frame(height: 30)
-                .background(self.state.session.job?.backgroundColor ?? .clear)
+                .background(self.job?.backgroundColor ?? .clear)
             }
         }
 
