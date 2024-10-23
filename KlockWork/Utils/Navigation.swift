@@ -579,7 +579,7 @@ extension Navigation {
             HistoryPage(page: .planning, view: AnyView(Planning()), sidebar: AnyView(DefaultPlanningSidebar()), title: "Planning"),
             HistoryPage(page: .today, view: AnyView(Today()), sidebar: AnyView(TodaySidebar()), title: "Today", navButtons: [.resetUserChoices, .CLIFilter, .CLIMode]),
             HistoryPage(page: .recordDetail, view: AnyView(RecordDetail()), sidebar: AnyView(TodaySidebar()), title: "Record"),
-            HistoryPage(page: .companies, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Companies & Projects", navButtons: [.resetUserChoices, .createCompany, .createProject]),
+            HistoryPage(page: .companies, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Companies & Projects", navButtons: [.resetUserChoices, .createCompany]),
             HistoryPage(page: .companyDetail, view: AnyView(CompanyView()), sidebar: AnyView(DefaultCompanySidebar()), title: "Company"),
             HistoryPage(page: .jobs, view: AnyView(JobDashboardRedux()), sidebar: AnyView(JobDashboardSidebar()), title: "Jobs", navButtons: [.resetUserChoices, .createJob]),
             HistoryPage(page: .notes, view: AnyView(NoteDashboard()), sidebar: AnyView(NoteDashboardSidebar()), title: "Notes", navButtons: [.resetUserChoices, .createNote]),
