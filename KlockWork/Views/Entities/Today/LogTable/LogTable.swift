@@ -136,7 +136,7 @@ extension Today.LogTable {
                                 LogRow(
                                     entry: entry,
                                     index: records.firstIndex(of: record),
-                                    colour: Color.fromStored((record.job?.colour) ?? Theme.rowColourAsDouble),
+                                    colour: record.job?.backgroundColor ?? Theme.rowColour,
                                     record: record
                                 )
                             }

@@ -150,6 +150,7 @@
 		53796AD92CB33F1600555EF3 /* CoreSpotlight.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F0C70C2BF04625000BFD2E /* CoreSpotlight.framework */; };
 		537AEB9F29627DCC00385787 /* LogTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEB9E29627DCC00385787 /* LogTable.swift */; };
 		537AEBA1296287B900385787 /* LogRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537AEBA0296287B900385787 /* LogRow.swift */; };
+		537C9CA62CC98830008E1D0E /* ProjectBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537C9CA52CC9882D008E1D0E /* ProjectBlock.swift */; };
 		53814A8E2A9821C800A5A015 /* DefaultPlanningSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53814A8D2A9821C800A5A015 /* DefaultPlanningSidebar.swift */; };
 		53842B272B4C82B20029AC73 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53842B262B4C82B20029AC73 /* Project.swift */; };
 		53842B2A2B4C9B100029AC73 /* FancyToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53842B292B4C9B100029AC73 /* FancyToggle.swift */; };
@@ -445,6 +446,7 @@
 		53790C132A758A7200D3FFD4 /* RecordTableColumn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordTableColumn.swift; sourceTree = "<group>"; };
 		537AEB9E29627DCC00385787 /* LogTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTable.swift; sourceTree = "<group>"; };
 		537AEBA0296287B900385787 /* LogRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRow.swift; sourceTree = "<group>"; };
+		537C9CA52CC9882D008E1D0E /* ProjectBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectBlock.swift; sourceTree = "<group>"; };
 		537DFF862BF27F0B00FC5923 /* PRIVACY.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PRIVACY.md; sourceTree = "<group>"; };
 		537DFF8C2BF2A2C800FC5923 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		537DFF8E2BF2A2C800FC5923 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -1100,6 +1102,7 @@
 			children = (
 				53E202542A7E0F0600B4DF70 /* Sidebars */,
 				53B0BE7E2972542A007CB663 /* ProjectsDashboard.swift */,
+				537C9CA52CC9882D008E1D0E /* ProjectBlock.swift */,
 				53B0BE85297261A3007CB663 /* ProjectCreate.swift */,
 				53B0BE8B297318A6007CB663 /* ProjectView.swift */,
 				53959A1C2973897F007A2549 /* ProjectConfig.swift */,
@@ -1778,6 +1781,7 @@
 				5371BA3B2A7B490C00DEEC21 /* TasksWidget.swift in Sources */,
 				5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */,
 				5363B6802A6DE87000C2FBB8 /* View.swift in Sources */,
+				537C9CA62CC98830008E1D0E /* ProjectBlock.swift in Sources */,
 				53E2025E2A7EB20500B4DF70 /* SidebarWidget.swift in Sources */,
 				5354C8F12AA03CD4001C1779 /* Notes.swift in Sources */,
 				53218D4824B7F6EB0088ABE9 /* DLPrototype.swift in Sources */,
