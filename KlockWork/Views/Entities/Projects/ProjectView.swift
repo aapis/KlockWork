@@ -88,15 +88,9 @@ struct ProjectView: View {
                 deselectAll()
             }
         }
-        .onChange(of: self.selectedCompany) {
-            self.update()
-        }
         .onChange(of: self.name) {
-            self.abbreviation = StringHelper.abbreviate(self.name)
-
-            Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { timer in
-                self.update()
-                timer.invalidate()
+            if self.nav.session.project == self.project {
+                self.abbreviation = StringHelper.abbreviate(self.name)
             }
         }
         .onChange(of: self.project?.lastUpdate) {
