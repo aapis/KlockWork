@@ -11,7 +11,7 @@ import SwiftUI
 import KWCore
 
 struct ProjectView: View {
-    @State public var project: Project
+    @State public var project: Project?
     @State private var name: String = ""
     @State private var colour: Color = .clear
     @State private var colourChanged: Bool = false
@@ -56,7 +56,7 @@ struct ProjectView: View {
                         showLabel: false,
                         type: .destructive
                     )
-                    .alert("Are you sure you want to delete project \(project.name ?? "Invalid project name")?", isPresented: $isDeleteAlertShowing) {
+                    .alert("Are you sure you want to delete project \(project?.name ?? "Invalid project name")?", isPresented: $isDeleteAlertShowing) {
                         Button("Yes", role: .destructive) {
                             actionHardDelete()
                         }
@@ -72,36 +72,35 @@ struct ProjectView: View {
             .padding()
         }
         .id(updater.get("project.view"))
-        .background(Theme.toolbarColour)
-        .font(Theme.font)
+        .background(self.nav.session.appPage.primaryColour)
         .onAppear(perform: onAppear)
-        .onChange(of: selectAllToggleAssociated) { _ in
-            if selectAllToggleAssociated == true {
+        .onChange(of: selectAllToggleAssociated) {
+            if self.selectAllToggleAssociated {
                 selectAll()
             } else {
                 deselectAll()
             }
         }
-        .onChange(of: selectAllToggleUnassociated) { _ in
-            if selectAllToggleUnassociated == true {
+        .onChange(of: self.selectAllToggleUnassociated) {
+            if self.selectAllToggleUnassociated {
                 selectAll()
             } else {
                 deselectAll()
             }
         }
-        .onChange(of: selectedCompany) { _ in
-            update()
+        .onChange(of: self.selectedCompany) {
+            self.update()
         }
-        .onChange(of: name) { newName in
-            abbreviation = StringHelper.abbreviate(newName)
+        .onChange(of: self.name) {
+            self.abbreviation = StringHelper.abbreviate(self.name)
 
             Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { timer in
                 self.update()
                 timer.invalidate()
             }
         }
-        .onChange(of: project.lastUpdate) { _ in
-            lastUpdate = project.lastUpdate
+        .onChange(of: self.project?.lastUpdate) {
+            self.lastUpdate = self.project?.lastUpdate
         }
     }
     
@@ -115,9 +114,9 @@ struct ProjectView: View {
         }
         FancyTextField(placeholder: "Name", lineLimit: 1, onSubmit: update, showLabel: true, text: $name)
         FancyTextField(placeholder: "Abbreviation", lineLimit: 1, onSubmit: {}, showLabel: true, text: $abbreviation)
-        CompanyPicker(onChange: {company,_ in selectedCompany = company}, selected: project.company != nil ? Int(project.company!.pid) : 0)
-        FancyProjectActiveToggle(entity: project)
-        FancyColourPicker(initialColour: project.colour ?? Theme.rowColourAsDouble, onChange: {newColour in colour = newColour})
+        CompanyPicker(onChange: {company,_ in selectedCompany = company}, selected: project?.company != nil ? Int(project?.company?.pid ?? 0) : 0)
+        FancyProjectActiveToggle(alive: project?.alive ?? false)
+        FancyColourPicker(initialColour: project?.colour ?? Theme.rowColourAsDouble, onChange: {newColour in colour = newColour})
 
         if let createdAt = created {
             HStack {
@@ -272,7 +271,7 @@ struct ProjectView: View {
                                                 })
                                             }
 
-                                            if let conf = project.configuration {
+                                            if let conf = project?.configuration {
                                                 if let ignored = conf.ignoredJobs {
                                                     if ignored.contains(job.jid.string) {
                                                         FancyButton(text: "Hide from exports", action: {disableExport(job.jid.string)}, icon: "eye.slash", transparent: true, showLabel: false)
@@ -400,7 +399,7 @@ extension ProjectView {
 //    private func regenerateColour() -> Void {
 //        let rndColour = Color.randomStorable()
 //        colour = Color.fromStored(rndColour).description.debugDescription
-//        project.colour = rndColour
+//        project?.colour = rndColour
 //        colourChanged = true
 //
 //        PersistenceController.shared.save()
@@ -408,7 +407,6 @@ extension ProjectView {
 //    }
 
     private func createToolbar() -> Void {
-        // TODO: apply this pattern to Today view
         buttons = [
             ToolbarButton(
                 id: 0,
@@ -438,18 +436,18 @@ extension ProjectView {
     }
 
     private func update() -> Void {
-        project.name = name
-        project.jobs = []
-        project.alive = alive
-        project.lastUpdate = Date()
-        project.company = CoreDataCompanies(moc: moc).byPid(selectedCompany)
-        project.abbreviation = StringHelper.abbreviate(name)
+        project?.name = name
+        project?.jobs = []
+        project?.alive = alive
+        project?.lastUpdate = Date()
+        project?.company = CoreDataCompanies(moc: moc).byPid(selectedCompany)
+        project?.abbreviation = StringHelper.abbreviate(name)
 
         if colourChanged {
-            project.colour = Color.randomStorable()
+            project?.colour = Color.randomStorable()
         }
 
-        lastUpdate = project.lastUpdate!
+        lastUpdate = project?.lastUpdate!
 
         saveSelectedJobs()
 
@@ -457,7 +455,7 @@ extension ProjectView {
     }
 
     private func isJobOnIgnoreList(_ jid: String) -> Bool {
-        if let ignoredJobs = project.configuration!.ignoredJobs {
+        if let ignoredJobs = project?.configuration!.ignoredJobs {
             do {
                 let dec = JSONDecoder()
                 let data = ignoredJobs.data(using: .utf8)
@@ -473,7 +471,7 @@ extension ProjectView {
     }
 
     private func enableExport(_ jid: String) -> Void {
-        if let ignoredJobs = project.configuration!.ignoredJobs {
+        if let ignoredJobs = project?.configuration!.ignoredJobs {
             do {
                 let dec = JSONDecoder()
                 let data = ignoredJobs.data(using: .utf8)
@@ -486,7 +484,7 @@ extension ProjectView {
                 let enc = JSONEncoder()
                 let json = try enc.encode(decodedIgnoredJobs)
 
-                project.configuration!.ignoredJobs = String(data: json, encoding: .utf8)!
+                project?.configuration!.ignoredJobs = String(data: json, encoding: .utf8)!
 
                 updater.update()
             } catch {
@@ -498,7 +496,7 @@ extension ProjectView {
     }
 
     private func disableExport(_ jid: String) -> Void {
-        if let ignoredJobs = project.configuration!.ignoredJobs {
+        if let ignoredJobs = project?.configuration!.ignoredJobs {
             do {
                 let dec = JSONDecoder()
                 let data = ignoredJobs.data(using: .utf8)
@@ -509,7 +507,7 @@ extension ProjectView {
                 let enc = JSONEncoder()
                 let json = try enc.encode(decodedIgnoredJobs)
 
-                project.configuration!.ignoredJobs = String(data: json, encoding: .utf8)!
+                project?.configuration!.ignoredJobs = String(data: json, encoding: .utf8)!
 
                 updater.update()
             } catch {
@@ -523,27 +521,26 @@ extension ProjectView {
     public func onAppear() -> Void {
         if let stored = self.nav.session.project {
             self.project = stored
-            self.nav.session.project = nil
         }
 
-        allUnOwned = jm.unowned()
-        name = project.name!
-        created = project.created!
+        self.allUnOwned = jm.unowned()
+        self.name = project?.name ?? ""
+        self.created = project?.created!
 
-        if let company = project.company {
-            selectedCompany = Int(company.pid)
+        if let company = project?.company {
+            self.selectedCompany = Int(company.pid)
         }
 
-        if project.lastUpdate != nil {
-            lastUpdate = project.lastUpdate!
+        if self.project?.lastUpdate != nil {
+            self.lastUpdate = project?.lastUpdate!
         }
         
-        if let abb = project.abbreviation {
-            abbreviation = abb
+        if let abb = project?.abbreviation {
+            self.abbreviation = abb
         }
 
-        if project.jobs!.count > 0 {
-            let existingJobs = project.jobs?.allObjects as! [Job]
+        if self.project?.jobs?.count ?? 0 > 0 {
+            let existingJobs = self.project?.jobs?.allObjects as! [Job]
             selectedJobs = existingJobs.sorted(by: ({$0.jid < $1.jid}))
         }
     }
@@ -581,26 +578,26 @@ extension ProjectView {
     }
 
     private func saveSelectedJobs() -> Void {
-        let existingJobs = project.jobs?.allObjects as! [Job]
+        let existingJobs = project?.jobs?.allObjects as! [Job]
         for job in existingJobs {
-            project.removeFromJobs(job)
+            project?.removeFromJobs(job)
         }
-        lastUpdate = project.lastUpdate ?? Date()
+        lastUpdate = project?.lastUpdate ?? Date()
 
         for job in selectedJobs {
-            project.addToJobs(job)
+            project?.addToJobs(job)
         }
 
         PersistenceController.shared.save()
     }
 
     private func actionHardDelete() -> Void {
-        moc.delete(project)
-        PersistenceController.shared.save()
+        if let project = self.project {
+            moc.delete(project)
+            PersistenceController.shared.save()
+        }
 
-        nav.setId()
-        nav.setView(AnyView(ProjectsDashboard()))
-        nav.setParent(.projects)
-        nav.setSidebar(AnyView(ProjectsDashboardSidebar()))
+        self.nav.session.project = nil
+        self.nav.to(.projects)
     }
 }
