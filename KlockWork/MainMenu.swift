@@ -6,47 +6,41 @@
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
 import KWCore
 
 struct MainMenu: Commands {
-    public var moc: NSManagedObjectContext
-    public var nav: Navigation
+    public var state: Navigation
 
     public var body: some Commands {
-        SidebarCommands()
-        ToolbarCommands()
-        TextEditingCommands()
-
         CommandGroup(after: .newItem) {
             Menu("New...") {
-                Button("Company") { self.nav.to(.companyDetail) }
+                Button("Company") { self.state.to(.companyDetail) }
                 .keyboardShortcut("c", modifiers: [.command, .shift])
-                Button("Person") { self.nav.to(.peopleDetail) }
+                Button("Person") { self.state.to(.peopleDetail) }
                     .keyboardShortcut("u", modifiers: [.command, .shift])
-                Button("Project") { self.nav.to(.projectDetail) }
+                Button("Project") { self.state.to(.projectDetail) }
                     .keyboardShortcut("p", modifiers: [.command, .shift])
-                Button("Job") { self.nav.to(.jobs) }
+                Button("Job") { self.state.to(.jobs) }
                     .keyboardShortcut("j", modifiers: [.command, .shift])
-                Button("Note") { self.nav.to(.noteDetail) }
+                Button("Note") { self.state.to(.noteDetail) }
                     .keyboardShortcut("n", modifiers: [.command, .shift])
-                Button("Task") { self.nav.to(.taskDetail) }
+                Button("Task") { self.state.to(.taskDetail) }
                     .keyboardShortcut("t", modifiers: [.command, .shift])
-                Button("Record") { self.nav.to(.today) }
+                Button("Record") { self.state.to(.today) }
                     .keyboardShortcut("r", modifiers: [.command, .shift])
-                Button("Definition") { self.nav.to(.definitionDetail) }
+                Button("Definition") { self.state.to(.definitionDetail) }
                     .keyboardShortcut("d", modifiers: [.command, .shift])
             }
 
             Divider()
             Menu("Timeline navigation") {
-                Button("Previous day") {nav.session.date -= 86400}
+                Button("Previous day") {self.state.session.date -= 86400}
                     .keyboardShortcut(.leftArrow, modifiers: [.control, .shift])
-                Button("Next day") {nav.session.date += 86400}
+                Button("Next day") {self.state.session.date += 86400}
                     .keyboardShortcut(.rightArrow, modifiers: [.control, .shift])
                 Divider()
-                Button("Reset to today") {nav.session.date = Date()}
+                Button("Reset to today") {self.state.session.date = Date()}
                     .keyboardShortcut("d", modifiers: [.control, .shift])
             }
         }
