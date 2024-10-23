@@ -262,10 +262,15 @@ public class CoreDataProjects: ObservableObject {
     /// - Returns: Array<Project>
     public func alive() -> [Project] {
         let predicate = NSPredicate(
-            format: "alive = true"
+            format: "alive == true"
         )
-        
-        return query(predicate)
+        let sortOptions = [
+            NSSortDescriptor(keyPath: \Project.company?.isDefault, ascending: false),
+            NSSortDescriptor(keyPath: \Project.company?.name, ascending: true),
+            NSSortDescriptor(keyPath: \Project.name, ascending: true),
+        ]
+
+        return query(predicate, sort: sortOptions)
     }
 
     /// Find recently used projects
@@ -370,15 +375,16 @@ public class CoreDataProjects: ObservableObject {
     }
 
     /// Query projects
-    /// - Parameter predicate: Query predicate
+    /// - Parameter predicate: NSPredicate
+    /// - Parameter sort: [NSSortDescriptor]
     /// - Returns: Array<Project>
-    private func query(_ predicate: NSPredicate? = nil) -> [Project] {
+    private func query(_ predicate: NSPredicate? = nil, sort: [NSSortDescriptor] = [NSSortDescriptor(keyPath: \Project.created, ascending: false)]) -> [Project] {
         lock.lock()
 
         var results: [Project] = []
         let fetch: NSFetchRequest<Project> = Project.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Project.created, ascending: false)]
-        
+        fetch.sortDescriptors = sort
+
         if predicate != nil {
             fetch.predicate = predicate
         }
