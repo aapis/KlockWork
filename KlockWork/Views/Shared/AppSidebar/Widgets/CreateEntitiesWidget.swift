@@ -56,7 +56,8 @@ struct CreateEntitiesWidget: View {
     private var Buttons: some View {
         HStack(alignment: .center, spacing: 8) {
             PlanButton(doesPlanExist: $doesPlanExist)
-            PrivacyModeButton()
+            // @TODO: uncomment when privacy mode is built out
+//            PrivacyModeButton()
             CreateButton(active: $isCreateStackShowing)
             FindButton(active: $isSearchStackShowing)
             Forecast(
