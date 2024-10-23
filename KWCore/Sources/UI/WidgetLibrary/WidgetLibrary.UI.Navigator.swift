@@ -285,6 +285,23 @@ extension WidgetLibrary.UI.Navigator {
                 .onChange(of: self.showPublished) { self.actionOnAppear() }
 //                .onChange(of: self.navigatorSortCreatedOrder) { self.actionOnAppear() }
 //                .onChange(of: self.navigatorSortModifiedOrder) { self.actionOnAppear() }
+                .contextMenu {
+                    switch self.entity {
+                    case is Job:
+                        if let entity = self.entity as? Job {
+                            US.GroupHeaderContextMenu(page: entity.pageDetailType, entity: entity)
+                        }
+                    case is Project:
+                        if let entity = self.entity as? Project {
+                            US.GroupHeaderContextMenu(page: entity.pageDetailType, entity: entity)
+                        }
+                    case is Company:
+                        if let entity = self.entity as? Company {
+                            US.GroupHeaderContextMenu(page: entity.pageDetailType, entity: entity)
+                        }
+                    default: EmptyView()
+                    }
+                }
             }
 
             var ButtonContent: some View {
@@ -641,7 +658,7 @@ extension WidgetLibrary.UI.Navigator.Folders {
     /// - Returns: Void
     private func actionOnUp() -> Void {
         if self.depth == 0 {
-            self.state.session.company = nil
+//            self.state.session.company = nil
         } else if self.depth == 1 {
             self.depth = 0
             self.state.session.project = nil
