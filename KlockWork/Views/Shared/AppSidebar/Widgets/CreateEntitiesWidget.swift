@@ -207,7 +207,7 @@ struct CreateEntitiesWidget: View {
                         Theme.base.opacity(0.5)
                         FancyButtonv2(
                             text: "Search",
-                            action: {active.toggle() ; isSearching.toggle() ; isCreateStackShowing = false ; self.isUpcomingTaskStackShowing = false ; nav.session.search.cancel()},
+                            action: {active.toggle() ; isSearching.toggle() ; isCreateStackShowing = false ; self.isUpcomingTaskStackShowing = false ; nav.session.search.reset()},
                             icon: "magnifyingglass",
                             fgColour: nav.session.job?.colour_from_stored().isBright() ?? false ? .black : .white,
                             bgColour: nav.session.job?.colour_from_stored() ?? nil,

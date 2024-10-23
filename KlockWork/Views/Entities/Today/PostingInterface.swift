@@ -11,16 +11,14 @@ import KWCore
 
 extension Today {
     struct PostingInterface: View {
+        @EnvironmentObject public var nav: Navigation
+        @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
+        @AppStorage("general.experimental.cli") private var allowCLIMode: Bool = false
+        @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+        @FocusState private var primaryTextFieldInFocus: Bool
         @State private var text: String = ""
         @State private var errorNoJob: Bool = false
         @State private var errorNoContent: Bool = false
-        @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
-        @AppStorage("general.experimental.cli") private var allowCLIMode: Bool = false
-
-        @FocusState private var primaryTextFieldInFocus: Bool
-
-        @Environment(\.managedObjectContext) var moc
-        @EnvironmentObject public var nav: Navigation
         private let page: PageConfiguration.AppPage = .today
         private let eType: PageConfiguration.EntityType = .records
 
@@ -39,12 +37,6 @@ extension Today {
                 )
                 .background(self.nav.session.job?.backgroundColor.opacity(0.6) ?? .clear)
                 .focused($primaryTextFieldInFocus)
-                .onAppear {
-                    // thx https://www.kodeco.com/31569019-focus-management-in-swiftui-getting-started#toc-anchor-002
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        self.primaryTextFieldInFocus = true
-                    }
-                }
                 .alert("Please select a job from the sidebar", isPresented: $errorNoJob) {
                     Button("Ok", role: .cancel) {}
                 }
@@ -58,6 +50,8 @@ extension Today {
                     page: self.page
                 )
             }
+            .onAppear(perform: self.setFieldFocus)
+            .onChange(of: self.isSearchStackShowing) { self.setFieldFocus() }
             .onChange(of: text) {
                 if self.text.isEmpty {
                     nav.save()
@@ -95,7 +89,7 @@ extension Today.PostingInterface {
     /// - Returns: Void
     private func save() async -> Void {
         if let job = nav.session.job {
-            let record = LogRecord(context: moc)
+            let record = LogRecord(context: self.nav.moc)
             record.timestamp = Date()
             record.message = text
             record.alive = true
@@ -108,17 +102,17 @@ extension Today.PostingInterface {
                     // Find existing term, if one exists
                     let name = String(match.1)
                     let definition = String(match.2)
-                    let tTermDefinition = TaxonomyTermDefinitions(context: moc)
+                    let tTermDefinition = TaxonomyTermDefinitions(context: self.nav.moc)
                     tTermDefinition.definition = definition
                     tTermDefinition.created = record.timestamp
                     tTermDefinition.job = job
 
                     // Add definition to existing term
-                    if let foundTerm = CoreDataTaxonomyTerms(moc: self.moc).byName(name) {
+                    if let foundTerm = CoreDataTaxonomyTerms(moc: self.nav.moc).byName(name) {
                         foundTerm.addToDefinitions(tTermDefinition)
                     } else {
                         // For now, we create both records AND definitions
-                        let term = TaxonomyTerm(context: moc)
+                        let term = TaxonomyTerm(context: self.nav.moc)
                         term.name = name
                         term.created = record.timestamp
                         term.lastUpdate = record.timestamp
@@ -131,7 +125,7 @@ extension Today.PostingInterface {
                 try record.validateForInsert()
 
                 PersistenceController.shared.save()
-                nav.session.idate = DateHelper.identifiedDate(for: Date(), moc: moc)
+                nav.session.idate = DateHelper.identifiedDate(for: Date(), moc: self.nav.moc)
 
                 // Create a history item (used by CLI mode and, eventually, LogTable)
                 if nav.session.cli.history.count <= CommandLineInterface.maxItems {
@@ -154,5 +148,11 @@ extension Today.PostingInterface {
         self.nav.session.job = nil
         self.nav.session.company = nil
         self.nav.session.project = nil
+    }
+    
+    /// Onload handler. Sets whether field is focused or not.
+    /// - Returns: Void
+    private func setFieldFocus() -> Void {
+        self.primaryTextFieldInFocus = !self.isSearchStackShowing
     }
 }
