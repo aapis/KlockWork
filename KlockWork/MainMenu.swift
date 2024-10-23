@@ -21,47 +21,33 @@ struct MainMenu: Commands {
 
         CommandGroup(after: .newItem) {
             Menu("New...") {
-                Button("Record") {
-                    nav.view = AnyView(Today())
-                    nav.parent = .today
-                }
-                .keyboardShortcut("r", modifiers: [.command, .shift])
-                Button("Note") {
-                    nav.view = AnyView(NoteCreate())
-                    nav.parent = .notes
-                }
-                    .keyboardShortcut("n", modifiers: [.command, .shift])
-                Button("Task") {
-                    nav.view = AnyView(TaskDetail())
-                    nav.parent = .tasks
-                }
-                    .keyboardShortcut("t", modifiers: [.command, .shift])
-                Button("Project") {
-                    nav.view = AnyView(ProjectCreate())
-                    nav.parent = .companies
-                }
+                Button("Company") { self.nav.to(.companyDetail) }
+                .keyboardShortcut("c", modifiers: [.command, .shift])
+                Button("Person") { self.nav.to(.peopleDetail) }
+                    .keyboardShortcut("u", modifiers: [.command, .shift])
+                Button("Project") { self.nav.to(.projectDetail) }
                     .keyboardShortcut("p", modifiers: [.command, .shift])
-                Button("Company") {
-                    nav.view = AnyView(CompanyCreate())
-                    nav.parent = .companies
-                }
-                    .keyboardShortcut("c", modifiers: [.command, .shift])
-                Button("Job") {
-                    nav.view = AnyView(JobCreate())
-                    nav.parent = .jobs
-                }
+                Button("Job") { self.nav.to(.jobs) }
                     .keyboardShortcut("j", modifiers: [.command, .shift])
+                Button("Note") { self.nav.to(.noteDetail) }
+                    .keyboardShortcut("n", modifiers: [.command, .shift])
+                Button("Task") { self.nav.to(.taskDetail) }
+                    .keyboardShortcut("t", modifiers: [.command, .shift])
+                Button("Record") { self.nav.to(.today) }
+                    .keyboardShortcut("r", modifiers: [.command, .shift])
+                Button("Definition") { self.nav.to(.definitionDetail) }
+                    .keyboardShortcut("d", modifiers: [.command, .shift])
             }
 
             Divider()
             Menu("Timeline navigation") {
                 Button("Previous day") {nav.session.date -= 86400}
-                    .keyboardShortcut(.leftArrow, modifiers: [.command, .shift])
+                    .keyboardShortcut(.leftArrow, modifiers: [.control, .shift])
                 Button("Next day") {nav.session.date += 86400}
-                    .keyboardShortcut(.rightArrow, modifiers: [.command, .shift])
+                    .keyboardShortcut(.rightArrow, modifiers: [.control, .shift])
                 Divider()
                 Button("Reset to today") {nav.session.date = Date()}
-                    .keyboardShortcut("d", modifiers: [.command, .shift])
+                    .keyboardShortcut("d", modifiers: [.control, .shift])
             }
         }
     }
