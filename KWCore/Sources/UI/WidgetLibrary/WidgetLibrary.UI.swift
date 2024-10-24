@@ -106,7 +106,7 @@ extension WidgetLibrary {
                         showLabel: false,
                         size: .small,
                         type: .clear,
-                        font: .title2
+                        font: .title
                     )
                     .help("Create a new company")
                     .frame(width: 25)
@@ -126,7 +126,7 @@ extension WidgetLibrary {
                         showLabel: false,
                         size: .small,
                         type: .clear,
-                        font: .title2
+                        font: .title
                     )
                     .help("Create a new project")
                     .frame(width: 25)
@@ -147,7 +147,7 @@ extension WidgetLibrary {
                         showLabel: false,
                         size: .small,
                         type: .clear,
-                        font: .title2
+                        font: .title
                     )
                     .help("Create a new job")
                     .frame(width: 25)
@@ -167,7 +167,7 @@ extension WidgetLibrary {
                         showLabel: false,
                         size: .small,
                         type: .clear,
-                        font: .title2
+                        font: .title
                     )
                     .help("Create a new taxonomy term")
                     .frame(width: 25)
@@ -187,7 +187,7 @@ extension WidgetLibrary {
                         showLabel: false,
                         size: .small,
                         type: .clear,
-                        font: .title2
+                        font: .title
                     )
                     .help("Create a new term definition")
                     .frame(width: 25)
@@ -1528,6 +1528,100 @@ extension WidgetLibrary {
                 self.selectedIcon = selectedIcon
                 _isOn = isOn
             }
+        }
+
+        struct GroupHeaderContextMenu: View {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateProject") private var shouldCreateProject: Bool = false
+            public let page: Page
+            public let entity: NSManagedObject
+
+            var body: some View {
+                if [.companyDetail, .projectDetail].contains(where: {$0 == self.page}) {
+                    Button(action: self.actionNewProject, label: {
+                        if self.page == .companyDetail {
+                            Text("New Project")
+                        } else if self.page == .projectDetail {
+                            Text("New Job")
+                        }
+                    })
+                } else if self.page == .jobs {
+                    Menu("New") {
+                        Button(action: {self.state.to(.taskDetail)}, label: {
+                            Text("Task...")
+                        })
+                        Button(action: {self.state.to(.today)}, label: {
+                            Text("Record...")
+                        })
+                        Button(action: {self.state.to(.noteDetail)}, label: {
+                            Text("Note...")
+                        })
+                        Button(action: {self.state.to(.definitionDetail)}, label: {
+                            Text("Definition...")
+                        })
+                    }
+                }
+                Divider()
+                Button(action: self.actionEdit, label: {
+                    Text("Edit...")
+                })
+                Divider()
+                Button(action: self.actionInspect, label: {
+                    Text("Inspect")
+                })
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.GroupHeaderContextMenu {
+    /// Navigate to an edit page
+    /// - Returns: Void
+    private func actionEdit() -> Void {
+        switch self.page {
+        case .recordDetail:
+            self.state.session.record = self.entity as? LogRecord
+        case .jobs:
+            self.state.session.job = self.entity as? Job
+        case .companyDetail:
+            self.state.session.company = self.entity as? Company
+        case .projectDetail:
+            self.state.session.project = self.entity as? Project
+        case .definitionDetail:
+            self.state.session.definition = self.entity as? TaxonomyTermDefinitions
+        case .taskDetail:
+            self.state.session.task = self.entity as? LogTask
+        case .noteDetail:
+            self.state.session.note = self.entity as? Note
+        case .peopleDetail:
+            self.state.session.person = self.entity as? Person
+        default:
+            print("noop")
+        }
+        self.state.to(self.page)
+    }
+
+    /// Inspect an entity
+    /// - Returns: Void
+    private func actionInspect() -> Void {
+        self.state.session.search.inspectingEntity = self.entity
+        self.state.setInspector(AnyView(Inspector(entity: self.entity)))
+    }
+
+    /// Create a new project. Fires when user selects "New project" button in context menu
+    /// - Returns: Void
+    private func actionNewProject() -> Void {
+        self.shouldCreateProject.toggle()
+
+        switch self.entity {
+        case is Company:
+            self.state.session.company = self.entity as? Company
+        case is Project:
+            self.state.session.project = self.entity as? Project
+        case is Job:
+            self.state.session.job = self.entity as? Job
+        default:
+            print("Noop")
         }
     }
 }
