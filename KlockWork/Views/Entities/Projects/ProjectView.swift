@@ -64,7 +64,10 @@ struct ProjectView: View {
                     }
 
                     Spacer()
-                    FancyButtonv2(text: "Save & Close", action: update, redirect: AnyView(CompanyDashboard()), pageType: .companies, sidebar: AnyView(DefaultCompanySidebar()))
+                    FancyButtonv2(text: "Save & Close", action: {
+                        self.update()
+                        self.nav.to(.projects)
+                    })
                 }
                 
                 Spacer()
@@ -96,6 +99,7 @@ struct ProjectView: View {
         .onChange(of: self.project?.lastUpdate) {
             self.lastUpdate = self.project?.lastUpdate
         }
+        .onChange(of: self.nav.session.project) { self.onAppear() }
     }
     
     // MARK: form view
@@ -432,13 +436,14 @@ extension ProjectView {
     }
 
     private func update() -> Void {
-        project?.name = name
+        project?.name = self.name
         project?.jobs = []
-        project?.alive = alive
+        project?.alive = self.alive
         project?.lastUpdate = Date()
         project?.company = CoreDataCompanies(moc: moc).byPid(selectedCompany)
-        project?.abbreviation = StringHelper.abbreviate(name)
+        project?.abbreviation = self.abbreviation
 
+        // @TODO: this is no longer what we want
         if colourChanged {
             project?.colour = Color.randomStorable()
         }
