@@ -251,6 +251,35 @@ public class CoreDataJob: ObservableObject {
         return nil
     }
     
+    /// Find projects
+    /// - Parameters:
+    ///   - project: Project
+    ///   - allowKilled: Bool(false)
+    /// - Returns: Array<Job>
+    public func byProject(_ project: Project, allowKilled: Bool = false) -> [Job] {
+        var subpredicates: [NSPredicate] = []
+        subpredicates.append(
+                NSPredicate(
+                format: "project == %@",
+                project
+            )
+        )
+
+        // Add alive check if required
+        if allowKilled {
+            subpredicates.append(
+                NSPredicate(format: "alive == true")
+            )
+        }
+
+        let filterPredicate = NSCompoundPredicate(
+            type: NSCompoundPredicate.LogicalType.and,
+            subpredicates: subpredicates
+        )
+
+        return self.query(filterPredicate)
+    }
+
     public func byProject(_ project: Project) -> [Job] {
         var all: [Job] = []
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()

@@ -162,7 +162,7 @@ public class CoreDataCompanies: ObservableObject {
             var subpredicates: [NSPredicate] = []
 
             // Add alive check if required
-            if !allowKilled {
+            if allowKilled {
                 subpredicates.append(
                     NSPredicate(format: "alive == true")
                 )
