@@ -11,8 +11,9 @@ import KWCore
 
 extension WidgetLibrary.UI {
     struct UnifiedSidebar {
+        typealias UI = WidgetLibrary.UI
+
         struct Widget: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var state: Navigation
             @State private var companies: [Company] = []
             @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
@@ -63,7 +64,7 @@ extension WidgetLibrary.UI {
                         }, isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
                         .contextMenu {
-                            GroupHeaderContextMenu(page: self.entity.pageDetailType, entity: self.entity)
+                            UI.GroupHeaderContextMenu(page: self.entity.pageDetailType, entity: self.entity)
                         }
 
                         if self.entity == self.state.session.company {
@@ -150,7 +151,7 @@ extension WidgetLibrary.UI {
                         }, isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
                         .contextMenu {
-                            GroupHeaderContextMenu(page: self.entity.pageDetailType, entity: self.entity)
+                            UI.GroupHeaderContextMenu(page: self.entity.pageDetailType, entity: self.entity)
                         }
 
                         if self.entity == self.state.session.project {
@@ -241,7 +242,7 @@ extension WidgetLibrary.UI {
                         }, isPresented: $isPresented)
                         .useDefaultHover({ inside in self.highlighted = inside})
                         .contextMenu {
-                            GroupHeaderContextMenu(page: self.entity.pageDetailType, entity: self.entity)
+                            UI.GroupHeaderContextMenu(page: self.entity.pageDetailType, entity: self.entity)
                         }
 
                         if self.entity == self.state.session.job {
@@ -298,6 +299,7 @@ extension WidgetLibrary.UI {
 
         struct Tasks: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
             public let job: Job
             public let tasks: [LogTask]?
             @State private var isPresented: Bool = false
@@ -315,7 +317,6 @@ extension WidgetLibrary.UI {
                         )
                         .buttonStyle(.plain)
                     }
-                    .background(Theme.base.opacity(0.6).blendMode(.softLight))
 
                     if self.isPresented {
                         VStack(alignment: .leading, spacing: 0) {
@@ -342,8 +343,8 @@ extension WidgetLibrary.UI {
                         }
                     }
                 }
-                .background(self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8))
-                .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white)
+                .background(self.viewModeIndex == 1 ? self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8) : .white.opacity(0.1))
+                .foregroundStyle(self.viewModeIndex == 1 ? (self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white : .white)
             }
 
             init(job: Job, tasks: [LogTask]? = nil) {
@@ -355,6 +356,7 @@ extension WidgetLibrary.UI {
 
         struct Notes: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
             public let job: Job
             public let notes: [Note]?
             @State private var isPresented: Bool = false
@@ -372,7 +374,6 @@ extension WidgetLibrary.UI {
                         )
                         .buttonStyle(.plain)
                     }
-                    .background(Theme.base.opacity(0.6).blendMode(.softLight))
 
                     if self.isPresented {
                         VStack(alignment: .leading, spacing: 0) {
@@ -399,8 +400,8 @@ extension WidgetLibrary.UI {
                         }
                     }
                 }
-                .background(self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8))
-                .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white)
+                .background(self.viewModeIndex == 1 ? self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8) : .white.opacity(0.1))
+                .foregroundStyle(self.viewModeIndex == 1 ? (self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white : .white)
             }
 
             init(job: Job, notes: [Note]? = nil) {
@@ -412,6 +413,7 @@ extension WidgetLibrary.UI {
 
         struct Definitions: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
             public let job: Job
             public let definitions: [TaxonomyTermDefinitions]?
             @State private var isPresented: Bool = false
@@ -429,7 +431,6 @@ extension WidgetLibrary.UI {
                         )
                         .buttonStyle(.plain)
                     }
-                    .background(Theme.base.opacity(0.6).blendMode(.softLight))
 
                     if self.isPresented {
                         VStack(alignment: .leading, spacing: 0) {
@@ -456,8 +457,8 @@ extension WidgetLibrary.UI {
                         }
                     }
                 }
-                .background(self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8))
-                .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white)
+                .background(self.viewModeIndex == 1 ? self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8) : .white.opacity(0.1))
+                .foregroundStyle(self.viewModeIndex == 1 ? (self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white : .white)
             }
 
             init(job: Job, definitions: [TaxonomyTermDefinitions]? = nil) {
@@ -469,6 +470,7 @@ extension WidgetLibrary.UI {
 
         struct Records: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
             public let job: Job
             public let records: [LogRecord]?
             @State private var isPresented: Bool = false
@@ -482,7 +484,6 @@ extension WidgetLibrary.UI {
                             .useDefaultHover({ inside in self.highlighted = inside})
                             .disabled((self.records?.count ?? self.childrenFromJob.count) == 0)
                     }
-                    .background(Theme.base.opacity(0.6).blendMode(.softLight))
 
                     if self.isPresented {
                         VStack(alignment: .leading, spacing: 0) {
@@ -509,8 +510,8 @@ extension WidgetLibrary.UI {
                         }
                     }
                 }
-                .background(self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8))
-                .foregroundStyle((self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white)
+                .background(self.viewModeIndex == 1 ? self.job.alive ? self.highlighted ? self.job.backgroundColor.opacity(0.9) : self.job.backgroundColor : .gray.opacity(0.8) : .white.opacity(0.1))
+                .foregroundStyle(self.viewModeIndex == 1 ? (self.job.alive ? self.job.backgroundColor : .gray).isBright() ? Theme.base : .white : .white)
             }
 
             init(job: Job, records: [LogRecord]? = nil) {
@@ -522,6 +523,7 @@ extension WidgetLibrary.UI {
 
         struct People: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
             public let entity: Company
             @State private var isPresented: Bool = false
             @State private var highlighted: Bool = false
@@ -536,7 +538,6 @@ extension WidgetLibrary.UI {
                         )
                         .buttonStyle(.plain)
                     }
-                    .background(Theme.base.opacity(0.6).blendMode(.softLight))
 
                     if self.isPresented {
                         VStack(alignment: .leading, spacing: 0) {
@@ -556,8 +557,8 @@ extension WidgetLibrary.UI {
                         }
                     }
                 }
-                .background(self.entity.alive ? self.highlighted ? self.entity.backgroundColor.opacity(0.9) : self.entity.backgroundColor : .gray.opacity(0.8))
-                .foregroundStyle((self.entity.alive ? self.entity.backgroundColor : .gray).isBright() ? Theme.base : .white)
+                .background(self.viewModeIndex == 1 ? self.entity.alive ? self.highlighted ? self.entity.backgroundColor.opacity(0.9) : self.entity.backgroundColor : .gray.opacity(0.8) : .white.opacity(0.1))
+                .foregroundStyle(self.viewModeIndex == 1 ? (self.entity.alive ? self.entity.backgroundColor : .gray).isBright() ? Theme.base : .white : .white)
             }
         }
 
@@ -657,22 +658,6 @@ extension WidgetLibrary.UI {
                 .disabled(self.noLinkAvailable)
                 .help(self.noLinkAvailable ? "Link not found" : self.label)
                 .buttonStyle(.plain)
-            }
-        }
-
-        struct GroupHeaderContextMenu: View {
-            @EnvironmentObject private var state: Navigation
-            public let page: Page
-            public let entity: NSManagedObject
-
-            var body: some View {
-                Button(action: self.actionEdit, label: {
-                    Text("Edit...")
-                })
-                Divider()
-                Button(action: self.actionInspect, label: {
-                    Text("Inspect")
-                })
             }
         }
     }
@@ -864,40 +849,5 @@ extension WidgetLibrary.UI.UnifiedSidebar.EntityTypeRowButton {
         default:
             self.noLinkAvailable = true
         }
-    }
-}
-
-extension WidgetLibrary.UI.UnifiedSidebar.GroupHeaderContextMenu {
-    /// Navigate to an edit page
-    /// - Returns: Void
-    private func actionEdit() -> Void {
-        switch self.page {
-        case .recordDetail:
-            self.state.session.record = self.entity as? LogRecord
-        case .jobs:
-            self.state.session.job = self.entity as? Job
-        case .companyDetail:
-            self.state.session.company = self.entity as? Company
-        case .projectDetail:
-            self.state.session.project = self.entity as? Project
-        case .definitionDetail:
-            self.state.session.definition = self.entity as? TaxonomyTermDefinitions
-        case .taskDetail:
-            self.state.session.task = self.entity as? LogTask
-        case .noteDetail:
-            self.state.session.note = self.entity as? Note
-        case .peopleDetail:
-            self.state.session.person = self.entity as? Person
-        default:
-            print("noop")
-        }
-        self.state.to(self.page)
-    }
-
-    /// Inspect an entity
-    /// - Returns: Void
-    private func actionInspect() -> Void {
-        self.state.session.search.inspectingEntity = self.entity
-        self.state.setInspector(AnyView(Inspector(entity: self.entity)))
     }
 }
