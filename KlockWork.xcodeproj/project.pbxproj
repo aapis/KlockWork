@@ -61,7 +61,6 @@
 		5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B4296D1FA7000051B1 /* TaskView.swift */; };
 		5335A5B7296D2089000051B1 /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B6296D2089000051B1 /* TaskListView.swift */; };
 		533E40652970DA640007785A /* ViewUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533E40642970DA640007785A /* ViewUpdater.swift */; };
-		533E40682970DD170007785A /* AutoFixJobs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533E40672970DD170007785A /* AutoFixJobs.swift */; };
 		53450CEC2BF46ECF007F45FB /* CommandLineInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53450CEB2BF46ECF007F45FB /* CommandLineInterface.swift */; };
 		5345C9CD2B31315F004A4188 /* SearchLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5345C9CC2B31315F004A4188 /* SearchLanguage.swift */; };
 		5347DAA92CB3519C003DA2B9 /* KWCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5347DA9F2CB3519C003DA2B9 /* KWCore.framework */; };
@@ -350,7 +349,6 @@
 		5335A5B4296D1FA7000051B1 /* TaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskView.swift; sourceTree = "<group>"; };
 		5335A5B6296D2089000051B1 /* TaskListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListView.swift; sourceTree = "<group>"; };
 		533E40642970DA640007785A /* ViewUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewUpdater.swift; sourceTree = "<group>"; };
-		533E40672970DD170007785A /* AutoFixJobs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoFixJobs.swift; sourceTree = "<group>"; };
 		53450CEB2BF46ECF007F45FB /* CommandLineInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandLineInterface.swift; sourceTree = "<group>"; };
 		5345C9CC2B31315F004A4188 /* SearchLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchLanguage.swift; sourceTree = "<group>"; };
 		5347DA9F2CB3519C003DA2B9 /* KWCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KWCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -824,7 +822,6 @@
 		533E40662970DD080007785A /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				533E40672970DD170007785A /* AutoFixJobs.swift */,
 				533E40642970DA640007785A /* ViewUpdater.swift */,
 				53790C062A74408D00D3FFD4 /* Navigation.swift */,
 			);
@@ -1668,7 +1665,6 @@
 				53C0009A2B3A90DF00D5EC04 /* PostingInterface.swift in Sources */,
 				5371BA3D2A7B7F1200DEEC21 /* TaskViewPlain.swift in Sources */,
 				533544882CB1A0F00067A944 /* Timestamp.swift in Sources */,
-				533E40682970DD170007785A /* AutoFixJobs.swift in Sources */,
 				538B2FA62CB095B400B353AE /* TaskDetail.swift in Sources */,
 				53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */,
 				5354C8F32AA03CE4001C1779 /* Notes.Row.swift in Sources */,
