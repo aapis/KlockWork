@@ -1,5 +1,5 @@
 //
-//  CreateEntitiesWidget.swift
+//  GlobalSidebarWidgets.swift
 //  DLPrototype
 //
 //  Created by Ryan Priebe on 2023-08-08.
@@ -9,12 +9,12 @@
 import SwiftUI
 import KWCore
 
-struct CreateEntitiesWidget: View {
-    @Environment(\.managedObjectContext) var moc
+struct GlobalSidebarWidgets: View {
+    typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var nav: Navigation
-    @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
-    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
-    @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isCreateStackShowing") private var isCreateStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
     @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
     @State private var followingPlan: Bool = false
     @State private var doesPlanExist: Bool = false
@@ -56,7 +56,8 @@ struct CreateEntitiesWidget: View {
     private var Buttons: some View {
         HStack(alignment: .center, spacing: 8) {
             PlanButton(doesPlanExist: $doesPlanExist)
-            PrivacyModeButton()
+            // @TODO: uncomment when privacy mode is built out
+//            PrivacyModeButton()
             CreateButton(active: $isCreateStackShowing)
             FindButton(active: $isSearchStackShowing)
             Forecast(
@@ -155,8 +156,8 @@ struct CreateEntitiesWidget: View {
     }
 
     struct CreateButton: View {
-        @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
-        @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
 
         @Binding public var active: Bool
         
@@ -192,9 +193,9 @@ struct CreateEntitiesWidget: View {
     }
 
     struct FindButton: View {
-        @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
-        @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
-        @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isCreateStackShowing") private var isCreateStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isSearching") private var isSearching: Bool = false
 
         @Binding public var active: Bool
         
@@ -207,7 +208,7 @@ struct CreateEntitiesWidget: View {
                         Theme.base.opacity(0.5)
                         FancyButtonv2(
                             text: "Search",
-                            action: {active.toggle() ; isSearching.toggle() ; isCreateStackShowing = false ; self.isUpcomingTaskStackShowing = false ; nav.session.search.cancel()},
+                            action: {active.toggle() ; isSearching.toggle() ; isCreateStackShowing = false ; self.isUpcomingTaskStackShowing = false ; nav.session.search.reset()},
                             icon: "magnifyingglass",
                             fgColour: nav.session.job?.colour_from_stored().isBright() ?? false ? .black : .white,
                             bgColour: nav.session.job?.colour_from_stored() ?? nil,
@@ -228,9 +229,9 @@ struct CreateEntitiesWidget: View {
     }
 
     struct CreateStack: View {
-        @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
-        @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
-        @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isCreateStackShowing") private var isCreateStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
 
         @EnvironmentObject private var nav: Navigation
 
@@ -250,7 +251,7 @@ struct CreateEntitiesWidget: View {
                         sidebar: AnyView(DefaultCompanySidebar())
                     )
                     Spacer()
-                    KeyboardShortcutIndicator(character: "C", requireShift: true)
+                    UI.KeyboardShortcutIndicator(character: "C", requireShift: true)
                 }
 
                 ZStack(alignment: .topLeading) {
@@ -278,7 +279,7 @@ struct CreateEntitiesWidget: View {
                                 )
                             }
                             Spacer()
-                            KeyboardShortcutIndicator(character: "U", requireShift: true)
+                            UI.KeyboardShortcutIndicator(character: "U", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -301,7 +302,7 @@ struct CreateEntitiesWidget: View {
                                 )
                             }
                             Spacer()
-                            KeyboardShortcutIndicator(character: "P", requireShift: true)
+                            UI.KeyboardShortcutIndicator(character: "P", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -323,7 +324,7 @@ struct CreateEntitiesWidget: View {
                                 )
                             }
                             Spacer()
-                            KeyboardShortcutIndicator(character: "J", requireShift: true)
+                            UI.KeyboardShortcutIndicator(character: "J", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -345,7 +346,7 @@ struct CreateEntitiesWidget: View {
                                 )
                             }
                             Spacer()
-                            KeyboardShortcutIndicator(character: "N", requireShift: true)
+                            UI.KeyboardShortcutIndicator(character: "N", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -367,7 +368,7 @@ struct CreateEntitiesWidget: View {
                                 )
                             }
                             Spacer()
-                            KeyboardShortcutIndicator(character: "T", requireShift: true)
+                            UI.KeyboardShortcutIndicator(character: "T", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -389,7 +390,7 @@ struct CreateEntitiesWidget: View {
                                 )
                             }
                             Spacer()
-                            KeyboardShortcutIndicator(character: "R", requireShift: true)
+                            UI.KeyboardShortcutIndicator(character: "R", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -411,7 +412,7 @@ struct CreateEntitiesWidget: View {
                                 )
                             }
                             Spacer()
-                            KeyboardShortcutIndicator(character: "D", requireShift: true)
+                            UI.KeyboardShortcutIndicator(character: "D", requireShift: true)
                         }
                     }
                 }
@@ -421,7 +422,7 @@ struct CreateEntitiesWidget: View {
     }
 }
 
-extension CreateEntitiesWidget {
+extension GlobalSidebarWidgets {
     private func actionOnAppear() -> Void {
         findPlan()
     }
@@ -449,9 +450,11 @@ extension CreateEntitiesWidget {
 
         findPlan()
     }
-
+    
+    /// Determine whether there's an active plan, sets self.doesPlanExist accordingly
+    /// - Returns: Void
     private func findPlan() -> Void {
-        let plans = CoreDataPlan(moc: moc).forDate(nav.session.date)
+        let plans = CoreDataPlan(moc: self.nav.moc).forDate(nav.session.date)
         if plans.count > 0 {
             if let plan = plans.first {
                 doesPlanExist = !plan.isEmpty()
@@ -461,7 +464,7 @@ extension CreateEntitiesWidget {
 }
 
 
-extension CreateEntitiesWidget.PlanButton {
+extension GlobalSidebarWidgets.PlanButton {
     private func actionOnChangeFocus() -> Void {
         if nav.session.gif == .normal {
             nav.session.gif = .focus

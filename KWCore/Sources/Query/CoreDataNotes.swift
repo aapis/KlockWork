@@ -260,7 +260,7 @@ public class CoreDataNotes {
         var predicate: NSPredicate
         if !allowKilled {
             predicate = NSPredicate(
-                format: "ANY mJob == %@",
+                format: "mJob == %@",
                 job
             )
         } else {

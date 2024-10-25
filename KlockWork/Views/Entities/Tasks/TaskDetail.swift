@@ -18,12 +18,10 @@ struct TaskDetail: View {
     @State private var published: Bool = false
     @State private var isPresented: Bool = false
     @State private var shouldCreateNotification: Bool = true
-    @State private var due: Date = Date()
+    @State private var due: Date = DateHelper.endOfDay() ?? Date()
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .tasks
-    private var isDisabled: Bool {
-        self.state.session.job == nil && self.task == nil
-    }
+    @State private var isDisabled: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -91,8 +89,9 @@ extension TaskDetail {
 
         self.content = self.task?.content ?? ""
         self.published = self.task?.cancelledDate == nil && self.task?.completedDate == nil
-        self.due = self.task?.due ?? Date()
+        self.due = self.task?.due ?? DateHelper.endOfDay() ?? Date()
         self.shouldCreateNotification = !(self.task?.hasScheduledNotification ?? false)
+        self.isDisabled = self.state.session.job == nil && self.task == nil
     }
 
     /// Fires when enter/return hit while entering text in field or when add button tapped

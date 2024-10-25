@@ -20,7 +20,7 @@ struct Explore: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 20) {
             VStack(alignment: .leading, spacing: 0) {
                 UniversalHeader.Widget(
                     type: .BruceWillis,
@@ -29,12 +29,13 @@ struct Explore: View {
                 UI.EntityStatistics()
             }
             UI.ExploreLinks()
+            UI.Navigator()
             // @TODO: tmp disabled
-//            Widgets()
+            //            Widgets()
             Spacer()
         }
         .padding()
-        .background(self.state.session.appPage.primaryColour)
+        .background(Theme.toolbarColour)
     }
 }
 

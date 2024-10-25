@@ -224,6 +224,32 @@ struct FancyGenericToolbar: View {
                 .frame(height: 12)
         }
     }
+
+    struct ActionButton: View {
+        @EnvironmentObject public var state: Navigation
+        public var icon: String?
+        public var iconAsImage: Image?
+        public var callback: () -> Void
+        public var helpText: String
+
+        var body: some View {
+            Button {
+                self.callback()
+            } label: {
+                if let icon = self.icon {
+                    Image(systemName: icon)
+                } else if let icon = self.iconAsImage {
+                    icon
+                }
+            }
+            .buttonStyle(.plain)
+            .help(self.helpText)
+            .foregroundStyle(self.state.theme.tint)
+            .padding(3)
+            .background(Theme.textBackground)
+            .clipShape(.rect(cornerRadius: 5))
+        }
+    }
 }
 
 extension FancyGenericToolbar.TabView {

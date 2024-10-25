@@ -89,7 +89,7 @@ struct SidebarButton: View, Identifiable {
                                 }
                             }
                         //                        .foregroundStyle(nav.session.job != nil ? nav.session.job!.backgroundColor : isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
-                            .foregroundStyle(isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
+                            .foregroundStyle(isDatePickerPresented && nav.parent == pageType ? Theme.base : highlighted ? .white : .white.opacity(0.8))
                     }
                 case .companies:
                     HStack(alignment: .top, spacing: 0) {
@@ -98,7 +98,16 @@ struct SidebarButton: View, Identifiable {
                         }
                         button.frame(width: 50, height: 50)
                         //                        .foregroundStyle(nav.session.job != nil ? nav.session.job!.backgroundColor : isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
-                            .foregroundStyle(isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
+                            .foregroundStyle(isDatePickerPresented && nav.parent == pageType ? Theme.base : highlighted ? .white : .white.opacity(0.8))
+                    }
+                case .projects:
+                    HStack(alignment: .top, spacing: 0) {
+                        if let stored = self.nav.session.project {
+                            ActiveIndicator(colour: stored.backgroundColor, href: .projects)
+                        }
+                        button.frame(width: 50, height: 50)
+                        //                        .foregroundStyle(nav.session.job != nil ? nav.session.job!.backgroundColor : isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
+                            .foregroundStyle(isDatePickerPresented && nav.parent == pageType ? Theme.base : highlighted ? .white : .white.opacity(0.8))
                     }
                 default: button.frame(width: 50, height: 50)
                 }

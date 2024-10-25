@@ -178,13 +178,28 @@ public class CoreDataProjects: ObservableObject {
     /// Find projects by company PID
     /// - Parameter id: Company PID
     /// - Returns: Array<Project>
-    public func byCompany(_ company: Company) -> [Project] {
-        let predicate = NSPredicate(
-            format: "ANY company == %@",
-            company
+    public func byCompany(_ company: Company, allowKilled: Bool = false) -> [Project] {
+        var subpredicates: [NSPredicate] = []
+        subpredicates.append(
+                NSPredicate(
+                format: "company == %@",
+                company
+            )
         )
 
-        return query(predicate)
+        // Add alive check if required
+        if allowKilled {
+            subpredicates.append(
+                NSPredicate(format: "alive == true")
+            )
+        }
+
+        let filterPredicate = NSCompoundPredicate(
+            type: NSCompoundPredicate.LogicalType.and,
+            subpredicates: subpredicates
+        )
+
+        return query(filterPredicate)
     }
 
     /// Find projects whose name matches the term
@@ -262,10 +277,15 @@ public class CoreDataProjects: ObservableObject {
     /// - Returns: Array<Project>
     public func alive() -> [Project] {
         let predicate = NSPredicate(
-            format: "alive = true"
+            format: "alive == true"
         )
-        
-        return query(predicate)
+        let sortOptions = [
+            NSSortDescriptor(keyPath: \Project.company?.isDefault, ascending: false),
+            NSSortDescriptor(keyPath: \Project.company?.name, ascending: true),
+            NSSortDescriptor(keyPath: \Project.name, ascending: true),
+        ]
+
+        return query(predicate, sort: sortOptions)
     }
 
     /// Find recently used projects
@@ -310,7 +330,7 @@ public class CoreDataProjects: ObservableObject {
     ///   - company: Optional(Company)
     ///   - saveByDefault: Bool: True by default)
     /// - Returns: Project
-    private func make(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, pid: Int64, alive: Bool = true, company: Company? = nil, jobs: NSSet? = nil, saveByDefault: Bool = true) -> Project {
+    private func make(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, pid: Int64? = nil, alive: Bool = true, company: Company? = nil, jobs: NSSet? = nil, saveByDefault: Bool = true) -> Project {
         let project = Project(context: moc!)
         project.alive = alive
         project.abbreviation = abbreviation
@@ -318,7 +338,13 @@ public class CoreDataProjects: ObservableObject {
         project.created = created
         project.lastUpdate = updated ?? created
         project.name = name
-        project.pid = pid
+
+        if pid == nil {
+            project.pid = Int64.random(in: 1...1999999999999)
+        } else {
+            project.pid = pid!
+        }
+
         project.company = company
         project.id = UUID()
         project.jobs = jobs
@@ -349,7 +375,7 @@ public class CoreDataProjects: ObservableObject {
     ///   - company: Optional(Company)
     ///   - saveByDefault: Bool: True by default)
     /// - Returns: Project
-    public func create(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, pid: Int64, alive: Bool = true, company: Company? = nil, jobs: NSSet? = nil, saveByDefault: Bool = true) -> Void {
+    public func create(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, pid: Int64? = nil, alive: Bool = true, company: Company? = nil, jobs: NSSet? = nil, saveByDefault: Bool = true) -> Void {
         let _ = self.make(name: name, abbreviation: abbreviation, colour: colour, created: created, pid: pid, company: company, jobs: jobs, saveByDefault: saveByDefault)
     }
 
@@ -365,20 +391,21 @@ public class CoreDataProjects: ObservableObject {
     ///   - company: Optional(Company)
     ///   - saveByDefault: Bool: True by default)
     /// - Returns: Project
-    public func createAndReturn(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, pid: Int64, alive: Bool = true, company: Company? = nil, jobs: NSSet? = nil, saveByDefault: Bool = true) -> Project {
+    public func createAndReturn(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, pid: Int64? = nil, alive: Bool = true, company: Company? = nil, jobs: NSSet? = nil, saveByDefault: Bool = true) -> Project {
         return self.make(name: name, abbreviation: abbreviation, colour: colour, created: created, pid: pid, company: company, jobs: jobs, saveByDefault: saveByDefault)
     }
 
     /// Query projects
-    /// - Parameter predicate: Query predicate
+    /// - Parameter predicate: NSPredicate
+    /// - Parameter sort: [NSSortDescriptor]
     /// - Returns: Array<Project>
-    private func query(_ predicate: NSPredicate? = nil) -> [Project] {
+    private func query(_ predicate: NSPredicate? = nil, sort: [NSSortDescriptor] = [NSSortDescriptor(keyPath: \Project.created, ascending: false)]) -> [Project] {
         lock.lock()
 
         var results: [Project] = []
         let fetch: NSFetchRequest<Project> = Project.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Project.created, ascending: false)]
-        
+        fetch.sortDescriptors = sort
+
         if predicate != nil {
             fetch.predicate = predicate
         }

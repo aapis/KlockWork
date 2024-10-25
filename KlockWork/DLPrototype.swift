@@ -57,11 +57,8 @@ struct DLPrototype: App {
                     }
                 }
         }
-        // TODO: still shows the window close/minimize/zoom,
-        // see https://stackoverflow.com/questions/70501890/how-can-i-hide-title-bar-in-swiftui-for-macos-app
-        //        .windowStyle(.hiddenTitleBar)
         .commands {
-            MainMenu(moc: persistenceController.container.viewContext, nav: nav)
+            MainMenu(state: self.nav)
         }
 
 #if os(macOS)

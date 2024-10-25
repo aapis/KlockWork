@@ -11,7 +11,7 @@ import SwiftUI
 import KWCore
 
 struct ProjectConfig: View {
-    public var project: Project
+    public var project: Project?
     
     @State private var bannedWords: [BannedWord] = []
     @State private var bannedWord: String = ""
@@ -55,7 +55,7 @@ struct ProjectConfig: View {
     }
     
     private func onAppear() -> Void {
-        if let bw = project.configuration?.bannedWords! {
+        if let bw = self.project?.configuration?.bannedWords! {
             let savedBws = bw.allObjects as! [BannedWord]
             bannedWords = savedBws
         }
@@ -68,8 +68,8 @@ struct ProjectConfig: View {
     private func removeFromBannedWordList(_ word: BannedWord) -> Void {
         bannedWords.removeAll {$0 == word}
         
-        project.configuration!.bannedWords = NSSet(array: bannedWords)
-        project.lastUpdate = Date()
+        self.project?.configuration!.bannedWords = NSSet(array: bannedWords)
+        self.project?.lastUpdate = Date()
         
         PersistenceController.shared.save()
     }
@@ -93,10 +93,10 @@ struct ProjectConfig: View {
         }
         
         for word in bannedWords {
-            project.configuration?.addToBannedWords(word)
+            self.project?.configuration?.addToBannedWords(word)
         }
         
-        project.lastUpdate = Date()
+        self.project?.lastUpdate = Date()
         
         bannedWord = ""
         

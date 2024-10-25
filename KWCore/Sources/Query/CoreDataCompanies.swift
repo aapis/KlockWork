@@ -162,7 +162,7 @@ public class CoreDataCompanies: ObservableObject {
             var subpredicates: [NSPredicate] = []
 
             // Add alive check if required
-            if !allowKilled {
+            if allowKilled {
                 subpredicates.append(
                     NSPredicate(format: "alive == true")
                 )
@@ -286,7 +286,7 @@ public class CoreDataCompanies: ObservableObject {
     ///   - alive: Is company alive?
     ///   - hidden: Is company hidden?
     /// - Returns: Void
-    private func make(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, projects: NSSet, isDefault: Bool, pid: Int64, alive: Bool = true, hidden: Bool = false, saveByDefault: Bool = true) -> Company {
+    private func make(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, projects: NSSet, isDefault: Bool, pid: Int64? = nil, alive: Bool = true, hidden: Bool = false, saveByDefault: Bool = true) -> Company {
         let company = Company(context: moc!)
         company.alive = alive
         company.hidden = hidden
@@ -296,8 +296,13 @@ public class CoreDataCompanies: ObservableObject {
         company.lastUpdate = updated ?? created
         company.isDefault = isDefault
         company.name = name
-        company.pid = pid
-        
+
+        if pid == nil {
+            company.pid = Int64.random(in: 1...1999999999999)
+        } else {
+            company.pid = pid!
+        }
+
         if saveByDefault {
             PersistenceController.shared.save()
         }
@@ -318,7 +323,7 @@ public class CoreDataCompanies: ObservableObject {
     ///   - alive: Is company alive?
     ///   - hidden: Is company hidden?
     /// - Returns: Void
-    public func create(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, projects: NSSet, isDefault: Bool, pid: Int64, alive: Bool = true, hidden: Bool = false, saveByDefault: Bool = true) -> Void {
+    public func create(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, projects: NSSet, isDefault: Bool, pid: Int64? = nil, alive: Bool = true, hidden: Bool = false, saveByDefault: Bool = true) -> Void {
         let _ = self.make(
             name: name,
             abbreviation: abbreviation,
@@ -345,7 +350,7 @@ public class CoreDataCompanies: ObservableObject {
     ///   - alive: Is company alive?
     ///   - hidden: Is company hidden?
     /// - Returns: Void
-    public func createAndReturn(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, projects: NSSet, isDefault: Bool, pid: Int64, alive: Bool = true, hidden: Bool = false, saveByDefault: Bool = true) -> Company {
+    public func createAndReturn(name: String, abbreviation: String, colour: [Double], created: Date, updated: Date? = nil, projects: NSSet, isDefault: Bool, pid: Int64? = nil, alive: Bool = true, hidden: Bool = false, saveByDefault: Bool = true) -> Company {
         return self.make(
             name: name,
             abbreviation: abbreviation,

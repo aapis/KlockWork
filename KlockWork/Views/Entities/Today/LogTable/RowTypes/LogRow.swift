@@ -277,7 +277,7 @@ struct LogRow: View, Identifiable {
             Divider()
 
             if entry.jobObject != nil {
-                Button(action: {self.nav.session.job = entry.jobObject!}, label: {
+                Button(action: self.actionSetActiveJob, label: {
                     Text("Set as Active Job")
                 })
             }
@@ -330,6 +330,25 @@ struct LogRow: View, Identifiable {
     private func actionInspect(_ inspectable: NSManagedObject) -> Void {
         self.nav.session.search.inspectingEntity = inspectable
         nav.setInspector(AnyView(Inspector(entity: inspectable)))
+    }
+    
+    /// Fires when user chooses "Set as Active Job" from context menu
+    /// - Returns: Void
+    private func actionSetActiveJob() -> Void {
+        if let job = self.entry.jobObject {
+            self.nav.session.job = job
+            if let project = job.project {
+                self.nav.session.project = project
+                print("DERPO company=\(project.company?.name ?? "Invalid") stored=\(self.nav.session.company?.name ?? "Invalid")")
+                // @TODO: this doesn't work? company doesn't set but the other two do
+//                if let company = project.company {
+//                    self.nav.session.company = company
+//                }
+                print("DERPO company=\(project.company?.name ?? "Invalid") stored=\(self.nav.session.company?.name ?? "Invalid")")
+                print("DERPO project=\(project.name ?? "Invalid") stored=\(self.nav.session.project?.name ?? "Invalid")")
+                print("DERPO job=\(job.title ?? job.jid.string ?? "Invalid") stored=\(self.nav.session.job?.jid.string ?? "Invalid")")
+            }
+        }
     }
 
     private func actionOnAppear() -> Void {

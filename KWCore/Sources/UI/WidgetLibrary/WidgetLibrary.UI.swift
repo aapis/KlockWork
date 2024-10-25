@@ -101,12 +101,12 @@ extension WidgetLibrary {
                     FancyButtonv2(
                         text: "Create",
                         action: { self.onAction?() ; self.state.to(.companyDetail) },
-                        icon: "building.2.crop.circle",
-                        iconWhenHighlighted: "building.2.crop.circle.fill",
+                        icon: "plus.square",
+                        iconWhenHighlighted: "plus.square.fill",
                         showLabel: false,
                         size: .small,
                         type: .clear,
-                        font: .title2
+                        font: .title
                     )
                     .help("Create a new company")
                     .frame(width: 25)
@@ -121,12 +121,12 @@ extension WidgetLibrary {
                     FancyButtonv2(
                         text: "Create",
                         action: { self.onAction?() ; self.state.to(.projectDetail) },
-                        icon: "folder.badge.plus",
-                        iconWhenHighlighted: "folder.fill.badge.plus",
+                        icon: "plus.square",
+                        iconWhenHighlighted: "plus.square.fill",
                         showLabel: false,
                         size: .small,
                         type: .clear,
-                        font: .title2
+                        font: .title
                     )
                     .help("Create a new project")
                     .frame(width: 25)
@@ -142,12 +142,12 @@ extension WidgetLibrary {
                     FancyButtonv2(
                         text: "Create",
                         action: self.actionOnTap,
-                        iconAsImage: Conf.jobs.icon,
-                        iconAsImageWhenHighlighted: Conf.jobs.selectedIcon,
+                        icon: "plus.square",
+                        iconWhenHighlighted: "plus.square.fill",
                         showLabel: false,
                         size: .small,
                         type: .clear,
-                        font: .title2
+                        font: .title
                     )
                     .help("Create a new job")
                     .frame(width: 25)
@@ -162,12 +162,12 @@ extension WidgetLibrary {
                     FancyButtonv2(
                         text: "Create",
                         action: { self.onAction?() ; self.state.to(.terms) },
-                        iconAsImage: Conf.terms.selectedIcon,
-                        iconAsImageWhenHighlighted: Conf.terms.selectedIcon,
+                        icon: "plus.square",
+                        iconWhenHighlighted: "plus.square.fill",
                         showLabel: false,
                         size: .small,
                         type: .clear,
-                        font: .title2
+                        font: .title
                     )
                     .help("Create a new taxonomy term")
                     .frame(width: 25)
@@ -182,12 +182,12 @@ extension WidgetLibrary {
                     FancyButtonv2(
                         text: "Create",
                         action: { self.onAction?() ; self.state.to(.definitionDetail) },
-                        iconAsImage: Conf.terms.selectedIcon,
-                        iconAsImageWhenHighlighted: Conf.terms.selectedIcon,
+                        icon: "plus.square",
+                        iconWhenHighlighted: "plus.square.fill",
                         showLabel: false,
                         size: .small,
                         type: .clear,
-                        font: .title2
+                        font: .title
                     )
                     .help("Create a new term definition")
                     .frame(width: 25)
@@ -317,6 +317,23 @@ extension WidgetLibrary {
                         )
                         .mask(Circle())
                     }
+                }
+            }
+
+            struct Close: View {
+//                @EnvironmentObject public var state: Navigation
+                public var action: () -> Void
+
+                var body: some View {
+                    FancyButtonv2(
+                        text: "Reset",
+                        action: self.action,
+                        icon: "xmark",
+                        showLabel: false,
+                        type: .clear,
+                        font: .title2
+                    )
+                    .frame(width: 18)
                 }
             }
         }
@@ -656,7 +673,12 @@ extension WidgetLibrary {
                     }
                 }
                 .padding()
-                .background(Theme.textBackground)
+                .background(
+                    ZStack {
+                        self.state.session.appPage.primaryColour
+                        Theme.textBackground
+                    }
+                )
                 .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
                 .onAppear(perform: self.actionOnAppear)
             }
@@ -710,7 +732,48 @@ extension WidgetLibrary {
             }
         }
 
+        struct IconBlock: View, Identifiable {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
+            public var id: UUID = UUID()
+            public var type: Conf
+            public var text: String
+            public var colour: Color
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                VStack(alignment: .center, spacing: 0) {
+                    ZStack(alignment: .center) {
+                        (self.viewModeIndex == 0 ? Color.gray.opacity(self.isHighlighted ? 1 : 0.7) : self.colour.opacity(self.isHighlighted ? 1 : 0.7))
+                        VStack(alignment: .center, spacing: 0) {
+                            (self.isHighlighted ? self.type.selectedIcon : self.type.icon)
+                                .symbolRenderingMode(.hierarchical)
+                                .font(.largeTitle)
+//                                .foregroundStyle(self.viewModeIndex == 0 ? self.colour : self.colour.isBright() ? Theme.base : .white)
+                                .foregroundStyle(self.viewModeIndex == 0 ? self.colour : .white)
+                        }
+                        Spacer()
+                    }
+                    .frame(height: 65)
+
+                    ZStack(alignment: .center) {
+                        (self.isHighlighted ? Color.yellow : Theme.textBackground)
+                        VStack(alignment: .center, spacing: 0) {
+                            Text(self.text)
+                                .font(.system(.title3, design: .monospaced))
+                                .foregroundStyle(self.isHighlighted ? Theme.base : .gray)
+                        }
+                    }
+                    .frame(height: 25)
+                }
+                .frame(width: 65)
+                .clipShape(.rect(cornerRadius: 5))
+                .useDefaultHover({ hover in self.isHighlighted = hover })
+            }
+        }
+
         struct ExploreLinks: View {
+            @EnvironmentObject private var state: Navigation
             private var activities: [Activity] {
                 [
                     Activity(name: "Activity Calendar", page: .activityCalendar, type: .visualize, icon: "calendar"),
@@ -734,7 +797,12 @@ extension WidgetLibrary {
                                 }
                             }
                             .padding()
-                            .background(Theme.textBackground)
+                            .background(
+                                ZStack {
+                                    self.state.session.appPage.primaryColour
+                                    Theme.textBackground
+                                }
+                            )
                             .clipShape(.rect(cornerRadius: 5))
                         }
                     }
@@ -1288,14 +1356,7 @@ extension WidgetLibrary {
                             .font(.title2)
                         Spacer()
                         if self.searchText.count > 0 {
-                            FancyButtonv2(
-                                text: "Reset",
-                                action: self.actionOnReset,
-                                icon: "xmark",
-                                showLabel: false,
-                                type: .clear,
-                                font: .title2
-                            )
+                            UI.Buttons.Close(action: self.actionOnReset)
                         } else {
                             FancyButtonv2(
                                 text: "Entities",
@@ -1382,53 +1443,59 @@ extension WidgetLibrary {
             public var company: Company?
             public var project: Project?
             public var job: Job?
+            public var showRoot: Bool = false
 
             var body: some View {
                 HStack(alignment: .center, spacing: 0) {
-                    if let company = self.company {
-                        if let project = self.project {
-                            ZStack(alignment: .leading) {
-                                if let cJob = self.job {
-                                    cJob.backgroundColor
+                    ZStack(alignment: .leading) {
+                        HStack(alignment: .center, spacing: 8) {
+                            HStack(spacing: 0) {
+                                if self.showRoot {
+                                    Text("...")
+                                        .padding(7)
+                                        .background(Theme.base)
+                                        .foregroundStyle(.white.opacity(0.55))
+                                    Image(systemName: "chevron.right")
+                                        .padding([.top, .bottom], 8)
+                                        .padding([.leading, .trailing], 4)
+                                        .background(Theme.base.opacity(0.9))
+                                        .foregroundStyle(.white.opacity(0.55))
+                                }
 
-                                    if let cAbb = company.abbreviation {
-                                        if let pAbb = project.abbreviation {
-                                            HStack(alignment: .center, spacing: 8) {
-                                                HStack(spacing: 0) {
-                                                    Text("\(cAbb)")
-                                                        .padding(7)
-                                                        .background(company.backgroundColor)
-                                                        .foregroundStyle(company.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
-                                                    Image(systemName: "chevron.right")
-                                                        .padding([.top, .bottom], 8)
-                                                        .padding([.leading, .trailing], 4)
-                                                        .background(company.backgroundColor.opacity(0.9))
-                                                        .foregroundStyle(company.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
-                                                    Text("\(pAbb)")
-                                                        .padding(7)
-                                                        .background(project.backgroundColor)
-                                                        .foregroundStyle(project.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
-                                                    Image(systemName: "chevron.right")
-                                                        .padding([.top, .bottom], 8)
-                                                        .padding([.leading, .trailing], 4)
-                                                        .background(project.backgroundColor.opacity(0.9))
-                                                        .foregroundStyle(project.backgroundColor.isBright() ? .black.opacity(0.55) : .white.opacity(0.55))
-                                                }
+                                if let abbreviation = self.company?.abbreviation {
+                                    Text(abbreviation)
+                                        .padding(7)
+                                        .background(self.company?.backgroundColor ?? Theme.base)
+                                        .foregroundStyle((self.company?.backgroundColor.isBright() ?? false) ? Theme.base.opacity(0.55) : .white.opacity(0.55))
+                                    Image(systemName: "chevron.right")
+                                        .padding([.top, .bottom], 8)
+                                        .padding([.leading, .trailing], 4)
+                                        .background((self.company?.backgroundColor ?? Theme.base).opacity(0.9))
+                                        .foregroundStyle((self.company?.backgroundColor  ?? Theme.base).isBright() ? Theme.base.opacity(0.55) : .white.opacity(0.55))
+                                }
 
-                                                Text("\(self.job?.title ?? self.job?.jid.string ?? "")")
-                                                    .foregroundStyle(cJob.backgroundColor.isBright() ? .black : .white)
-                                                Spacer()
-                                            }
-                                        }
-                                    }
+                                if let abbreviation = self.project?.abbreviation {
+                                    Text(abbreviation)
+                                        .padding(7)
+                                        .background(self.project?.backgroundColor ?? Theme.base)
+                                        .foregroundStyle((self.project?.backgroundColor ?? Theme.base).isBright() ? Theme.base.opacity(0.55) : .white.opacity(0.55))
+                                    Image(systemName: "chevron.right")
+                                        .padding([.top, .bottom], 8)
+                                        .padding([.leading, .trailing], 4)
+                                        .background((self.project?.backgroundColor ?? Theme.base).opacity(0.9))
+                                        .foregroundStyle((self.project?.backgroundColor ?? Theme.base).isBright() ? Theme.base.opacity(0.55) : .white.opacity(0.55))
                                 }
                             }
-                            .foregroundStyle((self.state.session.job?.project?.backgroundColor ?? .clear).isBright() ? .black : .white)
+
+                            Text("\(self.job?.title ?? self.job?.jid.string ?? "")")
+                                .foregroundStyle((self.job?.backgroundColor ?? Theme.base).isBright() ? Theme.base : .white)
+                            Spacer()
                         }
+                        .foregroundStyle((self.project?.backgroundColor ?? .clear).isBright() ? Theme.base : .white)
                     }
                 }
                 .frame(height: 30)
-                .background(self.state.session.job?.backgroundColor ?? .clear)
+                .background(self.job?.backgroundColor ?? .clear)
             }
         }
 
@@ -1447,7 +1514,9 @@ extension WidgetLibrary {
                     HStack(alignment: .center, spacing: 4) {
                         if let title = self.title {
                             Text(title)
-                        } else if let icon = self.icon {
+                        }
+
+                        if let icon = self.icon {
                             (self.isOn ? Image(systemName: self.selectedIcon ?? "xmark") : Image(systemName: icon))
                         } else {
                             (self.isOn ? self.eType?.selectedIcon : self.eType?.icon)
@@ -1459,7 +1528,7 @@ extension WidgetLibrary {
                 .help(self.title ?? self.eType?.label ?? "")
                 .buttonStyle(.plain)
                 .useDefaultHover({ hover in self.isHighlighted = hover })
-                .shadow(color: self.isOn ? Theme.base : .clear, radius: 1, x: 1, y: 1)
+                .shadow(color: self.isOn && self.title == nil ? Theme.base : .clear, radius: 1, x: 1, y: 1)
             }
 
             init(_ title: String? = nil, isOn: Binding<Bool>, eType: PageConfiguration.EntityType? = .BruceWillis, icon: String? = nil, selectedIcon: String? = nil) {
@@ -1469,6 +1538,209 @@ extension WidgetLibrary {
                 self.selectedIcon = selectedIcon
                 _isOn = isOn
             }
+        }
+
+        struct GroupHeaderContextMenu: View {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateCompany") private var shouldCreateCompany: Bool = false
+            @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateProject") private var shouldCreateProject: Bool = false
+            @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateJob") private var shouldCreateJob: Bool = false
+            public let page: Page
+            public let entity: NSManagedObject
+
+            var body: some View {
+                Button(action: self.actionEdit, label: {
+                    Text("Edit...")
+                })
+                Divider()
+                Menu("New") {
+                    if [.companyDetail, .projectDetail].contains(where: {$0 == self.page}) {
+                        Button(action: self.actionOnSecondaryTap, label: {
+                            if self.page == .companyDetail {
+                                Text("Project")
+                            } else if self.page == .projectDetail {
+                                Text("Job")
+                            }
+                        })
+                    } else if self.page == .jobs {
+                        Button(action: {self.state.to(.taskDetail)}, label: {
+                            Text("Task...")
+                        })
+                        Button(action: {self.state.to(.today)}, label: {
+                            Text("Record...")
+                        })
+                        Button(action: {self.state.to(.noteDetail)}, label: {
+                            Text("Note...")
+                        })
+                        Button(action: {self.state.to(.definitionDetail)}, label: {
+                            Text("Definition...")
+                        })
+                    }
+                }
+                Divider()
+                Button(action: self.actionInspect, label: {
+                    Text("Inspect")
+                })
+            }
+        }
+
+        struct InlineEntityCreate: View {
+            public var label: String
+            public var onCreateChild: (String) -> Void
+            public var onAbortChild: () -> Void
+            @State private var newEntityName: String = ""
+            @FocusState private var newEntityFieldFocused: Bool
+
+            var body: some View {
+                HStack {
+                    Image(systemName: "folder")
+                        .padding([.leading, .top, .bottom])
+                    FancyTextField(
+                        placeholder: self.label,
+                        onSubmit: {self.onCreateChild(self.newEntityName)},
+                        transparent: true,
+                        text: $newEntityName
+                    )
+                    .focused($newEntityFieldFocused)
+                    .onAppear(perform: {self.newEntityFieldFocused = true})
+                    .onDisappear(perform: {self.newEntityFieldFocused = false})
+                    Spacer()
+                    UI.Buttons.Close(action: self.onAbortChild)
+                        .padding(.trailing)
+                }
+            }
+        }
+
+        struct KeyboardShortcutIndicator: View {
+            public var character: String
+            public var requireShift: Bool = false
+            public var requireCmd: Bool = true
+
+            var body: some View {
+                HStack(alignment: .top, spacing: 2) {
+                    if self.requireShift { Image(systemName: "arrowshape.up") }
+                    if self.requireShift { Image(systemName: "command") }
+                    Text(self.character)
+                }
+                .help("\(self.requireShift ? "Shift+" : "")\(self.requireCmd ? "Command+" : "")\(self.character)")
+                .foregroundStyle(.white.opacity(0.55))
+                .font(.caption)
+                .padding(3)
+                .background(.white.opacity(0.4).blendMode(.softLight))
+                .clipShape(.rect(cornerRadius: 4))
+            }
+        }
+
+        struct RowActionButton: View {
+            @EnvironmentObject public var state: Navigation
+            public var callback: (() -> Void)
+            public var icon: String?
+            public var iconAsImage: Image?
+            public var helpText: String = ""
+            public var highlightedColour: Color = .yellow
+            public var page: PageConfiguration.AppPage = .explore
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                Button {
+                    self.callback()
+                } label: {
+                    ZStack(alignment: .center) {
+                        LinearGradient(colors: [Theme.base, .clear], startPoint: .leading, endPoint: .trailing)
+                        self.isHighlighted ? self.highlightedColour : self.state.session.appPage.primaryColour
+
+                        if let icon = self.icon {
+                            Image(systemName: icon)
+                                .symbolRenderingMode(.hierarchical)
+                                .padding(5)
+                        } else if let iconAsImage = self.iconAsImage {
+                            iconAsImage
+                                .symbolRenderingMode(.hierarchical)
+                                .padding(5)
+                        }
+                    }
+                    .foregroundStyle(self.isHighlighted ? Theme.base : self.highlightedColour)
+                }
+                .font(.headline)
+                .buttonStyle(.plain)
+                .help(self.helpText)
+                .useDefaultHover({ hover in self.isHighlighted = hover })
+            }
+        }
+
+    }
+}
+
+extension WidgetLibrary.UI.GroupHeaderContextMenu {
+    /// Navigate to an edit page
+    /// - Returns: Void
+    private func actionEdit() -> Void {
+        switch self.page {
+        case .recordDetail:
+            self.state.session.record = self.entity as? LogRecord
+        case .jobs:
+            self.state.session.job = self.entity as? Job
+        case .companyDetail:
+            self.state.session.company = self.entity as? Company
+        case .projectDetail:
+            self.state.session.project = self.entity as? Project
+        case .definitionDetail:
+            self.state.session.definition = self.entity as? TaxonomyTermDefinitions
+        case .taskDetail:
+            self.state.session.task = self.entity as? LogTask
+        case .noteDetail:
+            self.state.session.note = self.entity as? Note
+        case .peopleDetail:
+            self.state.session.person = self.entity as? Person
+        default:
+            print("noop")
+        }
+        self.state.to(self.page)
+    }
+
+    /// Inspect an entity
+    /// - Returns: Void
+    private func actionInspect() -> Void {
+        self.state.session.search.inspectingEntity = self.entity
+        self.state.setInspector(AnyView(Inspector(entity: self.entity)))
+    }
+    
+    /// Fires when each row is right clicked
+    /// - Returns: Void
+    private func actionOnSecondaryTap() -> Void {
+        switch self.entity {
+        case is Company:
+            self.state.session.company = self.entity as? Company
+            self.state.session.company?.addToProjects(
+                CoreDataProjects(moc: self.state.moc).createAndReturn(
+                    name: "EDIT ME",
+                    abbreviation: "EM",
+                    colour: Color.randomStorable(),
+                    created: Date(),
+                    company: self.state.session.company,
+                    saveByDefault: false
+                )
+            )
+            self.shouldCreateProject = true
+        case is Project:
+            self.state.session.project = self.entity as? Project
+            self.state.session.project?.addToJobs(
+                CoreDataJob(moc: self.state.moc).createAndReturn(
+                    alive: true,
+                    colour: Color.randomStorable(),
+                    jid: 1.0,
+                    overview: "",
+                    shredable: false,
+                    title: "EDIT ME",
+                    uri: "",
+                    saveByDefault: false
+                )
+            )
+            self.shouldCreateJob = true
+        case is Job:
+            self.state.session.job = self.entity as? Job
+        default:
+            print("Noop")
         }
     }
 }
