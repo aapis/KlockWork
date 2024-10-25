@@ -1331,7 +1331,7 @@ extension WidgetLibrary {
             @EnvironmentObject public var state: Navigation
             @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
             @AppStorage("searchbar.shared") private var searchText: String = ""
-            @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+            @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
             @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
             public var disabled: Bool = false
             public var placeholder: String? = "Search..."
@@ -1381,7 +1381,7 @@ extension WidgetLibrary {
             @EnvironmentObject public var state: Navigation
             @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
             @AppStorage("searchbar.shared") private var searchText: String = ""
-            @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+            @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
             @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
             @Binding public var text: String
             public var disabled: Bool = false

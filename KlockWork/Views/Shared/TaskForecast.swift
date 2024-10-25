@@ -159,9 +159,9 @@ struct Forecast: View, Identifiable {
 
     struct ForecastTypeButton: View {
         @EnvironmentObject private var state: Navigation
-        @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
-        @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
-        @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isCreateStackShowing") private var isCreateStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
         public var date: Date
         public var callback: (() -> Void)? = nil
         @FetchRequest public var upcomingTasks: FetchedResults<LogTask>
@@ -225,9 +225,9 @@ struct Forecast: View, Identifiable {
 
     struct ForecastTypeRow: View {
         @EnvironmentObject private var state: Navigation
-        @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
-        @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
-        @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isCreateStackShowing") private var isCreateStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
         public var date: Date
         public var callback: (() -> Void)? = nil
         @FetchRequest public var upcomingTasks: FetchedResults<LogTask>

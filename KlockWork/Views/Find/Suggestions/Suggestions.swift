@@ -12,7 +12,7 @@ import KWCore
 extension FindDashboard {
     struct Suggestions: View {
         @EnvironmentObject public var nav: Navigation
-        @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isSearching") private var isSearching: Bool = false
         @Binding public var searchText: String
         @Binding public var publishedOnly: Bool
         @Binding public var showRecords: Bool

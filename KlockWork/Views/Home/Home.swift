@@ -14,12 +14,10 @@ struct Home: View {
     typealias APage = PageConfiguration.AppPage
     typealias Entity = PageConfiguration.EntityType
     typealias UI = WidgetLibrary.UI
-    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
-    @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
-    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
-    @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
-    @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isCreateStackShowing") private var isCreateStackShowing: Bool = false
     @AppStorage("general.showSessionInspector") public var showSessionInspector: Bool = false
     @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
@@ -98,15 +96,8 @@ struct Home: View {
             VStack(alignment: .leading, spacing: 0) {
                 GlobalSidebarWidgets()
 
-                if !isSearchStackShowing && !isUpcomingTaskStackShowing {
-                    if isDatePickerPresented {
-                        ZStack {
-                            nav.sidebar
-                            Theme.base.opacity(0.7)
-                        }
-                    } else {
-                        nav.sidebar
-                    }
+                if !self.isSearchStackShowing && !self.isUpcomingTaskStackShowing {
+                    nav.sidebar
                 }
             }
         }
@@ -143,7 +134,7 @@ struct Home: View {
                 UI.AppNavigation()
                 nav.view
                     .navigationTitle(nav.pageTitle())
-                    .disabled(isDatePickerPresented)
+                    .disabled(self.nav.inspector == nil)
             }
 
             if nav.inspector != nil {
@@ -174,7 +165,6 @@ extension Home {
 
         KeyboardHelper.monitor(key: .keyDown, callback: {
             self.isSearchStackShowing = false
-            self.isDatePickerPresented = false
             self.isCreateStackShowing = false
             self.nav.session.search.reset()
             self.nav.session.search.inspectingEntity = nil
@@ -280,7 +270,7 @@ extension Home {
     /// Updates the dashboard icon upcoming event indicator
     /// - Returns: EventIndicatorStatus
     private func updateIndicator() -> EventIndicatorStatus {
-        let ce = CoreDataCalendarEvent(moc: moc)
+        let ce = CoreDataCalendarEvent(moc: self.nav.moc)
         var upcoming: [EKEvent] = []
         var inProgress: [EKEvent] = []
 

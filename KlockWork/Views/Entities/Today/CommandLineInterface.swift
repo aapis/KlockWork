@@ -22,7 +22,7 @@ struct CommandLineInterface: View {
     @State private var showSelectorPanel: Bool = false
 
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
-    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearching: Bool = false
     
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation

@@ -12,7 +12,7 @@ import EventKit
 
 public struct Inspector: View, Identifiable {
     @EnvironmentObject public var nav: Navigation
-    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
     public let id: UUID = UUID()
     public var entity: NSManagedObject? = nil
     public var event: EKEvent? = nil

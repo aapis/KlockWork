@@ -36,8 +36,8 @@ struct SidebarButton: View, Identifiable {
 
     @EnvironmentObject public var nav: Navigation
     @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
-    @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
-    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearching: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {

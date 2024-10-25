@@ -14,7 +14,7 @@ struct FindDashboard: View {
     typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var nav: Navigation
     @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
-    @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearching") private var isSearching: Bool = false
     @AppStorage("dashboard.showWelcomeHeader") private var showWelcomeHeader: Bool = true
     @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
     @State public var searching: Bool = false
