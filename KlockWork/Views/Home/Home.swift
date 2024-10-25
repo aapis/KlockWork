@@ -134,7 +134,7 @@ struct Home: View {
                 UI.AppNavigation()
                 nav.view
                     .navigationTitle(nav.pageTitle())
-                    .disabled(self.nav.inspector == nil)
+                    .disabled(self.nav.inspector != nil)
             }
 
             if nav.inspector != nil {
