@@ -462,7 +462,6 @@ extension GlobalSidebarWidgets {
     }
 }
 
-
 extension GlobalSidebarWidgets.PlanButton {
     private func actionOnChangeFocus() -> Void {
         if nav.session.gif == .normal {

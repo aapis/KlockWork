@@ -59,17 +59,18 @@ extension WidgetLibrary.UI {
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
                     ZStack(alignment: .trailing) {
-                        RowButton(text: self.entity.name ?? "_COMPANY_NAME", alive: self.entity.alive, callback: {
-                            self.state.session.company = self.entity
-                        }, isPresented: $isPresented)
+                        RowButton(
+                            text: self.entity.name ?? "_COMPANY_NAME",
+                            alive: self.entity.alive,
+                            active: self.entity == self.state.session.company,
+                            callback: {
+                                self.state.session.company = self.entity
+                            },
+                            isPresented: $isPresented
+                        )
                         .useDefaultHover({ inside in self.highlighted = inside})
                         .contextMenu {
                             UI.GroupHeaderContextMenu(page: self.entity.pageDetailType, entity: self.entity)
-                        }
-
-                        if self.entity == self.state.session.company {
-                            FancyStarv2()
-                                .help("Active company")
                         }
                     }
 
@@ -145,18 +146,19 @@ extension WidgetLibrary.UI {
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
                     ZStack(alignment: .trailing) {
-                        RowButton(text: self.entity.name ?? "_PROJECT_NAME", alive: self.entity.alive, callback: {
-                            self.state.session.company = self.entity.company
-                            self.state.session.project = self.entity
-                        }, isPresented: $isPresented)
+                        RowButton(
+                            text: self.entity.name ?? "_PROJECT_NAME",
+                            alive: self.entity.alive,
+                            active: self.entity == self.state.session.project,
+                            callback: {
+                                self.state.session.company = self.entity.company
+                                self.state.session.project = self.entity
+                            },
+                            isPresented: $isPresented
+                        )
                         .useDefaultHover({ inside in self.highlighted = inside})
                         .contextMenu {
                             UI.GroupHeaderContextMenu(page: self.entity.pageDetailType, entity: self.entity)
-                        }
-
-                        if self.entity == self.state.session.project {
-                            FancyStarv2()
-                                .help("Active project")
                         }
                     }
 
@@ -224,30 +226,31 @@ extension WidgetLibrary.UI {
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
                     ZStack(alignment: .trailing) {
-                        RowButton(text: self.entity.title ?? self.entity.jid.string, alive: self.entity.alive, callback: {
-                            self.state.session.setJob(self.entity)
+                        RowButton(
+                            text: self.entity.title ?? self.entity.jid.string,
+                            alive: self.entity.alive,
+                            active: self.entity == self.state.session.job,
+                            callback: {
+                                self.state.session.setJob(self.entity)
 
-                            if self.state.parent == .planning {
-                                self.state.planning.jobs.insert(entity)
-                                self.state.planning.projects.insert(entity.project!)
+                                if self.state.parent == .planning {
+                                    self.state.planning.jobs.insert(entity)
+                                    self.state.planning.projects.insert(entity.project!)
 
-                                // projects are allowed to be unowned
-                                if let company = entity.project!.company {
-                                    self.state.planning.companies.insert(company)
+                                    // projects are allowed to be unowned
+                                    if let company = entity.project!.company {
+                                        self.state.planning.companies.insert(company)
+                                    }
+                                } else {
+                                    self.state.session.company = self.entity.project?.company
+                                    self.state.session.project = self.entity.project
                                 }
-                            } else {
-                                self.state.session.company = self.entity.project?.company
-                                self.state.session.project = self.entity.project
-                            }
-                        }, isPresented: $isPresented)
+                            },
+                            isPresented: $isPresented
+                        )
                         .useDefaultHover({ inside in self.highlighted = inside})
                         .contextMenu {
                             UI.GroupHeaderContextMenu(page: self.entity.pageDetailType, entity: self.entity)
-                        }
-
-                        if self.entity == self.state.session.job {
-                            FancyStarv2()
-                                .help("Active job")
                         }
                     }
 
@@ -563,8 +566,10 @@ extension WidgetLibrary.UI {
         }
 
         struct RowButton: View {
+            @EnvironmentObject private var state: Navigation
             public let text: String
             public let alive: Bool
+            public var active: Bool
             public var callback: (() -> Void)?
             @Binding public var isPresented: Bool
 
@@ -578,7 +583,8 @@ extension WidgetLibrary.UI {
                         HStack(alignment: .center, spacing: 8) {
                             ZStack(alignment: .center) {
                                 Theme.base.opacity(0.6).blendMode(.softLight)
-                                Image(systemName: self.isPresented ? "minus" : "plus")
+                                Image(systemName: self.active ? "star.fill" : self.isPresented ? "minus" : "plus")
+                                    .foregroundStyle(self.active ? .yellow : .white)
                             }
                             .frame(width: 30, height: 30)
                             .cornerRadius(5)
