@@ -109,7 +109,7 @@ extension WidgetLibrary.UI.Navigator {
         @State private var jobs: [Job] = []
         @State private var newProjectName: String = ""
         @State private var id: UUID = UUID()
-        public let location: WidgetLocation = .content
+        public var location: WidgetLocation = .content
         private var columns: [GridItem] {
             return Array(repeating: .init(.flexible(minimum: 100)), count: 6)
         }
