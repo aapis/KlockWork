@@ -108,6 +108,7 @@ extension WidgetLibrary.UI.Navigator {
         @State private var projects: [Project] = []
         @State private var jobs: [Job] = []
         @State private var newProjectName: String = ""
+        @State private var id: UUID = UUID()
         public let location: WidgetLocation = .content
         private var columns: [GridItem] {
             return Array(repeating: .init(.flexible(minimum: 100)), count: 6)
@@ -162,6 +163,7 @@ extension WidgetLibrary.UI.Navigator {
                     FancyHelpText(text: "Create a company first.")
                 }
             }
+            .id(self.id)
             .background(
                 ZStack {
                     self.state.session.appPage.primaryColour
@@ -257,8 +259,7 @@ extension WidgetLibrary.UI.Navigator {
             @State private var relatedEntities: [PageConfiguration.EntityType] = []
             @State private var isPresented: Bool = false
             @State private var isHighlighted: Bool = false
-            @State private var newEntityName: String = ""
-            @FocusState private var newEntityFieldFocused: Bool
+            @State private var id: UUID = UUID()
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
@@ -266,6 +267,7 @@ extension WidgetLibrary.UI.Navigator {
                         Main
                     }
                 }
+                .id(self.id)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.viewModeIndex) { self.actionOnAppear() }
                 .onChange(of: self.showPublished) { self.actionOnAppear() }
@@ -282,22 +284,11 @@ extension WidgetLibrary.UI.Navigator {
             var Main: some View {
                 VStack(alignment: .leading, spacing: 1) {
                     if self.label == "EDIT ME" {
-                        HStack {
-                            Image(systemName: "folder")
-                                .padding([.leading, .top, .bottom])
-                            FancyTextField(
-                                placeholder: self.label,
-                                onSubmit: self.actionOnCreateNewChild,
-                                bgColour: .clear,
-                                text: $newEntityName
-                            )
-                            .focused($newEntityFieldFocused)
-                            .onAppear(perform: {self.newEntityFieldFocused = true})
-                            .onDisappear(perform: {self.newEntityFieldFocused = false})
-                            Spacer()
-                            UI.Buttons.Close(action: self.actionOnAbort)
-                            .padding(.trailing)
-                        }
+                        UI.InlineEntityCreate(
+                            label: self.label,
+                            onCreateChild: self.actionOnCreateNewChild,
+                            onAbortChild: self.actionOnAbort
+                        )
                     } else {
                         Button {
                             self.actionOnTap()
@@ -326,50 +317,31 @@ extension WidgetLibrary.UI.Navigator {
             @ViewBuilder var Children: some View {
                 VStack(spacing: 1) {
                     ForEach(self.children!, id: \.objectID) { child in
-                        if self.label == "EDIT ME" {
-                            HStack {
-                                Image(systemName: "folder")
-                                    .padding([.leading, .top, .bottom])
-                                FancyTextField(
-                                    placeholder: self.label,
-                                    onSubmit: self.actionOnCreateNewChild,
-                                    bgColour: .clear,
-                                    text: $newEntityName
-                                )
-                                .focused($newEntityFieldFocused)
-                                .onAppear(perform: {self.newEntityFieldFocused = true})
-                                .onDisappear(perform: {self.newEntityFieldFocused = false})
-                                Spacer()
-                                UI.Buttons.Close(action: self.actionOnAbort)
-                                    .padding(.trailing)
+                        if self.state.session.gif == .focus {
+                            switch self.entity {
+                            case is Company:
+                                if let child = child as? Company {
+                                    // @TODO: do this check in actionOnAppear instead
+                                    if self.state.planning.companies.contains(child) {
+                                        Row(entity: child)
+                                    }
+                                }
+                            case is Project:
+                                if let child = child as? Project {
+                                    if self.state.planning.projects.contains(child) {
+                                        Row(entity: child)
+                                    }
+                                }
+                            case is Job:
+                                if let child = child as? Job {
+                                    if self.state.planning.jobs.contains(child) {
+                                        Row(entity: child)
+                                    }
+                                }
+                            default: EmptyView()
                             }
                         } else {
-                            if self.state.session.gif == .focus {
-                                switch self.entity {
-                                case is Company:
-                                    if let child = child as? Company {
-                                        // @TODO: do this check in actionOnAppear instead
-                                        if self.state.planning.companies.contains(child) {
-                                            Row(entity: child)
-                                        }
-                                    }
-                                case is Project:
-                                    if let child = child as? Project {
-                                        if self.state.planning.projects.contains(child) {
-                                            Row(entity: child)
-                                        }
-                                    }
-                                case is Job:
-                                    if let child = child as? Job {
-                                        if self.state.planning.jobs.contains(child) {
-                                            Row(entity: child)
-                                        }
-                                    }
-                                default: EmptyView()
-                                }
-                            } else {
-                                Row(entity: child)
-                            }
+                            Row(entity: child)
                         }
                     }
                 }
@@ -542,6 +514,7 @@ extension WidgetLibrary.UI.Navigator.List {
     /// Onload handler. Finds companies
     /// - Returns: Void
     private func actionOnAppear() -> Void {
+
         self.companies = CoreDataCompanies(moc: self.state.moc).all(
             allowKilled: self.showPublished,
             allowPlanMembersOnly: self.state.session.gif == .focus,
@@ -563,11 +536,13 @@ extension WidgetLibrary.UI.Navigator.List {
         }
 
         self.setInitialDepth()
+        self.id = UUID()
     }
     
     /// Set depth based on project/job/company
     /// - Returns: Void
     private func setInitialDepth() -> Void {
+        self.id = UUID()
         self.depth = 0
         if self.state.session.company != nil {
             self.depth = 1
@@ -609,7 +584,7 @@ extension WidgetLibrary.UI.Navigator.List.Row {
         switch self.entity {
         case is Company:
             let company = self.entity as! Company
-            self.label = company.name ?? "Error: Invalid company name"
+            self.label = company.name ?? ""
             self.children = CoreDataProjects(moc: self.state.moc).byCompany(company, allowKilled: self.showPublished)
             self.lastModified = company.lastUpdate
             self.created = company.createdDate
@@ -618,7 +593,7 @@ extension WidgetLibrary.UI.Navigator.List.Row {
             self.isPresented = company == self.state.session.company
         case is Project:
             let project = self.entity as! Project
-            self.label = project.name ?? "Error: Invalid project name"
+            self.label = project.name ?? ""
             self.children = CoreDataJob(moc: self.state.moc).byProject(project, allowKilled: self.showPublished)
             self.lastModified = project.lastUpdate
             self.created = project.created
@@ -634,8 +609,9 @@ extension WidgetLibrary.UI.Navigator.List.Row {
             self.relatedEntities = [.tasks, .records, .notes, .definitions]
             self.isPresented = job == self.state.session.job
         default:
-            self.label = "Error: Invalid company name"
+            self.label = ""
             self.children = []
+            self.isPresented = false
         }
     }
 
@@ -686,21 +662,24 @@ extension WidgetLibrary.UI.Navigator.List.Row {
     
     /// Fires when you hit enter/save on a editable row
     /// - Returns: Void
-    private func actionOnCreateNewChild() -> Void {
-        if self.newEntityName.isEmpty {
+    private func actionOnCreateNewChild(name: String) -> Void {
+        if name.isEmpty {
             return
         }
 
         switch self.entity {
         case is Company:
             let company = self.entity as! Company
-            company.name = self.newEntityName
+            company.name = name
+            self.id = company.id ?? UUID()
         case is Project:
             let project = self.entity as! Project
-            project.name = self.newEntityName
+            project.name = name
+            self.id = project.id ?? UUID()
         case is Job:
             let job = self.entity as! Job
-            job.title = self.newEntityName
+            job.title = name
+            self.id = job.id ?? UUID()
         default:
             print("noop")
         }
@@ -712,6 +691,7 @@ extension WidgetLibrary.UI.Navigator.List.Row {
     /// - Returns: Void
     private func actionOnAbort() -> Void {
         var entity: NSManagedObject?
+
         switch self.entity {
         case is Company: entity = self.entity as! Company
         case is Project: entity = self.entity as! Project
@@ -725,10 +705,10 @@ extension WidgetLibrary.UI.Navigator.List.Row {
         }
 
         self.label = ""
-        self.newEntityName = ""
         self.shouldCreateCompany = false
         self.shouldCreateProject = false
         self.shouldCreateJob = false
+        self.id = UUID()
     }
 }
 
