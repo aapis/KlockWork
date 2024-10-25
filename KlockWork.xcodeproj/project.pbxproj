@@ -10,7 +10,6 @@
 		53013A982CAC60200024BA30 /* Company.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A972CAC601F0024BA30 /* Company.swift */; };
 		53013A9A2CAC8C530024BA30 /* DefinitionDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A992CAC8C510024BA30 /* DefinitionDetail.swift */; };
 		53013A9C2CAC9CCA0024BA30 /* DefinitionSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A9B2CAC9CC40024BA30 /* DefinitionSidebar.swift */; };
-		5309EE3D25619A6D00B3BC06 /* Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5309EE3C25619A6D00B3BC06 /* Backup.swift */; };
 		530B1D722CAE219D0033E81F /* PageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D6F2CAE219D0033E81F /* PageConfiguration.swift */; };
 		530B1D732CAE219D0033E81F /* RowAddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D702CAE219D0033E81F /* RowAddButton.swift */; };
 		530B1D742CAE219D0033E81F /* FilterField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D712CAE219D0033E81F /* FilterField.swift */; };
@@ -124,7 +123,6 @@
 		5371BA402A7B866300DEEC21 /* TaskDashboardSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA3F2A7B866300DEEC21 /* TaskDashboardSidebar.swift */; };
 		5372C02A2A105AA1008CB120 /* FancyChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5372C0292A105AA1008CB120 /* FancyChip.swift */; };
 		537368D124B93DB600193E88 /* Today.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537368D024B93DB600193E88 /* Today.swift */; };
-		53759E0829678DC700DCDC4B /* Import.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53759E0729678DC700DCDC4B /* Import.swift */; };
 		5376289E29664F8C00DE8ECF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376289D29664F8C00DE8ECF /* Theme.swift */; };
 		537628A02966518B00DE8ECF /* ToolbarTabs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5376289F2966518B00DE8ECF /* ToolbarTabs.swift */; };
 		537628A22966525500DE8ECF /* ToolbarButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537628A12966525500DE8ECF /* ToolbarButtons.swift */; };
@@ -293,7 +291,6 @@
 		53013A972CAC601F0024BA30 /* Company.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Company.swift; sourceTree = "<group>"; };
 		53013A992CAC8C510024BA30 /* DefinitionDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefinitionDetail.swift; sourceTree = "<group>"; };
 		53013A9B2CAC9CC40024BA30 /* DefinitionSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefinitionSidebar.swift; sourceTree = "<group>"; };
-		5309EE3C25619A6D00B3BC06 /* Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backup.swift; sourceTree = "<group>"; };
 		530B1D6F2CAE219D0033E81F /* PageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PageConfiguration.swift; path = "../../../klockwork-ios/KlockWork-iOS/KlockWork-iOS/SharedEnums/PageConfiguration.swift"; sourceTree = "<group>"; };
 		530B1D702CAE219D0033E81F /* RowAddButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RowAddButton.swift; path = "../../../../klockwork-ios/KlockWork-iOS/KlockWork-iOS/SharedViews/RowAddButton.swift"; sourceTree = "<group>"; };
 		530B1D712CAE219D0033E81F /* FilterField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FilterField.swift; path = "../../../../klockwork-ios/KlockWork-iOS/KlockWork-iOS/SharedViews/FilterField.swift"; sourceTree = "<group>"; };
@@ -414,7 +411,6 @@
 		5371BA3F2A7B866300DEEC21 /* TaskDashboardSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDashboardSidebar.swift; sourceTree = "<group>"; };
 		5372C0292A105AA1008CB120 /* FancyChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyChip.swift; sourceTree = "<group>"; };
 		537368D024B93DB600193E88 /* Today.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Today.swift; sourceTree = "<group>"; };
-		53759E0729678DC700DCDC4B /* Import.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Import.swift; sourceTree = "<group>"; };
 		5376289D29664F8C00DE8ECF /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		5376289F2966518B00DE8ECF /* ToolbarTabs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarTabs.swift; sourceTree = "<group>"; };
 		537628A12966525500DE8ECF /* ToolbarButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarButtons.swift; sourceTree = "<group>"; };
@@ -997,17 +993,8 @@
 				53EDDF9C29634840008D34C7 /* Shared */,
 				53152CE1296BC76700A14E43 /* Home */,
 				53152CE0296BC75A00A14E43 /* Settings */,
-				53BDA6952B41BC6F00A61BE8 /* Legacy */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		53759E0929678DD000DCDC4B /* Import */ = {
-			isa = PBXGroup;
-			children = (
-				53759E0729678DC700DCDC4B /* Import.swift */,
-			);
-			path = Import;
 			sourceTree = "<group>";
 		};
 		537628A62966593500DE8ECF /* CoreData */ = {
@@ -1164,15 +1151,6 @@
 				53B0BE7D29725413007CB663 /* Projects */,
 			);
 			path = Entities;
-			sourceTree = "<group>";
-		};
-		53BDA6952B41BC6F00A61BE8 /* Legacy */ = {
-			isa = PBXGroup;
-			children = (
-				53759E0929678DD000DCDC4B /* Import */,
-				5309EE3C25619A6D00B3BC06 /* Backup.swift */,
-			);
-			path = Legacy;
 			sourceTree = "<group>";
 		};
 		53C000A12B3F73BD00D5EC04 /* Inspector */ = {
@@ -1656,7 +1634,6 @@
 				531EB6E82A9FDA5A00B3059C /* Job.swift in Sources */,
 				53B0BE8C297318A6007CB663 /* ProjectView.swift in Sources */,
 				53013A9A2CAC8C530024BA30 /* DefinitionDetail.swift in Sources */,
-				5309EE3D25619A6D00B3BC06 /* Backup.swift in Sources */,
 				53B0BE8429726118007CB663 /* FancyLink.swift in Sources */,
 				53EFCE7629637CC6004E45EC /* Color.swift in Sources */,
 				53F5896629983FD100843B32 /* ProjectRow.swift in Sources */,
@@ -1748,7 +1725,6 @@
 				53C036EF29F8A59900539C3C /* DashboardSettings.swift in Sources */,
 				5371BA302A7B2A8800DEEC21 /* JobDashboardSidebar.swift in Sources */,
 				530B1D7A2CAFA4E40033E81F /* PeopleDashboard.swift in Sources */,
-				53759E0829678DC700DCDC4B /* Import.swift in Sources */,
 				53E2025A2A7EAE5B00B4DF70 /* ProjectsWidget.swift in Sources */,
 				532CF0DC2A12A14200710B67 /* EventRow.swift in Sources */,
 				5371BA282A7B264900DEEC21 /* NoteRowPlain.swift in Sources */,
