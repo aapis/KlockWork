@@ -1549,16 +1549,20 @@ extension WidgetLibrary {
             public let entity: NSManagedObject
 
             var body: some View {
-                if [.companyDetail, .projectDetail].contains(where: {$0 == self.page}) {
-                    Button(action: self.actionOnSecondaryTap, label: {
-                        if self.page == .companyDetail {
-                            Text("New Project")
-                        } else if self.page == .projectDetail {
-                            Text("New Job")
-                        }
-                    })
-                } else if self.page == .jobs {
-                    Menu("New") {
+                Button(action: self.actionEdit, label: {
+                    Text("Edit...")
+                })
+                Divider()
+                Menu("New") {
+                    if [.companyDetail, .projectDetail].contains(where: {$0 == self.page}) {
+                        Button(action: self.actionOnSecondaryTap, label: {
+                            if self.page == .companyDetail {
+                                Text("Project")
+                            } else if self.page == .projectDetail {
+                                Text("Job")
+                            }
+                        })
+                    } else if self.page == .jobs {
                         Button(action: {self.state.to(.taskDetail)}, label: {
                             Text("Task...")
                         })
@@ -1574,13 +1578,36 @@ extension WidgetLibrary {
                     }
                 }
                 Divider()
-                Button(action: self.actionEdit, label: {
-                    Text("Edit...")
-                })
-                Divider()
                 Button(action: self.actionInspect, label: {
                     Text("Inspect")
                 })
+            }
+        }
+
+        struct InlineEntityCreate: View {
+            public var label: String
+            public var onCreateChild: (String) -> Void
+            public var onAbortChild: () -> Void
+            @State private var newEntityName: String = ""
+            @FocusState private var newEntityFieldFocused: Bool
+
+            var body: some View {
+                HStack {
+                    Image(systemName: "folder")
+                        .padding([.leading, .top, .bottom])
+                    FancyTextField(
+                        placeholder: self.label,
+                        onSubmit: {self.onCreateChild(self.newEntityName)},
+                        transparent: true,
+                        text: $newEntityName
+                    )
+                    .focused($newEntityFieldFocused)
+                    .onAppear(perform: {self.newEntityFieldFocused = true})
+                    .onDisappear(perform: {self.newEntityFieldFocused = false})
+                    Spacer()
+                    UI.Buttons.Close(action: self.onAbortChild)
+                        .padding(.trailing)
+                }
             }
         }
     }
@@ -1652,6 +1679,8 @@ extension WidgetLibrary.UI.GroupHeaderContextMenu {
                 )
             )
             self.shouldCreateJob = true
+        case is Job:
+            self.state.session.job = self.entity as? Job
         default:
             print("Noop")
         }
