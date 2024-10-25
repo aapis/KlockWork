@@ -137,17 +137,16 @@ struct Home: View {
     }
 
     @ViewBuilder var InspectorAndMain: some View {
-        if nav.inspector != nil {
-            ZStack(alignment: .topLeading) {
-                VStack {
-                    UI.AppNavigation()
-                    nav.view
-                        .navigationTitle(nav.pageTitle())
-                        .disabled(isDatePickerPresented)
+        ZStack(alignment: .topLeading) {
+            VStack(alignment: .leading, spacing: 0) {
+                UI.AppNavigation()
+                nav.view
+                    .navigationTitle(nav.pageTitle())
+                    .disabled(isDatePickerPresented)
+            }
 
-                }
+            if nav.inspector != nil {
                 Theme.base.opacity(0.7)
-
                 ZStack(alignment: .topLeading) {
                     LinearGradient(gradient: Gradient(colors: [Color.clear, Theme.base]), startPoint: .topTrailing, endPoint: .topLeading)
                         .opacity(0.25)
@@ -156,24 +155,9 @@ struct Home: View {
                     self.nav.parent?.appPage.primaryColour.opacity(0.2) ?? Theme.subHeaderColour
 
                     nav.inspector
-
-                    if isDatePickerPresented {
-                        Theme.base.opacity(0.7)
-                    }
                 }
                 .background(Theme.base)
                 .frame(width: 340)
-            }
-        } else {
-            VStack(alignment: .leading, spacing: 0) {
-                UI.AppNavigation()
-
-                ZStack {
-                    nav.view
-                        .navigationTitle(nav.pageTitle())
-                        .disabled(isDatePickerPresented)
-                    (isDatePickerPresented ? Theme.base.opacity(0.7) : .clear)
-                }
             }
         }
     }
