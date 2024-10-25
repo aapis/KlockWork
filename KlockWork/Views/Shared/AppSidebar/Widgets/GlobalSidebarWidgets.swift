@@ -1,5 +1,5 @@
 //
-//  CreateEntitiesWidget.swift
+//  GlobalSidebarWidgets.swift
 //  DLPrototype
 //
 //  Created by Ryan Priebe on 2023-08-08.
@@ -9,12 +9,12 @@
 import SwiftUI
 import KWCore
 
-struct CreateEntitiesWidget: View {
+struct GlobalSidebarWidgets: View {
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
-    @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
-    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
-    @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isCreateStackShowing") private var isCreateStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
     @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
     @State private var followingPlan: Bool = false
     @State private var doesPlanExist: Bool = false
@@ -156,8 +156,8 @@ struct CreateEntitiesWidget: View {
     }
 
     struct CreateButton: View {
-        @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
-        @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
 
         @Binding public var active: Bool
         
@@ -193,9 +193,9 @@ struct CreateEntitiesWidget: View {
     }
 
     struct FindButton: View {
-        @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
-        @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
-        @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isCreateStackShowing") private var isCreateStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isSearching") private var isSearching: Bool = false
 
         @Binding public var active: Bool
         
@@ -229,9 +229,9 @@ struct CreateEntitiesWidget: View {
     }
 
     struct CreateStack: View {
-        @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
-        @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
-        @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isCreateStackShowing") private var isCreateStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
 
         @EnvironmentObject private var nav: Navigation
 
@@ -422,7 +422,7 @@ struct CreateEntitiesWidget: View {
     }
 }
 
-extension CreateEntitiesWidget {
+extension GlobalSidebarWidgets {
     private func actionOnAppear() -> Void {
         findPlan()
     }
@@ -462,7 +462,7 @@ extension CreateEntitiesWidget {
 }
 
 
-extension CreateEntitiesWidget.PlanButton {
+extension GlobalSidebarWidgets.PlanButton {
     private func actionOnChangeFocus() -> Void {
         if nav.session.gif == .normal {
             nav.session.gif = .focus
