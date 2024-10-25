@@ -319,6 +319,23 @@ extension WidgetLibrary {
                     }
                 }
             }
+
+            struct Close: View {
+//                @EnvironmentObject public var state: Navigation
+                public var action: () -> Void
+
+                var body: some View {
+                    FancyButtonv2(
+                        text: "Reset",
+                        action: self.action,
+                        icon: "xmark",
+                        showLabel: false,
+                        type: .clear,
+                        font: .title2
+                    )
+                    .frame(width: 18)
+                }
+            }
         }
 
         struct ActiveIndicator: View {
@@ -1339,14 +1356,7 @@ extension WidgetLibrary {
                             .font(.title2)
                         Spacer()
                         if self.searchText.count > 0 {
-                            FancyButtonv2(
-                                text: "Reset",
-                                action: self.actionOnReset,
-                                icon: "xmark",
-                                showLabel: false,
-                                type: .clear,
-                                font: .title2
-                            )
+                            UI.Buttons.Close(action: self.actionOnReset)
                         } else {
                             FancyButtonv2(
                                 text: "Entities",
@@ -1532,13 +1542,15 @@ extension WidgetLibrary {
 
         struct GroupHeaderContextMenu: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateCompany") private var shouldCreateCompany: Bool = false
             @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateProject") private var shouldCreateProject: Bool = false
+            @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateJob") private var shouldCreateJob: Bool = false
             public let page: Page
             public let entity: NSManagedObject
 
             var body: some View {
                 if [.companyDetail, .projectDetail].contains(where: {$0 == self.page}) {
-                    Button(action: self.actionNewProject, label: {
+                    Button(action: self.actionOnSecondaryTap, label: {
                         if self.page == .companyDetail {
                             Text("New Project")
                         } else if self.page == .projectDetail {
@@ -1607,19 +1619,39 @@ extension WidgetLibrary.UI.GroupHeaderContextMenu {
         self.state.session.search.inspectingEntity = self.entity
         self.state.setInspector(AnyView(Inspector(entity: self.entity)))
     }
-
-    /// Create a new project. Fires when user selects "New project" button in context menu
+    
+    /// Fires when each row is right clicked
     /// - Returns: Void
-    private func actionNewProject() -> Void {
-        self.shouldCreateProject.toggle()
-
+    private func actionOnSecondaryTap() -> Void {
         switch self.entity {
         case is Company:
             self.state.session.company = self.entity as? Company
+            self.state.session.company?.addToProjects(
+                CoreDataProjects(moc: self.state.moc).createAndReturn(
+                    name: "EDIT ME",
+                    abbreviation: "EM",
+                    colour: Color.randomStorable(),
+                    created: Date(),
+                    company: self.state.session.company,
+                    saveByDefault: false
+                )
+            )
+            self.shouldCreateProject = true
         case is Project:
             self.state.session.project = self.entity as? Project
-        case is Job:
-            self.state.session.job = self.entity as? Job
+            self.state.session.project?.addToJobs(
+                CoreDataJob(moc: self.state.moc).createAndReturn(
+                    alive: true,
+                    colour: Color.randomStorable(),
+                    jid: 1.0,
+                    overview: "",
+                    shredable: false,
+                    title: "EDIT ME",
+                    uri: "",
+                    saveByDefault: false
+                )
+            )
+            self.shouldCreateJob = true
         default:
             print("Noop")
         }
