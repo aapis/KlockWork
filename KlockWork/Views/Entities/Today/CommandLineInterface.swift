@@ -23,7 +23,8 @@ struct CommandLineInterface: View {
 
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
     @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearching: Bool = false
-    
+    @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
+
     @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
 
@@ -226,7 +227,13 @@ extension CommandLineInterface {
     }
     
     private func recordsForToday() async -> Void {
-        let records = CoreDataRecords(moc: moc).forDate(Date())
+        let records = CoreDataRecords(moc: moc).forDate(
+            Date(),
+            sort: NSSortDescriptor(
+                keyPath: \LogRecord.timestamp,
+                ascending: self.tableSortOrder == 0 ? true : false
+            )
+        )
 
         if nav.session.cli.history.count <= CommandLineInterface.maxItems {
             for record in records.sorted(by: {$0.timestamp! <= $1.timestamp!}) {
@@ -426,6 +433,7 @@ extension CommandLineInterface {
     struct Display: View {
         typealias UI = WidgetLibrary.UI
         @AppStorage("today.cli.showFilter") private var showCLIFilter: Bool = false
+        @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
         @State private var searchText: String = ""
         @State private var searchFilteredResults: [Navigation.CommandLineSession.History] = []
         @State private var searchResults: [Navigation.CommandLineSession.History] = []
@@ -449,7 +457,7 @@ extension CommandLineInterface {
                     VStack(alignment: .leading, spacing: 2) {
                         ScrollView {
                             VStack(spacing: 1) {
-                                ForEach(nav.session.cli.history, id: \.id) { line in
+                                ForEach(nav.session.cli.history.sorted(by: {self.tableSortOrder == 0 ? $0.time > $1.time : $0.time < $1.time}), id: \.id) { line in
                                     HStack(spacing: 0) {
                                         if let job = line.job {
                                             if let project = job.project {
