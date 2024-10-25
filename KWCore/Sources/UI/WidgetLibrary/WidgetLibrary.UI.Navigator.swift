@@ -103,7 +103,6 @@ extension WidgetLibrary.UI.Navigator {
         @AppStorage("widget.navigator.sortModifiedOrder") private var navigatorSortModifiedOrder: Bool = false
         @AppStorage("widget.navigator.sortCreatedOrder") private var navigatorSortCreatedOrder: Bool = false
         @AppStorage("widget.navigator.depth") private var depth: Int = 0
-        @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateProject") private var shouldCreateProject: Bool = false
         public var type: UI.Mode = .list
         @State private var companies: [Company] = []
         @State private var projects: [Project] = []
@@ -175,7 +174,6 @@ extension WidgetLibrary.UI.Navigator {
             .onChange(of: self.state.session.company) { self.setInitialDepth() }
             .onChange(of: self.state.session.project) { self.setInitialDepth() }
             .onChange(of: self.state.session.job) { self.setInitialDepth() }
-            .onChange(of: self.shouldCreateProject) { self.actionCreateProject() }
             .onChange(of: self.altViewModeEnabled) {
                 if self.altViewModeEnabled {
                     self.viewModeIndex = 1
@@ -246,8 +244,10 @@ extension WidgetLibrary.UI.Navigator {
             @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
             @AppStorage("widget.navigator.sortModifiedOrder") private var navigatorSortModifiedOrder: Bool = false
             @AppStorage("widget.navigator.sortCreatedOrder") private var navigatorSortCreatedOrder: Bool = false
-            @AppStorage("widget.navigator.depth") private var depth: Int = 0
+            @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateCompany") private var shouldCreateCompany: Bool = false
             @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateProject") private var shouldCreateProject: Bool = false
+            @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateJob") private var shouldCreateJob: Bool = false
+            @AppStorage("widget.navigator.depth") private var depth: Int = 0
             public let entity: NSManagedObject
             @State private var label: String = ""
             @State private var lastModified: Date? = nil
@@ -261,6 +261,25 @@ extension WidgetLibrary.UI.Navigator {
             @FocusState private var newEntityFieldFocused: Bool
 
             var body: some View {
+                VStack(alignment: .leading, spacing: 0) {
+                    if !self.label.isEmpty {
+                        Main
+                    }
+                }
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.viewModeIndex) { self.actionOnAppear() }
+                .onChange(of: self.showPublished) { self.actionOnAppear() }
+                .onChange(of: self.state.session.company) { self.actionMinOrMax() }
+                .onChange(of: self.state.session.project) { self.actionMinOrMax() }
+                .onChange(of: self.state.session.job) { self.actionMinOrMax() }
+                .onChange(of: self.shouldCreateCompany) { self.actionOnAppear() }
+                .onChange(of: self.shouldCreateProject) { self.actionOnAppear() }
+                .onChange(of: self.shouldCreateJob) { self.actionOnAppear() }
+//                .onChange(of: self.navigatorSortCreatedOrder) { self.actionOnAppear() }
+//                .onChange(of: self.navigatorSortModifiedOrder) { self.actionOnAppear() }
+            }
+
+            var Main: some View {
                 VStack(alignment: .leading, spacing: 1) {
                     if self.label == "EDIT ME" {
                         HStack {
@@ -275,6 +294,9 @@ extension WidgetLibrary.UI.Navigator {
                             .focused($newEntityFieldFocused)
                             .onAppear(perform: {self.newEntityFieldFocused = true})
                             .onDisappear(perform: {self.newEntityFieldFocused = false})
+                            Spacer()
+                            UI.Buttons.Close(action: self.actionOnAbort)
+                            .padding(.trailing)
                         }
                     } else {
                         Button {
@@ -296,46 +318,59 @@ extension WidgetLibrary.UI.Navigator {
                         }
                     }
                 }
-                .onAppear(perform: self.actionOnAppear)
-                .onChange(of: self.viewModeIndex) { self.actionOnAppear() }
-                .onChange(of: self.showPublished) { self.actionOnAppear() }
-                .onChange(of: self.state.session.company) { self.actionMinOrMax() }
-                .onChange(of: self.state.session.project) { self.actionMinOrMax() }
-                .onChange(of: self.state.session.job) { self.actionMinOrMax() }
-                .onChange(of: self.shouldCreateProject) { self.actionOnAppear() }
-//                .onChange(of: self.navigatorSortCreatedOrder) { self.actionOnAppear() }
-//                .onChange(of: self.navigatorSortModifiedOrder) { self.actionOnAppear() }
                 .contextMenu {
                     self.ContextMenu
                 }
             }
 
             @ViewBuilder var Children: some View {
-                ForEach(self.children!, id: \.objectID) { child in
-                    if self.state.session.gif == .focus {
-                        switch self.entity {
-                        case is Company:
-                            if let child = child as? Company {
-                                if self.state.planning.companies.contains(child) {
-                                    Row(entity: child)
-                                }
+                VStack(spacing: 1) {
+                    ForEach(self.children!, id: \.objectID) { child in
+                        if self.label == "EDIT ME" {
+                            HStack {
+                                Image(systemName: "folder")
+                                    .padding([.leading, .top, .bottom])
+                                FancyTextField(
+                                    placeholder: self.label,
+                                    onSubmit: self.actionOnCreateNewChild,
+                                    bgColour: .clear,
+                                    text: $newEntityName
+                                )
+                                .focused($newEntityFieldFocused)
+                                .onAppear(perform: {self.newEntityFieldFocused = true})
+                                .onDisappear(perform: {self.newEntityFieldFocused = false})
+                                Spacer()
+                                UI.Buttons.Close(action: self.actionOnAbort)
+                                    .padding(.trailing)
                             }
-                        case is Project:
-                            if let child = child as? Project {
-                                if self.state.planning.projects.contains(child) {
-                                    Row(entity: child)
+                        } else {
+                            if self.state.session.gif == .focus {
+                                switch self.entity {
+                                case is Company:
+                                    if let child = child as? Company {
+                                        // @TODO: do this check in actionOnAppear instead
+                                        if self.state.planning.companies.contains(child) {
+                                            Row(entity: child)
+                                        }
+                                    }
+                                case is Project:
+                                    if let child = child as? Project {
+                                        if self.state.planning.projects.contains(child) {
+                                            Row(entity: child)
+                                        }
+                                    }
+                                case is Job:
+                                    if let child = child as? Job {
+                                        if self.state.planning.jobs.contains(child) {
+                                            Row(entity: child)
+                                        }
+                                    }
+                                default: EmptyView()
                                 }
+                            } else {
+                                Row(entity: child)
                             }
-                        case is Job:
-                            if let child = child as? Job {
-                                if self.state.planning.jobs.contains(child) {
-                                    Row(entity: child)
-                                }
-                            }
-                        default: EmptyView()
                         }
-                    } else {
-                        Row(entity: child)
                     }
                 }
                 .padding(.leading)
@@ -365,16 +400,16 @@ extension WidgetLibrary.UI.Navigator {
 
             @ViewBuilder var ContextMenu: some View {
                 switch self.entity {
-                case is Job:
-                    if let entity = self.entity as? Job {
+                case is Company:
+                    if let entity = self.entity as? Company {
                         UI.GroupHeaderContextMenu(page: entity.pageDetailType, entity: entity)
                     }
                 case is Project:
                     if let entity = self.entity as? Project {
                         UI.GroupHeaderContextMenu(page: entity.pageDetailType, entity: entity)
                     }
-                case is Company:
-                    if let entity = self.entity as? Company {
+                case is Job:
+                    if let entity = self.entity as? Job {
                         UI.GroupHeaderContextMenu(page: entity.pageDetailType, entity: entity)
                     }
                 default: EmptyView()
@@ -439,14 +474,22 @@ extension WidgetLibrary.UI.Navigator {
             @State private var isHighlighted: Bool = false
 
             var body: some View {
-                Button {
-                    self.actionOnTap()
-                    self.isPresented.toggle()
-                } label: {
-                    UI.IconBlock(type: .projects, text: self.label, colour: self.colour)
+                VStack {
+                    Button {
+                        self.actionOnTap()
+                        self.isPresented.toggle()
+                    } label: {
+                        UI.IconBlock(type: .projects, text: self.label, colour: self.colour)
+                    }
+                    .help(self.label)
+                    .buttonStyle(.plain)
+
+                    if self.isPresented {
+                        if self.children != nil && self.children?.count ?? 0 > 0 {
+                            self.Children
+                        }
+                    }
                 }
-                .help(self.label)
-                .buttonStyle(.plain)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.viewModeIndex) { self.actionOnAppear() }
                 .onChange(of: self.showPublished) { self.actionOnAppear() }
@@ -459,6 +502,37 @@ extension WidgetLibrary.UI.Navigator {
                     }
                     .font(.largeTitle)
                 }
+            }
+
+            @ViewBuilder var Children: some View {
+                ForEach(self.children!, id: \.objectID) { child in
+                    if self.state.session.gif == .focus {
+                        switch self.entity {
+                        case is Company:
+                            if let child = child as? Company {
+                                if self.state.planning.companies.contains(child) {
+                                    Row(entity: child)
+                                }
+                            }
+                        case is Project:
+                            if let child = child as? Project {
+                                if self.state.planning.projects.contains(child) {
+                                    Row(entity: child)
+                                }
+                            }
+                        case is Job:
+                            if let child = child as? Job {
+                                if self.state.planning.jobs.contains(child) {
+                                    Row(entity: child)
+                                }
+                            }
+                        default: EmptyView()
+                        }
+                    } else {
+                        Row(entity: child)
+                    }
+                }
+                .padding(.leading)
             }
         }
     }
@@ -524,28 +598,6 @@ extension WidgetLibrary.UI.Navigator.List {
             self.depth = 2
             self.state.session.job = nil
         }
-    }
-    
-    /// Fires when shouldCreateProject changes state
-    /// - Returns: Void
-    private func actionCreateProject() -> Void {
-        if self.shouldCreateProject {
-            if let company = self.state.session.company {
-                company.addToProjects(
-                    CoreDataProjects(moc: self.state.moc).createAndReturn(
-                        name: "EDIT ME",
-                        abbreviation: "EM",
-                        colour: Color.randomStorable(),
-                        created: Date(),
-                        company: company,
-                        saveByDefault: false
-                    )
-                )
-            }
-        }
-
-        self.actionOnAppear()
-        self.shouldCreateProject = false
     }
 }
 
@@ -653,8 +705,30 @@ extension WidgetLibrary.UI.Navigator.List.Row {
             print("noop")
         }
 
-        self.actionOnAppear()
-//        PersistenceController.shared.save()
+        PersistenceController.shared.save()
+    }
+    
+    /// Fires when you cancel creating a new project/job
+    /// - Returns: Void
+    private func actionOnAbort() -> Void {
+        var entity: NSManagedObject?
+        switch self.entity {
+        case is Company: entity = self.entity as! Company
+        case is Project: entity = self.entity as! Project
+        case is Job: entity = self.entity as! Job
+        default:
+            entity = nil
+        }
+
+        if let deleteableEntity = entity {
+            self.state.moc.delete(deleteableEntity)
+        }
+
+        self.label = ""
+        self.newEntityName = ""
+        self.shouldCreateCompany = false
+        self.shouldCreateProject = false
+        self.shouldCreateJob = false
     }
 }
 
