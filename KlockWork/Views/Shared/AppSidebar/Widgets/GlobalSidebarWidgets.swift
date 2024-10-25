@@ -10,7 +10,7 @@ import SwiftUI
 import KWCore
 
 struct GlobalSidebarWidgets: View {
-    @Environment(\.managedObjectContext) var moc
+    typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var nav: Navigation
     @AppStorage("GlobalSidebarWidgets.isCreateStackShowing") private var isCreateStackShowing: Bool = false
     @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
@@ -251,7 +251,7 @@ struct GlobalSidebarWidgets: View {
                         sidebar: AnyView(DefaultCompanySidebar())
                     )
                     Spacer()
-                    KeyboardShortcutIndicator(character: "C", requireShift: true)
+                    UI.KeyboardShortcutIndicator(character: "C", requireShift: true)
                 }
 
                 ZStack(alignment: .topLeading) {
@@ -279,7 +279,7 @@ struct GlobalSidebarWidgets: View {
                                 )
                             }
                             Spacer()
-                            KeyboardShortcutIndicator(character: "U", requireShift: true)
+                            UI.KeyboardShortcutIndicator(character: "U", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -302,7 +302,7 @@ struct GlobalSidebarWidgets: View {
                                 )
                             }
                             Spacer()
-                            KeyboardShortcutIndicator(character: "P", requireShift: true)
+                            UI.KeyboardShortcutIndicator(character: "P", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -324,7 +324,7 @@ struct GlobalSidebarWidgets: View {
                                 )
                             }
                             Spacer()
-                            KeyboardShortcutIndicator(character: "J", requireShift: true)
+                            UI.KeyboardShortcutIndicator(character: "J", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -346,7 +346,7 @@ struct GlobalSidebarWidgets: View {
                                 )
                             }
                             Spacer()
-                            KeyboardShortcutIndicator(character: "N", requireShift: true)
+                            UI.KeyboardShortcutIndicator(character: "N", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -368,7 +368,7 @@ struct GlobalSidebarWidgets: View {
                                 )
                             }
                             Spacer()
-                            KeyboardShortcutIndicator(character: "T", requireShift: true)
+                            UI.KeyboardShortcutIndicator(character: "T", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -390,7 +390,7 @@ struct GlobalSidebarWidgets: View {
                                 )
                             }
                             Spacer()
-                            KeyboardShortcutIndicator(character: "R", requireShift: true)
+                            UI.KeyboardShortcutIndicator(character: "R", requireShift: true)
                         }
 
                         HStack(alignment: .center, spacing: 0) {
@@ -412,7 +412,7 @@ struct GlobalSidebarWidgets: View {
                                 )
                             }
                             Spacer()
-                            KeyboardShortcutIndicator(character: "D", requireShift: true)
+                            UI.KeyboardShortcutIndicator(character: "D", requireShift: true)
                         }
                     }
                 }
@@ -450,9 +450,11 @@ extension GlobalSidebarWidgets {
 
         findPlan()
     }
-
+    
+    /// Determine whether there's an active plan, sets self.doesPlanExist accordingly
+    /// - Returns: Void
     private func findPlan() -> Void {
-        let plans = CoreDataPlan(moc: moc).forDate(nav.session.date)
+        let plans = CoreDataPlan(moc: self.nav.moc).forDate(nav.session.date)
         if plans.count > 0 {
             if let plan = plans.first {
                 doesPlanExist = !plan.isEmpty()

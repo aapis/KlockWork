@@ -1610,6 +1610,64 @@ extension WidgetLibrary {
                 }
             }
         }
+
+        struct KeyboardShortcutIndicator: View {
+            public var character: String
+            public var requireShift: Bool = false
+            public var requireCmd: Bool = true
+
+            var body: some View {
+                HStack(alignment: .top, spacing: 2) {
+                    if self.requireShift { Image(systemName: "arrowshape.up") }
+                    if self.requireShift { Image(systemName: "command") }
+                    Text(self.character)
+                }
+                .help("\(self.requireShift ? "Shift+" : "")\(self.requireCmd ? "Command+" : "")\(self.character)")
+                .foregroundStyle(.white.opacity(0.55))
+                .font(.caption)
+                .padding(3)
+                .background(.white.opacity(0.4).blendMode(.softLight))
+                .clipShape(.rect(cornerRadius: 4))
+            }
+        }
+
+        struct RowActionButton: View {
+            @EnvironmentObject public var state: Navigation
+            public var callback: (() -> Void)
+            public var icon: String?
+            public var iconAsImage: Image?
+            public var helpText: String = ""
+            public var highlightedColour: Color = .yellow
+            public var page: PageConfiguration.AppPage = .explore
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                Button {
+                    self.callback()
+                } label: {
+                    ZStack(alignment: .center) {
+                        LinearGradient(colors: [Theme.base, .clear], startPoint: .leading, endPoint: .trailing)
+                        self.isHighlighted ? self.highlightedColour : self.state.session.appPage.primaryColour
+
+                        if let icon = self.icon {
+                            Image(systemName: icon)
+                                .symbolRenderingMode(.hierarchical)
+                                .padding(5)
+                        } else if let iconAsImage = self.iconAsImage {
+                            iconAsImage
+                                .symbolRenderingMode(.hierarchical)
+                                .padding(5)
+                        }
+                    }
+                    .foregroundStyle(self.isHighlighted ? Theme.base : self.highlightedColour)
+                }
+                .font(.headline)
+                .buttonStyle(.plain)
+                .help(self.helpText)
+                .useDefaultHover({ hover in self.isHighlighted = hover })
+            }
+        }
+
     }
 }
 

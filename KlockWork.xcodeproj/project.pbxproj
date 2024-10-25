@@ -57,8 +57,6 @@
 		533544862CB19E010067A944 /* TaskForecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533544852CB19DFE0067A944 /* TaskForecast.swift */; };
 		533544882CB1A0F00067A944 /* Timestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533544872CB1A0EE0067A944 /* Timestamp.swift */; };
 		5335448A2CB1A15C0067A944 /* TaskItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533544892CB1A14E0067A944 /* TaskItem.swift */; };
-		5335448E2CB21AFF0067A944 /* RowActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335448D2CB21AFC0067A944 /* RowActionButton.swift */; };
-		533544902CB2371E0067A944 /* KeyboardShortcutIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335448F2CB237150067A944 /* KeyboardShortcutIndicator.swift */; };
 		533544922CB302240067A944 /* UpcomingWork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533544912CB3021E0067A944 /* UpcomingWork.swift */; };
 		5335A5B3296D17EB000051B1 /* TaskDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B2296D17EB000051B1 /* TaskDashboard.swift */; };
 		5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B4296D1FA7000051B1 /* TaskView.swift */; };
@@ -350,8 +348,6 @@
 		533544852CB19DFE0067A944 /* TaskForecast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskForecast.swift; sourceTree = "<group>"; };
 		533544872CB1A0EE0067A944 /* Timestamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timestamp.swift; sourceTree = "<group>"; };
 		533544892CB1A14E0067A944 /* TaskItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskItem.swift; sourceTree = "<group>"; };
-		5335448D2CB21AFC0067A944 /* RowActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowActionButton.swift; sourceTree = "<group>"; };
-		5335448F2CB237150067A944 /* KeyboardShortcutIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardShortcutIndicator.swift; sourceTree = "<group>"; };
 		533544912CB3021E0067A944 /* UpcomingWork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingWork.swift; sourceTree = "<group>"; };
 		5335A5B2296D17EB000051B1 /* TaskDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDashboard.swift; sourceTree = "<group>"; };
 		5335A5B4296D1FA7000051B1 /* TaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskView.swift; sourceTree = "<group>"; };
@@ -1328,8 +1324,6 @@
 				53B0BE822972610C007CB663 /* Fancy */,
 				530B1D712CAE219D0033E81F /* FilterField.swift */,
 				530B1D702CAE219D0033E81F /* RowAddButton.swift */,
-				5335448F2CB237150067A944 /* KeyboardShortcutIndicator.swift */,
-				5335448D2CB21AFC0067A944 /* RowActionButton.swift */,
 				533544872CB1A0EE0067A944 /* Timestamp.swift */,
 				53EDDF9D29634852008D34C7 /* Entry.swift */,
 				533544852CB19DFE0067A944 /* TaskForecast.swift */,
@@ -1647,7 +1641,6 @@
 				5354C8EA2AA03C77001C1779 /* Tasks.swift in Sources */,
 				539F68DD2BF70A260086F89A /* IntroToKlockWork.swift in Sources */,
 				5371BA222A7B1C9D00DEEC21 /* RecentNotesWidget.swift in Sources */,
-				5335448E2CB21AFF0067A944 /* RowActionButton.swift in Sources */,
 				53C000AA2B41447600D5EC04 /* NoteFormWidget.swift in Sources */,
 				5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */,
 				53E202652A7ECE7A00B4DF70 /* DayInHistory.swift in Sources */,
@@ -1793,7 +1786,6 @@
 				5326AE982B27FA02009F1349 /* DefaultCompanySidebar.swift in Sources */,
 				537AEB9F29627DCC00385787 /* LogTable.swift in Sources */,
 				53E918832B4A6D9600912C6F /* SessionInspector.swift in Sources */,
-				533544902CB2371E0067A944 /* KeyboardShortcutIndicator.swift in Sources */,
 				533544802CB19C430067A944 /* Planning.Upcoming.swift in Sources */,
 				53E202612A7EC96D00B4DF70 /* DashboardSidebar.swift in Sources */,
 				532A722F299037AC0038C18B /* RecordResult.swift in Sources */,
