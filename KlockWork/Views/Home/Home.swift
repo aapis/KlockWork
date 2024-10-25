@@ -19,6 +19,7 @@ struct Home: View {
     @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
     @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
     @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+    @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
     @AppStorage("general.showSessionInspector") public var showSessionInspector: Bool = false
     @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
@@ -78,7 +79,7 @@ struct Home: View {
                 }
             }
         }
-        .onAppear(perform: self.onAppear)
+        .onAppear(perform: self.actionOnAppear)
         .onChange(of: self.nav.session.company) { self.actionOnChangeCompany() }
         .onChange(of: self.nav.session.project) { self.createToolbarButtons() }
         .onChange(of: self.nav.session.job) { self.createToolbarButtons() }
@@ -164,7 +165,9 @@ struct Home: View {
 }
 
 extension Home {
-    private func onAppear() -> Void {
+    /// Onload handler. Sets view state, finds events, creates toolbar buttons, monitors keyboard for Esc
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
         nav.parent = selectedSidebarButton
         checkForEvents()
         self.createToolbarButtons()
@@ -172,12 +175,15 @@ extension Home {
         KeyboardHelper.monitor(key: .keyDown, callback: {
             self.isSearchStackShowing = false
             self.isDatePickerPresented = false
+            self.isCreateStackShowing = false
             self.nav.session.search.reset()
             self.nav.session.search.inspectingEntity = nil
             self.nav.setInspector()
         })
     }
-
+    
+    /// Creates all toolbar buttons
+    /// - Returns: Void
     private func createToolbarButtons() -> Void {
         self.buttons = [
             .views: [
