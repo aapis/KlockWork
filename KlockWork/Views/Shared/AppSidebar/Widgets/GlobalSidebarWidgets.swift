@@ -65,7 +65,6 @@ struct GlobalSidebarWidgets: View {
                 type: .button,
                 page: self.page
             )
-                .disabled(nav.parent == .planning)
             Spacer()
         }
         .padding([.leading, .trailing], 15)
