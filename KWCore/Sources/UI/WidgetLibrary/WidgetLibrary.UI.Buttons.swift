@@ -26,8 +26,8 @@ extension WidgetLibrary.UI {
                     FancyButtonv2(
                         text: "Reset interface to default state",
                         action: self.onActionClear != nil ? self.onActionClear : self.defaultClearAction,
-                        icon: "arrow.clockwise.square",
-                        iconWhenHighlighted: "arrow.clockwise.square.fill",
+                        icon: "arrow.clockwise.square.fill",
+                        iconWhenHighlighted: "arrow.clockwise.square",
                         showLabel: false,
                         size: .small,
                         type: .clear,
@@ -49,8 +49,8 @@ extension WidgetLibrary.UI {
                 FancyButtonv2(
                     text: "Create",
                     action: self.onAction,
-                    icon: "plus.square",
-                    iconWhenHighlighted: "plus.square.fill",
+                    icon: "plus.square.fill",
+                    iconWhenHighlighted: "plus.square",
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -72,8 +72,8 @@ extension WidgetLibrary.UI {
                 FancyButtonv2(
                     text: "Create",
                     action: { self.onAction?() ; self.state.to(.peopleDetail) },
-                    icon: "plus.square",
-                    iconWhenHighlighted: "plus.square.fill",
+                    icon: "plus.square.fill",
+                    iconWhenHighlighted: "plus.square",
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -92,8 +92,8 @@ extension WidgetLibrary.UI {
                 FancyButtonv2(
                     text: "Create",
                     action: { self.onAction?() ; self.state.to(.companyDetail) },
-                    icon: "plus.square",
-                    iconWhenHighlighted: "plus.square.fill",
+                    icon: "plus.square.fill",
+                    iconWhenHighlighted: "plus.square",
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -112,8 +112,8 @@ extension WidgetLibrary.UI {
                 FancyButtonv2(
                     text: "Create",
                     action: { self.onAction?() ; self.state.to(.projectDetail) },
-                    icon: "plus.square",
-                    iconWhenHighlighted: "plus.square.fill",
+                    icon: "plus.square.fill",
+                    iconWhenHighlighted: "plus.square",
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -133,14 +133,34 @@ extension WidgetLibrary.UI {
                 FancyButtonv2(
                     text: "Create",
                     action: self.actionOnTap,
-                    icon: "plus.square",
-                    iconWhenHighlighted: "plus.square.fill",
+                    icon: "plus.square.fill",
+                    iconWhenHighlighted: "plus.square",
                     showLabel: false,
                     size: .small,
                     type: .clear,
                     font: .title
                 )
                 .help("Create a new job")
+                .frame(width: 25)
+            }
+        }
+
+        struct CreateTask: View {
+            @EnvironmentObject public var state: Navigation
+            public var onAction: (() -> Void)? = {}
+
+            var body: some View {
+                FancyButtonv2(
+                    text: "Create",
+                    action: { self.onAction?() ; self.state.to(.taskDetail) },
+                    icon: "plus.square.fill",
+                    iconWhenHighlighted: "plus.square",
+                    showLabel: false,
+                    size: .small,
+                    type: .clear,
+                    font: .title
+                )
+                .help("Create a new task")
                 .frame(width: 25)
             }
         }
@@ -153,8 +173,8 @@ extension WidgetLibrary.UI {
                 FancyButtonv2(
                     text: "Create",
                     action: { self.onAction?() ; self.state.to(.terms) },
-                    icon: "plus.square",
-                    iconWhenHighlighted: "plus.square.fill",
+                    icon: "plus.square.fill",
+                    iconWhenHighlighted: "plus.square",
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -173,8 +193,8 @@ extension WidgetLibrary.UI {
                 FancyButtonv2(
                     text: "Create",
                     action: { self.onAction?() ; self.state.to(.definitionDetail) },
-                    icon: "plus.square",
-                    iconWhenHighlighted: "plus.square.fill",
+                    icon: "plus.square.fill",
+                    iconWhenHighlighted: "plus.square",
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -195,8 +215,35 @@ extension WidgetLibrary.UI {
                 FancyButtonv2(
                     text: self.state.session.job != nil ? "Log to job \(self.state.session.job!.title ?? self.state.session.job!.jid.string)" : "Log",
                     action: self.onAction,
-                    icon: "plus.square",
-                    iconWhenHighlighted: "plus.square.fill",
+                    icon: "plus.square.fill",
+                    iconWhenHighlighted: "plus.square",
+                    showLabel: false,
+                    size: .small,
+                    type: .clear,
+                    font: .title
+                )
+                .help("Create a new record")
+                .frame(width: 25)
+                .disabled(self.state.session.job == nil)
+                .opacity(self.state.session.job == nil ? 0.5 : 1)
+            }
+        }
+
+        struct CreateRecordToday: View {
+            @EnvironmentObject public var state: Navigation
+            public var onAction: (() -> Void)? = {}
+            @State private var isHighlighted: Bool = false
+            @State private var selectedPage: Page = .dashboard
+
+            var body: some View {
+                FancyButtonv2(
+                    text: self.state.session.job != nil ? "Log to job \(self.state.session.job!.title ?? self.state.session.job!.jid.string)" : "Log",
+                    action: {
+                        self.onAction?()
+                        self.state.to(.today)
+                    },
+                    icon: "plus.square.fill",
+                    iconWhenHighlighted: "plus.square",
                     showLabel: false,
                     size: .small,
                     type: .clear,

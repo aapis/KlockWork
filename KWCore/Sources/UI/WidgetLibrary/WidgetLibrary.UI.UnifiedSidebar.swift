@@ -315,10 +315,8 @@ extension WidgetLibrary.UI {
                         EntityRowButton(text: "\((self.tasks?.count ?? self.childrenFromJob.count)) Tasks", isPresented: $isPresented)
                             .useDefaultHover({ inside in self.highlighted = inside})
                             .disabled((self.tasks?.count ?? self.childrenFromJob.count) == 0)
-                        RowAddNavLink(
-                            target: AnyView(TaskDetail())
-                        )
-                        .buttonStyle(.plain)
+                        UI.Buttons.CreateTask()
+                            .padding(.trailing, 8)
                     }
 
                     if self.isPresented {
@@ -372,10 +370,8 @@ extension WidgetLibrary.UI {
                         EntityRowButton(text: "\((self.notes?.count ?? self.childrenFromJob.count)) Notes", isPresented: $isPresented)
                             .useDefaultHover({ inside in self.highlighted = inside})
                             .disabled((self.notes?.count ?? self.childrenFromJob.count) == 0)
-                        RowAddNavLink(
-                            target: AnyView(NoteCreate())
-                        )
-                        .buttonStyle(.plain)
+                        UI.Buttons.CreateNote()
+                            .padding(.trailing, 8)
                     }
 
                     if self.isPresented {
@@ -429,10 +425,8 @@ extension WidgetLibrary.UI {
                         EntityRowButton(text: "\((self.definitions?.count ?? self.childrenFromJob.count)) Definitions", isPresented: $isPresented)
                             .useDefaultHover({ inside in self.highlighted = inside})
                             .disabled((self.definitions?.count ?? self.childrenFromJob.count) == 0)
-                        RowAddNavLink(
-                            target: AnyView(DefinitionDetail())
-                        )
-                        .buttonStyle(.plain)
+                        UI.Buttons.CreateDefinition()
+                            .padding(.trailing, 8)
                     }
 
                     if self.isPresented {
@@ -486,6 +480,8 @@ extension WidgetLibrary.UI {
                         EntityRowButton(text: "\((self.records?.count ?? self.childrenFromJob.count)) Records", isPresented: $isPresented)
                             .useDefaultHover({ inside in self.highlighted = inside})
                             .disabled((self.records?.count ?? self.childrenFromJob.count) == 0)
+                        UI.Buttons.CreateRecordToday()
+                            .padding(.trailing, 8)
                     }
 
                     if self.isPresented {
@@ -536,10 +532,8 @@ extension WidgetLibrary.UI {
                     ZStack(alignment: .trailing) {
                         EntityRowButton(text: "People", isPresented: $isPresented)
                             .useDefaultHover({ inside in self.highlighted = inside})
-                        RowAddNavLink(
-                            target: AnyView(PeopleDetail())
-                        )
-                        .buttonStyle(.plain)
+                        UI.Buttons.CreatePerson()
+                            .padding(.trailing, 8)
                     }
 
                     if self.isPresented {
