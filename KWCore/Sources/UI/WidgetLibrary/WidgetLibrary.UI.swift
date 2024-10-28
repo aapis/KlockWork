@@ -23,7 +23,7 @@ extension WidgetLibrary {
         public struct Buttons {
             public enum UIButtonType {
                 case resetUserChoices, createNote, createTask, createRecord, createPerson, createCompany, createProject,
-                createJob, createTerm, createDefinition, historyPrevious, settings, CLIMode, CLIFilter
+                createJob, createTerm, createDefinition, historyPrevious, settings, CLIMode, CLIFilter, sidebarToggle
             }
 
             struct ResetUserChoices: View {
@@ -336,6 +336,27 @@ extension WidgetLibrary {
                     .frame(width: 18)
                 }
             }
+
+            struct SidebarToggle: View {
+                @EnvironmentObject public var state: Navigation
+                @AppStorage("widgetlibrary.ui.isSidebarPresented") private var isSidebarPresented: Bool = false
+
+                var body: some View {
+                    FancyButtonv2(
+                        text: "Toggle sidebar",
+                        action: {self.isSidebarPresented.toggle()},
+                        icon: "sidebar.left",
+                        iconWhenHighlighted: "sidebar.left",
+                        fgColour: self.isSidebarPresented ? .gray : .white,
+                        showLabel: false,
+                        size: .small,
+                        type: .clear,
+                        font: .title
+                    )
+                    .help("Toggle sidebar")
+                    .frame(width: 25)
+                }
+            }
         }
 
         struct ActiveIndicator: View {
@@ -478,6 +499,7 @@ extension WidgetLibrary {
                                 case .createCompany: Buttons.CreateCompany()
                                 case .createProject: Buttons.CreateProject()
                                 case .createDefinition: Buttons.CreateDefinition()
+                                case .sidebarToggle: Buttons.SidebarToggle()
                                 default: EmptyView()
                                 }
                             }
@@ -763,6 +785,7 @@ extension WidgetLibrary {
                                 .font(.system(.title3, design: .monospaced))
                                 .foregroundStyle(self.isHighlighted ? Theme.base : .gray)
                         }
+                        .padding([.leading, .trailing], 4)
                     }
                     .frame(height: 25)
                 }
@@ -1451,15 +1474,26 @@ extension WidgetLibrary {
                         HStack(alignment: .center, spacing: 8) {
                             HStack(spacing: 0) {
                                 if self.showRoot {
-                                    Text("...")
-                                        .padding(7)
-                                        .background(Theme.base)
-                                        .foregroundStyle(.white.opacity(0.55))
+                                    Button {
+                                        self.state.session.company = nil
+                                        self.state.session.project = nil
+                                        self.state.session.job = nil
+                                    } label: {
+                                        Image(systemName: "house.fill")
+                                            .padding([.top, .bottom], 7)
+                                            .padding([.leading, .trailing], 4)
+                                            .background(Theme.lightBase)
+                                            .foregroundStyle(self.company == nil ? Theme.lightWhite : self.state.theme.tint)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .disabled(self.company == nil)
+                                    .useDefaultHover({ _ in})
+
                                     Image(systemName: "chevron.right")
                                         .padding([.top, .bottom], 8)
                                         .padding([.leading, .trailing], 4)
-                                        .background(Theme.base.opacity(0.9))
-                                        .foregroundStyle(.white.opacity(0.55))
+                                        .background(Theme.lightBase)
+                                        .foregroundStyle(Theme.lightWhite)
                                 }
 
                                 if let abbreviation = self.company?.abbreviation {
@@ -1486,6 +1520,7 @@ extension WidgetLibrary {
                                         .foregroundStyle((self.project?.backgroundColor ?? Theme.base).isBright() ? Theme.base.opacity(0.55) : .white.opacity(0.55))
                                 }
                             }
+                            .background(self.state.session.appPage.primaryColour)
 
                             Text("\(self.job?.title ?? self.job?.jid.string ?? "")")
                                 .foregroundStyle((self.job?.backgroundColor ?? Theme.base).isBright() ? Theme.base : .white)

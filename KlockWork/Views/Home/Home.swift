@@ -22,6 +22,7 @@ struct Home: View {
     @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
     @AppStorage("notifications.interval") private var notificationInterval: Int = 0
+    @AppStorage("widgetlibrary.ui.isSidebarPresented") private var isSidebarPresented: Bool = false
     @State public var selectedSidebarButton: Page = .dashboard
     @State private var timer: Timer? = nil
 
@@ -57,12 +58,13 @@ struct Home: View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top, spacing: 0) {
-                    TabBackground
-                    if nav.sidebar != nil {
+                    if nav.sidebar != nil && self.isSidebarPresented {
+                        TabBackground
                         Sidebar
+                            .border(width: 1, edges: [.trailing], color: Theme.rowColour)
                     }
 
-                    Divider().background(Theme.rowColour)
+//                    Divider().background(Theme.rowColour)
                     ZStack(alignment: .leading) {
                         InspectorAndMain
                         LinearGradient(colors: [Theme.base, .clear], startPoint: .leading, endPoint: .trailing)

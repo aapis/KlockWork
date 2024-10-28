@@ -16,6 +16,7 @@
 		530B1D782CAFA4DD0033E81F /* PeopleDashboadSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D772CAFA4D50033E81F /* PeopleDashboadSidebar.swift */; };
 		530B1D7A2CAFA4E40033E81F /* PeopleDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D792CAFA4E00033E81F /* PeopleDashboard.swift */; };
 		530B1D7C2CAFAFBD0033E81F /* PeopleDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D7B2CAFAFBB0033E81F /* PeopleDetail.swift */; };
+		530D74782CCEFC65000B81FE /* AccessibilitySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530D74772CCEFC5F000B81FE /* AccessibilitySettings.swift */; };
 		53152CC929690E7300A14E43 /* LosslessStringConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CC829690E7300A14E43 /* LosslessStringConvertible.swift */; };
 		53152CD4296A296A00A14E43 /* FancyButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CD3296A296A00A14E43 /* FancyButton.swift */; };
 		53152CD6296A2DA300A14E43 /* FancyPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53152CD5296A2DA300A14E43 /* FancyPicker.swift */; };
@@ -296,6 +297,7 @@
 		530B1D772CAFA4D50033E81F /* PeopleDashboadSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleDashboadSidebar.swift; sourceTree = "<group>"; };
 		530B1D792CAFA4E00033E81F /* PeopleDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleDashboard.swift; sourceTree = "<group>"; };
 		530B1D7B2CAFAFBB0033E81F /* PeopleDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleDetail.swift; sourceTree = "<group>"; };
+		530D74772CCEFC5F000B81FE /* AccessibilitySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilitySettings.swift; sourceTree = "<group>"; };
 		53152CC829690E7300A14E43 /* LosslessStringConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LosslessStringConvertible.swift; sourceTree = "<group>"; };
 		53152CD3296A296A00A14E43 /* FancyButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyButton.swift; sourceTree = "<group>"; };
 		53152CD5296A2DA300A14E43 /* FancyPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyPicker.swift; sourceTree = "<group>"; };
@@ -1177,6 +1179,7 @@
 		53C036ED29F8A58600539C3C /* Tabs */ = {
 			isa = PBXGroup;
 			children = (
+				530D74772CCEFC5F000B81FE /* AccessibilitySettings.swift */,
 				536043CB2CBE0E670030D72D /* NotificationSettings.swift */,
 				53967D8329EC6D14006616A0 /* TodaySettings.swift */,
 				53EFCE7829637F35004E45EC /* GeneralSettings.swift */,
@@ -1682,6 +1685,7 @@
 				5363B67A2A6BB75F00C2FBB8 /* CompanyBlock.swift in Sources */,
 				531B8DF22A847BE8005D911B /* NoteGroup.swift in Sources */,
 				538A535E2C704E5800711639 /* TermsDashboard.swift in Sources */,
+				530D74782CCEFC65000B81FE /* AccessibilitySettings.swift in Sources */,
 				535C1AE129F48EF700CD95FD /* Dashboard.swift in Sources */,
 				53C000962B3A7BD500D5EC04 /* String.swift in Sources */,
 				537628A22966525500DE8ECF /* ToolbarButtons.swift in Sources */,
