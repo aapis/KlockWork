@@ -59,7 +59,7 @@ struct FindDashboard: View {
                     onSubmit: onSubmit,
                     onReset: onReset
                 )
-                .clipShape(.rect(topLeadingRadius: self.showWelcomeHeader ? 0 : 5, topTrailingRadius: self.showWelcomeHeader ? 0 : 5))
+                .clipShape(.rect(topLeadingRadius: self.showWelcomeHeader || self.location == .sidebar ? 0 : 5, topTrailingRadius: self.showWelcomeHeader || self.location == .sidebar ? 0 : 5))
             }
             Divider()
 
@@ -76,9 +76,9 @@ struct FindDashboard: View {
                             .opacity(0.3)
                         UI.Links(location: self.location, isSearching: !searching && activeSearchText.count >= 2)
                     }
-                    .frame(height: self.location == .content ? 250 : 400)
+                    .frame(height: 250)
                 }
-                .background(Theme.rowColour)
+                .background(self.location == .content ? Theme.rowColour : .clear)
                 .foregroundStyle(.gray)
             }
 
@@ -127,8 +127,21 @@ struct FindDashboard: View {
             }
 
             if showingTypes {
-                if location == .content {
+                if self.location == .content {
                     self.TypeFilter
+                } else if self.location == .sidebar {
+                    Spacer()
+                    GridRow {
+                        ZStack(alignment: .topLeading) {
+                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                .blendMode(.softLight)
+                                .opacity(0.3)
+                            UI.Links(location: self.location, isSearching: !searching && activeSearchText.count >= 2)
+                        }
+                        .frame(height: 300)
+                    }
+                    .background(.clear)
+                    .foregroundStyle(.gray)
                 }
             }
 
