@@ -36,5 +36,46 @@ extension WidgetLibrary.UI {
                 .useDefaultHover({ hover in self.isHighlighted = hover})
             }
         }
+
+        struct Icon: View, Identifiable {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
+            public var id: UUID = UUID()
+            public var type: EType
+            public var text: String
+            public var colour: Color
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                VStack(alignment: .center, spacing: 0) {
+                    ZStack(alignment: .center) {
+                        (self.viewModeIndex == 0 ? Color.gray.opacity(self.isHighlighted ? 1 : 0.7) : self.colour.opacity(self.isHighlighted ? 1 : 0.7))
+                        VStack(alignment: .center, spacing: 0) {
+                            (self.isHighlighted ? self.type.selectedIcon : self.type.icon)
+                                .symbolRenderingMode(.hierarchical)
+                                .font(.largeTitle)
+//                                .foregroundStyle(self.viewModeIndex == 0 ? self.colour : self.colour.isBright() ? Theme.base : .white)
+                                .foregroundStyle(self.viewModeIndex == 0 ? self.colour : .white)
+                        }
+                        Spacer()
+                    }
+                    .frame(height: 65)
+
+                    ZStack(alignment: .center) {
+                        (self.isHighlighted ? Color.yellow : Theme.textBackground)
+                        VStack(alignment: .center, spacing: 0) {
+                            Text(self.text)
+                                .font(.system(.title3, design: .monospaced))
+                                .foregroundStyle(self.isHighlighted ? Theme.base : .gray)
+                        }
+                        .padding([.leading, .trailing], 4)
+                    }
+                    .frame(height: 25)
+                }
+                .frame(width: 65)
+                .clipShape(.rect(cornerRadius: 5))
+                .useDefaultHover({ hover in self.isHighlighted = hover })
+            }
+        }
     }
 }

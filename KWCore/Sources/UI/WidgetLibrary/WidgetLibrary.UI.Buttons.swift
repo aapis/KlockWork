@@ -20,6 +20,7 @@ extension WidgetLibrary.UI {
         struct ResetUserChoices: View {
             @EnvironmentObject public var state: Navigation
             public var onActionClear: (() -> Void)?
+            public var isAlteredForReadability: Bool = false
 
             var body: some View {
                 if self.state.session.job != nil || self.state.session.project != nil || self.state.session.company != nil {
@@ -28,6 +29,7 @@ extension WidgetLibrary.UI {
                         action: self.onActionClear != nil ? self.onActionClear : self.defaultClearAction,
                         icon: "arrow.clockwise.square.fill",
                         iconWhenHighlighted: "arrow.clockwise.square",
+                        fgColour: self.isAlteredForReadability ? Theme.base : .white,
                         showLabel: false,
                         size: .small,
                         type: .clear,
@@ -44,6 +46,7 @@ extension WidgetLibrary.UI {
         struct CreateNote: View {
             @EnvironmentObject public var state: Navigation
             public var onAction: (() -> Void)? = {}
+            public var isAlteredForReadability: Bool = false
 
             var body: some View {
                 FancyButtonv2(
@@ -51,11 +54,10 @@ extension WidgetLibrary.UI {
                     action: self.onAction,
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
+                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
-                    redirect: AnyView(NoteCreate()),
-                    pageType: .notes,
                     sidebar: AnyView(NoteCreateSidebar()),
                     font: .title
                 )
@@ -67,6 +69,7 @@ extension WidgetLibrary.UI {
         struct CreatePerson: View {
             @EnvironmentObject public var state: Navigation
             public var onAction: (() -> Void)? = {}
+            public var isAlteredForReadability: Bool = false
 
             var body: some View {
                 FancyButtonv2(
@@ -74,6 +77,7 @@ extension WidgetLibrary.UI {
                     action: { self.onAction?() ; self.state.to(.peopleDetail) },
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
+                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -87,6 +91,7 @@ extension WidgetLibrary.UI {
         struct CreateCompany: View {
             @EnvironmentObject public var state: Navigation
             public var onAction: (() -> Void)? = {}
+            public var isAlteredForReadability: Bool = false
 
             var body: some View {
                 FancyButtonv2(
@@ -94,6 +99,7 @@ extension WidgetLibrary.UI {
                     action: { self.onAction?() ; self.state.to(.companyDetail) },
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
+                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -107,17 +113,20 @@ extension WidgetLibrary.UI {
         struct CreateProject: View {
             @EnvironmentObject public var state: Navigation
             public var onAction: (() -> Void)? = {}
+            public var location: WidgetLocation = .content
+            public var isAlteredForReadability: Bool = false
 
             var body: some View {
                 FancyButtonv2(
                     text: "Create",
                     action: { self.onAction?() ; self.state.to(.projectDetail) },
-                    icon: "plus.square.fill",
-                    iconWhenHighlighted: "plus.square",
+                    icon: self.location == .sidebar ? "folder.fill.badge.plus" : "plus.square.fill",
+                    iconWhenHighlighted: self.location == .sidebar ? "folder.badge.plus" : "plus.square",
+                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
-                    font: .title
+                    font: self.location == .sidebar ? .title2 : .title
                 )
                 .help("Create a new project")
                 .frame(width: 25)
@@ -128,6 +137,7 @@ extension WidgetLibrary.UI {
             @EnvironmentObject public var state: Navigation
             @AppStorage("jobdashboard.explorerVisible") private var explorerVisible: Bool = true
             @AppStorage("jobdashboard.editorVisible") private var editorVisible: Bool = true
+            public var isAlteredForReadability: Bool = false
 
             var body: some View {
                 FancyButtonv2(
@@ -135,6 +145,7 @@ extension WidgetLibrary.UI {
                     action: self.actionOnTap,
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
+                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -148,6 +159,7 @@ extension WidgetLibrary.UI {
         struct CreateTask: View {
             @EnvironmentObject public var state: Navigation
             public var onAction: (() -> Void)? = {}
+            public var isAlteredForReadability: Bool = false
 
             var body: some View {
                 FancyButtonv2(
@@ -155,6 +167,7 @@ extension WidgetLibrary.UI {
                     action: { self.onAction?() ; self.state.to(.taskDetail) },
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
+                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -168,6 +181,7 @@ extension WidgetLibrary.UI {
         struct CreateTerm: View {
             @EnvironmentObject public var state: Navigation
             public var onAction: (() -> Void)? = {}
+            public var isAlteredForReadability: Bool = false
 
             var body: some View {
                 FancyButtonv2(
@@ -175,6 +189,7 @@ extension WidgetLibrary.UI {
                     action: { self.onAction?() ; self.state.to(.terms) },
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
+                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -188,6 +203,7 @@ extension WidgetLibrary.UI {
         struct CreateDefinition: View {
             @EnvironmentObject public var state: Navigation
             public var onAction: (() -> Void)? = {}
+            public var isAlteredForReadability: Bool = false
 
             var body: some View {
                 FancyButtonv2(
@@ -195,6 +211,7 @@ extension WidgetLibrary.UI {
                     action: { self.onAction?() ; self.state.to(.definitionDetail) },
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
+                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -208,6 +225,7 @@ extension WidgetLibrary.UI {
         struct CreateRecord: View {
             @EnvironmentObject public var state: Navigation
             public var onAction: (() -> Void)? = {}
+            public var isAlteredForReadability: Bool = false
             @State private var isHighlighted: Bool = false
             @State private var selectedPage: Page = .dashboard
 
@@ -217,6 +235,7 @@ extension WidgetLibrary.UI {
                     action: self.onAction,
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
+                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -232,6 +251,7 @@ extension WidgetLibrary.UI {
         struct CreateRecordToday: View {
             @EnvironmentObject public var state: Navigation
             public var onAction: (() -> Void)? = {}
+            public var isAlteredForReadability: Bool = false
             @State private var isHighlighted: Bool = false
             @State private var selectedPage: Page = .dashboard
 
@@ -244,6 +264,7 @@ extension WidgetLibrary.UI {
                     },
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
+                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
