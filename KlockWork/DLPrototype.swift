@@ -11,6 +11,9 @@ import KWCore
 import CoreSpotlight
 import UserNotifications
 
+typealias UI = WidgetLibrary.UI
+typealias EType = PageConfiguration.EntityType
+
 @main
 struct DLPrototype: App {
     private let persistenceController = PersistenceController.shared
