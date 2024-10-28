@@ -643,6 +643,30 @@ public struct Inspector: View, Identifiable {
                         Spacer()
                     }
                     Divider()
+                    VStack(spacing: 1) {
+                        ForEach(defs, id: \.objectID) { definition in
+                            if let text = definition.definition?.firstCapitalized {
+                                Button {
+                                    self.nav.session.job = definition.job
+                                    self.nav.session.project = self.nav.session.job?.project
+                                    self.nav.session.company = self.nav.session.project?.company
+                                    self.nav.session.definition = definition
+                                    self.nav.to(.definitionDetail)
+                                } label: {
+                                    HStack(alignment: .top, spacing: 10) {
+                                        Text(text)
+                                        Spacer()
+                                    }
+                                    .padding(8)
+                                    .background(definition.job?.backgroundColor ?? Theme.rowColour)
+                                    .foregroundStyle((definition.job?.backgroundColor ?? Theme.rowColour).isBright() ? Theme.base : Theme.lightWhite)
+                                }
+                                .buttonStyle(.plain)
+                                .useDefaultHover({_ in})
+                            }
+                        }
+                    }
+                    .clipShape(.rect(cornerRadius: 5))
                 }
 
                 Spacer()
