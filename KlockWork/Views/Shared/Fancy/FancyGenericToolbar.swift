@@ -77,35 +77,36 @@ struct FancyGenericToolbar: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            GridRow {
-                Group {
-                    ZStack(alignment: .bottom) {
-                        (self.location == .content ? UIGradient() : nil)
+            if buttons.count > 1 {
+                GridRow {
+                    Group {
+                        ZStack(alignment: .bottom) {
+                            (self.location == .content ? UIGradient() : nil)
 
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 1) {
-                                ForEach(buttons, id: \ToolbarButton.id) { button in
-                                    TabView(
-                                        button: button,
-                                        location: location,
-                                        selected: $selected,
-                                        mode: mode,
-                                        page: self.page
-                                    )
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 1) {
+                                    ForEach(buttons, id: \ToolbarButton.id) { button in
+                                        TabView(
+                                            button: button,
+                                            location: location,
+                                            selected: $selected,
+                                            mode: mode,
+                                            page: self.page
+                                        )
 
-                                    if buttons.count == 1 {
-                                        Text(buttons.first!.helpText)
-                                            .padding(.leading, 10)
-                                            .opacity(0.6)
+                                        if buttons.count == 1 {
+                                            Text(buttons.first!.helpText)
+                                                .padding(.leading, 10)
+                                                .opacity(0.6)
+                                        }
                                     }
                                 }
                             }
-                            .clipShape(.rect(topLeadingRadius: self.location == .content ? 5 : 0, topTrailingRadius: self.location == .content ? 5 : 0))
                         }
                     }
                 }
+                .frame(height: self.location == .content ? 50 : 32)
             }
-            .frame(height: self.location == .content ? 50 : 32)
 
             GridRow {
                 Group {
@@ -129,6 +130,7 @@ struct FancyGenericToolbar: View {
                 }
             }
         }
+        .clipShape(.rect(cornerRadius: 5))
     }
 
     struct TabView: View {

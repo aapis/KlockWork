@@ -153,7 +153,7 @@ extension WidgetLibrary {
                                 case .settings: Buttons.Settings()
                                 case .createJob: Buttons.CreateJob()
                                 case .createNote: Buttons.CreateNote()
-//                                    case .createTask: Buttons.CreateTask()
+                                case .createTask: Buttons.CreateTask()
                                 case .createTerm: Buttons.CreateTerm()
                                 case .createPerson: Buttons.CreatePerson()
                                 case .createRecord: Buttons.CreateRecord()
@@ -161,7 +161,6 @@ extension WidgetLibrary {
                                 case .createProject: Buttons.CreateProject()
                                 case .createDefinition: Buttons.CreateDefinition()
                                 case .sidebarToggle: Buttons.SidebarToggle()
-                                default: EmptyView()
                                 }
                             }
                         }
@@ -203,31 +202,29 @@ extension WidgetLibrary {
                     } label: {
                         HStack(alignment: .center) {
                             ZStack {
-                                RoundedRectangle(cornerRadius: 5)
+                                RoundedRectangle(cornerRadius: 20)
                                     .strokeBorder(self.isToday ? .yellow.opacity(0.6) : .gray, lineWidth: 1)
-                                    .fill(.white.opacity(self.isHighlighted ? 0.2 : 0.1))
+                                    .fill(self.isToday ? .yellow.opacity(self.isHighlighted ? 0.8 : 0.7) : .gray.opacity(self.isHighlighted ? 0.8 : 0.7))
                                 if !self.showDateOverlay {
                                     HStack {
                                         Image(systemName: "calendar")
-                                            .foregroundStyle(.gray)
                                         Text(self.date)
                                     }
+                                    .foregroundStyle(self.isToday ? Theme.base : Theme.lightWhite)
                                 }
                             }
                             .frame(width: 200)
                         }
                     }
-                    .foregroundStyle(self.isHighlighted ? .white : self.isToday ? .yellow.opacity(0.6) : .gray)
                     .buttonStyle(.plain)
                     .useDefaultHover({ hover in self.isHighlighted = hover})
                     .overlay {
                         if self.showDateOverlay {
-                            HStack {
-                                DatePicker("", selection: $sDate)
-                                Image(systemName: "xmark")
-                            }
+                            DatePicker("", selection: $sDate)
+                                .foregroundStyle(self.isToday ? Theme.base : Theme.lightBase)
                         }
                     }
+                    .onChange(of: self.sDate) { self.showDateOverlay.toggle() }
 
                     FancyButtonv2(
                         text: "Next day",
