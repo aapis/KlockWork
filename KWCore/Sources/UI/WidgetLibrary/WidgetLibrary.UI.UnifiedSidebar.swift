@@ -11,8 +11,6 @@ import KWCore
 
 extension WidgetLibrary.UI {
     struct UnifiedSidebar {
-        typealias UI = WidgetLibrary.UI
-
         struct Widget: View {
             @EnvironmentObject public var state: Navigation
             @State private var companies: [Company] = []
@@ -77,23 +75,15 @@ extension WidgetLibrary.UI {
                     if self.isPresented {
                         HStack(alignment: .center, spacing: 0) {
                             Text(self.entity.abbreviation ?? "XXX")
-                                .foregroundStyle(self.entity.backgroundColor.isBright() ? Theme.base : .white)
                                 .opacity(0.7)
                                 .padding(.leading)
                             Spacer()
-                            RowAddNavLink(
-                                title: "+ Person",
-                                target: AnyView(PeopleDetail())
-                            )
-                            .buttonStyle(.plain)
-                            RowAddNavLink(
-                                title: "+ Project",
-                                target: AnyView(ProjectCreate())
-                            )
-                            .buttonStyle(.plain)
+                            UI.Buttons.CreateProject(location: .sidebar, isAlteredForReadability: self.entity.backgroundColor.isBright())
+                                .padding(.trailing, 8)
                         }
                         .padding([.top, .bottom], 8)
                         .background(Theme.base.opacity(0.6).blendMode(.softLight))
+                        .foregroundStyle(self.entity.backgroundColor.isBright() ? Theme.base : .white)
 
                         VStack(alignment: .leading, spacing: 0) {
                             ZStack(alignment: .topLeading) {
@@ -165,18 +155,15 @@ extension WidgetLibrary.UI {
                     if self.isPresented {
                         HStack(alignment: .center, spacing: 0) {
                             Text("\(self.entity.company?.abbreviation ?? "XXX").\(self.entity.abbreviation ?? "YYY")")
-                                .foregroundStyle(self.entity.backgroundColor.isBright() ? Theme.base : .white)
                                 .opacity(0.7)
                                 .padding(.leading)
                             Spacer()
-                            RowAddNavLink(
-                                title: "+ Job",
-                                target: AnyView(JobCreate())
-                            )
-                            .buttonStyle(.plain)
+                            UI.Buttons.CreateJob(isAlteredForReadability: self.entity.backgroundColor.isBright())
+                                .padding(.trailing, 8)
                         }
                         .padding([.top, .bottom], 8)
                         .background(Theme.base.opacity(0.6).blendMode(.softLight))
+                        .foregroundStyle(self.entity.backgroundColor.isBright() ? Theme.base : .white)
 
                         VStack(alignment: .leading, spacing: 0) {
                             ZStack(alignment: .topLeading) {
@@ -315,7 +302,7 @@ extension WidgetLibrary.UI {
                         EntityRowButton(text: "\((self.tasks?.count ?? self.childrenFromJob.count)) Tasks", isPresented: $isPresented)
                             .useDefaultHover({ inside in self.highlighted = inside})
                             .disabled((self.tasks?.count ?? self.childrenFromJob.count) == 0)
-                        UI.Buttons.CreateTask()
+                        UI.Buttons.CreateTask(isAlteredForReadability: self.job.backgroundColor.isBright())
                             .padding(.trailing, 8)
                     }
 
@@ -370,7 +357,7 @@ extension WidgetLibrary.UI {
                         EntityRowButton(text: "\((self.notes?.count ?? self.childrenFromJob.count)) Notes", isPresented: $isPresented)
                             .useDefaultHover({ inside in self.highlighted = inside})
                             .disabled((self.notes?.count ?? self.childrenFromJob.count) == 0)
-                        UI.Buttons.CreateNote()
+                        UI.Buttons.CreateNote(isAlteredForReadability: self.job.backgroundColor.isBright())
                             .padding(.trailing, 8)
                     }
 
@@ -425,7 +412,7 @@ extension WidgetLibrary.UI {
                         EntityRowButton(text: "\((self.definitions?.count ?? self.childrenFromJob.count)) Definitions", isPresented: $isPresented)
                             .useDefaultHover({ inside in self.highlighted = inside})
                             .disabled((self.definitions?.count ?? self.childrenFromJob.count) == 0)
-                        UI.Buttons.CreateDefinition()
+                        UI.Buttons.CreateDefinition(isAlteredForReadability: self.job.backgroundColor.isBright())
                             .padding(.trailing, 8)
                     }
 
@@ -480,7 +467,7 @@ extension WidgetLibrary.UI {
                         EntityRowButton(text: "\((self.records?.count ?? self.childrenFromJob.count)) Records", isPresented: $isPresented)
                             .useDefaultHover({ inside in self.highlighted = inside})
                             .disabled((self.records?.count ?? self.childrenFromJob.count) == 0)
-                        UI.Buttons.CreateRecordToday()
+                        UI.Buttons.CreateRecordToday(isAlteredForReadability: self.job.backgroundColor.isBright())
                             .padding(.trailing, 8)
                     }
 
@@ -532,7 +519,7 @@ extension WidgetLibrary.UI {
                     ZStack(alignment: .trailing) {
                         EntityRowButton(text: "People", isPresented: $isPresented)
                             .useDefaultHover({ inside in self.highlighted = inside})
-                        UI.Buttons.CreatePerson()
+                        UI.Buttons.CreatePerson(isAlteredForReadability: self.entity.backgroundColor.isBright())
                             .padding(.trailing, 8)
                     }
 
