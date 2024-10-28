@@ -10,56 +10,31 @@ import SwiftUI
 import KWCore
 
 struct TodayInHistoryWidget: View {
+    typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var nav: Navigation
     public let title: String = "Today In History"
-    @State private var selectedDate: String = ""
-    @State private var currentDate: Date = Date()
     @State private var todayInHistory: [DayInHistory] = []
     @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            ZStack(alignment: .bottomLeading) {
-                HStack(alignment: .center, spacing: 0) {
-                    Text(self.title)
-                        .padding(6)
-                        .background(Theme.textBackground)
-                        .foregroundStyle(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
-                }
-                .padding(8)
-            }
+            UI.Sidebar.Title(text: self.title)
             Divider()
-
             VStack(alignment: .leading, spacing: 1) {
-                ForEach(todayInHistory, id: \.year) { day in
-                    SidebarItem(
-                        data: day.linkLabel(),
-                        help: day.linkLabel(),
-                        icon: "chevron.right",
-                        orientation: .right,
-                        action: {actionTodayInHistory(day)},
-                        showBorder: false,
-                        showButton: false
-                    )
-                    .background(day.highlight ? Theme.lightWhite : .yellow.opacity(0.8))
-                    .foregroundStyle(Theme.base.opacity(day.highlight ? 0.4 : 1))
-                }
+                ForEach(self.todayInHistory, id: \.year) { day in day }
             }
-            Divider()
         }
-        .background(Theme.base.opacity(0.2))
-        .onAppear(perform: loadWidgetData)
-        .onChange(of: nav.session.date) {
-            loadWidgetData()
-        }
+        .onAppear(perform: self.loadWidgetData)
+        .onChange(of: self.nav.session.date) { self.loadWidgetData() }
     }
 }
 
 extension TodayInHistoryWidget {
+    /// Find historical data for the currently selected date
+    /// - Returns: Void
     private func findHistoricalDataForToday() async -> Void {
         let calendar = Calendar.autoupdatingCurrent
-        let current = calendar.dateComponents([.year, .month, .day], from: currentDate)
+        let current = calendar.dateComponents([.year, .month, .day], from: self.nav.session.date)
         todayInHistory = []
 
         if current.isValidDate == false {
@@ -69,29 +44,18 @@ extension TodayInHistoryWidget {
                 let day = calendar.date(from: components)
                 let numRecordsForDay = CoreDataRecords(moc: self.nav.moc).countForDate(day)
 
-                todayInHistory.append(DayInHistory(year: offsetYear, date: day ?? Date(), count: numRecordsForDay))
+                todayInHistory.append(
+                    DayInHistory(year: offsetYear, date: day ?? Date(), count: numRecordsForDay)
+                )
             }
         }
     }
-
+    
+    /// Calls findHistoricalDataForToday asynchronously
+    /// - Returns: Void
     private func loadWidgetData() -> Void {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE, MMM d, yyyy"
-        formatter.timeZone = TimeZone.autoupdatingCurrent
-        formatter.locale = NSLocale.current
-        currentDate = nav.session.date
-        selectedDate = formatter.string(from: currentDate)
-
         Task {
             await findHistoricalDataForToday()
         }
-    }
-
-    private func actionTodayInHistory(_ day: DayInHistory) -> Void {
-        nav.session.date = day.date
-        nav.parent = .today
-        nav.view = AnyView(Today(defaultSelectedDate: day.date).environmentObject(nav))
-        nav.sidebar = AnyView(TodaySidebar(date: day.date))
-        nav.pageId = UUID()
     }
 }
