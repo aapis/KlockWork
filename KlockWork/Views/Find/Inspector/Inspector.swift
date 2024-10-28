@@ -16,6 +16,7 @@ public struct Inspector: View, Identifiable {
     public let id: UUID = UUID()
     public var entity: NSManagedObject? = nil
     public var event: EKEvent? = nil
+    public var location: WidgetLocation = .inspector
     private let panelWidth: CGFloat = 400
     private var job: Job? = nil
     private var project: Project? = nil
@@ -35,7 +36,8 @@ public struct Inspector: View, Identifiable {
                 FancyButtonv2(
                     text: "Close",
                     action: {nav.session.search.cancel() ; nav.setInspector() ; self.isSearchStackShowing = false},
-                    icon: "xmark",
+                    icon: "xmark.square.fill",
+                    iconWhenHighlighted: "xmark.square",
                     showLabel: false,
                     size: .tiny,
                     type: .clear
@@ -51,8 +53,10 @@ public struct Inspector: View, Identifiable {
             }
             Spacer()
         }
-        .padding()
+        .padding([.trailing, .top, .bottom])
+        .padding(.leading, self.location == .content ? 0 : 20)
         .frame(maxWidth: panelWidth)
+        .background(self.location == .content ? Theme.rowColour : .clear)
     }
     public var EntityInspectorBody: some View {
         VStack(alignment: .leading) {
@@ -80,9 +84,10 @@ public struct Inspector: View, Identifiable {
         }
     }
 
-    init(entity: NSManagedObject? = nil, event: EKEvent? = nil) {
+    init(entity: NSManagedObject? = nil, event: EKEvent? = nil, location: WidgetLocation = .inspector) {
         self.entity = entity
         self.event = event
+        self.location = location
 
         if entity != nil {
             switch self.entity {

@@ -12,8 +12,6 @@ import KWCore
 
 struct Home: View {
     typealias APage = PageConfiguration.AppPage
-    typealias Entity = PageConfiguration.EntityType
-    typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var nav: Navigation
     @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
     @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
@@ -160,8 +158,8 @@ extension Home {
     /// Onload handler. Sets view state, finds events, creates toolbar buttons, monitors keyboard for Esc
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        nav.parent = selectedSidebarButton
-        checkForEvents()
+        self.nav.parent = self.selectedSidebarButton
+        self.checkForEvents()
         self.createToolbarButtons()
 
         KeyboardHelper.monitor(key: .keyDown, callback: {
@@ -202,7 +200,7 @@ extension Home {
                 SidebarButton(
                     destination: AnyView(Today()),
                     pageType: .today,
-                    iconAsImage: Entity.records.icon,
+                    iconAsImage: EType.records.icon,
                     label: "Today",
                     sidebar: AnyView(TodaySidebar()),
                     altMode: PageAltMode(
@@ -220,8 +218,8 @@ extension Home {
                 SidebarButton(
                     destination: AnyView(CompanyDashboard()),
                     pageType: .companies,
-                    iconAsImage: Entity.companies.icon,
-                    label: Entity.companies.label,
+                    iconAsImage: EType.companies.icon,
+                    label: EType.companies.label,
                     sidebar: AnyView(DefaultCompanySidebar())
                 )
             )
@@ -232,8 +230,8 @@ extension Home {
                 SidebarButton(
                     destination: AnyView(ProjectsDashboard()),
                     pageType: .projects,
-                    iconAsImage: Entity.projects.icon,
-                    label: Entity.projects.label,
+                    iconAsImage: EType.projects.icon,
+                    label: EType.projects.label,
                     sidebar: AnyView(DefaultCompanySidebar())
                 )
             )
@@ -244,8 +242,8 @@ extension Home {
                 SidebarButton(
                     destination: AnyView(JobDashboard()),
                     pageType: .jobs,
-                    iconAsImage: Entity.jobs.icon,
-                    label: Entity.jobs.label,
+                    iconAsImage: EType.jobs.icon,
+                    label: EType.jobs.label,
                     sidebar: AnyView(JobDashboardSidebar())
                 )
             )

@@ -40,6 +40,7 @@ extension FindDashboard {
                                     text: "",
                                     action: {self.isMinimized.toggle()},
                                     icon: self.isMinimized ? "plus.square.fill" : "minus.square.fill",
+                                    iconWhenHighlighted: self.isMinimized ? "plus.square" : "minus.square",
                                     showLabel: false,
                                     showIcon: true,
                                     size: .tinyLink,

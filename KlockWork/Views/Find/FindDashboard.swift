@@ -84,8 +84,8 @@ struct FindDashboard: View {
 
             if !searching && activeSearchText.count >= 2 {
                 GridRow {
-                    if location == .content {
-                        HStack(alignment: .top, spacing: 1) {
+                    if self.location == .content {
+                        HStack(alignment: .top, spacing: 0) {
                             Suggestions(
                                 searchText: $activeSearchText,
                                 publishedOnly: $allowAlive,
@@ -101,8 +101,10 @@ struct FindDashboard: View {
                                 location: location
                             )
                             
-                            if nav.session.search.inspectingEntity != nil {
-                                Inspector(entity: nav.session.search.inspectingEntity!)
+                            if let entity = nav.session.search.inspectingEntity {
+                                Inspector(entity: entity, location: .content)
+                            } else if let event = nav.session.search.inspectingEvent {
+                                Inspector(event: event, location: .content)
                             }
                         }
                     } else if location == .sidebar {
