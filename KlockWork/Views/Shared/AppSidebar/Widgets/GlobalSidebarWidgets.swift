@@ -192,13 +192,11 @@ struct GlobalSidebarWidgets: View {
     }
 
     struct FindButton: View {
+        @EnvironmentObject public var nav: Navigation
         @AppStorage("GlobalSidebarWidgets.isCreateStackShowing") private var isCreateStackShowing: Bool = false
         @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
         @AppStorage("GlobalSidebarWidgets.isSearching") private var isSearching: Bool = false
-
         @Binding public var active: Bool
-        
-        @EnvironmentObject public var nav: Navigation
 
         var body: some View {
             VStack(alignment: .center) {
@@ -207,7 +205,13 @@ struct GlobalSidebarWidgets: View {
                         Theme.base.opacity(0.5)
                         FancyButtonv2(
                             text: "Search",
-                            action: {active.toggle() ; isSearching.toggle() ; isCreateStackShowing = false ; self.isUpcomingTaskStackShowing = false ; nav.session.search.reset()},
+                            action: {
+                                self.active.toggle()
+                                self.isSearching.toggle()
+                                self.isCreateStackShowing = false
+                                self.isUpcomingTaskStackShowing = false
+                                self.nav.session.search.reset()
+                            },
                             icon: "magnifyingglass",
                             fgColour: nav.session.job?.colour_from_stored().isBright() ?? false ? .black : .white,
                             bgColour: nav.session.job?.colour_from_stored() ?? nil,
