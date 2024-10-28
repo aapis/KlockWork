@@ -20,7 +20,7 @@ struct TodayInHistoryWidget: View {
         VStack(alignment: .leading, spacing: 0) {
             UI.Sidebar.Title(text: self.title)
             Divider()
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: 0) {
                 ForEach(self.todayInHistory, id: \.year) { day in day }
             }
         }
