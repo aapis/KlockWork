@@ -645,25 +645,7 @@ public struct Inspector: View, Identifiable {
                     Divider()
                     VStack(spacing: 1) {
                         ForEach(defs, id: \.objectID) { definition in
-                            if let text = definition.definition?.firstCapitalized {
-                                Button {
-                                    self.nav.session.job = definition.job
-                                    self.nav.session.project = self.nav.session.job?.project
-                                    self.nav.session.company = self.nav.session.project?.company
-                                    self.nav.session.definition = definition
-                                    self.nav.to(.definitionDetail)
-                                } label: {
-                                    HStack(alignment: .top, spacing: 10) {
-                                        Text(text)
-                                        Spacer()
-                                    }
-                                    .padding(8)
-                                    .background(definition.job?.backgroundColor ?? Theme.rowColour)
-                                    .foregroundStyle((definition.job?.backgroundColor ?? Theme.rowColour).isBright() ? Theme.base : Theme.lightWhite)
-                                }
-                                .buttonStyle(.plain)
-                                .useDefaultHover({_ in})
-                            }
+                            UI.Blocks.Definition(definition: definition)
                         }
                     }
                     .clipShape(.rect(cornerRadius: 5))
@@ -740,27 +722,17 @@ public struct Inspector: View, Identifiable {
                     Divider()
                 }
 
-                if let definition = self.item.definition {
-                    HStack(alignment: .center) {
-                        Image(systemName: "list.bullet").symbolRenderingMode(.hierarchical)
-                        Text("Definition")
-                    }
-                    Divider()
-                    HStack(alignment: .top, spacing: 10) {
-                        Text(definition)
-                            .contextMenu {
-                                Button {
-                                    ClipboardHelper.copy(definition)
-                                } label: {
-                                    Text("Copy to clipboard")
-                                }
-                            }
-                        Spacer()
-                    }
-                    .help("Full definition text")
-                    Divider()
+                HStack(alignment: .center) {
+                    Image(systemName: "list.bullet").symbolRenderingMode(.hierarchical)
+                    Text("Definition")
                 }
-
+                Divider()
+                VStack(alignment: .leading, spacing: 1) {
+                    UI.Blocks.Definition(definition: self.item)
+                        .help("Full definition text")
+                }
+                .clipShape(.rect(cornerRadius: 5))
+                Divider()
                 Spacer()
                 HStack(alignment: .top, spacing: 10) {
                     FancyButtonv2(
