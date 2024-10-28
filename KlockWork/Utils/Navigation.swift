@@ -94,7 +94,10 @@ public class Navigation: Identifiable, ObservableObject {
     @Published public var parent: Page? = .dashboard
     @Published public var sidebar: AnyView? = AnyView(DashboardSidebar())
     @Published public var inspector: AnyView? = nil
-    @Published public var navButtons: [WidgetLibrary.UI.Buttons.UIButtonType] = []
+    @Published public var navButtons: [WidgetLibrary.UI.Buttons.UIButtonType] = [
+        .sidebarToggle,
+        .resetUserChoices
+    ]
     @Published public var title: String? = ""
     @Published public var pageId: UUID? = UUID()
     @Published public var session: Session = Session()
