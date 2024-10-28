@@ -57,7 +57,7 @@ extension FindDashboard {
                                     // @TODO: reduce this with a loop, each view is basically identical...
                                     if showRecords {SuggestedRecords(searchText: $searchText, publishedOnly: $publishedOnly)}
                                     if showNotes {SuggestedNotes(searchText: $searchText, publishedOnly: $publishedOnly)}
-                                    if showTasks {SuggestedTasks(searchText: $searchText)}
+                                    if showTasks {SuggestedTasks(searchText: $searchText, publishedOnly: $publishedOnly)}
                                     if showProjects {SuggestedProjects(searchText: $searchText, publishedOnly: $publishedOnly)}
                                     if showJobs {SuggestedJobs(searchText: $searchText, publishedOnly: $publishedOnly)}
                                     if showCompanies {SuggestedCompanies(searchText: $searchText, publishedOnly: $publishedOnly)}
@@ -362,6 +362,7 @@ extension FindDashboard {
             typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
+            @Binding public var publishedOnly: Bool
             @State private var showChildren: Bool = false
             @State private var hover: Bool = false
             @FetchRequest private var items: FetchedResults<LogTask>
@@ -419,19 +420,27 @@ extension FindDashboard {
                 }
             }
             
-            init(searchText: Binding<String>) {
+            init(searchText: Binding<String>, publishedOnly: Binding<Bool>) {
                 _searchText = searchText
+                _publishedOnly = publishedOnly
 
                 let req: NSFetchRequest<LogTask> = LogTask.fetchRequest()
                 req.sortDescriptors = [
                     NSSortDescriptor(keyPath: \LogTask.created, ascending: true),
                 ]
 
-                req.predicate = NSPredicate(
-                    format: "content CONTAINS[cd] %@ && owner.project.company.hidden == false",
-                    _searchText.wrappedValue
-                )
-                
+                if publishedOnly.wrappedValue {
+                    req.predicate = NSPredicate(
+                        format: "completedDate == nil && cancelledDate == nil && (content CONTAINS[cd] %@ && owner.project.company.hidden == false)",
+                        _searchText.wrappedValue
+                    )
+                } else {
+                    req.predicate = NSPredicate(
+                        format: "content CONTAINS[cd] %@ && owner.project.company.hidden == false",
+                        _searchText.wrappedValue
+                    )
+                }
+
                 _items = FetchRequest(fetchRequest: req, animation: .easeInOut)
             }
         }
