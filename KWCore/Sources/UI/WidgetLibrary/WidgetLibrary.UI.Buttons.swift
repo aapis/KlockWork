@@ -19,6 +19,7 @@ extension WidgetLibrary.UI {
 
         struct ResetUserChoices: View {
             @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
             public var onActionClear: (() -> Void)?
             public var isAlteredForReadability: Bool = false
 
@@ -29,7 +30,7 @@ extension WidgetLibrary.UI {
                         action: self.onActionClear != nil ? self.onActionClear : self.defaultClearAction,
                         icon: "arrow.clockwise.square.fill",
                         iconWhenHighlighted: "arrow.clockwise.square",
-                        fgColour: self.isAlteredForReadability ? Theme.base : .white,
+                        fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
                         showLabel: false,
                         size: .small,
                         type: .clear,
@@ -45,6 +46,7 @@ extension WidgetLibrary.UI {
 
         struct CreateNote: View {
             @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
             public var onAction: (() -> Void)? = {}
             public var isAlteredForReadability: Bool = false
 
@@ -54,7 +56,7 @@ extension WidgetLibrary.UI {
                     action: self.onAction,
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
-                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
+                    fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -68,6 +70,7 @@ extension WidgetLibrary.UI {
 
         struct CreatePerson: View {
             @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
             public var onAction: (() -> Void)? = {}
             public var isAlteredForReadability: Bool = false
 
@@ -77,7 +80,7 @@ extension WidgetLibrary.UI {
                     action: { self.onAction?() ; self.state.to(.peopleDetail) },
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
-                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
+                    fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -90,6 +93,7 @@ extension WidgetLibrary.UI {
 
         struct CreateCompany: View {
             @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
             public var onAction: (() -> Void)? = {}
             public var isAlteredForReadability: Bool = false
 
@@ -99,7 +103,7 @@ extension WidgetLibrary.UI {
                     action: { self.onAction?() ; self.state.to(.companyDetail) },
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
-                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
+                    fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -112,6 +116,7 @@ extension WidgetLibrary.UI {
 
         struct CreateProject: View {
             @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
             public var onAction: (() -> Void)? = {}
             public var location: WidgetLocation = .content
             public var isAlteredForReadability: Bool = false
@@ -122,7 +127,7 @@ extension WidgetLibrary.UI {
                     action: { self.onAction?() ; self.state.to(.projectDetail) },
                     icon: self.location == .sidebar ? "folder.fill.badge.plus" : "plus.square.fill",
                     iconWhenHighlighted: self.location == .sidebar ? "folder.badge.plus" : "plus.square",
-                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
+                    fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -137,6 +142,7 @@ extension WidgetLibrary.UI {
             @EnvironmentObject public var state: Navigation
             @AppStorage("jobdashboard.explorerVisible") private var explorerVisible: Bool = true
             @AppStorage("jobdashboard.editorVisible") private var editorVisible: Bool = true
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
             public var isAlteredForReadability: Bool = false
 
             var body: some View {
@@ -145,7 +151,7 @@ extension WidgetLibrary.UI {
                     action: self.actionOnTap,
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
-                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
+                    fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -158,6 +164,7 @@ extension WidgetLibrary.UI {
 
         struct CreateTask: View {
             @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
             public var onAction: (() -> Void)? = {}
             public var isAlteredForReadability: Bool = false
 
@@ -167,7 +174,7 @@ extension WidgetLibrary.UI {
                     action: { self.onAction?() ; self.state.to(.taskDetail) },
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
-                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
+                    fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -180,6 +187,7 @@ extension WidgetLibrary.UI {
 
         struct CreateTerm: View {
             @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
             public var onAction: (() -> Void)? = {}
             public var isAlteredForReadability: Bool = false
 
@@ -189,7 +197,7 @@ extension WidgetLibrary.UI {
                     action: { self.onAction?() ; self.state.to(.terms) },
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
-                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
+                    fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -202,6 +210,7 @@ extension WidgetLibrary.UI {
 
         struct CreateDefinition: View {
             @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
             public var onAction: (() -> Void)? = {}
             public var isAlteredForReadability: Bool = false
 
@@ -211,7 +220,7 @@ extension WidgetLibrary.UI {
                     action: { self.onAction?() ; self.state.to(.definitionDetail) },
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
-                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
+                    fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -224,6 +233,7 @@ extension WidgetLibrary.UI {
 
         struct CreateRecord: View {
             @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
             public var onAction: (() -> Void)? = {}
             public var isAlteredForReadability: Bool = false
             @State private var isHighlighted: Bool = false
@@ -235,7 +245,7 @@ extension WidgetLibrary.UI {
                     action: self.onAction,
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
-                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
+                    fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -250,6 +260,7 @@ extension WidgetLibrary.UI {
 
         struct CreateRecordToday: View {
             @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
             public var onAction: (() -> Void)? = {}
             public var isAlteredForReadability: Bool = false
             @State private var isHighlighted: Bool = false
@@ -264,7 +275,7 @@ extension WidgetLibrary.UI {
                     },
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
-                    fgColour: self.isAlteredForReadability ? Theme.base : .white,
+                    fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
