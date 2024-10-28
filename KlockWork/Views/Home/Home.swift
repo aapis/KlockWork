@@ -64,7 +64,6 @@ struct Home: View {
                             .border(width: 1, edges: [.trailing], color: Theme.rowColour)
                     }
 
-//                    Divider().background(Theme.rowColour)
                     ZStack(alignment: .leading) {
                         InspectorAndMain
                         LinearGradient(colors: [Theme.base, .clear], startPoint: .leading, endPoint: .trailing)
@@ -305,8 +304,6 @@ extension Home {
     /// Fires when you change companies, resets children
     /// - Returns: Void
     private func actionOnChangeCompany() -> Void {
-        self.nav.session.project = nil
-        self.nav.session.job = nil
         self.createToolbarButtons()
     }
 }
