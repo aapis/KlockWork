@@ -119,6 +119,7 @@ extension Today.LogTable {
         @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
         @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
         @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
+
         public var records: [LogRecord]
 
         var body: some View {
@@ -154,6 +155,7 @@ extension Today.LogTable {
         public struct Chronologic: View {
             typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
+            @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
             public var date: Date? = Date()
             private let page: PageConfiguration.AppPage = .today
             @State private var searchText: String = ""
@@ -171,6 +173,7 @@ extension Today.LogTable {
                 }
                 .onAppear(perform: self.findRecords)
                 .onChange(of: nav.session.date) { self.findRecords() }
+                .onChange(of: self.tableSortOrder) { self.findRecords() }
                 .onChange(of: nav.saved) {
                     if nav.saved {
                         self.findRecords()
@@ -201,6 +204,7 @@ extension Today.LogTable {
         /// A list of rows that are grouped by Job
         public struct Grouped: View {
             @EnvironmentObject public var nav: Navigation
+            @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
             private let page: PageConfiguration.AppPage = .today
             @State private var grouped: [FancyStaticTextField] = []
             @State private var records: [LogRecord] = []
@@ -230,6 +234,7 @@ extension Today.LogTable {
         public struct Summarized: View {
             typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
+            @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
             public var date: Date? = nil
             private let page: PageConfiguration.AppPage = .today
             // @TODO: needed?
@@ -261,6 +266,7 @@ extension Today.LogTable {
         
         /// A list of events pulled from the user's connected calendar
         public struct Calendar: View {
+            @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
             @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
             // @TODO: needed?
             //        @State private var searchText: String = ""
@@ -285,7 +291,7 @@ extension Today.LogTable.Headers {
 extension Today.LogTable.TabContent.Chronologic {
     private func findRecords() -> Void {
         DispatchQueue.with(background: {
-            return CoreDataRecords(moc: self.nav.moc).forDate(nav.session.date)
+            return CoreDataRecords(moc: self.nav.moc).forDate(nav.session.date, sort: NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: self.tableSortOrder == 1 ? true : false))
         }, completion: { recordsForToday in
             self.records = recordsForToday!
         })
@@ -295,7 +301,7 @@ extension Today.LogTable.TabContent.Chronologic {
 extension Today.LogTable.TabContent.Grouped {
     private func findRecords() -> Void {
         DispatchQueue.with(background: {
-            return CoreDataRecords(moc: self.nav.moc).forDate(nav.session.date)
+            return CoreDataRecords(moc: self.nav.moc).forDate(nav.session.date, sort: NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: self.tableSortOrder == 1 ? true : false))
         }, completion: { recordsForToday in
             self.records = recordsForToday!
             grouped = CoreDataRecords(moc: self.nav.moc).createExportableGroupedRecordsAsViews(self.records)
@@ -306,7 +312,7 @@ extension Today.LogTable.TabContent.Grouped {
 extension Today.LogTable.TabContent.Summarized {
     private func findRecords() -> Void {
         DispatchQueue.with(background: {
-            return CoreDataRecords(moc: self.nav.moc).forDate(nav.session.date)
+            return CoreDataRecords(moc: self.nav.moc).forDate(nav.session.date, sort: NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: self.tableSortOrder == 1 ? true : false))
         }, completion: { recordsForToday in
             self.records = recordsForToday!
         })

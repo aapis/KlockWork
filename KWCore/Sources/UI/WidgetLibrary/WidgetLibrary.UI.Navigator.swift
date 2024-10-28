@@ -84,7 +84,8 @@ extension WidgetLibrary.UI {
         }
 
         init() {
-            Mode.allCases.forEach { tab in
+            // @TODO: temp removing folders so it can be finished or removed later
+            Mode.allCases.filter({$0 != .folders}).forEach { tab in
                 buttons.append(tab.button)
             }
         }
@@ -115,7 +116,7 @@ extension WidgetLibrary.UI.Navigator {
         }
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: 0) {
                 VStack(spacing: 0) {
                     self.ListHeader
                     UI.ResourcePath(
@@ -130,27 +131,30 @@ extension WidgetLibrary.UI.Navigator {
                 if self.companies.count(where: {$0.alive == true}) > 0 {
                     if self.type == .folders {
                         LazyVGrid(columns: self.columns, alignment: .leading) {
-                            switch self.depth {
-                            case 0:
-                                if self.companies.count  > 0 {
-                                    ForEach(self.companies, id: \.objectID) { company in
-                                        Folder(entity: company)
-                                    }
-                                }
-                            case 1:
-                                if self.projects.count > 0 {
-                                    ForEach(self.projects, id: \.objectID) { project in
-                                        Folder(entity: project)
-                                    }
-                                }
-                            case 2:
-                                if self.jobs.count > 0 {
-                                    ForEach(self.jobs, id: \.objectID) { job in
-                                        Folder(entity: job)
-                                    }
-                                }
-                            default: EmptyView()
+                            ForEach(self.companies, id: \.objectID) { company in
+                                Folder(entity: company)
                             }
+//                            switch self.depth {
+//                            case 0:
+//                                if self.companies.count  > 0 {
+//                                    ForEach(self.companies, id: \.objectID) { company in
+//                                        Folder(entity: company)
+//                                    }
+//                                }
+//                            case 1:
+//                                if self.projects.count > 0 {
+//                                    ForEach(self.projects, id: \.objectID) { project in
+//                                        Folder(entity: project)
+//                                    }
+//                                }
+//                            case 2:
+//                                if self.jobs.count > 0 {
+//                                    ForEach(self.jobs, id: \.objectID) { job in
+//                                        Folder(entity: job)
+//                                    }
+//                                }
+//                            default: EmptyView()
+//                            }
                         }
                         .frame(maxWidth: 800)
                         .padding()
@@ -394,9 +398,9 @@ extension WidgetLibrary.UI.Navigator {
                         if self.isPresented {
                             self.colour.blendMode(.softLight)
                         }
-                        Image(systemName: self.isPresented ? "minus" : self.isHighlighted ? "folder.fill" : "folder")
+                        Image(systemName: self.isPresented ? "star.fill" : self.isHighlighted ? "folder.fill" : "folder")
                             // @TODO: create a ShapeStyle for this
-                            .foregroundStyle(self.isPresented ? .white : self.viewModeIndex == 1 ? self.colour.isBright() ? Theme.base : .white : self.colour)
+                            .foregroundStyle(self.isPresented ? .yellow : self.viewModeIndex == 1 ? self.colour.isBright() ? Theme.base : .white : self.colour)
                     }
                     .frame(width: 30, height: 30)
                     .cornerRadius(5)
@@ -444,14 +448,43 @@ extension WidgetLibrary.UI.Navigator {
             @State private var relatedEntities: [PageConfiguration.EntityType] = []
             @State private var isPresented: Bool = false
             @State private var isHighlighted: Bool = false
+            private var columns: [GridItem] {
+                return Array(repeating: .init(.flexible(minimum: 100)), count: 6)
+            }
 
             var body: some View {
+                VStack {
+                    switch self.depth {
+                    case 0:
+                        Text("Companies")
+                        if self.entity is Company {
+                            Main
+                        }
+                    case 1:
+                        Text("Projects")
+                        if self.entity is Project {
+                            Main
+                        }
+                    case 2:
+                        Text("Jobs")
+                        if self.entity is Job {
+                            Main
+                        }
+                    default: EmptyView()
+                    }
+                }
+                .onChange(of: self.depth) { self.actionOnAppear() }
+            }
+
+            var Main: some View {
                 VStack {
                     Button {
                         self.actionOnTap()
                         self.isPresented.toggle()
                     } label: {
-                        UI.IconBlock(type: .projects, text: self.label, colour: self.colour)
+//                        if !self.isPresented {
+                        UI.Blocks.Icon(type: .projects, text: self.label, colour: self.colour)
+//                        }
                     }
                     .help(self.label)
                     .buttonStyle(.plain)
@@ -462,9 +495,11 @@ extension WidgetLibrary.UI.Navigator {
                         }
                     }
                 }
+                .contextMenu { self.ContextMenu }
                 .onAppear(perform: self.actionOnAppear)
-                .onChange(of: self.viewModeIndex) { self.actionOnAppear() }
-                .onChange(of: self.showPublished) { self.actionOnAppear() }
+//                .onChange(of: self.depth) { self.actionOnAppear() }
+//                .onChange(of: self.viewModeIndex) { self.actionOnAppear() }
+//                .onChange(of: self.showPublished) { self.actionOnAppear() }
             }
 
             var ButtonContent: some View {
@@ -477,34 +512,54 @@ extension WidgetLibrary.UI.Navigator {
             }
 
             @ViewBuilder var Children: some View {
-                ForEach(self.children!, id: \.objectID) { child in
-                    if self.state.session.gif == .focus {
-                        switch self.entity {
-                        case is Company:
-                            if let child = child as? Company {
-                                if self.state.planning.companies.contains(child) {
-                                    Row(entity: child)
+                LazyVGrid(columns: self.columns, alignment: .leading) {
+                    ForEach(self.children!, id: \.objectID) { child in
+                        if self.state.session.gif == .focus {
+                            switch self.entity {
+                            case is Company:
+                                if let child = child as? Company {
+                                    if self.state.planning.companies.contains(child) {
+                                        Folder(entity: child)
+                                    }
                                 }
-                            }
-                        case is Project:
-                            if let child = child as? Project {
-                                if self.state.planning.projects.contains(child) {
-                                    Row(entity: child)
+                            case is Project:
+                                if let child = child as? Project {
+                                    if self.state.planning.projects.contains(child) {
+                                        Folder(entity: child)
+                                    }
                                 }
-                            }
-                        case is Job:
-                            if let child = child as? Job {
-                                if self.state.planning.jobs.contains(child) {
-                                    Row(entity: child)
+                            case is Job:
+                                if let child = child as? Job {
+                                    if self.state.planning.jobs.contains(child) {
+                                        Folder(entity: child)
+                                    }
                                 }
+                            default: EmptyView()
                             }
-                        default: EmptyView()
+                        } else {
+                            Folder(entity: child)
                         }
-                    } else {
-                        Row(entity: child)
                     }
                 }
                 .padding(.leading)
+            }
+
+            @ViewBuilder var ContextMenu: some View {
+                switch self.entity {
+                case is Company:
+                    if let entity = self.entity as? Company {
+                        UI.GroupHeaderContextMenu(page: entity.pageDetailType, entity: entity)
+                    }
+                case is Project:
+                    if let entity = self.entity as? Project {
+                        UI.GroupHeaderContextMenu(page: entity.pageDetailType, entity: entity)
+                    }
+                case is Job:
+                    if let entity = self.entity as? Job {
+                        UI.GroupHeaderContextMenu(page: entity.pageDetailType, entity: entity)
+                    }
+                default: EmptyView()
+                }
             }
         }
     }
@@ -514,7 +569,6 @@ extension WidgetLibrary.UI.Navigator.List {
     /// Onload handler. Finds companies
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-
         self.companies = CoreDataCompanies(moc: self.state.moc).all(
             allowKilled: self.showPublished,
             allowPlanMembersOnly: self.state.session.gif == .focus,
@@ -716,6 +770,7 @@ extension WidgetLibrary.UI.Navigator.List.Folder {
     /// Onload handler. Sets view state
     /// - Returns: Void
     private func actionOnAppear() -> Void {
+        print("DERPO depth=\(self.depth)")
         switch self.entity {
         case is Company:
             let company = self.entity as! Company
@@ -737,7 +792,7 @@ extension WidgetLibrary.UI.Navigator.List.Folder {
             self.created = company.createdDate
             self.colour = company.alive ? company.backgroundColor : .gray.opacity(0.7)
             self.relatedEntities = [.people]
-            self.isPresented = company == self.state.session.company
+            self.isPresented = self.depth == 0 && company == self.state.session.company
         case is Project:
             let project = self.entity as! Project
             let jobs = (project.jobs?.allObjects as? [Job] ?? [])
@@ -751,7 +806,7 @@ extension WidgetLibrary.UI.Navigator.List.Folder {
             self.lastModified = project.lastUpdate
             self.created = project.created
             self.colour = project.alive ? project.backgroundColor : .gray.opacity(0.7)
-            self.isPresented = project == self.state.session.project
+            self.isPresented = self.depth == 1 && project == self.state.session.project
         case is Job:
             let job = self.entity as! Job
             self.label = job.title ?? job.jid.string
@@ -760,7 +815,7 @@ extension WidgetLibrary.UI.Navigator.List.Folder {
             self.created = job.created
             self.colour = job.alive ? job.backgroundColor : .gray.opacity(0.7)
             self.relatedEntities = [.tasks, .records, .notes, .definitions]
-            self.isPresented = job == self.state.session.job
+            self.isPresented = self.depth == 2 && job == self.state.session.job
         default:
             self.label = "Error: Invalid company name"
             self.children = []

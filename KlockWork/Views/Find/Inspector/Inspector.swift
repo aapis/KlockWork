@@ -12,10 +12,11 @@ import EventKit
 
 public struct Inspector: View, Identifiable {
     @EnvironmentObject public var nav: Navigation
-    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
     public let id: UUID = UUID()
     public var entity: NSManagedObject? = nil
     public var event: EKEvent? = nil
+    public var location: WidgetLocation = .inspector
     private let panelWidth: CGFloat = 400
     private var job: Job? = nil
     private var project: Project? = nil
@@ -35,7 +36,8 @@ public struct Inspector: View, Identifiable {
                 FancyButtonv2(
                     text: "Close",
                     action: {nav.session.search.cancel() ; nav.setInspector() ; self.isSearchStackShowing = false},
-                    icon: "xmark",
+                    icon: "xmark.square.fill",
+                    iconWhenHighlighted: "xmark.square",
                     showLabel: false,
                     size: .tiny,
                     type: .clear
@@ -51,8 +53,10 @@ public struct Inspector: View, Identifiable {
             }
             Spacer()
         }
-        .padding()
+        .padding([.trailing, .top, .bottom])
+        .padding(.leading, self.location == .content ? 0 : 20)
         .frame(maxWidth: panelWidth)
+        .background(self.location == .content ? Theme.rowColour : .clear)
     }
     public var EntityInspectorBody: some View {
         VStack(alignment: .leading) {
@@ -80,9 +84,10 @@ public struct Inspector: View, Identifiable {
         }
     }
 
-    init(entity: NSManagedObject? = nil, event: EKEvent? = nil) {
+    init(entity: NSManagedObject? = nil, event: EKEvent? = nil, location: WidgetLocation = .inspector) {
         self.entity = entity
         self.event = event
+        self.location = location
 
         if entity != nil {
             switch self.entity {
@@ -643,6 +648,12 @@ public struct Inspector: View, Identifiable {
                         Spacer()
                     }
                     Divider()
+                    VStack(spacing: 1) {
+                        ForEach(defs, id: \.objectID) { definition in
+                            UI.Blocks.Definition(definition: definition)
+                        }
+                    }
+                    .clipShape(.rect(cornerRadius: 5))
                 }
 
                 Spacer()
@@ -716,27 +727,17 @@ public struct Inspector: View, Identifiable {
                     Divider()
                 }
 
-                if let definition = self.item.definition {
-                    HStack(alignment: .center) {
-                        Image(systemName: "list.bullet").symbolRenderingMode(.hierarchical)
-                        Text("Definition")
-                    }
-                    Divider()
-                    HStack(alignment: .top, spacing: 10) {
-                        Text(definition)
-                            .contextMenu {
-                                Button {
-                                    ClipboardHelper.copy(definition)
-                                } label: {
-                                    Text("Copy to clipboard")
-                                }
-                            }
-                        Spacer()
-                    }
-                    .help("Full definition text")
-                    Divider()
+                HStack(alignment: .center) {
+                    Image(systemName: "list.bullet").symbolRenderingMode(.hierarchical)
+                    Text("Definition")
                 }
-
+                Divider()
+                VStack(alignment: .leading, spacing: 1) {
+                    UI.Blocks.Definition(definition: self.item)
+                        .help("Full definition text")
+                }
+                .clipShape(.rect(cornerRadius: 5))
+                Divider()
                 Spacer()
                 HStack(alignment: .top, spacing: 10) {
                     FancyButtonv2(

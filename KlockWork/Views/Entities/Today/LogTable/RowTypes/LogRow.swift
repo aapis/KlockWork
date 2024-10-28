@@ -339,14 +339,7 @@ struct LogRow: View, Identifiable {
             self.nav.session.job = job
             if let project = job.project {
                 self.nav.session.project = project
-                print("DERPO company=\(project.company?.name ?? "Invalid") stored=\(self.nav.session.company?.name ?? "Invalid")")
-                // @TODO: this doesn't work? company doesn't set but the other two do
-//                if let company = project.company {
-//                    self.nav.session.company = company
-//                }
-                print("DERPO company=\(project.company?.name ?? "Invalid") stored=\(self.nav.session.company?.name ?? "Invalid")")
-                print("DERPO project=\(project.name ?? "Invalid") stored=\(self.nav.session.project?.name ?? "Invalid")")
-                print("DERPO job=\(job.title ?? job.jid.string ?? "Invalid") stored=\(self.nav.session.job?.jid.string ?? "Invalid")")
+                self.nav.session.company = project.company
             }
         }
     }

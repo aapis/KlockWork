@@ -82,7 +82,7 @@ struct SidebarItem: View, Identifiable {
     public var showButton: Bool = true
     public var contextMenu: AnyView?
 
-    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearching: Bool = false
 
     @State private var highlighted: Bool = false
 

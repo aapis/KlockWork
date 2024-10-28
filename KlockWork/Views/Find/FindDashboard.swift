@@ -14,7 +14,7 @@ struct FindDashboard: View {
     typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var nav: Navigation
     @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
-    @AppStorage("CreateEntitiesWidget.isSearching") private var isSearching: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearching") private var isSearching: Bool = false
     @AppStorage("dashboard.showWelcomeHeader") private var showWelcomeHeader: Bool = true
     @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
     @State public var searching: Bool = false
@@ -59,7 +59,7 @@ struct FindDashboard: View {
                     onSubmit: onSubmit,
                     onReset: onReset
                 )
-                .clipShape(.rect(topLeadingRadius: self.showWelcomeHeader ? 0 : 5, topTrailingRadius: self.showWelcomeHeader ? 0 : 5))
+                .clipShape(.rect(topLeadingRadius: self.showWelcomeHeader || self.location == .sidebar ? 0 : 5, topTrailingRadius: self.showWelcomeHeader || self.location == .sidebar ? 0 : 5))
             }
             Divider()
 
@@ -76,16 +76,16 @@ struct FindDashboard: View {
                             .opacity(0.3)
                         UI.Links(location: self.location, isSearching: !searching && activeSearchText.count >= 2)
                     }
-                    .frame(height: self.location == .content ? 250 : 400)
+                    .frame(height: 250)
                 }
-                .background(Theme.rowColour)
+                .background(self.location == .content ? Theme.rowColour : .clear)
                 .foregroundStyle(.gray)
             }
 
             if !searching && activeSearchText.count >= 2 {
                 GridRow {
-                    if location == .content {
-                        HStack(alignment: .top, spacing: 1) {
+                    if self.location == .content {
+                        HStack(alignment: .top, spacing: 0) {
                             Suggestions(
                                 searchText: $activeSearchText,
                                 publishedOnly: $allowAlive,
@@ -101,8 +101,10 @@ struct FindDashboard: View {
                                 location: location
                             )
                             
-                            if nav.session.search.inspectingEntity != nil {
-                                Inspector(entity: nav.session.search.inspectingEntity!)
+                            if let entity = nav.session.search.inspectingEntity {
+                                Inspector(entity: entity, location: .content)
+                            } else if let event = nav.session.search.inspectingEvent {
+                                Inspector(event: event, location: .content)
                             }
                         }
                     } else if location == .sidebar {
@@ -125,8 +127,21 @@ struct FindDashboard: View {
             }
 
             if showingTypes {
-                if location == .content {
+                if self.location == .content {
                     self.TypeFilter
+                } else if self.location == .sidebar {
+                    Spacer()
+                    GridRow {
+                        ZStack(alignment: .topLeading) {
+                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                .blendMode(.softLight)
+                                .opacity(0.3)
+                            UI.Links(location: self.location, isSearching: !searching && activeSearchText.count >= 2)
+                        }
+                        .frame(height: 300)
+                    }
+                    .background(.clear)
+                    .foregroundStyle(.gray)
                 }
             }
 

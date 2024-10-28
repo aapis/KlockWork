@@ -12,18 +12,15 @@ import KWCore
 
 struct Home: View {
     typealias APage = PageConfiguration.AppPage
-    typealias Entity = PageConfiguration.EntityType
-    typealias UI = WidgetLibrary.UI
-    @Environment(\.managedObjectContext) var moc
     @EnvironmentObject public var nav: Navigation
-    @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
-    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
-    @AppStorage("CreateEntitiesWidget.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
-    @AppStorage("CreateEntitiesWidget.isCreateStackShowing") private var isCreateStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isCreateStackShowing") private var isCreateStackShowing: Bool = false
     @AppStorage("general.showSessionInspector") public var showSessionInspector: Bool = false
     @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
     @AppStorage("notifications.interval") private var notificationInterval: Int = 0
+    @AppStorage("widgetlibrary.ui.isSidebarPresented") private var isSidebarPresented: Bool = false
     @State public var selectedSidebarButton: Page = .dashboard
     @State private var timer: Timer? = nil
 
@@ -59,12 +56,12 @@ struct Home: View {
         NavigationStack {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(alignment: .top, spacing: 0) {
-                    TabBackground
-                    if nav.sidebar != nil {
+                    if nav.sidebar != nil && self.isSidebarPresented {
+                        TabBackground
                         Sidebar
+                            .border(width: 1, edges: [.trailing], color: Theme.rowColour)
                     }
 
-                    Divider().background(Theme.rowColour)
                     ZStack(alignment: .leading) {
                         InspectorAndMain
                         LinearGradient(colors: [Theme.base, .clear], startPoint: .leading, endPoint: .trailing)
@@ -98,15 +95,8 @@ struct Home: View {
             VStack(alignment: .leading, spacing: 0) {
                 GlobalSidebarWidgets()
 
-                if !isSearchStackShowing && !isUpcomingTaskStackShowing {
-                    if isDatePickerPresented {
-                        ZStack {
-                            nav.sidebar
-                            Theme.base.opacity(0.7)
-                        }
-                    } else {
-                        nav.sidebar
-                    }
+                if !self.isSearchStackShowing && !self.isUpcomingTaskStackShowing {
+                    nav.sidebar
                 }
             }
         }
@@ -143,7 +133,7 @@ struct Home: View {
                 UI.AppNavigation()
                 nav.view
                     .navigationTitle(nav.pageTitle())
-                    .disabled(isDatePickerPresented)
+                    .disabled(self.nav.inspector != nil)
             }
 
             if nav.inspector != nil {
@@ -168,13 +158,12 @@ extension Home {
     /// Onload handler. Sets view state, finds events, creates toolbar buttons, monitors keyboard for Esc
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        nav.parent = selectedSidebarButton
-        checkForEvents()
+        self.nav.parent = self.selectedSidebarButton
+        self.checkForEvents()
         self.createToolbarButtons()
 
         KeyboardHelper.monitor(key: .keyDown, callback: {
             self.isSearchStackShowing = false
-            self.isDatePickerPresented = false
             self.isCreateStackShowing = false
             self.nav.session.search.reset()
             self.nav.session.search.inspectingEntity = nil
@@ -211,7 +200,7 @@ extension Home {
                 SidebarButton(
                     destination: AnyView(Today()),
                     pageType: .today,
-                    iconAsImage: Entity.records.icon,
+                    iconAsImage: EType.records.icon,
                     label: "Today",
                     sidebar: AnyView(TodaySidebar()),
                     altMode: PageAltMode(
@@ -229,8 +218,8 @@ extension Home {
                 SidebarButton(
                     destination: AnyView(CompanyDashboard()),
                     pageType: .companies,
-                    iconAsImage: Entity.companies.icon,
-                    label: Entity.companies.label,
+                    iconAsImage: EType.companies.icon,
+                    label: EType.companies.label,
                     sidebar: AnyView(DefaultCompanySidebar())
                 )
             )
@@ -241,8 +230,8 @@ extension Home {
                 SidebarButton(
                     destination: AnyView(ProjectsDashboard()),
                     pageType: .projects,
-                    iconAsImage: Entity.projects.icon,
-                    label: Entity.projects.label,
+                    iconAsImage: EType.projects.icon,
+                    label: EType.projects.label,
                     sidebar: AnyView(DefaultCompanySidebar())
                 )
             )
@@ -253,8 +242,8 @@ extension Home {
                 SidebarButton(
                     destination: AnyView(JobDashboard()),
                     pageType: .jobs,
-                    iconAsImage: Entity.jobs.icon,
-                    label: Entity.jobs.label,
+                    iconAsImage: EType.jobs.icon,
+                    label: EType.jobs.label,
                     sidebar: AnyView(JobDashboardSidebar())
                 )
             )
@@ -280,7 +269,7 @@ extension Home {
     /// Updates the dashboard icon upcoming event indicator
     /// - Returns: EventIndicatorStatus
     private func updateIndicator() -> EventIndicatorStatus {
-        let ce = CoreDataCalendarEvent(moc: moc)
+        let ce = CoreDataCalendarEvent(moc: self.nav.moc)
         var upcoming: [EKEvent] = []
         var inProgress: [EKEvent] = []
 
@@ -313,8 +302,6 @@ extension Home {
     /// Fires when you change companies, resets children
     /// - Returns: Void
     private func actionOnChangeCompany() -> Void {
-        self.nav.session.project = nil
-        self.nav.session.job = nil
         self.createToolbarButtons()
     }
 }

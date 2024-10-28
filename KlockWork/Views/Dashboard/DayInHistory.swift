@@ -9,27 +9,48 @@
 import SwiftUI
 import KWCore
 
-struct DayInHistory {
+struct DayInHistory: View {
+    @EnvironmentObject public var state: Navigation
     public var year: Int
     public var date: Date
     public var count: Int
     public var highlight: Bool {
         return count == 0
     }
-
-    public func linkLabel() -> String {
-        if count == 1 {
-            return "\(count) record on \(self.formatDate())"
-        } else if count > 0 {
-            return "\(count) records on \(self.formatDate())"
-        }
-
-        return "No records from \(self.formatDate("yyyy"))"
+    public var isToday: Bool {
+        return DateHelper.todayShort(format: "yyyy") == String(self.year)
     }
 
-    private func formatDate(_ format: String = "MMM d, yyyy") -> String {
-        let df = DateFormatter()
-        df.dateFormat = format
-        return df.string(from: date)
+    var body: some View {
+        SidebarItem(
+            data: self.linkLabel(),
+            help: self.linkLabel(),
+            icon: "chevron.right",
+            orientation: .right,
+            action: {
+                self.state.session.date = self.date
+                self.state.to(.today)
+            },
+            showBorder: false,
+            showButton: false
+        )
+        .background(self.isToday ? .yellow.opacity(0.5) : self.highlight ? Theme.base.opacity(0.3) : Theme.cPurple)
+        .foregroundStyle(self.highlight ? Theme.lightWhite : .white)
+    }
+}
+
+extension DayInHistory {
+    /// Determines the correct text to display for each day block
+    /// - Returns: String
+    public func linkLabel() -> String {
+        if self.isToday {
+            return "\(self.count) \(self.count == 1 ? "record" : "records") today"
+        } else {
+            if self.count > 0 {
+                return "\(self.count) \(self.count == 1 ? "record" : "records") from \(self.year)"
+            }
+        }
+
+        return "No records from \(self.year)"
     }
 }

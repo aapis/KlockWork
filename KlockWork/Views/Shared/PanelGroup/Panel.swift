@@ -100,7 +100,7 @@ struct CompanyPanel: View {
     typealias UI = WidgetLibrary.UI
     public var position: Panel.Position
 
-    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearching: Bool = false
 
     @State private var showSearch: Bool = false
     @State private var searchText: String = ""
@@ -266,7 +266,7 @@ struct ProjectPanel: View {
     typealias UI = WidgetLibrary.UI
     public var position: Panel.Position
 
-    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearching: Bool = false
 
     @State private var showSearch: Bool = false
     @State private var searchText: String = ""
@@ -388,7 +388,7 @@ public struct JobPanel: View {
     typealias UI = WidgetLibrary.UI
     public var position: Panel.Position
 
-    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearching: Bool = false
 
     @State private var showSearch: Bool = false
     @State private var searchText: String = ""
@@ -490,7 +490,7 @@ public struct NotePanel: View {
     typealias UI = WidgetLibrary.UI
     public var position: Panel.Position
 
-    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearching: Bool = false
 
     @State private var showSearch: Bool = false
     @State private var searchText: String = ""

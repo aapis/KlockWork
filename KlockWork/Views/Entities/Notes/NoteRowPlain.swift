@@ -14,7 +14,7 @@ struct NoteRowPlain: View {
     public var moc: NSManagedObjectContext
     public var icon: String = "chevron.right"
 
-    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearching: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearching: Bool = false
 
     @EnvironmentObject public var nav: Navigation
 

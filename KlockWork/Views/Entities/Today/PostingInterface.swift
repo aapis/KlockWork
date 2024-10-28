@@ -14,7 +14,7 @@ extension Today {
         @EnvironmentObject public var nav: Navigation
         @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
         @AppStorage("general.experimental.cli") private var allowCLIMode: Bool = false
-        @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
         @FocusState private var primaryTextFieldInFocus: Bool
         @State private var text: String = ""
         @State private var errorNoJob: Bool = false

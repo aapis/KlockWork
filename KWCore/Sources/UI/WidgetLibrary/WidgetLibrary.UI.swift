@@ -20,324 +20,6 @@ extension WidgetLibrary {
             "excellent"
         ]
 
-        public struct Buttons {
-            public enum UIButtonType {
-                case resetUserChoices, createNote, createTask, createRecord, createPerson, createCompany, createProject,
-                createJob, createTerm, createDefinition, historyPrevious, settings, CLIMode, CLIFilter
-            }
-
-            struct ResetUserChoices: View {
-                @EnvironmentObject public var state: Navigation
-                public var onActionClear: (() -> Void)?
-
-                var body: some View {
-                    if self.state.session.job != nil || self.state.session.project != nil || self.state.session.company != nil {
-                        FancyButtonv2(
-                            text: "Reset interface to default state",
-                            action: self.onActionClear != nil ? self.onActionClear : self.defaultClearAction,
-                            icon: "arrow.clockwise.square",
-                            iconWhenHighlighted: "arrow.clockwise.square.fill",
-                            showLabel: false,
-                            size: .small,
-                            type: .clear,
-                            font: .title
-                        )
-                        .help("Reset interface to default state")
-                        .frame(width: 25)
-                    } else {
-                        EmptyView()
-                    }
-                }
-            }
-
-            struct CreateNote: View {
-                @EnvironmentObject public var state: Navigation
-                public var onAction: (() -> Void)? = {}
-
-                var body: some View {
-                    FancyButtonv2(
-                        text: "Create",
-                        action: self.onAction,
-                        icon: "plus.square",
-                        iconWhenHighlighted: "plus.square.fill",
-                        showLabel: false,
-                        size: .small,
-                        type: .clear,
-                        redirect: AnyView(NoteCreate()),
-                        pageType: .notes,
-                        sidebar: AnyView(NoteCreateSidebar()),
-                        font: .title
-                    )
-                    .help("Create a new note")
-                    .frame(width: 25)
-                }
-            }
-
-            struct CreatePerson: View {
-                @EnvironmentObject public var state: Navigation
-                public var onAction: (() -> Void)? = {}
-
-                var body: some View {
-                    FancyButtonv2(
-                        text: "Create",
-                        action: { self.onAction?() ; self.state.to(.peopleDetail) },
-                        icon: "plus.square",
-                        iconWhenHighlighted: "plus.square.fill",
-                        showLabel: false,
-                        size: .small,
-                        type: .clear,
-                        font: .title
-                    )
-                    .help("Create a new contact")
-                    .frame(width: 25)
-                }
-            }
-
-            struct CreateCompany: View {
-                @EnvironmentObject public var state: Navigation
-                public var onAction: (() -> Void)? = {}
-
-                var body: some View {
-                    FancyButtonv2(
-                        text: "Create",
-                        action: { self.onAction?() ; self.state.to(.companyDetail) },
-                        icon: "plus.square",
-                        iconWhenHighlighted: "plus.square.fill",
-                        showLabel: false,
-                        size: .small,
-                        type: .clear,
-                        font: .title
-                    )
-                    .help("Create a new company")
-                    .frame(width: 25)
-                }
-            }
-
-            struct CreateProject: View {
-                @EnvironmentObject public var state: Navigation
-                public var onAction: (() -> Void)? = {}
-
-                var body: some View {
-                    FancyButtonv2(
-                        text: "Create",
-                        action: { self.onAction?() ; self.state.to(.projectDetail) },
-                        icon: "plus.square",
-                        iconWhenHighlighted: "plus.square.fill",
-                        showLabel: false,
-                        size: .small,
-                        type: .clear,
-                        font: .title
-                    )
-                    .help("Create a new project")
-                    .frame(width: 25)
-                }
-            }
-
-            struct CreateJob: View {
-                @EnvironmentObject public var state: Navigation
-                @AppStorage("jobdashboard.explorerVisible") private var explorerVisible: Bool = true
-                @AppStorage("jobdashboard.editorVisible") private var editorVisible: Bool = true
-
-                var body: some View {
-                    FancyButtonv2(
-                        text: "Create",
-                        action: self.actionOnTap,
-                        icon: "plus.square",
-                        iconWhenHighlighted: "plus.square.fill",
-                        showLabel: false,
-                        size: .small,
-                        type: .clear,
-                        font: .title
-                    )
-                    .help("Create a new job")
-                    .frame(width: 25)
-                }
-            }
-
-            struct CreateTerm: View {
-                @EnvironmentObject public var state: Navigation
-                public var onAction: (() -> Void)? = {}
-
-                var body: some View {
-                    FancyButtonv2(
-                        text: "Create",
-                        action: { self.onAction?() ; self.state.to(.terms) },
-                        icon: "plus.square",
-                        iconWhenHighlighted: "plus.square.fill",
-                        showLabel: false,
-                        size: .small,
-                        type: .clear,
-                        font: .title
-                    )
-                    .help("Create a new taxonomy term")
-                    .frame(width: 25)
-                }
-            }
-
-            struct CreateDefinition: View {
-                @EnvironmentObject public var state: Navigation
-                public var onAction: (() -> Void)? = {}
-
-                var body: some View {
-                    FancyButtonv2(
-                        text: "Create",
-                        action: { self.onAction?() ; self.state.to(.definitionDetail) },
-                        icon: "plus.square",
-                        iconWhenHighlighted: "plus.square.fill",
-                        showLabel: false,
-                        size: .small,
-                        type: .clear,
-                        font: .title
-                    )
-                    .help("Create a new term definition")
-                    .frame(width: 25)
-                }
-            }
-
-            struct CreateRecord: View {
-                @EnvironmentObject public var state: Navigation
-                public var onAction: (() -> Void)? = {}
-                @State private var isHighlighted: Bool = false
-                @State private var selectedPage: Page = .dashboard
-
-                var body: some View {
-                    FancyButtonv2(
-                        text: self.state.session.job != nil ? "Log to job \(self.state.session.job!.title ?? self.state.session.job!.jid.string)" : "Log",
-                        action: self.onAction,
-                        icon: "plus.square",
-                        iconWhenHighlighted: "plus.square.fill",
-                        showLabel: false,
-                        size: .small,
-                        type: .clear,
-                        font: .title
-                    )
-                    .help("Create a new record")
-                    .frame(width: 25)
-                    .disabled(self.state.session.job == nil)
-                    .opacity(self.state.session.job == nil ? 0.5 : 1)
-                }
-            }
-
-            struct HistoryPrevious: View {
-                @EnvironmentObject public var state: Navigation
-                public var onAction: (() -> Void)? = {}
-                @State private var isHighlighted: Bool = false
-                @State private var selectedPage: Page = .dashboard
-                private var isEmpty: Bool { self.state.history.recent.count == 0 }
-
-                var body: some View {
-                    Button {
-                        if let previous = self.state.history.previous() {
-                            self.state.to(previous.page, addToHistory: false)
-                            self.selectedPage = previous.page
-                            self.onAction?()
-                        }
-                    } label: {
-                        HStack(alignment: .center) {
-                            Image(systemName: "chevron.left")
-                            Text("Back")
-                        }
-                        .padding(8)
-                        .background(self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.6))
-                        .foregroundStyle(self.isHighlighted ? .white : Theme.lightWhite)
-                        .clipShape(.rect(cornerRadius: 5))
-                        .padding([.top, .bottom], 10)
-                    }
-                    .disabled(self.isEmpty)
-                    .keyboardShortcut(KeyEquivalent.leftArrow, modifiers: [.command])
-                    .buttonStyle(.plain)
-                    .useDefaultHover({ hover in !self.isEmpty ? self.isHighlighted = hover : nil})
-                }
-            }
-
-            struct Settings: View {
-                @EnvironmentObject public var state: Navigation
-                public var onAction: (() -> Void)? = {}
-                @State private var isHighlighted: Bool = false
-                @State private var selectedPage: Page = .dashboard
-
-                var body: some View {
-                    Button {
-                        self.onAction?()
-                    } label: {
-                        Image(systemName: "gear")
-                            .font(.title)
-                            .foregroundStyle(self.isHighlighted ? .white : Theme.lightWhite)
-                            .padding([.leading, .trailing])
-                            .padding([.top, .bottom], 10)
-                    }
-                    .keyboardShortcut(KeyEquivalent.leftArrow, modifiers: [.command])
-                    .buttonStyle(.plain)
-                    .useDefaultHover({ hover in self.isHighlighted = hover})
-                }
-            }
-
-            struct CLIMode: View {
-                @EnvironmentObject public var state: Navigation
-                @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
-                @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
-                public var onAction: (() -> Void)? = {}
-                @State private var isHighlighted: Bool = false
-                @State private var selectedPage: Page = .dashboard
-
-                var body: some View {
-                    if self.cliEnabled {
-                        FancyButtonv2(
-                            text: "Command line mode",
-                            action: {self.commandLineMode.toggle() ; self.onAction?()},
-                            icon: self.commandLineMode ? "apple.terminal.fill" : "apple.terminal",
-                            iconWhenHighlighted: self.commandLineMode ? "apple.terminal" : "apple.terminal.fill",
-                            showLabel: false,
-                            size: .small,
-                            type: .clear,
-                            font: .title
-                        )
-                        .help(self.commandLineMode ? "Exit CLI mode" : "Enter CLI mode")
-                        .frame(width: 25)
-                    }
-                }
-            }
-
-            struct CLIFilter: View {
-                @EnvironmentObject public var state: Navigation
-                @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
-                @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
-                @AppStorage("today.cli.showFilter") private var showCLIFilter: Bool = false
-
-                var body: some View {
-                    if self.cliEnabled && self.commandLineMode {
-                        FancyButtonv2(
-                            text: "Filter",
-                            action: {self.showCLIFilter.toggle()},
-                            icon: "line.3.horizontal.decrease",
-                            bgColour: self.state.session.appPage.primaryColour.opacity(0.2),
-                            showLabel: false,
-                            size: .small,
-                            type: .clear
-                        )
-                        .mask(Circle())
-                    }
-                }
-            }
-
-            struct Close: View {
-//                @EnvironmentObject public var state: Navigation
-                public var action: () -> Void
-
-                var body: some View {
-                    FancyButtonv2(
-                        text: "Reset",
-                        action: self.action,
-                        icon: "xmark",
-                        showLabel: false,
-                        type: .clear,
-                        font: .title2
-                    )
-                    .frame(width: 18)
-                }
-            }
-        }
-
         struct ActiveIndicator: View {
             public var colour: Color = .white
             public var action: (() -> Void)? = nil
@@ -471,14 +153,14 @@ extension WidgetLibrary {
                                 case .settings: Buttons.Settings()
                                 case .createJob: Buttons.CreateJob()
                                 case .createNote: Buttons.CreateNote()
-//                                    case .createTask: Buttons.CreateTask()
+                                case .createTask: Buttons.CreateTask()
                                 case .createTerm: Buttons.CreateTerm()
                                 case .createPerson: Buttons.CreatePerson()
                                 case .createRecord: Buttons.CreateRecord()
                                 case .createCompany: Buttons.CreateCompany()
                                 case .createProject: Buttons.CreateProject()
                                 case .createDefinition: Buttons.CreateDefinition()
-                                default: EmptyView()
+                                case .sidebarToggle: Buttons.SidebarToggle()
                                 }
                             }
                         }
@@ -520,31 +202,29 @@ extension WidgetLibrary {
                     } label: {
                         HStack(alignment: .center) {
                             ZStack {
-                                RoundedRectangle(cornerRadius: 5)
+                                RoundedRectangle(cornerRadius: 20)
                                     .strokeBorder(self.isToday ? .yellow.opacity(0.6) : .gray, lineWidth: 1)
-                                    .fill(.white.opacity(self.isHighlighted ? 0.2 : 0.1))
+                                    .fill(self.isToday ? .yellow.opacity(self.isHighlighted ? 0.8 : 0.7) : .gray.opacity(self.isHighlighted ? 0.8 : 0.7))
                                 if !self.showDateOverlay {
                                     HStack {
                                         Image(systemName: "calendar")
-                                            .foregroundStyle(.gray)
                                         Text(self.date)
                                     }
+                                    .foregroundStyle(self.isToday ? Theme.base : Theme.lightWhite)
                                 }
                             }
                             .frame(width: 200)
                         }
                     }
-                    .foregroundStyle(self.isHighlighted ? .white : self.isToday ? .yellow.opacity(0.6) : .gray)
                     .buttonStyle(.plain)
                     .useDefaultHover({ hover in self.isHighlighted = hover})
                     .overlay {
                         if self.showDateOverlay {
-                            HStack {
-                                DatePicker("", selection: $sDate)
-                                Image(systemName: "xmark")
-                            }
+                            DatePicker("", selection: $sDate)
+                                .foregroundStyle(self.isToday ? Theme.base : Theme.lightBase)
                         }
                     }
+                    .onChange(of: self.sDate) { self.showDateOverlay.toggle() }
 
                     FancyButtonv2(
                         text: "Next day",
@@ -729,46 +409,6 @@ extension WidgetLibrary {
                     .onAppear(perform: self.actionOnAppear)
                     .help("\(self.count) \(self.type.label)")
                 }
-            }
-        }
-
-        struct IconBlock: View, Identifiable {
-            @EnvironmentObject private var state: Navigation
-            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
-            public var id: UUID = UUID()
-            public var type: Conf
-            public var text: String
-            public var colour: Color
-            @State private var isHighlighted: Bool = false
-
-            var body: some View {
-                VStack(alignment: .center, spacing: 0) {
-                    ZStack(alignment: .center) {
-                        (self.viewModeIndex == 0 ? Color.gray.opacity(self.isHighlighted ? 1 : 0.7) : self.colour.opacity(self.isHighlighted ? 1 : 0.7))
-                        VStack(alignment: .center, spacing: 0) {
-                            (self.isHighlighted ? self.type.selectedIcon : self.type.icon)
-                                .symbolRenderingMode(.hierarchical)
-                                .font(.largeTitle)
-//                                .foregroundStyle(self.viewModeIndex == 0 ? self.colour : self.colour.isBright() ? Theme.base : .white)
-                                .foregroundStyle(self.viewModeIndex == 0 ? self.colour : .white)
-                        }
-                        Spacer()
-                    }
-                    .frame(height: 65)
-
-                    ZStack(alignment: .center) {
-                        (self.isHighlighted ? Color.yellow : Theme.textBackground)
-                        VStack(alignment: .center, spacing: 0) {
-                            Text(self.text)
-                                .font(.system(.title3, design: .monospaced))
-                                .foregroundStyle(self.isHighlighted ? Theme.base : .gray)
-                        }
-                    }
-                    .frame(height: 25)
-                }
-                .frame(width: 65)
-                .clipShape(.rect(cornerRadius: 5))
-                .useDefaultHover({ hover in self.isHighlighted = hover })
             }
         }
 
@@ -1331,7 +971,7 @@ extension WidgetLibrary {
             @EnvironmentObject public var state: Navigation
             @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
             @AppStorage("searchbar.shared") private var searchText: String = ""
-            @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+            @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
             @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
             public var disabled: Bool = false
             public var placeholder: String? = "Search..."
@@ -1377,11 +1017,12 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: BoundSearchBar
         struct BoundSearchBar: View {
             @EnvironmentObject public var state: Navigation
             @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
             @AppStorage("searchbar.shared") private var searchText: String = ""
-            @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+            @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
             @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
             @Binding public var text: String
             public var disabled: Bool = false
@@ -1408,15 +1049,7 @@ extension WidgetLibrary {
                             .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
                         Spacer()
                         if self.text.count > 0 {
-                            FancyButtonv2(
-                                text: "Reset",
-                                action: self.actionOnReset,
-                                icon: "xmark",
-                                showLabel: false,
-                                type: .clear,
-                                font: .title2
-                            )
-                            .frame(width: 18)
+                            UI.Buttons.Close(action: self.actionOnReset)
                         } else {
                             FancyButtonv2(
                                 text: "Entities",
@@ -1438,6 +1071,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: ResourcePath
         struct ResourcePath: View {
             @EnvironmentObject public var state: Navigation
             public var company: Company?
@@ -1451,15 +1085,26 @@ extension WidgetLibrary {
                         HStack(alignment: .center, spacing: 8) {
                             HStack(spacing: 0) {
                                 if self.showRoot {
-                                    Text("...")
-                                        .padding(7)
-                                        .background(Theme.base)
-                                        .foregroundStyle(.white.opacity(0.55))
+                                    Button {
+                                        self.state.session.company = nil
+                                        self.state.session.project = nil
+                                        self.state.session.job = nil
+                                    } label: {
+                                        Image(systemName: "house.fill")
+                                            .padding([.top, .bottom], 7)
+                                            .padding([.leading, .trailing], 4)
+                                            .background(Theme.lightBase)
+                                            .foregroundStyle(self.company == nil ? Theme.lightWhite : self.state.theme.tint)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .disabled(self.company == nil)
+                                    .useDefaultHover({ _ in})
+
                                     Image(systemName: "chevron.right")
                                         .padding([.top, .bottom], 8)
                                         .padding([.leading, .trailing], 4)
-                                        .background(Theme.base.opacity(0.9))
-                                        .foregroundStyle(.white.opacity(0.55))
+                                        .background(Theme.lightBase)
+                                        .foregroundStyle(Theme.lightWhite)
                                 }
 
                                 if let abbreviation = self.company?.abbreviation {
@@ -1486,6 +1131,7 @@ extension WidgetLibrary {
                                         .foregroundStyle((self.project?.backgroundColor ?? Theme.base).isBright() ? Theme.base.opacity(0.55) : .white.opacity(0.55))
                                 }
                             }
+                            .background(self.state.session.appPage.primaryColour)
 
                             Text("\(self.job?.title ?? self.job?.jid.string ?? "")")
                                 .foregroundStyle((self.job?.backgroundColor ?? Theme.base).isBright() ? Theme.base : .white)
@@ -1528,7 +1174,6 @@ extension WidgetLibrary {
                 .help(self.title ?? self.eType?.label ?? "")
                 .buttonStyle(.plain)
                 .useDefaultHover({ hover in self.isHighlighted = hover })
-                .shadow(color: self.isOn && self.title == nil ? Theme.base : .clear, radius: 1, x: 1, y: 1)
             }
 
             init(_ title: String? = nil, isOn: Binding<Bool>, eType: PageConfiguration.EntityType? = .BruceWillis, icon: String? = nil, selectedIcon: String? = nil) {
@@ -1952,38 +1597,6 @@ extension WidgetLibrary.UI.SimpleDateSelector {
     /// - Returns: Void
     private func actionNextDay() -> Void {
         self.state.session.date += 86400
-    }
-}
-
-extension WidgetLibrary.UI.Buttons.ResetUserChoices {
-    private func defaultClearAction() -> Void {
-        self.state.session.job = nil
-        self.state.session.project = nil
-        self.state.session.company = nil
-    }
-}
-
-extension WidgetLibrary.UI.Buttons.CreateJob {
-    /// Fires when the button is clicked/tapped.
-    /// - Returns: Void
-    private func actionOnTap() -> Void {
-        self.editorVisible = true
-        self.explorerVisible = false
-
-        // Creates a new job entity so the user can customize it
-        // @TODO: move to new method CoreDataJobs.create
-        let newJob = Job(context: self.state.moc)
-        newJob.id = UUID()
-        newJob.jid = 1.0
-        newJob.colour = Color.randomStorable()
-        newJob.alive = true
-        newJob.project = CoreDataProjects(moc: self.state.moc).alive().first(where: {$0.company?.isDefault == true})
-        newJob.created = Date()
-        newJob.lastUpdate = newJob.created
-        newJob.overview = "Sample job overview"
-        newJob.title = "Sample job title"
-        self.state.session.job = newJob
-        self.state.forms.tp.editor.job = newJob
     }
 }
 

@@ -94,7 +94,10 @@ public class Navigation: Identifiable, ObservableObject {
     @Published public var parent: Page? = .dashboard
     @Published public var sidebar: AnyView? = AnyView(DashboardSidebar())
     @Published public var inspector: AnyView? = nil
-    @Published public var navButtons: [WidgetLibrary.UI.Buttons.UIButtonType] = []
+    @Published public var navButtons: [WidgetLibrary.UI.Buttons.UIButtonType] = [
+        .sidebarToggle,
+        .resetUserChoices
+    ]
     @Published public var title: String? = ""
     @Published public var pageId: UUID? = UUID()
     @Published public var session: Session = Session()
@@ -577,21 +580,21 @@ extension Navigation {
         public let all: [HistoryPage] = [
             HistoryPage(page: .dashboard, view: AnyView(Dashboard()), sidebar: AnyView(DashboardSidebar()), title: "Dashboard"),
             HistoryPage(page: .planning, view: AnyView(Planning()), sidebar: AnyView(DefaultPlanningSidebar()), title: "Planning"),
-            HistoryPage(page: .today, view: AnyView(Today()), sidebar: AnyView(TodaySidebar()), title: "Today", navButtons: [.resetUserChoices, .CLIFilter, .CLIMode]),
+            HistoryPage(page: .today, view: AnyView(Today()), sidebar: AnyView(TodaySidebar()), title: "Today", navButtons: [.sidebarToggle, .resetUserChoices, .CLIFilter, .CLIMode]),
             HistoryPage(page: .recordDetail, view: AnyView(RecordDetail()), sidebar: AnyView(TodaySidebar()), title: "Record"),
-            HistoryPage(page: .companies, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Companies & Projects", navButtons: [.resetUserChoices, .createCompany]),
+            HistoryPage(page: .companies, view: AnyView(CompanyDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Companies & Projects", navButtons: [.sidebarToggle, .resetUserChoices, .createCompany]),
             HistoryPage(page: .companyDetail, view: AnyView(CompanyView()), sidebar: AnyView(DefaultCompanySidebar()), title: "Company"),
-            HistoryPage(page: .jobs, view: AnyView(JobDashboardRedux()), sidebar: AnyView(JobDashboardSidebar()), title: "Jobs", navButtons: [.resetUserChoices, .createJob]),
-            HistoryPage(page: .notes, view: AnyView(NoteDashboard()), sidebar: AnyView(NoteDashboardSidebar()), title: "Notes", navButtons: [.resetUserChoices, .createNote]),
+            HistoryPage(page: .jobs, view: AnyView(JobDashboardRedux()), sidebar: AnyView(JobDashboardSidebar()), title: "Jobs", navButtons: [.sidebarToggle, .resetUserChoices, .createJob]),
+            HistoryPage(page: .notes, view: AnyView(NoteDashboard()), sidebar: AnyView(NoteDashboardSidebar()), title: "Notes", navButtons: [.sidebarToggle, .resetUserChoices, .createNote]),
             HistoryPage(page: .noteDetail, view: AnyView(NoteCreate()), sidebar: AnyView(NoteCreateSidebar()), title: "Note detail"),
-            HistoryPage(page: .tasks, view: AnyView(TaskDashboard()), sidebar: AnyView(TaskDashboardSidebar()), title: "Tasks", navButtons: [.resetUserChoices, .createTask]),
-            HistoryPage(page: .terms, view: AnyView(TermsDashboard()), sidebar: AnyView(TermsDashboardSidebar()), title: "Terms", navButtons: [.resetUserChoices, .createDefinition]),
+            HistoryPage(page: .tasks, view: AnyView(TaskDashboard()), sidebar: AnyView(TaskDashboardSidebar()), title: "Tasks", navButtons: [.sidebarToggle, .resetUserChoices, .createTask]),
+            HistoryPage(page: .terms, view: AnyView(TermsDashboard()), sidebar: AnyView(TermsDashboardSidebar()), title: "Terms", navButtons: [.sidebarToggle, .resetUserChoices, .createDefinition]),
             HistoryPage(page: .definitionDetail, view: AnyView(DefinitionDetail()), sidebar: AnyView(TermsDashboardSidebar()), title: "Definition detail"),
             HistoryPage(page: .taskDetail, view: AnyView(TaskDetail()), sidebar: AnyView(TermsDashboardSidebar()), title: "Task detail"),
-            HistoryPage(page: .people, view: AnyView(PeopleDashboard()), sidebar: AnyView(PeopleDashboardSidebar()), title: "People", navButtons: [.resetUserChoices, .createPerson]),
+            HistoryPage(page: .people, view: AnyView(PeopleDashboard()), sidebar: AnyView(PeopleDashboardSidebar()), title: "People", navButtons: [.sidebarToggle, .resetUserChoices, .createPerson]),
             HistoryPage(page: .peopleDetail, view: AnyView(PeopleDetail()), sidebar: AnyView(PeopleDashboardSidebar()), title: "Person"),
             HistoryPage(page: .projectDetail, view: AnyView(ProjectView()), sidebar: AnyView(DefaultCompanySidebar()), title: "Project"),
-            HistoryPage(page: .projects, view: AnyView(ProjectsDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Projects", navButtons: [.resetUserChoices, .createProject]),
+            HistoryPage(page: .projects, view: AnyView(ProjectsDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Projects", navButtons: [.sidebarToggle, .resetUserChoices, .createProject]),
             HistoryPage(page: .explore, view: AnyView(Explore()), sidebar: AnyView(ExploreSidebar()), title: "Explore"),
             HistoryPage(page: .activityFlashcards, view: AnyView(UI.FlashcardActivity()), sidebar: AnyView(ExploreSidebar()), title: "Flashcards"),
             HistoryPage(page: .activityCalendar, view: AnyView(UI.ActivityCalendar()), sidebar: AnyView(ExploreSidebar()), title: "Activity Calendar"),
@@ -605,6 +608,7 @@ extension Navigation {
             var sidebar: AnyView
             var title: String
             var navButtons: [WidgetLibrary.UI.Buttons.UIButtonType] = [
+                .sidebarToggle,
                 .resetUserChoices
             ]
         }

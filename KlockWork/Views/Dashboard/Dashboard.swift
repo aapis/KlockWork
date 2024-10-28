@@ -12,7 +12,7 @@ import KWCore
 struct Dashboard: View {
     @EnvironmentObject public var nav: Navigation
     @EnvironmentObject public var updater: ViewUpdater
-    @AppStorage("CreateEntitiesWidget.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
     private let page: PageConfiguration.AppPage = .find
 
     var body: some View {

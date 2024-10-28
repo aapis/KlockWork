@@ -77,35 +77,36 @@ struct FancyGenericToolbar: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            GridRow {
-                Group {
-                    ZStack(alignment: .bottom) {
-                        (self.location == .content ? UIGradient() : nil)
+            if buttons.count > 1 {
+                GridRow {
+                    Group {
+                        ZStack(alignment: .bottom) {
+                            (self.location == .content ? UIGradient() : nil)
 
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 1) {
-                                ForEach(buttons, id: \ToolbarButton.id) { button in
-                                    TabView(
-                                        button: button,
-                                        location: location,
-                                        selected: $selected,
-                                        mode: mode,
-                                        page: self.page
-                                    )
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 1) {
+                                    ForEach(buttons, id: \ToolbarButton.id) { button in
+                                        TabView(
+                                            button: button,
+                                            location: location,
+                                            selected: $selected,
+                                            mode: mode,
+                                            page: self.page
+                                        )
 
-                                    if buttons.count == 1 {
-                                        Text(buttons.first!.helpText)
-                                            .padding(.leading, 10)
-                                            .opacity(0.6)
+                                        if buttons.count == 1 {
+                                            Text(buttons.first!.helpText)
+                                                .padding(.leading, 10)
+                                                .opacity(0.6)
+                                        }
                                     }
                                 }
                             }
-                            .clipShape(.rect(topLeadingRadius: self.location == .content ? 5 : 0, topTrailingRadius: self.location == .content ? 5 : 0))
                         }
                     }
                 }
+                .frame(height: self.location == .content ? 50 : 32)
             }
-            .frame(height: self.location == .content ? 50 : 32)
 
             GridRow {
                 Group {
@@ -129,10 +130,12 @@ struct FancyGenericToolbar: View {
                 }
             }
         }
+        .clipShape(.rect(cornerRadius: 5))
     }
 
     struct TabView: View {
         @EnvironmentObject public var nav: Navigation
+        @AppStorage("settings.accessibility.showTabTitles") private var showTabTitles: Bool = true
         public var button: ToolbarButton
         public var location: WidgetLocation
         @Binding public var selected: Int
@@ -182,9 +185,11 @@ struct FancyGenericToolbar: View {
                                 .padding(0)
                                 .foregroundStyle(self.selected == self.button.id ? self.nav.session.job?.backgroundColor ?? .white : .white.opacity(0.5))
                         } else {
-                            button.label
-                                .padding(0)
-                                .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
+                            if self.showTabTitles {
+                                button.label
+                                    .padding(0)
+                                    .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
+                            }
                         }
                     } else {
                         if mode == .compact {
@@ -193,7 +198,7 @@ struct FancyGenericToolbar: View {
                                     .foregroundStyle(self.selected == self.button.id ? self.nav.session.job?.backgroundColor ?? .white : .white.opacity(0.5))
                                     .font(.title3)
 
-                                if self.selected == self.button.id && self.button.labelText != nil {
+                                if self.selected == self.button.id && self.button.labelText != nil && self.showTabTitles {
                                     Text(self.button.labelText!)
                                         .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
                                         .font(.headline)
@@ -202,8 +207,10 @@ struct FancyGenericToolbar: View {
                             .padding([.top, .bottom], 10)
                             .padding([.leading, .trailing])
                         } else {
-                            button.label.padding(16)
-                                .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
+                            if self.showTabTitles {
+                                button.label.padding(16)
+                                    .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
+                            }
                         }
                     }
                 }

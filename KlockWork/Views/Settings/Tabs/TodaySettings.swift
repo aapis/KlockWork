@@ -23,7 +23,7 @@ struct TodaySettings: View {
     @AppStorage("today.calendar.hasAccess") public var hasAccess: Bool = false
     @AppStorage("today.startOfDay") public var startOfDay: Int = 9
     @AppStorage("today.endOfDay") public var endOfDay: Int = 18
-    @AppStorage("today.defaultTableSortOrder") private var defaultTableSortOrder: String = "DESC"
+    @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
     @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
     @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
     @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
@@ -49,9 +49,9 @@ struct TodaySettings: View {
                     Text("Plain").tag(2)
                 }
                 
-                Picker("Default sort direction:", selection: $defaultTableSortOrder) {
-                    Text("DESC").tag("DESC")
-                    Text("ASC").tag("ASC")
+                Picker("Default sort direction:", selection: $tableSortOrder) {
+                    Text("Newest first").tag(0)
+                    Text("Oldest first").tag(1)
                 }
                 
                 Group {

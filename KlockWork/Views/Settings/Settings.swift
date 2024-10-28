@@ -12,7 +12,7 @@ import KWCore
 
 struct SettingsView: View {
     private enum SettingsTabs: Hashable {
-        case general, today, advanced, dashboard, notedashboard, notifications
+        case general, today, advanced, dashboard, notedashboard, notifications, accessibility
     }
 
     @StateObject public var ce: CoreDataCalendarEvent = CoreDataCalendarEvent(moc: PersistenceController.shared.container.viewContext)
@@ -48,6 +48,13 @@ struct SettingsView: View {
                     Label("Notifications", systemImage: "bell")
                 }
                 .tag(SettingsTabs.notifications)
+
+            AccessibilitySettings()
+                .tabItem {
+                    Label("Accessibility", systemImage: "accessibility")
+                }
+                .tag(SettingsTabs.accessibility)
+
         }
         .padding(20)
     }

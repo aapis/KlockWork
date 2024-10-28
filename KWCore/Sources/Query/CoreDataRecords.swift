@@ -310,14 +310,18 @@ public class CoreDataRecords: ObservableObject {
         return count(predicate)
     }
     
-    public func forDate(_ date: Date) -> [LogRecord] {
+    public func forDate(_ date: Date, sort: NSSortDescriptor? = nil) -> [LogRecord] {
         let (start, end) = DateHelper.startAndEndOf(date)
         let predicate = NSPredicate(
             format: "(alive == true && timestamp > %@ && timestamp <= %@) && job.project.company.hidden == false",
             start as CVarArg,
             end as CVarArg
         )
-        
+
+        if sort != nil {
+            return query(predicate, sort: [sort!])
+        }
+
         return query(predicate)
     }
     
@@ -695,12 +699,12 @@ public class CoreDataRecords: ObservableObject {
         return record
     }
 
-    private func query(_ predicate: NSPredicate) -> [LogRecord] {
+    private func query(_ predicate: NSPredicate, sort: [NSSortDescriptor] = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)]) -> [LogRecord] {
         lock.lock()
 
         var results: [LogRecord] = []
         let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)]
+        fetch.sortDescriptors = sort
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
         

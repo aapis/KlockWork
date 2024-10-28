@@ -10,6 +10,7 @@ import SwiftUI
 import KWCore
 
 struct MainMenu: Commands {
+    @AppStorage("widgetlibrary.ui.isSidebarPresented") private var isSidebarPresented: Bool = false
     public var state: Navigation
 
     public var body: some Commands {
@@ -40,9 +41,16 @@ struct MainMenu: Commands {
                 Button("Next day") {self.state.session.date += 86400}
                     .keyboardShortcut(.rightArrow, modifiers: [.control, .shift])
                 Divider()
-                Button("Reset to today") {self.state.session.date = Date()}
+                Button("Reset to today") {self.state.session.date = Date.now}
                     .keyboardShortcut("d", modifiers: [.control, .shift])
             }
+        }
+
+        CommandGroup(after: .sidebar) {
+            Divider()
+            Button("Show/hide Sidebar") { self.isSidebarPresented.toggle() }
+                .keyboardShortcut("b", modifiers: [.control, .shift])
+            Divider()
         }
     }
 }
