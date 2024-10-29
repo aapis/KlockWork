@@ -74,7 +74,7 @@ struct FindDashboard: View {
                         LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                             .blendMode(.softLight)
                             .opacity(0.3)
-                        UI.Links(location: self.location, isSearching: !searching && activeSearchText.count >= 2)
+                        UI.LinkList(location: self.location, isSearching: !searching && activeSearchText.count >= 2)
                     }
                     .frame(height: 250)
                 }
@@ -136,7 +136,7 @@ struct FindDashboard: View {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                                 .blendMode(.softLight)
                                 .opacity(0.3)
-                            UI.Links(location: self.location, isSearching: !searching && activeSearchText.count >= 2)
+                            UI.LinkList(location: self.location, isSearching: !searching && activeSearchText.count >= 2)
                         }
                         .frame(height: 300)
                     }

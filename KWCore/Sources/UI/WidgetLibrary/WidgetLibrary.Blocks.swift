@@ -77,5 +77,75 @@ extension WidgetLibrary.UI {
                 .useDefaultHover({ hover in self.isHighlighted = hover })
             }
         }
+
+        struct GenericBlock: View {
+            @EnvironmentObject public var state: Navigation
+            public var item: NSManagedObject
+            @State private var bgColour: Color = .clear
+            @State private var name: String = ""
+
+            var body: some View {
+                Button {
+                    self.actionOnTap()
+                } label: {
+                    HStack(alignment: .top, spacing: 10) {
+                        Text(self.name)
+                            .multilineTextAlignment(.leading)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                    }
+                    .padding(8)
+                    .background(self.bgColour)
+                    .foregroundStyle(self.bgColour.isBright() ? Theme.base : Theme.lightWhite)
+                    .clipShape(.rect(cornerRadius: 5))
+                    .help(self.name)
+                }
+                .contextMenu {
+                    Button {
+                        ClipboardHelper.copy(self.bgColour.description)
+                    } label: {
+                        Text("Copy colour HEX to clipboard")
+                    }
+                }
+                .buttonStyle(.plain)
+                .useDefaultHover({_ in})
+                .onAppear(perform: self.actionOnAppear)
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.Blocks.GenericBlock {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        if let job = self.item as? Job {
+            self.bgColour = job.backgroundColor
+            self.name = job.title ?? job.jid.string
+        } else if let project = self.item as? Project {
+            self.bgColour = project.backgroundColor
+            self.name = "\(project.name ?? "Error: Invalid project name") (\(project.abbreviation ?? "YYY"))"
+        } else if let company = self.item as? Company {
+            self.bgColour = company.backgroundColor
+            self.name = "\(company.name ?? "Error: Invalid project name") (\(company.abbreviation ?? "XXX"))"
+        }
+    }
+
+    /// Fires when a block is tapped
+    /// - Returns: Void
+    private func actionOnTap() -> Void {
+        if let job = self.item as? Job {
+            self.state.session.job = job
+            self.state.session.project = job.project
+            self.state.session.company = job.project?.company
+            self.state.to(.jobs)
+        } else if let project = self.item as? Project {
+            self.state.session.project = project
+            self.state.session.company = project.company
+            self.state.to(.projectDetail)
+        } else if let company = self.item as? Company {
+            self.state.session.company = company
+            self.state.to(.companyDetail)
+        }
     }
 }

@@ -172,7 +172,7 @@ extension Inspector {
                         noteReferences.insert(note as! Note)
                     }
                 }
-            default: print("DERPO failure")
+            default: print("[error] Inspector.Context Unable to inspect \(self.item)")
             }
         }
     }
@@ -186,14 +186,13 @@ extension Inspector.Context {
     }
 
     private func actionShowPlan(_ day: Date) -> Void {
-        actionOnClick(day)
-        nav.to(.planning)
+        self.actionOnClick(day)
+        self.nav.to(.planning)
     }
 
     private func actionShowNote(_ note: Note) -> Void {
-        nav.session.search.cancel()
-        nav.setView(AnyView(NoteCreate(note: note)))
-        nav.setParent(.notes)
-        nav.setSidebar(AnyView(NoteCreateSidebar(note: note)))
+        self.nav.session.search.cancel()
+        self.nav.session.note = note
+        self.nav.to(.noteDetail)
     }
 }

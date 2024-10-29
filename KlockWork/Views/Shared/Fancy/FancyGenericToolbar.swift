@@ -101,6 +101,7 @@ struct FancyGenericToolbar: View {
                                         }
                                     }
                                 }
+                                .clipShape(.rect(topLeadingRadius: self.location == .content ? 5 : 0, topTrailingRadius: self.location == .content ? 5 : 0))
                             }
                         }
                     }
@@ -124,6 +125,7 @@ struct FancyGenericToolbar: View {
                                     }
                                 }
                             }
+                            .clipShape(.rect(topLeadingRadius: self.location == .content && self.buttons.count == 0 ? 5 : 0, topTrailingRadius: self.location == .content ? 5 : 0))
                         }
                         .padding(standalone ? 0 : 20)
                     }

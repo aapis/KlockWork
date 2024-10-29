@@ -120,6 +120,8 @@ public struct Inspector: View, Identifiable {
                     }
                     .help("Type: Job entity")
                     Divider()
+                    UI.Blocks.GenericBlock(item: self.item)
+                    Divider()
 
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: "number").symbolRenderingMode(.hierarchical)
@@ -173,58 +175,21 @@ public struct Inspector: View, Identifiable {
                             }
                         }
                     }
-
-                    HStack(alignment: .top, spacing: 10) {
-                        Image(systemName: "camera.filters").symbolRenderingMode(.hierarchical)
-                        ZStack {
-                            Theme.base
-                            item.colour_from_stored()
-                        }
-                        .frame(width: 15, height: 15)
-                        Text(item.colour_from_stored().description)
-                            .contextMenu {
-                                Button {
-                                    ClipboardHelper.copy(item.colour_from_stored().description)
-                                } label: {
-                                    Text("Copy colour HEX to clipboard")
-                                }
-                            }
-                        Spacer()
-                    }
-                    .help("Colour: \(item.colour_from_stored().description)")
-                    Divider()
-
                     Context(item: item)
-
                     Spacer()
-                    VStack(alignment: .leading) {
-                        HStack(alignment: .top, spacing: 10) {
-                            FancyButtonv2(
-                                text: "Open",
-                                action: {nav.session.search.cancel() ; nav.setInspector()},
-                                icon: "arrow.right.square.fill",
-                                showLabel: true,
-                                size: .link,
-                                type: .clear,
-                                redirect: AnyView(JobDashboard(defaultSelectedJob: item)),
-                                pageType: .jobs,
-                                sidebar: AnyView(JobDashboardSidebar())
-                            )
-
-                            FancyButtonv2(
-                                text: nav.session.job != nil ?
-                                (
-                                    nav.session.job == item ? "Current job" : "Overwrite Active Job"
-                                ):
-                                    "Set as Active Job",
-                                action: {nav.session.job = item},
-                                icon: "arrow.right.square.fill",
-                                showLabel: true,
-                                size: .link,
-                                type: .clear
-                            )
-                            .disabled(nav.session.job == item)
-                            .help(nav.session.job != nil ? "Current: \(nav.session.job!.jid)" : "Flags this as the current job on other pages and in widgets.")
+                    if self.nav.session.job != self.item {
+                        VStack(alignment: .leading) {
+                            HStack(alignment: .top, spacing: 10) {
+                                FancyButtonv2(
+                                    text: "Overwrite Active Job",
+                                    action: {self.nav.session.job = self.item},
+                                    icon: "arrow.right.square.fill",
+                                    showLabel: true,
+                                    size: .link,
+                                    type: .clear
+                                )
+                                .help(self.nav.session.job != nil ? "Current: \(self.nav.session.job!.jid)" : "Set as Active Job.")
+                            }
                         }
                     }
                 }
@@ -307,6 +272,8 @@ public struct Inspector: View, Identifiable {
                 }
                 .help("Type: Project entity")
                 Divider()
+                UI.Blocks.GenericBlock(item: self.item)
+                Divider()
 
                 if let date = item.created {
                     HStack(alignment: .top, spacing: 10) {
@@ -318,27 +285,37 @@ public struct Inspector: View, Identifiable {
                     Divider()
                 }
 
-                Spacer()
-                if let company = item.company {
+                if let date = item.lastUpdate {
                     HStack(alignment: .top, spacing: 10) {
-                        FancyButtonv2(
-                            text: "Open project",
-                            action: {self.nav.session.company = company ; self.nav.to(.companyDetail)},
-                            icon: "arrow.right.square.fill",
-                            showLabel: true,
-                            size: .link,
-                            type: .clear
-                        )
+                        Image(systemName: "calendar").symbolRenderingMode(.hierarchical)
+                        Text(date.description)
+                        Spacer()
+                    }
+                    .help("Created: \(date.description)")
+                }
+
+                if let jobs = self.item.jobs?.allObjects as? [Job] {
+                    if jobs.count(where: {$0.alive == true}) > 0 {
+                        Divider()
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "folder.fill").symbolRenderingMode(.hierarchical)
+                            Text("Jobs")
+                            Spacer()
+                        }
+                        ForEach(jobs.filter({$0.alive == true}).sorted(by: {$0.lastUpdate ?? Date.now > $1.lastUpdate ?? Date.now}), id: \.objectID) { entity in
+                            UI.Links.ToJob(entity: entity)
+                        }
                     }
                 }
+                Divider()
+                Spacer()
             }
         }
     }
 
     struct InspectingCompany: View {
-        public var item: Company
-
         @EnvironmentObject public var nav: Navigation
+        public var item: Company
 
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
@@ -348,6 +325,30 @@ public struct Inspector: View, Identifiable {
                     Spacer()
                 }
                 .help("Type: Company entity")
+                Divider()
+                UI.Blocks.GenericBlock(item: self.item)
+                Divider()
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: self.item.alive ? "heart.fill" : "heart").symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(self.item.alive ? .red : .gray)
+                    Text(self.item.alive ? "Published" : "Unpublished")
+                    Spacer()
+                }
+                .help(self.item.alive ? "Unpublish" : "Publish")
+                Divider()
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: self.item.isDefault ? "building.2.fill" : "building.2").symbolRenderingMode(.hierarchical)
+                    Text(self.item.isDefault ? "Default Company: Yes" : "Default Company: No")
+                    Spacer()
+                }
+                .help(self.item.isDefault ? "This is your default company" : "")
+                Divider()
+                HStack(alignment: .top, spacing: 10) {
+                    Image(systemName: self.item.hidden ? "eye.slash" : "eye").symbolRenderingMode(.hierarchical)
+                    Text(self.item.hidden ? "Hidden from UI/search" : "Visible in UI/search results")
+                    Spacer()
+                }
+                .help(self.item.hidden ? "Hidden? Yes" : "Hidden? No")
                 Divider()
 
                 if let date = item.createdDate {
@@ -360,17 +361,19 @@ public struct Inspector: View, Identifiable {
                     Divider()
                 }
 
-                Spacer()
-                HStack(alignment: .top, spacing: 10) {
-                    FancyButtonv2(
-                        text: "Open company",
-                        action: {self.nav.session.company = self.item ; self.nav.to(.companyDetail)},
-                        icon: "arrow.right.square.fill",
-                        showLabel: true,
-                        size: .link,
-                        type: .clear
-                    )
+                if let projects = self.item.projects?.allObjects as? [Project] {
+                    if projects.count(where: {$0.alive == true}) > 0 {
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: "folder.fill").symbolRenderingMode(.hierarchical)
+                            Text("Projects")
+                            Spacer()
+                        }
+                        ForEach(projects.filter({$0.alive == true}).sorted(by: {$0.lastUpdate ?? Date.now > $1.lastUpdate ?? Date.now}), id: \.objectID) { project in
+                            UI.Links.ToProject(entity: project)
+                        }
+                    }
                 }
+                Spacer()
             }
         }
     }

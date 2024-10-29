@@ -99,7 +99,6 @@ extension FindDashboard {
         }
         
         struct SuggestedJobs: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -191,7 +190,6 @@ extension FindDashboard {
         }
         
         struct SuggestedProjects: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -270,7 +268,6 @@ extension FindDashboard {
         }
         
         struct SuggestedNotes: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -359,7 +356,6 @@ extension FindDashboard {
         }
         
         struct SuggestedTasks: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -446,7 +442,6 @@ extension FindDashboard {
         }
         
         struct SuggestedRecords: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -533,7 +528,6 @@ extension FindDashboard {
         }
         
         struct SuggestedCompanies: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -620,7 +614,6 @@ extension FindDashboard {
         }
         
         struct SuggestedPeople: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @State private var showChildren: Bool = false
@@ -687,7 +680,6 @@ extension FindDashboard {
         }
 
         struct SuggestedTerms: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -764,7 +756,6 @@ extension FindDashboard {
         }
 
         struct SuggestedDefinitions: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
