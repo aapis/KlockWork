@@ -465,6 +465,7 @@ public struct Inspector: View, Identifiable {
                     Spacer()
                 }
                 .help("Type: Note entity")
+                Divider()
                 UI.Blocks.GenericBlock(item: self.item)
                 Divider()
                 if let versions = self.item.versions?.allObjects as? [NoteVersion] {
@@ -664,14 +665,11 @@ public struct Inspector: View, Identifiable {
                         Image(systemName: "list.bullet.rectangle").symbolRenderingMode(.hierarchical)
                         FancyButtonv2(
                             text: name,
-                            action: {nav.session.search.cancel() ; nav.setInspector()},
+                            action: {nav.session.search.cancel() ; nav.setInspector() ; self.nav.to(.terms)},
                             showLabel: true,
                             showIcon: false,
                             size: .link,
-                            type: .clear,
-                            redirect: AnyView(TermsDashboard()),
-                            pageType: .terms,
-                            sidebar: AnyView(TermsDashboardSidebar())
+                            type: .clear
                         )
                         .help("Term: \(name)")
                     }

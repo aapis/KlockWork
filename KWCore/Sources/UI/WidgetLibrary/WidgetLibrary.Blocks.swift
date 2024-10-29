@@ -29,7 +29,7 @@ extension WidgetLibrary.UI {
                         Spacer()
                     }
                     .padding(8)
-                    .background(self.definition.job?.backgroundColor ?? Theme.rowColour)
+                    .background(self.isHighlighted ? (self.definition.job?.backgroundColor ?? Theme.rowColour).opacity(1) : (self.definition.job?.backgroundColor ?? Theme.rowColour).opacity(0.8)) // @TODO: refactor, this sucks
                     .foregroundStyle((self.definition.job?.backgroundColor ?? Theme.rowColour).isBright() ? Theme.base : Theme.lightWhite)
                 }
                 .buttonStyle(.plain)
@@ -49,12 +49,11 @@ extension WidgetLibrary.UI {
             var body: some View {
                 VStack(alignment: .center, spacing: 0) {
                     ZStack(alignment: .center) {
-                        (self.viewModeIndex == 0 ? Color.gray.opacity(self.isHighlighted ? 1 : 0.7) : self.colour.opacity(self.isHighlighted ? 1 : 0.7))
+                        (self.viewModeIndex == 0 ? Color.gray.opacity(self.isHighlighted ? 1 : 0.8) : self.colour.opacity(self.isHighlighted ? 1 : 0.8))
                         VStack(alignment: .center, spacing: 0) {
                             (self.isHighlighted ? self.type.selectedIcon : self.type.icon)
                                 .symbolRenderingMode(.hierarchical)
                                 .font(.largeTitle)
-//                                .foregroundStyle(self.viewModeIndex == 0 ? self.colour : self.colour.isBright() ? Theme.base : .white)
                                 .foregroundStyle(self.viewModeIndex == 0 ? self.colour : .white)
                         }
                         Spacer()
