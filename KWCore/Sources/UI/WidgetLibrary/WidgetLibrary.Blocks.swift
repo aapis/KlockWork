@@ -83,6 +83,7 @@ extension WidgetLibrary.UI {
             public var item: NSManagedObject
             @State private var bgColour: Color = .clear
             @State private var name: String = ""
+            @State private var isHighlighted: Bool = false
 
             var body: some View {
                 Button {
@@ -95,7 +96,7 @@ extension WidgetLibrary.UI {
                         Image(systemName: "chevron.right")
                     }
                     .padding(8)
-                    .background(self.bgColour)
+                    .background(self.isHighlighted ? self.bgColour.opacity(1) : self.bgColour.opacity(0.8))
                     .foregroundStyle(self.bgColour.isBright() ? Theme.base : Theme.lightWhite)
                     .clipShape(.rect(cornerRadius: 5))
                     .help(self.name)
@@ -108,8 +109,9 @@ extension WidgetLibrary.UI {
                     }
                 }
                 .buttonStyle(.plain)
-                .useDefaultHover({_ in})
+                .useDefaultHover({ hover in self.isHighlighted = hover })
                 .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.item) { self.actionOnAppear() }
             }
         }
     }
