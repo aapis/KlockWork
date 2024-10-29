@@ -935,7 +935,9 @@ extension FindDashboard.Suggestions.SuggestedTasks {
     private func setContext(_ item: LogTask) -> Void {
         switch nav.parent {
         case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today, .terms:
-            nav.session.job = item.owner
+            self.nav.session.job = item.owner
+            self.nav.session.project = self.nav.session.job?.project
+            self.nav.session.company = self.nav.session.project?.company
         case .planning:
             if let job = item.owner {
                 nav.planning.jobs.insert(job)
