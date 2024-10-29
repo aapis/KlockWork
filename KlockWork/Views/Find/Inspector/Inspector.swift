@@ -46,10 +46,12 @@ public struct Inspector: View, Identifiable {
             Divider()
             FancyDivider(height: 5)
 
-            if self.entity != nil {
-                EntityInspectorBody
-            } else if let event = self.event {
-                InspectingEvent(item: event)
+            ScrollView(showsIndicators: false) {
+                if self.entity != nil {
+                    EntityInspectorBody
+                } else if let event = self.event {
+                    InspectingEvent(item: event)
+                }
             }
             Spacer()
         }
