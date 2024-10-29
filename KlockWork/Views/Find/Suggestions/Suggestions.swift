@@ -940,7 +940,13 @@ extension FindDashboard.Suggestions.SuggestedTasks {
             self.nav.session.company = self.nav.session.project?.company
         case .planning:
             if let job = item.owner {
-                nav.planning.jobs.insert(job)
+                self.nav.planning.jobs.insert(job)
+                if let project = job.project {
+                    self.nav.planning.projects.insert(project)
+                    if let company = project.company {
+                        self.nav.planning.companies.insert(company)
+                    }
+                }
             }
         default:
             print("no op")
