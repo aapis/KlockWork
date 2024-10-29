@@ -33,6 +33,7 @@ struct LogRow: View, Identifiable {
     @State public var required: Set<RecordTableColumn> = [.message]
     @State private var isDeleteAlertShowing: Bool = false
     @State private var words: [CustomMessage] = []
+    @State private var isHighlighted: Bool = false
 
     var body: some View {
         if isEditing {
@@ -55,7 +56,7 @@ struct LogRow: View, Identifiable {
             GridRow {
                 Column(
                     type: .index,
-                    colour: (entry.jobObject != nil  && entry.jobObject!.project != nil ? Color.fromStored(entry.jobObject!.project!.colour ?? Theme.rowColourAsDouble) : applyColour()),
+                    colour: (entry.jobObject != nil  && entry.jobObject!.project != nil ? Color.fromStored(entry.jobObject?.project?.colour ?? Theme.rowColourAsDouble).opacity(self.isHighlighted ? 1 : 0.8) : applyColour()),
                     textColour: self.colour.isBright() ? Theme.base : .white,
                     alignment: .center,
                     job: entry.jobObject,
@@ -112,6 +113,7 @@ struct LogRow: View, Identifiable {
                 )
             }
             .contextMenu { contextMenu }
+            .useDefaultHover({ hover in self.isHighlighted = hover })
         }
         .onAppear(perform: self.actionOnAppear)
         .onChange(of: timestamp) {

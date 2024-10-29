@@ -29,7 +29,7 @@ extension WidgetLibrary.UI {
                         Spacer()
                     }
                     .padding(8)
-                    .background(self.definition.job?.backgroundColor ?? Theme.rowColour)
+                    .background(self.isHighlighted ? (self.definition.job?.backgroundColor ?? Theme.rowColour).opacity(1) : (self.definition.job?.backgroundColor ?? Theme.rowColour).opacity(0.8)) // @TODO: refactor, this sucks
                     .foregroundStyle((self.definition.job?.backgroundColor ?? Theme.rowColour).isBright() ? Theme.base : Theme.lightWhite)
                 }
                 .buttonStyle(.plain)
@@ -49,12 +49,11 @@ extension WidgetLibrary.UI {
             var body: some View {
                 VStack(alignment: .center, spacing: 0) {
                     ZStack(alignment: .center) {
-                        (self.viewModeIndex == 0 ? Color.gray.opacity(self.isHighlighted ? 1 : 0.7) : self.colour.opacity(self.isHighlighted ? 1 : 0.7))
+                        (self.viewModeIndex == 0 ? Color.gray.opacity(self.isHighlighted ? 1 : 0.8) : self.colour.opacity(self.isHighlighted ? 1 : 0.8))
                         VStack(alignment: .center, spacing: 0) {
                             (self.isHighlighted ? self.type.selectedIcon : self.type.icon)
                                 .symbolRenderingMode(.hierarchical)
                                 .font(.largeTitle)
-//                                .foregroundStyle(self.viewModeIndex == 0 ? self.colour : self.colour.isBright() ? Theme.base : .white)
                                 .foregroundStyle(self.viewModeIndex == 0 ? self.colour : .white)
                         }
                         Spacer()
@@ -76,6 +75,102 @@ extension WidgetLibrary.UI {
                 .clipShape(.rect(cornerRadius: 5))
                 .useDefaultHover({ hover in self.isHighlighted = hover })
             }
+        }
+
+        struct GenericBlock: View {
+            @EnvironmentObject public var state: Navigation
+            public var item: NSManagedObject
+            @State private var bgColour: Color = .clear
+            @State private var name: String = ""
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                Button {
+                    self.actionOnTap()
+                } label: {
+                    HStack(alignment: .top, spacing: 10) {
+                        Text(self.name)
+                            .multilineTextAlignment(.leading)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                    }
+                    .padding(8)
+                    .background(self.isHighlighted ? self.bgColour.opacity(1) : self.bgColour.opacity(0.8))
+                    .foregroundStyle(self.bgColour.isBright() ? Theme.base : Theme.lightWhite)
+                    .clipShape(.rect(cornerRadius: 5))
+                    .help(self.name)
+                }
+                .contextMenu {
+                    Button {
+                        ClipboardHelper.copy(self.bgColour.description)
+                    } label: {
+                        Text("Copy colour HEX to clipboard")
+                    }
+                }
+                .buttonStyle(.plain)
+                .useDefaultHover({ hover in self.isHighlighted = hover })
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.item) { self.actionOnAppear() }
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.Blocks.GenericBlock {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        if let job = self.item as? Job {
+            self.bgColour = job.backgroundColor
+            self.name = job.title ?? job.jid.string
+        } else if let project = self.item as? Project {
+            self.bgColour = project.backgroundColor
+            self.name = "\(project.name ?? "Error: Invalid project name") (\(project.abbreviation ?? "YYY"))"
+        } else if let company = self.item as? Company {
+            self.bgColour = company.backgroundColor
+            self.name = "\(company.name ?? "Error: Invalid company name") (\(company.abbreviation ?? "XXX"))"
+        } else if let note = self.item as? Note {
+            self.bgColour = note.mJob?.backgroundColor ?? Theme.rowColour
+            self.name = note.mJob?.title ?? note.mJob?.jid.string ?? "Error: Invalid job title"
+        } else if let task = self.item as? LogTask {
+            self.bgColour = task.owner?.backgroundColor ?? Theme.rowColour
+            self.name = "\(task.owner?.title ?? "Error: Invalid job title")"
+        } else if let record = self.item as? LogRecord {
+            self.bgColour = record.job?.backgroundColor ?? Theme.rowColour
+            self.name = record.job?.title ?? "Error: Invalid job title"
+        } else if let definition = self.item as? TaxonomyTermDefinitions {
+            self.bgColour = definition.job?.backgroundColor ?? Theme.rowColour
+            self.name = definition.job?.title ?? "Error: Invalid job title"
+        }
+    }
+
+    /// Fires when a block is tapped
+    /// - Returns: Void
+    private func actionOnTap() -> Void {
+        if let job = self.item as? Job {
+            self.state.session.job = job
+            self.state.session.project = job.project
+            self.state.session.company = job.project?.company
+            self.state.to(.jobs)
+        } else if let project = self.item as? Project {
+            self.state.session.project = project
+            self.state.session.company = project.company
+            self.state.to(.projectDetail)
+        } else if let company = self.item as? Company {
+            self.state.session.company = company
+            self.state.to(.companyDetail)
+        } else if let note = self.item as? Note {
+            self.state.session.note = note
+            self.state.to(.noteDetail)
+        } else if let task = self.item as? LogTask {
+            self.state.session.task = task
+            self.state.to(.taskDetail)
+        } else if let record = self.item as? LogRecord {
+            self.state.session.date = record.timestamp ?? Date()
+            self.state.to(.today)
+        } else if let definition = self.item as? TaxonomyTermDefinitions {
+            self.state.session.definition = definition
+            self.state.to(.definitionDetail)
         }
     }
 }

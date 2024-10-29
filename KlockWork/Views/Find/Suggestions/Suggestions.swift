@@ -52,8 +52,8 @@ extension FindDashboard {
                         }
 
                         if searchText.count >= 2 || isSearching {
-                            VStack {
-                                if !self.isMinimized {
+                            if !self.isMinimized {
+                                VStack {
                                     // @TODO: reduce this with a loop, each view is basically identical...
                                     if showRecords {SuggestedRecords(searchText: $searchText, publishedOnly: $publishedOnly)}
                                     if showNotes {SuggestedNotes(searchText: $searchText, publishedOnly: $publishedOnly)}
@@ -65,10 +65,10 @@ extension FindDashboard {
                                     if showTerms {SuggestedTerms(searchText: $searchText, publishedOnly: $publishedOnly)}
                                     if showDefinitions {SuggestedDefinitions(searchText: $searchText, publishedOnly: $publishedOnly)}
                                 }
+                                .padding(self.location == .content ? 16 : 8)
+                                .background(Theme.textBackground)
+                                .clipShape(.rect(cornerRadius: 5))
                             }
-                            .padding(self.location == .content ? 16 : 8)
-                            .background(Theme.textBackground)
-                            .clipShape(.rect(cornerRadius: 5))
                         }
                     }
                     .padding(.leading, self.location == .content ? 16 : 8)
@@ -99,7 +99,6 @@ extension FindDashboard {
         }
         
         struct SuggestedJobs: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -191,7 +190,6 @@ extension FindDashboard {
         }
         
         struct SuggestedProjects: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -270,7 +268,6 @@ extension FindDashboard {
         }
         
         struct SuggestedNotes: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -359,7 +356,6 @@ extension FindDashboard {
         }
         
         struct SuggestedTasks: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -446,7 +442,6 @@ extension FindDashboard {
         }
         
         struct SuggestedRecords: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -533,7 +528,6 @@ extension FindDashboard {
         }
         
         struct SuggestedCompanies: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -620,7 +614,6 @@ extension FindDashboard {
         }
         
         struct SuggestedPeople: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @State private var showChildren: Bool = false
@@ -687,7 +680,6 @@ extension FindDashboard {
         }
 
         struct SuggestedTerms: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -764,7 +756,6 @@ extension FindDashboard {
         }
 
         struct SuggestedDefinitions: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
             @Binding public var publishedOnly: Bool
@@ -944,10 +935,18 @@ extension FindDashboard.Suggestions.SuggestedTasks {
     private func setContext(_ item: LogTask) -> Void {
         switch nav.parent {
         case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today, .terms:
-            nav.session.job = item.owner
+            self.nav.session.job = item.owner
+            self.nav.session.project = self.nav.session.job?.project
+            self.nav.session.company = self.nav.session.project?.company
         case .planning:
             if let job = item.owner {
-                nav.planning.jobs.insert(job)
+                self.nav.planning.jobs.insert(job)
+                if let project = job.project {
+                    self.nav.planning.projects.insert(project)
+                    if let company = project.company {
+                        self.nav.planning.companies.insert(company)
+                    }
+                }
             }
         default:
             print("no op")

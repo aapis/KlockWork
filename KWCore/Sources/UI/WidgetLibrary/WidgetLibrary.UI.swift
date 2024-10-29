@@ -470,7 +470,7 @@ extension WidgetLibrary {
             }
         }
 
-        struct Links: View {
+        struct LinkList: View {
             @EnvironmentObject private var state: Navigation
             @State private var links: Set<Link> = []
             public var location: WidgetLocation
@@ -1390,7 +1390,7 @@ extension WidgetLibrary.UI.GroupHeaderContextMenu {
     }
 }
 
-extension WidgetLibrary.UI.Links {
+extension WidgetLibrary.UI.LinkList {
     /// Onload handler. Starts monitoring keyboard for esc key
     /// - Returns: Void
     private func actionOnAppear() -> Void {
