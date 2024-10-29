@@ -52,8 +52,8 @@ extension FindDashboard {
                         }
 
                         if searchText.count >= 2 || isSearching {
-                            VStack {
-                                if !self.isMinimized {
+                            if !self.isMinimized {
+                                VStack {
                                     // @TODO: reduce this with a loop, each view is basically identical...
                                     if showRecords {SuggestedRecords(searchText: $searchText, publishedOnly: $publishedOnly)}
                                     if showNotes {SuggestedNotes(searchText: $searchText, publishedOnly: $publishedOnly)}
@@ -65,10 +65,10 @@ extension FindDashboard {
                                     if showTerms {SuggestedTerms(searchText: $searchText, publishedOnly: $publishedOnly)}
                                     if showDefinitions {SuggestedDefinitions(searchText: $searchText, publishedOnly: $publishedOnly)}
                                 }
+                                .padding(self.location == .content ? 16 : 8)
+                                .background(Theme.textBackground)
+                                .clipShape(.rect(cornerRadius: 5))
                             }
-                            .padding(self.location == .content ? 16 : 8)
-                            .background(Theme.textBackground)
-                            .clipShape(.rect(cornerRadius: 5))
                         }
                     }
                     .padding(.leading, self.location == .content ? 16 : 8)
