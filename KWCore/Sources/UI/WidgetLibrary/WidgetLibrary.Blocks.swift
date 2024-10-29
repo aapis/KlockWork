@@ -129,7 +129,19 @@ extension WidgetLibrary.UI.Blocks.GenericBlock {
             self.name = "\(project.name ?? "Error: Invalid project name") (\(project.abbreviation ?? "YYY"))"
         } else if let company = self.item as? Company {
             self.bgColour = company.backgroundColor
-            self.name = "\(company.name ?? "Error: Invalid project name") (\(company.abbreviation ?? "XXX"))"
+            self.name = "\(company.name ?? "Error: Invalid company name") (\(company.abbreviation ?? "XXX"))"
+        } else if let note = self.item as? Note {
+            self.bgColour = note.mJob?.backgroundColor ?? Theme.rowColour
+            self.name = note.mJob?.title ?? note.mJob?.jid.string ?? "Error: Invalid job title"
+        } else if let task = self.item as? LogTask {
+            self.bgColour = task.owner?.backgroundColor ?? Theme.rowColour
+            self.name = "\(task.owner?.title ?? "Error: Invalid job title")"
+        } else if let record = self.item as? LogRecord {
+            self.bgColour = record.job?.backgroundColor ?? Theme.rowColour
+            self.name = record.job?.title ?? "Error: Invalid job title"
+        } else if let definition = self.item as? TaxonomyTermDefinitions {
+            self.bgColour = definition.job?.backgroundColor ?? Theme.rowColour
+            self.name = definition.job?.title ?? "Error: Invalid job title"
         }
     }
 
@@ -148,6 +160,18 @@ extension WidgetLibrary.UI.Blocks.GenericBlock {
         } else if let company = self.item as? Company {
             self.state.session.company = company
             self.state.to(.companyDetail)
+        } else if let note = self.item as? Note {
+            self.state.session.note = note
+            self.state.to(.noteDetail)
+        } else if let task = self.item as? LogTask {
+            self.state.session.task = task
+            self.state.to(.taskDetail)
+        } else if let record = self.item as? LogRecord {
+            self.state.session.date = record.timestamp ?? Date()
+            self.state.to(.today)
+        } else if let definition = self.item as? TaxonomyTermDefinitions {
+            self.state.session.definition = definition
+            self.state.to(.definitionDetail)
         }
     }
 }

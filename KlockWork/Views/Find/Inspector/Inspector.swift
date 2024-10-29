@@ -211,6 +211,8 @@ public struct Inspector: View, Identifiable {
                 }
                 .help("Type: Record entity")
                 Divider()
+                UI.Blocks.GenericBlock(item: self.item)
+                Divider()
 
                 if let date = item.timestamp {
                     HStack(alignment: .top, spacing: 10) {
@@ -450,9 +452,8 @@ public struct Inspector: View, Identifiable {
     }
 
     struct InspectingNote: View {
-        public var item: Note
-
         @EnvironmentObject public var nav: Navigation
+        public var item: Note
 
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
@@ -462,8 +463,17 @@ public struct Inspector: View, Identifiable {
                     Spacer()
                 }
                 .help("Type: Note entity")
+                UI.Blocks.GenericBlock(item: self.item)
                 Divider()
-
+                if let versions = self.item.versions?.allObjects as? [NoteVersion] {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "number").symbolRenderingMode(.hierarchical)
+                        Text("\(versions.count) Versions")
+                        Spacer()
+                    }
+                    .help("\(versions.count) saved versions of this note")
+                    Divider()
+                }
                 if let date = item.postedDate {
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: "calendar.badge.plus").symbolRenderingMode(.hierarchical)
@@ -473,7 +483,6 @@ public struct Inspector: View, Identifiable {
                     .help("Created: \(date.description)")
                     Divider()
                 }
-
                 if let date = item.lastUpdate {
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: "calendar.badge.clock").symbolRenderingMode(.hierarchical)
@@ -483,7 +492,28 @@ public struct Inspector: View, Identifiable {
                     .help("Last update: \(date.description)")
                     Divider()
                 }
-
+                if let versions = self.item.versions?.allObjects as? [NoteVersion] {
+                    if versions.count > 0 {
+                        if let content = versions.first?.content {
+                            HStack(alignment: .top, spacing: 10) {
+                                Image(systemName: "questionmark.square.fill").symbolRenderingMode(.hierarchical)
+                                Text("Preview")
+                                Spacer()
+                            }
+                            Divider()
+                            HStack(alignment: .top, spacing: 10) {
+                                if content.count > 150 {
+                                    Text("\(content.prefix(150))...")
+                                        .multilineTextAlignment(.leading)
+                                } else {
+                                    Text(content)
+                                        .multilineTextAlignment(.leading)
+                                }
+                            }
+                        }
+                    }
+                }
+                Divider()
                 Spacer()
                 HStack(alignment: .top, spacing: 10) {
                     FancyButtonv2(
@@ -515,6 +545,8 @@ public struct Inspector: View, Identifiable {
                     Spacer()
                 }
                 .help("Type: Task entity")
+                Divider()
+                UI.Blocks.GenericBlock(item: self.item)
                 Divider()
 
                 if let date = item.created {
@@ -690,6 +722,8 @@ public struct Inspector: View, Identifiable {
                     Spacer()
                 }
                 .help("Type: Taxonomy definition")
+                Divider()
+                UI.Blocks.GenericBlock(item: self.item)
                 Divider()
 
                 if let date = item.created {
