@@ -13,7 +13,6 @@ extension Today {
     struct PostingInterface: View {
         @EnvironmentObject public var nav: Navigation
         @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
-        @AppStorage("general.experimental.cli") private var allowCLIMode: Bool = false
         @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
         @FocusState private var primaryTextFieldInFocus: Bool
         @State private var text: String = ""

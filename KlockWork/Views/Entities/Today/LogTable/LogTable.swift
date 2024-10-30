@@ -12,9 +12,8 @@ import KWCore
 /// Table which displays all the records
 extension Today {
     struct LogTable: View {
-        private var buttons: [ToolbarButton] = []
-        
         @EnvironmentObject public var nav: Navigation
+        private var buttons: [ToolbarButton] = []
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
@@ -29,7 +28,8 @@ extension Today {
         }
         
         init() {
-            TodayViewTab.allCases.forEach { tab in
+            // @TODO: hide summarized view until we figure out what to do with it
+            TodayViewTab.allCases.filter{$0 != .summarized}.forEach { tab in
                 buttons.append(tab.button)
             }
         }
@@ -147,7 +147,6 @@ extension Today.LogTable {
                     }
                 }
             }
-            .onAppear(perform: self.actionOnAppear)
         }
     }
     
@@ -178,6 +177,7 @@ extension Today.LogTable {
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.recordsOnCurrentPage) { self.refreshView() }
                 .onChange(of: self.nav.session.pagination.currentPageOffset) { self.findRecords() }
+                .onChange(of: self.perPage) { self.actionOnAppear() }
                 .onChange(of: self.nav.session.date) { self.actionOnAppear() }
                 .onChange(of: self.tableSortOrder) { self.findRecords() }
                 .onChange(of: nav.saved) {
@@ -363,22 +363,5 @@ extension Today.LogTable.Plain {
 
         plain = model.createExportableRecordsFrom(records, grouped: true)
         grouped = model.createExportableGroupedRecordsAsViews(records)
-    }
-}
-
-extension Today.LogTable.Full {
-    /// Onload handler. Sets view state
-    /// - Returns: Void
-    private func actionOnAppear() -> Void {
-//        if self.offset == 0 {
-//            self.records = Array(self.records.prefix(10))
-//        }
-    }
-
-    /// Fires when you navigate to another page of records
-    /// - Returns: Void
-    private func actionOnChangeOffset() -> Void {
-//        self.nav.session.pagination.currentPageOffset += self.perPage
-
     }
 }

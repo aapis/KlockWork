@@ -1331,9 +1331,31 @@ extension WidgetLibrary {
             var Main: some View {
                 HStack(spacing: 1) {
                     Spacer()
+                    Button {
+                        if self.state.session.pagination.currentPageOffset > 0 {
+                            self.state.session.pagination.currentPageOffset -= self.perPage
+                        }
+                    } label: {
+                        Image(systemName: "chevron.left.chevron.left.dotted")
+                    }
+                    .buttonStyle(.plain)
+                    .useDefaultHover({_ in})
+                    .keyboardShortcut("[", modifiers: [.control, .shift])
+                    .disabled(self.state.session.pagination.currentPageOffset == 0)
+
                     ForEach(self.pages, id: \.id) { page in
                         page
                     }
+
+                    Button {
+                        self.state.session.pagination.currentPageOffset += self.perPage
+                    } label: {
+                        Image(systemName: "chevron.right.dotted.chevron.right")
+                    }
+                    .buttonStyle(.plain)
+                    .useDefaultHover({_ in})
+                    .keyboardShortcut("]", modifiers: [.control, .shift])
+                    Spacer()
                 }
                 .background(
                     ZStack(alignment: .top) {
@@ -1344,6 +1366,35 @@ extension WidgetLibrary {
                             .frame(height: 15)
                     }
                 )
+            }
+
+            struct Widget: View {
+                @EnvironmentObject public var state: Navigation
+                @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
+                @State private var isHighlighted: Bool = false
+                private var pickerItems: [CustomPickerItem] {
+                    return [
+                        CustomPickerItem(title: "Pagination", tag: 0),
+                        CustomPickerItem(title: "10 per page", tag: 10),
+                        CustomPickerItem(title: "30 per page", tag: 30),
+                        CustomPickerItem(title: "50 per page", tag: 50)
+                    ]
+                }
+
+                var body: some View {
+                    HStack(spacing: 5) {
+                        FancyPicker(onChange: change, items: self.pickerItems, defaultSelected: self.perPage, icon: "square.grid.3x3")
+                            .onAppear(perform: {self.change(selected: self.perPage, sender: "")})
+                            .onChange(of: self.perPage) {
+                                change(selected: self.perPage, sender: "")
+                            }
+                    }
+                    .padding(6)
+                    .background(self.isHighlighted ? Theme.textBackground.opacity(1) : Theme.textBackground.opacity(0.8))
+                    .foregroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                    .useDefaultHover({ hover in self.isHighlighted = hover})
+                }
             }
 
             struct Page: View, Identifiable {
@@ -1359,14 +1410,17 @@ extension WidgetLibrary {
                     Button {
                         self.state.session.pagination.currentPageOffset = self.index * self.perPage
                     } label: {
-                        ZStack {
+                        ZStack(alignment: .center) {
                             if self.isCurrent {
-                                (self.isHighlighted ? Color.yellow.opacity(0.4) : Color.yellow.opacity(0.4))
+                                Circle()
+                                    .fill(self.isHighlighted ? self.state.theme.tint.opacity(1) : self.state.theme.tint.opacity(0.8))
+                                    .frame(width: 20)
                             } else {
                                 (self.isHighlighted ? Theme.textBackground.opacity(1) : Theme.textBackground.opacity(0))
                             }
                             Text(self.value)
                                 .padding(8)
+                                .foregroundStyle(self.isCurrent ? Theme.base : .gray)
                         }
                         .frame(maxWidth: 35)
                         .useDefaultHover({ hover in self.isHighlighted = hover })
@@ -1377,13 +1431,90 @@ extension WidgetLibrary {
                 }
             }
         }
+
+        struct SortSelector: View {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
+            @State private var isHighlighted: Bool = false
+            private var pickerItems: [CustomPickerItem] {
+                return [
+                    CustomPickerItem(title: "Sort", tag: -1),
+                    CustomPickerItem(title: "Newest first", tag: 0),
+                    CustomPickerItem(title: "Oldest first", tag: 1)
+                ]
+            }
+
+            var body: some View {
+                HStack(spacing: 5) {
+                    FancyPicker(onChange: change, items: self.pickerItems, defaultSelected: self.tableSortOrder, icon: "arrow.up.arrow.down")
+                        .onAppear(perform: {self.change(selected: self.tableSortOrder, sender: "")})
+                        .onChange(of: self.tableSortOrder) {
+                            change(selected: self.tableSortOrder, sender: "")
+                        }
+                }
+                .padding(6)
+                .background(self.isHighlighted ? Theme.textBackground.opacity(1) : Theme.textBackground.opacity(0.8))
+                .foregroundStyle(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 5))
+                .useDefaultHover({ hover in self.isHighlighted = hover})
+            }
+        }
+
+        public struct ViewModeSelector: View {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("today.viewMode") public var index: Int = 0
+            private var items: [CustomPickerItem] {
+                return [
+                    CustomPickerItem(title: "View mode", tag: 0),
+                    CustomPickerItem(title: "Full", tag: 1),
+                    CustomPickerItem(title: "Plain", tag: 2)
+                ]
+            }
+
+            public var body: some View {
+                FancyPicker(onChange: change, items: items, defaultSelected: index, icon: self.index == 1 ? "rectangle.pattern.checkered" : "rectangle")
+                    .onAppear(perform: {self.change(selected: index, sender: "")})
+                    .onChange(of: self.index) {
+                        change(selected: self.index, sender: "")
+                    }
+            }
+
+            private func change(selected: Int, sender: String?) -> Void {
+                if selected == 1 || selected == 0 {
+                    self.state.session.toolbar.mode = .full
+                } else if selected == 2 {
+                    self.state.session.toolbar.mode = .plain
+                }
+
+                index = selected
+            }
+        }
     }
 }
+
+extension WidgetLibrary.UI.SortSelector {
+    /// Fires when number of records per-page selector is changed
+    /// - Parameters:
+    ///   - selected: Int
+    ///   - sender: String
+    /// - Returns: Void
+    private func change(selected: Int, sender: String?) -> Void {
+        if selected > -1 {
+            self.tableSortOrder = selected
+        }
+    }
+}
+
 
 extension WidgetLibrary.UI.Pagination {
     /// Onload handler. Sets view state
     /// - Returns: Void
     private func actionOnAppear() -> Void {
+        if self.perPage == 0 {
+            self.pages = []
+            return
+        }
+
         let numPages = self.entityCount/self.perPage
 
         if numPages > 0 {
@@ -1395,6 +1526,19 @@ extension WidgetLibrary.UI.Pagination {
                     )
                 )
             }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.Pagination.Widget {
+    /// Fires when number of records per-page selector is changed
+    /// - Parameters:
+    ///   - selected: Int
+    ///   - sender: String
+    /// - Returns: Void
+    private func change(selected: Int, sender: String?) -> Void {
+        if selected > 0 {
+            self.perPage = selected
         }
     }
 }
