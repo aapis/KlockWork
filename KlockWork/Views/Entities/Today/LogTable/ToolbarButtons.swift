@@ -29,7 +29,7 @@ struct ToolbarButtons: View {
                 .frame(height: 20)
 
             HStack(alignment: .center) {
-                ViewModeSelector()
+                UI.ViewModeSelector()
                     .padding(6)
                     .background(Theme.textBackground)
                     .foregroundStyle(.white)
