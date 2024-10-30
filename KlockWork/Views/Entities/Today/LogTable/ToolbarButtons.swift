@@ -34,6 +34,7 @@ struct ToolbarButtons: View {
                     .background(Theme.textBackground)
                     .foregroundStyle(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 5))
+                UI.SortSelector()
                 UI.Pagination.Widget()
                 Button(action: export, label: {
                     HStack(spacing: 5) {
