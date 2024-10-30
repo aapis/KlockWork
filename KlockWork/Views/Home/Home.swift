@@ -17,7 +17,6 @@ struct Home: View {
     @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
     @AppStorage("GlobalSidebarWidgets.isCreateStackShowing") private var isCreateStackShowing: Bool = false
     @AppStorage("general.showSessionInspector") public var showSessionInspector: Bool = false
-    @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
     @AppStorage("notifications.interval") private var notificationInterval: Int = 0
     @AppStorage("widgetlibrary.ui.isSidebarPresented") private var isSidebarPresented: Bool = false
@@ -206,7 +205,7 @@ extension Home {
                     altMode: PageAltMode(
                         name: "CLI Mode",
                         icon: "apple.terminal",
-                        condition: cliEnabled && commandLineMode
+                        condition: commandLineMode
                     )
                 ),
             ],

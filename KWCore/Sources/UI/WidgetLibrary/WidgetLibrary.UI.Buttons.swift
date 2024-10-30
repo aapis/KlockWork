@@ -344,38 +344,34 @@ extension WidgetLibrary.UI {
 
         struct CLIMode: View {
             @EnvironmentObject public var state: Navigation
-            @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
             @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
             public var onAction: (() -> Void)? = {}
             @State private var isHighlighted: Bool = false
             @State private var selectedPage: Page = .dashboard
 
             var body: some View {
-                if self.cliEnabled {
-                    FancyButtonv2(
-                        text: "Command line mode",
-                        action: {self.commandLineMode.toggle() ; self.onAction?()},
-                        icon: self.commandLineMode ? "apple.terminal.fill" : "apple.terminal",
-                        iconWhenHighlighted: self.commandLineMode ? "apple.terminal" : "apple.terminal.fill",
-                        showLabel: false,
-                        size: .small,
-                        type: .clear,
-                        font: .title
-                    )
-                    .help(self.commandLineMode ? "Exit CLI mode" : "Enter CLI mode")
-                    .frame(width: 25)
-                }
+                FancyButtonv2(
+                    text: "Command line mode",
+                    action: {self.commandLineMode.toggle() ; self.onAction?()},
+                    icon: self.commandLineMode ? "apple.terminal.fill" : "apple.terminal",
+                    iconWhenHighlighted: self.commandLineMode ? "apple.terminal" : "apple.terminal.fill",
+                    showLabel: false,
+                    size: .small,
+                    type: .clear,
+                    font: .title
+                )
+                .help(self.commandLineMode ? "Exit CLI mode" : "Enter CLI mode")
+                .frame(width: 25)
             }
         }
 
         struct CLIFilter: View {
             @EnvironmentObject public var state: Navigation
-            @AppStorage("general.experimental.cli") private var cliEnabled: Bool = false
             @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
             @AppStorage("today.cli.showFilter") private var showCLIFilter: Bool = false
 
             var body: some View {
-                if self.cliEnabled && self.commandLineMode {
+                if self.commandLineMode {
                     FancyButtonv2(
                         text: "Filter",
                         action: {self.showCLIFilter.toggle()},

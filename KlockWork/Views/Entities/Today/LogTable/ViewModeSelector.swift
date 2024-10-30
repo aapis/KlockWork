@@ -11,9 +11,7 @@ import KWCore
 
 public struct ViewModeSelector: View {
     @EnvironmentObject public var nav: Navigation
-    
     @AppStorage("today.viewMode") public var index: Int = 0
-    
     private var items: [CustomPickerItem] {
         return [
             CustomPickerItem(title: "View mode", tag: 0),
@@ -21,9 +19,9 @@ public struct ViewModeSelector: View {
             CustomPickerItem(title: "Plain", tag: 2)
         ]
     }
-    
+
     public var body: some View {
-        FancyPicker(onChange: change, items: items, defaultSelected: index)
+        FancyPicker(onChange: change, items: items, defaultSelected: index, icon: self.index == 1 ? "rectangle.pattern.checkered" : "rectangle")
             .onAppear(perform: {self.change(selected: index, sender: "")})
             .onChange(of: self.index) {
                 change(selected: self.index, sender: "")
