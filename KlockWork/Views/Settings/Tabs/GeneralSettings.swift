@@ -13,7 +13,6 @@ import CoreSpotlight
 struct GeneralSettings: View {
     @AppStorage("tigerStriped") private var tigerStriped: Bool = false
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures: Bool = false
-    @AppStorage("general.experimental.cli") private var cliMode: Bool = false
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
     @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
     @AppStorage("general.syncColumns") public var syncColumns: Bool = false
@@ -36,7 +35,6 @@ struct GeneralSettings: View {
                 if showExperimentalFeatures {
                     Toggle("Enable SessionInspector panel", isOn: $showSessionInspector)
                     Toggle("Spotlight (data is NOT shared with Apple)", isOn: $spotlightIndex)
-                    Toggle("Enable CLI mode", isOn: $cliMode)
                 }
             }
 
