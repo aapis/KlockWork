@@ -178,6 +178,7 @@ extension Today.LogTable {
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.recordsOnCurrentPage) { self.refreshView() }
                 .onChange(of: self.nav.session.pagination.currentPageOffset) { self.findRecords() }
+                .onChange(of: self.perPage) { self.actionOnAppear() }
                 .onChange(of: self.nav.session.date) { self.actionOnAppear() }
                 .onChange(of: self.tableSortOrder) { self.findRecords() }
                 .onChange(of: nav.saved) {
