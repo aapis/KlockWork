@@ -187,8 +187,8 @@ struct FindDashboard: View {
                 self.nav.parent?.appPage.primaryColour.opacity(0.6) ?? Theme.subHeaderColour
                 LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                     .blendMode(.softLight)
-                    .opacity(0.3)
-                    .frame(height: 20)
+                    .opacity(0.4)
+                    .frame(height: 15)
 
                 HStack(alignment: .center) {
                     UI.Toggle(isOn: $showRecords, eType: .records)

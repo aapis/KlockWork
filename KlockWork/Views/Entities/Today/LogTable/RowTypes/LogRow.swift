@@ -113,7 +113,7 @@ struct LogRow: View, Identifiable {
                 )
             }
             .contextMenu { contextMenu }
-            .useDefaultHover({ hover in self.isHighlighted = hover })
+            .useDefaultHoverNoCursor({ hover in self.isHighlighted = hover })
         }
         .onAppear(perform: self.actionOnAppear)
         .onChange(of: timestamp) {
