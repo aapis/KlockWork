@@ -119,21 +119,21 @@ extension Today.LogTable {
         @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
         @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
         @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
-
         public var records: [LogRecord]
+        @State private var offset: Int = 0
 
         var body: some View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     if records.count > 0 {
-                        ForEach(records, id: \.objectID) { record in
+                        ForEach(self.records, id: \.objectID) { record in
                             if record.job != nil {
                                 let entry = Entry(
                                     timestamp: DateHelper.longDate(record.timestamp!),
                                     job: record.job!,
                                     message: record.message!
                                 )
-                                
+
                                 LogRow(
                                     entry: entry,
                                     index: records.firstIndex(of: record),
@@ -147,6 +147,7 @@ extension Today.LogTable {
                     }
                 }
             }
+            .onAppear(perform: self.actionOnAppear)
         }
     }
     
@@ -156,11 +157,14 @@ extension Today.LogTable {
             typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
+            @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
             public var date: Date? = Date()
             private let page: PageConfiguration.AppPage = .today
             @State private var searchText: String = ""
 //            @State private var loading: Bool = false
             @State private var records: [LogRecord] = []
+            @State private var recordsOnCurrentPage: [LogRecord] = []
+            @State private var id: UUID = UUID()
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
@@ -171,8 +175,10 @@ extension Today.LogTable {
                         Content
 //                    }
                 }
-                .onAppear(perform: self.findRecords)
-                .onChange(of: nav.session.date) { self.findRecords() }
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.recordsOnCurrentPage) { self.refreshView() }
+                .onChange(of: self.nav.session.pagination.currentPageOffset) { self.findRecords() }
+                .onChange(of: self.nav.session.date) { self.actionOnAppear() }
                 .onChange(of: self.tableSortOrder) { self.findRecords() }
                 .onChange(of: nav.saved) {
                     if nav.saved {
@@ -186,18 +192,20 @@ extension Today.LogTable {
                     ToolbarButtons()
                         .background(self.page.primaryColour)
                     Divider().foregroundStyle(.white)
-                    // TODO: fix search
+                    // @TODO: fix search
                     //                if nav.session.toolbar.showSearch {
                     //                    UI.BoundSearchBar(text: $searchText, disabled: (records.count == 0))
                     //                }
-                    
+
                     if nav.session.toolbar.mode == .plain {
-                        Plain(records: records)
+                        Plain(records: self.recordsOnCurrentPage)
                     } else {
                         Headers(page: self.page)
-                        Full(records: records)
+                        Full(records: self.recordsOnCurrentPage)
                     }
+                    UI.Pagination(entityCount: records.count)
                 }
+                .id(self.id)
             }
         }
         
@@ -289,11 +297,37 @@ extension Today.LogTable.Headers {
 }
 
 extension Today.LogTable.TabContent.Chronologic {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.nav.session.pagination.currentPageOffset = 0
+        self.findRecords()
+    }
+
+    /// Fires when the record window shifts
+    /// - Returns: Void
+    private func refreshView() -> Void {
+        self.id = UUID()
+    }
+
+    /// Find today's records
+    /// - Returns: Void
     private func findRecords() -> Void {
         DispatchQueue.with(background: {
-            return CoreDataRecords(moc: self.nav.moc).forDate(nav.session.date, sort: NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: self.tableSortOrder == 1 ? true : false))
+            return CoreDataRecords(moc: self.nav.moc).forDate(self.nav.session.date, sort: NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: self.tableSortOrder == 1 ? true : false))
         }, completion: { recordsForToday in
-            self.records = recordsForToday!
+            if let recordsForToday = recordsForToday {
+                let lBound = self.nav.session.pagination.currentPageOffset
+                let uBound = lBound + self.perPage
+
+                if lBound < recordsForToday.count && uBound <= recordsForToday.count {
+                    self.recordsOnCurrentPage = Array(recordsForToday[lBound..<uBound])
+                } else {
+                    self.recordsOnCurrentPage = recordsForToday
+                }
+
+                self.records = recordsForToday
+            }
         })
     }
 }
@@ -303,8 +337,10 @@ extension Today.LogTable.TabContent.Grouped {
         DispatchQueue.with(background: {
             return CoreDataRecords(moc: self.nav.moc).forDate(nav.session.date, sort: NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: self.tableSortOrder == 1 ? true : false))
         }, completion: { recordsForToday in
-            self.records = recordsForToday!
-            grouped = CoreDataRecords(moc: self.nav.moc).createExportableGroupedRecordsAsViews(self.records)
+            if let recordsForToday = recordsForToday {
+                self.records = recordsForToday
+                grouped = CoreDataRecords(moc: self.nav.moc).createExportableGroupedRecordsAsViews(self.records)
+            }
         })
     }
 }
@@ -314,7 +350,9 @@ extension Today.LogTable.TabContent.Summarized {
         DispatchQueue.with(background: {
             return CoreDataRecords(moc: self.nav.moc).forDate(nav.session.date, sort: NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: self.tableSortOrder == 1 ? true : false))
         }, completion: { recordsForToday in
-            self.records = recordsForToday!
+            if let recordsForToday = recordsForToday {
+                self.records = recordsForToday
+            }
         })
     }
 }
@@ -325,5 +363,22 @@ extension Today.LogTable.Plain {
 
         plain = model.createExportableRecordsFrom(records, grouped: true)
         grouped = model.createExportableGroupedRecordsAsViews(records)
+    }
+}
+
+extension Today.LogTable.Full {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+//        if self.offset == 0 {
+//            self.records = Array(self.records.prefix(10))
+//        }
+    }
+
+    /// Fires when you navigate to another page of records
+    /// - Returns: Void
+    private func actionOnChangeOffset() -> Void {
+//        self.nav.session.pagination.currentPageOffset += self.perPage
+
     }
 }

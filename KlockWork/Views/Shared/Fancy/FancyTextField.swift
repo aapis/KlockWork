@@ -89,7 +89,7 @@ struct FancyTextField: View {
     
     private var multiLine: some View {
         TextEditor(text: $text)
-            .font(Theme.fontSubTitle)
+            .font(font)
             .textFieldStyle(.plain)
             .disableAutocorrection(!enableAutoCorrection)
             .padding(padding)
@@ -108,5 +108,6 @@ struct FancyTextField: View {
 extension FancyTextField {
     private func reset() -> Void {
         text = ""
+        self.hasFocus = false
     }
 }

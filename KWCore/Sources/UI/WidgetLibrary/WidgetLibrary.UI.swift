@@ -1313,6 +1313,97 @@ extension WidgetLibrary {
             }
         }
 
+        struct Pagination: View {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
+            public var entityCount: Int
+            @State private var pages: [Page] = []
+
+            var body: some View {
+                VStack(alignment: .leading, spacing: 0) {
+                    if self.entityCount > 0 && self.pages.count > 1 {
+                        Main
+                    }
+                }
+                .onAppear(perform: self.actionOnAppear)
+            }
+
+            var Main: some View {
+                HStack(spacing: 1) {
+                    Spacer()
+                    ForEach(self.pages, id: \.id) { page in
+                        page
+                    }
+                }
+                .background(
+                    ZStack(alignment: .top) {
+                        self.state.session.appPage.primaryColour
+                        LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                            .blendMode(.softLight)
+                            .opacity(0.4)
+                            .frame(height: 15)
+                    }
+                )
+            }
+
+            struct Page: View, Identifiable {
+                @EnvironmentObject public var state: Navigation
+                @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
+                public var id: UUID = UUID()
+                public var index: Int
+                public var value: String
+                @State private var isHighlighted: Bool = false
+                @State private var isCurrent: Bool = false
+
+                var body: some View {
+                    Button {
+                        self.state.session.pagination.currentPageOffset = self.index * self.perPage
+                    } label: {
+                        ZStack {
+                            if self.isCurrent {
+                                (self.isHighlighted ? Color.yellow.opacity(0.4) : Color.yellow.opacity(0.4))
+                            } else {
+                                (self.isHighlighted ? Theme.textBackground.opacity(1) : Theme.textBackground.opacity(0))
+                            }
+                            Text(self.value)
+                                .padding(8)
+                        }
+                        .frame(maxWidth: 35)
+                        .useDefaultHover({ hover in self.isHighlighted = hover })
+                    }
+                    .buttonStyle(.plain)
+                    .onAppear(perform: self.actionOnAppear)
+                    .onChange(of: self.state.session.pagination.currentPageOffset) { self.actionOnAppear() }
+                }
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.Pagination {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        let numPages = self.entityCount/self.perPage
+
+        if numPages > 0 {
+            for page in 0..<numPages {
+                self.pages.append(
+                    Page(
+                        index: page,
+                        value: String(page + 1)
+                    )
+                )
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.Pagination.Page {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.isCurrent = (self.state.session.pagination.currentPageOffset/self.perPage) == self.index
     }
 }
 
