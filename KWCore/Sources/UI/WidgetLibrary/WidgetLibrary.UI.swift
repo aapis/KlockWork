@@ -1355,8 +1355,6 @@ extension WidgetLibrary {
                     .buttonStyle(.plain)
                     .useDefaultHover({_ in})
                     .keyboardShortcut("]", modifiers: [.control, .shift])
-//                    .disabled(self.state.session.pagination.currentPageOffset <= self.entityCount)
-
                     Spacer()
                 }
                 .background(
