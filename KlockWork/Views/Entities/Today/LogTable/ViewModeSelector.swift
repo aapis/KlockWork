@@ -6,13 +6,8 @@
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
 import KWCore
-
-public enum ViewMode: Hashable {
-    case full, plain
-}
 
 public struct ViewModeSelector: View {
     @EnvironmentObject public var nav: Navigation
@@ -29,17 +24,17 @@ public struct ViewModeSelector: View {
     
     public var body: some View {
         FancyPicker(onChange: change, items: items, defaultSelected: index)
-            .onAppear(perform: {change(selected: index, sender: "")})
-            .onChange(of: index) { _ in
-                change(selected: index, sender: "")
+            .onAppear(perform: {self.change(selected: index, sender: "")})
+            .onChange(of: self.index) {
+                change(selected: self.index, sender: "")
             }
     }
     
     private func change(selected: Int, sender: String?) -> Void {
         if selected == 1 || selected == 0 {
-            nav.session.toolbar.mode = .full
+            self.nav.session.toolbar.mode = .full
         } else if selected == 2 {
-            nav.session.toolbar.mode = .plain
+            self.nav.session.toolbar.mode = .plain
         }
         
         index = selected
