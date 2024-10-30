@@ -147,7 +147,6 @@ extension Today.LogTable {
                     }
                 }
             }
-            .onAppear(perform: self.actionOnAppear)
         }
     }
     
