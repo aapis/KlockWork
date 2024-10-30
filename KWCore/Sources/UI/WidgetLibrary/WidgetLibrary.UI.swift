@@ -1459,6 +1459,36 @@ extension WidgetLibrary {
                 .useDefaultHover({ hover in self.isHighlighted = hover})
             }
         }
+
+        public struct ViewModeSelector: View {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("today.viewMode") public var index: Int = 0
+            private var items: [CustomPickerItem] {
+                return [
+                    CustomPickerItem(title: "View mode", tag: 0),
+                    CustomPickerItem(title: "Full", tag: 1),
+                    CustomPickerItem(title: "Plain", tag: 2)
+                ]
+            }
+
+            public var body: some View {
+                FancyPicker(onChange: change, items: items, defaultSelected: index, icon: self.index == 1 ? "rectangle.pattern.checkered" : "rectangle")
+                    .onAppear(perform: {self.change(selected: index, sender: "")})
+                    .onChange(of: self.index) {
+                        change(selected: self.index, sender: "")
+                    }
+            }
+
+            private func change(selected: Int, sender: String?) -> Void {
+                if selected == 1 || selected == 0 {
+                    self.state.session.toolbar.mode = .full
+                } else if selected == 2 {
+                    self.state.session.toolbar.mode = .plain
+                }
+
+                index = selected
+            }
+        }
     }
 }
 

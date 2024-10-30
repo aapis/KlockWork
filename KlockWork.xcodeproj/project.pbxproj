@@ -154,7 +154,6 @@
 		53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1C2973897F007A2549 /* ProjectConfig.swift */; };
 		53959A1F29738AAA007A2549 /* FancySubTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1E29738AAA007A2549 /* FancySubTitle.swift */; };
 		53967D8429EC6D14006616A0 /* TodaySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53967D8329EC6D14006616A0 /* TodaySettings.swift */; };
-		53967D8629EC7DEB006616A0 /* ViewModeSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53967D8529EC7DEB006616A0 /* ViewModeSelector.swift */; };
 		53999C1F29669C4E00125E65 /* NoteCreate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53999C1E29669C4E00125E65 /* NoteCreate.swift */; };
 		5399AF762CB4995A00211ECD /* UniversalHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5399AF752CB4995400211ECD /* UniversalHeader.swift */; };
 		539F68DB2BF6BD310086F89A /* FancyDropdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539F68DA2BF6BD310086F89A /* FancyDropdown.swift */; };
@@ -444,7 +443,6 @@
 		53959A1C2973897F007A2549 /* ProjectConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfig.swift; sourceTree = "<group>"; };
 		53959A1E29738AAA007A2549 /* FancySubTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancySubTitle.swift; sourceTree = "<group>"; };
 		53967D8329EC6D14006616A0 /* TodaySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodaySettings.swift; sourceTree = "<group>"; };
-		53967D8529EC7DEB006616A0 /* ViewModeSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModeSelector.swift; sourceTree = "<group>"; };
 		53999C1E29669C4E00125E65 /* NoteCreate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteCreate.swift; sourceTree = "<group>"; };
 		5399AF752CB4995400211ECD /* UniversalHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversalHeader.swift; sourceTree = "<group>"; };
 		539F68DA2BF6BD310086F89A /* FancyDropdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyDropdown.swift; sourceTree = "<group>"; };
@@ -1349,7 +1347,6 @@
 				537AEB9E29627DCC00385787 /* LogTable.swift */,
 				5376289F2966518B00DE8ECF /* ToolbarTabs.swift */,
 				537628A12966525500DE8ECF /* ToolbarButtons.swift */,
-				53967D8529EC7DEB006616A0 /* ViewModeSelector.swift */,
 				53790C132A758A7200D3FFD4 /* RecordTableColumn.swift */,
 			);
 			path = LogTable;
@@ -1748,7 +1745,6 @@
 				5371BA2B2A7B279800DEEC21 /* NoteViewSidebar.swift in Sources */,
 				5334F26C2B2A5BD60079D2E7 /* FancyProjectActiveToggle.swift in Sources */,
 				53D5E2982A85A75C00FE293A /* Planning.swift in Sources */,
-				53967D8629EC7DEB006616A0 /* ViewModeSelector.swift in Sources */,
 				53C3418C299960310071B855 /* JobDashboard.swift in Sources */,
 				53C000A02B3F736F00D5EC04 /* Inspector.swift in Sources */,
 				5334F26E2B2A5CC50079D2E7 /* FancyLabel.swift in Sources */,
