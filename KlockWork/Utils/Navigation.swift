@@ -245,8 +245,13 @@ extension Navigation {
         var toolbar: Toolbar = Toolbar()
         var eventStatus: EventIndicatorStatus = .ready
         var cli: CommandLineSession = CommandLineSession()
+        var pagination: TablePagination = TablePagination()
     }
-    
+
+    public struct TablePagination {
+        var currentPageOffset: Int = 0
+    }
+
     public struct CommandLineSession {
         typealias CLIApp = CommandLineInterface.App
         typealias CLIAppType = CommandLineInterface.App.AppType

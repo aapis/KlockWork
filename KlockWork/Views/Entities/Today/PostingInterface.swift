@@ -30,7 +30,7 @@ extension Today {
 
                 FancyTextField(
                     placeholder: "What are you working on?",
-                    lineLimit: 11,
+                    lineLimit: 8,
                     onSubmit: submitAction,
                     fgColour: self.nav.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
                     text: $text
@@ -43,7 +43,6 @@ extension Today {
                 .alert("You need to write a message too. What are you working on?", isPresented: $errorNoContent) {
                     Button("Ok", role: .cancel) {}
                 }
-                .frame(height: 215)
 
                 FancyHelpText(
                     text: "Choose a job from the sidebar, type into the field below. Enter/Return/+ to create records.",
