@@ -1346,6 +1346,35 @@ extension WidgetLibrary {
                 )
             }
 
+            struct Widget: View {
+                @EnvironmentObject public var state: Navigation
+                @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
+                @State private var isHighlighted: Bool = false
+                private var pickerItems: [CustomPickerItem] {
+                    return [
+                        CustomPickerItem(title: "Pagination", tag: 0),
+                        CustomPickerItem(title: "10 per page", tag: 10),
+                        CustomPickerItem(title: "30 per page", tag: 30),
+                        CustomPickerItem(title: "50 per page", tag: 50)
+                    ]
+                }
+
+                var body: some View {
+                    HStack(spacing: 5) {
+                        FancyPicker(onChange: change, items: self.pickerItems, defaultSelected: self.perPage)
+                            .onAppear(perform: {self.change(selected: self.perPage, sender: "")})
+                            .onChange(of: self.perPage) {
+                                change(selected: self.perPage, sender: "")
+                            }
+                    }
+                    .padding(6)
+                    .background(self.isHighlighted ? Theme.textBackground.opacity(1) : Theme.textBackground.opacity(0.8))
+                    .foregroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                    .useDefaultHover({ hover in self.isHighlighted = hover})
+                }
+            }
+
             struct Page: View, Identifiable {
                 @EnvironmentObject public var state: Navigation
                 @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
@@ -1359,14 +1388,17 @@ extension WidgetLibrary {
                     Button {
                         self.state.session.pagination.currentPageOffset = self.index * self.perPage
                     } label: {
-                        ZStack {
+                        ZStack(alignment: .center) {
                             if self.isCurrent {
-                                (self.isHighlighted ? Color.yellow.opacity(0.4) : Color.yellow.opacity(0.4))
+                                Circle()
+                                    .fill(self.isHighlighted ? self.state.theme.tint.opacity(1) : self.state.theme.tint.opacity(0.8))
+                                    .frame(width: 20)
                             } else {
                                 (self.isHighlighted ? Theme.textBackground.opacity(1) : Theme.textBackground.opacity(0))
                             }
                             Text(self.value)
                                 .padding(8)
+                                .foregroundStyle(self.isCurrent ? Theme.base : .gray)
                         }
                         .frame(maxWidth: 35)
                         .useDefaultHover({ hover in self.isHighlighted = hover })
@@ -1384,6 +1416,11 @@ extension WidgetLibrary.UI.Pagination {
     /// Onload handler. Sets view state
     /// - Returns: Void
     private func actionOnAppear() -> Void {
+        if self.perPage == 0 {
+            self.pages = []
+            return
+        }
+
         let numPages = self.entityCount/self.perPage
 
         if numPages > 0 {
@@ -1395,6 +1432,21 @@ extension WidgetLibrary.UI.Pagination {
                     )
                 )
             }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.Pagination.Widget {
+    /// Fires when number of records per-page selector is changed
+    /// - Parameters:
+    ///   - selected: Int
+    ///   - sender: String
+    /// - Returns: Void
+    private func change(selected: Int, sender: String?) -> Void {
+        if selected > 0 {
+            self.perPage = selected
+        } else {
+            
         }
     }
 }

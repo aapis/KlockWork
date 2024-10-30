@@ -34,7 +34,7 @@ struct ToolbarButtons: View {
                     .background(Theme.textBackground)
                     .foregroundStyle(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 5))
-
+                UI.Pagination.Widget()
                 Button(action: export, label: {
                     HStack(spacing: 5) {
                         Image(systemName: "arrow.down.to.line")
