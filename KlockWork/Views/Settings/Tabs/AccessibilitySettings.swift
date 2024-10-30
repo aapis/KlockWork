@@ -12,6 +12,7 @@ import KWCore
 struct AccessibilitySettings: View {
     @EnvironmentObject public var state: Navigation
     @AppStorage("settings.accessibility.showTabTitles") private var showTabTitles: Bool = true
+    @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
 
     var body: some View {
         HStack {
@@ -19,6 +20,7 @@ struct AccessibilitySettings: View {
             Form {
                 Section("User interface") {
                     Toggle("Show tab titles", isOn: $showTabTitles)
+                    Toggle("Show hints & tutorials", isOn: $showUIHints)
                 }
             }
             Spacer()
