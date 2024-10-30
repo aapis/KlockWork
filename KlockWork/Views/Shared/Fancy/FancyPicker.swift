@@ -6,7 +6,6 @@
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
 import KWCore
 
@@ -17,8 +16,9 @@ struct FancyPicker: View {
     public var labelText: String?
     public var showLabel: Bool? = false
     public var defaultSelected: Int = 0
-    public var size: PickerSize = .small
-    
+    public var size: PickerSize = .large
+    public var icon: String = "questionmark.app.fill"
+    @State private var isDropdownOpen: Bool = false
     @State private var selection: Int = 0
     
     var body: some View {
@@ -33,31 +33,27 @@ struct FancyPicker: View {
             selection = defaultSelected
         })
     }
-    
+
     var showNoLabel: some View {
         VStack {
-            Picker(labelText ?? "Picker", selection: $selection) {
-                ForEach(items) { item in
-                    Text(item.title)
-                        .tag(item.tag)
-                        // @TODO: this doesn't actually work; see https://stackoverflow.com/a/76154257
-                        .disabled(item.disabled)
+            HStack(spacing: 0) {
+                if self.labelText == nil {
+                    Image(systemName: self.icon)
+                        .symbolRenderingMode(.hierarchical)
+                        .font(.headline)
                 }
-            }
-            .background(transparent! ? Color.clear : Theme.toolbarColour)
-            .onHover { inside in
-                if inside {
-                    NSCursor.pointingHand.push()
-                } else {
-                    NSCursor.pop()
+                Picker(labelText ?? "", selection: $selection) {
+                    ForEach(items) { item in
+                        Text(item.title)
+                            .tag(item.tag)
+                    }
                 }
-            }
-            .labelsHidden()
-            .frame(width: size == .small ? 200 : nil)
-            .padding([.trailing], size == .small ? 0 : 16)
-            .font(Theme.font)
-            .onChange(of: selection) { _ in
-                onChange(selection, labelText)
+                .background(self.transparent! ? Color.clear : Theme.toolbarColour)
+                .useDefaultHover({_ in})
+                .frame(width: 150)
+                .onChange(of: self.selection) {
+                    onChange(self.selection, self.labelText)
+                }
             }
         }
     }
@@ -68,23 +64,12 @@ struct FancyPicker: View {
                 ForEach(items) { item in
                     Text(item.title)
                         .tag(item.tag)
-                        // @TODO: this doesn't actually work; see https://stackoverflow.com/a/76154257
-                        .disabled(item.disabled)
                 }
             }
             .background(transparent! ? Color.clear : Theme.toolbarColour)
-            .onHover { inside in
-                if inside {
-                    NSCursor.pointingHand.push()
-                } else {
-                    NSCursor.pop()
-                }
-            }
-            .frame(width: size == .small ? 200 : nil)
-            .padding([.trailing], size == .small ? 0 : 16)
-            .font(Theme.font)
-            .onChange(of: selection) { _ in
-                onChange(selection, labelText)
+            .useDefaultHover({_ in})
+            .onChange(of: self.selection) {
+                onChange(self.selection, self.labelText)
             }
         }
     }
