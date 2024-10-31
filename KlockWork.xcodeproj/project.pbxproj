@@ -10,9 +10,6 @@
 		53013A982CAC60200024BA30 /* Company.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A972CAC601F0024BA30 /* Company.swift */; };
 		53013A9A2CAC8C530024BA30 /* DefinitionDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A992CAC8C510024BA30 /* DefinitionDetail.swift */; };
 		53013A9C2CAC9CCA0024BA30 /* DefinitionSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53013A9B2CAC9CC40024BA30 /* DefinitionSidebar.swift */; };
-		530B1D722CAE219D0033E81F /* PageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D6F2CAE219D0033E81F /* PageConfiguration.swift */; };
-		530B1D732CAE219D0033E81F /* RowAddButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D702CAE219D0033E81F /* RowAddButton.swift */; };
-		530B1D742CAE219D0033E81F /* FilterField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D712CAE219D0033E81F /* FilterField.swift */; };
 		530B1D782CAFA4DD0033E81F /* PeopleDashboadSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D772CAFA4D50033E81F /* PeopleDashboadSidebar.swift */; };
 		530B1D7A2CAFA4E40033E81F /* PeopleDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D792CAFA4E00033E81F /* PeopleDashboard.swift */; };
 		530B1D7C2CAFAFBD0033E81F /* PeopleDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B1D7B2CAFAFBB0033E81F /* PeopleDetail.swift */; };
@@ -516,6 +513,7 @@
 		5347DAB62CB3519C003DA2B9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				KWCore.docc,
 				Package.swift,
 				Sources/Helpers/ClipboardHelper.swift,
 				Sources/Helpers/DateHelper.swift,
@@ -1567,9 +1565,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				530B1D722CAE219D0033E81F /* PageConfiguration.swift in Sources */,
-				530B1D732CAE219D0033E81F /* RowAddButton.swift in Sources */,
-				530B1D742CAE219D0033E81F /* FilterField.swift in Sources */,
 				53FEF578296603D9000B94FC /* FancyTextField.swift in Sources */,
 				53F5895E2998330000843B32 /* NoteResult.swift in Sources */,
 				536040A82CB9F5970030D72D /* AssessmentFactor.swift in Sources */,
