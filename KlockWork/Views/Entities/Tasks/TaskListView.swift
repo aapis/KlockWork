@@ -42,7 +42,7 @@ struct TaskListView: View {
                             text: $content
                         )
 
-                        RowAddButton(isPresented: $isPresented, callback: self.actionOnCreate)
+                        UI.RowAddButton(isPresented: $isPresented, callback: self.actionOnCreate)
                             .frame(height: 42)
                             .disabled(self.content.isEmpty || self.state.session.job == nil)
                             .opacity(self.content.isEmpty || self.state.session.job == nil ? 0.5 : 1)

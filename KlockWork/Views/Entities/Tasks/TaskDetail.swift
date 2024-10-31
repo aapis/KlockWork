@@ -51,7 +51,7 @@ struct TaskDetail: View {
                         text: $content
                     )
 
-                    RowAddButton(
+                    UI.RowAddButton(
                         title: self.task != nil ? "Save" : self.state.session.job != nil ? "Add" : "Save",
                         isPresented: $isPresented,
                         callback: self.actionOnSave
