@@ -13,5 +13,5 @@ A productivity app & personal database for people who need help remembering thin
 
 See the [wiki](https://github.com/aapis/KlockWork/wiki) for more details.
 
-![Dashboard view](Screenshots/dashboard-1.12.png)
-![Explore view](Screenshots/explore-1.12.png)
+![Dashboard view](Screenshots/dashboard-1.15.png)
+![Explore view](Screenshots/explore-1.15.png)
