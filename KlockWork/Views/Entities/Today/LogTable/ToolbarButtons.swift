@@ -11,16 +11,14 @@ import SwiftUI
 import KWCore
 
 struct ToolbarButtons: View {
+    @EnvironmentObject public var updater: ViewUpdater
+    @EnvironmentObject public var nav: Navigation
+    @AppStorage("today.numPastDates") public var numPastDates: Int = 20
+    public var records: [LogRecord]
     @State private var datePickerItems: [CustomPickerItem] = []
     @State private var pickerSelection: Int = 0
     @State private var highlighted: Bool = false
 
-    @AppStorage("today.numPastDates") public var numPastDates: Int = 20
-    
-    @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var updater: ViewUpdater
-    @EnvironmentObject public var nav: Navigation
-    
     var body: some View {
         ZStack(alignment: .bottom) {
             LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
@@ -38,8 +36,8 @@ struct ToolbarButtons: View {
                 UI.Pagination.Widget()
                 Button(action: export, label: {
                     HStack(spacing: 5) {
-                        Image(systemName: "arrow.down.to.line")
-                        Text("Export")
+                        Image(systemName: "document.on.document.fill")
+                        Text("Copy")
                     }
                     .padding(6)
                     .background(Theme.textBackground)
@@ -47,8 +45,8 @@ struct ToolbarButtons: View {
                     .clipShape(RoundedRectangle(cornerRadius: 5))
                 })
                 .buttonStyle(.plain)
-                .keyboardShortcut("c", modifiers: [.command, .shift])
-                .help("Export this view")
+                .keyboardShortcut("c", modifiers: [.control, .shift])
+                .help("Copy view data to clipboard")
                 .useDefaultHover({ hover in self.highlighted = hover})
                 Spacer()
             }
@@ -67,11 +65,12 @@ struct ToolbarButtons: View {
         nav.session.toolbar.showSearch.toggle()
     }
     
+    /// Copy data to clipboard
+    /// - Returns: Void
     private func export() -> Void {
-        // @TODO: fix
-//        ClipboardHelper.copy(
-//            CoreDataRecords(moc: moc).createExportableRecordsFrom(records)
-//        )
+        ClipboardHelper.copy(
+            CoreDataRecords(moc: self.nav.moc).createExportableRecordsFrom(self.records)
+        )
     }
     
     private func viewAsPlain() -> Void {

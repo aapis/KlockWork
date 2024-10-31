@@ -189,7 +189,7 @@ extension Today.LogTable {
             
             var Content: some View {
                 VStack(spacing: 0) {
-                    ToolbarButtons()
+                    ToolbarButtons(records: self.recordsOnCurrentPage)
                         .background(self.page.primaryColour)
                     Divider().foregroundStyle(.white)
                     // @TODO: fix search
@@ -220,7 +220,7 @@ extension Today.LogTable {
             var body: some View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 1) {
-                        ToolbarButtons()
+                        ToolbarButtons(records: self.records)
                             .background(self.page.primaryColour)
                         Divider().foregroundStyle(.white)
 
@@ -251,7 +251,7 @@ extension Today.LogTable {
 
             var body: some View {
                 VStack(spacing: 0) {
-                    ToolbarButtons()
+                    ToolbarButtons(records: self.records)
                         .background(self.page.primaryColour)
                     Divider().foregroundStyle(.white)
 

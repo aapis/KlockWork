@@ -48,6 +48,7 @@ extension Today {
                     page: self.page
                 )
             }
+            .clipShape(.rect(cornerRadius: 5))
             .onAppear(perform: self.setFieldFocus)
             .onChange(of: self.isSearchStackShowing) { self.setFieldFocus() }
             .onChange(of: text) {

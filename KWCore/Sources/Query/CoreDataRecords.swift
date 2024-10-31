@@ -489,6 +489,48 @@ public class CoreDataRecords: ObservableObject {
             jobs
         )
     }
+    
+    /// Serializes a LogRecord to a string
+    /// - Parameters:
+    ///   - index: Int
+    ///   - job: Job
+    ///   - cleaned: LogRecord
+    /// - Returns: String
+    private func serializeRecord(index: Int, job: Job, cleaned: LogRecord) -> String {
+        let shredableMsg = job.shredable ? " (SR&ED)" : ""
+        var jobSection = ""
+        var line = ""
+
+        if syncColumns && showColumnIndex {
+            jobSection += " \(String(Int(job.jid)))"
+            line += "\(index) - "
+        } else {
+            jobSection += String(Int(job.jid))
+        }
+
+        if syncColumns && showColumnJobId {
+            if let uri = job.uri {
+                jobSection += " - \(uri.absoluteString)" + shredableMsg
+            } else {
+                jobSection += shredableMsg
+            }
+        }
+
+        if syncColumns && showColumnTimestamp {
+            line += "\(cleaned.timestamp!)"
+            line += " - \(jobSection)"
+        } else {
+            line += jobSection
+        }
+
+        if line.count > 0 {
+            line += " - \(cleaned.message!)\n"
+        } else {
+            line += "\(cleaned.message!)\n"
+        }
+
+        return line
+    }
 
     private func exportableRecords(_ records: [LogRecord]) -> String {
         if records.count == 0 {
@@ -501,43 +543,13 @@ public class CoreDataRecords: ObservableObject {
         for item in records {
             if let job = item.job {
                 let cleaned = CoreDataProjectConfiguration.applyBannedWordsTo(item)
+                let ignoredJobs = job.project?.configuration?.ignoredJobs
 
-                if let ignoredJobs = job.project?.configuration?.ignoredJobs {
-                    if !ignoredJobs.contains(job.jid.string) {
-                        let shredableMsg = job.shredable ? " (SR&ED)" : ""
-                        var jobSection = ""
-                        var line = ""
-
-                        if syncColumns && showColumnIndex {
-                            jobSection += " \(String(Int(job.jid)))"
-                            line += "\(i) - "
-                        } else {
-                            jobSection += String(Int(job.jid))
-                        }
-
-                        if syncColumns && showColumnJobId {
-                            if let uri = job.uri {
-                                jobSection += " - \(uri.absoluteString)" + shredableMsg
-                            } else {
-                                jobSection += shredableMsg
-                            }
-                        }
-
-                        if syncColumns && showColumnTimestamp {
-                            line += "\(item.timestamp!)"
-                            line += " - \(jobSection)"
-                        } else {
-                            line += jobSection
-                        }
-
-                        if line.count > 0 {
-                            line += " - \(cleaned.message!)\n"
-                        } else {
-                            line += "\(cleaned.message!)\n"
-                        }
-
-
-                        buffer += line
+                if ignoredJobs == nil {
+                    buffer += self.serializeRecord(index: i, job: job, cleaned: cleaned)
+                } else {
+                    if !ignoredJobs!.contains(job.jid.string) {
+                        buffer += self.serializeRecord(index: i, job: job, cleaned: cleaned)
                     }
                 }
             }
