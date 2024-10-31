@@ -660,6 +660,8 @@ extension Navigation.History {
 extension Navigation.Session {
     mutating func setJob(_ job: Job?) -> Void {
         self.job = job
+        self.project = self.job?.project
+        self.company = self.project?.company
     }
 }
 
