@@ -189,19 +189,15 @@ struct SidebarItem: View, Identifiable {
                                 if let alt = altIcon {
                                     if highlighted {
                                         Image(systemName: alt)
-                                            .foregroundStyle(Theme.base.opacity(0.5))
                                     } else {
                                         Image(systemName: ic)
-                                            .foregroundStyle(Theme.base.opacity(0.5))
                                     }
                                 } else {
                                     Image(systemName: ic)
-                                        .foregroundStyle(Theme.base.opacity(0.5))
                                 }
                             }
                             .frame(width: 30, height: 30)
-                            .cornerRadius(5)
-//                            .padding(.trailing, type.padding)
+                            .clipShape(.rect(cornerRadius: 5))
                         }
                         .padding(8)
                     }
