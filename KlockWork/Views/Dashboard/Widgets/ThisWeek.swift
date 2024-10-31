@@ -50,66 +50,16 @@ struct ThisWeek: View {
         .onAppear(perform: onAppear)
         .frame(height: 250)
     }
-    
+}
+
+extension ThisWeek {
+    /// Onload handler. Sets view state.
+    /// - Returns: Void
     private func onAppear() -> Void {
         Task {
             (wordCount, jobCount, recordCount) = await crm.weeklyStats {
-//                randomMlShit()
+
             }
         }
-    }
-    
-    private func randomMlShit() -> Void {
-//        let complexDict: [String: Array<String>] = [
-//            "411150.0": [
-//                "ok we were mainly just proofing the functionality. all is good, we have a full checklist of post-launch items now",
-//                "in related meeting: OnPoint Search - Dry run",
-//                "pausing to prepare for a project-related meeting",
-//                "working on this task: Date selector"
-//            ],
-//            "11.0": [
-//                "prepping for 1:1",
-//                "in 1:1",
-//                "done"
-//            ],
-//            "55.0": [
-//                "in standup",
-//                "done"
-//            ]
-//        ]
-//
-//        let dict: [String: MLDataValueConvertible] = [
-//            "411150.0": "ok we were mainly just proofing the functionality. all is good, we have a full checklist of post-launch items now",
-//            "11.0": "prepping for 1:1",
-//            "55.0": "in standup"
-//        ]
-//
-//        let toklab: [String: MLDataValueConvertible] = [
-//            "tokens": [
-//                "ok we were mainly just proofing the functionality. all is good, we have a full checklist of post-launch items now",
-//                "in related meeting: OnPoint Search - Dry run",
-//                "pausing to prepare for a project-related meeting",
-//                "working on this task: Date selector"
-//            ],
-//            "labels": [
-//                "411150.0",
-//                "411150.0",
-//                "411150.0",
-//                "11.0",
-//                "55.0"
-//            ]
-//        ]
-        
-//        let file = Bundle.main.url(forResource: "job_ids", withExtension: ".json")
-//        
-//        if file == nil {
-//            print("[error] No file with name job_ids.json")
-//            return
-//        } else {
-//            let contents = try? String(contentsOf: file!)
-//            print("[debug] Contents: \(contents)")
-//        }
-//        
-//        let kw = Keywords(from: file!)
     }
 }

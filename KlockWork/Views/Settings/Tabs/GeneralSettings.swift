@@ -114,7 +114,7 @@ extension GeneralSettings {
         index.beginBatch()
         index.indexSearchableItems(searchableItems) { error in
             if error != nil {
-                print("[debug][Spotlight] Error: \(error?.localizedDescription)")
+                print("[debug][Spotlight] Error: \(error?.localizedDescription ?? "Unable to determine error")")
             } else {
                 print("[debug][Spotlight] Indexed \(searchableItems.count) items with Spotlight")
             }
@@ -128,8 +128,10 @@ extension GeneralSettings {
     }
 
     private func spotlightIndexer(error: (any Error)?) -> Void {
-        print("[debug][Spotlight] ERROR: \(error)")
-        print("[debug][Spotlight] Other")
+        if let error = error {
+            print("[debug][Spotlight] ERROR: \(error)")
+            print("[debug][Spotlight] Other")
+        }
     }
 }
 

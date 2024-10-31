@@ -49,30 +49,30 @@ struct JobView: View {
         }
         .padding(5)
         .onAppear(perform: setEditableValues)
-        .onChange(of: nav.session.job) { _ in
+        .onChange(of: nav.session.job) {
             setEditableValues()
         }
-        .onChange(of: id) { jobId in
+        .onChange(of: id) {
             JobFormValidator(moc: moc).onChangeCallback(
-                jobFieldValue: jobId,
+                jobFieldValue: self.id,
                 valid: $validJob,
                 id: $id
             )
 
             if validJob {
-                job.jid = Double(jobId) ?? 0.0
+                job.jid = Double(self.id) ?? 0.0
                 PersistenceController.shared.save()
             }
         }
-        .onChange(of: url) { newUrl in
+        .onChange(of: url) {
             JobFormValidator(moc: moc).onChangeCallback(
-                urlFieldValue: newUrl,
+                urlFieldValue: self.url,
                 valid: $validUrl,
                 id: $id
             )
 
             if validUrl {
-                job.uri = URL(string: newUrl)
+                job.uri = URL(string: self.url)
                 PersistenceController.shared.save()
             }
         }

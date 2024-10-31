@@ -47,7 +47,7 @@ struct TaskResult: View {
             }
         }
         .frame(height: 40)
-        .onChange(of: text) { _ in
+        .onChange(of: text) {
             isLoading = true
             showChildren = false
             numPages = 1

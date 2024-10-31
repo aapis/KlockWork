@@ -108,7 +108,7 @@ struct NoteVersionNavigationWidget: View {
             lastUpdate = prev.created!
 
             if currentVersion == noteVersions.count {
-                CoreDataNoteVersions(moc: moc).from(note)
+                let _ = CoreDataNoteVersions(moc: moc).from(note)
             }
 
             currentVersion -= 1
