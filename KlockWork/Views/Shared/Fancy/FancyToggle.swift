@@ -29,8 +29,8 @@ struct FancyToggle: View {
         .onAppear(perform: {
             alive = value
         })
-        .onChange(of: alive) { status in
-            self.onChange(status)
+        .onChange(of: self.alive) {
+            self.onChange(self.alive)
         }
     }
 }
@@ -50,8 +50,8 @@ struct FancyBoundToggle: View {
             .padding()
             .background(Theme.textBackground)
         }
-        .onChange(of: value) { status in
-            self.onChange(status)
+        .onChange(of: self.value) {
+            self.onChange(self.value)
         }
     }
 }

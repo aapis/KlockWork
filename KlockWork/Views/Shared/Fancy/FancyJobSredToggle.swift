@@ -36,8 +36,8 @@ struct FancyJobSredToggle: View {
 
             entity.shredable = shredable
         })
-        .onChange(of: shredable) { bval in
-            entity.shredable = bval
+        .onChange(of: self.shredable) {
+            self.entity.shredable = self.shredable
             PersistenceController.shared.save()
         }
     }

@@ -68,7 +68,7 @@ struct ProjectsWidget: View {
                     } else {
                         if showSearch {
                             UI.BoundSearchBar(text: $query, disabled: minimized, placeholder: "Statue of Liberty 2.0, Extreme Roofing League")
-                                .onChange(of: query, perform: actionOnSearch)
+                                .onChange(of: query) { self.actionOnSearch() }
                         } else {
                             HStack {Spacer()}
                         }
@@ -98,7 +98,7 @@ struct ProjectsWidget: View {
             .background(Theme.base.opacity(0.2))
         }
         .onAppear(perform: actionOnAppear)
-        .onChange(of: showAll, perform: {_ in actionOnAppear()})
+        .onChange(of: self.showAll) { self.actionOnAppear() }
     }
 }
 
@@ -129,16 +129,16 @@ extension ProjectsWidget {
         setListItems(getRecent())
     }
 
-    private func actionOnSearch(term: String) -> Void {
-        if term.count > 3 {
+    private func actionOnSearch() -> Void {
+        if self.query.count > 3 {
             setListItems(
                 resource.filter {
-                    $0.name?.caseInsensitiveCompare(term) == .orderedSame
+                    $0.name?.caseInsensitiveCompare(self.query) == .orderedSame
                     ||
                     (
-                        $0.name?.contains(term) ?? false
+                        $0.name?.contains(self.query) ?? false
                         ||
-                        $0.name?.starts(with: term) ?? false
+                        $0.name?.starts(with: self.query) ?? false
                     )
                 }
             )

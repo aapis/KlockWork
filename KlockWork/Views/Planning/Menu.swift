@@ -53,12 +53,12 @@ extension Planning {
             }
             .background(self.page.primaryColour)
             .onAppear(perform: actionOnAppear)
-            .onChange(of: nav.planning.tasks, perform: actionOnChangeTasks)
-            .onChange(of: nav.planning.jobs, perform: actionOnChangeJobs)
-            .onChange(of: nav.planning.notes, perform: actionOnChangeNotes)
-            .onChange(of: nav.planning.companies, perform: actionOnChangeCompanies)
-            .onChange(of: nav.planning.projects, perform: actionOnChangeProjects)
-            .onChange(of: nav.session.date, perform: actionOnChangeDate)
+            .onChange(of: self.nav.planning.tasks) { self.actionOnChangeTasks() }
+            .onChange(of: self.nav.planning.jobs) { self.actionOnChangeJobs() }
+            .onChange(of: self.nav.planning.notes) { self.actionOnChangeNotes() }
+            .onChange(of: self.nav.planning.companies) { self.actionOnChangeCompanies() }
+            .onChange(of: self.nav.planning.projects) { self.actionOnChangeProjects() }
+            .onChange(of: self.nav.session.date) { self.actionOnChangeDate() }
         }
 
         var CountPills: some View {
@@ -147,32 +147,27 @@ extension Planning.Menu {
         nav.session.gif = .normal
     }
 
-    private func actionOnChangeJobs(jobs: Set<Job>) -> Void {
-        nav.planning.jobs = jobs
+    private func actionOnChangeJobs() -> Void {
         actionOnAppear()
         actionFinalizePlan()
     }
 
-    private func actionOnChangeTasks(tasks: Set<LogTask>) -> Void {
-        nav.planning.tasks = tasks
+    private func actionOnChangeTasks() -> Void {
         actionFinalizePlan()
         actionOnAppear()
     }
 
-    private func actionOnChangeNotes(notes: Set<Note>) -> Void {
-        nav.planning.notes = notes
+    private func actionOnChangeNotes() -> Void {
         actionFinalizePlan()
         actionOnAppear()
     }
 
-    private func actionOnChangeCompanies(companies: Set<Company>) -> Void {
-        nav.planning.companies = companies
+    private func actionOnChangeCompanies() -> Void {
         actionFinalizePlan()
         actionOnAppear()
     }
 
-    private func actionOnChangeProjects(projects: Set<Project>) -> Void {
-        nav.planning.projects = projects
+    private func actionOnChangeProjects() -> Void {
         actionFinalizePlan()
         actionOnAppear()
     }
@@ -220,9 +215,11 @@ extension Planning.Menu {
 
         ClipboardHelper.copy(dailyPlan)
     }
-
-    private func actionOnChangeDate(_ date: Date) -> Void {
-        if let plan = CoreDataPlan(moc: nav.planning.moc).forDate(date).first {
+    
+    /// Fires when you change date
+    /// - Returns: Void
+    private func actionOnChangeDate() -> Void {
+        if let plan = CoreDataPlan(moc: nav.planning.moc).forDate(self.nav.session.date).first {
             nav.session.plan = plan
             nav.planning.load(nav.session.plan)
         } else {
