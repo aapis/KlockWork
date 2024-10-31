@@ -21,6 +21,7 @@ struct ToolbarButtons: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
+            self.nav.session.appPage.primaryColour
             LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
                 .opacity(0.3)
                 .blendMode(.softLight)

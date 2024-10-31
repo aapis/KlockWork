@@ -49,6 +49,30 @@ extension Job {
 //        \.name!, \.created!
 //    ]
 
+    @ViewBuilder var rowView: some View {
+        if let date = self.created {
+            LogRow(
+                entry: Entry(
+                    timestamp: DateHelper.longDate(date),
+                    job: self,
+                    message: "Job created: \(self.title ?? self.jid.string)"
+                ),
+                index: 0,
+                colour: self.backgroundColor
+            )
+        } else if let date = self.lastUpdate {
+            LogRow(
+                entry: Entry(
+                    timestamp: DateHelper.longDate(date),
+                    job: self,
+                    message: "Job updated: \(self.title ?? self.jid.string)"
+                ),
+                index: 0,
+                colour: self.backgroundColor
+            )
+        }
+    }
+
     // @TODO: the following are dupes and should be deprecated then removed
     func id_int() -> Int {
         return Int(exactly: jid.rounded(.toNearestOrEven)) ?? 0

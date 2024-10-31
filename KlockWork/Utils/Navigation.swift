@@ -13,7 +13,8 @@ import EventKit
 public enum Page {
     typealias Conf = PageConfiguration.AppPage
     case dashboard, today, notes, tasks, projects, projectDetail, jobs, companies, companyDetail, planning,
-    terms, definitionDetail, taskDetail, noteDetail, people, peopleDetail, explore, activityFlashcards, activityCalendar, recordDetail
+    terms, definitionDetail, taskDetail, noteDetail, people, peopleDetail, explore, activityFlashcards, activityCalendar, recordDetail,
+    timeline
 
     var appPage: Conf {
         switch self {
@@ -59,6 +60,7 @@ public enum Page {
         case .activityCalendar: return "Activity Calendar"
         case .activityFlashcards: return "Flashcards"
         case .recordDetail: return "Record"
+        case .timeline: return "Timeline"
         }
     }
 
@@ -72,6 +74,7 @@ public enum Page {
         case .peopleDetail: return .people
         case .activityCalendar, .activityFlashcards: return .explore
         case .recordDetail: return .today
+        case .timeline: return .explore
         default: return nil
         }
     }
@@ -603,6 +606,7 @@ extension Navigation {
             HistoryPage(page: .explore, view: AnyView(Explore()), sidebar: AnyView(ExploreSidebar()), title: "Explore"),
             HistoryPage(page: .activityFlashcards, view: AnyView(UI.FlashcardActivity()), sidebar: AnyView(ExploreSidebar()), title: "Flashcards"),
             HistoryPage(page: .activityCalendar, view: AnyView(UI.ActivityCalendar()), sidebar: AnyView(ExploreSidebar()), title: "Activity Calendar"),
+            HistoryPage(page: .timeline, view: AnyView(UI.TimelineActivity()), sidebar: AnyView(ExploreSidebar()), title: "Timeline"),
         ]
         
         /// A single page representing a page the user navigated to

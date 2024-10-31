@@ -46,7 +46,7 @@ struct DashboardSettings: View {
                 }
             }
 
-            Picker("Max number of days in history:", selection: $maxYearsPastInHistory) {
+            Picker("How many years of records would you like to show?", selection: $maxYearsPastInHistory) {
                 Text("1").tag(1)
                 Text("2").tag(2)
                 Text("3").tag(3)

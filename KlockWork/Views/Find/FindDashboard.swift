@@ -64,7 +64,17 @@ struct FindDashboard: View {
             Divider()
 
             if self.location == .sidebar {
-                self.TypeFilter
+                UI.BoundSearchTypeFilter(
+                    showRecords: $showRecords,
+                    showNotes: $showNotes,
+                    showTasks: $showTasks,
+                    showProjects: $showProjects,
+                    showJobs: $showJobs,
+                    showCompanies: $showCompanies,
+                    showPeople: $showPeople,
+                    showTerms: $showTerms,
+                    showDefinitions: $showDefinitions
+                )
             }
 
             /// When installed in content areas, display above suggestions
@@ -122,15 +132,25 @@ struct FindDashboard: View {
                             showDefinitions: $showDefinitions,
                             location: location
                         )
+                        .frame(maxHeight: 500)
                     }
                 }
             }
 
             if showingTypes {
                 if self.location == .content {
-                    self.TypeFilter
+                    UI.BoundSearchTypeFilter(
+                        showRecords: $showRecords,
+                        showNotes: $showNotes,
+                        showTasks: $showTasks,
+                        showProjects: $showProjects,
+                        showJobs: $showJobs,
+                        showCompanies: $showCompanies,
+                        showPeople: $showPeople,
+                        showTerms: $showTerms,
+                        showDefinitions: $showDefinitions
+                    )
                 } else if self.location == .sidebar {
-                    Spacer()
                     GridRow {
                         ZStack(alignment: .topLeading) {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
@@ -138,7 +158,7 @@ struct FindDashboard: View {
                                 .opacity(0.3)
                             UI.LinkList(location: self.location, isSearching: !searching && activeSearchText.count >= 2)
                         }
-                        .frame(height: 300)
+                        .frame(minHeight: 300, maxHeight: 400)
                     }
                     .background(.clear)
                     .foregroundStyle(.gray)
@@ -179,36 +199,6 @@ struct FindDashboard: View {
                 }
             }
         }
-    }
-
-    @ViewBuilder var TypeFilter: some View {
-        GridRow {
-            ZStack(alignment: .topLeading) {
-                self.nav.parent?.appPage.primaryColour.opacity(0.6) ?? Theme.subHeaderColour
-                LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
-                    .blendMode(.softLight)
-                    .opacity(0.4)
-                    .frame(height: 15)
-
-                HStack(alignment: .center) {
-                    UI.Toggle(isOn: $showRecords, eType: .records)
-                    UI.Toggle(isOn: $showNotes, eType: .notes)
-                    UI.Toggle(isOn: $showTasks, eType: .tasks)
-                    UI.Toggle(isOn: $showProjects, eType: .projects)
-                    UI.Toggle(isOn: $showJobs, eType: .jobs)
-                    UI.Toggle(isOn: $showCompanies, eType: .companies)
-                    UI.Toggle(isOn: $showPeople, eType: .people)
-                    UI.Toggle(isOn: $showTerms, eType: .terms)
-                    Spacer()
-                    UI.Toggle(isOn: $allowAlive, icon: "heart", selectedIcon: "heart.fill")
-                        .help("Published only")
-                }
-                .padding(.top, 8)
-                .padding([.leading, .trailing], 10)
-            }
-        }
-        .frame(height: 40)
-        .foregroundStyle(.gray)
     }
 }
 

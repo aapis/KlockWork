@@ -25,18 +25,22 @@ struct ToolbarButton: Hashable, Equatable {
     public var label: AnyView?
     public var labelText: String?
     public var contents: AnyView?
-    
-    init(id: Int, helpText: String, label: AnyView?, contents: AnyView?) {
+    public var showIcon: Bool = true
+    public var showLabel: Bool = true
+
+    init(id: Int, helpText: String, label: AnyView?, contents: AnyView?, showIcon: Bool = true, showLabel: Bool = true) {
         self.id = id
         self.helpText = helpText
         self.label = label
         self.contents = contents
+        self.showIcon = showIcon
+        self.showLabel = showLabel
     }
 
-    init(id: Int, helpText: String, icon: String, labelText: String, contents: AnyView?) {
+    init(id: Int, helpText: String, icon: String, labelText: String, contents: AnyView?, showIcon: Bool = true, showLabel: Bool = true) {
         self.id = id
         self.helpText = helpText
-        self.icon = AnyView(Image(systemName: icon).symbolRenderingMode(.hierarchical))
+        self.icon = AnyView(Image(systemName: icon).symbolRenderingMode(.hierarchical).font(.title3))
         self.label = AnyView(
             HStack {
                 self.icon
@@ -45,20 +49,24 @@ struct ToolbarButton: Hashable, Equatable {
         )
         self.labelText = labelText
         self.contents = contents
+        self.showIcon = showIcon
+        self.showLabel = showLabel
     }
 
-    init(id: Int, helpText: String, icon: Image, labelText: String, contents: AnyView?) {
+    init(id: Int, helpText: String, icon: Image, labelText: String, contents: AnyView?, showIcon: Bool = true, showLabel: Bool = true) {
         self.id = id
         self.helpText = helpText
-        self.icon = AnyView(icon)
+        self.icon = AnyView(icon.symbolRenderingMode(.hierarchical).font(.title3))
         self.label = AnyView(
             HStack {
-                self.icon.symbolRenderingMode(.hierarchical)
+                self.icon.symbolRenderingMode(.hierarchical).font(.title3)
                 Text(labelText)
             }
         )
         self.labelText = labelText
         self.contents = contents
+        self.showIcon = showIcon
+        self.showLabel = showLabel
     }
 }
 
@@ -72,7 +80,7 @@ struct FancyGenericToolbar: View {
     public var standalone: Bool = false
     public var location: WidgetLocation = .content
     public var mode: ToolbarMode = .full
-    public var page: PageConfiguration.AppPage = .today
+    public var page: PageConfiguration.AppPage?
     @State public var selected: Int = 0
 
     var body: some View {
@@ -85,7 +93,7 @@ struct FancyGenericToolbar: View {
 
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 1) {
-                                    ForEach(buttons, id: \ToolbarButton.id) { button in
+                                    ForEach(self.buttons.sorted(by: {$0.id < $1.id}), id: \ToolbarButton.id) { button in
                                         TabView(
                                             button: button,
                                             location: location,
@@ -113,7 +121,7 @@ struct FancyGenericToolbar: View {
                 Group {
                     ZStack(alignment: .leading) {
                         if !standalone {
-                            Theme.toolbarColour
+                            Theme.textBackground
                         }
 
                         ScrollView(showsIndicators: false) {
@@ -142,10 +150,9 @@ struct FancyGenericToolbar: View {
         public var location: WidgetLocation
         @Binding public var selected: Int
         public var mode: ToolbarMode
-        public var page: PageConfiguration.AppPage
-
+        public var page: PageConfiguration.AppPage?
         @State private var highlighted: Bool = false
-        
+
         var body: some View {
             if location == .sidebar {
                 if mode == .compact {
@@ -165,11 +172,11 @@ struct FancyGenericToolbar: View {
                         (
                             selected == button.id ?
                             (
-                                location == .sidebar ? Theme.base.opacity(0.2) : self.page.primaryColour
+                                location == .sidebar ? Theme.base.opacity(0.2) : self.page != nil ? self.page!.primaryColour : self.nav.theme.tint
                             )
                             :
                             (
-                                highlighted ? Theme.tabColour.opacity(0.6) : Theme.tabColour
+                                highlighted ? Theme.tabColour.opacity(0.6) : Theme.base.opacity(0.1)
                             )
                         )
                     }
@@ -183,11 +190,13 @@ struct FancyGenericToolbar: View {
 
                     if location == .sidebar {
                         if mode == .compact {
-                            button.icon
-                                .padding(0)
-                                .foregroundStyle(self.selected == self.button.id ? self.nav.session.job?.backgroundColor ?? .white : .white.opacity(0.5))
+                            if self.button.showIcon {
+                                button.icon
+                                    .padding(0)
+                                    .foregroundStyle(self.selected == self.button.id ? self.nav.session.job?.backgroundColor ?? .white : .white.opacity(0.5))
+                            }
                         } else {
-                            if self.showTabTitles {
+                            if self.showTabTitles && self.button.showLabel {
                                 button.label
                                     .padding(0)
                                     .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
@@ -196,9 +205,11 @@ struct FancyGenericToolbar: View {
                     } else {
                         if mode == .compact {
                             HStack(alignment: .center, spacing: 8) {
-                                button.icon
-                                    .foregroundStyle(self.selected == self.button.id ? self.nav.session.job?.backgroundColor ?? .white : .white.opacity(0.5))
-                                    .font(.title3)
+                                if self.button.showIcon {
+                                    self.button.icon
+                                        .foregroundStyle(self.selected == self.button.id ? self.nav.session.job?.backgroundColor ?? .white : .white.opacity(0.5))
+                                        .font(.title3)
+                                }
 
                                 if self.selected == self.button.id && self.button.labelText != nil && self.showTabTitles {
                                     Text(self.button.labelText!)
@@ -209,14 +220,28 @@ struct FancyGenericToolbar: View {
                             .padding([.top, .bottom], 10)
                             .padding([.leading, .trailing])
                         } else {
-                            if self.showTabTitles {
-                                button.label.padding(16)
+                            if self.showTabTitles && self.button.showLabel {
+                                self.button.label.padding(16)
                                     .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
+                            } else {
+                                if self.button.showIcon {
+                                    self.button.icon
+                                        .foregroundStyle(self.selected == self.button.id ? self.nav.session.job?.backgroundColor ?? .white : .white.opacity(0.5))
+                                        .font(.title3)
+                                        .padding([.top, .bottom], 10)
+                                        .padding([.leading, .trailing])
+                                }
                             }
                         }
                     }
                 }
             }
+            .clipShape(
+                .rect(
+                    topLeadingRadius: self.selected == self.button.id || self.highlighted ? 5 : 0,
+                    topTrailingRadius: self.selected == self.button.id || self.highlighted ? 5 : 0
+                )
+            )
             .buttonStyle(.plain)
             .help(button.helpText)
             .useDefaultHover({ hover in highlighted = hover})

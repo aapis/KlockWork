@@ -353,23 +353,29 @@ extension WidgetLibrary.UI.Navigator {
             }
 
             var RelatedEntities: some View {
-                ForEach(self.relatedEntities, id: \.self) { entity in
-                    if self.state.session.company != nil {
-                        switch entity {
-                        case .people: US.People(entity: self.state.session.company!)
-                        default: EmptyView()
+                VStack(spacing: 1) {
+                    ForEach(self.relatedEntities, id: \.self) { entity in
+                        if self.state.session.company != nil {
+                            switch entity {
+                            case .people: US.People(entity: self.state.session.company!)
+                            default: EmptyView()
+                            }
                         }
-                    }
 
-                    if self.state.session.job != nil {
-                        switch entity {
-                        case .tasks: US.Tasks(job: self.state.session.job!)
-                        case .records: US.Records(job: self.state.session.job!)
-                        case .notes: US.Notes(job: self.state.session.job!)
-                        case .definitions: US.Definitions(job: self.state.session.job!)
-                        default: EmptyView()
+                        if self.state.session.job != nil {
+                            switch entity {
+                            case .tasks: US.Tasks(job: self.state.session.job!)
+                            case .records: US.Records(job: self.state.session.job!)
+                            case .notes: US.Notes(job: self.state.session.job!)
+                            case .definitions: US.Definitions(job: self.state.session.job!)
+                            default: EmptyView()
+                            }
                         }
                     }
+                    // @TODO: remove if still commented out
+//                    if self.state.session.job != nil {
+//                        US.Timeline(job: self.state.session.job!)
+//                    }
                 }
                 .padding(.leading)
             }

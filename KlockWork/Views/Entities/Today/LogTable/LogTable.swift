@@ -190,7 +190,6 @@ extension Today.LogTable {
             var Content: some View {
                 VStack(spacing: 0) {
                     ToolbarButtons(records: self.recordsOnCurrentPage)
-                        .background(self.page.primaryColour)
                     Divider().foregroundStyle(.white)
                     // @TODO: fix search
                     //                if nav.session.toolbar.showSearch {

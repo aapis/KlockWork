@@ -417,7 +417,8 @@ extension WidgetLibrary {
             private var activities: [Activity] {
                 [
                     Activity(name: "Activity Calendar", page: .activityCalendar, type: .visualize, icon: "calendar"),
-                    Activity(name: "Flashcards", page: .activityFlashcards, type: .activity, icon: "person.text.rectangle"),
+                    Activity(name: "Timeline", page: .timeline, type: .visualize, icon: "moonphase.waxing.crescent"),
+                    Activity(name: "Flashcards", page: .activityFlashcards, type: .activity, icon: "person.text.rectangle")
                 ]
             }
 
@@ -967,6 +968,286 @@ extension WidgetLibrary {
             }
         }
 
+        struct TimelineActivity: View {
+            @EnvironmentObject public var state: Navigation
+            private var buttons: [ToolbarButton] = []
+
+            init() {
+                ActivityMode.allCases.sorted(by: {$0.id < $1.id}).forEach { tab in
+                    self.buttons.append(tab.button)
+                }
+            }
+
+            var body: some View {
+                VStack(spacing: 0) {
+                    FancyGenericToolbar(
+                        buttons: self.buttons,
+                        standalone: true,
+                        location: .content,
+                        mode: .compact,
+                        page: .explore
+                    )
+                }
+                .padding()
+                .background(Theme.toolbarColour)
+            }
+
+            struct ModeByEntity: View {
+                @EnvironmentObject public var state: Navigation
+                @State private var showRecords: Bool = true
+                @State private var showNotes: Bool = true
+                @State private var showTasks: Bool = true
+                @State private var showProjects: Bool = true
+                @State private var showJobs: Bool = true
+                @State private var showCompanies: Bool = true
+                @State private var showPeople: Bool = true
+                @State private var showTerms: Bool = true
+                @State private var showDefinitions: Bool = true
+
+                var body: some View {
+                    VStack(alignment: .leading, spacing: 0) {
+                        UI.BoundSearchTypeFilter(
+                            showRecords: $showRecords,
+                            showNotes: $showNotes,
+                            showTasks: $showTasks,
+                            showProjects: $showProjects,
+                            showJobs: $showJobs,
+                            showCompanies: $showCompanies,
+                            showPeople: $showPeople,
+                            showTerms: $showTerms,
+                            showDefinitions: $showDefinitions
+                        )
+
+                        VStack(alignment: .leading, spacing: 0) {
+                            UniversalHeader.Widget(
+                                type: .BruceWillis,
+                                title: "Timeline"
+                            )
+                        }.padding()
+                        Spacer()
+                    }
+                    .background(self.state.session.appPage.primaryColour)
+                }
+            }
+
+            struct ModeByDate: View {
+                @EnvironmentObject public var state: Navigation
+                @State private var showRecords: Bool = true
+                @State private var showNotes: Bool = true
+                @State private var showTasks: Bool = true
+                @State private var showProjects: Bool = true
+                @State private var showJobs: Bool = true
+                @State private var showCompanies: Bool = true
+                @State private var showPeople: Bool = true
+                @State private var showTerms: Bool = true
+                @State private var showDefinitions: Bool = true
+
+                var body: some View {
+                    VStack(alignment: .leading, spacing: 0) {
+                        VStack(alignment: .leading) {
+                            UI.BoundSearchTypeFilter(
+                                showRecords: $showRecords,
+                                showNotes: $showNotes,
+                                showTasks: $showTasks,
+                                showProjects: $showProjects,
+                                showJobs: $showJobs,
+                                showCompanies: $showCompanies,
+                                showPeople: $showPeople,
+                                showTerms: $showTerms,
+                                showDefinitions: $showDefinitions
+                            )
+
+                            VStack {
+                                VStack {
+                                    Text("Hello")
+                                }
+                                .padding()
+                                .background(Theme.textBackground)
+                                .clipShape(.rect(cornerRadius: 5))
+                                VStack {
+                                    Text("Links")
+                                }
+                                .padding()
+                                .background(Theme.textBackground)
+                                .clipShape(.rect(cornerRadius: 5))
+                            }
+                            .padding()
+                        }
+                        .background(self.state.session.appPage.primaryColour)
+                        FancyDivider()
+                        UI.ActivityFeed(
+                            mode: .byDate,
+                            showRecords: $showRecords,
+                            showNotes: $showNotes,
+                            showTasks: $showTasks,
+                            showProjects: $showProjects,
+                            showJobs: $showJobs,
+                            showCompanies: $showCompanies,
+                            showPeople: $showPeople,
+                            showTerms: $showTerms,
+                            showDefinitions: $showDefinitions
+                        )
+                    }
+                }
+            }
+
+            public enum ActivityMode: CaseIterable {
+                case byEntity, byDate
+
+                var id: Int {
+                    switch self {
+                    case .byEntity: return 1
+                    default: return 0
+                    }
+                }
+
+                var helpText: String {
+                    switch self {
+                    case .byDate: return "Timeline will be based on selected date"
+                    case .byEntity: return "Timeline will be based on selected entities"
+                    }
+                }
+
+                var icon: String {
+                    switch self {
+                    case .byEntity: return "rectangle.on.rectangle.dashed"
+                    default: return "calendar"
+                    }
+                }
+
+                var labelText: String {
+                    switch self {
+                    case .byEntity: return "By Entity"
+                    case .byDate: return "By Date"
+                    }
+                }
+
+                var view: AnyView {
+                    switch self {
+                    case .byEntity: return AnyView(ModeByEntity())
+                    default: return AnyView(ModeByDate())
+                    }
+                }
+
+                var button: ToolbarButton {
+                    ToolbarButton(
+                        id: self.id,
+                        helpText: self.helpText,
+                        icon: self.icon,
+                        labelText: self.labelText,
+                        contents: self.view
+                    )
+                }
+            }
+        }
+
+        // MARK: ActivityFeed
+        struct ActivityFeed: View {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
+            @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
+            public let mode: UI.TimelineActivity.ActivityMode
+            @Binding public var showRecords: Bool
+            @Binding public var showNotes: Bool
+            @Binding public var showTasks: Bool
+            @Binding public var showProjects: Bool
+            @Binding public var showJobs: Bool
+            @Binding public var showCompanies: Bool
+            @Binding public var showPeople: Bool
+            @Binding public var showTerms: Bool
+            @Binding public var showDefinitions: Bool
+            @State private var tabs: [ToolbarButton] = []
+
+            var body: some View {
+                VStack {
+                    FancyGenericToolbar(
+                        buttons: self.tabs,
+                        standalone: true,
+                        location: .content,
+                        mode: .full
+                    )
+                }
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.date) { self.actionOnAppear() }
+            }
+        }
+
+        // MARK: GenericTimelineActivity
+        struct GenericTimelineActivity: View, Identifiable {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
+            @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
+            public var id: UUID = UUID()
+            public let mode: UI.TimelineActivity.ActivityMode
+            public var historicalDate: Date?
+            public var view: AnyView?
+            @State private var activities: [GenericTimelineActivity] = []
+
+            var body: some View {
+                VStack(alignment: .leading, spacing: 0) {
+                    ToolbarButtons(records: [])
+                    if self.activities.count > 0 {
+                        ForEach(self.activities) { activity in
+                            if let view = activity.view {
+                                view
+                            }
+                        }
+                    } else {
+                        LogRowEmpty(message: "No activities found for \(self.historicalDate?.formatted(date: .abbreviated, time: .omitted) ?? Date().formatted(date: .abbreviated, time: .omitted))", index: 0, colour: Theme.rowColour)
+                    }
+                }
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.date) { self.actionOnAppear() }
+                .onChange(of: self.tableSortOrder) { self.actionOnAppear() }
+            }
+        }
+
+        // MARK: BoundSearchTypeFilter
+        struct BoundSearchTypeFilter: View {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
+            @Binding public var showRecords: Bool
+            @Binding public var showNotes: Bool
+            @Binding public var showTasks: Bool
+            @Binding public var showProjects: Bool
+            @Binding public var showJobs: Bool
+            @Binding public var showCompanies: Bool
+            @Binding public var showPeople: Bool
+            @Binding public var showTerms: Bool
+            @Binding public var showDefinitions: Bool
+
+            var body: some View {
+                GridRow {
+                    ZStack(alignment: .topLeading) {
+                        self.state.parent?.appPage.primaryColour.opacity(0.6) ?? Theme.subHeaderColour
+                        LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                            .blendMode(.softLight)
+                            .opacity(0.4)
+                            .frame(height: 15)
+
+                        HStack(alignment: .center) {
+                            UI.Toggle(isOn: $showRecords, eType: .records)
+                            UI.Toggle(isOn: $showNotes, eType: .notes)
+                            UI.Toggle(isOn: $showTasks, eType: .tasks)
+                            UI.Toggle(isOn: $showProjects, eType: .projects)
+                            UI.Toggle(isOn: $showJobs, eType: .jobs)
+                            UI.Toggle(isOn: $showCompanies, eType: .companies)
+                            UI.Toggle(isOn: $showPeople, eType: .people)
+                            UI.Toggle(isOn: $showTerms, eType: .terms)
+                            Spacer()
+                            UI.Toggle(isOn: $allowAlive, icon: "heart", selectedIcon: "heart.fill")
+                                .help("Published only")
+                        }
+                        .padding(.top, 8)
+                        .padding([.leading, .trailing], 10)
+                    }
+                }
+                .frame(height: 40)
+                .foregroundStyle(.gray)
+            }
+        }
+
+        // MARK: SearchBar
         struct SearchBar: View {
             @EnvironmentObject public var state: Navigation
             @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
@@ -1145,6 +1426,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: Toggle
         struct Toggle: View {
             public var title: String? = nil
             @Binding public var isOn: Bool
@@ -1185,6 +1467,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: GroupHeaderContextMenu
         struct GroupHeaderContextMenu: View {
             @EnvironmentObject private var state: Navigation
             @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateCompany") private var shouldCreateCompany: Bool = false
@@ -1229,6 +1512,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: InlineEntityCreate
         struct InlineEntityCreate: View {
             public var label: String
             public var onCreateChild: (String) -> Void
@@ -1256,6 +1540,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: KeyboardShortcutIndicator
         struct KeyboardShortcutIndicator: View {
             public var character: String
             public var requireShift: Bool = false
@@ -1276,6 +1561,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: RowActionButton
         struct RowActionButton: View {
             @EnvironmentObject public var state: Navigation
             public var callback: (() -> Void)
@@ -1313,6 +1599,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: Pagination
         struct Pagination: View {
             @EnvironmentObject public var state: Navigation
             @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
@@ -1433,6 +1720,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: SortSelector
         struct SortSelector: View {
             @EnvironmentObject public var state: Navigation
             @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
@@ -1462,6 +1750,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: ViewModeSelector
         public struct ViewModeSelector: View {
             @EnvironmentObject public var state: Navigation
             @AppStorage("today.viewMode") public var index: Int = 0
@@ -1493,6 +1782,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: RowAddButton
         struct RowAddButton: View {
             public var title: String = "Add"
             @Binding public var isPresented: Bool
@@ -1534,6 +1824,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: RowAddNavLink
         struct RowAddNavLink: View {
             public var title: String = "Add"
             public let target: AnyView
@@ -1569,6 +1860,171 @@ extension WidgetLibrary {
             }
         }
 
+        struct GenericActivity: View {
+
+            var body: some View {
+                Text("HI")
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.GenericTimelineActivity {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        if let historicalDate = self.historicalDate {
+            self.activities = []
+//            self.activities = CoreDataRecords(moc: self.state.moc).forDate(historicalDate)
+            let records = CoreDataRecords(moc: self.state.moc).forDate(historicalDate)
+            let tasks = CoreDataTasks(moc: self.state.moc).forDate(historicalDate, from: records)
+            let notes = CoreDataNotes(moc: self.state.moc).forDate(historicalDate)
+            let jobs = CoreDataJob(moc: self.state.moc).byDate(historicalDate)
+
+            for record in records {
+                // Records created
+                if let date = record.timestamp {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: date,
+                            view: AnyView(record.rowView)
+                        )
+                    )
+                }
+            }
+
+            for task in tasks {
+                // Tasks created
+                if let date = task.created {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: date,
+                            view: AnyView(task.rowView)
+                        )
+                    )
+                } else
+                // Tasks updated
+                if let date = task.lastUpdate {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: date,
+                            view: AnyView(task.rowView)
+                        )
+                    )
+                } else
+                // Tasks completed
+                if let date = task.completedDate {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: date,
+                            view: AnyView(task.rowView)
+                        )
+                    )
+                } else
+                // Tasks cancelled
+                if let date = task.cancelledDate {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: date,
+                            view: AnyView(task.rowView)
+                        )
+                    )
+                }
+            }
+
+            for note in notes {
+                // Notes created
+                if let date = note.postedDate {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: date,
+                            view: AnyView(note.rowView)
+                        )
+                    )
+                }
+                // Notes updated
+            }
+
+            for job in jobs {
+                // Jobs created
+                if let date = job.created {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: date,
+                            view: AnyView(job.rowView)
+                        )
+                    )
+                } else
+                // Jobs updated
+                if let date = job.lastUpdate {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: date,
+                            view: AnyView(job.rowView)
+                        )
+                    )
+                }
+            }
+        }
+
+        self.activities = self.activities.sorted(by: {self.tableSortOrder == 0 ? $0.historicalDate! > $1.historicalDate! : $0.historicalDate! < $1.historicalDate!})
+    }
+}
+
+extension WidgetLibrary.UI.ActivityFeed {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.tabs = []
+        var tabSet: Set<ToolbarButton> = []
+
+        let calendar = Calendar.autoupdatingCurrent
+        let current = calendar.dateComponents([.year, .month, .day], from: self.state.session.date)
+
+        if current.isValidDate == false {
+            for offset in 0...maxYearsPastInHistory {
+                let offsetYear = ((offset * -1) + current.year!)
+                let components = DateComponents(year: offsetYear, month: current.month!, day: current.day!)
+                let day = calendar.date(from: components)
+
+                tabSet.insert(
+                    ToolbarButton(
+                        id: offset,
+                        helpText: "Help",
+                        icon: "calendar",
+                        labelText: DateHelper.todayShort(day, format: "yyyy"),
+                        contents: AnyView(
+                            UI.GenericTimelineActivity(
+                                mode: self.mode,
+                                historicalDate: day
+//                                view: AnyView(
+//                                    LogRow(
+//                                        entry: Entry(
+//                                            timestamp: DateHelper.longDate(record.timestamp!),
+//                                            job: record.job!,
+//                                            message: record.message!
+//                                        ),
+//                                        index: records.firstIndex(of: record),
+//                                        colour: record.job?.backgroundColor ?? Theme.rowColour,
+//                                        record: record
+//                                    )
+//                                )
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+        self.tabs = Array(tabSet)
     }
 }
 
@@ -1584,7 +2040,6 @@ extension WidgetLibrary.UI.SortSelector {
         }
     }
 }
-
 
 extension WidgetLibrary.UI.Pagination {
     /// Onload handler. Sets view state

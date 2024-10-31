@@ -6,6 +6,7 @@
 //  Copyright © 2024 YegCollective. All rights reserved.
 //
 
+import SwiftUI
 
 public enum ViewMode: Hashable {
     case full, plain
