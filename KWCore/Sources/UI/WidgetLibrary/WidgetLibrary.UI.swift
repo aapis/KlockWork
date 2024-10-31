@@ -1447,7 +1447,7 @@ extension WidgetLibrary {
 
             var body: some View {
                 HStack(spacing: 5) {
-                    FancyPicker(onChange: change, items: self.pickerItems, defaultSelected: self.tableSortOrder, icon: "arrow.up.arrow.down")
+                    FancyPicker(onChange: change, items: self.pickerItems, defaultSelected: self.tableSortOrder, icon: self.tableSortOrder == 0 ? "text.line.first.and.arrowtriangle.forward" : "text.line.last.and.arrowtriangle.forward")
                         .onAppear(perform: {self.change(selected: self.tableSortOrder, sender: "")})
                         .onChange(of: self.tableSortOrder) {
                             change(selected: self.tableSortOrder, sender: "")
