@@ -1383,11 +1383,12 @@ extension WidgetLibrary {
 
                 var body: some View {
                     HStack(spacing: 5) {
-                        FancyPicker(onChange: change, items: self.pickerItems, defaultSelected: self.perPage, icon: "square.grid.3x3")
+                        FancyPicker(onChange: change, items: self.pickerItems, defaultSelected: self.perPage, icon: self.perPage == 10 ? "circle.grid.2x1.fill" : self.perPage == 30 ? "circle.grid.2x2.fill" : "circle.grid.3x3.fill")
                             .onAppear(perform: {self.change(selected: self.perPage, sender: "")})
                             .onChange(of: self.perPage) {
                                 change(selected: self.perPage, sender: "")
                             }
+                            .help("Number of records per page. 10, 30 or 50.")
                     }
                     .padding(6)
                     .background(self.isHighlighted ? Theme.textBackground.opacity(1) : Theme.textBackground.opacity(0.8))
@@ -1451,6 +1452,7 @@ extension WidgetLibrary {
                         .onChange(of: self.tableSortOrder) {
                             change(selected: self.tableSortOrder, sender: "")
                         }
+                        .help("Change table sort order (newest or oldest first)")
                 }
                 .padding(6)
                 .background(self.isHighlighted ? Theme.textBackground.opacity(1) : Theme.textBackground.opacity(0.8))
@@ -1477,6 +1479,7 @@ extension WidgetLibrary {
                     .onChange(of: self.index) {
                         change(selected: self.index, sender: "")
                     }
+                    .help("Change view mode. Tap to see options.")
             }
 
             private func change(selected: Int, sender: String?) -> Void {
