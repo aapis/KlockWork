@@ -384,6 +384,24 @@ public class CoreDataTasks {
 
         return query(predicate, sort)
     }
+    
+    /// Find jobs for the tasks which are due today. Used to overwrite AppState.planning.jobs
+    /// - Parameter date: Date
+    /// - Returns: Set<Job>
+    public func jobsForTasksDueToday(_ date: Date = Date.now) -> Set<Job> {
+        let suggested = CoreDataTasks(moc: self.moc!).dueToday(date)
+        var sJobs: Set<Job> = []
+
+        if !suggested.isEmpty {
+            for task in suggested {
+                if let job = task.owner {
+                    sJobs.insert(job)
+                }
+            }
+        }
+
+        return sJobs
+    }
 
     /// Find tasks due today
     /// - Returns: Array<LogTask>

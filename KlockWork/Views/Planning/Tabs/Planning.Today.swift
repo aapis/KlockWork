@@ -47,5 +47,9 @@ extension Planning.Today {
     /// - Returns: Void
     private func actionOnAppear() -> Void {
         self.jobs = self.nav.planning.jobs
+
+        if self.nav.planning.jobs.isEmpty {
+            self.jobs = CoreDataTasks(moc: self.nav.moc).jobsForTasksDueToday()
+        }
     }
 }
