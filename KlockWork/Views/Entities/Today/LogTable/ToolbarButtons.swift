@@ -14,7 +14,8 @@ struct ToolbarButtons: View {
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var nav: Navigation
     @AppStorage("today.numPastDates") public var numPastDates: Int = 20
-    public var records: [LogRecord]
+    public var records: [LogRecord]?
+//    public var activities: [UI.GenericTimelineActivity]?
     @State private var datePickerItems: [CustomPickerItem] = []
     @State private var pickerSelection: Int = 0
     @State private var highlighted: Bool = false
@@ -69,9 +70,11 @@ struct ToolbarButtons: View {
     /// Copy data to clipboard
     /// - Returns: Void
     private func export() -> Void {
-        ClipboardHelper.copy(
-            CoreDataRecords(moc: self.nav.moc).createExportableRecordsFrom(self.records)
-        )
+        if let records = self.records {
+            ClipboardHelper.copy(
+                CoreDataRecords(moc: self.nav.moc).createExportableRecordsFrom(records)
+            )
+        }
     }
     
     private func viewAsPlain() -> Void {

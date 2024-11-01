@@ -10,16 +10,18 @@ import SwiftUI
 
 extension Note {
     @ViewBuilder var rowView: some View {
-        if let date = self.postedDate {
-            LogRow(
-                entry: Entry(
-                    timestamp: DateHelper.longDate(date),
-                    job: self.mJob!,
-                    message: "Note created: \(self.title ?? "Error: Invalid note title")"
-                ),
-                index: 0,
-                colour: self.mJob?.backgroundColor ?? Theme.rowColour
-            )
+        if let job = self.mJob {
+            if let date = self.postedDate {
+                LogRow(
+                    entry: Entry(
+                        timestamp: DateHelper.longDate(date),
+                        job: job,
+                        message: "Note created: \(self.title ?? "Error: Invalid note title")"
+                    ),
+                    index: 0,
+                    colour: job.backgroundColor
+                )
+            }
         }
     }
 }

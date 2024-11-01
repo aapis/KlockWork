@@ -994,29 +994,10 @@ extension WidgetLibrary {
 
             struct ModeByEntity: View {
                 @EnvironmentObject public var state: Navigation
-                @State private var showRecords: Bool = true
-                @State private var showNotes: Bool = true
-                @State private var showTasks: Bool = true
-                @State private var showProjects: Bool = true
-                @State private var showJobs: Bool = true
-                @State private var showCompanies: Bool = true
-                @State private var showPeople: Bool = true
-                @State private var showTerms: Bool = true
-                @State private var showDefinitions: Bool = true
 
                 var body: some View {
                     VStack(alignment: .leading, spacing: 0) {
-                        UI.BoundSearchTypeFilter(
-                            showRecords: $showRecords,
-                            showNotes: $showNotes,
-                            showTasks: $showTasks,
-                            showProjects: $showProjects,
-                            showJobs: $showJobs,
-                            showCompanies: $showCompanies,
-                            showPeople: $showPeople,
-                            showTerms: $showTerms,
-                            showDefinitions: $showDefinitions
-                        )
+                        SearchTypeFilter()
 
                         VStack(alignment: .leading, spacing: 0) {
                             UniversalHeader.Widget(
@@ -1032,30 +1013,11 @@ extension WidgetLibrary {
 
             struct ModeByDate: View {
                 @EnvironmentObject public var state: Navigation
-                @State private var showRecords: Bool = true
-                @State private var showNotes: Bool = true
-                @State private var showTasks: Bool = true
-                @State private var showProjects: Bool = true
-                @State private var showJobs: Bool = true
-                @State private var showCompanies: Bool = true
-                @State private var showPeople: Bool = true
-                @State private var showTerms: Bool = true
-                @State private var showDefinitions: Bool = true
 
                 var body: some View {
                     VStack(alignment: .leading, spacing: 0) {
                         VStack(alignment: .leading) {
-                            UI.BoundSearchTypeFilter(
-                                showRecords: $showRecords,
-                                showNotes: $showNotes,
-                                showTasks: $showTasks,
-                                showProjects: $showProjects,
-                                showJobs: $showJobs,
-                                showCompanies: $showCompanies,
-                                showPeople: $showPeople,
-                                showTerms: $showTerms,
-                                showDefinitions: $showDefinitions
-                            )
+                            SearchTypeFilter()
 
                             VStack {
                                 VStack {
@@ -1075,18 +1037,7 @@ extension WidgetLibrary {
                         }
                         .background(self.state.session.appPage.primaryColour)
                         FancyDivider()
-                        UI.ActivityFeed(
-                            mode: .byDate,
-                            showRecords: $showRecords,
-                            showNotes: $showNotes,
-                            showTasks: $showTasks,
-                            showProjects: $showProjects,
-                            showJobs: $showJobs,
-                            showCompanies: $showCompanies,
-                            showPeople: $showPeople,
-                            showTerms: $showTerms,
-                            showDefinitions: $showDefinitions
-                        )
+                        UI.ActivityFeed(mode: .byDate)
                     }
                 }
             }
@@ -1144,19 +1095,10 @@ extension WidgetLibrary {
         // MARK: ActivityFeed
         struct ActivityFeed: View {
             @EnvironmentObject public var state: Navigation
-            @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
             @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
             public let mode: UI.TimelineActivity.ActivityMode
-            @Binding public var showRecords: Bool
-            @Binding public var showNotes: Bool
-            @Binding public var showTasks: Bool
-            @Binding public var showProjects: Bool
-            @Binding public var showJobs: Bool
-            @Binding public var showCompanies: Bool
-            @Binding public var showPeople: Bool
-            @Binding public var showTerms: Bool
-            @Binding public var showDefinitions: Bool
             @State private var tabs: [ToolbarButton] = []
+            @State private var vid: UUID = UUID()
 
             var body: some View {
                 VStack {
@@ -1167,38 +1109,67 @@ extension WidgetLibrary {
                         mode: .full
                     )
                 }
+                .id(self.vid)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
+                .onChange(of: self.state.session.pagination.currentPageOffset) { self.actionOnAppear() }
             }
         }
 
         // MARK: GenericTimelineActivity
-        struct GenericTimelineActivity: View, Identifiable {
+        struct GenericTimelineActivity: View, Identifiable, Equatable {
             @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
             @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
             @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showRecords") public var showRecords: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showNotes") public var showNotes: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showTasks") public var showTasks: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showPeople") public var showPeople: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showTerms") public var showTerms: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showDefinitions") public var showDefinitions: Bool = true
             public var id: UUID = UUID()
             public let mode: UI.TimelineActivity.ActivityMode
             public var historicalDate: Date?
             public var view: AnyView?
             @State private var activities: [GenericTimelineActivity] = []
+            @State private var currentActivities: [GenericTimelineActivity] = []
+            @State private var vid: UUID = UUID()
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
-                    ToolbarButtons(records: [])
+                    ToolbarButtons()
                     if self.activities.count > 0 {
-                        ForEach(self.activities) { activity in
+                        ForEach(self.currentActivities) { activity in
                             if let view = activity.view {
                                 view
                             }
                         }
+                        UI.Pagination(entityCount: self.activities.count)
                     } else {
-                        LogRowEmpty(message: "No activities found for \(self.historicalDate?.formatted(date: .abbreviated, time: .omitted) ?? Date().formatted(date: .abbreviated, time: .omitted))", index: 0, colour: Theme.rowColour)
+                        LogRowEmpty(
+                            message: "No activities found for \(self.historicalDate?.formatted(date: .abbreviated, time: .omitted) ?? Date().formatted(date: .abbreviated, time: .omitted))",
+                            index: 0,
+                            colour: Theme.rowColour
+                        )
                     }
                 }
+                .id(self.vid)
                 .onAppear(perform: self.actionOnAppear)
-                .onChange(of: self.state.session.date) { self.actionOnAppear() }
                 .onChange(of: self.tableSortOrder) { self.actionOnAppear() }
+                .onChange(of: self.perPage) { self.actionOnAppear() }
+                .onChange(of: self.state.session.pagination.currentPageOffset) { self.actionOnAppear() }
+                .onChange(of: self.showRecords) { self.actionOnAppear() }
+                .onChange(of: self.showNotes) { self.actionOnAppear() }
+                .onChange(of: self.showTasks) { self.actionOnAppear() }
+                .onChange(of: self.showProjects) { self.actionOnAppear() }
+                .onChange(of: self.showJobs) { self.actionOnAppear() }
+                .onChange(of: self.showCompanies) { self.actionOnAppear() }
+                .onChange(of: self.showPeople) { self.actionOnAppear() }
+                .onChange(of: self.showDefinitions) { self.actionOnAppear() }
             }
         }
 
@@ -1215,6 +1186,51 @@ extension WidgetLibrary {
             @Binding public var showPeople: Bool
             @Binding public var showTerms: Bool
             @Binding public var showDefinitions: Bool
+
+            var body: some View {
+                GridRow {
+                    ZStack(alignment: .topLeading) {
+                        self.state.parent?.appPage.primaryColour.opacity(0.6) ?? Theme.subHeaderColour
+                        LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                            .blendMode(.softLight)
+                            .opacity(0.4)
+                            .frame(height: 15)
+
+                        HStack(alignment: .center) {
+                            UI.Toggle(isOn: $showRecords, eType: .records)
+                            UI.Toggle(isOn: $showNotes, eType: .notes)
+                            UI.Toggle(isOn: $showTasks, eType: .tasks)
+                            UI.Toggle(isOn: $showProjects, eType: .projects)
+                            UI.Toggle(isOn: $showJobs, eType: .jobs)
+                            UI.Toggle(isOn: $showCompanies, eType: .companies)
+                            UI.Toggle(isOn: $showPeople, eType: .people)
+                            UI.Toggle(isOn: $showTerms, eType: .terms)
+                            Spacer()
+                            UI.Toggle(isOn: $allowAlive, icon: "heart", selectedIcon: "heart.fill")
+                                .help("Published only")
+                        }
+                        .padding(.top, 8)
+                        .padding([.leading, .trailing], 10)
+                    }
+                }
+                .frame(height: 40)
+                .foregroundStyle(.gray)
+            }
+        }
+
+        // MARK: SearchTypeFilter
+        struct SearchTypeFilter: View {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showRecords") public var showRecords: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showNotes") public var showNotes: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showTasks") public var showTasks: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showPeople") public var showPeople: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showTerms") public var showTerms: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showDefinitions") public var showDefinitions: Bool = true
 
             var body: some View {
                 GridRow {
@@ -1662,15 +1678,18 @@ extension WidgetLibrary {
                 private var pickerItems: [CustomPickerItem] {
                     return [
                         CustomPickerItem(title: "Pagination", tag: 0),
+                        CustomPickerItem(title: "5 per page", tag: 5),
                         CustomPickerItem(title: "10 per page", tag: 10),
+                        CustomPickerItem(title: "20 per page", tag: 20),
                         CustomPickerItem(title: "30 per page", tag: 30),
-                        CustomPickerItem(title: "50 per page", tag: 50)
+                        CustomPickerItem(title: "50 per page", tag: 50),
+                        CustomPickerItem(title: "100 per page", tag: 100),
                     ]
                 }
 
                 var body: some View {
                     HStack(spacing: 5) {
-                        FancyPicker(onChange: change, items: self.pickerItems, defaultSelected: self.perPage, icon: self.perPage == 10 ? "circle.grid.2x1.fill" : self.perPage == 30 ? "circle.grid.2x2.fill" : "circle.grid.3x3.fill")
+                        FancyPicker(onChange: change, items: self.pickerItems, defaultSelected: self.perPage, icon: self.perPage < 30 ? "circle.grid.2x1.fill" : self.perPage < 100 ? "circle.grid.2x2.fill" : "circle.grid.3x3.fill")
                             .onAppear(perform: {self.change(selected: self.perPage, sender: "")})
                             .onChange(of: self.perPage) {
                                 change(selected: self.perPage, sender: "")
@@ -1859,123 +1878,185 @@ extension WidgetLibrary {
 #endif
             }
         }
-
-        struct GenericActivity: View {
-
-            var body: some View {
-                Text("HI")
-            }
-        }
     }
 }
 
 extension WidgetLibrary.UI.GenericTimelineActivity {
+    /// Equatable conformity
+    /// - Parameters:
+    ///   - lhs: GenericTimelineActivity
+    ///   - rhs: GenericTimelineActivity
+    /// - Returns: Bool
+    static func == (lhs: WidgetLibrary.UI.GenericTimelineActivity, rhs: WidgetLibrary.UI.GenericTimelineActivity) -> Bool {
+        return lhs.id == rhs.id
+    }
+
     /// Onload handler. Sets view state
     /// - Returns: Void
     private func actionOnAppear() -> Void {
+        Task {
+            await self.populateTimeline()
+            self.vid = UUID()
+        }
+    }
+
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func populateTimeline() async -> Void {
         if let historicalDate = self.historicalDate {
             self.activities = []
-//            self.activities = CoreDataRecords(moc: self.state.moc).forDate(historicalDate)
+
             let records = CoreDataRecords(moc: self.state.moc).forDate(historicalDate)
-            let tasks = CoreDataTasks(moc: self.state.moc).forDate(historicalDate, from: records)
-            let notes = CoreDataNotes(moc: self.state.moc).forDate(historicalDate)
-            let jobs = CoreDataJob(moc: self.state.moc).byDate(historicalDate)
-
-            for record in records {
-                // Records created
-                if let date = record.timestamp {
-                    self.activities.append(
-                        UI.GenericTimelineActivity(
-                            mode: self.mode,
-                            historicalDate: date,
-                            view: AnyView(record.rowView)
-                        )
-                    )
+            if self.showRecords {
+                for record in records {
+                    // Records created
+                    if let date = record.timestamp {
+                        if let rContent = record.message {
+                            // Ignore records representing definitions (those activities are added later)
+                            if !rContent.contains("==") {
+                                self.activities.append(
+                                    UI.GenericTimelineActivity(
+                                        mode: self.mode,
+                                        historicalDate: date,
+                                        view: AnyView(record.rowView)
+                                    )
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
-            for task in tasks {
-                // Tasks created
-                if let date = task.created {
-                    self.activities.append(
-                        UI.GenericTimelineActivity(
-                            mode: self.mode,
-                            historicalDate: date,
-                            view: AnyView(task.rowView)
+            if self.showTasks {
+                let tasks = CoreDataTasks(moc: self.state.moc).forDate(historicalDate, from: records)
+                for task in tasks {
+                    // Tasks completed
+                    if let date = task.completedDate {
+                        self.activities.append(
+                            UI.GenericTimelineActivity(
+                                mode: self.mode,
+                                historicalDate: date,
+                                view: AnyView(task.rowView)
+                            )
                         )
-                    )
-                } else
-                // Tasks updated
-                if let date = task.lastUpdate {
-                    self.activities.append(
-                        UI.GenericTimelineActivity(
-                            mode: self.mode,
-                            historicalDate: date,
-                            view: AnyView(task.rowView)
+                    } else
+                    // Tasks cancelled
+                    if let date = task.cancelledDate {
+                        self.activities.append(
+                            UI.GenericTimelineActivity(
+                                mode: self.mode,
+                                historicalDate: date,
+                                view: AnyView(task.rowView)
+                            )
                         )
-                    )
-                } else
-                // Tasks completed
-                if let date = task.completedDate {
-                    self.activities.append(
-                        UI.GenericTimelineActivity(
-                            mode: self.mode,
-                            historicalDate: date,
-                            view: AnyView(task.rowView)
+                    } else
+                    // Tasks created
+                    if let date = task.created {
+                        self.activities.append(
+                            UI.GenericTimelineActivity(
+                                mode: self.mode,
+                                historicalDate: date,
+                                view: AnyView(task.rowView)
+                            )
                         )
-                    )
-                } else
-                // Tasks cancelled
-                if let date = task.cancelledDate {
-                    self.activities.append(
-                        UI.GenericTimelineActivity(
-                            mode: self.mode,
-                            historicalDate: date,
-                            view: AnyView(task.rowView)
-                        )
-                    )
+                    }
                 }
             }
 
-            for note in notes {
-                // Notes created
-                if let date = note.postedDate {
-                    self.activities.append(
-                        UI.GenericTimelineActivity(
-                            mode: self.mode,
-                            historicalDate: date,
-                            view: AnyView(note.rowView)
+            if self.showNotes {
+                let notes = CoreDataNotes(moc: self.state.moc).forDate(historicalDate)
+                for note in notes {
+                    // Notes created
+                    if let date = note.postedDate {
+                        self.activities.append(
+                            UI.GenericTimelineActivity(
+                                mode: self.mode,
+                                historicalDate: date,
+                                view: AnyView(note.rowView)
+                            )
                         )
-                    )
+                    } else
+                    // Notes updated
+                    if note.postedDate != note.lastUpdate && note.lastUpdate != nil {
+                        self.activities.append(
+                            UI.GenericTimelineActivity(
+                                mode: self.mode,
+                                historicalDate: note.lastUpdate!,
+                                view: AnyView(note.rowView)
+                            )
+                        )
+                    }
                 }
-                // Notes updated
             }
 
-            for job in jobs {
-                // Jobs created
-                if let date = job.created {
-                    self.activities.append(
-                        UI.GenericTimelineActivity(
-                            mode: self.mode,
-                            historicalDate: date,
-                            view: AnyView(job.rowView)
+            if self.showJobs {
+                let jobs = CoreDataJob(moc: self.state.moc).byDate(historicalDate)
+                for job in jobs {
+                    // Jobs created
+                    if let date = job.created {
+                        self.activities.append(
+                            UI.GenericTimelineActivity(
+                                mode: self.mode,
+                                historicalDate: date,
+                                view: AnyView(job.rowView)
+                            )
                         )
-                    )
-                } else
-                // Jobs updated
-                if let date = job.lastUpdate {
-                    self.activities.append(
-                        UI.GenericTimelineActivity(
-                            mode: self.mode,
-                            historicalDate: date,
-                            view: AnyView(job.rowView)
+                    } else
+                    // Jobs updated
+                    if let date = job.lastUpdate {
+                        self.activities.append(
+                            UI.GenericTimelineActivity(
+                                mode: self.mode,
+                                historicalDate: date,
+                                view: AnyView(job.rowView)
+                            )
                         )
-                    )
+                    }
+                }
+            }
+
+            // Technically this is showDefinitions, but the toggle isn't implemented yet
+            // @TODO: change to self.showDefinitions
+            if self.showTerms {
+                let definitions = CoreDataTaxonomyTermDefinitions(moc: self.state.moc).forDate(historicalDate)
+                for definition in definitions {
+                    // Definition updated
+                    if definition.created != definition.lastUpdate && definition.lastUpdate != nil {
+                        if let date = definition.lastUpdate {
+                            self.activities.append(
+                                UI.GenericTimelineActivity(
+                                    mode: self.mode,
+                                    historicalDate: date,
+                                    view: AnyView(definition.rowView)
+                                )
+                            )
+                        }
+                    } else
+                    // Definition created
+                    if let date = definition.created {
+                        self.activities.append(
+                            UI.GenericTimelineActivity(
+                                mode: self.mode,
+                                historicalDate: date,
+                                view: AnyView(definition.rowView)
+                            )
+                        )
+                    }
                 }
             }
         }
 
         self.activities = self.activities.sorted(by: {self.tableSortOrder == 0 ? $0.historicalDate! > $1.historicalDate! : $0.historicalDate! < $1.historicalDate!})
+
+        // Find the current page of resources by offset
+        let lBound = self.state.session.pagination.currentPageOffset
+        let uBound = lBound + self.perPage
+
+        if lBound < self.activities.count && uBound <= self.activities.count {
+            self.currentActivities = Array(self.activities[lBound..<uBound])
+        } else {
+            self.currentActivities = self.activities
+        }
     }
 }
 
@@ -2005,18 +2086,6 @@ extension WidgetLibrary.UI.ActivityFeed {
                             UI.GenericTimelineActivity(
                                 mode: self.mode,
                                 historicalDate: day
-//                                view: AnyView(
-//                                    LogRow(
-//                                        entry: Entry(
-//                                            timestamp: DateHelper.longDate(record.timestamp!),
-//                                            job: record.job!,
-//                                            message: record.message!
-//                                        ),
-//                                        index: records.firstIndex(of: record),
-//                                        colour: record.job?.backgroundColor ?? Theme.rowColour,
-//                                        record: record
-//                                    )
-//                                )
                             )
                         )
                     )
@@ -2025,6 +2094,7 @@ extension WidgetLibrary.UI.ActivityFeed {
         }
 
         self.tabs = Array(tabSet)
+        self.vid = UUID()
     }
 }
 
