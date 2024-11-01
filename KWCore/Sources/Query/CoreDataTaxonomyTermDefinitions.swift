@@ -61,14 +61,29 @@ open class CoreDataTaxonomyTermDefinitions {
     /// - Parameter job: Job
     /// - Returns: [TaxonomyTermDefinitions]
     public func definitions(for job: Job) -> [TaxonomyTermDefinitions] {
-        let results = self.query(
+        return self.query(
             NSPredicate(
                 format: "alive == true && job == %@",
                 job
             )
         )
+    }
+    
+    /// Find definitions either created or updated on a given date
+    /// - Parameter date: Date
+    /// - Returns: Array<TaxonomyTermDefinitions>
+    public func forDate(_ date: Date) -> [TaxonomyTermDefinitions] {
+        let (before, after) = DateHelper.startAndEndOf(date)
 
-        return results
+        return self.query(
+            NSPredicate(
+                format: "(created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@)",
+                before as CVarArg,
+                after as CVarArg,
+                before as CVarArg,
+                after as CVarArg
+            )
+        )
     }
 
     /// Create a new TaxonomyTermDefinitions
