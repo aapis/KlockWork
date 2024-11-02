@@ -11,6 +11,7 @@ import KWCore
 
 extension Planning {
     struct Row: View {
+        @EnvironmentObject public var state: Navigation
         var job: Job
         var index: Array<Job>.Index?
         var type: PlanningObjectType
@@ -20,7 +21,7 @@ extension Planning {
         @FetchRequest public var notes: FetchedResults<Note>
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: 0) {
                 if let idx = index {
                     Header(job: job, index: idx, type: type)
                         .opacity((type == .tasks && tasks.count > 0) || (type == .notes && notes.count > 0) ? 1 : 0.7)
@@ -33,13 +34,11 @@ extension Planning {
                                 HStack {
                                     FancyButtonv2(
                                         text: "Add a task to this job",
+                                        action: {self.state.to(.tasks)},
                                         icon: "plus",
-                                        fgColour: colour.isBright() ? .black : .white,
+                                        fgColour: colour.isBright() ? Theme.base : .white,
                                         size: .link,
-                                        type: .clear,
-                                        redirect: AnyView(TaskDashboard(defaultSelectedJob: job)),
-                                        pageType: .tasks,
-                                        sidebar: AnyView(TaskDashboardSidebar())
+                                        type: .clear
                                     )
                                     Spacer()
                                 }
@@ -56,13 +55,11 @@ extension Planning {
                                 HStack {
                                     FancyButtonv2(
                                         text: "Add a note to this job",
+                                        action: {self.state.to(.notes)},
                                         icon: "plus",
-                                        fgColour: colour.isBright() ? .black : .white,
+                                        fgColour: colour.isBright() ? Theme.base : .white,
                                         size: .link,
-                                        type: .clear,
-                                        redirect: AnyView(NoteDashboard()),
-                                        pageType: .notes,
-                                        sidebar: AnyView(NoteDashboardSidebar())
+                                        type: .clear
                                     )
                                     Spacer()
                                 }

@@ -22,21 +22,34 @@ extension Planning {
         var body: some View {
             VStack(alignment: .leading, spacing: 1) {
                 HStack {
-                    FancyButtonv2(
-                        text: "Job #\(job.jid.string)",
-                        icon: "hammer",
-                        fgColour: colour.isBright() ? .black : .white,
-                        showIcon: false,
-                        size: .link,
-                        type: .clear,
-                        redirect: AnyView(JobDashboard(defaultSelectedJob: job)),
-                        pageType: .notes,
-                        sidebar: AnyView(JobDashboardSidebar())
-                    )
-
-                    Spacer()
+//                    FancyButtonv2(
+//                        text: "\(self.job.title ?? self.job.jid.string)",
+//                        action: {self.nav.to(.jobs)},
+//                        icon: "hammer",
+//                        fgColour: colour.isBright() ? Theme.base : .white,
+//                        showIcon: false,
+//                        size: .link,
+//                        type: .clear
+//                    )
                     Button {
-                        nav.planning.jobs.remove(job)
+                        self.nav.session.job = self.job
+                        self.nav.to(.jobs)
+                    } label: {
+                        HStack {
+                            Text("\(self.job.title ?? self.job.jid.string)")
+                            Spacer()
+                        }
+                        .foregroundStyle(self.colour.isBright() ? Theme.base : .white)
+                        .useDefaultHover({_ in})
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        if !self.nav.planning.jobs.contains(self.job) {
+                            self.nav.planning.jobs.insert(self.job)
+                        } else {
+                            self.nav.planning.jobs.remove(job)
+                        }
 
                         if nav.planning.jobs.count == 0 {
                             nav.planning.reset(nav.session.date)
@@ -47,9 +60,15 @@ extension Planning {
                             nav.session.plan = plan
                         }
                     } label: {
-                        Image(systemName: highlighted ? "clear.fill" : "clear")
-                            .foregroundColor(colour.isBright() ? .black : .white)
-                            .font(.title)
+                        if !self.nav.planning.jobs.contains(self.job) {
+                            Image(systemName: highlighted ? "plus.square.fill" : "plus.square.dashed")
+                                .foregroundColor(colour.isBright() ? Theme.base : .white)
+                                .font(.title)
+                        } else {
+                            Image(systemName: highlighted ? "clear.fill" : "clear")
+                                .foregroundColor(colour.isBright() ? Theme.base : .white)
+                                .font(.title)
+                        }
                     }
                     .buttonStyle(.plain)
                     .useDefaultHover({inside in highlighted = inside})
@@ -67,6 +86,6 @@ extension Planning {
 
 extension Planning.Group {
     private func actionOnAppear() -> Void {
-        colour = Color.fromStored(job.colour!)
+        self.colour = self.job.backgroundColor
     }
 }
