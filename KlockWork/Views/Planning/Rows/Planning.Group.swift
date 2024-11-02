@@ -20,30 +20,20 @@ extension Planning {
         @EnvironmentObject public var nav: Navigation
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: 0) {
                 HStack {
-//                    FancyButtonv2(
-//                        text: "\(self.job.title ?? self.job.jid.string)",
-//                        action: {self.nav.to(.jobs)},
-//                        icon: "hammer",
-//                        fgColour: colour.isBright() ? Theme.base : .white,
-//                        showIcon: false,
-//                        size: .link,
-//                        type: .clear
-//                    )
-                    Button {
-                        self.nav.session.job = self.job
-                        self.nav.to(.jobs)
-                    } label: {
-                        HStack {
-                            Text("\(self.job.title ?? self.job.jid.string)")
-                            Spacer()
-                        }
-                        .foregroundStyle(self.colour.isBright() ? Theme.base : .white)
-                        .useDefaultHover({_ in})
-                    }
-                    .buttonStyle(.plain)
-
+                    FancyButtonv2(
+                        text: "\(self.job.title ?? self.job.jid.string)",
+                        action: {
+                            self.nav.session.job = self.job
+                            self.nav.to(.jobs)
+                        },
+                        fgColour: colour.isBright() ? Theme.base : .white,
+                        showIcon: false,
+                        size: .link,
+                        type: .clear,
+                        font: .headline
+                    )
                     Button {
                         if !self.nav.planning.jobs.contains(self.job) {
                             self.nav.planning.jobs.insert(self.job)
@@ -73,8 +63,9 @@ extension Planning {
                     .buttonStyle(.plain)
                     .useDefaultHover({inside in highlighted = inside})
                 }
-                .padding()
+                .padding(8)
                 .background(colour)
+                Divider()
 
                 Planning.Row(job: job, index: jobs.firstIndex(of: job), type: .tasks)
                 Planning.Row(job: job, index: jobs.firstIndex(of: job), type: .notes)

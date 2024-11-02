@@ -86,7 +86,7 @@ struct FancyButtonv2: View {
     public var pageType: Page? = nil
     public var sidebar: AnyView? = nil
     public var twoStage: Bool = false
-    public var font: Font = .title2
+    public var font: Font?
     @State private var padding: CGFloat = 10
     @State private var highlighted: Bool = false
     @State private var active: Bool = false
@@ -179,7 +179,7 @@ struct FancyButtonv2: View {
         }
         .frame(maxWidth: buttonFrameWidth(), maxHeight: size.height)
         .foregroundStyle(self.fgColour ?? (highlighted ? type.highlightColour : type.textColour))
-        .font(size.font)
+        .font(self.font ?? self.size.font)
         .help(text)
         .underline((size == .link || size == .titleLink) && highlighted)
     }
