@@ -32,4 +32,15 @@ extension Company {
 
         return nil
     }
+
+    @ViewBuilder var rowView: some View {
+        HStack {
+            if self.lastUpdate != self.createdDate {
+                Text("Company updated: \(self.name ?? "Error: Invalid company name")")
+            } else {
+                Text("Company created: \(self.name ?? "Error: Invalid company name")")
+            }
+        }
+        .background(self.backgroundColor)
+    }
 }
