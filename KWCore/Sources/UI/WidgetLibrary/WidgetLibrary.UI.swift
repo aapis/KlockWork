@@ -412,6 +412,44 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: ActivityLinks
+        struct ActivityLinks: View {
+            @EnvironmentObject private var state: Navigation
+            public var activities: [Activity]
+            public var title: String
+
+            var body: some View {
+                VStack(alignment: .leading, spacing: 5) {
+                    UI.ListLinkTitle(text: self.title)
+
+                    if self.activities.count > 0 {
+                        ForEach(self.activities, id: \.id) { activity in
+                            UI.ListLinkItem(
+                                page: activity.page,
+                                name: activity.name,
+                                icon: activity.icon
+                            )
+                        }
+                    } else {
+                        UI.ListButtonItem(
+                            callback: {_ in},
+                            name: "Nothing yet"
+                        )
+                        .disabled(true)
+                    }
+                }
+                .padding()
+                .background(
+                    ZStack {
+                        self.state.session.appPage.primaryColour
+                        Theme.textBackground
+                    }
+                )
+                .clipShape(.rect(cornerRadius: 5))
+            }
+        }
+
+        // MARK: ExploreLinks
         struct ExploreLinks: View {
             @EnvironmentObject private var state: Navigation
             private var activities: [Activity] {
@@ -1013,29 +1051,45 @@ extension WidgetLibrary {
 
             struct ModeByDate: View {
                 @EnvironmentObject public var state: Navigation
+                @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+                private var threeCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 3) }
+                private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
 
                 var body: some View {
                     VStack(alignment: .leading, spacing: 0) {
-                        VStack(alignment: .leading) {
+                        VStack(alignment: .leading, spacing: 0) {
                             SearchTypeFilter()
-
-                            VStack {
-                                VStack {
-                                    Text("Hello")
-                                }
-                                .padding()
-                                .background(Theme.textBackground)
-                                .clipShape(.rect(cornerRadius: 5))
-                                VStack {
-                                    Text("Links")
+                                .padding(.bottom)
+                            VStack(spacing: 0) {
+                                LazyVGrid(columns: self.threeCol, alignment: .leading) {
+                                    GridRow {
+                                        Text("HI")
+                                        Text("HI")
+                                        Text("HI")
+                                    }
                                 }
                                 .padding()
                                 .background(Theme.textBackground)
                                 .clipShape(.rect(cornerRadius: 5))
                             }
-                            .padding()
+                            .padding([.leading, .bottom, .trailing])
                         }
                         .background(self.state.session.appPage.primaryColour)
+                        .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                        FancyHelpText(
+                            text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "MMMM d"))",
+                            page: self.state.session.appPage
+                        )
+
+                        FancyDivider()
+                        VStack(spacing: 0) {
+                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                                GridRow {
+                                    UI.LinkListForDate()
+                                    Text("HI")
+                                }
+                            }
+                        }
                         FancyDivider()
                         UI.ActivityFeed(mode: .byDate)
                     }
@@ -1092,6 +1146,18 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: LinkListForDate
+        struct LinkListForDate: View {
+            @EnvironmentObject private var state: Navigation
+            @State private var activities: [Activity] = []
+
+            var body: some View {
+                ActivityLinks(activities: self.activities, title: "Links found for today")
+                    .onAppear(perform: self.actionOnAppear)
+                    .onChange(of: self.state.session.date) { self.actionOnAppear() }
+            }
+        }
+
         // MARK: ActivityFeed
         struct ActivityFeed: View {
             @EnvironmentObject public var state: Navigation
@@ -1106,12 +1172,14 @@ extension WidgetLibrary {
                         buttons: self.tabs,
                         standalone: true,
                         location: .content,
-                        mode: .full
+                        mode: .full,
+                        page: .explore
                     )
                 }
                 .id(self.vid)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
+                .onChange(of: self.maxYearsPastInHistory) { self.actionOnAppear() }
                 .onChange(of: self.state.session.pagination.currentPageOffset) { self.actionOnAppear() }
             }
         }
@@ -1151,7 +1219,7 @@ extension WidgetLibrary {
                         UI.Pagination(entityCount: self.activities.count)
                     } else {
                         LogRowEmpty(
-                            message: "No activities found for \(self.historicalDate?.formatted(date: .abbreviated, time: .omitted) ?? Date().formatted(date: .abbreviated, time: .omitted))",
+                            message: "No activities found for \(DateHelper.todayShort(self.historicalDate, format: "MMMM d, YYYY"))",
                             index: 0,
                             colour: Theme.rowColour
                         )
@@ -1169,6 +1237,7 @@ extension WidgetLibrary {
                 .onChange(of: self.showJobs) { self.actionOnAppear() }
                 .onChange(of: self.showCompanies) { self.actionOnAppear() }
                 .onChange(of: self.showPeople) { self.actionOnAppear() }
+                .onChange(of: self.showTerms) { self.actionOnAppear() }
                 .onChange(of: self.showDefinitions) { self.actionOnAppear() }
             }
         }
@@ -1881,6 +1950,30 @@ extension WidgetLibrary {
     }
 }
 
+extension WidgetLibrary.UI.LinkListForDate {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.activities = []
+        self.getLinksFromJobs()
+    }
+
+    /// Get links from jobs created or updated on a given day
+    /// - Returns: Void
+    private func getLinksFromJobs() -> Void {
+        let jobs = CoreDataJob(moc: self.state.moc).byDate(self.state.session.date)
+        for job in jobs {
+            if let uri = job.uri {
+                if uri.absoluteString != "https://" {
+                    self.activities.append(
+                        Activity(name: uri.absoluteString, page: self.state.parent ?? .dashboard, type: .activity)
+                    )
+                }
+            }
+        }
+    }
+}
+
 extension WidgetLibrary.UI.GenericTimelineActivity {
     /// Equatable conformity
     /// - Parameters:
@@ -2009,6 +2102,32 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                                 mode: self.mode,
                                 historicalDate: date,
                                 view: AnyView(job.rowView)
+                            )
+                        )
+                    }
+                }
+            }
+
+            if self.showCompanies {
+                let companies = CoreDataCompanies(moc: self.state.moc).forDate(historicalDate)
+                for company in companies {
+                    // Companies created
+                    if let date = company.createdDate {
+                        self.activities.append(
+                            UI.GenericTimelineActivity(
+                                mode: self.mode,
+                                historicalDate: date,
+                                view: AnyView(company.rowView)
+                            )
+                        )
+                    } else
+                    // Companies updated
+                    if let date = company.lastUpdate {
+                        self.activities.append(
+                            UI.GenericTimelineActivity(
+                                mode: self.mode,
+                                historicalDate: date,
+                                view: AnyView(company.rowView)
                             )
                         )
                     }
