@@ -28,13 +28,13 @@ extension Planning {
                         Image(systemName: "\(numChildren).circle")
                             .font(.title)
                             .foregroundColor(colour.isBright() ? .black : .white)
-                        Text("Incomplete tasks associated with job \(job.jid.string)")
+                        Text("Incomplete tasks")
                             .foregroundColor(colour.isBright() ? .black : .white)
                     } else if type == .notes {
                         Image(systemName: "\(numChildren).circle")
                             .font(.title)
                             .foregroundColor(colour.isBright() ? .black : .white)
-                        Text("Notes associated with job \(job.jid.string)")
+                        Text("Notes")
                             .foregroundColor(colour.isBright() ? .black : .white)
                     }
 
@@ -43,26 +43,22 @@ extension Planning {
                         if type == .tasks {
                             FancyButtonv2(
                                 text: "Add a task to this job",
+                                action: {self.nav.to(.tasks)},
                                 icon: "plus",
                                 fgColour: colour.isBright() ? .black : .white,
                                 showLabel: false,
                                 size: .link,
-                                type: .clear,
-                                redirect: AnyView(TaskDashboard(defaultSelectedJob: job)),
-                                pageType: .tasks,
-                                sidebar: AnyView(TaskDashboardSidebar())
+                                type: .clear
                             )
                         } else if type == .notes {
                             FancyButtonv2(
                                 text: "Add a note to this job",
+                                action: {self.nav.to(.notes)},
                                 icon: "plus",
                                 fgColour: colour.isBright() ? .black : .white,
                                 showLabel: false,
                                 size: .link,
-                                type: .clear,
-                                redirect: AnyView(NoteDashboard()),
-                                pageType: .notes,
-                                sidebar: AnyView(NoteDashboardSidebar())
+                                type: .clear
                             )
                         }
                     }
