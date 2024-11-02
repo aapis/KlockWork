@@ -18,7 +18,7 @@ public class CoreDataPerson: ObservableObject {
     public init(moc: NSManagedObjectContext?) {
         self.moc = moc
     }
-    
+
     /// Find all people
     /// - Returns: FetchRequest<Person>
     static public func fetchAll() -> FetchRequest<Person> {
@@ -122,7 +122,7 @@ public class CoreDataPerson: ObservableObject {
 
         return query(predicate)
     }
-    
+
     /// Find all people
     /// - Returns: Array<Person>
     public func all() -> [Person] {
@@ -143,6 +143,22 @@ public class CoreDataPerson: ObservableObject {
         return count(predicate)
     }
     
+    /// Finds people created or updated on a given day
+    /// - Parameter date: Date
+    /// - Returns: Array<Person>
+    public func forDate(_ date: Date) -> [Person] {
+        let (before, after) = DateHelper.startAndEndOf(date)
+        return self.query(
+            NSPredicate(
+                format: "(created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@)",
+                after as CVarArg,
+                before as CVarArg,
+                after as CVarArg,
+                before as CVarArg
+            )
+        )
+    }
+
     /// Create a new Person entity
     /// - Parameters:
     ///   - created: Date

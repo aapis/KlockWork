@@ -272,7 +272,23 @@ public class CoreDataCompanies: ObservableObject {
 
         return results.first
     }
-    
+
+    /// Finds people created or updated on a given day
+    /// - Parameter date: Date
+    /// - Returns: Array<Company>
+    public func forDate(_ date: Date) -> [Company] {
+        let (before, after) = DateHelper.startAndEndOf(date)
+        return self.query(
+            NSPredicate(
+                format: "(createdDate > %@ && createdDate < %@) || (lastUpdate > %@ && lastUpdate < %@)",
+                after as CVarArg,
+                before as CVarArg,
+                after as CVarArg,
+                before as CVarArg
+            )
+        )
+    }
+
     /// Create a new company
     /// - Parameters:
     ///   - name: Company name

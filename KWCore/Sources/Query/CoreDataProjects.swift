@@ -318,6 +318,22 @@ public class CoreDataProjects: ObservableObject {
         return count(predicate)
     }
 
+    /// Finds people created or updated on a given day
+    /// - Parameter date: Date
+    /// - Returns: Array<Project>
+    public func forDate(_ date: Date) -> [Project] {
+        let (before, after) = DateHelper.startAndEndOf(date)
+        return self.query(
+            NSPredicate(
+                format: "(created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@)",
+                after as CVarArg,
+                before as CVarArg,
+                after as CVarArg,
+                before as CVarArg
+            )
+        )
+    }
+
     /// Create a new project
     /// - Parameters:
     ///   - name: Project name
