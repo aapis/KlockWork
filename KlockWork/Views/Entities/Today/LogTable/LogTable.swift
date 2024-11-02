@@ -22,7 +22,8 @@ extension Today {
                     buttons: buttons,
                     standalone: true,
                     location: .content,
-                    mode: .compact
+                    mode: .compact,
+                    page: .today
                 )
             }
         }
