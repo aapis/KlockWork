@@ -39,6 +39,7 @@ struct ToolbarButtons: View {
                 Button(action: export, label: {
                     HStack(spacing: 5) {
                         Image(systemName: "document.on.document.fill")
+                            .foregroundStyle(self.nav.session.job != nil ? self.nav.session.job?.backgroundColor ?? .white : self.nav.theme.tint)
                         Text("Copy")
                     }
                     .padding(6)
