@@ -90,20 +90,20 @@ struct GlobalSidebarWidgets: View {
                                 fgColour: Theme.base,
                                 showLabel: false,
                                 size: .small,
-                                type: .tsWhite
+                                type: .tsWhite,
+                                font: .title2
                             )
                             .mask(Circle())
                         } else {
                             FancyButtonv2(
                                 text: "You need to create a plan first, click here!",
+                                action: {self.nav.to(.planning)},
                                 icon: "hexagon",
                                 fgColour: Theme.base,
                                 showLabel: false,
                                 size: .small,
                                 type: nav.parent == .planning ? .secondary : .tsWhite,
-                                redirect: AnyView(Planning()),
-                                pageType: .planning,
-                                sidebar: AnyView(DefaultPlanningSidebar())
+                                font: .title2
                             )
                             .mask(Circle())
                         }
@@ -176,7 +176,8 @@ struct GlobalSidebarWidgets: View {
                             bgColour: nav.session.job?.colour_from_stored() ?? nil,
                             showLabel: false,
                             size: .small,
-                            type: active ? .secondary : .standard
+                            type: active ? .secondary : .standard,
+                            font: .title2
                         )
                         .mask(Circle())
                     }
@@ -218,7 +219,8 @@ struct GlobalSidebarWidgets: View {
                             bgColour: nav.session.job?.colour_from_stored() ?? nil,
                             showLabel: false,
                             size: .small,
-                            type: active ? .secondary : .standard
+                            type: active ? .secondary : .standard,
+                            font: .title2
                         )
                         .keyboardShortcut("f", modifiers: .command)
                         .mask(Circle())
@@ -257,7 +259,8 @@ struct GlobalSidebarWidgets: View {
                             bgColour: (self.state.session.job?.backgroundColor ?? self.bgColour) ?? .clear,
                             showLabel: true,
                             size: .small,
-                            type: .standard
+                            type: .standard,
+                            font: .title2
                         )
                         .mask(Circle())
                     }
