@@ -43,4 +43,14 @@ extension Company {
         }
         .background(self.backgroundColor)
     }
+
+    @ViewBuilder var linkRowView: some View {
+        HStack {
+            Text(self.name ?? "Error: Invalid company name")
+                .foregroundStyle(self.backgroundColor.isBright() ? Theme.base : .white)
+            Spacer()
+        }
+        .padding(8)
+        .background(self.backgroundColor)
+    }
 }

@@ -73,6 +73,16 @@ extension Job {
         }
     }
 
+    @ViewBuilder var linkRowView: some View {
+        HStack {
+            Text(self.title ?? self.jid.string)
+                .foregroundStyle(self.backgroundColor.isBright() ? Theme.base : .white)
+            Spacer()
+        }
+        .padding(8)
+        .background(self.backgroundColor)
+    }
+
     // @TODO: the following are dupes and should be deprecated then removed
     func id_int() -> Int {
         return Int(exactly: jid.rounded(.toNearestOrEven)) ?? 0
