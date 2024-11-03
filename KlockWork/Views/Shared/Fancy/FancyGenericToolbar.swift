@@ -81,11 +81,12 @@ struct FancyGenericToolbar: View {
     public var location: WidgetLocation = .content
     public var mode: ToolbarMode = .full
     public var page: PageConfiguration.AppPage?
+    public var alwaysShowTab: Bool = false
     @State public var selected: Int = 0
 
     var body: some View {
         VStack(spacing: 0) {
-            if buttons.count > 1 {
+            if self.alwaysShowTab == true || buttons.count > 1 {
                 GridRow {
                     Group {
                         ZStack(alignment: .bottom) {
