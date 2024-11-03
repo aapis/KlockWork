@@ -36,10 +36,14 @@ struct Explore: View {
 struct Activity: Identifiable {
     var id: UUID = UUID()
     var name: String
+    var help: String = ""
     var page: Page
     var type: ExploreActivityType
     var icon: String?
     var iconAsImage: Image?
+    var job: Job?
+    var source: NSManagedObject?
+    var url: URL?
 }
 
 enum ExploreActivityType: CaseIterable {
