@@ -1,3 +1,11 @@
+//
+//  ActivityMode.swift
+//  KlockWork
+//
+//  Created by Ryan Priebe on 2024-11-03.
+//  Copyright © 2024 YegCollective. All rights reserved.
+//
+
 import SwiftUI
 
 public enum ActivityMode: CaseIterable {
@@ -33,8 +41,8 @@ public enum ActivityMode: CaseIterable {
 
     var view: AnyView {
         switch self {
-        case .byEntity: return AnyView(ModeByEntity())
-        default: return AnyView(ModeByDate())
+        case .byEntity: return AnyView(UI.TimelineActivity.ModeByEntity())
+        default: return AnyView(UI.TimelineActivity.ModeByDate())
         }
     }
 

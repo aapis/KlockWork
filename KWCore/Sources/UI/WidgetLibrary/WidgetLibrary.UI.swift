@@ -1183,62 +1183,13 @@ extension WidgetLibrary {
                             LazyVGrid(columns: self.twoCol, alignment: .leading) {
                                 GridRow {
                                     UI.LinkListForDate()
-                                    Text("HI")
+                                    UI.EntityInteractionsForDate()
                                 }
                             }
                         }
                         FancyDivider()
                         UI.ActivityFeed(mode: .byDate)
                     }
-                }
-            }
-
-            public enum ActivityMode: CaseIterable {
-                case byEntity, byDate
-
-                var id: Int {
-                    switch self {
-                    case .byEntity: return 1
-                    default: return 0
-                    }
-                }
-
-                var helpText: String {
-                    switch self {
-                    case .byDate: return "Timeline will be based on selected date"
-                    case .byEntity: return "Timeline will be based on selected entities"
-                    }
-                }
-
-                var icon: String {
-                    switch self {
-                    case .byEntity: return "rectangle.on.rectangle.dashed"
-                    default: return "calendar"
-                    }
-                }
-
-                var labelText: String {
-                    switch self {
-                    case .byEntity: return "By Entity"
-                    case .byDate: return "By Date"
-                    }
-                }
-
-                var view: AnyView {
-                    switch self {
-                    case .byEntity: return AnyView(ModeByEntity())
-                    default: return AnyView(ModeByDate())
-                    }
-                }
-
-                var button: ToolbarButton {
-                    ToolbarButton(
-                        id: self.id,
-                        helpText: self.helpText,
-                        icon: self.icon,
-                        labelText: self.labelText,
-                        contents: self.view
-                    )
                 }
             }
         }
@@ -1249,10 +1200,41 @@ extension WidgetLibrary {
             @State private var activities: [Activity] = []
 
             var body: some View {
-                ActivityLinks(activities: self.activities, title: "Links found for \(DateHelper.todayShort(self.state.session.timeline.date, format: "yyyy"))")
+                ActivityLinks(activities: self.activities, title: "Links found for \(self.state.session.timeline.formatted())")
                     .onAppear(perform: self.actionOnAppear)
                     .onChange(of: self.state.session.date) { self.actionOnAppear() }
                     .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
+            }
+        }
+
+        // MARK: EntityInteractionsForDate
+        struct EntityInteractionsForDate: View {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
+            @State private var activities: [Activity] = []
+            @State private var tabs: [ToolbarButton] = []
+            @State private var vid: UUID = UUID()
+
+            var body: some View {
+                FancyGenericToolbar(
+                    buttons: self.tabs,
+                    standalone: true,
+                    location: .content,
+                    mode: .compact,
+                    page: .explore,
+                    alwaysShowTab: true
+                )
+                .frame(height: 200)
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.date) { self.vid = UUID() }
+                .onChange(of: self.state.session.timeline.date) { self.vid = UUID() ; self.actionOnAppear() }
+                .onChange(of: self.showCompanies) { self.actionOnAppear() }
+                .onChange(of: self.showProjects) { self.actionOnAppear() }
+                .onChange(of: self.showJobs) { self.actionOnAppear() }
+                .id(self.vid)
             }
         }
 
@@ -1260,7 +1242,7 @@ extension WidgetLibrary {
         struct ActivityFeed: View {
             @EnvironmentObject public var state: Navigation
             @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
-            public let mode: UI.TimelineActivity.ActivityMode
+            public let mode: ActivityMode
             @State private var tabs: [ToolbarButton] = []
             @State private var vid: UUID = UUID()
 
@@ -1298,7 +1280,7 @@ extension WidgetLibrary {
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showTerms") public var showTerms: Bool = true
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showDefinitions") public var showDefinitions: Bool = true
             public var id: UUID = UUID()
-            public let mode: UI.TimelineActivity.ActivityMode
+            public let mode: ActivityMode
             public var historicalDate: Date
             public var view: AnyView?
             @State private var activities: [GenericTimelineActivity] = []
@@ -2045,6 +2027,169 @@ extension WidgetLibrary {
 #endif
             }
         }
+
+        struct SimpleEntityList: View {
+            @EnvironmentObject private var state: Navigation
+            public let type: EType
+            @State private var entities: [SimpleEntityRow] = []
+
+            var body: some View {
+                VStack {
+                    if self.entities.count > 0 {
+                        ScrollView(showsIndicators: false) {
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(self.entities) { entity in entity }
+                            }
+                        }
+                    } else {
+                        UI.ListButtonItem(
+                            callback: {_ in},
+                            name: "None found for \(self.state.session.timeline.formatted())"
+                        )
+                        .disabled(true)
+                    }
+                }
+                .onAppear(perform: self.actionOnAppear)
+            }
+        }
+
+        // MARK: SimpleEntityRow
+        struct SimpleEntityRow: View, Identifiable {
+            @EnvironmentObject private var state: Navigation
+            public var id: UUID = UUID()
+            public var entity: NSManagedObject
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                switch self.entity {
+                case is Company:
+                    Button {
+                        self.state.session.company = self.entity as? Company
+                        self.state.to(.companyDetail)
+                    } label: {
+                        if let entity = self.entity as? Company {
+                            entity.linkRowView
+                                .underline(self.isHighlighted)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .useDefaultHover({ hover in self.isHighlighted = hover})
+                case is Project:
+                    Button {
+                        self.state.session.project = self.entity as? Project
+                        self.state.to(.projectDetail)
+                    } label: {
+                        if let entity = self.entity as? Project {
+                            entity.linkRowView
+                                .underline(self.isHighlighted)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .useDefaultHover({ hover in self.isHighlighted = hover})
+                case is Job:
+                    Button {
+                        self.state.session.job = self.entity as? Job
+                        self.state.to(.jobs)
+                    } label: {
+                        if let entity = self.entity as? Job {
+                            entity.linkRowView
+                                .underline(self.isHighlighted)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .useDefaultHover({ hover in self.isHighlighted = hover})
+                default:
+                    EmptyView()
+                }
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.SimpleEntityList {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        switch self.type {
+        case .companies:
+            let source = CoreDataCompanies(moc: self.state.moc).interactionsOn(self.state.session.timeline.date)
+
+            for entity in source {
+                self.entities.append(
+                    UI.SimpleEntityRow(
+                        entity: entity
+                    )
+                )
+            }
+        case .projects:
+            let source = CoreDataProjects(moc: self.state.moc).interactionsOn(self.state.session.timeline.date)
+
+            for entity in source {
+                self.entities.append(
+                    UI.SimpleEntityRow(
+                        entity: entity
+                    )
+                )
+            }
+        case .jobs:
+            let source = CoreDataJob(moc: self.state.moc).interactionsOn(self.state.session.timeline.date)
+
+            for entity in source {
+                self.entities.append(
+                    UI.SimpleEntityRow(
+                        entity: entity
+                    )
+                )
+            }
+        default:
+            print("noop")
+        }
+    }
+}
+
+extension WidgetLibrary.UI.EntityInteractionsForDate {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.tabs = []
+
+        self.tabs.append(
+            ToolbarButton(
+                id: 0,
+                helpText: "Jobs interacted with on this day in \(self.state.session.timeline.formatted())",
+                icon: "hammer",
+                labelText: "Jobs",
+                contents: AnyView(
+                    UI.SimpleEntityList(type: .jobs)
+                )
+            )
+        )
+        if self.showProjects {
+            self.tabs.append(
+                ToolbarButton(
+                    id: 1,
+                    helpText: "Projects interacted with on this day in \(self.state.session.timeline.formatted())",
+                    icon: "folder",
+                    labelText: "Projects",
+                    contents: AnyView(
+                        UI.SimpleEntityList(type: .projects)
+                    )
+                )
+            )
+        }
+        if self.showCompanies {
+            self.tabs.append(
+                ToolbarButton(
+                    id: 2,
+                    helpText: "Companies interacted with on this day in \(self.state.session.timeline.formatted())",
+                    icon: "building.2",
+                    labelText: "Companies",
+                    contents: AnyView(
+                        UI.SimpleEntityList(type: .companies)
+                    )
+                )
+            )
+        }
     }
 }
 
@@ -2060,7 +2205,7 @@ extension WidgetLibrary.UI.LinkListForDate {
     /// Get links from jobs created or updated on a given day
     /// - Returns: Void
     private func getLinksFromJobs() -> Void {
-        let jobs = CoreDataJob(moc: self.state.moc).byDate(self.state.session.timeline.date)
+        let jobs = CoreDataJob(moc: self.state.moc).forDate(self.state.session.timeline.date)
         for job in jobs {
             if let uri = job.uri {
                 if uri.absoluteString != "https://" {
@@ -2225,7 +2370,7 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
         }
 
         if self.showJobs {
-            let jobs = CoreDataJob(moc: self.state.moc).byDate(self.historicalDate)
+            let jobs = CoreDataJob(moc: self.state.moc).forDate(self.historicalDate)
             for job in jobs {
                 // Jobs created
                 if let date = job.created {
@@ -2326,7 +2471,6 @@ extension WidgetLibrary.UI.ActivityFeed {
     private func actionOnAppear() -> Void {
         self.tabs = []
         var tabSet: Set<ToolbarButton> = []
-//        self.state.session.timeline.date = Date()
 
         let calendar = Calendar.autoupdatingCurrent
         let current = calendar.dateComponents([.year, .month, .day], from: self.state.session.date)
