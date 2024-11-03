@@ -254,6 +254,13 @@ extension Navigation {
 
     public struct Timeline {
         var date: Date = Date()
+        
+        /// Format self.date
+        /// - Parameter format: String
+        /// - Returns: String
+        func formatted(_ format: String = "yyyy") -> String {
+            return DateHelper.todayShort(self.date, format: format)
+        }
     }
 
     public struct TablePagination {
