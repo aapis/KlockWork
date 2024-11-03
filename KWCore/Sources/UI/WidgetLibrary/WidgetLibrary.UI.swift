@@ -525,7 +525,7 @@ extension WidgetLibrary {
                                 } else {
                                     UI.ListButtonItem(
                                         callback: {_ in},
-                                        name: "Nothing yet"
+                                        name: "None found for \(self.state.session.timeline.formatted())"
                                     )
                                     .disabled(true)
                                 }
