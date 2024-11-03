@@ -249,6 +249,11 @@ extension Navigation {
         var eventStatus: EventIndicatorStatus = .ready
         var cli: CommandLineSession = CommandLineSession()
         var pagination: TablePagination = TablePagination()
+        var timeline: Timeline = Timeline()
+    }
+
+    public struct Timeline {
+        var date: Date = Date()
     }
 
     public struct TablePagination {
