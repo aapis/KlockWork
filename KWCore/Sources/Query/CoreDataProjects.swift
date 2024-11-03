@@ -334,6 +334,39 @@ public class CoreDataProjects: ObservableObject {
         )
     }
 
+    /// Find all entities interacted with on a given date
+    /// - Parameter date: Date
+    /// - Returns: Array<NSManagedObject>
+    public func interactionsOn(_ date: Date) -> [Project] {
+        let records = CoreDataRecords(moc: self.moc!).forDate(date)
+        if records.count == 0 {
+            return []
+        }
+
+        var set: Set<Project> = []
+
+        for record in records {
+            if let entity = record.job?.project {
+                set.insert(entity)
+            }
+        }
+
+        let window = DateHelper.startAndEndOf(date)
+        let predicate = NSPredicate(
+            format: "(created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@)",
+            window.0 as CVarArg,
+            window.1 as CVarArg,
+            window.0 as CVarArg,
+            window.1 as CVarArg
+        )
+
+        for entity in query(predicate) {
+            set.insert(entity)
+        }
+
+        return Array(set).sorted(by: {$0.lastUpdate ?? Date() > $1.lastUpdate ?? Date()})
+    }
+
     /// Create a new project
     /// - Parameters:
     ///   - name: Project name
