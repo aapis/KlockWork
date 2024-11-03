@@ -245,6 +245,89 @@ extension WidgetLibrary {
             }
         }
 
+        struct ListExternalLinkItem: View {
+            @EnvironmentObject private var state: Navigation
+            public var name: String
+            public var icon: String?
+            public var iconAsImage: Image?
+            public var activity: Activity
+            @State private var isHighlighted: Bool = false
+            @State private var isMinimized: Bool = true
+
+            var body: some View {
+                HStack(alignment: .top) {
+                    UI.Buttons.Minimize(isMinimized: $isMinimized)
+
+                    VStack(alignment: .leading, spacing: 1) {
+                        if let url = self.activity.url {
+                            SwiftUI.Link(destination: url, label: {
+                                VStack(alignment: .leading, spacing: 0) {
+                                    HStack(alignment: .center) {
+                                        if let image = self.iconAsImage {
+                                            image
+                                                .foregroundStyle(self.state.session.job?.backgroundColor ?? self.state.theme.tint)
+                                        } else if let icon = self.icon {
+                                            Image(systemName: icon)
+                                                .foregroundStyle(self.state.session.job?.backgroundColor ?? self.state.theme.tint)
+                                        }
+                                        Text(self.name)
+                                            .multilineTextAlignment(.leading)
+                                        Spacer()
+                                        Image(systemName: "link")
+                                            .foregroundStyle(.gray)
+                                    }
+                                    .padding(8)
+                                }
+                                .buttonStyle(.plain)
+                                .useDefaultHover({ hover in self.isHighlighted = hover })
+                            })
+                            .foregroundStyle(.white)
+                        }
+                        if !self.isMinimized {
+                            if self.activity.source != nil {
+                                HStack {
+                                    switch self.activity.source {
+                                    case is NoteVersion:
+                                        Text("Found in note \"\((self.activity.source as? NoteVersion)?.note?.title ?? "Error: Note not found")\"")
+                                            .foregroundStyle(.gray)
+                                        Spacer()
+                                        Button {
+                                            if let entity = self.activity.source as? NoteVersion {
+                                                self.state.session.note = entity.note
+                                                self.state.to(.noteDetail)
+                                            }
+                                        } label: {
+                                            Text("Open")
+                                                .font(.caption)
+                                                .foregroundStyle(Theme.base)
+                                                .padding(6)
+                                                .padding([.leading, .trailing], 8)
+                                                .background(.white)
+                                                .clipShape(.capsule(style: .continuous))
+                                        }
+                                        .buttonStyle(.plain)
+                                    default:
+                                        Text("No source found")
+                                    }
+                                }
+                                .padding(8)
+                            }
+
+                            if let job = self.activity.job {
+                                ResourcePath(
+                                    company: job.project?.company,
+                                    project: job.project,
+                                    job: job
+                                )
+                            }
+                        }
+                    }
+                    .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .clipShape(.rect(cornerRadius: 5))
+                }
+            }
+        }
+
         struct ListLinkItem: View {
             @EnvironmentObject private var state: Navigation
             public var page: Page
@@ -419,26 +502,38 @@ extension WidgetLibrary {
             public var title: String
 
             var body: some View {
-                VStack(alignment: .leading, spacing: 5) {
-                    UI.ListLinkTitle(text: self.title)
+                VStack {
+                    ZStack(alignment: .bottom) {
+                        LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
+                            .blendMode(.softLight)
+                            .opacity(0.4)
+                            .frame(height: 20)
 
-                    if self.activities.count > 0 {
-                        ForEach(self.activities, id: \.id) { activity in
-                            UI.ListLinkItem(
-                                page: activity.page,
-                                name: activity.name,
-                                icon: activity.icon
-                            )
+                        ScrollView(showsIndicators: false) {
+                            VStack(alignment: .leading, spacing: 5) {
+                                UI.ListLinkTitle(text: self.title)
+
+                                if self.activities.count > 0 {
+                                    ForEach(self.activities, id: \.id) { activity in
+                                        UI.ListExternalLinkItem(
+                                            name: activity.name,
+                                            icon: activity.icon,
+                                            activity: activity
+                                        )
+                                        .help(activity.help)
+                                    }
+                                } else {
+                                    UI.ListButtonItem(
+                                        callback: {_ in},
+                                        name: "Nothing yet"
+                                    )
+                                    .disabled(true)
+                                }
+                            }
                         }
-                    } else {
-                        UI.ListButtonItem(
-                            callback: {_ in},
-                            name: "Nothing yet"
-                        )
-                        .disabled(true)
+                        .padding()
                     }
                 }
-                .padding()
                 .background(
                     ZStack {
                         self.state.session.appPage.primaryColour
@@ -446,6 +541,7 @@ extension WidgetLibrary {
                     }
                 )
                 .clipShape(.rect(cornerRadius: 5))
+                .frame(maxHeight: 200)
             }
         }
 
@@ -473,6 +569,7 @@ extension WidgetLibrary {
                                         name: activity.name,
                                         icon: activity.icon
                                     )
+                                    .help(activity.help)
                                 }
                             }
                             .padding()
@@ -1152,9 +1249,10 @@ extension WidgetLibrary {
             @State private var activities: [Activity] = []
 
             var body: some View {
-                ActivityLinks(activities: self.activities, title: "Links found for today")
+                ActivityLinks(activities: self.activities, title: "Links found for \(DateHelper.todayShort(self.state.session.timeline.date, format: "yyyy"))")
                     .onAppear(perform: self.actionOnAppear)
                     .onChange(of: self.state.session.date) { self.actionOnAppear() }
+                    .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
             }
         }
 
@@ -1201,7 +1299,7 @@ extension WidgetLibrary {
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showDefinitions") public var showDefinitions: Bool = true
             public var id: UUID = UUID()
             public let mode: UI.TimelineActivity.ActivityMode
-            public var historicalDate: Date?
+            public var historicalDate: Date
             public var view: AnyView?
             @State private var activities: [GenericTimelineActivity] = []
             @State private var currentActivities: [GenericTimelineActivity] = []
@@ -1956,18 +2054,62 @@ extension WidgetLibrary.UI.LinkListForDate {
     private func actionOnAppear() -> Void {
         self.activities = []
         self.getLinksFromJobs()
+        self.getLinksFromNotes()
     }
 
     /// Get links from jobs created or updated on a given day
     /// - Returns: Void
     private func getLinksFromJobs() -> Void {
-        let jobs = CoreDataJob(moc: self.state.moc).byDate(self.state.session.date)
+        let jobs = CoreDataJob(moc: self.state.moc).byDate(self.state.session.timeline.date)
         for job in jobs {
             if let uri = job.uri {
                 if uri.absoluteString != "https://" {
                     self.activities.append(
-                        Activity(name: uri.absoluteString, page: self.state.parent ?? .dashboard, type: .activity)
+                        Activity(
+                            name: uri.absoluteString,
+                            page: self.state.parent ?? .dashboard,
+                            type: .activity,
+                            job: job,
+                            url: uri.absoluteURL
+                        )
                     )
+                }
+            }
+        }
+    }
+    
+    /// Find links in notes created on a given day
+    /// - Returns: Void
+    private func getLinksFromNotes() -> Void {
+        let notes = CoreDataNotes(moc: self.state.moc).find(for: self.state.session.timeline.date)
+        for note in notes {
+            if let versions = note.versions?.allObjects as? [NoteVersion] {
+                for version in versions {
+                    if let content = version.content {
+                        let linkRegex = /https:\/\/([^ ]+)/
+                        if let match = content.firstMatch(of: linkRegex) {
+                            let sMatch = String(match.0)
+                            let linkLength = 40
+                            var label: String = sMatch
+
+                            if sMatch.count > linkLength {
+                                label = label.prefix(linkLength) + "..."
+                            }
+                            if !self.activities.contains(where: {$0.name == label}) {
+                                self.activities.append(
+                                    Activity(
+                                        name: label,
+                                        help: sMatch,
+                                        page: self.state.parent ?? .dashboard,
+                                        type: .activity,
+                                        job: note.mJob,
+                                        source: version,
+                                        url: URL(string: sMatch) ?? nil
+                                    )
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -1996,163 +2138,152 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
     /// Onload handler. Sets view state
     /// - Returns: Void
     private func populateTimeline() async -> Void {
-        if let historicalDate = self.historicalDate {
-            self.activities = []
+        self.activities = []
+        self.state.session.timeline.date = self.historicalDate
 
-            let records = CoreDataRecords(moc: self.state.moc).forDate(historicalDate)
-            if self.showRecords {
-                for record in records {
-                    // Records created
-                    if let date = record.timestamp {
-                        if let rContent = record.message {
-                            // Ignore records representing definitions (those activities are added later)
-                            if !rContent.contains("==") {
-                                self.activities.append(
-                                    UI.GenericTimelineActivity(
-                                        mode: self.mode,
-                                        historicalDate: date,
-                                        view: AnyView(record.rowView)
-                                    )
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
-            if self.showTasks {
-                let tasks = CoreDataTasks(moc: self.state.moc).forDate(historicalDate, from: records)
-                for task in tasks {
-                    // Tasks completed
-                    if let date = task.completedDate {
-                        self.activities.append(
-                            UI.GenericTimelineActivity(
-                                mode: self.mode,
-                                historicalDate: date,
-                                view: AnyView(task.rowView)
-                            )
-                        )
-                    } else
-                    // Tasks cancelled
-                    if let date = task.cancelledDate {
-                        self.activities.append(
-                            UI.GenericTimelineActivity(
-                                mode: self.mode,
-                                historicalDate: date,
-                                view: AnyView(task.rowView)
-                            )
-                        )
-                    } else
-                    // Tasks created
-                    if let date = task.created {
-                        self.activities.append(
-                            UI.GenericTimelineActivity(
-                                mode: self.mode,
-                                historicalDate: date,
-                                view: AnyView(task.rowView)
-                            )
-                        )
-                    }
-                }
-            }
-
-            if self.showNotes {
-                let notes = CoreDataNotes(moc: self.state.moc).forDate(historicalDate)
-                for note in notes {
-                    // Notes created
-                    if let date = note.postedDate {
-                        self.activities.append(
-                            UI.GenericTimelineActivity(
-                                mode: self.mode,
-                                historicalDate: date,
-                                view: AnyView(note.rowView)
-                            )
-                        )
-                    } else
-                    // Notes updated
-                    if note.postedDate != note.lastUpdate && note.lastUpdate != nil {
-                        self.activities.append(
-                            UI.GenericTimelineActivity(
-                                mode: self.mode,
-                                historicalDate: note.lastUpdate!,
-                                view: AnyView(note.rowView)
-                            )
-                        )
-                    }
-                }
-            }
-
-            if self.showJobs {
-                let jobs = CoreDataJob(moc: self.state.moc).byDate(historicalDate)
-                for job in jobs {
-                    // Jobs created
-                    if let date = job.created {
-                        self.activities.append(
-                            UI.GenericTimelineActivity(
-                                mode: self.mode,
-                                historicalDate: date,
-                                view: AnyView(job.rowView)
-                            )
-                        )
-                    } else
-                    // Jobs updated
-                    if let date = job.lastUpdate {
-                        self.activities.append(
-                            UI.GenericTimelineActivity(
-                                mode: self.mode,
-                                historicalDate: date,
-                                view: AnyView(job.rowView)
-                            )
-                        )
-                    }
-                }
-            }
-
-            if self.showCompanies {
-                let companies = CoreDataCompanies(moc: self.state.moc).forDate(historicalDate)
-                for company in companies {
-                    // Companies created
-                    if let date = company.createdDate {
-                        self.activities.append(
-                            UI.GenericTimelineActivity(
-                                mode: self.mode,
-                                historicalDate: date,
-                                view: AnyView(company.rowView)
-                            )
-                        )
-                    } else
-                    // Companies updated
-                    if let date = company.lastUpdate {
-                        self.activities.append(
-                            UI.GenericTimelineActivity(
-                                mode: self.mode,
-                                historicalDate: date,
-                                view: AnyView(company.rowView)
-                            )
-                        )
-                    }
-                }
-            }
-
-            // Technically this is showDefinitions, but the toggle isn't implemented yet
-            // @TODO: change to self.showDefinitions
-            if self.showTerms {
-                let definitions = CoreDataTaxonomyTermDefinitions(moc: self.state.moc).forDate(historicalDate)
-                for definition in definitions {
-                    // Definition updated
-                    if definition.created != definition.lastUpdate && definition.lastUpdate != nil {
-                        if let date = definition.lastUpdate {
+        let records = CoreDataRecords(moc: self.state.moc).forDate(self.historicalDate)
+        if self.showRecords {
+            for record in records {
+                // Records created
+                if let date = record.timestamp {
+                    if let rContent = record.message {
+                        // Ignore records representing definitions (those activities are added later)
+                        if !rContent.contains("==") {
                             self.activities.append(
                                 UI.GenericTimelineActivity(
                                     mode: self.mode,
                                     historicalDate: date,
-                                    view: AnyView(definition.rowView)
+                                    view: AnyView(record.rowView)
                                 )
                             )
                         }
-                    } else
-                    // Definition created
-                    if let date = definition.created {
+                    }
+                }
+            }
+        }
+
+        if self.showTasks {
+            let tasks = CoreDataTasks(moc: self.state.moc).forDate(self.historicalDate, from: records)
+            for task in tasks {
+                // Tasks completed
+                if let date = task.completedDate {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: date,
+                            view: AnyView(task.rowView)
+                        )
+                    )
+                } else
+                // Tasks cancelled
+                if let date = task.cancelledDate {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: date,
+                            view: AnyView(task.rowView)
+                        )
+                    )
+                } else
+                // Tasks created
+                if let date = task.created {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: date,
+                            view: AnyView(task.rowView)
+                        )
+                    )
+                }
+            }
+        }
+
+        if self.showNotes {
+            let notes = CoreDataNotes(moc: self.state.moc).forDate(self.historicalDate)
+            for note in notes {
+                // Notes created
+                if let date = note.postedDate {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: date,
+                            view: AnyView(note.rowView)
+                        )
+                    )
+                } else
+                // Notes updated
+                if note.postedDate != note.lastUpdate && note.lastUpdate != nil {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: note.lastUpdate!,
+                            view: AnyView(note.rowView)
+                        )
+                    )
+                }
+            }
+        }
+
+        if self.showJobs {
+            let jobs = CoreDataJob(moc: self.state.moc).byDate(self.historicalDate)
+            for job in jobs {
+                // Jobs created
+                if let date = job.created {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: date,
+                            view: AnyView(job.rowView)
+                        )
+                    )
+                } else
+                // Jobs updated
+                if let date = job.lastUpdate {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: date,
+                            view: AnyView(job.rowView)
+                        )
+                    )
+                }
+            }
+        }
+
+        if self.showCompanies {
+            let companies = CoreDataCompanies(moc: self.state.moc).forDate(self.historicalDate)
+            for company in companies {
+                // Companies created
+                if let date = company.createdDate {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: date,
+                            view: AnyView(company.rowView)
+                        )
+                    )
+                } else
+                // Companies updated
+                if let date = company.lastUpdate {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: date,
+                            view: AnyView(company.rowView)
+                        )
+                    )
+                }
+            }
+        }
+
+        // Technically this is showDefinitions, but the toggle isn't implemented yet
+        // @TODO: change to self.showDefinitions
+        if self.showTerms {
+            let definitions = CoreDataTaxonomyTermDefinitions(moc: self.state.moc).forDate(self.historicalDate)
+            for definition in definitions {
+                // Definition updated
+                if definition.created != definition.lastUpdate && definition.lastUpdate != nil {
+                    if let date = definition.lastUpdate {
                         self.activities.append(
                             UI.GenericTimelineActivity(
                                 mode: self.mode,
@@ -2161,11 +2292,21 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                             )
                         )
                     }
+                } else
+                // Definition created
+                if let date = definition.created {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            mode: self.mode,
+                            historicalDate: date,
+                            view: AnyView(definition.rowView)
+                        )
+                    )
                 }
             }
         }
 
-        self.activities = self.activities.sorted(by: {self.tableSortOrder == 0 ? $0.historicalDate! > $1.historicalDate! : $0.historicalDate! < $1.historicalDate!})
+        self.activities = self.activities.sorted(by: {self.tableSortOrder == 0 ? $0.historicalDate > $1.historicalDate : $0.historicalDate < $1.historicalDate})
 
         // Find the current page of resources by offset
         let lBound = self.state.session.pagination.currentPageOffset
@@ -2185,6 +2326,7 @@ extension WidgetLibrary.UI.ActivityFeed {
     private func actionOnAppear() -> Void {
         self.tabs = []
         var tabSet: Set<ToolbarButton> = []
+//        self.state.session.timeline.date = Date()
 
         let calendar = Calendar.autoupdatingCurrent
         let current = calendar.dateComponents([.year, .month, .day], from: self.state.session.date)
@@ -2193,22 +2335,22 @@ extension WidgetLibrary.UI.ActivityFeed {
             for offset in 0...maxYearsPastInHistory {
                 let offsetYear = ((offset * -1) + current.year!)
                 let components = DateComponents(year: offsetYear, month: current.month!, day: current.day!)
-                let day = calendar.date(from: components)
-
-                tabSet.insert(
-                    ToolbarButton(
-                        id: offset,
-                        helpText: "Help",
-                        icon: "calendar",
-                        labelText: DateHelper.todayShort(day, format: "yyyy"),
-                        contents: AnyView(
-                            UI.GenericTimelineActivity(
-                                mode: self.mode,
-                                historicalDate: day
+                if let day = calendar.date(from: components) {
+                    tabSet.insert(
+                        ToolbarButton(
+                            id: offset,
+                            helpText: "Help",
+                            icon: "calendar",
+                            labelText: DateHelper.todayShort(day, format: "yyyy"),
+                            contents: AnyView(
+                                UI.GenericTimelineActivity(
+                                    mode: self.mode,
+                                    historicalDate: day
+                                )
                             )
                         )
                     )
-                )
+                }
             }
         }
 
