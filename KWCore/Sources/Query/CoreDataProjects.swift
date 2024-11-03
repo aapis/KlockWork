@@ -367,6 +367,16 @@ public class CoreDataProjects: ObservableObject {
         return Array(set).sorted(by: {$0.lastUpdate ?? Date() > $1.lastUpdate ?? Date()})
     }
 
+    /// Find all projects that have a name and are not hidden
+    /// - Returns: Array<Project>
+    public func indescriminate() -> [Project] {
+        let predicate = NSPredicate(
+            format: "name != nil && company.hidden == false"
+        )
+
+        return query(predicate)
+    }
+
     /// Create a new project
     /// - Parameters:
     ///   - name: Project name

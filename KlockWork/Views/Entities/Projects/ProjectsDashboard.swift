@@ -12,6 +12,7 @@ import KWCore
 struct ProjectsDashboard: View {
     @EnvironmentObject public var state: Navigation
     @AppStorage("general.columns") private var numColumns: Int = 3
+    @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
     @State private var projects: [Project] = []
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .projects
@@ -54,6 +55,7 @@ struct ProjectsDashboard: View {
         .background(Theme.toolbarColour)
         .onAppear(perform: self.actionOnAppear)
         .onChange(of: self.state.session.project) { self.actionOnAppear() }
+        .onChange(of: self.allowAlive) { self.actionOnAppear() }
     }
 }
 
@@ -64,7 +66,11 @@ extension ProjectsDashboard {
         if let stored = self.state.session.project {
             self.projects = [stored]
         } else {
-            self.projects = CoreDataProjects(moc: self.state.moc).alive()
+            if self.allowAlive {
+                self.projects = CoreDataProjects(moc: self.state.moc).alive()
+            } else {
+                self.projects = CoreDataProjects(moc: self.state.moc).indescriminate()
+            }
         }
     }
 }

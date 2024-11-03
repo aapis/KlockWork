@@ -14,6 +14,7 @@ struct CompanyDashboard: View {
     @EnvironmentObject public var state: Navigation
     @AppStorage("general.columns") private var numColumns: Int = 3
     @AppStorage("general.defaultCompany") public var defaultCompany: Int = 0
+    @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
     @State private var searchText: String = ""
     @State private var selected: Int = 0
     @State private var allowHidden: Bool = false
@@ -52,6 +53,7 @@ struct CompanyDashboard: View {
         .background(Theme.toolbarColour)
         .onAppear(perform: self.actionOnAppear)
         .onChange(of: self.state.session.company) { self.actionOnAppear() }
+        .onChange(of: self.allowAlive) { self.actionOnAppear() }
     }
 
     @ViewBuilder private var Recent: some View {
@@ -72,7 +74,11 @@ extension CompanyDashboard {
         if let company = self.state.session.company {
             self.companies = [company]
         } else {
-            self.companies = CoreDataCompanies(moc: self.state.moc).alive()
+            if self.allowAlive {
+                self.companies = CoreDataCompanies(moc: self.state.moc).alive()
+            } else {
+                self.companies = CoreDataCompanies(moc: self.state.moc).indescriminate()
+            }
         }
     }
 }
