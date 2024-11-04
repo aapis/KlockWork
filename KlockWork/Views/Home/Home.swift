@@ -98,7 +98,7 @@ struct Home: View {
                     nav.sidebar
                 }
                 Spacer()
-                UI.ActivityCalendar()
+                UI.EntityCalendar.Widget()
             }
         }
         .frame(width: 320)
