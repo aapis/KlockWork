@@ -2086,6 +2086,7 @@ extension WidgetLibrary {
                     }
                     .buttonStyle(.plain)
                     .useDefaultHover({ hover in self.isHighlighted = hover})
+                    .help("Open")
                 case is Project:
                     Button {
                         self.state.session.project = self.entity as? Project
@@ -2098,6 +2099,7 @@ extension WidgetLibrary {
                     }
                     .buttonStyle(.plain)
                     .useDefaultHover({ hover in self.isHighlighted = hover})
+                    .help("Open")
                 case is Job:
                     Button {
                         self.state.session.job = self.entity as? Job
@@ -2110,6 +2112,7 @@ extension WidgetLibrary {
                     }
                     .buttonStyle(.plain)
                     .useDefaultHover({ hover in self.isHighlighted = hover})
+                    .help("Open")
                 default:
                     EmptyView()
                 }
