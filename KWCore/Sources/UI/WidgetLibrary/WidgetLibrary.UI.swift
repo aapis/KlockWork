@@ -1785,7 +1785,7 @@ extension WidgetLibrary {
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
-                    if self.entityCount > 0 && self.pages.count > 1 {
+                    if self.entityCount > 0 && self.pages.count > 0 {
                         Main
                     }
                 }
