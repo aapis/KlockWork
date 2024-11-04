@@ -97,6 +97,8 @@ struct Home: View {
                 if !self.isSearchStackShowing && !self.isUpcomingTaskStackShowing {
                     nav.sidebar
                 }
+                Spacer()
+                UI.ActivityCalendar()
             }
         }
         .frame(width: 320)

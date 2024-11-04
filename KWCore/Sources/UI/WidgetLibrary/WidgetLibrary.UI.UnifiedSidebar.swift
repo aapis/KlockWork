@@ -18,7 +18,7 @@ extension WidgetLibrary.UI {
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
-                    ZStack {
+                    ZStack(alignment: .topLeading) {
                         Theme.base.opacity(0.2)
 
                         HStack(alignment: .center, spacing: 8) {

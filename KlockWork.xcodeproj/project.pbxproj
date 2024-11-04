@@ -152,7 +152,6 @@
 		5394D9A12CD445D30069E230 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5394D9A02CD445D20069E230 /* Note.swift */; };
 		5394D9A32CD46BD10069E230 /* TaxonomyTermDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5394D9A22CD46BCE0069E230 /* TaxonomyTermDefinitions.swift */; };
 		5394D9A52CD4AC520069E230 /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5394D9A42CD4AC500069E230 /* Person.swift */; };
-		5394D9AA2CD828F30069E230 /* ActivityMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5394D9A92CD828F30069E230 /* ActivityMode.swift */; };
 		53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A19297377A7007A2549 /* FancyGenericToolbar.swift */; };
 		53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1C2973897F007A2549 /* ProjectConfig.swift */; };
 		53959A1F29738AAA007A2549 /* FancySubTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1E29738AAA007A2549 /* FancySubTitle.swift */; };
@@ -446,7 +445,6 @@
 		5394D9A02CD445D20069E230 /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
 		5394D9A22CD46BCE0069E230 /* TaxonomyTermDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxonomyTermDefinitions.swift; sourceTree = "<group>"; };
 		5394D9A42CD4AC500069E230 /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
-		5394D9A92CD828F30069E230 /* ActivityMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityMode.swift; sourceTree = "<group>"; };
 		53959A19297377A7007A2549 /* FancyGenericToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyGenericToolbar.swift; sourceTree = "<group>"; };
 		53959A1C2973897F007A2549 /* ProjectConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfig.swift; sourceTree = "<group>"; };
 		53959A1E29738AAA007A2549 /* FancySubTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancySubTitle.swift; sourceTree = "<group>"; };
@@ -1256,7 +1254,6 @@
 		53E202662A802CFC00B4DF70 /* Enums */ = {
 			isa = PBXGroup;
 			children = (
-				5394D9A92CD828F30069E230 /* ActivityMode.swift */,
 				5394D9982CD3203C0069E230 /* PageConfiguration.swift */,
 				536040A92CB9F5F10030D72D /* ActionType.swift */,
 				53E202672A802D0900B4DF70 /* ButtonSize.swift */,
@@ -1783,7 +1780,6 @@
 				53E202562A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift in Sources */,
 				532A722B298F1CB70038C18B /* Results.swift in Sources */,
 				5360409B2CB9F4080030D72D /* Legend.swift in Sources */,
-				5394D9AA2CD828F30069E230 /* ActivityMode.swift in Sources */,
 				53196AC92A168E7200FE49FC /* CalendarIndividualEvent.swift in Sources */,
 				5333E7A12A0ECE0D00EE4A36 /* FancyTab.swift in Sources */,
 				5331FCB32A9E6ECE005CDE0E /* Plan.swift in Sources */,

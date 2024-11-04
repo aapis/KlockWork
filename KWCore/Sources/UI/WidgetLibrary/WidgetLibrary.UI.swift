@@ -1098,158 +1098,67 @@ extension WidgetLibrary {
             }
         }
 
-        // MARK: EntityPicker
-        struct EntityPicker: View, Identifiable {
-            public var id: UUID = UUID()
-            public var type: EType
-
-            var body: some View {
-                VStack(alignment: .leading) {
-                    HStack {
-                        Text("HI HIELLO \(self.type)")
-                        Spacer()
-                    }
-                }
-                .padding()
-                .background(Theme.textBackground)
-                .clipShape(.rect(cornerRadius: 5))
-            }
-        }
-
         // MARK: TimelineActivity
         struct TimelineActivity: View {
             @EnvironmentObject public var state: Navigation
-            private var buttons: [ToolbarButton] = []
-
-            init() {
-                ActivityMode.allCases.sorted(by: {$0.id < $1.id}).forEach { tab in
-                    self.buttons.append(tab.button)
-                }
-            }
+            @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+            private var threeCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 3) }
+            private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
 
             var body: some View {
-                VStack(spacing: 0) {
-                    FancyGenericToolbar(
-                        buttons: self.buttons,
-                        standalone: true,
-                        location: .content,
-                        mode: .compact,
-                        page: .explore
+                VStack(alignment: .leading, spacing: 0) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        SearchTypeFilter()
+                            .padding(.bottom)
+                        VStack(alignment: .leading, spacing: 0) {
+                            UniversalHeader.Widget(
+                                type: .BruceWillis,
+                                title: self.state.session.timeline.formatted("MMMM dd, yyyy")
+                            )
+                            LazyVGrid(columns: self.threeCol, alignment: .center) {
+                                GridRow {
+                                    // @TODO: create new Forecast widget that shows how many items were on the list
+                                    // before EOD (this one changes to 0 when all are completed, so basically the
+                                    // opposite. Must be bigger, too. This widget is for illustrative purposes
+                                    // until then
+                                    Forecast(
+                                        date: DateHelper.startOfDay(self.state.session.timeline.date),
+                                        type: .button,
+                                        page: self.state.session.appPage
+                                    )
+                                    // @TODO: should be bigger and actually work
+                                    GlobalSidebarWidgets.ScoreButton()
+                                    Text("HI")
+                                }
+                            }
+                            .padding()
+                            .background(Theme.textBackground)
+                            .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
+                        }
+                        .padding([.leading, .bottom, .trailing])
+                    }
+                    .background(self.state.session.appPage.primaryColour)
+                    .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
+                    .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                    FancyHelpText(
+                        text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
+                        page: self.state.session.appPage
                     )
+
+                    FancyDivider()
+                    VStack(spacing: 0) {
+                        LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                            GridRow {
+                                UI.LinkListForDate()
+                                UI.EntityInteractionsForDate()
+                            }
+                        }
+                    }
+                    FancyDivider()
+                    UI.ActivityFeed()
                 }
                 .padding()
                 .background(Theme.toolbarColour)
-            }
-
-            struct ModeByEntity: View {
-                @EnvironmentObject public var state: Navigation
-                @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
-                private var columns: [GridItem] { Array(repeating: GridItem(.flexible(), spacing: 10), count: 2)}
-                private var pickers: [EntityPicker] = []
-
-                init() {
-                    EType.allCases.filter({$0 != .BruceWillis}).forEach { type in
-                        self.pickers.append(
-                            EntityPicker(type: type)
-                        )
-                    }
-                }
-
-                var body: some View {
-                    VStack(spacing: 0) {
-                        VStack(alignment: .leading, spacing: 0) {
-                            SearchTypeFilter()
-                            VStack(alignment: .leading, spacing: 0) {
-                                UniversalHeader.Widget(
-                                    type: .BruceWillis,
-                                    title: self.state.session.timeline.formatted("MMMM dd, yyyy")
-                                )
-                            }
-                            .padding()
-                        }
-                        .background(self.state.session.appPage.primaryColour)
-                        // @TODO: this doesn't work for some reason, something else (above) is clipping this view
-                        //                    .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
-                        FancyHelpText(
-                            text: "Browse entities by date \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
-                            page: self.state.session.appPage
-                        )
-                        FancyDivider()
-                        LazyVGrid(columns: self.columns, alignment: .leading) {
-                            ScrollView(showsIndicators: false) {
-                                VStack {
-                                    ForEach(self.pickers, id: \.id) { picker in picker }
-                                    Spacer()
-                                }
-                            }
-                            VStack {
-                                // @TODO: ActivityCalendar used only to mockup the view, a new/modified view is required
-                                ActivityCalendar()
-                                    .clipShape(.rect(cornerRadius: 5))
-                            }
-                        }
-                    }
-                }
-            }
-
-            struct ModeByDate: View {
-                @EnvironmentObject public var state: Navigation
-                @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
-                private var threeCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 3) }
-                private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
-
-                var body: some View {
-                    VStack(alignment: .leading, spacing: 0) {
-                        VStack(alignment: .leading, spacing: 0) {
-                            SearchTypeFilter()
-                                .padding(.bottom)
-                            VStack(alignment: .leading, spacing: 0) {
-                                UniversalHeader.Widget(
-                                    type: .BruceWillis,
-                                    title: self.state.session.timeline.formatted("MMMM dd, yyyy")
-                                )
-                                LazyVGrid(columns: self.threeCol, alignment: .center) {
-                                    GridRow {
-                                        // @TODO: create new Forecast widget that shows how many items were on the list
-                                        // before EOD (this one changes to 0 when all are completed, so basically the
-                                        // opposite. Must be bigger, too. This widget is for illustrative purposes
-                                        // until then
-                                        Forecast(
-                                            date: DateHelper.startOfDay(self.state.session.timeline.date),
-                                            type: .button,
-                                            page: self.state.session.appPage
-                                        )
-                                        // @TODO: should be bigger and actually work
-                                        GlobalSidebarWidgets.ScoreButton()
-                                        Text("HI")
-                                    }
-                                }
-                                .padding()
-                                .background(Theme.textBackground)
-                                .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
-                            }
-                            .padding([.leading, .bottom, .trailing])
-                        }
-                        .background(self.state.session.appPage.primaryColour)
-                        .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
-                        FancyHelpText(
-                            text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
-                            page: self.state.session.appPage
-                        )
-
-                        FancyDivider()
-                        VStack(spacing: 0) {
-                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
-                                GridRow {
-                                    UI.LinkListForDate()
-                                    UI.EntityInteractionsForDate()
-                                }
-                            }
-                        }
-                        FancyDivider()
-                        UI.ActivityFeed(mode: .byDate)
-                    }
-                }
             }
         }
 
@@ -1325,7 +1234,6 @@ extension WidgetLibrary {
         struct ActivityFeed: View {
             @EnvironmentObject public var state: Navigation
             @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
-            public let mode: ActivityMode
             @State private var tabs: [ToolbarButton] = []
             @State private var vid: UUID = UUID()
 
@@ -1364,7 +1272,6 @@ extension WidgetLibrary {
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showTerms") public var showTerms: Bool = true
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showDefinitions") public var showDefinitions: Bool = true
             public var id: UUID = UUID()
-            public let mode: ActivityMode
             public var historicalDate: Date
             public var view: AnyView?
             @State private var activities: [GenericTimelineActivity] = []
@@ -2403,7 +2310,6 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                         if !rContent.contains("==") {
                             self.activities.append(
                                 UI.GenericTimelineActivity(
-                                    mode: self.mode,
                                     historicalDate: date,
                                     view: AnyView(record.rowView)
                                 )
@@ -2421,7 +2327,6 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                 if let date = task.completedDate {
                     self.activities.append(
                         UI.GenericTimelineActivity(
-                            mode: self.mode,
                             historicalDate: date,
                             view: AnyView(task.rowView)
                         )
@@ -2431,7 +2336,6 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                 if let date = task.cancelledDate {
                     self.activities.append(
                         UI.GenericTimelineActivity(
-                            mode: self.mode,
                             historicalDate: date,
                             view: AnyView(task.rowView)
                         )
@@ -2441,7 +2345,6 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                 if let date = task.created {
                     self.activities.append(
                         UI.GenericTimelineActivity(
-                            mode: self.mode,
                             historicalDate: date,
                             view: AnyView(task.rowView)
                         )
@@ -2457,7 +2360,6 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                 if let date = note.postedDate {
                     self.activities.append(
                         UI.GenericTimelineActivity(
-                            mode: self.mode,
                             historicalDate: date,
                             view: AnyView(note.rowView)
                         )
@@ -2467,7 +2369,6 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                 if note.postedDate != note.lastUpdate && note.lastUpdate != nil {
                     self.activities.append(
                         UI.GenericTimelineActivity(
-                            mode: self.mode,
                             historicalDate: note.lastUpdate!,
                             view: AnyView(note.rowView)
                         )
@@ -2483,7 +2384,6 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                 if let date = job.created {
                     self.activities.append(
                         UI.GenericTimelineActivity(
-                            mode: self.mode,
                             historicalDate: date,
                             view: AnyView(job.rowView)
                         )
@@ -2493,7 +2393,6 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                 if let date = job.lastUpdate {
                     self.activities.append(
                         UI.GenericTimelineActivity(
-                            mode: self.mode,
                             historicalDate: date,
                             view: AnyView(job.rowView)
                         )
@@ -2509,7 +2408,6 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                 if let date = company.createdDate {
                     self.activities.append(
                         UI.GenericTimelineActivity(
-                            mode: self.mode,
                             historicalDate: date,
                             view: AnyView(company.rowView)
                         )
@@ -2519,7 +2417,6 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                 if let date = company.lastUpdate {
                     self.activities.append(
                         UI.GenericTimelineActivity(
-                            mode: self.mode,
                             historicalDate: date,
                             view: AnyView(company.rowView)
                         )
@@ -2538,7 +2435,6 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                     if let date = definition.lastUpdate {
                         self.activities.append(
                             UI.GenericTimelineActivity(
-                                mode: self.mode,
                                 historicalDate: date,
                                 view: AnyView(definition.rowView)
                             )
@@ -2549,7 +2445,6 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                 if let date = definition.created {
                     self.activities.append(
                         UI.GenericTimelineActivity(
-                            mode: self.mode,
                             historicalDate: date,
                             view: AnyView(definition.rowView)
                         )
@@ -2595,7 +2490,6 @@ extension WidgetLibrary.UI.ActivityFeed {
                             labelText: DateHelper.todayShort(day, format: "yyyy"),
                             contents: AnyView(
                                 UI.GenericTimelineActivity(
-                                    mode: self.mode,
                                     historicalDate: day
                                 )
                             )
