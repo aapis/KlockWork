@@ -231,7 +231,7 @@ extension DateSelectorWidget {
 
     private func formattedDate() -> String {
         let df = DateFormatter()
-        df.dateFormat = "MMMM d, yyyy"
+        df.dateFormat = "MMMM dd, yyyy"
         return df.string(from: nav.session.date)
     }
 
@@ -257,7 +257,7 @@ extension DateSelectorWidget {
 
     private func areSameDate(_ lhs: Date, _ rhs: Date) -> Bool {
         let df = DateFormatter()
-        df.dateFormat = "MMMM d"
+        df.dateFormat = "MMMM dd"
         let fmtDate = df.string(from: lhs)
         let fmtSessionDate = df.string(from: rhs)
 
@@ -287,7 +287,7 @@ extension DateSelectorWidget.DateSelectorRow {
     private func formatDate() -> String {
         if let date = day.date {
             let df = DateFormatter()
-            df.dateFormat = "EE MMMM d"
+            df.dateFormat = "EE MMMM dd"
             return df.string(from: date)
         }
 

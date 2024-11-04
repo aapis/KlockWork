@@ -345,7 +345,7 @@ extension Forecast.ForecastTypeRow {
         self.itemsDue = self.upcomingTasks.count
 
         let df = DateFormatter()
-        df.dateFormat = "MMMM d"
+        df.dateFormat = "MMMM dd"
         df.timeZone = TimeZone.autoupdatingCurrent
         df.locale = NSLocale.current
 
