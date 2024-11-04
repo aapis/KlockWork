@@ -39,9 +39,11 @@ struct Legend: View {
                                 Image(systemName: "gear")
                             }
                         }
+                        .buttonStyle(.plain)
                         .foregroundStyle(self.state.activities.statuses.isEmpty ? .gray : self.state.theme.tint)
                         .help("Modify assessment factors")
                         .disabled(self.state.activities.statuses.isEmpty)
+                        .useDefaultHover({_ in})
                     }
                 }
                 .padding([.bottom], 10)
