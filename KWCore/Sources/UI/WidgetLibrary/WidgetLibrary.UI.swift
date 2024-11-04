@@ -1279,6 +1279,7 @@ extension WidgetLibrary {
 
             var body: some View {
                 VStack {
+                    UI.ListLinkTitle(text: "Activity Feed")
                     FancyGenericToolbar(
                         buttons: self.tabs,
                         standalone: true,
