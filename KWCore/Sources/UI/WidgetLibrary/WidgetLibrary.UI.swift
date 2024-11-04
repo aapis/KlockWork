@@ -516,45 +516,28 @@ extension WidgetLibrary {
             public var title: String
 
             var body: some View {
-                VStack {
-                    ZStack(alignment: .bottom) {
-                        LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
-                            .blendMode(.softLight)
-                            .opacity(0.4)
-                            .frame(height: 20)
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 5) {
+                        UI.ListLinkTitle(text: self.title)
 
-                        ScrollView(showsIndicators: false) {
-                            VStack(alignment: .leading, spacing: 5) {
-                                UI.ListLinkTitle(text: self.title)
-
-                                if self.activities.count > 0 {
-                                    ForEach(self.activities, id: \.id) { activity in
-                                        UI.ListExternalLinkItem(
-                                            name: activity.name,
-                                            icon: activity.icon,
-                                            activity: activity
-                                        )
-                                        .help(activity.help)
-                                    }
-                                } else {
-                                    UI.ListButtonItem(
-                                        callback: {_ in},
-                                        name: "None found."
-                                    )
-                                    .disabled(true)
-                                }
+                        if self.activities.count > 0 {
+                            ForEach(self.activities, id: \.id) { activity in
+                                UI.ListExternalLinkItem(
+                                    name: activity.name,
+                                    icon: activity.icon,
+                                    activity: activity
+                                )
+                                .help(activity.help)
                             }
+                        } else {
+                            UI.ListButtonItem(
+                                callback: {_ in},
+                                name: "None found."
+                            )
+                            .disabled(true)
                         }
-                        .padding()
                     }
                 }
-                .background(
-                    ZStack {
-                        self.state.session.appPage.primaryColour
-                        Theme.textBackground
-                    }
-                )
-                .clipShape(.rect(cornerRadius: 5))
                 .frame(maxHeight: 200)
             }
         }
