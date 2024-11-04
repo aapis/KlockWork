@@ -2285,7 +2285,7 @@ extension WidgetLibrary.UI.LinkListForDate {
             if let versions = note.versions?.allObjects as? [NoteVersion] {
                 for version in versions {
                     if let content = version.content {
-                        let linkRegex = /https:\/\/([^ ]+)/
+                        let linkRegex = /https:\/\/([^ \n]+)/
                         if let match = content.firstMatch(of: linkRegex) {
                             let sMatch = String(match.0)
                             let linkLength = 40
