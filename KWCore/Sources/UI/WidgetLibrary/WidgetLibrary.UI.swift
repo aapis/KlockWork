@@ -1157,24 +1157,36 @@ extension WidgetLibrary {
                         VStack(alignment: .leading, spacing: 0) {
                             SearchTypeFilter()
                                 .padding(.bottom)
-                            VStack(spacing: 0) {
-                                LazyVGrid(columns: self.threeCol, alignment: .leading) {
+                            VStack(alignment: .leading, spacing: 0) {
+                                UniversalHeader.Widget(
+                                    type: .BruceWillis,
+                                    title: self.state.session.timeline.formatted("MMMM dd")
+                                )
+                                LazyVGrid(columns: self.threeCol, alignment: .center) {
                                     GridRow {
-                                        Text("HI")
+                                        // @TODO: create new Forecast widget that shows how many items were on the list
+                                        // before EOD (this one changes to 0 when all are completed, so basically the
+                                        // opposite. Must be bigger, too. This widget is for illustrative purposes
+                                        // until then
+                                        Forecast(
+                                            date: DateHelper.startOfDay(self.state.session.timeline.date),
+                                            type: .button,
+                                            page: self.state.session.appPage
+                                        )
                                         Text("HI")
                                         Text("HI")
                                     }
                                 }
                                 .padding()
                                 .background(Theme.textBackground)
-                                .clipShape(.rect(cornerRadius: 5))
+                                .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
                             }
                             .padding([.leading, .bottom, .trailing])
                         }
                         .background(self.state.session.appPage.primaryColour)
                         .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
                         FancyHelpText(
-                            text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "MMMM d"))",
+                            text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
                             page: self.state.session.appPage
                         )
 
@@ -1299,7 +1311,7 @@ extension WidgetLibrary {
                         UI.Pagination(entityCount: self.activities.count)
                     } else {
                         LogRowEmpty(
-                            message: "No activities found for \(DateHelper.todayShort(self.historicalDate, format: "MMMM d, YYYY"))",
+                            message: "No activities found for \(DateHelper.todayShort(self.historicalDate, format: "MMMM dd, YYYY"))",
                             index: 0,
                             colour: Theme.rowColour
                         )
@@ -2814,7 +2826,7 @@ extension WidgetLibrary.UI.SimpleDateSelector {
     /// Fires when the date is changed.
     /// - Returns: Void
     private func actionOnChangeDate() -> Void {
-        self.date = DateHelper.todayShort(self.state.session.date, format: "MMMM d, yyyy")
+        self.date = DateHelper.todayShort(self.state.session.date, format: "MMMM dd, yyyy")
         self.isToday = self.areSameDate(self.state.session.date, Date())
     }
 
@@ -2825,7 +2837,7 @@ extension WidgetLibrary.UI.SimpleDateSelector {
     /// - Returns: Void
     private func areSameDate(_ lhs: Date, _ rhs: Date) -> Bool {
         let df = DateFormatter()
-        df.dateFormat = "MMMM d"
+        df.dateFormat = "MMMM dd"
         let fmtDate = df.string(from: lhs)
         let fmtSessionDate = df.string(from: rhs)
 
