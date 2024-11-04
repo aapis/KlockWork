@@ -78,6 +78,7 @@ extension Job {
             Text(self.title ?? self.jid.string)
                 .foregroundStyle(self.backgroundColor.isBright() ? Theme.base : .white)
             Spacer()
+            Image(systemName: "chevron.right")
         }
         .padding(8)
         .background(self.backgroundColor)

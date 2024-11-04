@@ -49,6 +49,7 @@ extension Company {
             Text(self.name ?? "Error: Invalid company name")
                 .foregroundStyle(self.backgroundColor.isBright() ? Theme.base : .white)
             Spacer()
+            Image(systemName: "chevron.right")
         }
         .padding(8)
         .background(self.backgroundColor)

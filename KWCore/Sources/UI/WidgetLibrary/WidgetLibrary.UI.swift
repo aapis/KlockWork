@@ -513,13 +513,10 @@ extension WidgetLibrary {
         struct ActivityLinks: View {
             @EnvironmentObject private var state: Navigation
             public var activities: [Activity]
-            public var title: String
 
             var body: some View {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 5) {
-                        UI.ListLinkTitle(text: self.title)
-
                         if self.activities.count > 0 {
                             ForEach(self.activities, id: \.id) { activity in
                                 UI.ListExternalLinkItem(
@@ -1157,7 +1154,7 @@ extension WidgetLibrary {
                             VStack(alignment: .leading, spacing: 0) {
                                 UniversalHeader.Widget(
                                     type: .BruceWillis,
-                                    title: self.state.session.timeline.formatted("MMMM dd")
+                                    title: self.state.session.timeline.formatted("MMMM dd, yyyy")
                                 )
                                 LazyVGrid(columns: self.threeCol, alignment: .center) {
                                     GridRow {
@@ -1207,13 +1204,34 @@ extension WidgetLibrary {
         // MARK: LinkListForDate
         struct LinkListForDate: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
             @State private var activities: [Activity] = []
+            @State private var tabs: [ToolbarButton] = []
+            @State private var vid: UUID = UUID()
 
             var body: some View {
-                ActivityLinks(activities: self.activities, title: "Links found for \(self.state.session.timeline.formatted())")
-                    .onAppear(perform: self.actionOnAppear)
-                    .onChange(of: self.state.session.date) { self.actionOnAppear() }
-                    .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
+                VStack {
+                    UI.ListLinkTitle(text: "Suggested links from \(self.state.session.timeline.formatted())")
+                    UI.ActivityLinks(activities: self.activities)
+                        .frame(height: 200)
+                    // @TODO: ActivityLinks needs some tinkering to make it work within a tool view
+//                    FancyGenericToolbar(
+//                        buttons: self.tabs,
+//                        standalone: true,
+//                        location: .content,
+//                        mode: .compact,
+//                        page: .explore,
+//                        alwaysShowTab: true
+//                    )
+//                    .frame(height: 200)
+                }
+//                .id(self.vid)
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.date) { self.actionOnAppear() }
+                .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
             }
         }
 
@@ -1229,22 +1247,25 @@ extension WidgetLibrary {
             @State private var vid: UUID = UUID()
 
             var body: some View {
-                FancyGenericToolbar(
-                    buttons: self.tabs,
-                    standalone: true,
-                    location: .content,
-                    mode: .compact,
-                    page: .explore,
-                    alwaysShowTab: true
-                )
-                .frame(height: 200)
+                VStack {
+                    UI.ListLinkTitle(text: "Interactions from \(self.state.session.timeline.formatted())")
+                    FancyGenericToolbar(
+                        buttons: self.tabs,
+                        standalone: true,
+                        location: .content,
+                        mode: .compact,
+                        page: .explore,
+                        alwaysShowTab: true
+                    )
+                    .frame(height: 200)
+                }
+                .id(self.vid)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.vid = UUID() }
                 .onChange(of: self.state.session.timeline.date) { self.vid = UUID() ; self.actionOnAppear() }
                 .onChange(of: self.showCompanies) { self.actionOnAppear() }
                 .onChange(of: self.showProjects) { self.actionOnAppear() }
                 .onChange(of: self.showJobs) { self.actionOnAppear() }
-                .id(self.vid)
             }
         }
 
@@ -2168,7 +2189,6 @@ extension WidgetLibrary.UI.EntityInteractionsForDate {
     /// - Returns: Void
     private func actionOnAppear() -> Void {
         self.tabs = []
-
         self.tabs.append(
             ToolbarButton(
                 id: 0,
@@ -2216,6 +2236,24 @@ extension WidgetLibrary.UI.LinkListForDate {
         self.activities = []
         self.getLinksFromJobs()
         self.getLinksFromNotes()
+        self.createTabs()
+        self.vid = UUID()
+    }
+    
+    /// Creates tabs. Simples.
+    /// - Returns: Void
+    private func createTabs() -> Void {
+        self.tabs = [
+            ToolbarButton(
+                id: 0,
+                helpText: "",
+                icon: "link",
+                labelText: "Links",
+                contents: AnyView(
+                    UI.ActivityLinks(activities: self.activities)
+                )
+            )
+        ]
     }
 
     /// Get links from jobs created or updated on a given day

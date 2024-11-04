@@ -173,7 +173,7 @@ struct FancyGenericToolbar: View {
                         (
                             selected == button.id ?
                             (
-                                location == .sidebar ? Theme.base.opacity(0.2) : self.page != nil ? self.page!.primaryColour : self.nav.theme.tint
+                                location == .sidebar ? Theme.base.opacity(0.2) : self.page != nil ? self.page!.primaryColour : self.nav.theme.tint.opacity(0.8)
                             )
                             :
                             (
