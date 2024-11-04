@@ -322,8 +322,22 @@ extension WidgetLibrary {
                             }
                         }
                     }
+                    .contextMenu { ContextMenu(activity: self.activity) }
                     .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
+                }
+            }
+
+            // MARK: ListExternalItem.ContextMenu
+            struct ContextMenu: View {
+                public let activity: Activity
+
+                var body: some View {
+                    if let url = self.activity.url {
+                        Button("Copy to clipboard", action: {
+                            ClipboardHelper.copy(url.absoluteString)
+                        })
+                    }
                 }
             }
         }
@@ -525,7 +539,7 @@ extension WidgetLibrary {
                                 } else {
                                     UI.ListButtonItem(
                                         callback: {_ in},
-                                        name: "None found for \(self.state.session.timeline.formatted())"
+                                        name: "None found."
                                     )
                                     .disabled(true)
                                 }
@@ -2498,7 +2512,7 @@ extension WidgetLibrary.UI.ActivityFeed {
                     tabSet.insert(
                         ToolbarButton(
                             id: offset,
-                            helpText: "Help",
+                            helpText: "Show feed this day in \(DateHelper.todayShort(day, format: "yyyy"))",
                             icon: "calendar",
                             labelText: DateHelper.todayShort(day, format: "yyyy"),
                             contents: AnyView(
