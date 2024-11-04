@@ -1187,7 +1187,8 @@ extension WidgetLibrary {
                                             type: .button,
                                             page: self.state.session.appPage
                                         )
-                                        Text("HI")
+                                        // @TODO: should be bigger and actually work
+                                        GlobalSidebarWidgets.ScoreButton()
                                         Text("HI")
                                     }
                                 }
@@ -2104,6 +2105,7 @@ extension WidgetLibrary {
                 case is Project:
                     Button {
                         self.state.session.project = self.entity as? Project
+                        self.state.session.company = self.state.session.project?.company
                         self.state.to(.projectDetail)
                     } label: {
                         if let entity = self.entity as? Project {
@@ -2117,6 +2119,8 @@ extension WidgetLibrary {
                 case is Job:
                     Button {
                         self.state.session.job = self.entity as? Job
+                        self.state.session.project = self.state.session.job?.project
+                        self.state.session.company = self.state.session.project?.company
                         self.state.to(.jobs)
                     } label: {
                         if let entity = self.entity as? Job {
