@@ -768,7 +768,7 @@ extension WidgetLibrary {
                     .onAppear(perform: self.actionOnAppear)
                     .onChange(of: self.date) { self.actionChangeDate()}
                     .navigationTitle("Activity Calendar")
-    #if os(iOS)
+#if os(iOS)
                     .toolbarBackground(.visible, for: .navigationBar)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
@@ -781,7 +781,7 @@ extension WidgetLibrary {
                             }
                         }
                     }
-    #endif
+#endif
                 }
             }
 
@@ -1092,11 +1092,31 @@ extension WidgetLibrary {
                 }
             }
 
+            // MARK: FlashcardActivity.Flashcard
             struct Flashcard {
                 var term: TaxonomyTerm
             }
         }
 
+        // MARK: EntityPicker
+        struct EntityPicker: View, Identifiable {
+            public var id: UUID = UUID()
+            public var type: EType
+
+            var body: some View {
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text("HI HIELLO \(self.type)")
+                        Spacer()
+                    }
+                }
+                .padding()
+                .background(Theme.textBackground)
+                .clipShape(.rect(cornerRadius: 5))
+            }
+        }
+
+        // MARK: TimelineActivity
         struct TimelineActivity: View {
             @EnvironmentObject public var state: Navigation
             private var buttons: [ToolbarButton] = []
@@ -1123,20 +1143,52 @@ extension WidgetLibrary {
 
             struct ModeByEntity: View {
                 @EnvironmentObject public var state: Navigation
+                @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+                private var columns: [GridItem] { Array(repeating: GridItem(.flexible(), spacing: 10), count: 2)}
+                private var pickers: [EntityPicker] = []
+
+                init() {
+                    EType.allCases.filter({$0 != .BruceWillis}).forEach { type in
+                        self.pickers.append(
+                            EntityPicker(type: type)
+                        )
+                    }
+                }
 
                 var body: some View {
-                    VStack(alignment: .leading, spacing: 0) {
-                        SearchTypeFilter()
-
+                    VStack(spacing: 0) {
                         VStack(alignment: .leading, spacing: 0) {
-                            UniversalHeader.Widget(
-                                type: .BruceWillis,
-                                title: "Timeline"
-                            )
-                        }.padding()
-                        Spacer()
+                            SearchTypeFilter()
+                            VStack(alignment: .leading, spacing: 0) {
+                                UniversalHeader.Widget(
+                                    type: .BruceWillis,
+                                    title: self.state.session.timeline.formatted("MMMM dd, yyyy")
+                                )
+                            }
+                            .padding()
+                        }
+                        .background(self.state.session.appPage.primaryColour)
+                        // @TODO: this doesn't work for some reason, something else (above) is clipping this view
+                        //                    .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                        FancyHelpText(
+                            text: "Browse entities by date \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
+                            page: self.state.session.appPage
+                        )
+                        FancyDivider()
+                        LazyVGrid(columns: self.columns, alignment: .leading) {
+                            ScrollView(showsIndicators: false) {
+                                VStack {
+                                    ForEach(self.pickers, id: \.id) { picker in picker }
+                                    Spacer()
+                                }
+                            }
+                            VStack {
+                                // @TODO: ActivityCalendar used only to mockup the view, a new/modified view is required
+                                ActivityCalendar()
+                                    .clipShape(.rect(cornerRadius: 5))
+                            }
+                        }
                     }
-                    .background(self.state.session.appPage.primaryColour)
                 }
             }
 
