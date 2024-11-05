@@ -51,10 +51,17 @@ extension WidgetLibrary.UI {
                                     }
                                 }
                                 .background(Theme.textBackground)
-                                .padding(.bottom, 5)
 
-                                // List of days representing 1 month
-                                Month(month: $month)
+                                ZStack(alignment: .top) {
+                                    LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                        .opacity(0.3)
+                                        .blendMode(.softLight)
+                                        .frame(height: 50)
+                                    Divider()
+                                    // List of days representing 1 month
+                                    Month(month: $month)
+                                        .padding(.top, 5)
+                                }
                             }
                         }
                     }

@@ -1109,33 +1109,33 @@ extension WidgetLibrary {
                 VStack(alignment: .leading, spacing: 0) {
                     VStack(alignment: .leading, spacing: 0) {
                         SearchTypeFilter()
-                            .padding(.bottom)
-                        VStack(alignment: .leading, spacing: 0) {
-                            UniversalHeader.Widget(
-                                type: .BruceWillis,
-                                title: self.state.session.timeline.formatted("MMMM dd, yyyy")
-                            )
-                            LazyVGrid(columns: self.threeCol, alignment: .center) {
-                                GridRow {
-                                    // @TODO: create new Forecast widget that shows how many items were on the list
-                                    // before EOD (this one changes to 0 when all are completed, so basically the
-                                    // opposite. Must be bigger, too. This widget is for illustrative purposes
-                                    // until then
-                                    Forecast(
-                                        date: DateHelper.startOfDay(self.state.session.timeline.date),
-                                        type: .button,
-                                        page: self.state.session.appPage
-                                    )
-                                    // @TODO: should be bigger and actually work
-                                    GlobalSidebarWidgets.ScoreButton()
-                                    Text("HI")
-                                }
-                            }
-                            .padding()
-                            .background(Theme.textBackground)
-                            .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
-                        }
-                        .padding([.leading, .bottom, .trailing])
+//                            .padding(.bottom)
+//                        VStack(alignment: .leading, spacing: 0) {
+//                            UniversalHeader.Widget(
+//                                type: .BruceWillis,
+//                                title: self.state.session.timeline.formatted("MMMM dd, yyyy")
+//                            )
+//                            LazyVGrid(columns: self.threeCol, alignment: .center) {
+//                                GridRow {
+//                                    // @TODO: create new Forecast widget that shows how many items were on the list
+//                                    // before EOD (this one changes to 0 when all are completed, so basically the
+//                                    // opposite. Must be bigger, too. This widget is for illustrative purposes
+//                                    // until then
+//                                    Forecast(
+//                                        date: DateHelper.startOfDay(self.state.session.timeline.date),
+//                                        type: .button,
+//                                        page: self.state.session.appPage
+//                                    )
+//                                    // @TODO: should be bigger and actually work
+//                                    GlobalSidebarWidgets.ScoreButton()
+//                                    Text("HI")
+//                                }
+//                            }
+//                            .padding()
+//                            .background(Theme.textBackground)
+//                            .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
+//                        }
+//                        .padding([.leading, .bottom, .trailing])
                     }
                     .background(self.state.session.appPage.primaryColour)
                     .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
@@ -1144,7 +1144,21 @@ extension WidgetLibrary {
                         text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
                         page: self.state.session.appPage
                     )
-
+                    FancyDivider()
+                    LazyVGrid(columns: self.threeCol, alignment: .center) {
+                        VStack {
+                            UI.ListLinkTitle(text: "Tasks")
+                            Forecast(
+                                date: DateHelper.startOfDay(self.state.session.timeline.date),
+                                type: .button,
+                                page: self.state.session.appPage
+                            )
+                        }
+                        VStack {
+                            UI.ListLinkTitle(text: "Score")
+                            GlobalSidebarWidgets.ScoreButton()
+                        }
+                    }
                     FancyDivider()
                     VStack(spacing: 0) {
                         LazyVGrid(columns: self.twoCol, alignment: .leading) {
