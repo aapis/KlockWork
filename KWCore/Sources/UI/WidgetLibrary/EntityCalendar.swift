@@ -15,7 +15,7 @@ extension WidgetLibrary.UI {
             @EnvironmentObject private var state: Navigation
             @State public var month: String = "_DEFAULT_MONTH"
             @State private var date: Date = Date()
-            @State private var isMinimized: Bool = false
+            @AppStorage("widgetlibrary.ui.entitycalendar.isMinimized") private var isMinimized: Bool = false
             public var weekdays: [DayOfWeek] = [
                 DayOfWeek(symbol: "Sun"),
                 DayOfWeek(symbol: "Mon"),
@@ -33,7 +33,7 @@ extension WidgetLibrary.UI {
                 NavigationStack {
                     VStack {
                         Grid(alignment: .topLeading, horizontalSpacing: 5, verticalSpacing: 0) {
-                            MonthNav(date: $date, isMinimized: $isMinimized)
+                            MonthNav(date: $date)
 
                             if !self.isMinimized {
                                 // Day of week
@@ -144,7 +144,7 @@ extension WidgetLibrary.UI {
                         self.state.session.date = self.date
                         self.state.to(.timeline)
                     } label: {
-                        Text("Show in Timeline...")
+                        Text("Show Timeline...")
                     }
                 }
             }
@@ -153,7 +153,7 @@ extension WidgetLibrary.UI {
         struct MonthNav: View {
             @EnvironmentObject private var state: Navigation
             @Binding public var date: Date
-            @Binding public var isMinimized: Bool
+            @AppStorage("widgetlibrary.ui.entitycalendar.isMinimized") private var isMinimized: Bool = false
             @State private var isCurrentMonth: Bool = false // @TODO: implement
 
             var body: some View {
