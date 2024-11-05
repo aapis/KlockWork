@@ -105,9 +105,6 @@ extension WidgetLibrary.UI {
                 .padding([.leading, .trailing, .bottom])
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
-                .onChange(of: self.month) {
-                    self.reset()
-                }
             }
         }
 
@@ -166,7 +163,6 @@ extension WidgetLibrary.UI {
             @EnvironmentObject private var state: Navigation
             @Binding public var date: Date
             @AppStorage("widgetlibrary.ui.entitycalendar.isMinimized") private var isMinimized: Bool = false
-            @State private var isCurrentMonth: Bool = false // @TODO: implement
 
             var body: some View {
                 GridRow {
@@ -179,6 +175,7 @@ extension WidgetLibrary.UI {
                             HStack {
                                 Image(systemName: self.isMinimized ? "plus.square.fill" : "minus.square")
                                     .symbolRenderingMode(.hierarchical)
+                                    .font(.title3)
                                 Text(
                                     DateHelper.todayShort(
                                         self.state.session.date,
@@ -346,6 +343,8 @@ extension WidgetLibrary.UI.EntityCalendar.Day {
         } else if self.isToday {
             self.bgColour = self.state.theme.tint
             self.fgColour = Theme.base
+        } else if self.date < Date() {
+            self.fgColour = .gray
         }
     }
 }
