@@ -15,8 +15,7 @@ extension WidgetLibrary.UI {
             @EnvironmentObject private var state: Navigation
             @State public var month: String = "_DEFAULT_MONTH"
             @State private var date: Date = Date()
-            @State private var legendId: UUID = UUID() // @TODO: remove this gross hack once views refresh properly
-            @State private var calendarId: UUID = UUID() // @TODO: remove this gross hack once views refresh properly
+            @State private var isMinimized: Bool = false
             public var weekdays: [DayOfWeek] = [
                 DayOfWeek(symbol: "Sun"),
                 DayOfWeek(symbol: "Mon"),
@@ -34,37 +33,35 @@ extension WidgetLibrary.UI {
                 NavigationStack {
                     VStack {
                         Grid(alignment: .topLeading, horizontalSpacing: 5, verticalSpacing: 0) {
-                            MonthNav(date: $date)
+                            MonthNav(date: $date, isMinimized: $isMinimized)
 
-                            // Day of week
-                            GridRow {
-                                ZStack(alignment: .bottomLeading) {
-                                    LinearGradient(colors: [.white, .clear], startPoint: .top, endPoint: .bottom)
-                                        .frame(height: 50)
-                                        .opacity(0.05)
-                                    LazyVGrid(columns: self.columns, alignment: .center) {
-                                        ForEach(weekdays) {sym in
-                                            Text(sym.symbol)
-                                                .foregroundStyle(sym.current ? self.state.theme.tint : .white)
+                            if !self.isMinimized {
+                                // Day of week
+                                GridRow {
+                                    ZStack(alignment: .bottomLeading) {
+                                        LinearGradient(colors: [.white, .clear], startPoint: .top, endPoint: .bottom)
+                                            .frame(height: 50)
+                                            .opacity(0.05)
+                                        LazyVGrid(columns: self.columns, alignment: .center) {
+                                            ForEach(weekdays) {sym in
+                                                Text(sym.symbol)
+                                                    .foregroundStyle(sym.current ? self.state.theme.tint : .white)
+                                            }
+                                            .font(.caption)
                                         }
-                                        .font(.caption)
+                                        .padding([.leading, .trailing, .top])
+                                        .padding(.bottom, 5)
                                     }
-                                    .padding([.leading, .trailing, .top])
-                                    .padding(.bottom, 5)
                                 }
-                            }
-                            .background(Theme.rowColour)
 
-                            // List of days representing 1 month
-                            Month(month: $month, id: $calendarId)
-                                .id(self.calendarId)
-                                .background(Theme.rowColour)
+                                // List of days representing 1 month
+                                Month(month: $month)
+                            }
                         }
                     }
-//                    .background(self.state.session.appPage.primaryColour)
+                    .background(Theme.textBackground)
                     .onAppear(perform: self.actionOnAppear)
                     .onChange(of: self.date) { self.actionChangeDate()}
-
 #if os(iOS)
                     .navigationTitle("Activity Calendar")
                     .scrollDismissesKeyboard(.immediately)
@@ -88,7 +85,6 @@ extension WidgetLibrary.UI {
         struct Month: View {
             @EnvironmentObject private var state: Navigation
             @Binding public var month: String
-            @Binding public var id: UUID
             @State private var days: [Day] = []
             private var columns: [GridItem] {
                 return Array(repeating: GridItem(.flexible(), spacing: 1), count: 7)
@@ -157,18 +153,32 @@ extension WidgetLibrary.UI {
         struct MonthNav: View {
             @EnvironmentObject private var state: Navigation
             @Binding public var date: Date
+            @Binding public var isMinimized: Bool
             @State private var isCurrentMonth: Bool = false // @TODO: implement
 
             var body: some View {
                 GridRow {
                     HStack {
                         MonthNavButton(orientation: .leading, date: $date)
-                            .clipShape(.rect(topTrailingRadius: 5))
                         Spacer()
-                        Text(DateHelper.todayShort(self.state.session.date, format: "MMMM yyyy"))
+                        Button {
+                            self.isMinimized.toggle()
+                        } label: {
+                            HStack {
+                                Image(systemName: self.isMinimized ? "plus.square.fill" : "minus.square")
+                                    .symbolRenderingMode(.hierarchical)
+                                Text(
+                                    DateHelper.todayShort(
+                                        self.state.session.date,
+                                        format: self.isMinimized ? "MMMM dd yyyy" : "MMMM yyyy"
+                                    )
+                                )
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .useDefaultHover({_ in})
                         Spacer()
                         MonthNavButton(orientation: .trailing, date: $date)
-                            .clipShape(.rect(topLeadingRadius: 5))
                     }
                 }
                 .frame(height: 32)
