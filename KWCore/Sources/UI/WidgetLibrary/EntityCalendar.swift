@@ -39,9 +39,6 @@ extension WidgetLibrary.UI {
                                 // Day of week
                                 GridRow {
                                     ZStack(alignment: .bottomLeading) {
-                                        LinearGradient(colors: [.white, .clear], startPoint: .top, endPoint: .bottom)
-                                            .frame(height: 50)
-                                            .opacity(0.05)
                                         LazyVGrid(columns: self.columns, alignment: .center) {
                                             ForEach(weekdays) {sym in
                                                 Text(sym.symbol)
@@ -53,6 +50,8 @@ extension WidgetLibrary.UI {
                                         .padding(.bottom, 5)
                                     }
                                 }
+                                .background(Theme.textBackground)
+                                .padding(.bottom, 5)
 
                                 // List of days representing 1 month
                                 Month(month: $month)
@@ -146,6 +145,12 @@ extension WidgetLibrary.UI {
                     } label: {
                         Text("Show Timeline...")
                     }
+                    Button {
+                        self.state.session.date = self.date
+                        self.state.to(.today)
+                    } label: {
+                        Text("Show Today...")
+                    }
                 }
             }
         }
@@ -202,6 +207,7 @@ extension WidgetLibrary.UI {
                         HStack {
                             Spacer()
                             Image(systemName: self.orientation == .leading ? "chevron.left" : "chevron.right")
+                                .foregroundStyle(self.isHighlighted ? self.state.session.appPage.primaryColour : .white)
                             Spacer()
                         }
                     }
