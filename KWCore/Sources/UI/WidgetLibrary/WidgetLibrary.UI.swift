@@ -2012,30 +2012,12 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
 
         if self.showTasks {
             let tasks = CoreDataTasks(moc: self.state.moc).forDate(self.historicalDate, from: records)
+            let window = DateHelper.startAndEndOf(self.historicalDate)
             for task in tasks {
-                // Tasks completed
-                if let date = task.completedDate {
+                if task.lastUpdate ?? task.created ?? Date() > window.0 && task.lastUpdate ?? task.created ?? Date() < window.1 {
                     self.activities.append(
                         UI.GenericTimelineActivity(
-                            historicalDate: date,
-                            view: AnyView(task.rowView)
-                        )
-                    )
-                } else
-                // Tasks cancelled
-                if let date = task.cancelledDate {
-                    self.activities.append(
-                        UI.GenericTimelineActivity(
-                            historicalDate: date,
-                            view: AnyView(task.rowView)
-                        )
-                    )
-                } else
-                // Tasks created
-                if let date = task.created {
-                    self.activities.append(
-                        UI.GenericTimelineActivity(
-                            historicalDate: date,
+                            historicalDate: self.historicalDate,
                             view: AnyView(task.rowView)
                         )
                     )
