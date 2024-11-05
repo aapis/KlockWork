@@ -120,6 +120,7 @@ extension WidgetLibrary.UI {
             @State private var fgColour: Color = .white
             @State private var isPresented: Bool = false
             @State private var isHighlighted: Bool = false
+            @State private var colourData: Set<Job> = []
             private let gridSize: CGFloat = 40
             private var isToday: Bool {Calendar.autoupdatingCurrent.isDateInToday(self.date)}
 
@@ -132,15 +133,36 @@ extension WidgetLibrary.UI {
                         // Soooo sorry
                         (self.isHighlighted ? self.dayNumber > 0 ? Theme.rowColour : .clear : self.dayNumber > 0 ? self.bgColour.opacity(0.8) : .clear)
                         if self.dayNumber > 0 {
-                            Text(String(self.dayNumber))
+                            ZStack {
+                                // Jobs associated with tasks due on a given date provide
+                                VStack(alignment: .center, spacing: 0) {
+                                    if self.colourData.count > 0 {
+                                        ForEach(Array(self.colourData).sorted(by: {$0.created ?? Date() < $1.created ?? Date()}), id: \.objectID) { job in
+                                            Rectangle()
+                                                .foregroundStyle(job.backgroundColor)
+                                        }
+                                    }
+                                }
+
+                                RoundedRectangle(cornerRadius: 5)
+                                    .fill(!self.isToday && !self.isSelected ? self.state.session.appPage.primaryColour : self.bgColour)
+                                    .fill(
+                                        self.bgColour
+                                    )
+                                    .padding(4)
+                                Text(String(self.dayNumber))
+//                                    .font(self.isToday ? .title2 : .body)
+                                    .bold(self.isToday || self.isSelected)
+                            }
                         }
                     }
+                    .useDefaultHover({ hover in self.isHighlighted = hover })
                 }
+                .help("\(self.colourData.count) Tasks due on \(self.state.session.date.formatted(date: .abbreviated, time: .omitted))")
                 .buttonStyle(.plain)
-                .frame(minWidth: self.gridSize, minHeight: self.gridSize)
+                .frame(width: self.gridSize, height: self.gridSize)
                 .foregroundColor(self.fgColour)
                 .clipShape(.rect(cornerRadius: 6))
-                .useDefaultHover({ hover in self.isHighlighted = hover })
                 .onAppear(perform: self.actionOnAppear)
                 .contextMenu {
                     Button {
@@ -336,6 +358,7 @@ extension WidgetLibrary.UI.EntityCalendar.Day {
     private func actionOnAppear() -> Void {
         self.bgColour = .clear
         self.fgColour = .white
+        self.colourData = CoreDataTasks(moc: self.state.moc).jobsForTasksDueToday(self.date)
 
         if self.isToday && self.isSelected || self.isSelected {
             self.bgColour = .blue
