@@ -108,9 +108,10 @@ extension NoteCreate {
                 let noteVersion = CoreDataNoteVersions(moc: self.state.moc).from(note!, source: source)
                 noteVersion.content = self.content
 
-                note!.lastUpdate = Date()
-                note!.title = StringHelper.titleFromContent(from: title)
-                note!.body = noteVersion.content!
+                // @TODO: remove if still commented out
+//                note!.lastUpdate = Date()
+//                note!.title = StringHelper.titleFromContent(from: title)
+//                note!.body = noteVersion.content!
 
                 if let job = self.state.forms.note.job {
                     job.addToMNotes(self.note!)

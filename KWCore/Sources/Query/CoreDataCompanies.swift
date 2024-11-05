@@ -272,7 +272,56 @@ public class CoreDataCompanies: ObservableObject {
 
         return results.first
     }
-    
+
+    /// Finds people created or updated on a given day
+    /// - Parameter date: Date
+    /// - Returns: Array<Company>
+    public func forDate(_ date: Date) -> [Company] {
+        let (before, after) = DateHelper.startAndEndOf(date)
+        return self.query(
+            NSPredicate(
+                format: "(createdDate > %@ && createdDate < %@) || (lastUpdate > %@ && lastUpdate < %@)",
+                after as CVarArg,
+                before as CVarArg,
+                after as CVarArg,
+                before as CVarArg
+            )
+        )
+    }
+
+    /// Find all entities interacted with on a given date
+    /// - Parameter date: Date
+    /// - Returns: Array<NSManagedObject>
+    public func interactionsOn(_ date: Date) -> [Company] {
+        let records = CoreDataRecords(moc: self.moc!).forDate(date)
+        if records.count == 0 {
+            return []
+        }
+
+        var set: Set<Company> = []
+
+        for record in records {
+            if let company = record.job?.project?.company {
+                set.insert(company)
+            }
+        }
+
+        let window = DateHelper.startAndEndOf(date)
+        let predicate = NSPredicate(
+            format: "(createdDate > %@ && createdDate < %@) || (lastUpdate > %@ && lastUpdate < %@)",
+            window.0 as CVarArg,
+            window.1 as CVarArg,
+            window.0 as CVarArg,
+            window.1 as CVarArg
+        )
+
+        for entity in query(predicate) {
+            set.insert(entity)
+        }
+
+        return Array(set).sorted(by: {$0.lastUpdate ?? Date() > $1.lastUpdate ?? Date()})
+    }
+
     /// Create a new company
     /// - Parameters:
     ///   - name: Company name

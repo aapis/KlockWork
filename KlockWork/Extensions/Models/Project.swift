@@ -36,4 +36,15 @@ extension Project {
 
     var pageType: Page { .projects }
     var pageDetailType: Page { .projectDetail }
+
+    @ViewBuilder var linkRowView: some View {
+        HStack {
+            Text(self.name ?? "Error: Invalid project name")
+                .foregroundStyle(self.backgroundColor.isBright() ? Theme.base : .white)
+            Spacer()
+            Image(systemName: "chevron.right")
+        }
+        .padding(8)
+        .background(self.backgroundColor)
+    }
 }

@@ -288,6 +288,33 @@ extension WidgetLibrary.UI {
             }
         }
 
+        struct Minimize: View {
+            @EnvironmentObject public var state: Navigation
+            public var onAction: (() -> Void)? = {}
+            @Binding public var isMinimized: Bool
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                FancyButtonv2(
+                    text: "",
+                    action: {
+                        self.onAction?()
+                        self.isMinimized.toggle()
+                    },
+                    icon: !self.isMinimized ? "minus.square.fill" : "plus.square.fill",
+                    iconWhenHighlighted: !self.isMinimized ? "minus.square" : "plus.square",
+                    fgColour: .white,
+                    showLabel: false,
+                    size: .tiny,
+                    type: .clear,
+                    font: .title2
+                )
+                .padding([.top, .bottom], 10)
+                .help("Create a new record")
+                .frame(width: 25)
+            }
+        }
+
         struct HistoryPrevious: View {
             @EnvironmentObject public var state: Navigation
             public var onAction: (() -> Void)? = {}

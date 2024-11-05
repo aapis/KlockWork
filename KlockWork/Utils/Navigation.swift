@@ -13,7 +13,8 @@ import EventKit
 public enum Page {
     typealias Conf = PageConfiguration.AppPage
     case dashboard, today, notes, tasks, projects, projectDetail, jobs, companies, companyDetail, planning,
-    terms, definitionDetail, taskDetail, noteDetail, people, peopleDetail, explore, activityFlashcards, activityCalendar, recordDetail
+    terms, definitionDetail, taskDetail, noteDetail, people, peopleDetail, explore, activityFlashcards, activityCalendar, recordDetail,
+    timeline
 
     var appPage: Conf {
         switch self {
@@ -59,6 +60,7 @@ public enum Page {
         case .activityCalendar: return "Activity Calendar"
         case .activityFlashcards: return "Flashcards"
         case .recordDetail: return "Record"
+        case .timeline: return "Timeline"
         }
     }
 
@@ -72,6 +74,7 @@ public enum Page {
         case .peopleDetail: return .people
         case .activityCalendar, .activityFlashcards: return .explore
         case .recordDetail: return .today
+        case .timeline: return .explore
         default: return nil
         }
     }
@@ -246,6 +249,18 @@ extension Navigation {
         var eventStatus: EventIndicatorStatus = .ready
         var cli: CommandLineSession = CommandLineSession()
         var pagination: TablePagination = TablePagination()
+        var timeline: Timeline = Timeline()
+    }
+
+    public struct Timeline {
+        var date: Date = Date()
+        
+        /// Format self.date
+        /// - Parameter format: String
+        /// - Returns: String
+        func formatted(_ format: String = "yyyy") -> String {
+            return DateHelper.todayShort(self.date, format: format)
+        }
     }
 
     public struct TablePagination {
@@ -601,8 +616,9 @@ extension Navigation {
             HistoryPage(page: .projectDetail, view: AnyView(ProjectView()), sidebar: AnyView(DefaultCompanySidebar()), title: "Project"),
             HistoryPage(page: .projects, view: AnyView(ProjectsDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Projects", navButtons: [.sidebarToggle, .resetUserChoices, .createProject]),
             HistoryPage(page: .explore, view: AnyView(Explore()), sidebar: AnyView(ExploreSidebar()), title: "Explore"),
-            HistoryPage(page: .activityFlashcards, view: AnyView(UI.FlashcardActivity()), sidebar: AnyView(ExploreSidebar()), title: "Flashcards"),
+            HistoryPage(page: .activityFlashcards, view: AnyView(UI.Explore.Activity.FlashcardActivity()), sidebar: AnyView(ExploreSidebar()), title: "Flashcards"),
             HistoryPage(page: .activityCalendar, view: AnyView(UI.ActivityCalendar()), sidebar: AnyView(ExploreSidebar()), title: "Activity Calendar"),
+            HistoryPage(page: .timeline, view: AnyView(UI.Explore.Visualization.Timeline()), sidebar: AnyView(ExploreSidebar()), title: "Timeline"),
         ]
         
         /// A single page representing a page the user navigated to

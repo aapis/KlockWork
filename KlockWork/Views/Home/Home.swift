@@ -92,11 +92,20 @@ struct Home: View {
                 .frame(width: 40)
 
             VStack(alignment: .leading, spacing: 0) {
-                GlobalSidebarWidgets()
-
-                if !self.isSearchStackShowing && !self.isUpcomingTaskStackShowing {
-                    nav.sidebar
+                ZStack(alignment: .bottomLeading) {
+                    VStack(spacing: 0) {
+                        GlobalSidebarWidgets()
+                        if !self.isSearchStackShowing && !self.isUpcomingTaskStackShowing {
+                            nav.sidebar
+                        }
+                    }
+                    Divider()
+                    LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
+                        .opacity(0.2)
+                        .blendMode(.softLight)
+                        .frame(height: 20)
                 }
+                UI.EntityCalendar.Widget()
             }
         }
         .frame(width: 320)

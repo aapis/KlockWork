@@ -10,6 +10,7 @@ import SwiftUI
 import KWCore
 
 struct FancyPicker: View {
+    @EnvironmentObject public var state: Navigation
     public var onChange: (Int, String?) -> Void
     public var items: [CustomPickerItem] = []
     public var transparent: Bool? = false
@@ -41,6 +42,7 @@ struct FancyPicker: View {
                     Image(systemName: self.icon)
                         .symbolRenderingMode(.hierarchical)
                         .font(.headline)
+                        .foregroundStyle(self.state.session.job != nil ? self.state.session.job?.backgroundColor ?? .white : self.state.theme.tint)
                 }
                 Picker(labelText ?? "", selection: $selection) {
                     ForEach(items) { item in
@@ -48,7 +50,6 @@ struct FancyPicker: View {
                             .tag(item.tag)
                     }
                 }
-                .background(self.transparent! ? Color.clear : Theme.toolbarColour)
                 .useDefaultHover({_ in})
                 .frame(width: 150)
                 .onChange(of: self.selection) {
@@ -66,7 +67,6 @@ struct FancyPicker: View {
                         .tag(item.tag)
                 }
             }
-            .background(transparent! ? Color.clear : Theme.toolbarColour)
             .useDefaultHover({_ in})
             .onChange(of: self.selection) {
                 onChange(self.selection, self.labelText)

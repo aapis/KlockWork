@@ -14,13 +14,15 @@ struct ToolbarButtons: View {
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var nav: Navigation
     @AppStorage("today.numPastDates") public var numPastDates: Int = 20
-    public var records: [LogRecord]
+    public var records: [LogRecord]?
+//    public var activities: [UI.GenericTimelineActivity]?
     @State private var datePickerItems: [CustomPickerItem] = []
     @State private var pickerSelection: Int = 0
     @State private var highlighted: Bool = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
+            self.nav.session.appPage.primaryColour
             LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
                 .opacity(0.3)
                 .blendMode(.softLight)
@@ -37,6 +39,7 @@ struct ToolbarButtons: View {
                 Button(action: export, label: {
                     HStack(spacing: 5) {
                         Image(systemName: "document.on.document.fill")
+                            .foregroundStyle(self.nav.session.job != nil ? self.nav.session.job?.backgroundColor ?? .white : self.nav.theme.tint)
                         Text("Copy")
                     }
                     .padding(6)
@@ -68,9 +71,11 @@ struct ToolbarButtons: View {
     /// Copy data to clipboard
     /// - Returns: Void
     private func export() -> Void {
-        ClipboardHelper.copy(
-            CoreDataRecords(moc: self.nav.moc).createExportableRecordsFrom(self.records)
-        )
+        if let records = self.records {
+            ClipboardHelper.copy(
+                CoreDataRecords(moc: self.nav.moc).createExportableRecordsFrom(records)
+            )
+        }
     }
     
     private func viewAsPlain() -> Void {

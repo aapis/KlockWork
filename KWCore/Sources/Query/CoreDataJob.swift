@@ -316,7 +316,7 @@ public class CoreDataJob: ObservableObject {
     /// Find all jobs created on a specific date. Used in aggregate queries, mainly.
     /// - Parameter date: Date
     /// - Returns: Array<Job>
-    public func byDate(_ date: Date) -> [Job] {
+    public func forDate(_ date: Date) -> [Job] {
         let window = DateHelper.startAndEndOf(date)
         let predicate = NSPredicate(
             format: "created > %@ && created <= %@ && project != nil",
@@ -325,6 +325,37 @@ public class CoreDataJob: ObservableObject {
         )
 
         return query(predicate)
+    }
+
+    /// Find all entities interacted with on a given date
+    /// - Parameter date: Date
+    /// - Returns: Array<NSManagedObject>
+    public func interactionsOn(_ date: Date) -> [Job] {
+        let records = CoreDataRecords(moc: self.moc!).forDate(date)
+        if records.count == 0 {
+            return []
+        }
+
+        var set: Set<Job> = []
+
+        for record in records {
+            if let entity = record.job {
+                set.insert(entity)
+            }
+        }
+
+        let window = DateHelper.startAndEndOf(date)
+        let predicate = NSPredicate(
+            format: "created > %@ && created <= %@ && project != nil",
+            window.0 as CVarArg,
+            window.1 as CVarArg
+        )
+
+        for entity in query(predicate) {
+            set.insert(entity)
+        }
+
+        return Array(set).sorted(by: {$0.lastUpdate ?? Date() > $1.lastUpdate ?? Date()})
     }
 
     /// Count of all jobs created on a specific date. Used in aggregate queries, mainly.

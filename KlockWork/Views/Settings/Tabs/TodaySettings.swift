@@ -17,8 +17,6 @@ struct TodaySettings: View {
     @AppStorage("today.viewMode") public var viewMode: Int = 0
     @AppStorage("today.numWeeks") public var numWeeks: Int = 2
     @AppStorage("today.recordGrouping") public var recordGrouping: Int = 0
-    @AppStorage("today.relativeJobList") public var allowRelativeJobList: Bool = false
-    @AppStorage("today.ltd.tasks.all") public var showAllJobsInDetailsPane: Bool = false
     @AppStorage("today.calendar") public var calendar: Int = -1
     @AppStorage("today.calendar.hasAccess") public var hasAccess: Bool = false
     @AppStorage("today.startOfDay") public var startOfDay: Int = 9
@@ -47,23 +45,6 @@ struct TodaySettings: View {
                     Text("Full").tag(1)
                     Text("Plain").tag(2)
                 }
-                Group {
-                    Toggle("Dynamic job pickers", isOn: $allowRelativeJobList)
-                    
-                    if allowRelativeJobList {
-                        Picker("How many weeks", selection: $numWeeks) {
-                            Text("1").tag(1)
-                            Text("2").tag(2)
-                            Text("3").tag(3)
-                            Text("4").tag(4)
-                            Text("6").tag(6)
-                            Text("8").tag(8)
-                        }
-                    }
-                }
-
-                Toggle("Include all incomplete tasks in details pane", isOn: $showAllJobsInDetailsPane)
-
                 Picker("Default tab", selection: $recordGrouping) {
                     Text("Chronologic").tag(0)
                     Text("Grouped").tag(1)

@@ -318,6 +318,65 @@ public class CoreDataProjects: ObservableObject {
         return count(predicate)
     }
 
+    /// Finds people created or updated on a given day
+    /// - Parameter date: Date
+    /// - Returns: Array<Project>
+    public func forDate(_ date: Date) -> [Project] {
+        let (before, after) = DateHelper.startAndEndOf(date)
+        return self.query(
+            NSPredicate(
+                format: "(created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@)",
+                after as CVarArg,
+                before as CVarArg,
+                after as CVarArg,
+                before as CVarArg
+            )
+        )
+    }
+
+    /// Find all entities interacted with on a given date
+    /// - Parameter date: Date
+    /// - Returns: Array<NSManagedObject>
+    public func interactionsOn(_ date: Date) -> [Project] {
+        let records = CoreDataRecords(moc: self.moc!).forDate(date)
+        if records.count == 0 {
+            return []
+        }
+
+        var set: Set<Project> = []
+
+        for record in records {
+            if let entity = record.job?.project {
+                set.insert(entity)
+            }
+        }
+
+        let window = DateHelper.startAndEndOf(date)
+        let predicate = NSPredicate(
+            format: "(created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@)",
+            window.0 as CVarArg,
+            window.1 as CVarArg,
+            window.0 as CVarArg,
+            window.1 as CVarArg
+        )
+
+        for entity in query(predicate) {
+            set.insert(entity)
+        }
+
+        return Array(set).sorted(by: {$0.lastUpdate ?? Date() > $1.lastUpdate ?? Date()})
+    }
+
+    /// Find all projects that have a name and are not hidden
+    /// - Returns: Array<Project>
+    public func indescriminate() -> [Project] {
+        let predicate = NSPredicate(
+            format: "name != nil && company.hidden == false"
+        )
+
+        return query(predicate)
+    }
+
     /// Create a new project
     /// - Parameters:
     ///   - name: Project name

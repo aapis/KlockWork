@@ -20,23 +20,26 @@ extension Planning {
         @EnvironmentObject public var nav: Navigation
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     FancyButtonv2(
-                        text: "Job #\(job.jid.string)",
-                        icon: "hammer",
-                        fgColour: colour.isBright() ? .black : .white,
+                        text: "\(self.job.title ?? self.job.jid.string)",
+                        action: {
+                            self.nav.session.job = self.job
+                            self.nav.to(.jobs)
+                        },
+                        fgColour: colour.isBright() ? Theme.base : .white,
                         showIcon: false,
                         size: .link,
                         type: .clear,
-                        redirect: AnyView(JobDashboard(defaultSelectedJob: job)),
-                        pageType: .notes,
-                        sidebar: AnyView(JobDashboardSidebar())
+                        font: .headline
                     )
-
-                    Spacer()
                     Button {
-                        nav.planning.jobs.remove(job)
+                        if !self.nav.planning.jobs.contains(self.job) {
+                            self.nav.planning.jobs.insert(self.job)
+                        } else {
+                            self.nav.planning.jobs.remove(job)
+                        }
 
                         if nav.planning.jobs.count == 0 {
                             nav.planning.reset(nav.session.date)
@@ -47,15 +50,22 @@ extension Planning {
                             nav.session.plan = plan
                         }
                     } label: {
-                        Image(systemName: highlighted ? "clear.fill" : "clear")
-                            .foregroundColor(colour.isBright() ? .black : .white)
-                            .font(.title)
+                        if !self.nav.planning.jobs.contains(self.job) {
+                            Image(systemName: highlighted ? "plus.square.fill" : "plus.square.dashed")
+                                .foregroundColor(colour.isBright() ? Theme.base : .white)
+                                .font(.title)
+                        } else {
+                            Image(systemName: highlighted ? "clear.fill" : "clear")
+                                .foregroundColor(colour.isBright() ? Theme.base : .white)
+                                .font(.title)
+                        }
                     }
                     .buttonStyle(.plain)
                     .useDefaultHover({inside in highlighted = inside})
                 }
-                .padding()
+                .padding(8)
                 .background(colour)
+                Divider()
 
                 Planning.Row(job: job, index: jobs.firstIndex(of: job), type: .tasks)
                 Planning.Row(job: job, index: jobs.firstIndex(of: job), type: .notes)
@@ -67,6 +77,6 @@ extension Planning {
 
 extension Planning.Group {
     private func actionOnAppear() -> Void {
-        colour = Color.fromStored(job.colour!)
+        self.colour = self.job.backgroundColor
     }
 }

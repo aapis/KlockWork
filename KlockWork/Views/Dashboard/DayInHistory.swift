@@ -32,7 +32,23 @@ struct DayInHistory: View {
                 self.state.to(.today)
             },
             showBorder: false,
-            showButton: false
+            showButton: false,
+            contextMenu: AnyView(
+                VStack {
+                    Button {
+                        self.state.session.date = self.date
+                        self.state.to(.timeline)
+                    } label: {
+                        Text("Show Timeline...")
+                    }
+                    Button {
+                        self.state.session.date = self.date
+                        self.state.to(.today)
+                    } label: {
+                        Text("Show Today...")
+                    }
+                }
+            )
         )
         .background(self.isToday ? .yellow.opacity(0.5) : self.highlight ? Theme.base.opacity(0.3) : Theme.cPurple)
         .foregroundStyle(self.highlight ? Theme.lightWhite : .white)

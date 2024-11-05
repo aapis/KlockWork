@@ -30,12 +30,12 @@ extension Planning.Notes {
                     selected.toggle()
                 } label: {
                     Image(systemName: selected ? "checkmark.square" : "square")
-                        .foregroundColor(selected ? colour.isBright() ? .black : .white : .black.opacity(0.4))
+                        .foregroundColor(selected ? colour.isBright() ? Theme.base : .white : .black.opacity(0.4))
                         .font(.title)
 
                     if let content = note.title {
                         Text("\(content)")
-                            .foregroundColor(selected ? colour.isBright() ? .black : .white : .black.opacity(0.4))
+                            .foregroundColor(selected ? colour.isBright() ? Theme.base : .white : .black.opacity(0.4))
                     }
                 }
                 .buttonStyle(.plain)

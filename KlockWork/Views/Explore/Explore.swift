@@ -12,12 +12,6 @@ import KWCore
 struct Explore: View {
     typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var state: Navigation
-    private var activities: [Activity] {
-        [
-            Activity(name: "Activity Calendar", page: .activityCalendar, type: .visualize, icon: "calendar"),
-            Activity(name: "Flashcards", page: .activityFlashcards, type: .activity, icon: "person.text.rectangle"),
-        ]
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -42,10 +36,14 @@ struct Explore: View {
 struct Activity: Identifiable {
     var id: UUID = UUID()
     var name: String
+    var help: String = ""
     var page: Page
     var type: ExploreActivityType
     var icon: String?
     var iconAsImage: Image?
+    var job: Job?
+    var source: NSManagedObject?
+    var url: URL?
 }
 
 enum ExploreActivityType: CaseIterable {

@@ -245,6 +245,103 @@ extension WidgetLibrary {
             }
         }
 
+        struct ListExternalLinkItem: View {
+            @EnvironmentObject private var state: Navigation
+            public var name: String
+            public var icon: String?
+            public var iconAsImage: Image?
+            public var activity: Activity
+            @State private var isHighlighted: Bool = false
+            @State private var isMinimized: Bool = true
+
+            var body: some View {
+                HStack(alignment: .top) {
+                    UI.Buttons.Minimize(isMinimized: $isMinimized)
+
+                    VStack(alignment: .leading, spacing: 1) {
+                        if let url = self.activity.url {
+                            SwiftUI.Link(destination: url, label: {
+                                VStack(alignment: .leading, spacing: 0) {
+                                    HStack(alignment: .center) {
+                                        if let image = self.iconAsImage {
+                                            image
+                                                .foregroundStyle(self.state.session.job?.backgroundColor ?? self.state.theme.tint)
+                                        } else if let icon = self.icon {
+                                            Image(systemName: icon)
+                                                .foregroundStyle(self.state.session.job?.backgroundColor ?? self.state.theme.tint)
+                                        }
+                                        Text(self.name)
+                                            .multilineTextAlignment(.leading)
+                                        Spacer()
+                                        Image(systemName: "link")
+                                            .foregroundStyle(.gray)
+                                    }
+                                    .padding(8)
+                                }
+                                .buttonStyle(.plain)
+                                .useDefaultHover({ hover in self.isHighlighted = hover })
+                            })
+                            .foregroundStyle(.white)
+                        }
+                        if !self.isMinimized {
+                            if self.activity.source != nil {
+                                HStack {
+                                    switch self.activity.source {
+                                    case is NoteVersion:
+                                        Text("Found in note \"\((self.activity.source as? NoteVersion)?.note?.title ?? "Error: Note not found")\"")
+                                            .foregroundStyle(.gray)
+                                        Spacer()
+                                        Button {
+                                            if let entity = self.activity.source as? NoteVersion {
+                                                self.state.session.note = entity.note
+                                                self.state.to(.noteDetail)
+                                            }
+                                        } label: {
+                                            Text("Open")
+                                                .font(.caption)
+                                                .foregroundStyle(Theme.base)
+                                                .padding(6)
+                                                .padding([.leading, .trailing], 8)
+                                                .background(.white)
+                                                .clipShape(.capsule(style: .continuous))
+                                        }
+                                        .buttonStyle(.plain)
+                                    default:
+                                        Text("No source found")
+                                    }
+                                }
+                                .padding(8)
+                            }
+
+                            if let job = self.activity.job {
+                                ResourcePath(
+                                    company: job.project?.company,
+                                    project: job.project,
+                                    job: job
+                                )
+                            }
+                        }
+                    }
+                    .contextMenu { ContextMenu(activity: self.activity) }
+                    .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .clipShape(.rect(cornerRadius: 5))
+                }
+            }
+
+            // MARK: ListExternalItem.ContextMenu
+            struct ContextMenu: View {
+                public let activity: Activity
+
+                var body: some View {
+                    if let url = self.activity.url {
+                        Button("Copy to clipboard", action: {
+                            ClipboardHelper.copy(url.absoluteString)
+                        })
+                    }
+                }
+            }
+        }
+
         struct ListLinkItem: View {
             @EnvironmentObject private var state: Navigation
             public var page: Page
@@ -412,12 +509,44 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: ActivityLinks
+        struct ActivityLinks: View {
+            @EnvironmentObject private var state: Navigation
+            public var activities: [Activity]
+
+            var body: some View {
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 5) {
+                        if self.activities.count > 0 {
+                            ForEach(self.activities, id: \.id) { activity in
+                                UI.ListExternalLinkItem(
+                                    name: activity.name,
+                                    icon: activity.icon,
+                                    activity: activity
+                                )
+                                .help(activity.help)
+                            }
+                        } else {
+                            UI.ListButtonItem(
+                                callback: {_ in},
+                                name: "None found."
+                            )
+                            .disabled(true)
+                        }
+                    }
+                }
+                .frame(maxHeight: 200)
+            }
+        }
+
+        // MARK: ExploreLinks
         struct ExploreLinks: View {
             @EnvironmentObject private var state: Navigation
             private var activities: [Activity] {
                 [
                     Activity(name: "Activity Calendar", page: .activityCalendar, type: .visualize, icon: "calendar"),
-                    Activity(name: "Flashcards", page: .activityFlashcards, type: .activity, icon: "person.text.rectangle"),
+                    Activity(name: "Timeline", page: .timeline, type: .visualize, icon: "moonphase.waxing.crescent"),
+                    Activity(name: "Flashcards", page: .activityFlashcards, type: .activity, icon: "person.text.rectangle")
                 ]
             }
 
@@ -434,6 +563,7 @@ extension WidgetLibrary {
                                         name: activity.name,
                                         icon: activity.icon
                                     )
+                                    .help(activity.help)
                                 }
                             }
                             .padding()
@@ -638,7 +768,7 @@ extension WidgetLibrary {
                     .onAppear(perform: self.actionOnAppear)
                     .onChange(of: self.date) { self.actionChangeDate()}
                     .navigationTitle("Activity Calendar")
-    #if os(iOS)
+#if os(iOS)
                     .toolbarBackground(.visible, for: .navigationBar)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
@@ -651,7 +781,7 @@ extension WidgetLibrary {
                             }
                         }
                     }
-    #endif
+#endif
                 }
             }
 
@@ -722,251 +852,248 @@ extension WidgetLibrary {
             }
         }
 
-        struct FlashcardActivity: View {
+        // MARK: LinkListForDate
+        struct LinkListForDate: View {
             @EnvironmentObject private var state: Navigation
-            private var page: PageConfiguration.AppPage = .explore
-            @State private var isJobSelectorPresented: Bool = false
-            @State private var job: Job? // @TODO: rewrite to use self.state.session.job
+            @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
+            @State private var activities: [Activity] = []
+            @State private var tabs: [ToolbarButton] = []
+            @State private var vid: UUID = UUID()
 
             var body: some View {
-                VStack(alignment: .leading, spacing: 0) {
-                    FlashcardDeck(job: $job)
+                VStack {
+                    UI.ListLinkTitle(text: "Suggested links from \(self.state.session.timeline.formatted())")
+                    UI.ActivityLinks(activities: self.activities)
+                        .frame(height: 200)
+                    // @TODO: ActivityLinks needs some tinkering to make it work within a tool view
+//                    FancyGenericToolbar(
+//                        buttons: self.tabs,
+//                        standalone: true,
+//                        location: .content,
+//                        mode: .compact,
+//                        page: .explore,
+//                        alwaysShowTab: true
+//                    )
+//                    .frame(height: 200)
                 }
-                .onAppear(perform: {
-                    if self.state.session.job != nil {
-                        self.job = self.state.session.job
-                        self.isJobSelectorPresented = false
-                    } else {
-                        self.isJobSelectorPresented = true
-                    }
-                })
-                .onChange(of: self.state.session.job) { self.job = self.state.session.job }
-                .background(self.page.primaryColour)
-                .navigationTitle(job != nil ? self.job!.title ?? self.job!.jid.string: "Activity: Flashcard")
-        #if os(iOS)
-                .toolbarBackground(job != nil ? self.job!.backgroundColor : Theme.textBackground.opacity(0.7), for: .navigationBar)
-                .toolbarBackground(.visible, for: .navigationBar)
-        #endif
-            }
-
-            struct FlashcardDeck: View {
-                @EnvironmentObject private var state: Navigation
-                @Binding public var job: Job?
-                @State private var terms: Array<TaxonomyTerm> = []
-                @State private var current: TaxonomyTerm? = nil
-                @State private var isAnswerCardShowing: Bool = false
-                @State private var clue: String = ""
-                @State private var viewed: Set<TaxonomyTerm> = []
-                @State private var definitions: [TaxonomyTermDefinitions] = []
-
-                var body: some View {
-                    VStack(alignment: .center, spacing: 0) {
-                        Card(
-                            isAnswerCardShowing: $isAnswerCardShowing,
-                            definitions: $definitions,
-                            current: $current,
-                            job: $job
-                        )
-                        Actions(
-                            isAnswerCardShowing: $isAnswerCardShowing,
-                            definitions: $definitions,
-                            current: $current,
-                            terms: $terms,
-                            viewed: $viewed
-                        )
-                    }
-                    .onAppear(perform: self.actionOnAppear)
-                    .onChange(of: job) {
-                        self.actionOnAppear()
-                    }
-                }
-
-                struct Actions: View {
-                    @EnvironmentObject private var state: Navigation
-                    @Binding public var isAnswerCardShowing: Bool
-                    @Binding public var definitions: [TaxonomyTermDefinitions]
-                    @Binding public var current: TaxonomyTerm?
-                    @Binding public var terms: [TaxonomyTerm]
-                    @Binding public var viewed: Set<TaxonomyTerm>
-
-                    var body: some View {
-                        ZStack(alignment: .topLeading) {
-                            LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom)
-                                .frame(height: 50)
-                                .opacity(0.06)
-
-                            Buttons
-                        }
-                    }
-
-                    var Buttons: some View {
-                        HStack(alignment: .center) {
-                            Button {
-                                self.isAnswerCardShowing.toggle()
-                            } label: {
-                                ZStack(alignment: .center) {
-                                    LinearGradient(colors: [.black.opacity(0.2), .clear], startPoint: .top, endPoint: .bottom)
-                                    Image(systemName: "rectangle.landscape.rotate")
-                                }
-                            }
-                            .buttonStyle(.plain)
-                            .padding()
-                            .mask(Circle().frame(width: 50, height: 50))
-
-                            Button {
-                                self.isAnswerCardShowing = false
-                            } label: {
-                                ZStack(alignment: .center) {
-                                    LinearGradient(colors: [.black.opacity(0.2), .clear], startPoint: .top, endPoint: .bottom)
-                                    Image(systemName: "hand.thumbsup.fill")
-                                }
-                            }
-                            .buttonStyle(.plain)
-                            .padding()
-                            .mask(Circle().frame(width: 50, height: 50))
-
-                            Button {
-                                self.isAnswerCardShowing = false
-                            } label: {
-                                ZStack(alignment: .center) {
-                                    LinearGradient(colors: [.black.opacity(0.2), .clear], startPoint: .top, endPoint: .bottom)
-                                    Image(systemName: "hand.thumbsdown.fill")
-                                }
-                            }
-                            .buttonStyle(.plain)
-                            .padding()
-                            .mask(Circle().frame(width: 50, height: 50))
-
-                            Button {
-                                self.isAnswerCardShowing = false
-
-                                if let next = self.terms.randomElement() {
-                                    if next != current {
-                                        // Pick another random element if we've seen the next item already
-                                        if !self.viewed.contains(next) {
-                                            current = next
-                                        } else {
-                                            current = self.terms.randomElement()
-                                        }
-                                    }
-                                }
-
-                                if self.current != nil {
-                                    viewed.insert(self.current!)
-                                }
-                            } label: {
-                                ZStack(alignment: .center) {
-                                    LinearGradient(colors: [.black.opacity(0.2), .clear], startPoint: .top, endPoint: .bottom)
-                                    Image(systemName: "chevron.right")
-                                }
-                            }
-                            .buttonStyle(.plain)
-                            .padding()
-                            .mask(Circle().frame(width: 50, height: 50))
-                        }
-                        .frame(height: 90)
-                        .border(width: 1, edges: [.top], color: self.state.theme.tint)
-                    }
-                }
-
-                struct Card: View {
-                    @Binding public var isAnswerCardShowing: Bool
-                    @Binding public var definitions: [TaxonomyTermDefinitions] // @TODO: convert this to dict grouped by job
-                    @Binding public var current: TaxonomyTerm?
-                    @Binding public var job: Job?
-                    @State private var clue: String = ""
-
-                    var body: some View {
-                        VStack(alignment: .leading, spacing: 0) {
-                            if self.isAnswerCardShowing {
-                                // Definitions
-                                HStack(alignment: .center, spacing: 0) {
-                                    Text("\(self.definitions.count) Jobs define \"\(self.clue)\"")
-                                        .textCase(.uppercase)
-                                        .font(.caption)
-                                        .padding(5)
-                                    Spacer()
-                                }
-                                .background(self.job?.backgroundColor ?? Theme.rowColour)
-
-                                VStack(alignment: .leading, spacing: 0) {
-                                    ScrollView {
-                                        VStack(alignment: .leading, spacing: 1) {
-                                            ForEach(Array(definitions.enumerated()), id: \.element) { idx, term in
-                                                VStack(alignment: .leading, spacing: 0) {
-                                                    HStack(alignment: .top) {
-                                                        Text((term.job?.title ?? term.job?.jid.string) ?? "_JOB_NAME")
-                                                            .multilineTextAlignment(.leading)
-                                                            .padding(14)
-                                                            .foregroundStyle((term.job?.backgroundColor ?? Theme.rowColour).isBright() ? .white.opacity(0.75) : .gray)
-                                                        Spacer()
-                                                    }
-
-
-                                                    ZStack(alignment: .topLeading) {
-                                                        LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom)
-                                                            .frame(height: 50)
-                                                            .opacity(0.1)
-
-                                                        NavigationLink {
-                                                            DefinitionDetail(definition: term)
-                                                        } label: {
-                                                            HStack(alignment: .center) {
-                                                                Text(term.definition ?? "Definition not found")
-                                                                    .multilineTextAlignment(.leading)
-                                                                Spacer()
-                                                                Image(systemName: "chevron.right")
-                                                            }
-                                                            .padding(14)
-                                                        }
-                                                        .buttonStyle(.plain)
-                                                    }
-                                                }
-                                                .background(term.job?.backgroundColor)
-                                                .foregroundStyle((term.job?.backgroundColor ?? Theme.rowColour).isBright() ? .black : .white)
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                // Answer
-                                if self.current != nil {
-                                    VStack(alignment: .leading, spacing: 0) {
-                                        Spacer()
-                                        VStack(alignment: .center) {
-                                            Text("Clue")
-                                                .foregroundStyle((self.job?.backgroundColor ?? Theme.rowColour).isBright() ? .white.opacity(0.75) : .gray)
-                                            Text(clue)
-                                                .font(.title2)
-                                                .bold()
-                                                .multilineTextAlignment(.center)
-                                        }
-                                        Spacer()
-                                    }
-                                }
-                            }
-                            Spacer()
-                        }
-                        .onChange(of: current) {
-                            if self.current != nil {
-                                self.clue = current?.name ?? "Clue"
-
-                                if let defs = self.current!.definitions {
-                                    if let ttds = defs.allObjects as? [TaxonomyTermDefinitions] {
-                                        self.definitions = ttds
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            struct Flashcard {
-                var term: TaxonomyTerm
+//                .id(self.vid)
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.date) { self.actionOnAppear() }
+                .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
             }
         }
 
+        // MARK: EntityInteractionsForDate
+        struct EntityInteractionsForDate: View {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
+            @State private var activities: [Activity] = []
+            @State private var tabs: [ToolbarButton] = []
+            @State private var vid: UUID = UUID()
+
+            var body: some View {
+                VStack {
+                    UI.ListLinkTitle(text: "Interactions from \(self.state.session.timeline.formatted())")
+                    FancyGenericToolbar(
+                        buttons: self.tabs,
+                        standalone: true,
+                        location: .content,
+                        mode: .compact,
+                        page: .explore,
+                        alwaysShowTab: true
+                    )
+                    .frame(height: 200)
+                }
+                .id(self.vid)
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.date) { self.vid = UUID() }
+                .onChange(of: self.state.session.timeline.date) { self.vid = UUID() ; self.actionOnAppear() }
+                .onChange(of: self.showCompanies) { self.actionOnAppear() }
+                .onChange(of: self.showProjects) { self.actionOnAppear() }
+                .onChange(of: self.showJobs) { self.actionOnAppear() }
+            }
+        }
+
+        // MARK: ActivityFeed
+        struct ActivityFeed: View {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
+            @State private var tabs: [ToolbarButton] = []
+            @State private var vid: UUID = UUID()
+
+            var body: some View {
+                VStack {
+                    UI.ListLinkTitle(text: "Activity Feed")
+                    FancyGenericToolbar(
+                        buttons: self.tabs,
+                        standalone: true,
+                        location: .content,
+                        mode: .full,
+                        page: .explore
+                    )
+                }
+                .id(self.vid)
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.date) { self.actionOnAppear() }
+                .onChange(of: self.maxYearsPastInHistory) { self.actionOnAppear() }
+                .onChange(of: self.state.session.pagination.currentPageOffset) { self.actionOnAppear() }
+            }
+        }
+
+        // MARK: GenericTimelineActivity
+        struct GenericTimelineActivity: View, Identifiable, Equatable {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
+            @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
+            @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showRecords") public var showRecords: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showNotes") public var showNotes: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showTasks") public var showTasks: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showPeople") public var showPeople: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showTerms") public var showTerms: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showDefinitions") public var showDefinitions: Bool = true
+            public var id: UUID = UUID()
+            public var historicalDate: Date
+            public var view: AnyView?
+            @State private var activities: [GenericTimelineActivity] = []
+            @State private var currentActivities: [GenericTimelineActivity] = []
+            @State private var vid: UUID = UUID()
+
+            var body: some View {
+                VStack(alignment: .leading, spacing: 0) {
+                    ToolbarButtons()
+                    if self.activities.count > 0 {
+                        ForEach(self.currentActivities) { activity in
+                            if let view = activity.view {
+                                view
+                            }
+                        }
+                        UI.Pagination(entityCount: self.activities.count)
+                    } else {
+                        LogRowEmpty(
+                            message: "No activities found for \(DateHelper.todayShort(self.historicalDate, format: "MMMM dd, YYYY"))",
+                            index: 0,
+                            colour: Theme.rowColour
+                        )
+                    }
+                }
+                .id(self.vid)
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.tableSortOrder) { self.actionOnAppear() }
+                .onChange(of: self.perPage) { self.actionOnAppear() }
+                .onChange(of: self.state.session.pagination.currentPageOffset) { self.actionOnAppear() }
+                .onChange(of: self.showRecords) { self.actionOnAppear() }
+                .onChange(of: self.showNotes) { self.actionOnAppear() }
+                .onChange(of: self.showTasks) { self.actionOnAppear() }
+                .onChange(of: self.showProjects) { self.actionOnAppear() }
+                .onChange(of: self.showJobs) { self.actionOnAppear() }
+                .onChange(of: self.showCompanies) { self.actionOnAppear() }
+                .onChange(of: self.showPeople) { self.actionOnAppear() }
+                .onChange(of: self.showTerms) { self.actionOnAppear() }
+                .onChange(of: self.showDefinitions) { self.actionOnAppear() }
+            }
+        }
+
+        // MARK: BoundSearchTypeFilter
+        struct BoundSearchTypeFilter: View {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
+            @Binding public var showRecords: Bool
+            @Binding public var showNotes: Bool
+            @Binding public var showTasks: Bool
+            @Binding public var showProjects: Bool
+            @Binding public var showJobs: Bool
+            @Binding public var showCompanies: Bool
+            @Binding public var showPeople: Bool
+            @Binding public var showTerms: Bool
+            @Binding public var showDefinitions: Bool
+
+            var body: some View {
+                GridRow {
+                    ZStack(alignment: .topLeading) {
+                        self.state.parent?.appPage.primaryColour.opacity(0.6) ?? Theme.subHeaderColour
+                        LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                            .blendMode(.softLight)
+                            .opacity(0.4)
+                            .frame(height: 15)
+
+                        HStack(alignment: .center) {
+                            UI.Toggle(isOn: $showRecords, eType: .records)
+                            UI.Toggle(isOn: $showNotes, eType: .notes)
+                            UI.Toggle(isOn: $showTasks, eType: .tasks)
+                            UI.Toggle(isOn: $showProjects, eType: .projects)
+                            UI.Toggle(isOn: $showJobs, eType: .jobs)
+                            UI.Toggle(isOn: $showCompanies, eType: .companies)
+                            UI.Toggle(isOn: $showPeople, eType: .people)
+                            UI.Toggle(isOn: $showTerms, eType: .terms)
+                            Spacer()
+                            UI.Toggle(isOn: $allowAlive, icon: "heart", selectedIcon: "heart.fill")
+                                .help("Published only")
+                        }
+                        .padding(.top, 8)
+                        .padding([.leading, .trailing], 10)
+                    }
+                }
+                .frame(height: 40)
+                .foregroundStyle(.gray)
+            }
+        }
+
+        // MARK: SearchTypeFilter
+        struct SearchTypeFilter: View {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showRecords") public var showRecords: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showNotes") public var showNotes: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showTasks") public var showTasks: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showPeople") public var showPeople: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showTerms") public var showTerms: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showDefinitions") public var showDefinitions: Bool = true
+
+            var body: some View {
+                GridRow {
+                    ZStack(alignment: .topLeading) {
+                        self.state.parent?.appPage.primaryColour.opacity(0.6) ?? Theme.subHeaderColour
+                        LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                            .blendMode(.softLight)
+                            .opacity(0.4)
+                            .frame(height: 15)
+
+                        HStack(alignment: .center) {
+                            UI.Toggle(isOn: $showRecords, eType: .records)
+                            UI.Toggle(isOn: $showNotes, eType: .notes)
+                            UI.Toggle(isOn: $showTasks, eType: .tasks)
+                            UI.Toggle(isOn: $showProjects, eType: .projects)
+                            UI.Toggle(isOn: $showJobs, eType: .jobs)
+                            UI.Toggle(isOn: $showCompanies, eType: .companies)
+                            UI.Toggle(isOn: $showPeople, eType: .people)
+                            UI.Toggle(isOn: $showTerms, eType: .terms)
+                            Spacer()
+                            UI.Toggle(isOn: $allowAlive, icon: "heart", selectedIcon: "heart.fill")
+                                .help("Published only")
+                        }
+                        .padding(.top, 8)
+                        .padding([.leading, .trailing], 10)
+                    }
+                }
+                .frame(height: 40)
+                .foregroundStyle(.gray)
+            }
+        }
+
+        // MARK: SearchBar
         struct SearchBar: View {
             @EnvironmentObject public var state: Navigation
             @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
@@ -1145,6 +1272,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: Toggle
         struct Toggle: View {
             public var title: String? = nil
             @Binding public var isOn: Bool
@@ -1185,6 +1313,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: GroupHeaderContextMenu
         struct GroupHeaderContextMenu: View {
             @EnvironmentObject private var state: Navigation
             @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateCompany") private var shouldCreateCompany: Bool = false
@@ -1229,6 +1358,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: InlineEntityCreate
         struct InlineEntityCreate: View {
             public var label: String
             public var onCreateChild: (String) -> Void
@@ -1256,6 +1386,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: KeyboardShortcutIndicator
         struct KeyboardShortcutIndicator: View {
             public var character: String
             public var requireShift: Bool = false
@@ -1276,6 +1407,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: RowActionButton
         struct RowActionButton: View {
             @EnvironmentObject public var state: Navigation
             public var callback: (() -> Void)
@@ -1313,6 +1445,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: Pagination
         struct Pagination: View {
             @EnvironmentObject public var state: Navigation
             @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
@@ -1321,7 +1454,7 @@ extension WidgetLibrary {
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
-                    if self.entityCount > 0 && self.pages.count > 1 {
+                    if self.entityCount > 0 && self.pages.count > 0 {
                         Main
                     }
                 }
@@ -1375,15 +1508,18 @@ extension WidgetLibrary {
                 private var pickerItems: [CustomPickerItem] {
                     return [
                         CustomPickerItem(title: "Pagination", tag: 0),
+                        CustomPickerItem(title: "5 per page", tag: 5),
                         CustomPickerItem(title: "10 per page", tag: 10),
+                        CustomPickerItem(title: "20 per page", tag: 20),
                         CustomPickerItem(title: "30 per page", tag: 30),
-                        CustomPickerItem(title: "50 per page", tag: 50)
+                        CustomPickerItem(title: "50 per page", tag: 50),
+                        CustomPickerItem(title: "100 per page", tag: 100),
                     ]
                 }
 
                 var body: some View {
                     HStack(spacing: 5) {
-                        FancyPicker(onChange: change, items: self.pickerItems, defaultSelected: self.perPage, icon: self.perPage == 10 ? "circle.grid.2x1.fill" : self.perPage == 30 ? "circle.grid.2x2.fill" : "circle.grid.3x3.fill")
+                        FancyPicker(onChange: change, items: self.pickerItems, defaultSelected: self.perPage, icon: self.perPage < 30 ? "circle.grid.2x1.fill" : self.perPage < 100 ? "circle.grid.2x2.fill" : "circle.grid.3x3.fill")
                             .onAppear(perform: {self.change(selected: self.perPage, sender: "")})
                             .onChange(of: self.perPage) {
                                 change(selected: self.perPage, sender: "")
@@ -1433,6 +1569,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: SortSelector
         struct SortSelector: View {
             @EnvironmentObject public var state: Navigation
             @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
@@ -1447,7 +1584,7 @@ extension WidgetLibrary {
 
             var body: some View {
                 HStack(spacing: 5) {
-                    FancyPicker(onChange: change, items: self.pickerItems, defaultSelected: self.tableSortOrder, icon: "arrow.up.arrow.down")
+                    FancyPicker(onChange: change, items: self.pickerItems, defaultSelected: self.tableSortOrder, icon: self.tableSortOrder == 0 ? "text.line.first.and.arrowtriangle.forward" : "text.line.last.and.arrowtriangle.forward")
                         .onAppear(perform: {self.change(selected: self.tableSortOrder, sender: "")})
                         .onChange(of: self.tableSortOrder) {
                             change(selected: self.tableSortOrder, sender: "")
@@ -1462,6 +1599,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: ViewModeSelector
         public struct ViewModeSelector: View {
             @EnvironmentObject public var state: Navigation
             @AppStorage("today.viewMode") public var index: Int = 0
@@ -1493,6 +1631,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: RowAddButton
         struct RowAddButton: View {
             public var title: String = "Add"
             @Binding public var isPresented: Bool
@@ -1534,6 +1673,7 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: RowAddNavLink
         struct RowAddNavLink: View {
             public var title: String = "Add"
             public let target: AnyView
@@ -1569,6 +1709,470 @@ extension WidgetLibrary {
             }
         }
 
+        struct SimpleEntityList: View {
+            @EnvironmentObject private var state: Navigation
+            public let type: EType
+            @State private var entities: [SimpleEntityRow] = []
+
+            var body: some View {
+                VStack {
+                    if self.entities.count > 0 {
+                        ScrollView(showsIndicators: false) {
+                            VStack(alignment: .leading, spacing: 0) {
+                                ForEach(self.entities) { entity in entity }
+                            }
+                        }
+                    } else {
+                        UI.ListButtonItem(
+                            callback: {_ in},
+                            name: "None found for \(self.state.session.timeline.formatted())"
+                        )
+                        .disabled(true)
+                    }
+                }
+                .onAppear(perform: self.actionOnAppear)
+            }
+        }
+
+        // MARK: SimpleEntityRow
+        struct SimpleEntityRow: View, Identifiable {
+            @EnvironmentObject private var state: Navigation
+            public var id: UUID = UUID()
+            public var entity: NSManagedObject
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                switch self.entity {
+                case is Company:
+                    Button {
+                        self.state.session.company = self.entity as? Company
+                        self.state.to(.companyDetail)
+                    } label: {
+                        if let entity = self.entity as? Company {
+                            entity.linkRowView
+                                .underline(self.isHighlighted)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .useDefaultHover({ hover in self.isHighlighted = hover})
+                    .help("Open")
+                case is Project:
+                    Button {
+                        self.state.session.project = self.entity as? Project
+                        self.state.session.company = self.state.session.project?.company
+                        self.state.to(.projectDetail)
+                    } label: {
+                        if let entity = self.entity as? Project {
+                            entity.linkRowView
+                                .underline(self.isHighlighted)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .useDefaultHover({ hover in self.isHighlighted = hover})
+                    .help("Open")
+                case is Job:
+                    Button {
+                        self.state.session.job = self.entity as? Job
+                        self.state.session.project = self.state.session.job?.project
+                        self.state.session.company = self.state.session.project?.company
+                        self.state.to(.jobs)
+                    } label: {
+                        if let entity = self.entity as? Job {
+                            entity.linkRowView
+                                .underline(self.isHighlighted)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .useDefaultHover({ hover in self.isHighlighted = hover})
+                    .help("Open")
+                default:
+                    EmptyView()
+                }
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.SimpleEntityList {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        switch self.type {
+        case .companies:
+            let source = CoreDataCompanies(moc: self.state.moc).interactionsOn(self.state.session.timeline.date)
+
+            for entity in source {
+                self.entities.append(
+                    UI.SimpleEntityRow(
+                        entity: entity
+                    )
+                )
+            }
+        case .projects:
+            let source = CoreDataProjects(moc: self.state.moc).interactionsOn(self.state.session.timeline.date)
+
+            for entity in source {
+                self.entities.append(
+                    UI.SimpleEntityRow(
+                        entity: entity
+                    )
+                )
+            }
+        case .jobs:
+            let source = CoreDataJob(moc: self.state.moc).interactionsOn(self.state.session.timeline.date)
+
+            for entity in source {
+                self.entities.append(
+                    UI.SimpleEntityRow(
+                        entity: entity
+                    )
+                )
+            }
+        default:
+            print("noop")
+        }
+    }
+}
+
+extension WidgetLibrary.UI.EntityInteractionsForDate {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.tabs = []
+        self.tabs.append(
+            ToolbarButton(
+                id: 0,
+                helpText: "Jobs interacted with on this day in \(self.state.session.timeline.formatted())",
+                icon: "hammer",
+                labelText: "Jobs",
+                contents: AnyView(
+                    UI.SimpleEntityList(type: .jobs)
+                )
+            )
+        )
+        if self.showProjects {
+            self.tabs.append(
+                ToolbarButton(
+                    id: 1,
+                    helpText: "Projects interacted with on this day in \(self.state.session.timeline.formatted())",
+                    icon: "folder",
+                    labelText: "Projects",
+                    contents: AnyView(
+                        UI.SimpleEntityList(type: .projects)
+                    )
+                )
+            )
+        }
+        if self.showCompanies {
+            self.tabs.append(
+                ToolbarButton(
+                    id: 2,
+                    helpText: "Companies interacted with on this day in \(self.state.session.timeline.formatted())",
+                    icon: "building.2",
+                    labelText: "Companies",
+                    contents: AnyView(
+                        UI.SimpleEntityList(type: .companies)
+                    )
+                )
+            )
+        }
+    }
+}
+
+extension WidgetLibrary.UI.LinkListForDate {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.activities = []
+        self.getLinksFromJobs()
+        self.getLinksFromNotes()
+        self.createTabs()
+        self.vid = UUID()
+    }
+    
+    /// Creates tabs. Simples.
+    /// - Returns: Void
+    private func createTabs() -> Void {
+        self.tabs = [
+            ToolbarButton(
+                id: 0,
+                helpText: "",
+                icon: "link",
+                labelText: "Links",
+                contents: AnyView(
+                    UI.ActivityLinks(activities: self.activities)
+                )
+            )
+        ]
+    }
+
+    /// Get links from jobs created or updated on a given day
+    /// - Returns: Void
+    private func getLinksFromJobs() -> Void {
+        let jobs = CoreDataJob(moc: self.state.moc).forDate(self.state.session.timeline.date)
+        for job in jobs {
+            if let uri = job.uri {
+                if uri.absoluteString != "https://" {
+                    self.activities.append(
+                        Activity(
+                            name: uri.absoluteString,
+                            page: self.state.parent ?? .dashboard,
+                            type: .activity,
+                            job: job,
+                            url: uri.absoluteURL
+                        )
+                    )
+                }
+            }
+        }
+    }
+    
+    /// Find links in notes created on a given day
+    /// - Returns: Void
+    private func getLinksFromNotes() -> Void {
+        let notes = CoreDataNotes(moc: self.state.moc).find(for: self.state.session.timeline.date)
+        for note in notes {
+            if let versions = note.versions?.allObjects as? [NoteVersion] {
+                for version in versions {
+                    if let content = version.content {
+                        let linkRegex = /https:\/\/([^ \n]+)/
+                        if let match = content.firstMatch(of: linkRegex) {
+                            let sMatch = String(match.0)
+                            let linkLength = 40
+                            var label: String = sMatch
+
+                            if sMatch.count > linkLength {
+                                label = label.prefix(linkLength) + "..."
+                            }
+                            if !self.activities.contains(where: {$0.name == label}) {
+                                self.activities.append(
+                                    Activity(
+                                        name: label,
+                                        help: sMatch,
+                                        page: self.state.parent ?? .dashboard,
+                                        type: .activity,
+                                        job: note.mJob,
+                                        source: version,
+                                        url: URL(string: sMatch) ?? nil
+                                    )
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.GenericTimelineActivity {
+    /// Equatable conformity
+    /// - Parameters:
+    ///   - lhs: GenericTimelineActivity
+    ///   - rhs: GenericTimelineActivity
+    /// - Returns: Bool
+    static func == (lhs: WidgetLibrary.UI.GenericTimelineActivity, rhs: WidgetLibrary.UI.GenericTimelineActivity) -> Bool {
+        return lhs.id == rhs.id
+    }
+
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        Task {
+            await self.populateTimeline()
+            self.vid = UUID()
+        }
+    }
+
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func populateTimeline() async -> Void {
+        self.activities = []
+        self.state.session.timeline.date = self.historicalDate
+
+        let records = CoreDataRecords(moc: self.state.moc).forDate(self.historicalDate)
+        if self.showRecords {
+            for record in records {
+                // Records created
+                if let date = record.timestamp {
+                    if let rContent = record.message {
+                        // Ignore records representing definitions (those activities are added later)
+                        if !rContent.contains("==") {
+                            self.activities.append(
+                                UI.GenericTimelineActivity(
+                                    historicalDate: date,
+                                    view: AnyView(record.rowView)
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        if self.showTasks {
+            let tasks = CoreDataTasks(moc: self.state.moc).forDate(self.historicalDate, from: records)
+            let window = DateHelper.startAndEndOf(self.historicalDate)
+            for task in tasks {
+                if task.lastUpdate ?? task.created ?? Date() > window.0 && task.lastUpdate ?? task.created ?? Date() < window.1 {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            historicalDate: self.historicalDate,
+                            view: AnyView(task.rowView)
+                        )
+                    )
+                }
+            }
+        }
+
+        if self.showNotes {
+            let notes = CoreDataNotes(moc: self.state.moc).forDate(self.historicalDate)
+            for note in notes {
+                // Notes created
+                if let date = note.postedDate {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            historicalDate: date,
+                            view: AnyView(note.rowView)
+                        )
+                    )
+                } else
+                // Notes updated
+                if note.postedDate != note.lastUpdate && note.lastUpdate != nil {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            historicalDate: note.lastUpdate!,
+                            view: AnyView(note.rowView)
+                        )
+                    )
+                }
+            }
+        }
+
+        if self.showJobs {
+            let jobs = CoreDataJob(moc: self.state.moc).forDate(self.historicalDate)
+            for job in jobs {
+                // Jobs created
+                if let date = job.created {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            historicalDate: date,
+                            view: AnyView(job.rowView)
+                        )
+                    )
+                } else
+                // Jobs updated
+                if let date = job.lastUpdate {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            historicalDate: date,
+                            view: AnyView(job.rowView)
+                        )
+                    )
+                }
+            }
+        }
+
+        if self.showCompanies {
+            let companies = CoreDataCompanies(moc: self.state.moc).forDate(self.historicalDate)
+            for company in companies {
+                // Companies created
+                if let date = company.createdDate {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            historicalDate: date,
+                            view: AnyView(company.rowView)
+                        )
+                    )
+                } else
+                // Companies updated
+                if let date = company.lastUpdate {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            historicalDate: date,
+                            view: AnyView(company.rowView)
+                        )
+                    )
+                }
+            }
+        }
+
+        // Technically this is showDefinitions, but the toggle isn't implemented yet
+        // @TODO: change to self.showDefinitions
+        if self.showTerms {
+            let definitions = CoreDataTaxonomyTermDefinitions(moc: self.state.moc).forDate(self.historicalDate)
+            for definition in definitions {
+                // Definition updated
+                if definition.created != definition.lastUpdate && definition.lastUpdate != nil {
+                    if let date = definition.lastUpdate {
+                        self.activities.append(
+                            UI.GenericTimelineActivity(
+                                historicalDate: date,
+                                view: AnyView(definition.rowView)
+                            )
+                        )
+                    }
+                } else
+                // Definition created
+                if let date = definition.created {
+                    self.activities.append(
+                        UI.GenericTimelineActivity(
+                            historicalDate: date,
+                            view: AnyView(definition.rowView)
+                        )
+                    )
+                }
+            }
+        }
+
+        self.activities = self.activities.sorted(by: {self.tableSortOrder == 0 ? $0.historicalDate > $1.historicalDate : $0.historicalDate < $1.historicalDate})
+
+        // Find the current page of resources by offset
+        let lBound = self.state.session.pagination.currentPageOffset
+        let uBound = lBound + self.perPage
+
+        if lBound < self.activities.count && uBound <= self.activities.count {
+            self.currentActivities = Array(self.activities[lBound..<uBound])
+        } else {
+            self.currentActivities = self.activities
+        }
+    }
+}
+
+extension WidgetLibrary.UI.ActivityFeed {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.tabs = []
+        var tabSet: Set<ToolbarButton> = []
+
+        let calendar = Calendar.autoupdatingCurrent
+        let current = calendar.dateComponents([.year, .month, .day], from: self.state.session.date)
+
+        if current.isValidDate == false {
+            for offset in 0...maxYearsPastInHistory {
+                let offsetYear = ((offset * -1) + current.year!)
+                let components = DateComponents(year: offsetYear, month: current.month!, day: current.day!)
+                if let day = calendar.date(from: components) {
+                    tabSet.insert(
+                        ToolbarButton(
+                            id: offset,
+                            helpText: "Show feed this day in \(DateHelper.todayShort(day, format: "yyyy"))",
+                            icon: "calendar",
+                            labelText: DateHelper.todayShort(day, format: "yyyy"),
+                            contents: AnyView(
+                                UI.GenericTimelineActivity(
+                                    historicalDate: day
+                                )
+                            )
+                        )
+                    )
+                }
+            }
+        }
+
+        self.tabs = Array(tabSet)
+        self.vid = UUID()
     }
 }
 
@@ -1584,7 +2188,6 @@ extension WidgetLibrary.UI.SortSelector {
         }
     }
 }
-
 
 extension WidgetLibrary.UI.Pagination {
     /// Onload handler. Sets view state
@@ -1770,37 +2373,6 @@ extension WidgetLibrary.UI.SearchBar {
     }
 }
 
-extension WidgetLibrary.UI.FlashcardActivity.FlashcardDeck {
-    /// Onload/onChangeJob handler
-    /// - Returns: Void
-    private func actionOnAppear() -> Void {
-        self.isAnswerCardShowing = false
-        self.terms = []
-        self.definitions = []
-        self.current = nil
-        self.clue = ""
-
-        if self.job != nil {
-            if let termsForJob = CoreDataTaxonomyTerms(moc: self.state.moc).byJob(self.job!) {
-                self.terms = termsForJob
-            }
-        }
-
-        if !self.terms.isEmpty {
-            self.current = self.terms.randomElement()
-            self.clue = self.current?.name ?? "_TERM_NAME"
-            self.viewed.insert(self.current!)
-//            self.definitions = []
-
-            if let defs = self.current!.definitions {
-                if let ttds = defs.allObjects as? [TaxonomyTermDefinitions] {
-                    self.definitions = ttds
-                }
-            }
-        }
-    }
-}
-
 extension WidgetLibrary.UI.ActivityCalendar {
     /// Get month string from date
     /// - Returns: Void
@@ -1884,7 +2456,7 @@ extension WidgetLibrary.UI.SimpleDateSelector {
     /// Fires when the date is changed.
     /// - Returns: Void
     private func actionOnChangeDate() -> Void {
-        self.date = DateHelper.todayShort(self.state.session.date, format: "MMMM d, yyyy")
+        self.date = DateHelper.todayShort(self.state.session.date, format: "MMMM dd, yyyy")
         self.isToday = self.areSameDate(self.state.session.date, Date())
     }
 
@@ -1895,7 +2467,7 @@ extension WidgetLibrary.UI.SimpleDateSelector {
     /// - Returns: Void
     private func areSameDate(_ lhs: Date, _ rhs: Date) -> Bool {
         let df = DateFormatter()
-        df.dateFormat = "MMMM d"
+        df.dateFormat = "MMMM dd"
         let fmtDate = df.string(from: lhs)
         let fmtSessionDate = df.string(from: rhs)
 

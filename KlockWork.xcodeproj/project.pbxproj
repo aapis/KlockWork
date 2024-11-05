@@ -148,6 +148,10 @@
 		53911FC32C19E84C00B77DAB /* ActivityWeight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53911FC22C19E84C00B77DAB /* ActivityWeight.swift */; };
 		5394D9992CD3203C0069E230 /* PageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5394D9982CD3203C0069E230 /* PageConfiguration.swift */; };
 		5394D99B2CD320790069E230 /* FilterField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5394D99A2CD320790069E230 /* FilterField.swift */; };
+		5394D99F2CD440350069E230 /* LogRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5394D99D2CD43EAC0069E230 /* LogRecord.swift */; };
+		5394D9A12CD445D30069E230 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5394D9A02CD445D20069E230 /* Note.swift */; };
+		5394D9A32CD46BD10069E230 /* TaxonomyTermDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5394D9A22CD46BCE0069E230 /* TaxonomyTermDefinitions.swift */; };
+		5394D9A52CD4AC520069E230 /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5394D9A42CD4AC500069E230 /* Person.swift */; };
 		53959A1A297377A7007A2549 /* FancyGenericToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A19297377A7007A2549 /* FancyGenericToolbar.swift */; };
 		53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1C2973897F007A2549 /* ProjectConfig.swift */; };
 		53959A1F29738AAA007A2549 /* FancySubTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53959A1E29738AAA007A2549 /* FancySubTitle.swift */; };
@@ -437,6 +441,10 @@
 		53911FC22C19E84C00B77DAB /* ActivityWeight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityWeight.swift; sourceTree = "<group>"; };
 		5394D9982CD3203C0069E230 /* PageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageConfiguration.swift; sourceTree = "<group>"; };
 		5394D99A2CD320790069E230 /* FilterField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterField.swift; sourceTree = "<group>"; };
+		5394D99D2CD43EAC0069E230 /* LogRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogRecord.swift; sourceTree = "<group>"; };
+		5394D9A02CD445D20069E230 /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
+		5394D9A22CD46BCE0069E230 /* TaxonomyTermDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaxonomyTermDefinitions.swift; sourceTree = "<group>"; };
+		5394D9A42CD4AC500069E230 /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 		53959A19297377A7007A2549 /* FancyGenericToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyGenericToolbar.swift; sourceTree = "<group>"; };
 		53959A1C2973897F007A2549 /* ProjectConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConfig.swift; sourceTree = "<group>"; };
 		53959A1E29738AAA007A2549 /* FancySubTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancySubTitle.swift; sourceTree = "<group>"; };
@@ -546,6 +554,8 @@
 				Sources/UI/WidgetLibrary/WidgetLibrary.Blocks.swift,
 				Sources/UI/WidgetLibrary/WidgetLibrary.swift,
 				Sources/UI/WidgetLibrary/WidgetLibrary.UI.Buttons.swift,
+				Sources/UI/WidgetLibrary/WidgetLibrary.UI.EntityCalendar.swift,
+				Sources/UI/WidgetLibrary/WidgetLibrary.UI.Explore.swift,
 				Sources/UI/WidgetLibrary/WidgetLibrary.UI.Individual.swift,
 				Sources/UI/WidgetLibrary/WidgetLibrary.UI.Links.swift,
 				Sources/UI/WidgetLibrary/WidgetLibrary.UI.Navigator.swift,
@@ -589,6 +599,8 @@
 				Sources/UI/WidgetLibrary/WidgetLibrary.Blocks.swift,
 				Sources/UI/WidgetLibrary/WidgetLibrary.swift,
 				Sources/UI/WidgetLibrary/WidgetLibrary.UI.Buttons.swift,
+				Sources/UI/WidgetLibrary/WidgetLibrary.UI.EntityCalendar.swift,
+				Sources/UI/WidgetLibrary/WidgetLibrary.UI.Explore.swift,
 				Sources/UI/WidgetLibrary/WidgetLibrary.UI.Individual.swift,
 				Sources/UI/WidgetLibrary/WidgetLibrary.UI.Links.swift,
 				Sources/UI/WidgetLibrary/WidgetLibrary.UI.Navigator.swift,
@@ -700,8 +712,12 @@
 		531EB6E62A9FDA5000B3059C /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				5394D9A42CD4AC500069E230 /* Person.swift */,
+				5394D9A22CD46BCE0069E230 /* TaxonomyTermDefinitions.swift */,
+				5394D9A02CD445D20069E230 /* Note.swift */,
 				536043C92CBE06A40030D72D /* LogTask.swift */,
 				53013A972CAC601F0024BA30 /* Company.swift */,
+				5394D99D2CD43EAC0069E230 /* LogRecord.swift */,
 				5331FCB22A9E6ECE005CDE0E /* Plan.swift */,
 				531EB6E72A9FDA5A00B3059C /* Job.swift */,
 				53842B262B4C82B20029AC73 /* Project.swift */,
@@ -1569,6 +1585,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5394D99F2CD440350069E230 /* LogRecord.swift in Sources */,
 				53FEF578296603D9000B94FC /* FancyTextField.swift in Sources */,
 				53F5895E2998330000843B32 /* NoteResult.swift in Sources */,
 				536040A82CB9F5970030D72D /* AssessmentFactor.swift in Sources */,
@@ -1653,11 +1670,13 @@
 				5371BA3D2A7B7F1200DEEC21 /* TaskViewPlain.swift in Sources */,
 				533544882CB1A0F00067A944 /* Timestamp.swift in Sources */,
 				538B2FA62CB095B400B353AE /* TaskDetail.swift in Sources */,
+				5394D9A12CD445D30069E230 /* Note.swift in Sources */,
 				53959A1D2973897F007A2549 /* ProjectConfig.swift in Sources */,
 				5354C8F32AA03CE4001C1779 /* Notes.Row.swift in Sources */,
 				5335448A2CB1A15C0067A944 /* TaskItem.swift in Sources */,
 				5371BA2D2A7B27BB00DEEC21 /* NoteDashboardSidebar.swift in Sources */,
 				53790C0B2A747E0300D3FFD4 /* JobCreate.swift in Sources */,
+				5394D9A32CD46BD10069E230 /* TaxonomyTermDefinitions.swift in Sources */,
 				5376289E29664F8C00DE8ECF /* Theme.swift in Sources */,
 				53FBCC902A630CBE00B88539 /* MainMenu.swift in Sources */,
 				53C000A62B3F746800D5EC04 /* Suggestions.swift in Sources */,
@@ -1760,6 +1779,7 @@
 				5360429D2CBA35050030D72D /* RecordDetail.swift in Sources */,
 				5371BA372A7B412300DEEC21 /* TodaySidebar.swift in Sources */,
 				53842B2A2B4C9B100029AC73 /* FancyToggle.swift in Sources */,
+				5394D9A52CD4AC520069E230 /* Person.swift in Sources */,
 				5363B6782A6BB2CC00C2FBB8 /* CompanyDashboard.swift in Sources */,
 				53E202562A7E0F1700B4DF70 /* ProjectsDashboardSidebar.swift in Sources */,
 				532A722B298F1CB70038C18B /* Results.swift in Sources */,

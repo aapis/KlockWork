@@ -15,25 +15,21 @@ extension Planning {
         @State private var jobs: Set<Job> = []
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: 0) {
                 Menu()
-                ScrollView(.vertical, showsIndicators: false) {
-                    let jobs = self.jobs.sorted(by: {$0.title ?? $0.jid.string > $1.title ?? $1.jid.string})
-                    if jobs.count > 0 {
-                        ForEach(jobs, id: \.objectID) { job in
-                            VStack(spacing: 1) {
-                                Planning.Group(job: job, jobs: jobs)
-                            }
-                        }
-                    } else {
-                        HStack {
-                            Text("Add jobs using the sidebar widget then select the tasks you'd like to focus. This list saves automatically.")
-                                .foregroundColor(.gray)
-                            Spacer()
-                        }
-                        .padding()
-                        .background(Theme.rowColour)
+                if self.jobs.count > 0 {
+                    let jobs = Array(self.jobs).sorted(by: {$0.title ?? $0.jid.string > $1.title ?? $1.jid.string})
+                    ForEach(jobs, id: \.objectID) { job in
+                        Planning.Group(job: job, jobs: Array(self.jobs))
                     }
+                } else {
+                    HStack {
+                        Text("Add jobs using the sidebar widget then select the tasks you'd like to focus. This list saves automatically.")
+                            .foregroundColor(.gray)
+                        Spacer()
+                    }
+                    .padding()
+                    .background(Theme.rowColour)
                 }
             }
             .onAppear(perform: self.actionOnAppear)

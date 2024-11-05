@@ -40,6 +40,10 @@ struct MainMenu: Commands {
                     .keyboardShortcut(.leftArrow, modifiers: [.control, .shift])
                 Button("Next day") {self.state.session.date += 86400}
                     .keyboardShortcut(.rightArrow, modifiers: [.control, .shift])
+                Button("Previous week") {self.state.session.date -= (86400 * 7)}
+                    .keyboardShortcut(.upArrow, modifiers: [.control, .shift])
+                Button("Next week") {self.state.session.date += (86400 * 7)}
+                    .keyboardShortcut(.downArrow, modifiers: [.control, .shift])
                 Divider()
                 Button("Reset to today") {self.state.session.date = Date.now}
                     .keyboardShortcut("d", modifiers: [.control, .shift])

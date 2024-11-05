@@ -6,7 +6,6 @@
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
 import KWCore
 import CoreData
@@ -28,8 +27,6 @@ public class CoreDataNoteVersions: ObservableObject {
         let window = DateHelper.startAndEndOf(date)
         let predicate = NSPredicate(
             format: "(created > %@ && created < %@)",
-            window.0 as CVarArg,
-            window.1 as CVarArg,
             window.0 as CVarArg,
             window.1 as CVarArg
         )

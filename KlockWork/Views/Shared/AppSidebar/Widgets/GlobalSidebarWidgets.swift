@@ -60,6 +60,7 @@ struct GlobalSidebarWidgets: View {
 //            PrivacyModeButton()
             CreateButton(active: $isCreateStackShowing)
             FindButton(active: $isSearchStackShowing)
+            ScoreButton()
             Forecast(
                 date: DateHelper.startOfDay(self.nav.session.date),
                 type: .button,
@@ -89,20 +90,20 @@ struct GlobalSidebarWidgets: View {
                                 fgColour: Theme.base,
                                 showLabel: false,
                                 size: .small,
-                                type: .tsWhite
+                                type: .tsWhite,
+                                font: .title2
                             )
                             .mask(Circle())
                         } else {
                             FancyButtonv2(
                                 text: "You need to create a plan first, click here!",
+                                action: {self.nav.to(.planning)},
                                 icon: "hexagon",
                                 fgColour: Theme.base,
                                 showLabel: false,
                                 size: .small,
                                 type: nav.parent == .planning ? .secondary : .tsWhite,
-                                redirect: AnyView(Planning()),
-                                pageType: .planning,
-                                sidebar: AnyView(DefaultPlanningSidebar())
+                                font: .title2
                             )
                             .mask(Circle())
                         }
@@ -175,7 +176,8 @@ struct GlobalSidebarWidgets: View {
                             bgColour: nav.session.job?.colour_from_stored() ?? nil,
                             showLabel: false,
                             size: .small,
-                            type: active ? .secondary : .standard
+                            type: active ? .secondary : .standard,
+                            font: .title2
                         )
                         .mask(Circle())
                     }
@@ -204,7 +206,7 @@ struct GlobalSidebarWidgets: View {
                     ZStack {
                         Theme.base.opacity(0.5)
                         FancyButtonv2(
-                            text: "Search",
+                            text: "Find",
                             action: {
                                 self.active.toggle()
                                 self.isSearching.toggle()
@@ -217,7 +219,8 @@ struct GlobalSidebarWidgets: View {
                             bgColour: nav.session.job?.colour_from_stored() ?? nil,
                             showLabel: false,
                             size: .small,
-                            type: active ? .secondary : .standard
+                            type: active ? .secondary : .standard,
+                            font: .title2
                         )
                         .keyboardShortcut("f", modifiers: .command)
                         .mask(Circle())
@@ -228,6 +231,47 @@ struct GlobalSidebarWidgets: View {
                 Text("Find")
                     .opacity(active ? 1 : 0.4)
             }
+        }
+    }
+
+    struct ScoreButton: View {
+        @EnvironmentObject public var state: Navigation
+        @AppStorage("GlobalSidebarWidgets.isCreateStackShowing") private var isCreateStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+        @AppStorage("GlobalSidebarWidgets.isSearching") private var isSearching: Bool = false
+        @State private var score: Int = 0
+        @State private var bgColour: Color?
+
+        var body: some View {
+            VStack(alignment: .center) {
+                ZStack {
+                    ZStack {
+                        Theme.base.opacity(0.5)
+                        FancyButtonv2(
+                            text: "\(self.score)",
+                            action: {
+                                self.isSearching.toggle()
+                                self.isCreateStackShowing = false
+                                self.isUpcomingTaskStackShowing = false
+                                self.state.session.search.reset()
+                            },
+                            fgColour: (self.state.session.job?.backgroundColor ?? self.bgColour ?? .clear).isBright() ? .black : .white,
+                            bgColour: (self.state.session.job?.backgroundColor ?? self.bgColour) ?? .clear,
+                            showLabel: true,
+                            size: .small,
+                            type: .standard,
+                            font: .title2
+                        )
+                        .mask(Circle())
+                    }
+                    .mask(Circle())
+                }.frame(width: 46, height: 46)
+
+                Text("Score")
+                    .opacity(0.4)
+            }
+            .onAppear(perform: self.actionOnAppear)
+            .onChange(of: self.state.session.date) { self.actionOnAppear() }
         }
     }
 
@@ -472,6 +516,17 @@ extension GlobalSidebarWidgets.PlanButton {
             nav.session.gif = .focus
         } else {
             nav.session.gif = .normal
+        }
+    }
+}
+
+extension GlobalSidebarWidgets.ScoreButton {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        if let assessment = self.state.activities.assessed.filter({$0.isToday == true && $0.dayNumber > 0}).first {
+            self.score = assessment.score
+            self.bgColour = assessment.backgroundColourFromWeight()
         }
     }
 }
