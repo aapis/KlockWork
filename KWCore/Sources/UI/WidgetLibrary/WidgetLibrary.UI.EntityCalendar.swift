@@ -353,6 +353,22 @@ extension WidgetLibrary.UI.EntityCalendar.Day {
     private func actionOnAppear() -> Void {
         self.bgColour = .clear
         self.fgColour = .white
+        self.prepareColourData()
+
+        if self.isToday && self.isSelected || self.isSelected {
+            self.bgColour = self.state.theme.tint
+            self.fgColour = Theme.base
+        } else if self.isToday {
+            self.bgColour = .blue
+            self.fgColour = .white
+        } else if self.date < Date() {
+            self.fgColour = .gray
+        }
+    }
+    
+    /// Called in onload handler. Determines colour values for calendar Day border
+    /// - Returns: Void
+    private func prepareColourData() -> Void {
         self.colourData = []
 
         if let plan = CoreDataPlan(moc: self.state.moc).forToday(self.date).first {
@@ -368,16 +384,6 @@ extension WidgetLibrary.UI.EntityCalendar.Day {
             for job in jobs {
                 self.colourData.append(job.backgroundColor)
             }
-        }
-
-        if self.isToday && self.isSelected || self.isSelected {
-            self.bgColour = .blue
-            self.fgColour = .white
-        } else if self.isToday {
-            self.bgColour = self.state.theme.tint
-            self.fgColour = Theme.base
-        } else if self.date < Date() {
-            self.fgColour = .gray
         }
     }
 }

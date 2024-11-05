@@ -616,9 +616,9 @@ extension Navigation {
             HistoryPage(page: .projectDetail, view: AnyView(ProjectView()), sidebar: AnyView(DefaultCompanySidebar()), title: "Project"),
             HistoryPage(page: .projects, view: AnyView(ProjectsDashboard()), sidebar: AnyView(DefaultCompanySidebar()), title: "Projects", navButtons: [.sidebarToggle, .resetUserChoices, .createProject]),
             HistoryPage(page: .explore, view: AnyView(Explore()), sidebar: AnyView(ExploreSidebar()), title: "Explore"),
-            HistoryPage(page: .activityFlashcards, view: AnyView(UI.FlashcardActivity()), sidebar: AnyView(ExploreSidebar()), title: "Flashcards"),
+            HistoryPage(page: .activityFlashcards, view: AnyView(UI.Explore.Activity.FlashcardActivity()), sidebar: AnyView(ExploreSidebar()), title: "Flashcards"),
             HistoryPage(page: .activityCalendar, view: AnyView(UI.ActivityCalendar()), sidebar: AnyView(ExploreSidebar()), title: "Activity Calendar"),
-            HistoryPage(page: .timeline, view: AnyView(UI.TimelineActivity()), sidebar: AnyView(ExploreSidebar()), title: "Timeline"),
+            HistoryPage(page: .timeline, view: AnyView(UI.Explore.Visualization.Timeline()), sidebar: AnyView(ExploreSidebar()), title: "Timeline"),
         ]
         
         /// A single page representing a page the user navigated to
