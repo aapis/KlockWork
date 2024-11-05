@@ -122,12 +122,12 @@ struct Home: View {
                 VStack(alignment: .trailing, spacing: 5) {
                     if let buttons = self.buttons[.views] {
                         FancyDivider()
-                        ForEach(buttons) { button in button.environmentObject(nav) }
+                        ForEach(buttons) { button in button }
                     }
 
                     if let buttons = self.buttons[.entities] {
                         FancyDivider()
-                        ForEach(buttons) { button in button.environmentObject(nav) }
+                        ForEach(buttons) { button in button }
                     }
                 }
             }
@@ -194,7 +194,7 @@ extension Home {
                 SidebarButton(
                     destination: AnyView(Planning()),
                     pageType: .planning,
-                    icon: nav.planning.jobs.count == 0 ? "hexagon" : (nav.session.gif == .focus ? "circle.hexagongrid.fill" : "circle.hexagongrid"),
+                    icon: self.nav.planning.jobs.count == 0 ? "hexagon" : (nav.session.gif == .focus ? "hexagon.fill" : "hexagon"),
                     label: "Planning",
                     sidebar: AnyView(DefaultPlanningSidebar())
                 ),

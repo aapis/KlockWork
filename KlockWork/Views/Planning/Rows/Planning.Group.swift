@@ -35,10 +35,11 @@ extension Planning {
                         font: .headline
                     )
                     Button {
+                        self.nav.planning.jobs.insert(self.job)
                         if !self.nav.planning.jobs.contains(self.job) {
                             self.nav.planning.jobs.insert(self.job)
                         } else {
-                            self.nav.planning.jobs.remove(job)
+                            self.nav.planning.jobs.remove(self.job)
                         }
 
                         if nav.planning.jobs.count == 0 {
@@ -70,12 +71,14 @@ extension Planning {
                 Planning.Row(job: job, index: jobs.firstIndex(of: job), type: .tasks)
                 Planning.Row(job: job, index: jobs.firstIndex(of: job), type: .notes)
             }
-            .onAppear(perform: actionOnAppear)
+            .onAppear(perform: self.actionOnAppear)
         }
     }
 }
 
 extension Planning.Group {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
     private func actionOnAppear() -> Void {
         self.colour = self.job.backgroundColor
     }

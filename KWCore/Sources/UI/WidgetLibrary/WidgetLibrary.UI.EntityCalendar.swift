@@ -371,7 +371,7 @@ extension WidgetLibrary.UI.EntityCalendar.Day {
     private func prepareColourData() -> Void {
         self.colourData = []
 
-        if let plan = CoreDataPlan(moc: self.state.moc).forToday(self.date).first {
+        if let plan = CoreDataPlan(moc: self.state.moc).forDate(self.date).first {
             if let jobs = plan.jobs?.allObjects as? [Job] {
                 for job in jobs.sorted(by: {$0.created ?? Date() < $1.created ?? Date()}) {
                     self.colourData.append(job.backgroundColor)

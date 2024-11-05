@@ -135,14 +135,12 @@ extension Planning {
 
 extension Planning.Menu {
     private func actionFinalizePlan() -> Void {
-        nav.planning.empty(nav.session.date)
         let plan = nav.planning.finalize(nav.session.date)
         nav.session.plan = plan
     }
 
     private func actionResetPlan() -> Void {
-        nav.planning.empty(nav.session.date)
-        nav.planning = Navigation.PlanningState(moc: nav.planning.moc)
+        nav.planning = Navigation.PlanningState(moc: self.nav.moc)
         nav.session.plan = nil
         nav.session.gif = .normal
     }
