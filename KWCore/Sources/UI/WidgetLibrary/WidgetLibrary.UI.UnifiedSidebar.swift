@@ -218,19 +218,16 @@ extension WidgetLibrary.UI {
                             alive: self.entity.alive,
                             active: self.entity == self.state.session.job,
                             callback: {
-                                self.state.session.setJob(self.entity)
-
                                 if self.state.parent == .planning {
-                                    self.state.planning.jobs.insert(entity)
-                                    self.state.planning.projects.insert(entity.project!)
-
-                                    // projects are allowed to be unowned
-                                    if let company = entity.project!.company {
-                                        self.state.planning.companies.insert(company)
+                                    if !self.state.planning.jobs.contains(self.entity) {
+                                        self.state.planning.jobs.insert(self.entity)
+                                    } else {
+                                        self.state.planning.jobs.remove(self.entity)
                                     }
                                 } else {
                                     self.state.session.company = self.entity.project?.company
                                     self.state.session.project = self.entity.project
+                                    self.state.session.setJob(self.entity)
                                 }
                             },
                             isPresented: $isPresented

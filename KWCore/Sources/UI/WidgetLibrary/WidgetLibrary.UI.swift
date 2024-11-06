@@ -1323,7 +1323,7 @@ extension WidgetLibrary {
             public let entity: NSManagedObject
 
             var body: some View {
-                Button(action: self.actionEdit, label: {
+                Button(action: self.actionRedirectToEdit, label: {
                     Text("Edit...")
                 })
                 Divider()
@@ -1350,6 +1350,10 @@ extension WidgetLibrary {
                             Text("Definition...")
                         })
                     }
+                }
+                if self.state.session.appPage == .planning {
+                    Divider()
+                    Button("Add to Plan", action: self.actionEdit)
                 }
                 Divider()
                 Button(action: self.actionInspect, label: {
@@ -1404,44 +1408,6 @@ extension WidgetLibrary {
                 .padding(3)
                 .background(.white.opacity(0.4).blendMode(.softLight))
                 .clipShape(.rect(cornerRadius: 4))
-            }
-        }
-
-        // MARK: RowActionButton
-        struct RowActionButton: View {
-            @EnvironmentObject public var state: Navigation
-            public var callback: (() -> Void)
-            public var icon: String?
-            public var iconAsImage: Image?
-            public var helpText: String = ""
-            public var highlightedColour: Color = .yellow
-            public var page: PageConfiguration.AppPage = .explore
-            @State private var isHighlighted: Bool = false
-
-            var body: some View {
-                Button {
-                    self.callback()
-                } label: {
-                    ZStack(alignment: .center) {
-                        LinearGradient(colors: [Theme.base, .clear], startPoint: .leading, endPoint: .trailing)
-                        self.isHighlighted ? self.highlightedColour : self.state.session.appPage.primaryColour
-
-                        if let icon = self.icon {
-                            Image(systemName: icon)
-                                .symbolRenderingMode(.hierarchical)
-                                .padding(5)
-                        } else if let iconAsImage = self.iconAsImage {
-                            iconAsImage
-                                .symbolRenderingMode(.hierarchical)
-                                .padding(5)
-                        }
-                    }
-                    .foregroundStyle(self.isHighlighted ? Theme.base : self.highlightedColour)
-                }
-                .font(.headline)
-                .buttonStyle(.plain)
-                .help(self.helpText)
-                .useDefaultHover({ hover in self.isHighlighted = hover })
             }
         }
 
@@ -2237,7 +2203,7 @@ extension WidgetLibrary.UI.Pagination.Page {
 extension WidgetLibrary.UI.GroupHeaderContextMenu {
     /// Navigate to an edit page
     /// - Returns: Void
-    private func actionEdit() -> Void {
+    private func actionRedirectToEdit() -> Void {
         switch self.page {
         case .recordDetail:
             self.state.session.record = self.entity as? LogRecord
@@ -2259,6 +2225,37 @@ extension WidgetLibrary.UI.GroupHeaderContextMenu {
             print("noop")
         }
         self.state.to(self.page)
+    }
+
+    /// Navigate to an edit page
+    /// - Returns: Void
+    private func actionEdit() -> Void {
+        switch self.page {
+        case .recordDetail:
+            self.state.session.record = self.entity as? LogRecord
+        case .jobs:
+            self.state.session.job = self.entity as? Job
+        case .companyDetail:
+            self.state.session.company = self.entity as? Company
+        case .projectDetail:
+            self.state.session.project = self.entity as? Project
+        case .definitionDetail:
+            self.state.session.definition = self.entity as? TaxonomyTermDefinitions
+        case .taskDetail:
+            self.state.session.task = self.entity as? LogTask
+        case .noteDetail:
+            self.state.session.note = self.entity as? Note
+        case .peopleDetail:
+            self.state.session.person = self.entity as? Person
+        default:
+            print("noop")
+        }
+
+        if self.state.session.appPage == .planning {
+            if let job = self.state.session.job {
+                self.state.planning.jobs.insert(job)
+            }
+        }
     }
 
     /// Inspect an entity

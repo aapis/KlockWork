@@ -13,27 +13,35 @@ extension Planning {
     struct Today: View {
         @EnvironmentObject public var nav: Navigation
         @State private var jobs: Set<Job> = []
+        @State private var jobsArray: [Job] = []
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 Menu()
-                if self.jobs.count > 0 {
-                    let jobs = Array(self.jobs).sorted(by: {$0.title ?? $0.jid.string > $1.title ?? $1.jid.string})
-                    ForEach(jobs, id: \.objectID) { job in
-                        Planning.Group(job: job, jobs: Array(self.jobs))
+                VStack {
+                    if self.jobsArray.count > 0 {
+                        VStack {
+                            ForEach(self.jobsArray, id: \.objectID) { job in
+                                HStack(alignment: .top) {
+                                    if let index = self.jobsArray.firstIndex(of: job) {
+                                        Image(systemName: "\(Int(index + 1)).circle.fill")
+                                            .font(.title)
+                                    }
+                                    Planning.Group(job: job, jobs: self.jobsArray)
+                                }
+                                .padding(8)
+                                .background(Theme.textBackground)
+                                .clipShape(.rect(cornerRadius: 5))
+                            }
+                        }
+                        .padding(.top)
                     }
-                } else {
-                    HStack {
-                        Text("Add jobs using the sidebar widget then select the tasks you'd like to focus. This list saves automatically.")
-                            .foregroundColor(.gray)
-                        Spacer()
-                    }
-                    .padding()
-                    .background(Theme.rowColour)
                 }
+                FancyHelpText(text: "Add jobs using the sidebar widget then select the tasks you'd like to focus. This list saves automatically.")
             }
             .onAppear(perform: self.actionOnAppear)
             .onChange(of: self.nav.planning.jobs) { self.actionOnAppear() }
+            .onChange(of: self.nav.session.plan) { self.actionOnAppear() }
         }
     }
 }
@@ -42,10 +50,11 @@ extension Planning.Today {
     /// Onload handler. Sets view state (jobs)
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        self.jobs = self.nav.planning.jobs
-
-        if self.nav.planning.jobs.isEmpty {
+        if self.nav.session.plan == nil  {
             self.jobs = CoreDataTasks(moc: self.nav.moc).jobsForTasksDueToday()
+        } else if self.jobs != self.nav.planning.jobs {
+            self.jobs = self.nav.planning.jobs
         }
+        self.jobsArray = Array(self.jobs).sorted(by: {$0.jid < $1.jid})
     }
 }

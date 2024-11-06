@@ -255,8 +255,8 @@ struct GlobalSidebarWidgets: View {
                                 self.isUpcomingTaskStackShowing = false
                                 self.state.session.search.reset()
                             },
-                            fgColour: (self.state.session.job?.backgroundColor ?? self.bgColour ?? .clear).isBright() ? .black : .white,
-                            bgColour: (self.state.session.job?.backgroundColor ?? self.bgColour) ?? .clear,
+                            fgColour: (self.state.session.job?.backgroundColor ?? self.bgColour ?? .clear).isBright() ? Theme.base : .white,
+                            bgColour: self.state.session.job?.backgroundColor ?? self.bgColour ?? .clear,
                             showLabel: true,
                             size: .small,
                             type: .standard,
@@ -526,7 +526,7 @@ extension GlobalSidebarWidgets.ScoreButton {
     private func actionOnAppear() -> Void {
         if let assessment = self.state.activities.assessed.filter({$0.isToday == true && $0.dayNumber > 0}).first {
             self.score = assessment.score
-            self.bgColour = assessment.backgroundColourFromWeight()
+            self.bgColour = .blue
         }
     }
 }

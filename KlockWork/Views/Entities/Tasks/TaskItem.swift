@@ -77,9 +77,9 @@ struct TaskItem: View, Identifiable {
                     Spacer()
                     if self.isHighlighted {
                         VStack(alignment: .trailing, spacing: 0) {
-                            UI.RowActionButton(callback: self.actionOnTaskCancel, icon: "calendar.badge.minus", helpText: "Cancel task", highlightedColour: .red)
-                            UI.RowActionButton(callback: self.actionOnTaskDelay, icon: "clock.fill", helpText: "Delay task 1 day", highlightedColour: .yellow)
-                            UI.RowActionButton(callback: self.actionOnTaskComplete, icon: "checkmark.circle.fill", helpText: "Task complete!", highlightedColour: .green)
+                            UI.Buttons.RowActionButton(callback: self.actionOnTaskCancel, icon: "calendar.badge.minus", helpText: "Cancel task", highlightedColour: .red)
+                            UI.Buttons.RowActionButton(callback: self.actionOnTaskDelay, icon: "clock.fill", helpText: "Delay task 1 day", highlightedColour: .yellow)
+                            UI.Buttons.RowActionButton(callback: self.actionOnTaskComplete, icon: "checkmark.circle.fill", helpText: "Task complete!", highlightedColour: .green)
                         }
                         .frame(width: 30)
                     }
