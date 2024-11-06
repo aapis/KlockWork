@@ -1323,7 +1323,7 @@ extension WidgetLibrary {
             public let entity: NSManagedObject
 
             var body: some View {
-                Button(action: self.actionEdit, label: {
+                Button(action: self.actionRedirectToEdit, label: {
                     Text("Edit...")
                 })
                 Divider()
@@ -1350,6 +1350,10 @@ extension WidgetLibrary {
                             Text("Definition...")
                         })
                     }
+                }
+                if self.state.session.appPage == .planning {
+                    Divider()
+                    Button("Add to Plan", action: self.actionEdit)
                 }
                 Divider()
                 Button(action: self.actionInspect, label: {
@@ -2199,7 +2203,7 @@ extension WidgetLibrary.UI.Pagination.Page {
 extension WidgetLibrary.UI.GroupHeaderContextMenu {
     /// Navigate to an edit page
     /// - Returns: Void
-    private func actionEdit() -> Void {
+    private func actionRedirectToEdit() -> Void {
         switch self.page {
         case .recordDetail:
             self.state.session.record = self.entity as? LogRecord
@@ -2221,6 +2225,37 @@ extension WidgetLibrary.UI.GroupHeaderContextMenu {
             print("noop")
         }
         self.state.to(self.page)
+    }
+
+    /// Navigate to an edit page
+    /// - Returns: Void
+    private func actionEdit() -> Void {
+        switch self.page {
+        case .recordDetail:
+            self.state.session.record = self.entity as? LogRecord
+        case .jobs:
+            self.state.session.job = self.entity as? Job
+        case .companyDetail:
+            self.state.session.company = self.entity as? Company
+        case .projectDetail:
+            self.state.session.project = self.entity as? Project
+        case .definitionDetail:
+            self.state.session.definition = self.entity as? TaxonomyTermDefinitions
+        case .taskDetail:
+            self.state.session.task = self.entity as? LogTask
+        case .noteDetail:
+            self.state.session.note = self.entity as? Note
+        case .peopleDetail:
+            self.state.session.person = self.entity as? Person
+        default:
+            print("noop")
+        }
+
+        if self.state.session.appPage == .planning {
+            if let job = self.state.session.job {
+                self.state.planning.jobs.insert(job)
+            }
+        }
     }
 
     /// Inspect an entity

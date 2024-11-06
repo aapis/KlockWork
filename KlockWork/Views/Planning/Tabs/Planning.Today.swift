@@ -18,19 +18,34 @@ extension Planning {
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
                 Menu()
-                if self.jobsArray.count > 0 {
-                    ForEach(self.jobsArray, id: \.objectID) { job in
-                        Planning.Group(job: job, jobs: self.jobsArray)
+                VStack {
+                    if self.jobsArray.count > 0 {
+                        VStack {
+                            ForEach(self.jobsArray, id: \.objectID) { job in
+                                HStack(alignment: .top) {
+                                    if let index = self.jobsArray.firstIndex(of: job) {
+                                        ZStack(alignment: .top) {
+                                            LinearGradient(colors: [.white, .clear], startPoint: .top, endPoint: .bottom)
+                                                .blendMode(.softLight)
+                                                .opacity(0.4)
+
+                                            Text(String(Int(index + 1)))
+                                                .font(.title)
+                                        }
+                                        .frame(width: 20)
+                                        .clipShape(.rect(cornerRadius: 5))
+                                    }
+                                    Planning.Group(job: job, jobs: self.jobsArray)
+                                }
+                                .padding(8)
+                                .background(Theme.textBackground)
+                                .clipShape(.rect(cornerRadius: 5))
+                            }
+                        }
+                        .padding(.top)
                     }
-                } else {
-                    HStack {
-                        Text("Add jobs using the sidebar widget then select the tasks you'd like to focus. This list saves automatically.")
-                            .foregroundColor(.gray)
-                        Spacer()
-                    }
-                    .padding()
-                    .background(Theme.rowColour)
                 }
+                FancyHelpText(text: "Add jobs using the sidebar widget then select the tasks you'd like to focus. This list saves automatically.")
             }
             .onAppear(perform: self.actionOnAppear)
             .onChange(of: self.nav.planning.jobs) { self.actionOnAppear() }
@@ -44,7 +59,7 @@ extension Planning.Today {
     private func actionOnAppear() -> Void {
         if self.jobs != self.nav.planning.jobs {
             self.jobs = self.nav.planning.jobs
-            self.jobsArray = Array(self.jobs).sorted(by: {$0.title ?? $0.jid.string > $1.title ?? $1.jid.string})
+            self.jobsArray = Array(self.jobs)//.sorted(by: {$0.title ?? $0.jid.string > $1.title ?? $1.jid.string})
         }
 
         if self.nav.planning.jobs.isEmpty {

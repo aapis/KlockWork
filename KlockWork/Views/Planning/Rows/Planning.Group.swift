@@ -20,7 +20,7 @@ extension Planning {
         @EnvironmentObject public var nav: Navigation
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 1) {
                 HStack {
                     FancyButtonv2(
                         text: "\(self.job.title ?? self.job.jid.string)",
@@ -65,13 +65,16 @@ extension Planning {
                     .useDefaultHover({inside in highlighted = inside})
                 }
                 .padding(8)
-                .background(colour)
-                Divider()
-
+                .background(self.colour)
+                .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
                 Planning.Row(job: job, index: jobs.firstIndex(of: job), type: .tasks)
                 Planning.Row(job: job, index: jobs.firstIndex(of: job), type: .notes)
             }
+            .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
             .onAppear(perform: self.actionOnAppear)
+            .contextMenu {
+                Button("Remove", action: {self.nav.planning.jobs.remove(self.job)})
+            }
         }
     }
 }

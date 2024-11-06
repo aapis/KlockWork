@@ -52,6 +52,7 @@ extension Planning {
                 .padding(5)
             }
             .background(self.page.primaryColour)
+            .clipShape(.rect(bottomLeadingRadius: self.nav.session.plan != nil ? 5 : 0, bottomTrailingRadius: self.nav.session.plan != nil ? 5 : 0))
             .onAppear(perform: actionOnAppear)
             .onChange(of: self.nav.planning.tasks) { self.actionOnChangeTasks() }
             .onChange(of: self.nav.planning.jobs) { self.actionOnChangeJobs() }
@@ -146,6 +147,19 @@ extension Planning.Menu {
     }
 
     private func actionOnChangeJobs() -> Void {
+        // Recalculate project and company counts when jobs change
+        self.nav.planning.projects = []
+        self.nav.planning.companies = []
+        for job in self.nav.planning.jobs {
+            if let project = job.project {
+                self.nav.planning.projects.insert(project)
+
+                if let company = project.company {
+                    self.nav.planning.companies.insert(company)
+                }
+            }
+        }
+
         actionOnAppear()
         actionFinalizePlan()
     }

@@ -25,48 +25,22 @@ extension Planning {
             VStack(alignment: .leading, spacing: 5) {
                 HStack {
                     if type == .tasks {
-                        Image(systemName: "\(numChildren).circle")
-                            .font(.title)
-                            .foregroundColor(colour.isBright() ? .black : .white)
-                        Text("Incomplete tasks")
-                            .foregroundColor(colour.isBright() ? .black : .white)
+                        Text("\(self.numChildren) Incomplete tasks")
                     } else if type == .notes {
-                        Image(systemName: "\(numChildren).circle")
-                            .font(.title)
-                            .foregroundColor(colour.isBright() ? .black : .white)
-                        Text("Notes")
-                            .foregroundColor(colour.isBright() ? .black : .white)
+                        Text("\(self.numChildren) Notes")
                     }
-
                     Spacer()
-                    if numChildren > 0 {
-                        if type == .tasks {
-                            FancyButtonv2(
-                                text: "Add a task to this job",
-                                action: {self.nav.to(.tasks)},
-                                icon: "plus",
-                                fgColour: colour.isBright() ? .black : .white,
-                                showLabel: false,
-                                size: .link,
-                                type: .clear
-                            )
-                        } else if type == .notes {
-                            FancyButtonv2(
-                                text: "Add a note to this job",
-                                action: {self.nav.to(.notes)},
-                                icon: "plus",
-                                fgColour: colour.isBright() ? .black : .white,
-                                showLabel: false,
-                                size: .link,
-                                type: .clear
-                            )
-                        }
+                    if type == .tasks {
+                        UI.Buttons.CreateTask()
+                    } else if type == .notes {
+                        UI.Buttons.CreateNote()
                     }
                 }
-                .padding(10)
+                .padding([.leading, .trailing], 8)
             }
+            .foregroundStyle(.white)
             .onAppear(perform: actionOnAppear)
-            .background(colour)
+            .background(Theme.rowColour)
         }
     }
 }

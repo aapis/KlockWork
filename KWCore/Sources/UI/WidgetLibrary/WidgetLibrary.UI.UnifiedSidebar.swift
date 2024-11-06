@@ -227,9 +227,8 @@ extension WidgetLibrary.UI {
                                 } else {
                                     self.state.session.company = self.entity.project?.company
                                     self.state.session.project = self.entity.project
-                                    // Job already for both conditions below
+                                    self.state.session.setJob(self.entity)
                                 }
-                                self.state.session.setJob(self.entity)
                             },
                             isPresented: $isPresented
                         )
