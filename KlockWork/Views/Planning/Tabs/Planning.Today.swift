@@ -49,6 +49,7 @@ extension Planning {
             }
             .onAppear(perform: self.actionOnAppear)
             .onChange(of: self.nav.planning.jobs) { self.actionOnAppear() }
+            .onChange(of: self.nav.session.plan) { self.actionOnAppear() }
         }
     }
 }
@@ -57,13 +58,11 @@ extension Planning.Today {
     /// Onload handler. Sets view state (jobs)
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        if self.jobs != self.nav.planning.jobs {
-            self.jobs = self.nav.planning.jobs
-            self.jobsArray = Array(self.jobs)//.sorted(by: {$0.title ?? $0.jid.string > $1.title ?? $1.jid.string})
-        }
-
-        if self.nav.planning.jobs.isEmpty {
+        if self.nav.session.plan == nil  {
             self.jobs = CoreDataTasks(moc: self.nav.moc).jobsForTasksDueToday()
+        } else if self.jobs != self.nav.planning.jobs {
+            self.jobs = self.nav.planning.jobs
         }
+        self.jobsArray = Array(self.jobs).sorted(by: {$0.jid < $1.jid})
     }
 }

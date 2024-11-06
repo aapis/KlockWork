@@ -35,7 +35,6 @@ extension Planning {
                         font: .headline
                     )
                     Button {
-                        self.nav.planning.jobs.insert(self.job)
                         if !self.nav.planning.jobs.contains(self.job) {
                             self.nav.planning.jobs.insert(self.job)
                         } else {
@@ -52,9 +51,12 @@ extension Planning {
                         }
                     } label: {
                         if !self.nav.planning.jobs.contains(self.job) {
-                            Image(systemName: highlighted ? "plus.square.fill" : "plus.square.dashed")
-                                .foregroundColor(colour.isBright() ? Theme.base : .white)
-                                .font(.title)
+                            HStack {
+                                Text("Suggested")
+                                Image(systemName: highlighted ? "plus.square.fill" : "plus.square.dashed")
+                                    .font(.title)
+                            }
+                            .foregroundColor(colour.isBright() ? Theme.base : .white)
                         } else {
                             Image(systemName: highlighted ? "clear.fill" : "clear")
                                 .foregroundColor(colour.isBright() ? Theme.base : .white)
