@@ -24,16 +24,8 @@ extension Planning {
                             ForEach(self.jobsArray, id: \.objectID) { job in
                                 HStack(alignment: .top) {
                                     if let index = self.jobsArray.firstIndex(of: job) {
-                                        ZStack(alignment: .top) {
-                                            LinearGradient(colors: [.white, .clear], startPoint: .top, endPoint: .bottom)
-                                                .blendMode(.softLight)
-                                                .opacity(0.4)
-
-                                            Text(String(Int(index + 1)))
-                                                .font(.title)
-                                        }
-                                        .frame(width: 20)
-                                        .clipShape(.rect(cornerRadius: 5))
+                                        Image(systemName: "\(Int(index + 1)).circle.fill")
+                                            .font(.title)
                                     }
                                     Planning.Group(job: job, jobs: self.jobsArray)
                                 }
