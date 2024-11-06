@@ -14,7 +14,7 @@ extension Planning.Notes {
         var note: Note
         var colour: Color
 
-        @State private var selected: Bool = true
+        @State private var selected: Bool = false
 
         @EnvironmentObject public var nav: Navigation
 
