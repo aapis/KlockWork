@@ -56,9 +56,9 @@ extension WidgetLibrary.UI {
                     var view: AnyView {
                         switch self {
                         case .day: AnyView(ByDay())
-                        case .week: AnyView(EmptyView())
-                        case .month: AnyView(EmptyView())
-                        case .year: AnyView(EmptyView())
+                        case .week: AnyView(ByWeek())
+                        case .month: AnyView(ByMonth())
+                        case .year: AnyView(ByYear())
                         }
                     }
 
@@ -98,6 +98,7 @@ extension WidgetLibrary.UI {
                     }
                 }
 
+                // MARK: ByDay
                 struct ByDay: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
@@ -108,7 +109,7 @@ extension WidgetLibrary.UI {
                         VStack(alignment: .leading, spacing: 0) {
                             UI.SearchTypeFilter()
                                 .background(self.state.session.appPage.primaryColour)
-                                .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
+                                .clipShape(.rect(topTrailingRadius: 5))
                                 .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
                             FancyHelpText(
                                 text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
@@ -141,6 +142,66 @@ extension WidgetLibrary.UI {
                             }
                             FancyDivider()
                             UI.ActivityFeed()
+                        }
+                    }
+                }
+
+                // MARK: ByWeek
+                struct ByWeek: View {
+                    @EnvironmentObject public var state: Navigation
+                    @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+
+                    var body: some View {
+                        VStack(alignment: .leading, spacing: 0) {
+                            UI.SearchTypeFilter()
+                                .background(self.state.session.appPage.primaryColour)
+                                .clipShape(.rect(topTrailingRadius: 5))
+                                .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                            FancyHelpText(
+                                text: "Browse through historical records for week \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
+                                page: self.state.session.appPage
+                            )
+                            FancyDivider()
+                        }
+                    }
+                }
+
+                // MARK: ByMonth
+                struct ByMonth: View {
+                    @EnvironmentObject public var state: Navigation
+                    @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+
+                    var body: some View {
+                        VStack(alignment: .leading, spacing: 0) {
+                            UI.SearchTypeFilter()
+                                .background(self.state.session.appPage.primaryColour)
+                                .clipShape(.rect(topTrailingRadius: 5))
+                                .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                            FancyHelpText(
+                                text: "Browse through historical records for week \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
+                                page: self.state.session.appPage
+                            )
+                            FancyDivider()
+                        }
+                    }
+                }
+
+                // MARK: ByYear
+                struct ByYear: View {
+                    @EnvironmentObject public var state: Navigation
+                    @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+
+                    var body: some View {
+                        VStack(alignment: .leading, spacing: 0) {
+                            UI.SearchTypeFilter()
+                                .background(self.state.session.appPage.primaryColour)
+                                .clipShape(.rect(topTrailingRadius: 5))
+                                .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                            FancyHelpText(
+                                text: "Browse through historical records for week \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
+                                page: self.state.session.appPage
+                            )
+                            FancyDivider()
                         }
                     }
                 }
