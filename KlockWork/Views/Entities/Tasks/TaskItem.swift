@@ -124,6 +124,17 @@ struct TaskItem: View, Identifiable {
                     Text(PageConfiguration.EntityType.jobs.enSingular)
                 }
             }
+            if self.state.session.appPage == .planning {
+                Divider()
+                Button("Add to Plan", action: {
+                    self.state.planning.tasks.insert(self.task)
+                    if let job = self.task.owner {
+                        self.state.planning.jobs.insert(job)
+                        self.state.to(.planning)
+                    }
+                })
+            }
+            Divider()
             Button(action: self.actionInspect, label: {
                 Text("Inspect")
             })
