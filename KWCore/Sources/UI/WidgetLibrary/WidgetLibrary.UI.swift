@@ -904,6 +904,7 @@ extension WidgetLibrary {
                 VStack {
                     UI.ListLinkTitle(text: "Suggested links from \(self.state.session.timeline.formatted(self.format))")
                     UI.ActivityLinks(activities: self.activities)
+                    Spacer()
                     // @TODO: ActivityLinks needs some tinkering to make it work within a tool view
 //                    FancyGenericToolbar(
 //                        buttons: self.tabs,
@@ -915,6 +916,7 @@ extension WidgetLibrary {
 //                    )
 //                    .frame(height: 200)
                 }
+                .frame(minHeight: 200)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
                 .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
@@ -981,6 +983,7 @@ extension WidgetLibrary {
                         alwaysShowTab: true
                     )
                 }
+                .frame(minHeight: 200)
                 .id(self.vid)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.vid = UUID() }
@@ -1751,8 +1754,8 @@ extension WidgetLibrary {
         struct SimpleEntityList: View {
             @EnvironmentObject private var state: Navigation
             public let type: EType
-            public let start: Date?
-            public let end: Date?
+            public var start: Date?
+            public var end: Date?
             @State private var entities: [SimpleEntityRow] = []
 
             var body: some View {
@@ -1838,6 +1841,14 @@ extension WidgetLibrary.UI.SimpleEntityList {
     /// Onload handler. Sets view state
     /// - Returns: Void
     private func actionOnAppear() -> Void {
+        Task {
+            await self.findInteractions()
+        }
+    }
+
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func findInteractions() async -> Void {
         switch self.type {
         case .companies:
             var source: [Company]
@@ -1902,7 +1913,7 @@ extension WidgetLibrary.UI.EntityInteractionsForDate {
                 icon: "hammer",
                 labelText: "Jobs",
                 contents: AnyView(
-                    UI.SimpleEntityList(type: .jobs, start: self.state.session.timeline.date, end: self.state.session.timeline.date)
+                    UI.SimpleEntityList(type: .jobs)
                 )
             )
         )
@@ -1914,7 +1925,7 @@ extension WidgetLibrary.UI.EntityInteractionsForDate {
                     icon: "folder",
                     labelText: "Projects",
                     contents: AnyView(
-                        UI.SimpleEntityList(type: .projects, start: self.state.session.timeline.date, end: self.state.session.timeline.date)
+                        UI.SimpleEntityList(type: .projects)
                     )
                 )
             )
@@ -1927,7 +1938,7 @@ extension WidgetLibrary.UI.EntityInteractionsForDate {
                     icon: "building.2",
                     labelText: "Companies",
                     contents: AnyView(
-                        UI.SimpleEntityList(type: .companies, start: self.state.session.timeline.date, end: self.state.session.timeline.date)
+                        UI.SimpleEntityList(type: .companies)
                     )
                 )
             )
@@ -1985,10 +1996,13 @@ extension WidgetLibrary.UI.LinkListForDate {
     /// - Returns: Void
     private func actionOnAppear() -> Void {
         self.activities = []
-        self.getLinksFromJobs()
-        self.getLinksFromNotes()
-        self.createTabs()
-        self.vid = UUID()
+
+        Task {
+            await self.getLinksFromJobs()
+            await self.getLinksFromNotes()
+//            self.createTabs()
+            self.vid = UUID()
+        }
     }
     
     /// Creates tabs. Simples.
@@ -2009,7 +2023,7 @@ extension WidgetLibrary.UI.LinkListForDate {
 
     /// Get links from jobs created or updated on a given day
     /// - Returns: Void
-    private func getLinksFromJobs() -> Void {
+    private func getLinksFromJobs() async -> Void {
         let jobs = CoreDataJob(moc: self.state.moc).forDate(self.state.session.timeline.date)
         for job in jobs {
             if let uri = job.uri {
@@ -2030,7 +2044,7 @@ extension WidgetLibrary.UI.LinkListForDate {
     
     /// Find links in notes created on a given day
     /// - Returns: Void
-    private func getLinksFromNotes() -> Void {
+    private func getLinksFromNotes() async -> Void {
         let notes = CoreDataNotes(moc: self.state.moc).find(for: self.state.session.timeline.date)
         for note in notes {
             if let versions = note.versions?.allObjects as? [NoteVersion] {
@@ -2072,10 +2086,13 @@ extension WidgetLibrary.UI.SuggestedLinksInRange {
     private func actionOnAppear() -> Void {
         self.state.session.timeline.date = self.state.session.date
         self.activities = []
-        self.getLinksFromJobs()
-        self.getLinksFromNotes()
-        self.createTabs()
-        self.vid = UUID()
+
+        Task {
+            await self.getLinksFromJobs()
+            await self.getLinksFromNotes()
+//                self.createTabs()
+            self.vid = UUID()
+        }
     }
 
     /// Creates tabs. Simples.
@@ -2097,7 +2114,7 @@ extension WidgetLibrary.UI.SuggestedLinksInRange {
     /// Get links from jobs created or updated on a given day
     /// @TODO: move to Job
     /// - Returns: Void
-    private func getLinksFromJobs() -> Void {
+    private func getLinksFromJobs() async -> Void {
         let jobs = CoreDataJob(moc: self.state.moc).inRange(
             start: self.start,
             end: self.end
@@ -2123,7 +2140,7 @@ extension WidgetLibrary.UI.SuggestedLinksInRange {
     /// Find links in notes created on a given day
     /// @TODO: Move to Note
     /// - Returns: Void
-    private func getLinksFromNotes() -> Void {
+    private func getLinksFromNotes() async -> Void {
         let notes = CoreDataNotes(moc: self.state.moc).inRange(
             start: self.start,
             end: self.end
