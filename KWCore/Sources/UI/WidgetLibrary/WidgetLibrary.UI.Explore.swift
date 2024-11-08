@@ -84,7 +84,8 @@ extension WidgetLibrary.UI {
                                 standalone: true,
                                 location: .content,
                                 mode: .compact,
-                                page: .explore
+                                page: .explore,
+                                scrollable: false
                             )
                         }
                         .padding()
@@ -170,13 +171,20 @@ extension WidgetLibrary.UI {
                                         end: self.state.session.timeline.date.endOfWeek,
                                         format: "w"
                                     )
-                                    UI.InteractionsInRange(
-                                        start: self.state.session.timeline.date.startOfWeek,
-                                        end: self.state.session.timeline.date.endOfWeek,
-                                        format: "w"
-                                    )
+                                    EmptyView()
+//                                    UI.InteractionsInRange(
+//                                        start: self.state.session.timeline.date.startOfWeek,
+//                                        end: self.state.session.timeline.date.endOfWeek,
+//                                        format: "w"
+//                                    )
                                 }
                             }
+                            FancyDivider()
+                            UI.InteractionsInRange(
+                                start: self.state.session.timeline.date.startOfWeek,
+                                end: self.state.session.timeline.date.endOfWeek,
+                                format: "w"
+                            )
                         }
                     }
                 }
@@ -205,13 +213,15 @@ extension WidgetLibrary.UI {
                                         end: self.state.session.timeline.date.endOfMonth,
                                         format: "MMMM"
                                     )
-                                    UI.InteractionsInRange(
-                                        start: self.state.session.timeline.date.startOfMonth,
-                                        end: self.state.session.timeline.date.endOfMonth,
-                                        format: "MMMM"
-                                    )
+                                    EmptyView()
                                 }
                             }
+                            FancyDivider()
+                            UI.InteractionsInRange(
+                                start: self.state.session.timeline.date.startOfMonth,
+                                end: self.state.session.timeline.date.endOfMonth,
+                                format: "MMMM"
+                            )
                         }
                     }
                 }
@@ -240,13 +250,15 @@ extension WidgetLibrary.UI {
                                         end: self.state.session.timeline.date.endOfYear,
                                         format: "yyyy"
                                     )
-                                    UI.InteractionsInRange(
-                                        start: self.state.session.timeline.date.startOfYear,
-                                        end: self.state.session.timeline.date.endOfYear,
-                                        format: "yyyy"
-                                    )
+                                    EmptyView()
                                 }
                             }
+                            FancyDivider()
+                            UI.InteractionsInRange(
+                                start: self.state.session.timeline.date.startOfYear,
+                                end: self.state.session.timeline.date.endOfYear,
+                                format: "yyyy"
+                            )
                         }
                     }
                 }
