@@ -9,7 +9,6 @@
 import SwiftUI
 
 struct TypedListRowBackground: View {
-    @EnvironmentObject private var state: Navigation
     public let colour: Color
     public let type: PageConfiguration.EntityType
 

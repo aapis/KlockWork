@@ -1794,6 +1794,13 @@ extension WidgetLibrary {
                         if let entity = self.entity as? Company {
                             entity.linkRowView
                                 .underline(self.isHighlighted)
+                                .contextMenu {
+                                    Button("Inspect", action: {
+                                        let entity = self.entity as? Company
+                                        self.state.session.search.inspectingEntity = entity
+                                        self.state.setInspector(AnyView(Inspector(entity: entity)))
+                                    })
+                                }
                         }
                     }
                     .buttonStyle(.plain)
@@ -1808,6 +1815,13 @@ extension WidgetLibrary {
                         if let entity = self.entity as? Project {
                             entity.linkRowView
                                 .underline(self.isHighlighted)
+                                .contextMenu {
+                                    Button("Inspect", action: {
+                                        let entity = self.entity as? Project
+                                        self.state.session.search.inspectingEntity = entity
+                                        self.state.setInspector(AnyView(Inspector(entity: entity)))
+                                    })
+                                }
                         }
                     }
                     .buttonStyle(.plain)
@@ -1823,6 +1837,13 @@ extension WidgetLibrary {
                         if let entity = self.entity as? Job {
                             entity.linkRowView
                                 .underline(self.isHighlighted)
+                                .contextMenu {
+                                    Button("Inspect", action: {
+                                        let entity = self.entity as? Job
+                                        self.state.session.search.inspectingEntity = entity
+                                        self.state.setInspector(AnyView(Inspector(entity: entity)))
+                                    })
+                                }
                         }
                     }
                     .buttonStyle(.plain)
@@ -1848,7 +1869,7 @@ extension WidgetLibrary {
 
             var body: some View {
                 VStack {
-                    UI.ListLinkTitle(text: "Information for \(self.state.session.timeline.formatted(self.format))")
+                    UI.ListLinkTitle(text: "Stats for \(self.state.session.timeline.formatted(self.format))")
                     UI.ActivityLinks(activities: self.activities)
                     Spacer()
                 }
@@ -1869,7 +1890,8 @@ extension WidgetLibrary.UI.InformationForRange {
     /// Find information/stats for the given range
     /// - Returns: Void
     private func find() async -> Void {
-        
+        // @TODO: integrate with Assessment here
+//        if let assessment = self.state.activities.
     }
 }
 
