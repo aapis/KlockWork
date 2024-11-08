@@ -47,11 +47,13 @@ extension Company {
     @ViewBuilder var linkRowView: some View {
         HStack {
             Text(self.name ?? "Error: Invalid company name")
-                .foregroundStyle(self.backgroundColor.isBright() ? Theme.base : .white)
             Spacer()
             Image(systemName: "chevron.right")
         }
+        .foregroundStyle(self.backgroundColor.isBright() ? Theme.base : .white)
         .padding(8)
         .background(self.backgroundColor)
+        // @TODO: view cuts off and can't be read sometimes
+//        .background(TypedListRowBackground(colour: self.backgroundColor, type: .companies))
     }
 }
