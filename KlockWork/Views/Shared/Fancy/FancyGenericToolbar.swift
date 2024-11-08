@@ -82,6 +82,7 @@ struct FancyGenericToolbar: View {
     public var mode: ToolbarMode = .full
     public var page: PageConfiguration.AppPage?
     public var alwaysShowTab: Bool = false
+    public var scrollable: Bool = true
     @State public var selected: Int = 0
 
     var body: some View {
@@ -125,7 +126,7 @@ struct FancyGenericToolbar: View {
                             Theme.textBackground
                         }
 
-                        ScrollView(showsIndicators: false) {
+                        if !self.scrollable {
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(buttons, id: \ToolbarButton.id) { button in
                                     if button.id == selected && button.contents != nil {
@@ -135,8 +136,21 @@ struct FancyGenericToolbar: View {
                                 }
                             }
                             .clipShape(.rect(topLeadingRadius: self.location == .content && self.buttons.count == 0 ? 5 : 0, topTrailingRadius: self.location == .content ? 5 : 0))
+                        } else {
+                            ScrollView(showsIndicators: false) {
+                                VStack(alignment: .leading, spacing: 0) {
+                                    ForEach(buttons, id: \ToolbarButton.id) { button in
+                                        if button.id == selected && button.contents != nil {
+                                            button.contents
+                                                .clipShape(.rect(bottomLeadingRadius: self.location == .content ? 5 : 0, bottomTrailingRadius: self.location == .content ? 5 : 0))
+                                        }
+                                    }
+                                }
+                                .clipShape(.rect(topLeadingRadius: self.location == .content && self.buttons.count == 0 ? 5 : 0, topTrailingRadius: self.location == .content ? 5 : 0))
+                            }
+                            .padding(standalone ? 0 : 20)
                         }
-                        .padding(standalone ? 0 : 20)
+
                     }
                 }
             }
