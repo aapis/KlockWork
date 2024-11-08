@@ -252,7 +252,28 @@ public class CoreDataNotes {
 
         return query(predicate)
     }
-    
+
+    /// Find all entities created within a date range
+    /// - Parameters:
+    ///   - start: Date
+    ///   - end: Date
+    /// - Returns: Array<NSManagedObjedct>
+    public func inRange(start: Date?, end: Date?) -> [Note] {
+        if (start == nil || end == nil) || end! < start! {
+            return []
+        }
+
+        let predicate = NSPredicate(
+            format: "((postedDate > %@ && postedDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@))",
+            start! as CVarArg,
+            end! as CVarArg,
+            start! as CVarArg,
+            end! as CVarArg
+        )
+
+        return query(predicate)
+    }
+
     /// Find notes by Job
     /// - Parameter job: Job
     /// - Returns: [Note]

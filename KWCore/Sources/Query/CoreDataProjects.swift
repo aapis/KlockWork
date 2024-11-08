@@ -367,6 +367,43 @@ public class CoreDataProjects: ObservableObject {
         return Array(set).sorted(by: {$0.lastUpdate ?? Date() > $1.lastUpdate ?? Date()})
     }
 
+    /// Find all interactions within a certain date range
+    /// - Parameter start: Date
+    /// - Parameter end: Date
+    /// - Returns: Array<NSManagedObject>
+    public func interactionsIn(start: Date?, end: Date?) -> [Project] {
+        if start != nil && end != nil {
+            let records = CoreDataRecords(moc: self.moc!).inRange(start: start!, end: end!)
+            if records.count == 0 {
+                return []
+            }
+
+            var set: Set<Project> = []
+
+            for record in records {
+                if let entity = record.job?.project {
+                    set.insert(entity)
+                }
+            }
+
+            let predicate = NSPredicate(
+                format: "(created > %@ && created < %@) || (lastUpdate > %@ && lastUpdate < %@)",
+                start! as CVarArg,
+                end! as CVarArg,
+                start! as CVarArg,
+                end! as CVarArg
+            )
+
+            for entity in query(predicate) {
+                set.insert(entity)
+            }
+
+            return Array(set).sorted(by: {$0.lastUpdate ?? Date() > $1.lastUpdate ?? Date()})
+        }
+
+        return []
+    }
+
     /// Find all projects that have a name and are not hidden
     /// - Returns: Array<Project>
     public func indescriminate() -> [Project] {

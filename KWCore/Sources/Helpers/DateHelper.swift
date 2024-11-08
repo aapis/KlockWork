@@ -314,6 +314,21 @@ final public class DateHelper {
 
         return nil
     }
+    
+    /// Construct a date object for a given string representation of that date
+    /// - Parameters:
+    ///   - asString: String
+    ///   - format: String
+    /// - Returns: Optional(Date)
+    static public func date(from asString: String, format: String = "yyyy/M/dd HH:mm") -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = format
+        if let date = formatter.date(from: asString) {
+            return date
+        }
+
+        return nil
+    }
 
     /// Checks to see if the selected date is the current day
     /// - Parameter day: IdentifiableDay

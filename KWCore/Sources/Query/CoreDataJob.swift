@@ -326,6 +326,25 @@ public class CoreDataJob: ObservableObject {
 
         return query(predicate)
     }
+    
+    /// Find all entities created within a date range
+    /// - Parameters:
+    ///   - start: Date
+    ///   - end: Date
+    /// - Returns: Array<NSManagedObject>
+    public func inRange(start: Date?, end: Date?) -> [Job] {
+        if (start == nil || end == nil) || end! < start! {
+            return []
+        }
+
+        let predicate = NSPredicate(
+            format: "created > %@ && created <= %@ && project != nil",
+            start! as CVarArg,
+            end! as CVarArg
+        )
+
+        return query(predicate)
+    }
 
     /// Find all entities interacted with on a given date
     /// - Parameter date: Date
@@ -356,6 +375,43 @@ public class CoreDataJob: ObservableObject {
         }
 
         return Array(set).sorted(by: {$0.lastUpdate ?? Date() > $1.lastUpdate ?? Date()})
+    }
+
+    /// Find all interactions within a certain date range
+    /// - Parameter start: Date
+    /// - Parameter end: Date
+    /// - Returns: Array<NSManagedObject>
+    public func interactionsIn(start: Date?, end: Date?) -> [Job] {
+        if start != nil && end != nil {
+            let records = CoreDataRecords(moc: self.moc!).inRange(start: start!, end: end!)
+            if records.count == 0 {
+                return []
+            }
+
+            var set: Set<Job> = []
+
+            for record in records {
+                if let entity = record.job {
+                    set.insert(entity)
+                }
+            }
+
+            let predicate = NSPredicate(
+                format: "created > %@ && created < %@ && project != nil",
+                start! as CVarArg,
+                end! as CVarArg,
+                start! as CVarArg,
+                end! as CVarArg
+            )
+
+            for entity in query(predicate) {
+                set.insert(entity)
+            }
+
+            return Array(set).sorted(by: {$0.lastUpdate ?? Date() > $1.lastUpdate ?? Date()})
+        }
+
+        return []
     }
 
     /// Count of all jobs created on a specific date. Used in aggregate queries, mainly.

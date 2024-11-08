@@ -322,6 +322,43 @@ public class CoreDataCompanies: ObservableObject {
         return Array(set).sorted(by: {$0.lastUpdate ?? Date() > $1.lastUpdate ?? Date()})
     }
 
+    /// Find all interactions within a certain date range
+    /// - Parameter start: Date
+    /// - Parameter end: Date
+    /// - Returns: Array<NSManagedObject>
+    public func interactionsIn(start: Date?, end: Date?) -> [Company] {
+        if start != nil && end != nil {
+            let records = CoreDataRecords(moc: self.moc!).inRange(start: start!, end: end!)
+            if records.count == 0 {
+                return []
+            }
+
+            var set: Set<Company> = []
+
+            for record in records {
+                if let company = record.job?.project?.company {
+                    set.insert(company)
+                }
+            }
+
+            let predicate = NSPredicate(
+                format: "(createdDate > %@ && createdDate < %@) || (lastUpdate > %@ && lastUpdate < %@)",
+                start! as CVarArg,
+                end! as CVarArg,
+                start! as CVarArg,
+                end! as CVarArg
+            )
+
+            for entity in query(predicate) {
+                set.insert(entity)
+            }
+
+            return Array(set).sorted(by: {$0.lastUpdate ?? Date() > $1.lastUpdate ?? Date()})
+        }
+
+        return []
+    }
+
     /// Create a new company
     /// - Parameters:
     ///   - name: Company name
