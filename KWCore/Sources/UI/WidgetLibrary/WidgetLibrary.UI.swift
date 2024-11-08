@@ -898,7 +898,6 @@ extension WidgetLibrary {
             public var format: String = "yyyy"
             @State private var activities: [Activity] = []
             @State private var tabs: [ToolbarButton] = []
-            @State private var vid: UUID = UUID()
 
             var body: some View {
                 VStack {
@@ -1834,6 +1833,43 @@ extension WidgetLibrary {
                 }
             }
         }
+
+        // MARK: InformationForRange
+        struct InformationForRange: View {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
+            public var start: Date?
+            public var end: Date?
+            public var format: String = "yyyy"
+            @State private var activities: [Activity] = []
+
+            var body: some View {
+                VStack {
+                    UI.ListLinkTitle(text: "Information for \(self.state.session.timeline.formatted(self.format))")
+                    UI.ActivityLinks(activities: self.activities)
+                    Spacer()
+                }
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.InformationForRange {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        Task {
+            await self.find()
+        }
+    }
+    
+    /// Find information/stats for the given range
+    /// - Returns: Void
+    private func find() async -> Void {
+        
     }
 }
 
@@ -1846,7 +1882,7 @@ extension WidgetLibrary.UI.SimpleEntityList {
         }
     }
 
-    /// Onload handler. Sets view state
+    /// Finds all interactions for the start/end or selected date
     /// - Returns: Void
     private func findInteractions() async -> Void {
         switch self.type {
@@ -2091,7 +2127,6 @@ extension WidgetLibrary.UI.SuggestedLinksInRange {
             await self.getLinksFromJobs()
             await self.getLinksFromNotes()
 //                self.createTabs()
-            self.vid = UUID()
         }
     }
 

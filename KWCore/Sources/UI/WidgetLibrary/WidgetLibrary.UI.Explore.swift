@@ -171,12 +171,11 @@ extension WidgetLibrary.UI {
                                         end: self.state.session.timeline.date.endOfWeek,
                                         format: "w"
                                     )
-                                    EmptyView()
-//                                    UI.InteractionsInRange(
-//                                        start: self.state.session.timeline.date.startOfWeek,
-//                                        end: self.state.session.timeline.date.endOfWeek,
-//                                        format: "w"
-//                                    )
+                                    UI.InformationForRange(
+                                        start: self.state.session.timeline.date.startOfWeek,
+                                        end: self.state.session.timeline.date.endOfWeek,
+                                        format: "w"
+                                    )
                                 }
                             }
                             FancyDivider()
@@ -213,7 +212,11 @@ extension WidgetLibrary.UI {
                                         end: self.state.session.timeline.date.endOfMonth,
                                         format: "MMMM"
                                     )
-                                    EmptyView()
+                                    UI.InformationForRange(
+                                        start: self.state.session.timeline.date.startOfWeek,
+                                        end: self.state.session.timeline.date.endOfWeek,
+                                        format: "MMMM"
+                                    )
                                 }
                             }
                             FancyDivider()
@@ -250,7 +253,11 @@ extension WidgetLibrary.UI {
                                         end: self.state.session.timeline.date.endOfYear,
                                         format: "yyyy"
                                     )
-                                    EmptyView()
+                                    UI.InformationForRange(
+                                        start: self.state.session.timeline.date.startOfWeek,
+                                        end: self.state.session.timeline.date.endOfWeek,
+                                        format: "yyyy"
+                                    )
                                 }
                             }
                             FancyDivider()
