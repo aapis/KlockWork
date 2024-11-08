@@ -13,52 +13,136 @@ extension WidgetLibrary.UI {
     struct Explore {
         struct Visualization {
             // MARK: Explore.Visualization.Timeline
-            struct Timeline: View {
-                @EnvironmentObject public var state: Navigation
-                @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
-                private var threeCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 3) }
-                private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
+            struct Timeline {
+                enum TimelineTab: CaseIterable {
+                    case day, week, month, year
 
-                var body: some View {
-                    VStack(alignment: .leading, spacing: 0) {
-                        UI.SearchTypeFilter()
-                            .background(self.state.session.appPage.primaryColour)
-                            .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
-                            .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
-                        FancyHelpText(
-                            text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
-                            page: self.state.session.appPage
+                    var icon: String {
+                        switch self {
+                        case .day: "d.square.fill"
+                        case .week: "w.square.fill"
+                        case .month: "m.square.fill"
+                        case .year: "y.square.fill"
+                        }
+                    }
+
+                    var id: Int {
+                        switch self {
+                        case .day: 0
+                        case .week: 1
+                        case .month: 2
+                        case .year: 3
+                        }
+                    }
+
+                    var help: String {
+                        switch self {
+                        case .day: "Show 1 day"
+                        case .week: "Show 1 week"
+                        case .month: "Show 1 month"
+                        case .year: "Show 1 year"
+                        }
+                    }
+
+                    var title: String {
+                        switch self {
+                        case .day: "Day"
+                        case .week: "Week"
+                        case .month: "Month"
+                        case .year: "Year"
+                        }
+                    }
+
+                    var view: AnyView {
+                        switch self {
+                        case .day: AnyView(ByDay())
+                        case .week: AnyView(EmptyView())
+                        case .month: AnyView(EmptyView())
+                        case .year: AnyView(EmptyView())
+                        }
+                    }
+
+                    var button: ToolbarButton {
+                        ToolbarButton(
+                            id: self.id,
+                            helpText: self.help,
+                            icon: self.icon,
+                            labelText: self.title,
+                            contents: self.view
                         )
-                        FancyDivider()
-                        // @TODO: add up to 3 widgets here (plan, tasks, score, ???)
-                        //                    LazyVGrid(columns: self.threeCol, alignment: .center) {
-                        //                        VStack {
-                        //                            UI.ListLinkTitle(text: "Tasks")
-                        //                            Forecast(
-                        //                                date: DateHelper.startOfDay(self.state.session.timeline.date),
-                        //                                type: .button,
-                        //                                page: self.state.session.appPage
-                        //                            )
-                        //                        }
-                        //                        VStack {
-                        //                            UI.ListLinkTitle(text: "Score")
-                        //                            GlobalSidebarWidgets.ScoreButton()
-                        //                        }
-                        //                    }
-                        //                    FancyDivider()
-                        VStack(spacing: 0) {
-                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
-                                GridRow {
-                                    UI.LinkListForDate()
-                                    UI.EntityInteractionsForDate()
+                    }
+                }
+
+                struct Widget: View {
+                    @EnvironmentObject public var nav: Navigation
+                    private var tabs: [ToolbarButton] = []
+
+                    var body: some View {
+                        VStack {
+                            FancyGenericToolbar(
+                                buttons: self.tabs,
+                                standalone: true,
+                                location: .content,
+                                mode: .compact,
+                                page: .explore
+                            )
+                        }
+                        .padding()
+                        .background(Theme.toolbarColour)
+                    }
+
+                    init() {
+                        TimelineTab.allCases.forEach { tab in
+                            self.tabs.append(tab.button)
+                        }
+                    }
+                }
+
+                struct ByDay: View {
+                    @EnvironmentObject public var state: Navigation
+                    @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+                    private var threeCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 3) }
+                    private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
+
+                    var body: some View {
+                        VStack(alignment: .leading, spacing: 0) {
+                            UI.SearchTypeFilter()
+                                .background(self.state.session.appPage.primaryColour)
+                                .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
+                                .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                            FancyHelpText(
+                                text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
+                                page: self.state.session.appPage
+                            )
+                            FancyDivider()
+                            // @TODO: add up to 3 widgets here (plan, tasks, score, ???)
+                            //                    LazyVGrid(columns: self.threeCol, alignment: .center) {
+                            //                        VStack {
+                            //                            UI.ListLinkTitle(text: "Tasks")
+                            //                            Forecast(
+                            //                                date: DateHelper.startOfDay(self.state.session.timeline.date),
+                            //                                type: .button,
+                            //                                page: self.state.session.appPage
+                            //                            )
+                            //                        }
+                            //                        VStack {
+                            //                            UI.ListLinkTitle(text: "Score")
+                            //                            GlobalSidebarWidgets.ScoreButton()
+                            //                        }
+                            //                    }
+                            //                    FancyDivider()
+                            VStack(spacing: 0) {
+                                LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                                    GridRow {
+                                        UI.LinkListForDate()
+                                        UI.EntityInteractionsForDate()
+                                    }
                                 }
                             }
+                            FancyDivider()
+                            UI.ActivityFeed()
                         }
-                        FancyDivider()
-                        UI.ActivityFeed()
                     }
-                    .padding()
-                    .background(Theme.toolbarColour)
                 }
             }
         }
