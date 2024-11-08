@@ -1307,6 +1307,7 @@ extension WidgetLibrary {
                                         .padding([.leading, .trailing], 4)
                                         .background(Theme.lightBase)
                                         .foregroundStyle(Theme.lightWhite)
+                                        .opacity(self.company == nil ? 0.5 : 1)
                                 }
 
                                 if let abbreviation = self.company?.abbreviation {
