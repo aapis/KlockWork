@@ -46,6 +46,14 @@ struct Home: View {
             labelText: "Calendar events",
             contents: AnyView(WidgetLibrary.UI.Sidebar.EventsWidget())
         ),
+        // Experimental navigator
+//        ToolbarButton(
+//            id: 3,
+//            helpText: "X",
+//            icon: "xmark",
+//            labelText: "X",
+//            contents: AnyView(WidgetLibrary.UI.Navigator(location: .sidebar))
+//        ),
     ]
 
     private let page: APage = .find

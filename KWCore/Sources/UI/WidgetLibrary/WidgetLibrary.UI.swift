@@ -2116,7 +2116,7 @@ extension WidgetLibrary.UI.ActivityFeed {
         let current = calendar.dateComponents([.year, .month, .day], from: self.state.session.date)
 
         if current.isValidDate == false {
-            for offset in 0...maxYearsPastInHistory {
+            for offset in 0...self.maxYearsPastInHistory {
                 let offsetYear = ((offset * -1) + current.year!)
                 let components = DateComponents(year: offsetYear, month: current.month!, day: current.day!)
                 if let day = calendar.date(from: components) {
