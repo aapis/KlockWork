@@ -287,9 +287,10 @@ extension WidgetLibrary.UI {
                         VStack(alignment: .leading, spacing: 0) {
                             VStack(alignment: .leading) {
                                 UI.SearchTypeFilter()
-                                VStack(alignment: .leading) {
-                                    DatePicker("Start", selection: $start)
-                                    DatePicker("End", selection: $end)
+                                HStack {
+                                    DatePicker("Start", selection: $start).labelsHidden()
+                                    Text("To")
+                                    DatePicker("End", selection: $end).labelsHidden()
                                 }
                                 .padding(8)
                             }
