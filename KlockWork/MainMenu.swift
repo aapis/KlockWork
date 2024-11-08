@@ -11,6 +11,7 @@ import KWCore
 
 struct MainMenu: Commands {
     @AppStorage("widgetlibrary.ui.isSidebarPresented") private var isSidebarPresented: Bool = false
+    @AppStorage("widgetlibrary.ui.entitycalendar.isMinimized") private var isCalendarMinimized: Bool = false
     public var state: Navigation
 
     public var body: some Commands {
@@ -52,8 +53,10 @@ struct MainMenu: Commands {
 
         CommandGroup(after: .sidebar) {
             Divider()
-            Button("Show/hide Sidebar") { self.isSidebarPresented.toggle() }
+            Button("Show or hide Sidebar") { self.isSidebarPresented.toggle() }
                 .keyboardShortcut("b", modifiers: [.control, .shift])
+            Button("Show or hide Calendar") { self.isCalendarMinimized.toggle() }
+                .keyboardShortcut("f", modifiers: [.control, .shift])
             Divider()
         }
     }
