@@ -895,13 +895,14 @@ extension WidgetLibrary {
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
             public var start: Date?
             public var end: Date?
-            public var format: String = "yyyy"
+            public var format: String?
             @State private var activities: [Activity] = []
             @State private var tabs: [ToolbarButton] = []
+            @State private var vid: UUID = UUID()
 
             var body: some View {
                 VStack {
-                    UI.ListLinkTitle(text: "Suggested links from \(self.state.session.timeline.formatted(self.format))")
+                    UI.ListLinkTitle(text: "Suggested links from \(self.format == nil ? "period" : self.state.session.timeline.formatted(self.format!))")
                     UI.ActivityLinks(activities: self.activities)
                     Spacer()
                     // @TODO: ActivityLinks needs some tinkering to make it work within a tool view
@@ -915,10 +916,13 @@ extension WidgetLibrary {
 //                    )
 //                    .frame(height: 200)
                 }
+                .id(self.vid)
                 .frame(minHeight: 200)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
                 .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
+                .onChange(of: self.start) { self.actionOnAppear() }
+                .onChange(of: self.end) { self.actionOnAppear() }
             }
         }
 
@@ -965,14 +969,14 @@ extension WidgetLibrary {
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
             public var start: Date?
             public var end: Date?
-            public var format: String = "yyyy"
+            public var format: String?
             @State private var activities: [Activity] = []
             @State private var tabs: [ToolbarButton] = []
             @State private var vid: UUID = UUID()
 
             var body: some View {
                 VStack {
-                    UI.ListLinkTitle(text: "Interactions from \(self.state.session.timeline.formatted(self.format))")
+                    UI.ListLinkTitle(text: "Interactions from \(self.format == nil ? "period" : self.state.session.timeline.formatted(self.format!))")
                     FancyGenericToolbar(
                         buttons: self.tabs,
                         standalone: true,
@@ -990,6 +994,8 @@ extension WidgetLibrary {
                 .onChange(of: self.showCompanies) { self.actionOnAppear() }
                 .onChange(of: self.showProjects) { self.actionOnAppear() }
                 .onChange(of: self.showJobs) { self.actionOnAppear() }
+                .onChange(of: self.start) { self.actionOnAppear() }
+                .onChange(of: self.end) { self.actionOnAppear() }
             }
         }
 
@@ -2013,7 +2019,7 @@ extension WidgetLibrary.UI.InteractionsInRange {
         self.tabs.append(
             ToolbarButton(
                 id: 0,
-                helpText: "Jobs interacted with in \(self.state.session.timeline.formatted(self.format))",
+                helpText: "Jobs interacted with in \(self.format == nil ? "period" : self.state.session.timeline.formatted(self.format!))",
                 icon: "hammer",
                 labelText: "Jobs",
                 contents: AnyView(
@@ -2025,7 +2031,7 @@ extension WidgetLibrary.UI.InteractionsInRange {
             self.tabs.append(
                 ToolbarButton(
                     id: 1,
-                    helpText: "Projects interacted with in \(self.state.session.timeline.formatted(self.format))",
+                    helpText: "Projects interacted with in \(self.format == nil ? "period" : self.state.session.timeline.formatted(self.format!))",
                     icon: "folder",
                     labelText: "Projects",
                     contents: AnyView(
@@ -2038,7 +2044,7 @@ extension WidgetLibrary.UI.InteractionsInRange {
             self.tabs.append(
                 ToolbarButton(
                     id: 2,
-                    helpText: "Companies interacted with in \(self.state.session.timeline.formatted(self.format))",
+                    helpText: "Companies interacted with in \(self.format == nil ? "period" : self.state.session.timeline.formatted(self.format!))",
                     icon: "building.2",
                     labelText: "Companies",
                     contents: AnyView(
@@ -2047,6 +2053,7 @@ extension WidgetLibrary.UI.InteractionsInRange {
                 )
             )
         }
+        self.vid = UUID()
     }
 }
 
@@ -2150,6 +2157,7 @@ extension WidgetLibrary.UI.SuggestedLinksInRange {
             await self.getLinksFromJobs()
             await self.getLinksFromNotes()
 //                self.createTabs()
+            self.vid = UUID()
         }
     }
 

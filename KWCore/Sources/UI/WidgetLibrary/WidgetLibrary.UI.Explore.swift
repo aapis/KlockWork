@@ -15,7 +15,7 @@ extension WidgetLibrary.UI {
             // MARK: Explore.Visualization.Timeline
             struct Timeline {
                 enum TimelineTab: CaseIterable {
-                    case day, week, month, year
+                    case day, week, month, year, custom
 
                     var icon: String {
                         switch self {
@@ -23,6 +23,7 @@ extension WidgetLibrary.UI {
                         case .week: "w.square.fill"
                         case .month: "m.square.fill"
                         case .year: "y.square.fill"
+                        case .custom: "c.square.fill"
                         }
                     }
 
@@ -32,6 +33,7 @@ extension WidgetLibrary.UI {
                         case .week: 1
                         case .month: 2
                         case .year: 3
+                        case .custom: 4
                         }
                     }
 
@@ -41,6 +43,7 @@ extension WidgetLibrary.UI {
                         case .week: "Show 1 week"
                         case .month: "Show 1 month"
                         case .year: "Show 1 year"
+                        case .custom: "Custom range"
                         }
                     }
 
@@ -50,6 +53,7 @@ extension WidgetLibrary.UI {
                         case .week: "Week"
                         case .month: "Month"
                         case .year: "Year"
+                        case .custom: "Custom Range"
                         }
                     }
 
@@ -59,6 +63,7 @@ extension WidgetLibrary.UI {
                         case .week: AnyView(ByWeek())
                         case .month: AnyView(ByMonth())
                         case .year: AnyView(ByYear())
+                        case .custom: AnyView(ByCustomRange())
                         }
                     }
 
@@ -265,6 +270,53 @@ extension WidgetLibrary.UI {
                                 start: self.state.session.timeline.date.startOfYear,
                                 end: self.state.session.timeline.date.endOfYear,
                                 format: "yyyy"
+                            )
+                        }
+                    }
+                }
+
+                // MARK: ByCustomRange
+                struct ByCustomRange: View {
+                    @EnvironmentObject public var state: Navigation
+                    @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+                    @State private var start: Date = Date()
+                    @State private var end: Date = Date() + 86400
+                    private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
+
+                    var body: some View {
+                        VStack(alignment: .leading, spacing: 0) {
+                            VStack(alignment: .leading) {
+                                UI.SearchTypeFilter()
+                                VStack(alignment: .leading) {
+                                    DatePicker("Start", selection: $start)
+                                    DatePicker("End", selection: $end)
+                                }
+                                .padding(8)
+                            }
+                            .background(self.state.session.appPage.primaryColour)
+                            .clipShape(.rect(topTrailingRadius: 5))
+                            .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                            FancyHelpText(
+                                text: "Browse through historical records period \(DateHelper.todayShort(self.start, format: "MM/dd/yyyy HH:mm")) to \(DateHelper.todayShort(self.end, format: "MM/dd/yyyy HH:mm"))",
+                                page: self.state.session.appPage
+                            )
+                            FancyDivider()
+                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                                GridRow {
+                                    UI.SuggestedLinksInRange(
+                                        start: self.start,
+                                        end: self.end
+                                    )
+                                    UI.InformationForRange(
+                                        start: self.start,
+                                        end: self.end
+                                    )
+                                }
+                            }
+                            FancyDivider()
+                            UI.InteractionsInRange(
+                                start: self.start,
+                                end: self.end
                             )
                         }
                     }
