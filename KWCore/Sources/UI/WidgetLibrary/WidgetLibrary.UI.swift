@@ -904,7 +904,6 @@ extension WidgetLibrary {
                 VStack {
                     UI.ListLinkTitle(text: "Suggested links from \(self.state.session.timeline.formatted(self.format))")
                     UI.ActivityLinks(activities: self.activities)
-                        .frame(height: 200)
                     // @TODO: ActivityLinks needs some tinkering to make it work within a tool view
 //                    FancyGenericToolbar(
 //                        buttons: self.tabs,
@@ -981,7 +980,6 @@ extension WidgetLibrary {
                         page: .explore,
                         alwaysShowTab: true
                     )
-                    .frame(height: 200)
                 }
                 .id(self.vid)
                 .onAppear(perform: self.actionOnAppear)
@@ -1042,21 +1040,23 @@ extension WidgetLibrary {
             @State private var vid: UUID = UUID()
 
             var body: some View {
-                VStack(alignment: .leading, spacing: 0) {
-                    ToolbarButtons()
-                    if self.activities.count > 0 {
-                        ForEach(self.currentActivities) { activity in
-                            if let view = activity.view {
-                                view
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        ToolbarButtons()
+                        if self.activities.count > 0 {
+                            ForEach(self.currentActivities) { activity in
+                                if let view = activity.view {
+                                    view
+                                }
                             }
+                            UI.Pagination(entityCount: self.activities.count)
+                        } else {
+                            LogRowEmpty(
+                                message: "No activities found for \(DateHelper.todayShort(self.historicalDate, format: "MMMM dd, YYYY"))",
+                                index: 0,
+                                colour: Theme.rowColour
+                            )
                         }
-                        UI.Pagination(entityCount: self.activities.count)
-                    } else {
-                        LogRowEmpty(
-                            message: "No activities found for \(DateHelper.todayShort(self.historicalDate, format: "MMMM dd, YYYY"))",
-                            index: 0,
-                            colour: Theme.rowColour
-                        )
                     }
                 }
                 .id(self.vid)
