@@ -71,19 +71,21 @@ extension WidgetLibrary.UI {
     }
 
     struct Navigator: View {
+        public var location: WidgetLocation = .content
         private var buttons: [ToolbarButton] = []
 
         var body: some View {
             FancyGenericToolbar(
                 buttons: buttons,
                 standalone: true,
-                location: .content,
+                location: self.location,
                 mode: .compact,
                 page: .explore
             )
         }
 
-        init() {
+        init(location: WidgetLocation = .content) {
+            self.location = location
             // @TODO: temp removing folders so it can be finished or removed later
             Mode.allCases.filter({$0 != .folders}).forEach { tab in
                 buttons.append(tab.button)
@@ -110,7 +112,7 @@ extension WidgetLibrary.UI.Navigator {
         @State private var jobs: [Job] = []
         @State private var newProjectName: String = ""
         @State private var id: UUID = UUID()
-        public var location: WidgetLocation = .content
+        public var location: WidgetLocation = .content // @TODO: need to be able to set this in Mode.view, somehow
         private var columns: [GridItem] {
             return Array(repeating: .init(.flexible(minimum: 100)), count: 6)
         }
@@ -160,7 +162,7 @@ extension WidgetLibrary.UI.Navigator {
                         .padding()
                     } else {
                         ForEach(self.companies, id: \.objectID) { company in
-                            Row(entity: company)
+                            Row(entity: company, location: self.location)
                         }
                     }
                 } else {
@@ -211,18 +213,20 @@ extension WidgetLibrary.UI.Navigator {
             HStack {
                 Text("Name")
                 Spacer()
-                Button {
-                    self.navigatorSortModifiedOrder.toggle()
-                } label: {
-                    Text("Modified")
+                if self.location == .content {
+                    Button {
+                        self.navigatorSortModifiedOrder.toggle()
+                    } label: {
+                        Text("Modified")
+                    }
+                    .buttonStyle(.plain)
+                    Button {
+                        self.navigatorSortCreatedOrder.toggle()
+                    } label: {
+                        Text("Created")
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
-                Button {
-                    self.navigatorSortCreatedOrder.toggle()
-                } label: {
-                    Text("Created")
-                }
-                .buttonStyle(.plain)
             }
             .font(.caption)
             .padding(4)
@@ -255,6 +259,7 @@ extension WidgetLibrary.UI.Navigator {
             @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateJob") private var shouldCreateJob: Bool = false
             @AppStorage("widget.navigator.depth") private var depth: Int = 0
             public let entity: NSManagedObject
+            public let location: WidgetLocation
             @State private var label: String = ""
             @State private var lastModified: Date? = nil
             @State private var created: Date? = nil
@@ -327,25 +332,25 @@ extension WidgetLibrary.UI.Navigator {
                                 if let child = child as? Company {
                                     // @TODO: do this check in actionOnAppear instead
                                     if self.state.planning.companies.contains(child) {
-                                        Row(entity: child)
+                                        Row(entity: child, location: self.location)
                                     }
                                 }
                             case is Project:
                                 if let child = child as? Project {
                                     if self.state.planning.projects.contains(child) {
-                                        Row(entity: child)
+                                        Row(entity: child, location: self.location)
                                     }
                                 }
                             case is Job:
                                 if let child = child as? Job {
                                     if self.state.planning.jobs.contains(child) {
-                                        Row(entity: child)
+                                        Row(entity: child, location: self.location)
                                     }
                                 }
                             default: EmptyView()
                             }
                         } else {
-                            Row(entity: child)
+                            Row(entity: child, location: self.location)
                         }
                     }
                 }
@@ -372,10 +377,6 @@ extension WidgetLibrary.UI.Navigator {
                             }
                         }
                     }
-                    // @TODO: remove if still commented out
-//                    if self.state.session.job != nil {
-//                        US.Timeline(job: self.state.session.job!)
-//                    }
                 }
                 .padding(.leading)
             }
@@ -419,16 +420,18 @@ extension WidgetLibrary.UI.Navigator {
                         )
                     Spacer()
 
-                    HStack {
-                        if let modifiedDate = self.lastModified {
-                            Text(modifiedDate.formatted())
-                        }
+                    if self.location == .content {
+                        HStack {
+                            if let modifiedDate = self.lastModified {
+                                Text(modifiedDate.formatted())
+                            }
 
-                        if let createdDate = self.created {
-                            Text(createdDate.formatted())
+                            if let createdDate = self.created {
+                                Text(createdDate.formatted())
+                            }
                         }
+                        .foregroundStyle(.gray)
                     }
-                    .foregroundStyle(.gray)
                 }
                 .padding(8)
                 .background(
