@@ -150,6 +150,7 @@ extension WidgetLibrary.UI {
                 struct ByWeek: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+                    private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
 
                     var body: some View {
                         VStack(alignment: .leading, spacing: 0) {
@@ -158,10 +159,24 @@ extension WidgetLibrary.UI {
                                 .clipShape(.rect(topTrailingRadius: 5))
                                 .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
                             FancyHelpText(
-                                text: "Browse through historical records for week \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
+                                text: "Browse through historical records for week \(DateHelper.todayShort(self.state.session.date, format: "w"))",
                                 page: self.state.session.appPage
                             )
                             FancyDivider()
+                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                                GridRow {
+                                    UI.SuggestedLinksInRange(
+                                        start: self.state.session.timeline.date.startOfWeek,
+                                        end: self.state.session.timeline.date.endOfWeek,
+                                        format: "w"
+                                    )
+                                    UI.InteractionsInRange(
+                                        start: self.state.session.timeline.date.startOfWeek,
+                                        end: self.state.session.timeline.date.endOfWeek,
+                                        format: "w"
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -170,6 +185,7 @@ extension WidgetLibrary.UI {
                 struct ByMonth: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+                    private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
 
                     var body: some View {
                         VStack(alignment: .leading, spacing: 0) {
@@ -178,10 +194,24 @@ extension WidgetLibrary.UI {
                                 .clipShape(.rect(topTrailingRadius: 5))
                                 .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
                             FancyHelpText(
-                                text: "Browse through historical records for week \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
+                                text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "MMMM"))",
                                 page: self.state.session.appPage
                             )
                             FancyDivider()
+                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                                GridRow {
+                                    UI.SuggestedLinksInRange(
+                                        start: self.state.session.timeline.date.startOfMonth,
+                                        end: self.state.session.timeline.date.endOfMonth,
+                                        format: "MMMM"
+                                    )
+                                    UI.InteractionsInRange(
+                                        start: self.state.session.timeline.date.startOfMonth,
+                                        end: self.state.session.timeline.date.endOfMonth,
+                                        format: "MMMM"
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -190,6 +220,7 @@ extension WidgetLibrary.UI {
                 struct ByYear: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+                    private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
 
                     var body: some View {
                         VStack(alignment: .leading, spacing: 0) {
@@ -198,10 +229,24 @@ extension WidgetLibrary.UI {
                                 .clipShape(.rect(topTrailingRadius: 5))
                                 .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
                             FancyHelpText(
-                                text: "Browse through historical records for week \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
+                                text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "yyyy"))",
                                 page: self.state.session.appPage
                             )
                             FancyDivider()
+                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                                GridRow {
+                                    UI.SuggestedLinksInRange(
+                                        start: self.state.session.timeline.date.startOfYear,
+                                        end: self.state.session.timeline.date.endOfYear,
+                                        format: "yyyy"
+                                    )
+                                    UI.InteractionsInRange(
+                                        start: self.state.session.timeline.date.startOfYear,
+                                        end: self.state.session.timeline.date.endOfYear,
+                                        format: "yyyy"
+                                    )
+                                }
+                            }
                         }
                     }
                 }
