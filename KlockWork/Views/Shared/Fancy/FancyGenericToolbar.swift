@@ -40,7 +40,7 @@ struct ToolbarButton: Hashable, Equatable {
     init(id: Int, helpText: String, icon: String, labelText: String, contents: AnyView?, showIcon: Bool = true, showLabel: Bool = true) {
         self.id = id
         self.helpText = helpText
-        self.icon = AnyView(Image(systemName: icon).symbolRenderingMode(.hierarchical).font(.title2))
+        self.icon = AnyView(Image(systemName: icon).symbolRenderingMode(.hierarchical).font(.title3))
         self.label = AnyView(
             HStack {
                 self.icon
@@ -56,7 +56,7 @@ struct ToolbarButton: Hashable, Equatable {
     init(id: Int, helpText: String, icon: Image, labelText: String, contents: AnyView?, showIcon: Bool = true, showLabel: Bool = true) {
         self.id = id
         self.helpText = helpText
-        self.icon = AnyView(icon.symbolRenderingMode(.hierarchical).font(.title2))
+        self.icon = AnyView(icon.symbolRenderingMode(.hierarchical).font(.title3))
         self.label = AnyView(
             HStack {
                 self.icon
