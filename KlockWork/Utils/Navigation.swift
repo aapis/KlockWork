@@ -253,13 +253,17 @@ extension Navigation {
     }
 
     public struct Timeline {
-        var date: Date = Date()
-        
+        var date: Date? = nil
+
         /// Format self.date
         /// - Parameter format: String
         /// - Returns: String
         func formatted(_ format: String = "yyyy") -> String {
-            return DateHelper.todayShort(self.date, format: format)
+            if self.date != nil {
+                return DateHelper.todayShort(self.date!, format: format)
+            }
+
+            return ""
         }
     }
 

@@ -174,23 +174,22 @@ extension WidgetLibrary.UI {
                             if !self.isWeekAtAGlanceMinimized {
                                 UI.ActivityFeed()
                             }
-                            FancyDivider()
+                            Spacer()
                             LazyVGrid(columns: self.twoCol, alignment: .leading) {
                                 GridRow {
                                     UI.SuggestedLinksInRange(
-                                        start: self.state.session.date.startOfWeek,
-                                        end: self.state.session.date.endOfWeek,
+                                        start: self.state.session.timeline.date?.startOfWeek,
+                                        end: self.state.session.timeline.date?.endOfWeek,
                                         format: "w"
                                     )
                                     UI.InteractionsInRange(
-                                        start: self.state.session.date.startOfWeek,
-                                        end: self.state.session.date.endOfWeek,
+                                        start: self.state.session.timeline.date?.startOfWeek,
+                                        end: self.state.session.timeline.date?.endOfWeek,
                                         format: "w"
                                     )
                                     .frame(maxHeight: 200)
                                 }
                             }
-                            Spacer()
                         }
                     }
                 }
@@ -215,8 +214,8 @@ extension WidgetLibrary.UI {
                             LazyVGrid(columns: self.twoCol, alignment: .leading) {
                                 GridRow {
                                     UI.SuggestedLinksInRange(
-                                        start: self.state.session.timeline.date.startOfMonth,
-                                        end: self.state.session.timeline.date.endOfMonth,
+                                        start: self.state.session.timeline.date?.startOfMonth,
+                                        end: self.state.session.timeline.date?.endOfMonth,
                                         format: "MMMM"
                                     )
                                     EmptyView()
@@ -224,8 +223,8 @@ extension WidgetLibrary.UI {
                             }
                             FancyDivider()
                             UI.InteractionsInRange(
-                                start: self.state.session.timeline.date.startOfMonth,
-                                end: self.state.session.timeline.date.endOfMonth,
+                                start: self.state.session.timeline.date?.startOfMonth,
+                                end: self.state.session.timeline.date?.endOfMonth,
                                 format: "MMMM"
                             )
                         }
@@ -252,8 +251,8 @@ extension WidgetLibrary.UI {
                             LazyVGrid(columns: self.twoCol, alignment: .leading) {
                                 GridRow {
                                     UI.SuggestedLinksInRange(
-                                        start: self.state.session.timeline.date.startOfYear,
-                                        end: self.state.session.timeline.date.endOfYear,
+                                        start: self.state.session.timeline.date?.startOfYear,
+                                        end: self.state.session.timeline.date?.endOfYear,
                                         format: "yyyy"
                                     )
                                     EmptyView()
@@ -261,8 +260,8 @@ extension WidgetLibrary.UI {
                             }
                             FancyDivider()
                             UI.InteractionsInRange(
-                                start: self.state.session.timeline.date.startOfYear,
-                                end: self.state.session.timeline.date.endOfYear,
+                                start: self.state.session.timeline.date?.startOfYear,
+                                end: self.state.session.timeline.date?.endOfYear,
                                 format: "yyyy"
                             )
                         }

@@ -1882,7 +1882,7 @@ extension WidgetLibrary.UI.SimpleEntityList {
             if self.start != nil && self.end != nil {
                 source = CoreDataCompanies(moc: self.state.moc).interactionsIn(start: self.start, end: self.end)
             } else {
-                source = CoreDataCompanies(moc: self.state.moc).interactionsOn(self.state.session.timeline.date)
+                source = CoreDataCompanies(moc: self.state.moc).interactionsOn(self.state.session.timeline.date ?? self.state.session.date)
             }
 
             for entity in source {
@@ -1897,7 +1897,7 @@ extension WidgetLibrary.UI.SimpleEntityList {
             if self.start != nil && self.end != nil {
                 source = CoreDataProjects(moc: self.state.moc).interactionsIn(start: self.start, end: self.end)
             } else {
-                source = CoreDataProjects(moc: self.state.moc).interactionsOn(self.state.session.timeline.date)
+                source = CoreDataProjects(moc: self.state.moc).interactionsOn(self.state.session.timeline.date ?? self.state.session.date)
             }
 
             for entity in source {
@@ -1912,7 +1912,7 @@ extension WidgetLibrary.UI.SimpleEntityList {
             if self.start != nil && self.end != nil {
                 source = CoreDataJob(moc: self.state.moc).interactionsIn(start: self.start, end: self.end)
             } else {
-                source = CoreDataJob(moc: self.state.moc).interactionsOn(self.state.session.timeline.date)
+                source = CoreDataJob(moc: self.state.moc).interactionsOn(self.state.session.timeline.date ?? self.state.session.date)
             }
 
             for entity in source {
@@ -2052,19 +2052,21 @@ extension WidgetLibrary.UI.LinkListForDate {
     /// Get links from jobs created or updated on a given day
     /// - Returns: Void
     private func getLinksFromJobs() async -> Void {
-        let jobs = CoreDataJob(moc: self.state.moc).forDate(self.state.session.timeline.date)
-        for job in jobs {
-            if let uri = job.uri {
-                if uri.absoluteString != "https://" {
-                    self.activities.append(
-                        Activity(
-                            name: uri.absoluteString,
-                            page: self.state.parent ?? .dashboard,
-                            type: .activity,
-                            job: job,
-                            url: uri.absoluteURL
+        if let date = self.state.session.timeline.date {
+            let jobs = CoreDataJob(moc: self.state.moc).forDate(date)
+            for job in jobs {
+                if let uri = job.uri {
+                    if uri.absoluteString != "https://" {
+                        self.activities.append(
+                            Activity(
+                                name: uri.absoluteString,
+                                page: self.state.parent ?? .dashboard,
+                                type: .activity,
+                                job: job,
+                                url: uri.absoluteURL
+                            )
                         )
-                    )
+                    }
                 }
             }
         }
@@ -2073,32 +2075,34 @@ extension WidgetLibrary.UI.LinkListForDate {
     /// Find links in notes created on a given day
     /// - Returns: Void
     private func getLinksFromNotes() async -> Void {
-        let notes = CoreDataNotes(moc: self.state.moc).find(for: self.state.session.timeline.date)
-        for note in notes {
-            if let versions = note.versions?.allObjects as? [NoteVersion] {
-                for version in versions {
-                    if let content = version.content {
-                        let linkRegex = /https:\/\/([^ \n]+)/
-                        if let match = content.firstMatch(of: linkRegex) {
-                            let sMatch = String(match.0)
-                            let linkLength = 40
-                            var label: String = sMatch
+        if let date = self.state.session.timeline.date {
+            let notes = CoreDataNotes(moc: self.state.moc).find(for: date)
+            for note in notes {
+                if let versions = note.versions?.allObjects as? [NoteVersion] {
+                    for version in versions {
+                        if let content = version.content {
+                            let linkRegex = /https:\/\/([^ \n]+)/
+                            if let match = content.firstMatch(of: linkRegex) {
+                                let sMatch = String(match.0)
+                                let linkLength = 40
+                                var label: String = sMatch
 
-                            if sMatch.count > linkLength {
-                                label = label.prefix(linkLength) + "..."
-                            }
-                            if !self.activities.contains(where: {$0.name == label}) {
-                                self.activities.append(
-                                    Activity(
-                                        name: label,
-                                        help: sMatch,
-                                        page: self.state.parent ?? .dashboard,
-                                        type: .activity,
-                                        job: note.mJob,
-                                        source: version,
-                                        url: URL(string: sMatch) ?? nil
+                                if sMatch.count > linkLength {
+                                    label = label.prefix(linkLength) + "..."
+                                }
+                                if !self.activities.contains(where: {$0.name == label}) {
+                                    self.activities.append(
+                                        Activity(
+                                            name: label,
+                                            help: sMatch,
+                                            page: self.state.parent ?? .dashboard,
+                                            type: .activity,
+                                            job: note.mJob,
+                                            source: version,
+                                            url: URL(string: sMatch) ?? nil
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     }
@@ -2112,7 +2116,7 @@ extension WidgetLibrary.UI.SuggestedLinksInRange {
     /// Onload handler. Sets view state
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        self.state.session.timeline.date = self.state.session.date
+//        self.state.session.timeline.date = self.state.session.date
         self.activities = []
 
         Task {

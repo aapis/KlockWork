@@ -82,13 +82,13 @@ final public class DateHelper {
     ///   - date: Date
     ///   - format: String
     /// - Returns: Void
-    static public func todayShort(_ date: Date? = Date(), format: String = "yyyy-MM-dd") -> String {
+    static public func todayShort(_ date: Date = Date(), format: String = "yyyy-MM-dd") -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = format
         formatter.timeZone = TimeZone.autoupdatingCurrent
         formatter.locale = NSLocale.current
         
-        return formatter.string(from: date!)
+        return formatter.string(from: date)
     }
     
     static public func shortDate(_ date: String) -> Date? {
@@ -100,13 +100,13 @@ final public class DateHelper {
         return formatter.date(from: date)
     }
 
-    static public func shortDateWithTime(_ date: Date? = Date()) -> String {
+    static public func shortDateWithTime(_ date: Date = Date()) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd h:mm a"
         formatter.timeZone = TimeZone.autoupdatingCurrent
         formatter.locale = NSLocale.current
         
-        return formatter.string(from: date!)
+        return formatter.string(from: date)
     }
     
     static public func longDate(_ timestamp: Date) -> String {
