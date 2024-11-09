@@ -187,7 +187,7 @@ extension WidgetLibrary.UI {
                                         end: self.state.session.date.endOfWeek,
                                         format: "w"
                                     )
-                                    .frame(maxHeight: 300)
+                                    .frame(maxHeight: 200)
                                 }
                             }
                             Spacer()
