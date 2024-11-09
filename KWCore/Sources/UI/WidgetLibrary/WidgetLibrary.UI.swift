@@ -886,6 +886,46 @@ extension WidgetLibrary {
             }
         }
 
+        // MARK: SuggestedLinksInRange
+        struct SuggestedLinksInRange: View {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
+            public var start: Date?
+            public var end: Date?
+            public var format: String?
+            @State private var activities: [Activity] = []
+            @State private var tabs: [ToolbarButton] = []
+            @State private var vid: UUID = UUID()
+
+            var body: some View {
+                VStack {
+                    UI.ListLinkTitle(text: "Suggested links from \(self.format == nil ? "period" : self.state.session.timeline.formatted(self.format!))")
+                    UI.ActivityLinks(activities: self.activities)
+                    Spacer()
+                    // @TODO: ActivityLinks needs some tinkering to make it work within a tool view
+//                    FancyGenericToolbar(
+//                        buttons: self.tabs,
+//                        standalone: true,
+//                        location: .content,
+//                        mode: .compact,
+//                        page: .explore,
+//                        alwaysShowTab: true
+//                    )
+//                    .frame(height: 200)
+                }
+                .id(self.vid)
+                .frame(minHeight: 200)
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.date) { self.actionOnAppear() }
+                .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
+                .onChange(of: self.start) { self.actionOnAppear() }
+                .onChange(of: self.end) { self.actionOnAppear() }
+            }
+        }
+
         // MARK: EntityInteractionsForDate
         struct EntityInteractionsForDate: View {
             @EnvironmentObject private var state: Navigation
@@ -917,6 +957,45 @@ extension WidgetLibrary {
                 .onChange(of: self.showCompanies) { self.actionOnAppear() }
                 .onChange(of: self.showProjects) { self.actionOnAppear() }
                 .onChange(of: self.showJobs) { self.actionOnAppear() }
+            }
+        }
+
+        // MARK: InteractionsInRange
+        struct InteractionsInRange: View {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
+            public var start: Date?
+            public var end: Date?
+            public var format: String?
+            @State private var activities: [Activity] = []
+            @State private var tabs: [ToolbarButton] = []
+            @State private var vid: UUID = UUID()
+
+            var body: some View {
+                VStack {
+                    UI.ListLinkTitle(text: "Interactions from \(self.format == nil ? "period" : self.state.session.timeline.formatted(self.format!))")
+                    FancyGenericToolbar(
+                        buttons: self.tabs,
+                        standalone: true,
+                        location: .content,
+                        mode: .compact,
+                        page: .explore,
+                        alwaysShowTab: true
+                    )
+                }
+                .frame(minHeight: 200)
+                .id(self.vid)
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.date) { self.vid = UUID() }
+                .onChange(of: self.state.session.timeline.date) { self.vid = UUID() ; self.actionOnAppear() }
+                .onChange(of: self.showCompanies) { self.actionOnAppear() }
+                .onChange(of: self.showProjects) { self.actionOnAppear() }
+                .onChange(of: self.showJobs) { self.actionOnAppear() }
+                .onChange(of: self.start) { self.actionOnAppear() }
+                .onChange(of: self.end) { self.actionOnAppear() }
             }
         }
 
@@ -969,21 +1048,23 @@ extension WidgetLibrary {
             @State private var vid: UUID = UUID()
 
             var body: some View {
-                VStack(alignment: .leading, spacing: 0) {
-                    ToolbarButtons()
-                    if self.activities.count > 0 {
-                        ForEach(self.currentActivities) { activity in
-                            if let view = activity.view {
-                                view
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        ToolbarButtons()
+                        if self.activities.count > 0 {
+                            ForEach(self.currentActivities) { activity in
+                                if let view = activity.view {
+                                    view
+                                }
                             }
+                            UI.Pagination(entityCount: self.activities.count)
+                        } else {
+                            LogRowEmpty(
+                                message: "No activities found for \(DateHelper.todayShort(self.historicalDate, format: "MMMM dd, YYYY"))",
+                                index: 0,
+                                colour: Theme.rowColour
+                            )
                         }
-                        UI.Pagination(entityCount: self.activities.count)
-                    } else {
-                        LogRowEmpty(
-                            message: "No activities found for \(DateHelper.todayShort(self.historicalDate, format: "MMMM dd, YYYY"))",
-                            index: 0,
-                            colour: Theme.rowColour
-                        )
                     }
                 }
                 .id(self.vid)
@@ -1232,6 +1313,7 @@ extension WidgetLibrary {
                                         .padding([.leading, .trailing], 4)
                                         .background(Theme.lightBase)
                                         .foregroundStyle(Theme.lightWhite)
+                                        .opacity(self.company == nil ? 0.5 : 1)
                                 }
 
                                 if let abbreviation = self.company?.abbreviation {
@@ -1678,6 +1760,8 @@ extension WidgetLibrary {
         struct SimpleEntityList: View {
             @EnvironmentObject private var state: Navigation
             public let type: EType
+            public var start: Date?
+            public var end: Date?
             @State private var entities: [SimpleEntityRow] = []
 
             var body: some View {
@@ -1717,6 +1801,13 @@ extension WidgetLibrary {
                         if let entity = self.entity as? Company {
                             entity.linkRowView
                                 .underline(self.isHighlighted)
+                                .contextMenu {
+                                    Button("Inspect", action: {
+                                        let entity = self.entity as? Company
+                                        self.state.session.search.inspectingEntity = entity
+                                        self.state.setInspector(AnyView(Inspector(entity: entity)))
+                                    })
+                                }
                         }
                     }
                     .buttonStyle(.plain)
@@ -1731,6 +1822,13 @@ extension WidgetLibrary {
                         if let entity = self.entity as? Project {
                             entity.linkRowView
                                 .underline(self.isHighlighted)
+                                .contextMenu {
+                                    Button("Inspect", action: {
+                                        let entity = self.entity as? Project
+                                        self.state.session.search.inspectingEntity = entity
+                                        self.state.setInspector(AnyView(Inspector(entity: entity)))
+                                    })
+                                }
                         }
                     }
                     .buttonStyle(.plain)
@@ -1746,6 +1844,13 @@ extension WidgetLibrary {
                         if let entity = self.entity as? Job {
                             entity.linkRowView
                                 .underline(self.isHighlighted)
+                                .contextMenu {
+                                    Button("Inspect", action: {
+                                        let entity = self.entity as? Job
+                                        self.state.session.search.inspectingEntity = entity
+                                        self.state.setInspector(AnyView(Inspector(entity: entity)))
+                                    })
+                                }
                         }
                     }
                     .buttonStyle(.plain)
@@ -1763,9 +1868,22 @@ extension WidgetLibrary.UI.SimpleEntityList {
     /// Onload handler. Sets view state
     /// - Returns: Void
     private func actionOnAppear() -> Void {
+        Task {
+            await self.findInteractions()
+        }
+    }
+
+    /// Finds all interactions for the start/end or selected date
+    /// - Returns: Void
+    private func findInteractions() async -> Void {
         switch self.type {
         case .companies:
-            let source = CoreDataCompanies(moc: self.state.moc).interactionsOn(self.state.session.timeline.date)
+            var source: [Company]
+            if self.start != nil && self.end != nil {
+                source = CoreDataCompanies(moc: self.state.moc).interactionsIn(start: self.start, end: self.end)
+            } else {
+                source = CoreDataCompanies(moc: self.state.moc).interactionsOn(self.state.session.timeline.date ?? self.state.session.date)
+            }
 
             for entity in source {
                 self.entities.append(
@@ -1775,7 +1893,12 @@ extension WidgetLibrary.UI.SimpleEntityList {
                 )
             }
         case .projects:
-            let source = CoreDataProjects(moc: self.state.moc).interactionsOn(self.state.session.timeline.date)
+            var source: [Project]
+            if self.start != nil && self.end != nil {
+                source = CoreDataProjects(moc: self.state.moc).interactionsIn(start: self.start, end: self.end)
+            } else {
+                source = CoreDataProjects(moc: self.state.moc).interactionsOn(self.state.session.timeline.date ?? self.state.session.date)
+            }
 
             for entity in source {
                 self.entities.append(
@@ -1785,7 +1908,12 @@ extension WidgetLibrary.UI.SimpleEntityList {
                 )
             }
         case .jobs:
-            let source = CoreDataJob(moc: self.state.moc).interactionsOn(self.state.session.timeline.date)
+            var source: [Job]
+            if self.start != nil && self.end != nil {
+                source = CoreDataJob(moc: self.state.moc).interactionsIn(start: self.start, end: self.end)
+            } else {
+                source = CoreDataJob(moc: self.state.moc).interactionsOn(self.state.session.timeline.date ?? self.state.session.date)
+            }
 
             for entity in source {
                 self.entities.append(
@@ -1845,15 +1973,64 @@ extension WidgetLibrary.UI.EntityInteractionsForDate {
     }
 }
 
+extension WidgetLibrary.UI.InteractionsInRange {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.tabs = []
+        self.tabs.append(
+            ToolbarButton(
+                id: 0,
+                helpText: "Jobs interacted with in \(self.format == nil ? "period" : self.state.session.timeline.formatted(self.format!))",
+                icon: "hammer",
+                labelText: "Jobs",
+                contents: AnyView(
+                    UI.SimpleEntityList(type: .jobs, start: self.start, end: self.end)
+                )
+            )
+        )
+        if self.showProjects {
+            self.tabs.append(
+                ToolbarButton(
+                    id: 1,
+                    helpText: "Projects interacted with in \(self.format == nil ? "period" : self.state.session.timeline.formatted(self.format!))",
+                    icon: "folder",
+                    labelText: "Projects",
+                    contents: AnyView(
+                        UI.SimpleEntityList(type: .projects, start: self.start, end: self.end)
+                    )
+                )
+            )
+        }
+        if self.showCompanies {
+            self.tabs.append(
+                ToolbarButton(
+                    id: 2,
+                    helpText: "Companies interacted with in \(self.format == nil ? "period" : self.state.session.timeline.formatted(self.format!))",
+                    icon: "building.2",
+                    labelText: "Companies",
+                    contents: AnyView(
+                        UI.SimpleEntityList(type: .companies, start: self.start, end: self.end)
+                    )
+                )
+            )
+        }
+        self.vid = UUID()
+    }
+}
+
 extension WidgetLibrary.UI.LinkListForDate {
     /// Onload handler. Sets view state
     /// - Returns: Void
     private func actionOnAppear() -> Void {
         self.activities = []
-        self.getLinksFromJobs()
-        self.getLinksFromNotes()
-        self.createTabs()
-        self.vid = UUID()
+
+        Task {
+            await self.getLinksFromJobs()
+            await self.getLinksFromNotes()
+//            self.createTabs()
+            self.vid = UUID()
+        }
     }
     
     /// Creates tabs. Simples.
@@ -1874,8 +2051,107 @@ extension WidgetLibrary.UI.LinkListForDate {
 
     /// Get links from jobs created or updated on a given day
     /// - Returns: Void
-    private func getLinksFromJobs() -> Void {
-        let jobs = CoreDataJob(moc: self.state.moc).forDate(self.state.session.timeline.date)
+    private func getLinksFromJobs() async -> Void {
+        if let date = self.state.session.timeline.date {
+            let jobs = CoreDataJob(moc: self.state.moc).forDate(date)
+            for job in jobs {
+                if let uri = job.uri {
+                    if uri.absoluteString != "https://" {
+                        self.activities.append(
+                            Activity(
+                                name: uri.absoluteString,
+                                page: self.state.parent ?? .dashboard,
+                                type: .activity,
+                                job: job,
+                                url: uri.absoluteURL
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+    
+    /// Find links in notes created on a given day
+    /// - Returns: Void
+    private func getLinksFromNotes() async -> Void {
+        if let date = self.state.session.timeline.date {
+            let notes = CoreDataNotes(moc: self.state.moc).find(for: date)
+            for note in notes {
+                if let versions = note.versions?.allObjects as? [NoteVersion] {
+                    for version in versions {
+                        if let content = version.content {
+                            let linkRegex = /https:\/\/([^ \n]+)/
+                            if let match = content.firstMatch(of: linkRegex) {
+                                let sMatch = String(match.0)
+                                let linkLength = 40
+                                var label: String = sMatch
+
+                                if sMatch.count > linkLength {
+                                    label = label.prefix(linkLength) + "..."
+                                }
+                                if !self.activities.contains(where: {$0.name == label}) {
+                                    self.activities.append(
+                                        Activity(
+                                            name: label,
+                                            help: sMatch,
+                                            page: self.state.parent ?? .dashboard,
+                                            type: .activity,
+                                            job: note.mJob,
+                                            source: version,
+                                            url: URL(string: sMatch) ?? nil
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.SuggestedLinksInRange {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+//        self.state.session.timeline.date = self.state.session.date
+        self.activities = []
+
+        Task {
+            await self.getLinksFromJobs()
+            await self.getLinksFromNotes()
+//                self.createTabs()
+            self.vid = UUID()
+        }
+    }
+
+    /// Creates tabs. Simples.
+    /// - Returns: Void
+    private func createTabs() -> Void {
+        self.tabs = [
+            ToolbarButton(
+                id: 0,
+                helpText: "",
+                icon: "link",
+                labelText: "Links",
+                contents: AnyView(
+                    UI.ActivityLinks(activities: self.activities)
+                )
+            )
+        ]
+    }
+
+    /// Get links from jobs created or updated on a given day
+    /// @TODO: move to Job
+    /// - Returns: Void
+    private func getLinksFromJobs() async -> Void {
+        let jobs = CoreDataJob(moc: self.state.moc).inRange(
+            start: self.start,
+            end: self.end
+        )
+
         for job in jobs {
             if let uri = job.uri {
                 if uri.absoluteString != "https://" {
@@ -1892,36 +2168,43 @@ extension WidgetLibrary.UI.LinkListForDate {
             }
         }
     }
-    
+
     /// Find links in notes created on a given day
+    /// @TODO: Move to Note
     /// - Returns: Void
-    private func getLinksFromNotes() -> Void {
-        let notes = CoreDataNotes(moc: self.state.moc).find(for: self.state.session.timeline.date)
+    private func getLinksFromNotes() async -> Void {
+        let notes = CoreDataNotes(moc: self.state.moc).inRange(
+            start: self.start,
+            end: self.end
+        )
+
         for note in notes {
             if let versions = note.versions?.allObjects as? [NoteVersion] {
                 for version in versions {
-                    if let content = version.content {
-                        let linkRegex = /https:\/\/([^ \n]+)/
-                        if let match = content.firstMatch(of: linkRegex) {
-                            let sMatch = String(match.0)
-                            let linkLength = 40
-                            var label: String = sMatch
+                    if version.created ?? Date() > self.start ?? Date() && version.created ?? Date() < self.end ?? Date() {
+                        if let content = version.content {
+                            let linkRegex = /https:\/\/([^ \n]+)/
+                            if let match = content.firstMatch(of: linkRegex) {
+                                let sMatch = String(match.0)
+                                let linkLength = 40
+                                var label: String = sMatch
 
-                            if sMatch.count > linkLength {
-                                label = label.prefix(linkLength) + "..."
-                            }
-                            if !self.activities.contains(where: {$0.name == label}) {
-                                self.activities.append(
-                                    Activity(
-                                        name: label,
-                                        help: sMatch,
-                                        page: self.state.parent ?? .dashboard,
-                                        type: .activity,
-                                        job: note.mJob,
-                                        source: version,
-                                        url: URL(string: sMatch) ?? nil
+                                if sMatch.count > linkLength {
+                                    label = label.prefix(linkLength) + "..."
+                                }
+                                if !self.activities.contains(where: {$0.name == label}) {
+                                    self.activities.append(
+                                        Activity(
+                                            name: label,
+                                            help: sMatch,
+                                            page: self.state.parent ?? .dashboard,
+                                            type: .activity,
+                                            job: note.mJob,
+                                            source: version,
+                                            url: URL(string: sMatch) ?? nil
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     }
@@ -2124,7 +2407,7 @@ extension WidgetLibrary.UI.ActivityFeed {
                         ToolbarButton(
                             id: offset,
                             helpText: "Show feed this day in \(DateHelper.todayShort(day, format: "yyyy"))",
-                            icon: "calendar",
+                            icon: "\(DateHelper.todayShort(day, format: "yy")).square.fill",
                             labelText: DateHelper.todayShort(day, format: "yyyy"),
                             contents: AnyView(
                                 UI.GenericTimelineActivity(

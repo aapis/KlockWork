@@ -54,12 +54,10 @@ struct NoteVersionNavigationWidget: View {
 
             ZStack(alignment: .topLeading) {
                 role.colour.opacity(0.02)
-                Text("v\(currentVersion)/\(noteVersions.count).\(DateHelper.shortDateWithTime(note.lastUpdate))")
-//                Text("hi")
-//                    .help(help)
-//                    .padding()
+                if let date = note.lastUpdate {
+                    Text("v\(currentVersion)/\(noteVersions.count).\(DateHelper.shortDateWithTime(date))")
+                }
             }
-//            .onAppear(perform: onAppear)
 
             ZStack(alignment: .center) {
                 if role != .important {

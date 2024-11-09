@@ -8,8 +8,8 @@
 
 import SwiftUI
 
-struct DayOfWeek: Identifiable {
-    let id: UUID = UUID()
+public struct DayOfWeek: Identifiable {
+    public let id: UUID = UUID()
     let symbol: String
     var current: Bool {
         let df = DateFormatter()

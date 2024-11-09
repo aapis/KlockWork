@@ -48,15 +48,6 @@ public class CoreDataRecords: ObservableObject {
         PersistenceController.shared.save()
     }
 
-//    static public func hardDelete(_ record: LogRecord) -> (() -> Void) {
-//        let cb: (() -> Void)
-//
-//        CoreDataRecords.softDelete(record)
-//        PersistenceController.shared.delete(record)
-//
-//        return cb
-//    }
-    
     /// Find all objects created on a given date
     /// - Parameters:
     ///   - date: Date
@@ -594,7 +585,21 @@ public class CoreDataRecords: ObservableObject {
 
         return query(predicate)
     }
-    
+
+    /// Finds records created on a specific date that aren't hidden by their parent
+    /// - Parameter start: Date
+    /// - Parameter end: Date
+    /// - Returns: Array<LogRecord>
+    public func inRange(start: Date, end: Date) -> [LogRecord] {
+        let predicate = NSPredicate(
+            format: "timestamp > %@ && timestamp <= %@",
+            start as CVarArg,
+            end as CVarArg
+        )
+
+        return query(predicate)
+    }
+
     /// Finds records created on a given date or whose job ID or title match a given string
     /// - Parameters:
     ///   - date: Date

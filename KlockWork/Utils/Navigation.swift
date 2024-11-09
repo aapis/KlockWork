@@ -253,13 +253,17 @@ extension Navigation {
     }
 
     public struct Timeline {
-        var date: Date = Date()
-        
+        var date: Date? = nil
+
         /// Format self.date
         /// - Parameter format: String
         /// - Returns: String
         func formatted(_ format: String = "yyyy") -> String {
-            return DateHelper.todayShort(self.date, format: format)
+            if self.date != nil {
+                return DateHelper.todayShort(self.date!, format: format)
+            }
+
+            return ""
         }
     }
 
@@ -618,7 +622,7 @@ extension Navigation {
             HistoryPage(page: .explore, view: AnyView(Explore()), sidebar: AnyView(ExploreSidebar()), title: "Explore"),
             HistoryPage(page: .activityFlashcards, view: AnyView(UI.Explore.Activity.FlashcardActivity()), sidebar: AnyView(ExploreSidebar()), title: "Flashcards"),
             HistoryPage(page: .activityCalendar, view: AnyView(UI.ActivityCalendar()), sidebar: AnyView(ExploreSidebar()), title: "Activity Calendar"),
-            HistoryPage(page: .timeline, view: AnyView(UI.Explore.Visualization.Timeline()), sidebar: AnyView(ExploreSidebar()), title: "Timeline"),
+            HistoryPage(page: .timeline, view: AnyView(UI.Explore.Visualization.Timeline.Widget()), sidebar: AnyView(ExploreSidebar()), title: "Timeline"),
         ]
         
         /// A single page representing a page the user navigated to

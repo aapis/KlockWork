@@ -13,52 +13,304 @@ extension WidgetLibrary.UI {
     struct Explore {
         struct Visualization {
             // MARK: Explore.Visualization.Timeline
-            struct Timeline: View {
-                @EnvironmentObject public var state: Navigation
-                @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
-                private var threeCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 3) }
-                private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
+            struct Timeline {
+                enum TimelineTab: CaseIterable {
+                    case day, week, month, year, custom
 
-                var body: some View {
-                    VStack(alignment: .leading, spacing: 0) {
-                        UI.SearchTypeFilter()
-                            .background(self.state.session.appPage.primaryColour)
-                            .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
-                            .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
-                        FancyHelpText(
-                            text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
-                            page: self.state.session.appPage
+                    var icon: String {
+                        switch self {
+                        case .day: "d.square.fill"
+                        case .week: "w.square.fill"
+                        case .month: "m.square.fill"
+                        case .year: "y.square.fill"
+                        case .custom: "c.square.fill"
+                        }
+                    }
+
+                    var id: Int {
+                        switch self {
+                        case .day: 0
+                        case .week: 1
+                        case .month: 2
+                        case .year: 3
+                        case .custom: 4
+                        }
+                    }
+
+                    var help: String {
+                        switch self {
+                        case .day: "Show 1 day"
+                        case .week: "Show 1 week"
+                        case .month: "Show 1 month"
+                        case .year: "Show 1 year"
+                        case .custom: "Custom range"
+                        }
+                    }
+
+                    var title: String {
+                        switch self {
+                        case .day: "Day"
+                        case .week: "Week"
+                        case .month: "Month"
+                        case .year: "Year"
+                        case .custom: "Custom Range"
+                        }
+                    }
+
+                    var view: AnyView {
+                        switch self {
+                        case .day: AnyView(ByDay())
+                        case .week: AnyView(ByWeek())
+                        case .month: AnyView(ByMonth())
+                        case .year: AnyView(ByYear())
+                        case .custom: AnyView(ByCustomRange())
+                        }
+                    }
+
+                    var button: ToolbarButton {
+                        ToolbarButton(
+                            id: self.id,
+                            helpText: self.help,
+                            icon: self.icon,
+                            labelText: self.title,
+                            contents: self.view
                         )
-                        FancyDivider()
-                        // @TODO: add up to 3 widgets here (plan, tasks, score, ???)
-                        //                    LazyVGrid(columns: self.threeCol, alignment: .center) {
-                        //                        VStack {
-                        //                            UI.ListLinkTitle(text: "Tasks")
-                        //                            Forecast(
-                        //                                date: DateHelper.startOfDay(self.state.session.timeline.date),
-                        //                                type: .button,
-                        //                                page: self.state.session.appPage
-                        //                            )
-                        //                        }
-                        //                        VStack {
-                        //                            UI.ListLinkTitle(text: "Score")
-                        //                            GlobalSidebarWidgets.ScoreButton()
-                        //                        }
-                        //                    }
-                        //                    FancyDivider()
-                        VStack(spacing: 0) {
-                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                    }
+                }
+
+                struct Widget: View {
+                    @EnvironmentObject public var nav: Navigation
+                    private var tabs: [ToolbarButton] = []
+
+                    var body: some View {
+                        VStack {
+                            FancyGenericToolbar(
+                                buttons: self.tabs,
+                                standalone: true,
+                                location: .content,
+                                mode: .compact,
+                                page: .explore,
+                                scrollable: false
+                            )
+                        }
+                        .padding()
+                        .background(Theme.toolbarColour)
+                    }
+
+                    init() {
+                        TimelineTab.allCases.forEach { tab in
+                            self.tabs.append(tab.button)
+                        }
+                    }
+                }
+
+                // MARK: ByDay
+                struct ByDay: View {
+                    @EnvironmentObject public var state: Navigation
+                    @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+                    private var threeCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 3) }
+                    private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
+
+                    var body: some View {
+                        VStack(alignment: .leading, spacing: 0) {
+                            UI.SearchTypeFilter()
+                                .background(self.state.session.appPage.primaryColour)
+                                .clipShape(.rect(topTrailingRadius: 5))
+                                .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                            FancyHelpText(
+                                text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
+                                page: self.state.session.appPage
+                            )
+                            FancyDivider()
+                            // @TODO: add up to 3 widgets here (plan, tasks, score, ???)
+                            //                    LazyVGrid(columns: self.threeCol, alignment: .center) {
+                            //                        VStack {
+                            //                            UI.ListLinkTitle(text: "Tasks")
+                            //                            Forecast(
+                            //                                date: DateHelper.startOfDay(self.state.session.timeline.date),
+                            //                                type: .button,
+                            //                                page: self.state.session.appPage
+                            //                            )
+                            //                        }
+                            //                        VStack {
+                            //                            UI.ListLinkTitle(text: "Score")
+                            //                            GlobalSidebarWidgets.ScoreButton()
+                            //                        }
+                            //                    }
+                            //                    FancyDivider()
+                            LazyVGrid(columns: self.twoCol, alignment: .leading, spacing: 0) {
                                 GridRow {
                                     UI.LinkListForDate()
                                     UI.EntityInteractionsForDate()
                                 }
                             }
+                            FancyDivider()
+                            UI.ActivityFeed()
                         }
-                        FancyDivider()
-                        UI.ActivityFeed()
                     }
-                    .padding()
-                    .background(Theme.toolbarColour)
+                }
+
+                // MARK: ByWeek
+                struct ByWeek: View {
+                    @EnvironmentObject public var state: Navigation
+                    @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+                    @AppStorage("widgetlibrary.ui.entitycalendar.isWeekAtAGlanceMinimized") private var isWeekAtAGlanceMinimized: Bool = false
+                    private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
+
+                    var body: some View {
+                        VStack(alignment: .leading, spacing: 0) {
+                            UI.SearchTypeFilter()
+                                .background(self.state.session.appPage.primaryColour)
+                                .clipShape(.rect(topTrailingRadius: 5))
+                                .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                            FancyHelpText(
+                                text: "Browse through historical records for week \(DateHelper.todayShort(self.state.session.date, format: "w"))",
+                                page: self.state.session.appPage
+                            )
+                            FancyDivider()
+                            UI.EntityCalendar.WeekWidget(
+                                start: self.state.session.date.startOfWeek
+                            )
+                            if !self.isWeekAtAGlanceMinimized {
+                                UI.ActivityFeed()
+                            }
+                            Spacer()
+                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                                GridRow {
+                                    UI.SuggestedLinksInRange(
+                                        start: self.state.session.timeline.date?.startOfWeek,
+                                        end: self.state.session.timeline.date?.endOfWeek,
+                                        format: "w"
+                                    )
+                                    UI.InteractionsInRange(
+                                        start: self.state.session.timeline.date?.startOfWeek,
+                                        end: self.state.session.timeline.date?.endOfWeek,
+                                        format: "w"
+                                    )
+                                    .frame(maxHeight: 200)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // MARK: ByMonth
+                struct ByMonth: View {
+                    @EnvironmentObject public var state: Navigation
+                    @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+                    private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
+
+                    var body: some View {
+                        VStack(alignment: .leading, spacing: 0) {
+                            UI.SearchTypeFilter()
+                                .background(self.state.session.appPage.primaryColour)
+                                .clipShape(.rect(topTrailingRadius: 5))
+                                .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                            FancyHelpText(
+                                text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "MMMM"))",
+                                page: self.state.session.appPage
+                            )
+                            FancyDivider()
+                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                                GridRow {
+                                    UI.SuggestedLinksInRange(
+                                        start: self.state.session.timeline.date?.startOfMonth,
+                                        end: self.state.session.timeline.date?.endOfMonth,
+                                        format: "MMMM"
+                                    )
+                                    EmptyView()
+                                }
+                            }
+                            FancyDivider()
+                            UI.InteractionsInRange(
+                                start: self.state.session.timeline.date?.startOfMonth,
+                                end: self.state.session.timeline.date?.endOfMonth,
+                                format: "MMMM"
+                            )
+                        }
+                    }
+                }
+
+                // MARK: ByYear
+                struct ByYear: View {
+                    @EnvironmentObject public var state: Navigation
+                    @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+                    private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
+
+                    var body: some View {
+                        VStack(alignment: .leading, spacing: 0) {
+                            UI.SearchTypeFilter()
+                                .background(self.state.session.appPage.primaryColour)
+                                .clipShape(.rect(topTrailingRadius: 5))
+                                .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                            FancyHelpText(
+                                text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "yyyy"))",
+                                page: self.state.session.appPage
+                            )
+                            FancyDivider()
+                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                                GridRow {
+                                    UI.SuggestedLinksInRange(
+                                        start: self.state.session.timeline.date?.startOfYear,
+                                        end: self.state.session.timeline.date?.endOfYear,
+                                        format: "yyyy"
+                                    )
+                                    EmptyView()
+                                }
+                            }
+                            FancyDivider()
+                            UI.InteractionsInRange(
+                                start: self.state.session.timeline.date?.startOfYear,
+                                end: self.state.session.timeline.date?.endOfYear,
+                                format: "yyyy"
+                            )
+                        }
+                    }
+                }
+
+                // MARK: ByCustomRange
+                struct ByCustomRange: View {
+                    @EnvironmentObject public var state: Navigation
+                    @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+                    @State private var start: Date = Date()
+                    @State private var end: Date = Date() + 86400
+                    private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
+
+                    var body: some View {
+                        VStack(alignment: .leading, spacing: 0) {
+                            VStack(alignment: .leading) {
+                                UI.SearchTypeFilter()
+                                HStack {
+                                    DatePicker("Start", selection: $start).labelsHidden()
+                                    Text("To")
+                                    DatePicker("End", selection: $end).labelsHidden()
+                                }
+                                .padding(8)
+                            }
+                            .background(self.state.session.appPage.primaryColour)
+                            .clipShape(.rect(topTrailingRadius: 5))
+                            .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                            FancyHelpText(
+                                text: "Browse through historical records period \(DateHelper.todayShort(self.start, format: "MM/dd/yyyy HH:mm")) to \(DateHelper.todayShort(self.end, format: "MM/dd/yyyy HH:mm"))",
+                                page: self.state.session.appPage
+                            )
+                            FancyDivider()
+                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                                GridRow {
+                                    UI.SuggestedLinksInRange(
+                                        start: self.start,
+                                        end: self.end
+                                    )
+                                    EmptyView()
+                                }
+                            }
+                            FancyDivider()
+                            UI.InteractionsInRange(
+                                start: self.start,
+                                end: self.end
+                            )
+                        }
+                    }
                 }
             }
         }

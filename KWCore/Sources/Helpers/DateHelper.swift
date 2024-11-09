@@ -82,13 +82,13 @@ final public class DateHelper {
     ///   - date: Date
     ///   - format: String
     /// - Returns: Void
-    static public func todayShort(_ date: Date? = Date(), format: String = "yyyy-MM-dd") -> String {
+    static public func todayShort(_ date: Date = Date(), format: String = "yyyy-MM-dd") -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = format
         formatter.timeZone = TimeZone.autoupdatingCurrent
         formatter.locale = NSLocale.current
         
-        return formatter.string(from: date!)
+        return formatter.string(from: date)
     }
     
     static public func shortDate(_ date: String) -> Date? {
@@ -100,13 +100,13 @@ final public class DateHelper {
         return formatter.date(from: date)
     }
 
-    static public func shortDateWithTime(_ date: Date? = Date()) -> String {
+    static public func shortDateWithTime(_ date: Date = Date()) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd h:mm a"
         formatter.timeZone = TimeZone.autoupdatingCurrent
         formatter.locale = NSLocale.current
         
-        return formatter.string(from: date!)
+        return formatter.string(from: date)
     }
     
     static public func longDate(_ timestamp: Date) -> String {
@@ -310,6 +310,21 @@ final public class DateHelper {
     static public func dayAtStartAndEndOfMonth() -> (CVarArg, CVarArg)? {
         if let dates = DateHelper.datesAtStartAndEndOfMonth(for: Date()) {
             return (dates.0 as CVarArg, dates.1 as CVarArg)
+        }
+
+        return nil
+    }
+    
+    /// Construct a date object for a given string representation of that date
+    /// - Parameters:
+    ///   - asString: String
+    ///   - format: String
+    /// - Returns: Optional(Date)
+    static public func date(from asString: String, format: String = "yyyy/M/dd HH:mm") -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = format
+        if let date = formatter.date(from: asString) {
+            return date
         }
 
         return nil

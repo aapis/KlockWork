@@ -37,7 +37,7 @@ extension Planning {
                         .padding(.top)
                     }
                 }
-                FancyHelpText(text: "Add jobs using the sidebar widget then select the tasks you'd like to focus. This list saves automatically.")
+                FancyHelpText(text: "Add jobs using the sidebar widget then select the tasks you'd like to focus. This list saves automatically.", page: .planning)
             }
             .onAppear(perform: self.actionOnAppear)
             .onChange(of: self.nav.planning.jobs) { self.actionOnAppear() }

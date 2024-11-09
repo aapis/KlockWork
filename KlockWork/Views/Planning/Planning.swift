@@ -69,9 +69,18 @@ struct Planning: View {
                     WidgetLibrary.UI.Meetings()
                 )
             )
-            FancyHelpText(text: description, page: self.page)
+            FancyHelpText(text: self.description, page: self.page)
             FancyDivider()
-            FancyGenericToolbar(buttons: buttons, standalone: true, mode: .compact, page: self.page)
+            UI.EntityCalendar.WeekWidget(
+                start: self.nav.session.date.startOfWeek
+            )
+            FancyDivider()
+            FancyGenericToolbar(
+                buttons: self.buttons,
+                standalone: true,
+                mode: .compact,
+                page: self.page
+            )
         }
         .padding()
         .background(Theme.toolbarColour)
