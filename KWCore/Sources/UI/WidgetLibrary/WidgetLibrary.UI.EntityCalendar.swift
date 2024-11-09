@@ -787,16 +787,11 @@ extension WidgetLibrary.UI.EntityCalendar.Day {
     private func prepareColourData() -> Void {
         self.colourData = []
 
-        let jobsForToday = CoreDataJob(moc: self.state.moc).forDate(self.date)
         if let plan = CoreDataPlan(moc: self.state.moc).forDate(self.date).first {
             if let jobs = plan.jobs?.allObjects as? [Job] {
                 for job in jobs.sorted(by: {$0.created ?? Date() < $1.created ?? Date()}) {
                     self.colourData.insert(job.backgroundColor)
                 }
-            }
-        } else if jobsForToday.count > 0 {
-            for job in jobsForToday {
-                self.colourData.insert(job.backgroundColor)
             }
         } else {
             let jobs = CoreDataTasks(moc: self.state.moc)
@@ -833,16 +828,11 @@ extension WidgetLibrary.UI.EntityCalendar.DayBlock {
     private func prepareColourData() -> Void {
         self.colourData = []
 
-        let jobsForToday = CoreDataJob(moc: self.state.moc).forDate(self.date)
         if let plan = CoreDataPlan(moc: self.state.moc).forDate(self.date).first {
             if let jobs = plan.jobs?.allObjects as? [Job] {
                 for job in jobs.sorted(by: {$0.created ?? Date() < $1.created ?? Date()}) {
                     self.colourData.insert(job.backgroundColor)
                 }
-            }
-        } else if jobsForToday.count > 0 {
-            for job in jobsForToday {
-                self.colourData.insert(job.backgroundColor)
             }
         } else {
             let jobs = CoreDataTasks(moc: self.state.moc)
