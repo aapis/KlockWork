@@ -154,7 +154,6 @@ extension WidgetLibrary.UI {
                 struct ByWeek: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
-                    @AppStorage("widgetlibrary.ui.entitycalendar.isWeekAtAGlanceMinimized") private var isWeekAtAGlanceMinimized: Bool = false
                     private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
 
                     var body: some View {
@@ -171,9 +170,8 @@ extension WidgetLibrary.UI {
                             UI.EntityCalendar.WeekWidget(
                                 start: self.state.session.date.startOfWeek
                             )
-                            if !self.isWeekAtAGlanceMinimized {
-                                UI.ActivityFeed()
-                            }
+                            FancyDivider()
+                            UI.ActivityFeed()
                             Spacer()
                             LazyVGrid(columns: self.twoCol, alignment: .leading) {
                                 GridRow {
