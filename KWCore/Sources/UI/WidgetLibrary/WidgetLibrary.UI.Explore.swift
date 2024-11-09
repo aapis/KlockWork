@@ -168,6 +168,13 @@ extension WidgetLibrary.UI {
                                 page: self.state.session.appPage
                             )
                             FancyDivider()
+                            UI.EntityCalendar.WeekWidget(
+                                start: self.state.session.date.startOfWeek
+                            )
+                            if !self.isWeekAtAGlanceMinimized {
+                                UI.ActivityFeed()
+                            }
+                            FancyDivider()
                             LazyVGrid(columns: self.twoCol, alignment: .leading) {
                                 GridRow {
                                     UI.SuggestedLinksInRange(
@@ -182,13 +189,6 @@ extension WidgetLibrary.UI {
                                     )
                                     .frame(maxHeight: 300)
                                 }
-                            }
-                            FancyDivider()
-                            UI.EntityCalendar.WeekWidget(
-                                start: self.state.session.date.startOfWeek
-                            )
-                            if !self.isWeekAtAGlanceMinimized {
-                                UI.ActivityFeed()
                             }
                             Spacer()
                         }
