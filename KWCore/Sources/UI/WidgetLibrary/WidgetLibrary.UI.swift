@@ -1861,44 +1861,6 @@ extension WidgetLibrary {
                 }
             }
         }
-
-        // MARK: InformationForRange
-        struct InformationForRange: View {
-            @EnvironmentObject private var state: Navigation
-            @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
-            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
-            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
-            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
-            public var start: Date?
-            public var end: Date?
-            public var format: String = "yyyy"
-            @State private var activities: [Activity] = []
-
-            var body: some View {
-                VStack {
-                    UI.ListLinkTitle(text: "Stats for \(self.state.session.timeline.formatted(self.format))")
-                    UI.ActivityLinks(activities: self.activities)
-                    Spacer()
-                }
-            }
-        }
-    }
-}
-
-extension WidgetLibrary.UI.InformationForRange {
-    /// Onload handler. Sets view state
-    /// - Returns: Void
-    private func actionOnAppear() -> Void {
-        Task {
-            await self.find()
-        }
-    }
-    
-    /// Find information/stats for the given range
-    /// - Returns: Void
-    private func find() async -> Void {
-        // @TODO: integrate with Assessment here
-//        if let assessment = self.state.activities.
     }
 }
 
