@@ -138,12 +138,10 @@ extension WidgetLibrary.UI {
                             //                        }
                             //                    }
                             //                    FancyDivider()
-                            VStack(spacing: 0) {
-                                LazyVGrid(columns: self.twoCol, alignment: .leading) {
-                                    GridRow {
-                                        UI.LinkListForDate()
-                                        UI.EntityInteractionsForDate()
-                                    }
+                            LazyVGrid(columns: self.twoCol, alignment: .leading, spacing: 0) {
+                                GridRow {
+                                    UI.LinkListForDate()
+                                    UI.EntityInteractionsForDate()
                                 }
                             }
                             FancyDivider()
@@ -156,6 +154,7 @@ extension WidgetLibrary.UI {
                 struct ByWeek: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+                    @AppStorage("widgetlibrary.ui.entitycalendar.isWeekAtAGlanceMinimized") private var isWeekAtAGlanceMinimized: Bool = false
                     private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
 
                     var body: some View {
@@ -172,23 +171,26 @@ extension WidgetLibrary.UI {
                             LazyVGrid(columns: self.twoCol, alignment: .leading) {
                                 GridRow {
                                     UI.SuggestedLinksInRange(
-                                        start: self.state.session.timeline.date.startOfWeek,
-                                        end: self.state.session.timeline.date.endOfWeek,
+                                        start: self.state.session.date.startOfWeek,
+                                        end: self.state.session.date.endOfWeek,
                                         format: "w"
                                     )
-                                    UI.InformationForRange(
-                                        start: self.state.session.timeline.date.startOfWeek,
-                                        end: self.state.session.timeline.date.endOfWeek,
+                                    UI.InteractionsInRange(
+                                        start: self.state.session.date.startOfWeek,
+                                        end: self.state.session.date.endOfWeek,
                                         format: "w"
                                     )
+                                    .frame(maxHeight: 300)
                                 }
                             }
                             FancyDivider()
-                            UI.InteractionsInRange(
-                                start: self.state.session.timeline.date.startOfWeek,
-                                end: self.state.session.timeline.date.endOfWeek,
-                                format: "w"
+                            UI.EntityCalendar.WeekWidget(
+                                start: self.state.session.date.startOfWeek
                             )
+                            if !self.isWeekAtAGlanceMinimized {
+                                UI.ActivityFeed()
+                            }
+                            Spacer()
                         }
                     }
                 }
@@ -217,11 +219,7 @@ extension WidgetLibrary.UI {
                                         end: self.state.session.timeline.date.endOfMonth,
                                         format: "MMMM"
                                     )
-                                    UI.InformationForRange(
-                                        start: self.state.session.timeline.date.startOfWeek,
-                                        end: self.state.session.timeline.date.endOfWeek,
-                                        format: "MMMM"
-                                    )
+                                    EmptyView()
                                 }
                             }
                             FancyDivider()
@@ -258,11 +256,7 @@ extension WidgetLibrary.UI {
                                         end: self.state.session.timeline.date.endOfYear,
                                         format: "yyyy"
                                     )
-                                    UI.InformationForRange(
-                                        start: self.state.session.timeline.date.startOfWeek,
-                                        end: self.state.session.timeline.date.endOfWeek,
-                                        format: "yyyy"
-                                    )
+                                    EmptyView()
                                 }
                             }
                             FancyDivider()
@@ -308,10 +302,7 @@ extension WidgetLibrary.UI {
                                         start: self.start,
                                         end: self.end
                                     )
-                                    UI.InformationForRange(
-                                        start: self.start,
-                                        end: self.end
-                                    )
+                                    EmptyView()
                                 }
                             }
                             FancyDivider()
