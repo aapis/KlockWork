@@ -57,4 +57,12 @@ extension Date {
         }
         return nil
     }
+
+    var endOfDay: Date? {
+        return DateHelper.endOfDay(self)
+    }
+
+    var startOfDay: Date? {
+        return DateHelper.startOfDay(self)
+    }
 }
