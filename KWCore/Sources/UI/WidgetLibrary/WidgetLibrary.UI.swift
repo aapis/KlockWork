@@ -420,7 +420,7 @@ extension WidgetLibrary {
             public var text: String?
 
             var body: some View {
-                HStack {
+                HStack(alignment: .center) {
                     if let type = self.type {
                         Text(type.title.uppercased())
                     } else if let text = self.text {
@@ -432,7 +432,6 @@ extension WidgetLibrary {
                 }
                 .foregroundStyle(.gray)
                 .font(.caption)
-                .padding(.bottom, 5)
             }
         }
 
@@ -529,7 +528,7 @@ extension WidgetLibrary {
                         } else {
                             UI.ListButtonItem(
                                 callback: {_ in},
-                                name: "None found."
+                                name: "None found for \(DateHelper.todayShort(self.state.session.timeline.date ?? self.state.session.date, format: "yyyy"))"
                             )
                             .disabled(true)
                         }

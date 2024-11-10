@@ -19,8 +19,10 @@ struct WidgetLoading: View {
                 ProgressView()
                 Spacer()
             }
+            .padding()
             Spacer()
         }
+        .padding()
     }
 }
 

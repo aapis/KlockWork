@@ -172,6 +172,7 @@ extension WidgetLibrary.UI {
                             )
                             FancyDivider()
                             UI.ActivityFeed()
+                            FancyDivider()
                             Spacer()
                             LazyVGrid(columns: self.twoCol, alignment: .leading) {
                                 GridRow {

@@ -34,24 +34,15 @@ extension WidgetLibrary.UI {
                                 UI.Buttons.Minimize(isMinimized: $isWeekAtAGlanceMinimized)
                             }
                         }
-                        .padding([.leading, .trailing], 8)
-                        .background(self.isWeekAtAGlanceMinimized ? Theme.textBackground : .clear)
-                        .clipShape(.rect(topLeadingRadius: 5, bottomLeadingRadius: self.isWeekAtAGlanceMinimized ? 5 : 0, bottomTrailingRadius: self.isWeekAtAGlanceMinimized ? 5 : 0, topTrailingRadius: 5))
+                        .padding(8)
+                        .background(self.isWeekAtAGlanceMinimized ? self.state.session.appPage.primaryColour : .clear)
+                        .clipShape(.rect(cornerRadius: 5))
 
                         if !self.isWeekAtAGlanceMinimized {
                             GridRow(alignment: .top) {
-                                ZStack(alignment: .top) {
-                                    LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
-                                        .opacity(0.3)
-                                        .blendMode(.softLight)
-                                        .frame(height: 50)
-                                    Divider()
-                                    LazyVGrid(columns: self.columns, alignment: .leading) {
-                                        ForEach(self.days, id: \.id) { day in day }
-                                    }
-                                    .padding()
+                                LazyVGrid(columns: self.columns, alignment: .leading) {
+                                    ForEach(self.days, id: \.id) { day in day }
                                 }
-                                .clipShape(.rect(cornerRadius: 5))
                             }
                         }
                     }
