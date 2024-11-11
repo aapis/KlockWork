@@ -533,6 +533,7 @@ extension WidgetLibrary {
                             .disabled(true)
                         }
                     }
+                    .padding(.top, 8)
                 }
                 .frame(maxHeight: 200)
             }
@@ -684,8 +685,8 @@ extension WidgetLibrary {
                                                     self.actionOnAppear()
                                                 }
                                             } else {
-                                                Button("Delete") {
-                                                    CDSavedSearch(moc: self.state.moc).destroy(link.label)
+                                                Button("Remove") {
+                                                    CDSavedSearch(moc: self.state.moc).unpublish(link.label)
                                                     self.actionOnAppear()
                                                 }
                                             }
@@ -885,13 +886,10 @@ extension WidgetLibrary {
             }
         }
 
-        // MARK: SuggestedLinksInRange
-        struct SuggestedLinksInRange: View {
+        // MARK: SuggestedStack
+        struct SuggestedStack: View {
             @EnvironmentObject private var state: Navigation
-            @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
-            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
-            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
-            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
+            public var period: UI.Explore.Visualization.Timeline.TimelineTab
             public var start: Date?
             public var end: Date?
             public var format: String?
@@ -901,19 +899,17 @@ extension WidgetLibrary {
 
             var body: some View {
                 VStack {
-                    UI.ListLinkTitle(text: "Suggested links from \(self.format == nil ? "period" : self.state.session.timeline.formatted(self.format!))")
-                    UI.ActivityLinks(activities: self.activities)
+                    UI.ListLinkTitle(text: "Suggested items for \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))")
+                    FancyGenericToolbar(
+                        buttons: self.tabs,
+                        standalone: true,
+                        location: .content,
+                        mode: .compact,
+                        page: .explore,
+                        alwaysShowTab: true
+                    )
+                    .frame(height: 200)
                     Spacer()
-                    // @TODO: ActivityLinks needs some tinkering to make it work within a tool view
-//                    FancyGenericToolbar(
-//                        buttons: self.tabs,
-//                        standalone: true,
-//                        location: .content,
-//                        mode: .compact,
-//                        page: .explore,
-//                        alwaysShowTab: true
-//                    )
-//                    .frame(height: 200)
                 }
                 .id(self.vid)
                 .frame(minHeight: 200)
@@ -922,6 +918,93 @@ extension WidgetLibrary {
                 .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
                 .onChange(of: self.start) { self.actionOnAppear() }
                 .onChange(of: self.end) { self.actionOnAppear() }
+            }
+        }
+
+        // MARK: SuggestedLinksInRange
+        struct SuggestedLinksInRange: View {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
+            public var period: UI.Explore.Visualization.Timeline.TimelineTab
+            public var start: Date?
+            public var end: Date?
+            public var format: String?
+            @State private var activities: [Activity] = []
+            @State private var tabs: [ToolbarButton] = []
+            @State private var vid: UUID = UUID()
+
+            var body: some View {
+                VStack {
+                    UI.ListLinkTitle(text: "Suggested links from \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))")
+                    UI.ActivityLinks(activities: self.activities)
+                }
+                .id(self.vid)
+                .frame(minHeight: 200)
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.date) { self.actionOnAppear() }
+                .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
+                .onChange(of: self.start) { self.actionOnAppear() }
+                .onChange(of: self.end) { self.actionOnAppear() }
+            }
+        }
+
+        // MARK: SavedSearchTermsInRange
+        struct SavedSearchTermsInRange: View {
+            @EnvironmentObject private var state: Navigation
+            public var period: UI.Explore.Visualization.Timeline.TimelineTab
+            public var start: Date?
+            public var end: Date?
+            public var format: String?
+            @State private var vid: UUID = UUID()
+
+            var body: some View {
+                VStack {
+                    UI.ListLinkTitle(text: "Search terms saved in \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))")
+                    SavedSearchTermLinks(
+                        period: self.period,
+                        start: self.start,
+                        end: self.end,
+                        format: self.format
+                    )
+                }
+            }
+        }
+
+        // MARK: SavedSearchTermLinks
+        struct SavedSearchTermLinks: View {
+            @EnvironmentObject private var state: Navigation
+            public var period: UI.Explore.Visualization.Timeline.TimelineTab
+            public var start: Date?
+            public var end: Date?
+            public var format: String?
+            @State private var terms: [SavedSearch] = []
+            @State private var vid: UUID = UUID()
+
+            var body: some View {
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 1) {
+                        if self.terms.count > 0 {
+                            ForEach(self.terms, id: \.id) { savedSearch in
+                                UI.Buttons.SavedSearchTerm(savedSearch: savedSearch)
+                            }
+                        } else {
+                            UI.ListButtonItem(
+                                callback: {_ in},
+                                name: "None found for \(DateHelper.todayShort(self.state.session.date, format: "yyyy"))"
+                            )
+                            .disabled(true)
+                        }
+                    }
+                    .padding(.top, 8)
+                }
+                .id(self.vid)
+                .frame(minHeight: 200)
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.date) { self.actionOnAppear() }
+                .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
             }
         }
 
@@ -966,6 +1049,7 @@ extension WidgetLibrary {
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
+            public var period: UI.Explore.Visualization.Timeline.TimelineTab
             public var start: Date?
             public var end: Date?
             public var format: String?
@@ -975,7 +1059,7 @@ extension WidgetLibrary {
 
             var body: some View {
                 VStack {
-                    UI.ListLinkTitle(text: "Interactions from \(self.format == nil ? "period" : self.state.session.timeline.formatted(self.format!))")
+                    UI.ListLinkTitle(text: "Interactions from \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))")
                     FancyGenericToolbar(
                         buttons: self.tabs,
                         standalone: true,
@@ -2115,31 +2199,13 @@ extension WidgetLibrary.UI.SuggestedLinksInRange {
     /// Onload handler. Sets view state
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-//        self.state.session.timeline.date = self.state.session.date
         self.activities = []
 
         Task {
             await self.getLinksFromJobs()
             await self.getLinksFromNotes()
-//                self.createTabs()
             self.vid = UUID()
         }
-    }
-
-    /// Creates tabs. Simples.
-    /// - Returns: Void
-    private func createTabs() -> Void {
-        self.tabs = [
-            ToolbarButton(
-                id: 0,
-                helpText: "",
-                icon: "link",
-                labelText: "Links",
-                contents: AnyView(
-                    UI.ActivityLinks(activities: self.activities)
-                )
-            )
-        ]
     }
 
     /// Get links from jobs created or updated on a given day
@@ -2172,43 +2238,108 @@ extension WidgetLibrary.UI.SuggestedLinksInRange {
     /// @TODO: Move to Note
     /// - Returns: Void
     private func getLinksFromNotes() async -> Void {
-        let notes = CoreDataNotes(moc: self.state.moc).inRange(
-            start: self.start,
-            end: self.end
-        )
+        if self.start != nil && self.end != nil {
+            let notes = CoreDataNotes(moc: self.state.moc).inRange(
+                start: self.start,
+                end: self.end
+            )
+            let linkLength = 40
 
-        for note in notes {
-            if let versions = note.versions?.allObjects as? [NoteVersion] {
-                for version in versions {
-                    if version.created ?? Date() > self.start ?? Date() && version.created ?? Date() < self.end ?? Date() {
-                        if let content = version.content {
-                            let linkRegex = /https:\/\/([^ \n]+)/
-                            if let match = content.firstMatch(of: linkRegex) {
-                                let sMatch = String(match.0)
-                                let linkLength = 40
-                                var label: String = sMatch
+            for note in notes {
+                if let versions = note.versions?.allObjects as? [NoteVersion] {
+                    for version in versions {
+                        if let createdOn = version.created {
+                            if createdOn > self.start! && createdOn < self.end! {
+                                if let content = version.content {
+                                    let linkRegex = /https:\/\/([^ \n]+)/
+                                    if let match = content.firstMatch(of: linkRegex) {
+                                        let sMatch = String(match.0)
+                                        var label: String = sMatch
 
-                                if sMatch.count > linkLength {
-                                    label = label.prefix(linkLength) + "..."
-                                }
-                                if !self.activities.contains(where: {$0.name == label}) {
-                                    self.activities.append(
-                                        Activity(
-                                            name: label,
-                                            help: sMatch,
-                                            page: self.state.parent ?? .dashboard,
-                                            type: .activity,
-                                            job: note.mJob,
-                                            source: version,
-                                            url: URL(string: sMatch) ?? nil
-                                        )
-                                    )
+                                        if sMatch.count > linkLength {
+                                            label = label.prefix(linkLength) + "..."
+                                        }
+                                        if !self.activities.contains(where: {$0.name == label}) {
+                                            self.activities.append(
+                                                Activity(
+                                                    name: label,
+                                                    help: sMatch,
+                                                    page: self.state.parent ?? .dashboard,
+                                                    type: .activity,
+                                                    job: note.mJob,
+                                                    source: version,
+                                                    url: URL(string: sMatch) ?? nil
+                                                )
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.SuggestedStack {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.tabs = [
+            ToolbarButton(
+                id: 0,
+                helpText: "",
+                icon: "link",
+                labelText: "Links",
+                contents: AnyView(
+                    UI.ActivityLinks(activities: self.activities)
+                )
+            ),
+            ToolbarButton(
+                id: 1,
+                helpText: "",
+                icon: "magnifyingglass",
+                labelText: "Saved search terms",
+                contents: AnyView(
+                    UI.SavedSearchTermLinks(
+                        period: self.period,
+                        format: self.format
+                    )
+                )
+            )
+        ]
+    }
+}
+
+extension WidgetLibrary.UI.SavedSearchTermLinks {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.terms = []
+        Task {
+            switch self.period {
+            case .day:
+                await self.findSavedTermsForPeriod(self.state.session.date.startOfDay, self.state.session.date.endOfDay)
+            case .week:
+                await self.findSavedTermsForPeriod(self.state.session.date.startOfWeek, self.state.session.date.endOfWeek)
+            case .month:
+                await self.findSavedTermsForPeriod(self.state.session.date.startOfMonth, self.state.session.date.endOfMonth)
+            case .year:
+                await self.findSavedTermsForPeriod(self.state.session.date.startOfYear, self.state.session.date.endOfYear)
+            case .custom:
+                await self.findSavedTermsForPeriod(self.start, self.end)
+            }
+            self.vid = UUID()
+        }
+    }
+
+    /// Find saved search terms within the given period
+    /// - Returns: Void
+    private func findSavedTermsForPeriod(_ start: Date?, _ end: Date?) async -> Void {
+        if start != nil && end != nil {
+            self.terms = CDSavedSearch(moc: self.state.moc).createdBetween(start, end: end)
         }
     }
 }

@@ -140,8 +140,14 @@ extension WidgetLibrary.UI {
                             //                    FancyDivider()
                             LazyVGrid(columns: self.twoCol, alignment: .leading, spacing: 0) {
                                 GridRow {
-                                    UI.LinkListForDate()
-                                    UI.EntityInteractionsForDate()
+                                    UI.SuggestedStack(
+                                        period: .day,
+                                        format: "MMMM dd"
+                                    )
+                                    UI.InteractionsInRange(
+                                        period: .day,
+                                        format: "MMMM dd"
+                                    )
                                 }
                             }
                             FancyDivider()
@@ -176,14 +182,12 @@ extension WidgetLibrary.UI {
                             Spacer()
                             LazyVGrid(columns: self.twoCol, alignment: .leading) {
                                 GridRow {
-                                    UI.SuggestedLinksInRange(
-                                        start: self.state.session.timeline.date?.startOfWeek,
-                                        end: self.state.session.timeline.date?.endOfWeek,
+                                    UI.SuggestedStack(
+                                        period: .week,
                                         format: "w"
                                     )
                                     UI.InteractionsInRange(
-                                        start: self.state.session.timeline.date?.startOfWeek,
-                                        end: self.state.session.timeline.date?.endOfWeek,
+                                        period: .week,
                                         format: "w"
                                     )
                                     .frame(maxHeight: 200)
@@ -213,17 +217,18 @@ extension WidgetLibrary.UI {
                             LazyVGrid(columns: self.twoCol, alignment: .leading) {
                                 GridRow {
                                     UI.SuggestedLinksInRange(
-                                        start: self.state.session.timeline.date?.startOfMonth,
-                                        end: self.state.session.timeline.date?.endOfMonth,
+                                        period: .month,
                                         format: "MMMM"
                                     )
-                                    EmptyView()
+                                    UI.SavedSearchTermsInRange(
+                                        period: .month,
+                                        format: "MMMM"
+                                    )
                                 }
                             }
                             FancyDivider()
                             UI.InteractionsInRange(
-                                start: self.state.session.timeline.date?.startOfMonth,
-                                end: self.state.session.timeline.date?.endOfMonth,
+                                period: .month,
                                 format: "MMMM"
                             )
                         }
@@ -250,17 +255,24 @@ extension WidgetLibrary.UI {
                             LazyVGrid(columns: self.twoCol, alignment: .leading) {
                                 GridRow {
                                     UI.SuggestedLinksInRange(
-                                        start: self.state.session.timeline.date?.startOfYear,
-                                        end: self.state.session.timeline.date?.endOfYear,
+                                        period: .year,
+                                        start: self.state.session.date.startOfYear,
+                                        end: self.state.session.date.endOfYear,
                                         format: "yyyy"
                                     )
-                                    EmptyView()
+                                    UI.SavedSearchTermsInRange(
+                                        period: .year,
+                                        start: self.state.session.date.startOfYear,
+                                        end: self.state.session.date.endOfYear,
+                                        format: "yyyy"
+                                    )
                                 }
                             }
                             FancyDivider()
                             UI.InteractionsInRange(
-                                start: self.state.session.timeline.date?.startOfYear,
-                                end: self.state.session.timeline.date?.endOfYear,
+                                period: .year,
+                                start: self.state.session.date.startOfYear,
+                                end: self.state.session.date.endOfYear,
                                 format: "yyyy"
                             )
                         }
@@ -297,14 +309,20 @@ extension WidgetLibrary.UI {
                             LazyVGrid(columns: self.twoCol, alignment: .leading) {
                                 GridRow {
                                     UI.SuggestedLinksInRange(
+                                        period: .custom,
                                         start: self.start,
                                         end: self.end
                                     )
-                                    EmptyView()
+                                    UI.SavedSearchTermsInRange(
+                                        period: .custom,
+                                        start: self.start,
+                                        end: self.end
+                                    )
                                 }
                             }
                             FancyDivider()
                             UI.InteractionsInRange(
+                                period: .custom,
                                 start: self.start,
                                 end: self.end
                             )
