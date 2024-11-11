@@ -10,22 +10,6 @@ import Foundation
 import SwiftUI
 import KWCore
 
-struct WidgetLoading: View {
-    var body: some View {
-        VStack {
-            Spacer()
-            HStack {
-                Spacer()
-                ProgressView()
-                Spacer()
-            }
-            .padding()
-            Spacer()
-        }
-        .padding()
-    }
-}
-
 struct Widgets: View {
     typealias UI = WidgetLibrary.UI
     @AppStorage("dashboard.widget.thisweek") public var showWidgetThisWeek: Bool = true
