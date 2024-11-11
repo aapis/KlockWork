@@ -183,7 +183,19 @@ extension WidgetLibrary {
             @State private var sDate: Date = Date()
 
             var body: some View {
-                HStack(alignment: .center) {
+                HStack(alignment: .center, spacing: 0) {
+                    FancyButtonv2(
+                        text: "Previous month",
+                        action: {self.state.session.date -= 86400*30},
+                        icon: "chevron.left.chevron.left.dotted",
+                        fgColour: .gray,
+                        highlightColour: .white,
+                        showLabel: false,
+                        size: .titleLink,
+                        type: .titleLink
+                    )
+                    .help("Previous month")
+                    .frame(height: 20)
                     FancyButtonv2(
                         text: "Previous day",
                         action: self.actionPreviousDay,
@@ -236,6 +248,18 @@ extension WidgetLibrary {
                         type: .titleLink
                     )
                     .help("Next day")
+                    .frame(height: 20)
+                    FancyButtonv2(
+                        text: "Next month",
+                        action: {self.state.session.date += 86400*30},
+                        icon: "chevron.right.dotted.chevron.right",
+                        fgColour: .gray,
+                        highlightColour: .white,
+                        showLabel: false,
+                        size: .titleLink,
+                        type: .titleLink
+                    )
+                    .help("Next month")
                     .frame(height: 20)
                 }
                 .padding(12)
@@ -852,40 +876,6 @@ extension WidgetLibrary {
             }
         }
 
-        // MARK: LinkListForDate
-        struct LinkListForDate: View {
-            @EnvironmentObject private var state: Navigation
-            @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
-            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
-            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
-            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
-            @State private var activities: [Activity] = []
-            @State private var tabs: [ToolbarButton] = []
-            @State private var vid: UUID = UUID()
-
-            var body: some View {
-                VStack {
-                    UI.ListLinkTitle(text: "Suggested links from \(self.state.session.timeline.formatted())")
-                    UI.ActivityLinks(activities: self.activities)
-                        .frame(height: 200)
-                    // @TODO: ActivityLinks needs some tinkering to make it work within a tool view
-//                    FancyGenericToolbar(
-//                        buttons: self.tabs,
-//                        standalone: true,
-//                        location: .content,
-//                        mode: .compact,
-//                        page: .explore,
-//                        alwaysShowTab: true
-//                    )
-//                    .frame(height: 200)
-                }
-//                .id(self.vid)
-                .onAppear(perform: self.actionOnAppear)
-                .onChange(of: self.state.session.date) { self.actionOnAppear() }
-                .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
-            }
-        }
-
         // MARK: SuggestedStack
         struct SuggestedStack: View {
             @EnvironmentObject private var state: Navigation
@@ -908,7 +898,6 @@ extension WidgetLibrary {
                         page: .explore,
                         alwaysShowTab: true
                     )
-                    .frame(height: 200)
                     Spacer()
                 }
                 .id(self.vid)
@@ -940,6 +929,7 @@ extension WidgetLibrary {
                 VStack {
                     UI.ListLinkTitle(text: "Suggested links from \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))")
                     UI.ActivityLinks(activities: self.activities)
+                    Spacer()
                 }
                 .id(self.vid)
                 .frame(minHeight: 200)
@@ -969,6 +959,7 @@ extension WidgetLibrary {
                         end: self.end,
                         format: self.format
                     )
+                    Spacer()
                 }
             }
         }
@@ -1068,6 +1059,7 @@ extension WidgetLibrary {
                         page: .explore,
                         alwaysShowTab: true
                     )
+                    Spacer()
                 }
                 .frame(minHeight: 200)
                 .id(self.vid)
@@ -1099,6 +1091,7 @@ extension WidgetLibrary {
                         mode: .full,
                         page: .explore
                     )
+                    Spacer()
                 }
                 .id(self.vid)
                 .onAppear(perform: self.actionOnAppear)
@@ -2099,99 +2092,6 @@ extension WidgetLibrary.UI.InteractionsInRange {
             )
         }
         self.vid = UUID()
-    }
-}
-
-extension WidgetLibrary.UI.LinkListForDate {
-    /// Onload handler. Sets view state
-    /// - Returns: Void
-    private func actionOnAppear() -> Void {
-        self.activities = []
-
-        Task {
-            await self.getLinksFromJobs()
-            await self.getLinksFromNotes()
-//            self.createTabs()
-            self.vid = UUID()
-        }
-    }
-    
-    /// Creates tabs. Simples.
-    /// - Returns: Void
-    private func createTabs() -> Void {
-        self.tabs = [
-            ToolbarButton(
-                id: 0,
-                helpText: "",
-                icon: "link",
-                labelText: "Links",
-                contents: AnyView(
-                    UI.ActivityLinks(activities: self.activities)
-                )
-            )
-        ]
-    }
-
-    /// Get links from jobs created or updated on a given day
-    /// - Returns: Void
-    private func getLinksFromJobs() async -> Void {
-        if let date = self.state.session.timeline.date {
-            let jobs = CoreDataJob(moc: self.state.moc).forDate(date)
-            for job in jobs {
-                if let uri = job.uri {
-                    if uri.absoluteString != "https://" {
-                        self.activities.append(
-                            Activity(
-                                name: uri.absoluteString,
-                                page: self.state.parent ?? .dashboard,
-                                type: .activity,
-                                job: job,
-                                url: uri.absoluteURL
-                            )
-                        )
-                    }
-                }
-            }
-        }
-    }
-    
-    /// Find links in notes created on a given day
-    /// - Returns: Void
-    private func getLinksFromNotes() async -> Void {
-        if let date = self.state.session.timeline.date {
-            let notes = CoreDataNotes(moc: self.state.moc).find(for: date)
-            for note in notes {
-                if let versions = note.versions?.allObjects as? [NoteVersion] {
-                    for version in versions {
-                        if let content = version.content {
-                            let linkRegex = /https:\/\/([^ \n]+)/
-                            if let match = content.firstMatch(of: linkRegex) {
-                                let sMatch = String(match.0)
-                                let linkLength = 40
-                                var label: String = sMatch
-
-                                if sMatch.count > linkLength {
-                                    label = label.prefix(linkLength) + "..."
-                                }
-                                if !self.activities.contains(where: {$0.name == label}) {
-                                    self.activities.append(
-                                        Activity(
-                                            name: label,
-                                            help: sMatch,
-                                            page: self.state.parent ?? .dashboard,
-                                            type: .activity,
-                                            job: note.mJob,
-                                            source: version,
-                                            url: URL(string: sMatch) ?? nil
-                                        )
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 
