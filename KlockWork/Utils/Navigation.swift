@@ -250,6 +250,13 @@ extension Navigation {
         var cli: CommandLineSession = CommandLineSession()
         var pagination: TablePagination = TablePagination()
         var timeline: Timeline = Timeline()
+
+        /// Format Navigation.session.date
+        /// - Parameter format: String
+        /// - Returns: String
+        func dateFormatted(_ format: String = "yyyy") -> String {
+            return DateHelper.todayShort(self.date, format: format)
+        }
     }
 
     public struct Timeline {
