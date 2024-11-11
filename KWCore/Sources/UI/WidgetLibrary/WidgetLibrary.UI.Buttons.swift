@@ -488,6 +488,56 @@ extension WidgetLibrary.UI {
                 .useDefaultHover({ hover in self.isHighlighted = hover })
             }
         }
+
+        // MARK: SavedSearchTerm
+        struct SavedSearchTerm: View {
+            @EnvironmentObject public var state: Navigation
+            public var savedSearch: SavedSearch
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                Button {
+                    self.state.to(.dashboard)
+                    if let term = self.savedSearch.term {
+                        self.state.session.search.text = term
+                    }
+                } label: {
+                    HStack {
+                        Text(savedSearch.term ?? "Invalid term name")
+                        Spacer()
+                        if let timestamp = savedSearch.created?.formatted(date: .abbreviated, time: .shortened) {
+                            Timestamp(text: timestamp, alignment: .trailing)
+                        }
+                    }
+                    .padding(8)
+                    .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .useDefaultHover({ hover in self.isHighlighted = hover })
+                    .clipShape(.rect(cornerRadius: 5))
+                }
+                .buttonStyle(.plain)
+                .help("Searched for term \(savedSearch.created?.formatted(date: .complete, time: .complete) ?? "at some point in history")")
+                .contextMenu {
+                    VStack {
+                        Button {
+                            self.state.to(.timeline)
+                            if let date = self.savedSearch.created {
+                                self.state.session.date = date
+                            }
+                        } label: {
+                            Text("Show Timeline...")
+                        }
+                        Button {
+                            self.state.to(.today)
+                            if let date = self.savedSearch.created {
+                                self.state.session.date = date
+                            }
+                        } label: {
+                            Text("Show Today...")
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

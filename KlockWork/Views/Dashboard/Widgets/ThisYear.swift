@@ -38,7 +38,7 @@ struct ThisYear: View {
             .background(Theme.darkBtnColour)
             
             if recordCount == 0 {
-                WidgetLoading()
+                UI.WidgetLoading()
             } else {
                 StatsWidget(wordCount: $wordCount, jobCount: $jobCount, recordCount: $recordCount)
             }

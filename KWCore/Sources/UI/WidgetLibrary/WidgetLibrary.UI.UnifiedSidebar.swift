@@ -588,6 +588,7 @@ extension WidgetLibrary.UI {
             public let text: String
             public var callback: (() -> Void)?
             public var colour: Color? = Theme.base
+            public var showToggle: Bool = true
             @Binding public var isPresented: Bool
 
             var body: some View {
@@ -598,13 +599,14 @@ extension WidgetLibrary.UI {
                     ZStack(alignment: .topLeading) {
                         self.colour!.opacity(0.6).blendMode(.softLight)
                         HStack(alignment: .center, spacing: 8) {
-                            ZStack(alignment: .center) {
-                                self.colour!.opacity(0.6).blendMode(.softLight)
-                                Image(systemName: self.isPresented ? "minus" : "plus")
+                            if self.showToggle {
+                                ZStack(alignment: .center) {
+                                    self.colour!.opacity(0.6).blendMode(.softLight)
+                                    Image(systemName: self.isPresented ? "minus" : "plus")
+                                }
+                                .frame(width: 30, height: 30)
+                                .cornerRadius(5)
                             }
-                            .frame(width: 30, height: 30)
-                            .cornerRadius(5)
-
                             Text(self.text)
                                 .multilineTextAlignment(.leading)
                             Spacer()

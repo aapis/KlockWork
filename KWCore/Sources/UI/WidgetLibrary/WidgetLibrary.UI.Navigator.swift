@@ -97,7 +97,6 @@ extension WidgetLibrary.UI {
 extension WidgetLibrary.UI.Navigator {
     // @TODO: merge Folders and List
     struct List: View {
-        typealias UI = WidgetLibrary.UI
         typealias US = UI.UnifiedSidebar
         @EnvironmentObject private var state: Navigation
         @AppStorage("widget.jobs.showPublished") private var showPublished: Bool = true
@@ -230,14 +229,8 @@ extension WidgetLibrary.UI.Navigator {
             }
             .font(.caption)
             .padding(4)
-            .background(
-                ZStack(alignment: .topLeading) {
-                    self.state.session.appPage.primaryColour
-                    LinearGradient(colors: [Theme.base.opacity(0.2), .clear], startPoint: .top, endPoint: .bottom)
-                        .blendMode(.softLight)
-                        .frame(height: 10)
-                }
-            )
+            .background(self.state.session.appPage.primaryColour)
+            Divider()
         }
 
         var ListFooter: some View {

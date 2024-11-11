@@ -23,6 +23,24 @@ public class CDSavedSearch: ObservableObject {
         self.moc = moc
     }
     
+    /// Find search terms created on a given date
+    /// - Parameter date: Date
+    /// - Returns: FetchRequest<SavedSearch>
+    static public func createdBetween(_ start: Date?, _ end: Date?) -> FetchRequest<SavedSearch> {
+        let fetch: NSFetchRequest<SavedSearch> = SavedSearch.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "created > %@ && created < %@",
+            (start ?? Date.now) as CVarArg,
+            (end ?? Date.now) as CVarArg
+        )
+        fetch.sortDescriptors = [
+            NSSortDescriptor(keyPath: \SavedSearch.term, ascending: false),
+            NSSortDescriptor(keyPath: \SavedSearch.created, ascending: false)
+        ]
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
     /// Find all saved searches
     /// - Returns: [SavedSearch]
     public func all() -> [SavedSearch] {
@@ -33,7 +51,21 @@ public class CDSavedSearch: ObservableObject {
 
         return self.query(predicate)
     }
-    
+
+    /// Find all saved searches
+    /// - Parameter start: Date
+    /// - Parameter end: Date
+    /// - Returns: [SavedSearch]
+    public func createdBetween(_ start: Date?, end: Date?) -> [SavedSearch] {
+        return self.query(
+            NSPredicate(
+                format: "created > %@ && created < %@",
+                (start ?? Date.now) as CVarArg,
+                (end ?? Date.now) as CVarArg
+            )
+        )
+    }
+
     /// Find SavedSearch objects by term
     /// - Parameter term: String
     /// - Returns: Optional(SavedSearch
@@ -70,7 +102,16 @@ public class CDSavedSearch: ObservableObject {
     public func destroy(_ term: String) -> Void {
         if let entity = self.query(NSPredicate(format: "term == %@", term)).first {
             self.moc!.delete(entity)
+            PersistenceController.shared.save()
+        }
+    }
 
+    /// Destroy a saved search term
+    /// - Parameter term: SavedSearch
+    /// - Returns: Void
+    public func unpublish(_ term: String) -> Void {
+        if let entity = self.query(NSPredicate(format: "term == %@", term)).first {
+            entity.alive = false
             PersistenceController.shared.save()
         }
     }
@@ -105,6 +146,7 @@ public class CDSavedSearch: ObservableObject {
         let savedSearch = SavedSearch(context: self.moc!)
         savedSearch.term = term
         savedSearch.created = created
+        savedSearch.alive = true
 
         if saveByDefault {
             PersistenceController.shared.save()

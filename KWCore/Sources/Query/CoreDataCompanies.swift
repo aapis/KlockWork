@@ -319,7 +319,7 @@ public class CoreDataCompanies: ObservableObject {
             set.insert(entity)
         }
 
-        return Array(set).sorted(by: {$0.lastUpdate ?? Date() > $1.lastUpdate ?? Date()})
+        return Array(set).sorted(by: {$0.lastUpdate ?? Date() < $1.lastUpdate ?? Date()})
     }
 
     /// Find all interactions within a certain date range
@@ -353,7 +353,7 @@ public class CoreDataCompanies: ObservableObject {
                 set.insert(entity)
             }
 
-            return Array(set).sorted(by: {$0.lastUpdate ?? Date() > $1.lastUpdate ?? Date()})
+            return Array(set).sorted(by: {$0.lastUpdate ?? Date() < $1.lastUpdate ?? Date()})
         }
 
         return []
@@ -466,16 +466,16 @@ public class CoreDataCompanies: ObservableObject {
     /// Query companies
     /// - Parameter predicate: Query predicate
     /// - Returns: Array<Company>
-    private func query(_ predicate: NSPredicate? = nil) -> [Company] {
+    private func query(_ predicate: NSPredicate? = nil, sort: [NSSortDescriptor] = [
+        NSSortDescriptor(keyPath: \Company.isDefault, ascending: false),
+        NSSortDescriptor(keyPath: \Company.name?, ascending: true),
+        NSSortDescriptor(keyPath: \Company.createdDate?, ascending: true)
+    ]) -> [Company] {
         lock.lock()
 
         var results: [Company] = []
         let fetch: NSFetchRequest<Company> = Company.fetchRequest()
-        fetch.sortDescriptors = [
-            NSSortDescriptor(keyPath: \Company.isDefault, ascending: false),
-            NSSortDescriptor(keyPath: \Company.name?, ascending: true),
-            NSSortDescriptor(keyPath: \Company.createdDate?, ascending: true)
-        ]
+        fetch.sortDescriptors = sort
 
         if predicate != nil {
             fetch.predicate = predicate

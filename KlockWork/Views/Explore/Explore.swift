@@ -33,7 +33,7 @@ struct Explore: View {
     }
 }
 
-struct Activity: Identifiable {
+struct Activity: Identifiable, Equatable {
     var id: UUID = UUID()
     var name: String
     var help: String = ""

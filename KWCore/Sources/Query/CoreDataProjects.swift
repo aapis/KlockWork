@@ -364,7 +364,7 @@ public class CoreDataProjects: ObservableObject {
             set.insert(entity)
         }
 
-        return Array(set).sorted(by: {$0.lastUpdate ?? Date() > $1.lastUpdate ?? Date()})
+        return Array(set).sorted(by: {$0.lastUpdate ?? Date() < $1.lastUpdate ?? Date()})
     }
 
     /// Find all interactions within a certain date range
@@ -398,7 +398,7 @@ public class CoreDataProjects: ObservableObject {
                 set.insert(entity)
             }
 
-            return Array(set).sorted(by: {$0.lastUpdate ?? Date() > $1.lastUpdate ?? Date()})
+            return Array(set).sorted(by: {$0.lastUpdate ?? Date() < $1.lastUpdate ?? Date()})
         }
 
         return []

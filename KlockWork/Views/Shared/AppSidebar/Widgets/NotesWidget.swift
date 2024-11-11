@@ -29,7 +29,7 @@ struct NotesWidget: View {
 
     var body: some View {
         if isLoading {
-            WidgetLoading()
+            UI.WidgetLoading()
         } else {
             NotesWidget
         }

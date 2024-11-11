@@ -374,7 +374,7 @@ public class CoreDataJob: ObservableObject {
             set.insert(entity)
         }
 
-        return Array(set).sorted(by: {$0.lastUpdate ?? Date() > $1.lastUpdate ?? Date()})
+        return Array(set).sorted(by: {$0.lastUpdate ?? Date() < $1.lastUpdate ?? Date()})
     }
 
     /// Find all interactions within a certain date range
@@ -408,7 +408,7 @@ public class CoreDataJob: ObservableObject {
                 set.insert(entity)
             }
 
-            return Array(set).sorted(by: {$0.lastUpdate ?? Date() > $1.lastUpdate ?? Date()})
+            return Array(set).sorted(by: {$0.lastUpdate ?? Date() < $1.lastUpdate ?? Date()})
         }
 
         return []
@@ -619,12 +619,12 @@ public class CoreDataJob: ObservableObject {
         return newJob
     }
 
-    private func query(_ predicate: NSPredicate) -> [Job] {
+    private func query(_ predicate: NSPredicate, sort: [NSSortDescriptor] = [NSSortDescriptor(keyPath: \Job.created?, ascending: true)]) -> [Job] {
         lock.lock()
 
         var results: [Job] = []
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.created?, ascending: true)]
+        fetch.sortDescriptors = sort
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
 
