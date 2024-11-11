@@ -22,29 +22,23 @@ extension WidgetLibrary.UI {
             @AppStorage("today.endOfDay") public var endOfDay: Int = 18
             public var start: Date?
             @State private var days: [DayBlock] = []
-            private var columns: [GridItem] { Array(repeating: GridItem(.flexible(), spacing: 1), count: 7) }
 
             var body: some View {
-                NavigationStack {
-                    Grid(alignment: .topLeading, horizontalSpacing: 5, verticalSpacing: 0) {
-                        GridRow {
-                            HStack(alignment: .center) {
-                                UI.ListLinkTitle(text: "Week at a Glance")
-                                Spacer()
-                                UI.Buttons.Minimize(isMinimized: $isWeekAtAGlanceMinimized)
-                            }
+                VStack {
+                    HStack(alignment: .center) {
+                        UI.ListLinkTitle(text: "Week at a Glance")
+                        Spacer()
+                        UI.Buttons.Minimize(isMinimized: $isWeekAtAGlanceMinimized)
+                    }
+                    .padding(8)
+                    .background(self.isWeekAtAGlanceMinimized ? self.state.session.appPage.primaryColour : .clear)
+                    .clipShape(.rect(cornerRadius: 5))
+                    
+                    if !self.isWeekAtAGlanceMinimized {
+                        HStack(spacing: 16) {
+                            ForEach(self.days, id: \.id) { day in day }
                         }
-                        .padding(8)
-                        .background(self.isWeekAtAGlanceMinimized ? self.state.session.appPage.primaryColour : .clear)
-                        .clipShape(.rect(cornerRadius: 5))
-
-                        if !self.isWeekAtAGlanceMinimized {
-                            GridRow(alignment: .top) {
-                                LazyVGrid(columns: self.columns, alignment: .leading) {
-                                    ForEach(self.days, id: \.id) { day in day }
-                                }
-                            }
-                        }
+                        .frame(height: 100)
                     }
                 }
                 .onAppear(perform: self.actionOnAppear)
@@ -218,12 +212,18 @@ extension WidgetLibrary.UI {
                 Button {
                     self.state.session.date = DateHelper.startOfDay(self.date)
                 } label: {
-                    VStack {
-                        Text(DateHelper.todayShort(self.date, format: "EEE"))
-                            .bold(self.isToday || self.isSelected)
-                            .padding(.top, 8)
-                            .opacity(self.isToday ? 1 : 0.8)
-                        Divider()
+                    VStack(spacing: 0) {
+                        VStack {
+                            HStack {
+                                Spacer()
+                                Text(DateHelper.todayShort(self.date, format: "EEE"))
+                                    .bold(self.isToday || self.isSelected)
+                                    .padding([.top, .bottom], 4)
+                                    .opacity(self.isToday ? 1 : 0.8)
+                                Spacer()
+                            }
+                        }
+                        .background(self.isSelected ? self.state.theme.tint : self.isToday ? .blue : Theme.textBackground)
                         ZStack {
                             (self.dayNumber > 0 ? self.bgColour.opacity(0.8) : .clear)
                             if self.dayNumber > 0 {
@@ -237,25 +237,25 @@ extension WidgetLibrary.UI {
                                             }
                                         }
                                     }
-                                    .mask(
-                                        RoundedRectangle(cornerRadius: 5)
-                                            .fill(!self.isToday && !self.isSelected ? Theme.cPurple : self.bgColour)
-                                            .padding([.leading, .trailing], 8)
-                                    )
                                     Text(DateHelper.todayShort(self.date, format: "dd"))
                                         .bold(self.isToday || self.isSelected)
-                                        .font(.system(size: 40))
-                                        .padding([.top, .bottom])
+                                        .font(.system(size: 25))
                                 }
                             }
                         }
-                        Divider()
-                        Text(DateHelper.todayShort(self.date, format: "MMMM"))
-                            .bold(self.isToday || self.isSelected)
-                            .padding(.bottom, 8)
-                            .opacity(self.isToday ? 1 : 0.8)
+                        VStack {
+                            HStack {
+                                Spacer()
+                                Text(DateHelper.todayShort(self.date, format: "MMMM"))
+                                    .bold(self.isToday || self.isSelected)
+                                    .padding([.top, .bottom], 4)
+                                    .opacity(self.isToday ? 1 : 0.8)
+                                Spacer()
+                            }
+                        }
+                        .background(self.isSelected ? self.state.theme.tint : self.isToday ? .blue : .clear)
                     }
-                    .background(self.isSelected ? self.state.theme.tint : self.isToday ? .blue : Theme.textBackground)
+                    .background(Theme.textBackground)
                     .useDefaultHover({ hover in self.isHighlighted = hover })
                 }
                 .help("\(self.colourData.count) Tasks due on \(self.state.session.date.formatted(date: .abbreviated, time: .omitted))")
@@ -265,14 +265,14 @@ extension WidgetLibrary.UI {
                 .onAppear(perform: self.actionOnAppear)
                 .contextMenu {
                     Button {
-                        self.state.session.date = self.date
                         self.state.to(.timeline)
+                        self.state.session.date = self.date
                     } label: {
                         Text("Show Timeline...")
                     }
                     Button {
-                        self.state.session.date = self.date
                         self.state.to(.today)
+                        self.state.session.date = self.date
                     } label: {
                         Text("Show Today...")
                     }
@@ -558,7 +558,7 @@ extension WidgetLibrary.UI {
                         self.isHighlighted ? self.state.theme.tint.opacity(0.8) : Theme.textBackground
                         HStack {
                             Spacer()
-                            Image(systemName: self.orientation == .leading ? "chevron.left" : "chevron.right")
+                            Image(systemName: self.orientation == .leading ? "chevron.left.chevron.left.dotted" : "chevron.right.dotted.chevron.right")
                                 .foregroundStyle(self.isHighlighted ? self.state.session.appPage.primaryColour : .white)
                             Spacer()
                         }
@@ -566,6 +566,7 @@ extension WidgetLibrary.UI {
                     .useDefaultHover({ hover in self.isHighlighted = hover })
                 }
                 .buttonStyle(.plain)
+                .help("\(self.orientation == .leading ? "Previous" : "Next") month")
                 .frame(width: 32)
             }
         }
