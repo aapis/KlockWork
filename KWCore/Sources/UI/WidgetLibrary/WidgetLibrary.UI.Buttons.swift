@@ -24,23 +24,20 @@ extension WidgetLibrary.UI {
             public var isAlteredForReadability: Bool = false
 
             var body: some View {
-                if self.state.session.job != nil || self.state.session.project != nil || self.state.session.company != nil {
-                    FancyButtonv2(
-                        text: "Reset interface to default state",
-                        action: self.onActionClear != nil ? self.onActionClear : self.defaultClearAction,
-                        icon: "arrow.clockwise.square.fill",
-                        iconWhenHighlighted: "arrow.clockwise.square",
-                        fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
-                        showLabel: false,
-                        size: .small,
-                        type: .clear,
-                        font: .title
-                    )
-                    .help("Reset interface to default state")
-                    .frame(width: 25)
-                } else {
-                    EmptyView()
-                }
+                FancyButtonv2(
+                    text: "Reset interface to default state",
+                    action: self.onActionClear != nil ? self.onActionClear : self.defaultClearAction,
+                    icon: "arrow.clockwise.square.fill",
+                    iconWhenHighlighted: "arrow.clockwise.square",
+                    fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
+                    showLabel: false,
+                    size: .small,
+                    type: .clear,
+                    font: .title
+                )
+                .disabled(self.state.session.job == nil && self.state.session.project == nil && self.state.session.company == nil)
+                .help("Reset interface to default state")
+                .frame(width: 25)
             }
         }
 
@@ -440,7 +437,7 @@ extension WidgetLibrary.UI {
                     action: {self.isSidebarPresented.toggle()},
                     icon: "sidebar.left",
                     iconWhenHighlighted: "sidebar.left",
-                    fgColour: self.isSidebarPresented ? .gray : .white,
+                    iconFgColour: self.isSidebarPresented ? self.state.theme.tint : .gray,
                     showLabel: false,
                     size: .small,
                     type: .clear,
