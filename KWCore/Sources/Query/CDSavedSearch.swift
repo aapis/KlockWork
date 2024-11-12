@@ -44,12 +44,9 @@ public class CDSavedSearch: ObservableObject {
     /// Find all saved searches
     /// - Returns: [SavedSearch]
     public func all() -> [SavedSearch] {
-        let predicate = NSPredicate(
-            format: "created < %@",
-            Date() as CVarArg
-        )
-
-        return self.query(predicate)
+        return self.query(NSPredicate(
+            format: "alive == true"
+        ))
     }
 
     /// Find all saved searches
