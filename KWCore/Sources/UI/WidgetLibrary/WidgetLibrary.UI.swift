@@ -309,7 +309,7 @@ extension WidgetLibrary {
                         }
                         if !self.isMinimized {
                             if self.activity.source != nil {
-                                HStack {
+                                HStack(alignment: .top) {
                                     switch self.activity.source {
                                     case is NoteVersion:
                                         Text("Found in note \"\((self.activity.source as? NoteVersion)?.note?.title ?? "Error: Note not found")\"")
@@ -2158,7 +2158,7 @@ extension WidgetLibrary.UI.SuggestedLinksInRange {
     }
 
     /// Get links from records created or updated on a given day
-    /// @TODO: move to Job
+    /// @TODO: move to LogRecord
     /// - Returns: Void
     private func getLinksFromRecords() async -> Void {
         if let start = self.start {

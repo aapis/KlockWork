@@ -216,7 +216,7 @@ extension WidgetLibrary.UI {
                         VStack {
                             HStack {
                                 Spacer()
-                                Text(DateHelper.todayShort(self.date, format: "EEE"))
+                                Text(DateHelper.todayShort(self.date, format: "EEE dd"))
                                     .bold(self.isToday || self.isSelected)
                                     .padding([.top, .bottom], 4)
                                     .opacity(self.isToday ? 1 : 0.8)
@@ -237,9 +237,6 @@ extension WidgetLibrary.UI {
                                             }
                                         }
                                     }
-                                    Text(DateHelper.todayShort(self.date, format: "dd"))
-                                        .bold(self.isToday || self.isSelected)
-                                        .font(.system(size: 25))
                                 }
                             }
                         }

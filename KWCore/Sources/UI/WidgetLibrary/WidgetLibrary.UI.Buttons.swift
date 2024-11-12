@@ -37,6 +37,7 @@ extension WidgetLibrary.UI {
                 )
                 .disabled(self.state.session.job == nil && self.state.session.project == nil && self.state.session.company == nil)
                 .help("Reset interface to default state")
+                .keyboardShortcut("r", modifiers: [.control, .shift])
                 .frame(width: 25)
             }
         }
