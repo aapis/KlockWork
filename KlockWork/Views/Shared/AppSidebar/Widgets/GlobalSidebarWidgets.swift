@@ -173,7 +173,7 @@ struct GlobalSidebarWidgets: View {
                             action: {active.toggle() ; isSearchStackShowing = false; self.isUpcomingTaskStackShowing = false},
                             icon: "doc",
                             fgColour: nav.session.job?.colour_from_stored().isBright() ?? false ? .black : .white,
-                            bgColour: nav.session.job?.colour_from_stored() ?? nil,
+                            bgColour: nav.session.job?.backgroundColor ?? nil,
                             showLabel: false,
                             size: .small,
                             type: active ? .secondary : .standard,
@@ -215,8 +215,8 @@ struct GlobalSidebarWidgets: View {
                                 self.nav.session.search.reset()
                             },
                             icon: "magnifyingglass",
-                            fgColour: nav.session.job?.colour_from_stored().isBright() ?? false ? .black : .white,
-                            bgColour: nav.session.job?.colour_from_stored() ?? nil,
+                            fgColour: self.nav.session.job?.backgroundColor.isBright() ?? false ? .black : .white,
+                            bgColour: self.nav.session.job?.backgroundColor ?? nil,
                             showLabel: false,
                             size: .small,
                             type: active ? .secondary : .standard,
@@ -526,7 +526,7 @@ extension GlobalSidebarWidgets.ScoreButton {
     private func actionOnAppear() -> Void {
         if let assessment = self.state.activities.assessed.filter({$0.isToday == true && $0.dayNumber > 0}).first {
             self.score = assessment.score
-            self.bgColour = .blue
+            self.bgColour = Theme.cPurple
         }
     }
 }
