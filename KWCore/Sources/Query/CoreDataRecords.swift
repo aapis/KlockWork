@@ -592,7 +592,9 @@ public class CoreDataRecords: ObservableObject {
     /// - Returns: Array<LogRecord>
     public func inRange(start: Date, end: Date) -> [LogRecord] {
         let predicate = NSPredicate(
-            format: "timestamp > %@ && timestamp <= %@",
+            format: "timestamp > %@ && timestamp <= %@ || lastUpdate > %@ && lastUpdate <= %@",
+            start as CVarArg,
+            end as CVarArg,
             start as CVarArg,
             end as CVarArg
         )
