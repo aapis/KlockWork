@@ -65,7 +65,7 @@ extension PageConfiguration {
     }
 
     enum EntityType: CaseIterable, Equatable {
-        case records, tasks, notes, people, companies, projects, jobs, terms, definitions, BruceWillis
+        case records, tasks, notes, people, companies, projects, jobs, terms, definitions, plans, BruceWillis
 
         /// Interface-friendly representation
         var label: String {
@@ -79,6 +79,7 @@ extension PageConfiguration {
             case .projects: "Projects"
             case .terms: "Terms"
             case .definitions: "Definitions"
+            case .plans: "Plans"
             default: ""
             }
         }
@@ -95,6 +96,7 @@ extension PageConfiguration {
             case .projects: "Project"
             case .terms: "Term"
             case .definitions: "Definition"
+            case .plans: "Plan"
             default: ""
             }
         }
@@ -111,6 +113,7 @@ extension PageConfiguration {
             case .projects: Image(systemName: "folder")
             case .terms: Image(systemName: "list.bullet.rectangle")
             case .definitions: Image(systemName: "list.bullet.rectangle")
+            case .plans: Image(systemName: "hexagon")
             default: Image(systemName: "house")
             }
         }
@@ -127,6 +130,7 @@ extension PageConfiguration {
             case .projects: Image(systemName: "folder.fill")
             case .terms: Image(systemName: "list.bullet.rectangle.fill")
             case .definitions: Image(systemName: "list.bullet.rectangle.fill")
+            case .plans: Image(systemName: "hexagon.fill")
             default: Image(systemName: "house.fill")
             }
         }
@@ -142,6 +146,7 @@ extension PageConfiguration {
             case .projects: return [FilterField(name: "Published")]
             case .terms: return [FilterField(name: "Published")]
             case .definitions: return [FilterField(name: "Published")]
+            case .plans: return [FilterField(name: "Published")]
             default: return [FilterField(name: "Published")]
             }
         }
