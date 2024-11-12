@@ -10,10 +10,7 @@ import SwiftUI
 import KWCore
 
 struct Dashboard: View {
-    @EnvironmentObject public var nav: Navigation
-    @EnvironmentObject public var updater: ViewUpdater
-    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
-    private let page: PageConfiguration.AppPage = .find
+    @EnvironmentObject public var state: Navigation
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -21,6 +18,11 @@ struct Dashboard: View {
             Spacer()
         }
         .padding()
-        .background(Theme.toolbarColour)
+        .background(
+            ZStack {
+                self.state.session.appPage.primaryColour
+                Theme.base.opacity(0.6)
+            }
+        )
     }
 }

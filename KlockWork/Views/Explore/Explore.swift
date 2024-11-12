@@ -10,7 +10,6 @@ import SwiftUI
 import KWCore
 
 struct Explore: View {
-    typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var state: Navigation
 
     var body: some View {
@@ -27,7 +26,12 @@ struct Explore: View {
             Spacer()
         }
         .padding()
-        .background(Theme.toolbarColour)
+        .background(
+            ZStack {
+                self.state.session.appPage.primaryColour
+                Theme.base.opacity(0.6)
+            }
+        )
     }
 }
 
