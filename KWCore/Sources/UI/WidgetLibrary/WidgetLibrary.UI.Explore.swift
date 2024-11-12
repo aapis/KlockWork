@@ -15,7 +15,7 @@ extension WidgetLibrary.UI {
             // MARK: Explore.Visualization.Timeline
             struct Timeline {
                 enum TimelineTab: CaseIterable {
-                    case day, week, month, year, custom
+                    case day, week, month, year, entity, custom
 
                     var icon: String {
                         switch self {
@@ -23,6 +23,7 @@ extension WidgetLibrary.UI {
                         case .week: "w.square.fill"
                         case .month: "m.square.fill"
                         case .year: "y.square.fill"
+                        case .entity: "e.square.fill"
                         case .custom: "c.square.fill"
                         }
                     }
@@ -33,7 +34,8 @@ extension WidgetLibrary.UI {
                         case .week: 1
                         case .month: 2
                         case .year: 3
-                        case .custom: 4
+                        case .entity: 4
+                        case .custom: 5
                         }
                     }
 
@@ -43,6 +45,7 @@ extension WidgetLibrary.UI {
                         case .week: "Show 1 week"
                         case .month: "Show 1 month"
                         case .year: "Show 1 year"
+                        case .entity: "Show timeline(s) for the selected entities"
                         case .custom: "Custom range"
                         }
                     }
@@ -53,6 +56,7 @@ extension WidgetLibrary.UI {
                         case .week: "Week"
                         case .month: "Month"
                         case .year: "Year"
+                        case .entity: "Entity"
                         case .custom: "Custom Range"
                         }
                     }
@@ -63,6 +67,7 @@ extension WidgetLibrary.UI {
                         case .week: AnyView(ByWeek())
                         case .month: AnyView(ByMonth())
                         case .year: AnyView(ByYear())
+                        case .entity: AnyView(ByEntity())
                         case .custom: AnyView(ByCustomRange())
                         }
                     }
@@ -78,6 +83,7 @@ extension WidgetLibrary.UI {
                     }
                 }
 
+                // MARK: Timeline.Widget
                 struct Widget: View {
                     @EnvironmentObject public var nav: Navigation
                     private var tabs: [ToolbarButton] = []
@@ -104,7 +110,7 @@ extension WidgetLibrary.UI {
                     }
                 }
 
-                // MARK: ByDay
+                // MARK: Timeline.ByDay
                 struct ByDay: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
@@ -156,7 +162,7 @@ extension WidgetLibrary.UI {
                     }
                 }
 
-                // MARK: ByWeek
+                // MARK: Timeline.ByWeek
                 struct ByWeek: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
@@ -197,7 +203,7 @@ extension WidgetLibrary.UI {
                     }
                 }
 
-                // MARK: ByMonth
+                // MARK: Timeline.ByMonth
                 struct ByMonth: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
@@ -235,7 +241,7 @@ extension WidgetLibrary.UI {
                     }
                 }
 
-                // MARK: ByYear
+                // MARK: Timeline.ByYear
                 struct ByYear: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
@@ -279,8 +285,59 @@ extension WidgetLibrary.UI {
                     }
                 }
 
-                // MARK: ByCustomRange
+                // MARK: Timeline.ByCustomRange
                 struct ByCustomRange: View {
+                    @EnvironmentObject public var state: Navigation
+                    @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+                    @State private var start: Date = Date()
+                    @State private var end: Date = Date() + 86400
+                    private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
+
+                    var body: some View {
+                        VStack(alignment: .leading, spacing: 0) {
+                            VStack(alignment: .leading) {
+                                UI.SearchTypeFilter()
+                                HStack {
+                                    DatePicker("Start", selection: $start).labelsHidden()
+                                    Text("To")
+                                    DatePicker("End", selection: $end).labelsHidden()
+                                }
+                                .padding(8)
+                            }
+                            .background(self.state.session.appPage.primaryColour)
+                            .clipShape(.rect(topTrailingRadius: 5))
+                            .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                            FancyHelpText(
+                                text: "Browse through historical records period \(DateHelper.todayShort(self.start, format: "MM/dd/yyyy HH:mm")) to \(DateHelper.todayShort(self.end, format: "MM/dd/yyyy HH:mm"))",
+                                page: self.state.session.appPage
+                            )
+                            FancyDivider()
+                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                                GridRow {
+                                    UI.SuggestedLinksInRange(
+                                        period: .custom,
+                                        start: self.start,
+                                        end: self.end
+                                    )
+                                    UI.SavedSearchTermsInRange(
+                                        period: .custom,
+                                        start: self.start,
+                                        end: self.end
+                                    )
+                                }
+                            }
+                            FancyDivider()
+                            UI.InteractionsInRange(
+                                period: .custom,
+                                start: self.start,
+                                end: self.end
+                            )
+                        }
+                    }
+                }
+
+                // MARK: Timeline.ByEntity
+                struct ByEntity: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
                     @State private var start: Date = Date()

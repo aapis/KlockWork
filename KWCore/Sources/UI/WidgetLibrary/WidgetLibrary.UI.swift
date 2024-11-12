@@ -2245,7 +2245,7 @@ extension WidgetLibrary.UI.SavedSearchTermLinks {
                 await self.findSavedTermsForPeriod(self.state.session.date.startOfMonth, self.state.session.date.endOfMonth)
             case .year:
                 await self.findSavedTermsForPeriod(self.state.session.date.startOfYear, self.state.session.date.endOfYear)
-            case .custom:
+            default:
                 await self.findSavedTermsForPeriod(self.start, self.end)
             }
             self.vid = UUID()
