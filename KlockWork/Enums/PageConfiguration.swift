@@ -112,7 +112,7 @@ extension PageConfiguration {
             case .people: Image(systemName: "person.2")
             case .projects: Image(systemName: "folder")
             case .terms: Image(systemName: "list.bullet.rectangle")
-            case .definitions: Image(systemName: "list.bullet.rectangle")
+            case .definitions: Image(systemName: "list.dash.header.rectangle")
             case .plans: Image(systemName: "hexagon")
             default: Image(systemName: "house")
             }
@@ -129,7 +129,7 @@ extension PageConfiguration {
             case .people: Image(systemName: "person.2.fill")
             case .projects: Image(systemName: "folder.fill")
             case .terms: Image(systemName: "list.bullet.rectangle.fill")
-            case .definitions: Image(systemName: "list.bullet.rectangle.fill")
+            case .definitions: Image(systemName: "list.dash.header.rectangle")
             case .plans: Image(systemName: "hexagon.fill")
             default: Image(systemName: "house.fill")
             }
