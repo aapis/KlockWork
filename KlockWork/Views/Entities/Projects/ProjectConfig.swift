@@ -11,18 +11,15 @@ import SwiftUI
 import KWCore
 
 struct ProjectConfig: View {
+    @EnvironmentObject private var state: Navigation
+    @EnvironmentObject public var updater: ViewUpdater
     public var project: Project?
-    
     @State private var bannedWords: [BannedWord] = []
     @State private var bannedWord: String = ""
-    
     static private var exportFormatPickerItems: [CustomPickerItem] = [
         CustomPickerItem(title: "Choose an export format", tag: 0),
         CustomPickerItem(title: "Standard", tag: 1)
     ]
-    
-    @Environment(\.managedObjectContext) var moc
-    @EnvironmentObject public var updater: ViewUpdater
     
     // MARK: body view
     var body: some View {
@@ -50,6 +47,8 @@ struct ProjectConfig: View {
             
             Spacer()
         }
+        .padding()
+        .background(self.state.session.appPage.primaryColour)
         .onAppear(perform: onAppear)
         .id(updater.ids["pc.form"])
     }
@@ -75,10 +74,10 @@ struct ProjectConfig: View {
     }
     
     private func createBannedWord() -> Void {
-        let matches = CoreDataProjectConfiguration(moc: moc).byWord(bannedWord)
-        
+        let matches = CoreDataProjectConfiguration(moc: self.state.moc).byWord(bannedWord)
+
         if matches.count == 0 {
-            let bword = BannedWord(context: moc)
+            let bword = BannedWord(context: self.state.moc)
             bword.word = bannedWord
             bword.created = Date()
             bword.id = UUID()
