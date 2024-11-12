@@ -469,6 +469,7 @@ extension WidgetLibrary {
             var body: some View {
                 VStack(spacing: 0) {
                     ListLinkTitle(text: "Overview")
+                        .padding(.bottom, 5)
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(alignment: .center) {
                             ForEach(self.statistics, id: \.id) { type in type }
@@ -2029,6 +2030,23 @@ extension WidgetLibrary.UI.DaysWhereMentioned {
             }
         }
 
+        let plans = CoreDataPlan(moc: self.state.moc).forToday(self.state.session.date)
+        if !plans.isEmpty {
+            for plan in plans {
+                if let date = plan.created {
+                    let components = calendar.dateComponents([.day], from: date)
+                    if !self.days.contains(where: {
+                        let co = calendar.dateComponents([.day], from: $0.date)
+                        return co.day == components.day
+                    }) {
+                        self.days.append(
+                            Day(type: .plans, date: date)
+                        )
+                    }
+                }
+            }
+        }
+
         self.days = self.days.sorted(by: {$0.date > $1.date})
     }
 }
@@ -2497,6 +2515,28 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
             }
         }
 
+        // @TODO: This doesn't work just yet
+//        let plans = CoreDataPlan(moc: self.state.moc).forToday(self.historicalDate)
+//        let calendar = Calendar.autoupdatingCurrent
+//        if !plans.isEmpty {
+//            for plan in plans {
+//                if let date = plan.created {
+//                    let components = calendar.dateComponents([.day], from: date)
+//                    if !self.activities.contains(where: {
+//                        let co = calendar.dateComponents([.day], from: $0.historicalDate)
+//                        return co.day == components.day
+//                    }) {
+//                        self.activities.append(
+//                            UI.GenericTimelineActivity(
+//                                historicalDate: date,
+//                                view: AnyView(plan.rowView)
+//                            )
+//                        )
+//                    }
+//                }
+//            }
+//        }
+
         self.activities = self.activities.sorted(by: {self.tableSortOrder == 0 ? $0.historicalDate > $1.historicalDate : $0.historicalDate < $1.historicalDate})
 
         // Find the current page of resources by offset
@@ -2798,7 +2838,7 @@ extension WidgetLibrary.UI.EntityStatistics {
     /// Onload handler. Sets view state
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        let types = PageConfiguration.EntityType.allCases.filter({ ![.BruceWillis, .definitions].contains($0) })
+        let types = PageConfiguration.EntityType.allCases.filter({ ![.BruceWillis, .plans].contains($0) })
 
         for type in types {
             self.statistics.append(
@@ -2833,6 +2873,7 @@ extension WidgetLibrary.UI.EntityStatistics.Statistic {
         case .companies: self.count = CoreDataCompanies(moc: self.state.moc).countAll()
         case .projects: self.count = CoreDataProjects(moc: self.state.moc).countAll()
         case .terms: self.count = CoreDataTaxonomyTerms(moc: self.state.moc).countAll()
+        case .definitions: self.count = CoreDataTaxonomyTermDefinitions(moc: self.state.moc).countAll()
         default: self.count = 0
         }
     }
