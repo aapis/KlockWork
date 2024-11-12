@@ -49,7 +49,7 @@ struct TermDetail: View {
                     .disabled(self.state.session.job == nil)
                     .opacity(self.state.session.job == nil ? 0.5 : 1)
             }
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 1) {
                 Toggle("Published", isOn: $alive)
                 FancyDivider()
                 FancyTextField(
@@ -66,6 +66,18 @@ struct TermDetail: View {
                         text: "Select a job from the sidebar to get started.",
                         page: self.page
                     )
+                } else {
+                    FancyDivider()
+                    UI.ListLinkTitle(text: "Definitions")
+                        .padding(.bottom, 5)
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 1) {
+                            ForEach((self.term?.definitions?.allObjects as? [TaxonomyTermDefinitions] ?? []) , id: \TaxonomyTermDefinitions.objectID) { def in
+                                UI.Blocks.Definition(definition: def, icon: "chevron.right")
+                            }
+                        }
+                        .clipShape(.rect(cornerRadius: 5))
+                    }
                 }
             }
             Spacer()
