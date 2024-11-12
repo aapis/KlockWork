@@ -558,7 +558,7 @@ extension WidgetLibrary {
                         }
                     }
                 }
-                .frame(maxHeight: 200)
+                .frame(height: 200)
             }
         }
 
@@ -900,12 +900,9 @@ extension WidgetLibrary {
                     Spacer()
                 }
                 .id(self.vid)
-                .frame(minHeight: 200)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
                 .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
-                .onChange(of: self.start) { self.actionOnAppear() }
-                .onChange(of: self.end) { self.actionOnAppear() }
             }
         }
 
@@ -931,7 +928,6 @@ extension WidgetLibrary {
                     Spacer()
                 }
                 .id(self.vid)
-                .frame(minHeight: 200)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
                 .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
@@ -990,44 +986,10 @@ extension WidgetLibrary {
                     }
                 }
                 .id(self.vid)
-                .frame(minHeight: 200)
+                .frame(height: 200)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
                 .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
-            }
-        }
-
-        // MARK: EntityInteractionsForDate
-        struct EntityInteractionsForDate: View {
-            @EnvironmentObject private var state: Navigation
-            @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
-            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
-            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
-            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
-            @State private var activities: [Activity] = []
-            @State private var tabs: [ToolbarButton] = []
-            @State private var vid: UUID = UUID()
-
-            var body: some View {
-                VStack {
-                    UI.ListLinkTitle(text: "Interactions from \(self.state.session.timeline.formatted())")
-                    FancyGenericToolbar(
-                        buttons: self.tabs,
-                        standalone: true,
-                        location: .content,
-                        mode: .compact,
-                        page: .explore,
-                        alwaysShowTab: true
-                    )
-                    .frame(height: 200)
-                }
-                .id(self.vid)
-                .onAppear(perform: self.actionOnAppear)
-                .onChange(of: self.state.session.date) { self.vid = UUID() }
-                .onChange(of: self.state.session.timeline.date) { self.vid = UUID() ; self.actionOnAppear() }
-                .onChange(of: self.showCompanies) { self.actionOnAppear() }
-                .onChange(of: self.showProjects) { self.actionOnAppear() }
-                .onChange(of: self.showJobs) { self.actionOnAppear() }
             }
         }
 
@@ -1057,9 +1019,9 @@ extension WidgetLibrary {
                         page: .explore,
                         alwaysShowTab: true
                     )
+                    .frame(height: 200)
                     Spacer()
                 }
-                .frame(minHeight: 200)
                 .id(self.vid)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.vid = UUID() }
@@ -1067,8 +1029,6 @@ extension WidgetLibrary {
                 .onChange(of: self.showCompanies) { self.actionOnAppear() }
                 .onChange(of: self.showProjects) { self.actionOnAppear() }
                 .onChange(of: self.showJobs) { self.actionOnAppear() }
-                .onChange(of: self.start) { self.actionOnAppear() }
-                .onChange(of: self.end) { self.actionOnAppear() }
             }
         }
 
@@ -1952,6 +1912,122 @@ extension WidgetLibrary {
                 .padding()
             }
         }
+
+        // MARK: DaysWhereMentioned
+        struct DaysWhereMentioned: View {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showRecords") public var showRecords: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showTasks") public var showTasks: Bool = true
+            @State private var vid: UUID = UUID()
+            @State private var days: [Day] = []
+
+            var body: some View {
+                VStack {
+                    UI.ListLinkTitle(text: "Interactions with \(self.state.session.job?.title ?? self.state.session.job?.jid.string ?? "job")")
+                    if self.state.session.job != nil || self.state.session.project != nil || self.state.session.company != nil {
+                        if !self.days.isEmpty {
+                            ScrollView(showsIndicators: false) {
+                                VStack(alignment: .leading, spacing: 5) {
+                                    ForEach(self.days, id: \.id) { entity in
+                                        UI.ListButtonItem(
+                                            callback: { _ in
+                                                self.state.session.date = entity.date
+                                            },
+                                            name: DateHelper.todayShort(entity.date, format: "MMMM dd, yyyy"),
+                                            iconAsImage: entity.type.icon,
+                                            actionIcon: "chevron.right"
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            UI.ListButtonItem(
+                                callback: {_ in},
+                                name: "None found for \(DateHelper.todayShort(self.state.session.date, format: "yyyy"))"
+                            )
+                            .disabled(true)
+                        }
+                    } else {
+                        UI.ListButtonItem(
+                            callback: {_ in},
+                            name: "Select an entity from the sidebar"
+                        )
+                        .disabled(true)
+                    }
+                    Spacer()
+                }
+                .id(self.vid)
+                .frame(height: 200)
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.job) { self.actionOnAppear() }
+                .onChange(of: self.state.session.project) { self.actionOnAppear() }
+                .onChange(of: self.state.session.company) { self.actionOnAppear() }
+                .onChange(of: self.showRecords) { self.actionOnAppear() }
+            }
+
+            struct Day: Identifiable {
+                var id: UUID = UUID()
+                var type: EType
+                var date: Date
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.DaysWhereMentioned {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.days = []
+
+        Task {
+            await self.findInteractions()
+            self.vid = UUID()
+        }
+    }
+
+    /// Finds all interactions for the start/end or selected date
+    /// - Returns: Void
+    private func findInteractions() async -> Void {
+        let calendar = Calendar.autoupdatingCurrent
+
+        if self.showRecords {
+            if let records = self.state.session.job?.records?.allObjects as? [LogRecord] {
+                for record in records {
+                    if let timestamp = record.timestamp {
+                        let components = calendar.dateComponents([.day], from: timestamp)
+                        if !self.days.contains(where: {
+                            let co = calendar.dateComponents([.day], from: $0.date)
+                            return co.day == components.day
+                        }) {
+                            self.days.append(
+                                Day(type: .records, date: timestamp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        if self.showTasks {
+            if let tasks = self.state.session.job?.tasks?.allObjects as? [LogTask] {
+                for task in tasks {
+                    if let date = task.completedDate {
+                        let components = calendar.dateComponents([.day], from: date)
+                        if !self.days.contains(where: {
+                            let co = calendar.dateComponents([.day], from: $0.date)
+                            return co.day == components.day
+                        }) {
+                            self.days.append(
+                                Day(type: .tasks, date: date)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        self.days = self.days.sorted(by: {$0.date < $1.date})
     }
 }
 
@@ -2015,51 +2091,6 @@ extension WidgetLibrary.UI.SimpleEntityList {
             }
         default:
             print("noop")
-        }
-    }
-}
-
-extension WidgetLibrary.UI.EntityInteractionsForDate {
-    /// Onload handler. Sets view state
-    /// - Returns: Void
-    private func actionOnAppear() -> Void {
-        self.tabs = []
-        self.tabs.append(
-            ToolbarButton(
-                id: 0,
-                helpText: "Jobs interacted with on this day in \(self.state.session.timeline.formatted())",
-                icon: "hammer",
-                labelText: "Jobs",
-                contents: AnyView(
-                    UI.SimpleEntityList(type: .jobs)
-                )
-            )
-        )
-        if self.showProjects {
-            self.tabs.append(
-                ToolbarButton(
-                    id: 1,
-                    helpText: "Projects interacted with on this day in \(self.state.session.timeline.formatted())",
-                    icon: "folder",
-                    labelText: "Projects",
-                    contents: AnyView(
-                        UI.SimpleEntityList(type: .projects)
-                    )
-                )
-            )
-        }
-        if self.showCompanies {
-            self.tabs.append(
-                ToolbarButton(
-                    id: 2,
-                    helpText: "Companies interacted with on this day in \(self.state.session.timeline.formatted())",
-                    icon: "building.2",
-                    labelText: "Companies",
-                    contents: AnyView(
-                        UI.SimpleEntityList(type: .companies)
-                    )
-                )
-            )
         }
     }
 }

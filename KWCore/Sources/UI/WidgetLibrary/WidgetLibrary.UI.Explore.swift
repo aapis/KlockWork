@@ -196,7 +196,6 @@ extension WidgetLibrary.UI {
                                         period: .week,
                                         format: "w"
                                     )
-                                    .frame(maxHeight: 200)
                                 }
                             }
                         }
@@ -262,14 +261,10 @@ extension WidgetLibrary.UI {
                                 GridRow {
                                     UI.SuggestedLinksInRange(
                                         period: .year,
-                                        start: self.state.session.date.startOfYear,
-                                        end: self.state.session.date.endOfYear,
                                         format: "yyyy"
                                     )
                                     UI.SavedSearchTermsInRange(
                                         period: .year,
-                                        start: self.state.session.date.startOfYear,
-                                        end: self.state.session.date.endOfYear,
                                         format: "yyyy"
                                     )
                                 }
@@ -277,8 +272,6 @@ extension WidgetLibrary.UI {
                             FancyDivider()
                             UI.InteractionsInRange(
                                 period: .year,
-                                start: self.state.session.date.startOfYear,
-                                end: self.state.session.date.endOfYear,
                                 format: "yyyy"
                             )
                         }
@@ -359,13 +352,12 @@ extension WidgetLibrary.UI {
                             FancyDivider()
                             LazyVGrid(columns: self.twoCol, alignment: .leading) {
                                 GridRow {
-                                    Text("Medium widget")
-                                    Text("Medium widget")
+                                    DaysWhereMentioned()
+                                    EmptyView()
                                 }
                             }
                             FancyDivider()
-                            Text("Big widget")
-                            Spacer()
+                            ActivityFeed()
                         }
                     }
                 }

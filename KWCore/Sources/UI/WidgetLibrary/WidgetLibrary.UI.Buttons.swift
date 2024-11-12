@@ -503,7 +503,8 @@ extension WidgetLibrary.UI {
                         Text(savedSearch.term ?? "Invalid term name")
                         Spacer()
                         if let timestamp = savedSearch.created?.formatted(date: .abbreviated, time: .shortened) {
-                            Timestamp(text: timestamp, alignment: .trailing)
+                            Text(timestamp)
+                                .foregroundStyle(.gray)
                         }
                     }
                     .padding(8)
