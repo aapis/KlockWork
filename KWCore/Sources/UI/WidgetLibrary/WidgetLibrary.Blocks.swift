@@ -14,6 +14,7 @@ extension WidgetLibrary.UI {
         struct Definition: View {
             @EnvironmentObject public var state: Navigation
             public var definition: TaxonomyTermDefinitions
+            public var icon: String? = nil
             @State private var isHighlighted: Bool = false
 
             var body: some View {
@@ -27,6 +28,9 @@ extension WidgetLibrary.UI {
                     HStack(alignment: .top, spacing: 10) {
                         Text(self.definition.definition ?? "Error: Missing definition")
                         Spacer()
+                        if let icon = self.icon {
+                            Image(systemName: icon)
+                        }
                     }
                     .padding(8)
                     .background(self.isHighlighted ? (self.definition.job?.backgroundColor ?? Theme.rowColour).opacity(1) : (self.definition.job?.backgroundColor ?? Theme.rowColour).opacity(0.8)) // @TODO: refactor, this sucks
