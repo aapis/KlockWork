@@ -86,6 +86,12 @@ open class CoreDataTaxonomyTermDefinitions {
         )
     }
 
+    /// Count all taxonomy terms
+    /// - Returns: Int
+    public func countAll() -> Int {
+        return self.count(NSPredicate(format: "alive == true"))
+    }
+
     /// Create a new TaxonomyTermDefinitions
     /// - Parameters:
     ///   - alive: Bool
