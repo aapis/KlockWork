@@ -536,6 +536,28 @@ extension WidgetLibrary.UI {
                 }
             }
         }
+
+        // MARK: SmallOpen
+        struct SmallOpen: View {
+            var callback: () -> Void
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                Button {
+                    self.callback()
+                } label: {
+                    Text("Open")
+                        .font(.caption)
+                        .foregroundStyle(Theme.base)
+                        .padding(6)
+                        .padding([.leading, .trailing], 8)
+                        .background(.white.opacity(self.isHighlighted ? 1 : 0.8))
+                        .clipShape(.capsule(style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .useDefaultHover({ hover in self.isHighlighted = hover})
+            }
+        }
     }
 }
 

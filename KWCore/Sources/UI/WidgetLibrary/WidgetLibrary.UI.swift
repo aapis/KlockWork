@@ -315,21 +315,24 @@ extension WidgetLibrary {
                                         Text("Found in note \"\((self.activity.source as? NoteVersion)?.note?.title ?? "Error: Note not found")\"")
                                             .foregroundStyle(.gray)
                                         Spacer()
-                                        Button {
+                                        UI.Buttons.SmallOpen(callback: {
                                             if let entity = self.activity.source as? NoteVersion {
-                                                self.state.session.note = entity.note
                                                 self.state.to(.noteDetail)
+                                                self.state.session.note = entity.note
                                             }
-                                        } label: {
-                                            Text("Open")
-                                                .font(.caption)
-                                                .foregroundStyle(Theme.base)
-                                                .padding(6)
-                                                .padding([.leading, .trailing], 8)
-                                                .background(.white)
-                                                .clipShape(.capsule(style: .continuous))
-                                        }
-                                        .buttonStyle(.plain)
+                                        })
+                                    case is LogRecord:
+                                        Text("Found in record \"\((self.activity.source as? LogRecord)?.message ?? "Error: Record not found")\"")
+                                            .foregroundStyle(.gray)
+                                        Spacer()
+                                        UI.Buttons.SmallOpen(callback: {
+                                            if let entity = self.activity.source as? LogRecord {
+                                                if let created = entity.timestamp {
+                                                    self.state.to(.today)
+                                                    self.state.session.date = created
+                                                }
+                                            }
+                                        })
                                     default:
                                         Text("No source found")
                                     }
@@ -2149,7 +2152,52 @@ extension WidgetLibrary.UI.SuggestedLinksInRange {
         Task {
             await self.getLinksFromJobs()
             await self.getLinksFromNotes()
+            await self.getLinksFromRecords()
             self.vid = UUID()
+        }
+    }
+
+    /// Get links from records created or updated on a given day
+    /// @TODO: move to Job
+    /// - Returns: Void
+    private func getLinksFromRecords() async -> Void {
+        if let start = self.start {
+            if let end = self.end {
+                let linkLength = 40
+                let records = CoreDataRecords(moc: self.state.moc).inRange(
+                    start: start,
+                    end: end
+                )
+
+                for record in records {
+                    if let message = record.message {
+                        if message.contains("https://") {
+                            let linkRegex = /https:\/\/([^ \n]+)/
+                            if let match = message.firstMatch(of: linkRegex) {
+                                let sMatch = String(match.0)
+                                var label: String = sMatch
+
+                                if sMatch.count > linkLength {
+                                    label = label.prefix(linkLength) + "..."
+                                }
+                                if !self.activities.contains(where: {$0.name == label}) {
+                                    self.activities.append(
+                                        Activity(
+                                            name: label,
+                                            help: sMatch,
+                                            page: self.state.parent ?? .dashboard,
+                                            type: .activity,
+                                            job: record.job,
+                                            source: record,
+                                            url: URL(string: sMatch) ?? nil
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
