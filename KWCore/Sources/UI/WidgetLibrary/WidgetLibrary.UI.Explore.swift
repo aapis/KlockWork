@@ -364,8 +364,12 @@ extension WidgetLibrary.UI {
                             FancyDivider()
                             LazyVGrid(columns: self.twoCol, alignment: .leading) {
                                 GridRow {
-                                    DaysWhereMentioned()
-                                    EmptyView()
+                                    UI.DaysWhereMentioned()
+                                    UI.SuggestedLinksInRange(
+                                        period: .custom,
+                                        start: self.state.session.date.startOfDay,
+                                        end: self.state.session.date.endOfDay
+                                    )
                                 }
                             }
                             FancyDivider()

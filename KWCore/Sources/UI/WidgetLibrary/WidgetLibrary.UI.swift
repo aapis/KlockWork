@@ -1959,7 +1959,7 @@ extension WidgetLibrary {
                     Spacer()
                 }
                 .id(self.vid)
-                .frame(height: 200)
+                .frame(height: 250)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.job) { self.actionOnAppear() }
                 .onChange(of: self.state.session.project) { self.actionOnAppear() }
