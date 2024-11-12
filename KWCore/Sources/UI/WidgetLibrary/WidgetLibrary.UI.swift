@@ -557,7 +557,6 @@ extension WidgetLibrary {
                             .disabled(true)
                         }
                     }
-                    .padding(.top, 8)
                 }
                 .frame(maxHeight: 200)
             }
@@ -976,7 +975,7 @@ extension WidgetLibrary {
 
             var body: some View {
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 1) {
+                    VStack(alignment: .leading, spacing: 5) {
                         if self.terms.count > 0 {
                             ForEach(self.terms, id: \.id) { savedSearch in
                                 UI.Buttons.SavedSearchTerm(savedSearch: savedSearch)
@@ -989,7 +988,6 @@ extension WidgetLibrary {
                             .disabled(true)
                         }
                     }
-                    .padding(.top, 8)
                 }
                 .id(self.vid)
                 .frame(minHeight: 200)

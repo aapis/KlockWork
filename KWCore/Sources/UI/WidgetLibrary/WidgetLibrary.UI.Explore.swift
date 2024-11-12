@@ -348,41 +348,24 @@ extension WidgetLibrary.UI {
                         VStack(alignment: .leading, spacing: 0) {
                             VStack(alignment: .leading) {
                                 UI.SearchTypeFilter()
-                                HStack {
-                                    DatePicker("Start", selection: $start).labelsHidden()
-                                    Text("To")
-                                    DatePicker("End", selection: $end).labelsHidden()
-                                }
-                                .padding(8)
                             }
                             .background(self.state.session.appPage.primaryColour)
                             .clipShape(.rect(topTrailingRadius: 5))
                             .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
                             FancyHelpText(
-                                text: "Browse through historical records period \(DateHelper.todayShort(self.start, format: "MM/dd/yyyy HH:mm")) to \(DateHelper.todayShort(self.end, format: "MM/dd/yyyy HH:mm"))",
+                                text: "Show dates and times for the selected entities",
                                 page: self.state.session.appPage
                             )
                             FancyDivider()
                             LazyVGrid(columns: self.twoCol, alignment: .leading) {
                                 GridRow {
-                                    UI.SuggestedLinksInRange(
-                                        period: .custom,
-                                        start: self.start,
-                                        end: self.end
-                                    )
-                                    UI.SavedSearchTermsInRange(
-                                        period: .custom,
-                                        start: self.start,
-                                        end: self.end
-                                    )
+                                    Text("Medium widget")
+                                    Text("Medium widget")
                                 }
                             }
                             FancyDivider()
-                            UI.InteractionsInRange(
-                                period: .custom,
-                                start: self.start,
-                                end: self.end
-                            )
+                            Text("Big widget")
+                            Spacer()
                         }
                     }
                 }
