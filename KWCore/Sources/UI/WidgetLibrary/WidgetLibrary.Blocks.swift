@@ -134,6 +134,17 @@ extension WidgetLibrary.UI {
                                     .font(.title3)
                                     .fontWeight(.bold)
                                     .padding([.leading, .trailing, .top])
+                                if let defs = self.term.definitions {
+                                    if defs.count == 1 {
+                                        Text("\(defs.count) Definition")
+                                            .foregroundStyle(.white.opacity(0.55))
+                                            .padding([.leading, .trailing, .bottom])
+                                    } else {
+                                        Text("\(defs.count) Definitions")
+                                            .foregroundStyle(.white.opacity(0.55))
+                                            .padding([.leading, .trailing, .bottom])
+                                    }
+                                }
                                 Spacer()
                                 UI.ResourcePath(
                                     company: self.state.session.job?.project?.company,
@@ -197,7 +208,8 @@ extension WidgetLibrary.UI.Blocks.Term {
     /// Fires when a term block is clicked/tapped
     /// - Returns: Void
     private func actionOnTap() -> Void {
-
+        self.state.to(.termDetail)
+        self.state.session.term = self.term
     }
 }
 
