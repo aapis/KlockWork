@@ -2026,7 +2026,7 @@ extension WidgetLibrary.UI.DaysWhereMentioned {
             }
         }
 
-        self.days = self.days.sorted(by: {$0.date < $1.date})
+        self.days = self.days.sorted(by: {$0.date > $1.date})
     }
 }
 
