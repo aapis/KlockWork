@@ -24,8 +24,6 @@ struct Explore: View {
             }
             UI.ExploreLinks()
             UI.Navigator()
-            // @TODO: tmp disabled
-            //            Widgets()
             Spacer()
         }
         .padding()
