@@ -17,6 +17,7 @@ public final class SearchHelper {
     public var recordBucket: [LogRecord] = []
     public var companyBucket: [Company] = []
     public var definitionsBucket: [TaxonomyTermDefinitions] = []
+    public var termBucket: [TaxonomyTerm] = []
     public var peopleBucket: [Person] = []
     public var fields: [String] = []
     
@@ -42,6 +43,10 @@ public final class SearchHelper {
 
     public init(bucket: [TaxonomyTermDefinitions]) {
         self.definitionsBucket = bucket
+    }
+
+    public init(bucket: [TaxonomyTerm]) {
+        self.termBucket = bucket
     }
 
     public init(bucket: [Person]) {
@@ -91,6 +96,7 @@ public final class SearchHelper {
             matches(searchText, fields: [$0.name!]) && $0.hidden == allowHidden
         }
     }
+
     /// Find matching entities of type TaxonomyTermDefinitions
     /// - Parameter searchText: Binding(String)
     /// - Returns: [NSManagedObject]
@@ -99,7 +105,7 @@ public final class SearchHelper {
             matches(searchText, fields: [$0.definition!, $0.term!.name!])
         }
     }
-    
+
     /// Find matching entities of type Person
     /// - Parameter searchText: Binding(String)
     /// - Returns: [NSManagedObject]
@@ -108,7 +114,16 @@ public final class SearchHelper {
             matches(searchText, fields: [$0.name!])
         }
     }
-    
+
+    /// Find matching entities of type TaxonomyTerm
+    /// - Parameter searchText: Binding(String)
+    /// - Returns: [NSManagedObject]
+    public func findInTerms(_ searchText: Binding<String>) -> [TaxonomyTerm] {
+        return termBucket.filter {
+            matches(searchText, fields: [$0.name!])
+        }
+    }
+
     private func matches(_ searchText: Binding<String>, fields: [String]) -> Bool {
         do {
             let caseInsensitiveTerm = try Regex(searchText.wrappedValue).ignoresCase()

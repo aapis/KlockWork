@@ -1,16 +1,17 @@
 //
-//  TermDashboard.swift
-//  DLPrototype
+//  DefinitionDashboard.swift
+//  KlockWork
 //
-//  Created by Ryan Priebe on 2024-08-16.
+//  Created by Ryan Priebe on 2024-11-12.
 //  Copyright © 2024 YegCollective. All rights reserved.
 //
 
 import SwiftUI
 import KWCore
 
-struct TermsDashboard: View {
+struct DefinitionDashboard: View {
     typealias Widget = WidgetLibrary.UI.Buttons
+    typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var state: Navigation
     @AppStorage("general.columns") private var numColumns: Int = 3
     private let page: PageConfiguration.AppPage = .explore
@@ -19,7 +20,7 @@ struct TermsDashboard: View {
         return Array(repeating: .init(.flexible(minimum: 100)), count: numColumns)
     }
     @State public var job: Job?
-    @State private var terms: [TaxonomyTerm] = []
+    @State private var definitions: [TaxonomyTermDefinitions] = []
     @State private var searchText: String = ""
 
     var body: some View {
@@ -30,18 +31,17 @@ struct TermsDashboard: View {
                     title: self.eType.label
                 )
 
-                if self.terms.count > 0 {
+                if self.definitions.count > 0 {
                     UI.BoundSearchBar(
                         text: $searchText,
                         disabled: false,
-                        placeholder: self.terms.count > 1 ? "Filter \(self.terms.count) terms" : "Filter terms"
+                        placeholder: self.definitions.count > 1 ? "Filter \(self.definitions.count) terms & definitions" : "Filter terms & definitions"
                     )
-                    .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
 
                     ScrollView(showsIndicators: false) {
                         LazyVGrid(columns: columns, alignment: .leading) {
-                            ForEach(self.filter(self.terms), id: \TaxonomyTerm.objectID) { term in
-                                UI.Blocks.Term(term: term)
+                            ForEach(self.filter(self.definitions), id: \TaxonomyTermDefinitions.objectID) { def in
+                                UI.Blocks.DefinitionAlternative(definition: def)
                             }
                         }
                     }
@@ -63,30 +63,24 @@ struct TermsDashboard: View {
     }
 }
 
-extension TermsDashboard {
+extension DefinitionDashboard {
     /// Onload handler
     /// - Returns: Void
     private func actionOnAppear() -> Void {
         self.job = self.state.session.job
 
         if let job = self.job {
-            let definitions = CoreDataTaxonomyTermDefinitions(moc: self.state.moc).definitions(for: job)
-            let grouped = Dictionary(grouping: definitions, by: {$0.term!})
-            var tSet: Set<TaxonomyTerm> = []
-            for item in grouped {
-                tSet.insert(item.key)
-            }
-
-            self.terms = Array(tSet).sorted(by: {$0.name ?? "" < $1.name ?? ""})
+            self.definitions = CoreDataTaxonomyTermDefinitions(moc: self.state.moc).definitions(for: job)
         } else {
-            self.terms = []
+            self.definitions = []
         }
     }
 
     /// Filter terms by input text
     /// - Parameter terms: TaxonomyTerm
     /// - Returns: [TaxonomyTermDefinitions]
-    private func filter(_ terms: [TaxonomyTerm]) -> [TaxonomyTerm] {
-        return SearchHelper(bucket: terms).findInTerms($searchText)
+    private func filter(_ terms: [TaxonomyTermDefinitions]) -> [TaxonomyTermDefinitions] {
+        return SearchHelper(bucket: terms).findInDefinitions($searchText)
     }
 }
+

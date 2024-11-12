@@ -135,6 +135,70 @@ public class CoreDataTaxonomyTerms {
         return self.count(NSPredicate(format: "alive == true"))
     }
 
+    /// Create a new TaxonomyTerm
+    /// - Parameters:
+    ///   - alive: Bool
+    ///   - created: Optional(Date)
+    ///   - lastUpdate: Optional(Date)
+    ///   - name: String
+    ///   - definitions: Optional([TaxonomyTermDefinitions])
+    ///   - saveByDefault: Bool
+    /// - Returns: Void
+    public func createAndReturn(alive: Bool, created: Date? = nil, lastUpdate: Date? = nil, name: String, definitions: [TaxonomyTermDefinitions]? = nil, saveByDefault: Bool = true) -> TaxonomyTerm {
+        return self.make(
+            alive: alive,
+            created: created,
+            lastUpdate: lastUpdate,
+            name: name,
+            definitions: definitions,
+            saveByDefault: saveByDefault
+        )
+    }
+
+    /// Create a new TaxonomyTerm
+    /// - Parameters:
+    ///   - alive: Bool
+    ///   - created: Optional(Date)
+    ///   - lastUpdate: Optional(Date)
+    ///   - name: String
+    ///   - definitions: Optional([TaxonomyTermDefinitions])
+    ///   - saveByDefault: Bool
+    /// - Returns: Void
+    public func create(alive: Bool, created: Date? = nil, lastUpdate: Date? = nil, name: String, definitions: [TaxonomyTermDefinitions]? = nil, saveByDefault: Bool = true) -> Void {
+        let _ = self.make(
+            alive: alive,
+            created: created,
+            lastUpdate: lastUpdate,
+            name: name,
+            definitions: definitions,
+            saveByDefault: saveByDefault
+        )
+    }
+
+    /// Create a new TaxonomyTerm
+    /// - Parameters:
+    ///   - alive: Bool
+    ///   - created: Optional(Date)
+    ///   - lastUpdate: Optional(Date)
+    ///   - name: String
+    ///   - definitions: Optional([TaxonomyTermDefinitions])
+    ///   - saveByDefault: Bool
+    /// - Returns: TaxonomyTerm
+    private func make(alive: Bool, created: Date? = nil, lastUpdate: Date? = nil, name: String, definitions: [TaxonomyTermDefinitions]? = nil, saveByDefault: Bool = true) -> TaxonomyTerm {
+        let term = TaxonomyTerm(context: self.moc!)
+        term.alive = alive
+        term.created = created ?? Date()
+        term.lastUpdate = lastUpdate ?? Date()
+        term.name = name
+        term.definitions = NSSet(array: definitions ?? [])
+
+        if saveByDefault {
+            PersistenceController.shared.save()
+        }
+
+        return term
+    }
+
     /// Query function, finds and filters notes
     /// - Parameter predicate: A predicate to modify the results
     /// - Returns: Array<NoteVersion>

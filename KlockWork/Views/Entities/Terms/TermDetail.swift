@@ -1,33 +1,31 @@
 //
-//  DefinitionDetail.swift
-//  DLPrototype
+//  TermDetail.swift
+//  KlockWork
 //
-//  Created by Ryan Priebe on 2024-10-01.
+//  Created by Ryan Priebe on 2024-11-12.
 //  Copyright © 2024 YegCollective. All rights reserved.
 //
 
 import SwiftUI
 import KWCore
 
-struct DefinitionDetail: View {
+struct TermDetail: View {
     @EnvironmentObject public var state: Navigation
     @Environment(\.dismiss) private var dismiss
-    @State public var definition: TaxonomyTermDefinitions?
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .terms
     @State private var definitionString: String = ""
     @State private var alive: Bool = true
+    @State private var name: String = ""
     @State private var term: TaxonomyTerm?
     @State private var isDeleteAlertPresented: Bool = false
-    // @TODO: not sure if I want this here
-//    @FocusState private var primaryTextFieldInFocus: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center, spacing: 8) {
-                Title(text: "Definition", image: "list.bullet.rectangle")
+                Title(text: "Term", image: "list.bullet.rectangle")
                 Spacer()
-                if self.definition != nil {
+                if self.term != nil {
                     FancyButtonv2(
                         text: "Delete",
                         action: {isDeleteAlertPresented = true},
@@ -44,7 +42,6 @@ struct DefinitionDetail: View {
                     .disabled(self.state.session.job == nil)
                     .opacity(self.state.session.job == nil ? 0.5 : 1)
                 }
-
                 FancyButtonv2(text: "Cancel", action: self.actionOnCancel, showIcon: false)
                     .disabled(self.state.session.job == nil)
                     .opacity(self.state.session.job == nil ? 0.5 : 1)
@@ -52,16 +49,14 @@ struct DefinitionDetail: View {
                     .disabled(self.state.session.job == nil)
                     .opacity(self.state.session.job == nil ? 0.5 : 1)
             }
-            .padding(.bottom)
-
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 1) {
                 Toggle("Published", isOn: $alive)
                 FancyDivider()
                 FancyTextField(
-                    placeholder: "A statement of the meaning of a word, phrase, or term, as in a dictionary entry.",
-                    lineLimit: 11,
+                    placeholder: "A key, label, or name for an entity",
+                    lineLimit: 1,
                     onSubmit: self.actionOnSave,
-                    text: $definitionString
+                    text: $name
                 )
                 .disabled(self.state.session.job == nil)
                 .opacity(self.state.session.job == nil ? 0.5 : 1)
@@ -71,38 +66,39 @@ struct DefinitionDetail: View {
                         text: "Select a job from the sidebar to get started.",
                         page: self.page
                     )
+                } else {
+                    FancyDivider()
+                    UI.ListLinkTitle(text: "Definitions")
+                        .padding(.bottom, 5)
+                    ScrollView(showsIndicators: false) {
+                        VStack(spacing: 1) {
+                            ForEach((self.term?.definitions?.allObjects as? [TaxonomyTermDefinitions] ?? []) , id: \TaxonomyTermDefinitions.objectID) { def in
+                                UI.Blocks.Definition(definition: def, icon: "chevron.right")
+                            }
+                        }
+                        .clipShape(.rect(cornerRadius: 5))
+                    }
                 }
-                // @TODO: not sure if I want this here
-//                .focused($primaryTextFieldInFocus)
-//                .onAppear {
-//                    // thx https://www.kodeco.com/31569019-focus-management-in-swiftui-getting-started#toc-anchor-002
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-//                        self.primaryTextFieldInFocus = true
-//                    }
-//                }
             }
-
             Spacer()
         }
         .padding()
-        .background(self.page.primaryColour)
+        .background(self.state.session.appPage.primaryColour)
         .onAppear(perform: self.actionOnAppear)
-        .onChange(of: self.state.session.definition) { self.actionOnAppear() }
+        .onChange(of: self.state.session.job) { self.actionOnAppear() }
     }
 }
 
-extension DefinitionDetail {
-    /// Onload handler
+extension TermDetail {
+    /// Onload handler. Sets view state
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        if let stored = self.state.session.definition {
-            self.definition = stored
-            self.state.session.definition = nil
+        if let stored = self.state.session.term {
+            self.term = stored
         }
 
-        self.definitionString = self.definition?.definition ?? ""
-        self.alive = self.definition?.alive ?? true
-        self.term = self.definition?.term
+        self.alive = self.term?.alive ?? false
+        self.name = self.term?.name ?? ""
     }
 
     /// Callback that fires when cancel button clicked/tapped
@@ -115,31 +111,27 @@ extension DefinitionDetail {
     /// Callback that fires when save button clicked/tapped
     /// - Returns: Void
     private func actionOnSave() -> Void {
-        if self.definition != nil {
-            self.definition?.definition = self.definitionString
-            self.definition?.alive = self.alive
-            self.definition?.job = self.state.session.job
-            self.definition?.term = self.term
+        if self.term != nil {
+            self.term?.alive = self.alive
+            self.term?.lastUpdate = Date()
+            self.term?.name = self.name
         } else {
-            CoreDataTaxonomyTermDefinitions(moc: self.state.moc).create(
-                alive: self.alive,
-                created: Date(),
-                definition: self.definitionString,
-                lastUpdate: Date(),
-                job: self.state.session.job,
-                term: self.term // @TODO: NOTE TO SELF: all new items created will not be associated with terms until we build a term selector
+            CoreDataTaxonomyTerms(moc: self.state.moc).create(
+                alive: true,
+                name: self.name,
+                saveByDefault: false
             )
         }
 
         PersistenceController.shared.save()
         self.state.to(.terms)
     }
-    
+
     /// Fires when user chooses to unpublish a definition
     /// - Returns: Void
     private func actionOnSoftDelete() -> Void {
         self.alive = false
-        self.definition?.alive = false
+        self.term?.alive = false
         PersistenceController.shared.save()
         self.state.to(.terms)
     }

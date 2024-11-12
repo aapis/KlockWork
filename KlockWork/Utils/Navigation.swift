@@ -13,7 +13,7 @@ import EventKit
 public enum Page {
     typealias Conf = PageConfiguration.AppPage
     case dashboard, today, notes, tasks, projects, projectDetail, jobs, companies, companyDetail, planning,
-    terms, definitionDetail, taskDetail, noteDetail, people, peopleDetail, explore, activityFlashcards, activityCalendar, recordDetail,
+    terms, termDetail, definitions, definitionDetail, taskDetail, noteDetail, people, peopleDetail, explore, activityFlashcards, activityCalendar, recordDetail,
     timeline
 
     var appPage: Conf {
@@ -51,6 +51,8 @@ public enum Page {
         case .companyDetail: return "Company"
         case .planning: return "Planning"
         case .terms: return "Terms"
+        case .termDetail: return "Term"
+        case .definitions: return "Definitions"
         case .definitionDetail: return "Definition"
         case .taskDetail: return "Task"
         case .noteDetail: return "Note"
@@ -68,13 +70,14 @@ public enum Page {
         switch self {
         case .companyDetail: return .companies
         case .projectDetail: return .projects
-        case .definitionDetail: return .terms
+        case .definitionDetail: return .definitions
         case .taskDetail: return .tasks
         case .noteDetail: return .notes
         case .peopleDetail: return .people
         case .activityCalendar, .activityFlashcards: return .explore
         case .recordDetail: return .today
         case .timeline: return .explore
+        case .termDetail: return .terms
         default: return nil
         }
     }
@@ -619,7 +622,11 @@ extension Navigation {
             HistoryPage(page: .notes, view: AnyView(NoteDashboard()), sidebar: AnyView(NoteDashboardSidebar()), title: "Notes", navButtons: [.sidebarToggle, .resetUserChoices, .createNote]),
             HistoryPage(page: .noteDetail, view: AnyView(NoteCreate()), sidebar: AnyView(NoteCreateSidebar()), title: "Note detail"),
             HistoryPage(page: .tasks, view: AnyView(TaskDashboard()), sidebar: AnyView(TaskDashboardSidebar()), title: "Tasks", navButtons: [.sidebarToggle, .resetUserChoices, .createTask]),
+            // @TODO: UPDATE
             HistoryPage(page: .terms, view: AnyView(TermsDashboard()), sidebar: AnyView(TermsDashboardSidebar()), title: "Terms", navButtons: [.sidebarToggle, .resetUserChoices, .createDefinition]),
+            // @TODO: UPDATE
+            HistoryPage(page: .definitions, view: AnyView(DefinitionDashboard()), sidebar: AnyView(TermsDashboardSidebar()), title: "Terms", navButtons: [.sidebarToggle, .resetUserChoices, .createDefinition]),
+            HistoryPage(page: .termDetail, view: AnyView(TermDetail()), sidebar: AnyView(TermsDashboardSidebar()), title: "Terms", navButtons: [.sidebarToggle, .resetUserChoices, .createTerm]),
             HistoryPage(page: .definitionDetail, view: AnyView(DefinitionDetail()), sidebar: AnyView(TermsDashboardSidebar()), title: "Definition detail"),
             HistoryPage(page: .taskDetail, view: AnyView(TaskDetail()), sidebar: AnyView(TermsDashboardSidebar()), title: "Task detail"),
             HistoryPage(page: .people, view: AnyView(PeopleDashboard()), sidebar: AnyView(PeopleDashboardSidebar()), title: "People", navButtons: [.sidebarToggle, .resetUserChoices, .createPerson]),

@@ -14,6 +14,7 @@ extension WidgetLibrary.UI {
         struct Definition: View {
             @EnvironmentObject public var state: Navigation
             public var definition: TaxonomyTermDefinitions
+            public var icon: String? = nil
             @State private var isHighlighted: Bool = false
 
             var body: some View {
@@ -27,6 +28,9 @@ extension WidgetLibrary.UI {
                     HStack(alignment: .top, spacing: 10) {
                         Text(self.definition.definition ?? "Error: Missing definition")
                         Spacer()
+                        if let icon = self.icon {
+                            Image(systemName: icon)
+                        }
                     }
                     .padding(8)
                     .background(self.isHighlighted ? (self.definition.job?.backgroundColor ?? Theme.rowColour).opacity(1) : (self.definition.job?.backgroundColor ?? Theme.rowColour).opacity(0.8)) // @TODO: refactor, this sucks
@@ -113,8 +117,130 @@ extension WidgetLibrary.UI {
                 .onChange(of: self.item) { self.actionOnAppear() }
             }
         }
+
+        // MARK: Term
+        struct Term: View {
+            @EnvironmentObject public var state: Navigation
+            public let term: TaxonomyTerm
+            @State private var highlighted: Bool = false
+
+            var body: some View {
+                Button {
+                    self.actionOnTap()
+                } label: {
+                    VStack(spacing: 0) {
+                        ZStack(alignment: .topLeading) {
+                            Color.white
+                                .shadow(color: .black.opacity(1), radius: 3)
+                                .opacity(highlighted ? 0.2 : 0.1)
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text(self.term.name ?? "_TERM_NAME")
+                                    .font(.title3)
+                                    .fontWeight(.bold)
+                                    .padding([.leading, .trailing, .top])
+                                if let defs = self.term.definitions {
+                                    if defs.count == 1 {
+                                        Text("\(defs.count) Definition")
+                                            .foregroundStyle(.white.opacity(0.55))
+                                            .padding([.leading, .trailing, .bottom])
+                                    } else {
+                                        Text("\(defs.count) Definitions")
+                                            .foregroundStyle(.white.opacity(0.55))
+                                            .padding([.leading, .trailing, .bottom])
+                                    }
+                                }
+                                Spacer()
+                                UI.ResourcePath(
+                                    company: self.state.session.job?.project?.company,
+                                    project: self.state.session.job?.project,
+                                    job: self.state.session.job
+                                )
+                            }
+                        }
+                    }
+                }
+                .frame(height: 150)
+                .clipShape(.rect(cornerRadius: 5))
+                .useDefaultHover({ inside in highlighted = inside})
+                .buttonStyle(.plain)
+            }
+        }
+
+        // MARK: DefinitionAlternative
+        struct DefinitionAlternative: View {
+            @EnvironmentObject public var state: Navigation
+            public let definition: TaxonomyTermDefinitions
+            @State private var highlighted: Bool = false
+
+            var body: some View {
+                Button {
+                    self.actionOnTap()
+                } label: {
+                    VStack(spacing: 0) {
+                        ZStack(alignment: .topLeading) {
+                            Color.white
+                                .shadow(color: .black.opacity(1), radius: 3)
+                                .opacity(highlighted ? 0.2 : 0.1)
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text(self.definition.term?.name ?? "_TERM_NAME")
+                                    .font(.title3)
+                                    .fontWeight(.bold)
+                                    .padding([.leading, .trailing, .top])
+                                Text(self.definitionBody())
+                                    .foregroundStyle(.white.opacity(0.55))
+                                    .padding([.leading, .trailing, .bottom])
+                                Spacer()
+                                UI.ResourcePath(
+                                    company: self.state.session.job?.project?.company,
+                                    project: self.state.session.job?.project,
+                                    job: self.state.session.job
+                                )
+                            }
+                        }
+                    }
+                }
+                .frame(height: 150)
+                .clipShape(.rect(cornerRadius: 5))
+                .useDefaultHover({ inside in highlighted = inside})
+                .buttonStyle(.plain)
+            }
+        }
     }
 }
+
+extension WidgetLibrary.UI.Blocks.Term {
+    /// Fires when a term block is clicked/tapped
+    /// - Returns: Void
+    private func actionOnTap() -> Void {
+        self.state.to(.termDetail)
+        self.state.session.term = self.term
+    }
+}
+
+extension WidgetLibrary.UI.Blocks.DefinitionAlternative {
+    /// Trucate term answer
+    /// - Returns: String
+    private func definitionBody() -> String {
+        if let body = self.definition.definition {
+            if body.count > 100 {
+                let i = body.index(body.startIndex, offsetBy: 100)
+                let description = String(body[...i]).trimmingCharacters(in: .whitespacesAndNewlines)
+
+                return description + "..."
+            }
+        }
+
+        return "No preview available"
+    }
+
+    /// Fires when a term block is clicked/tapped
+    /// - Returns: Void
+    private func actionOnTap() -> Void {
+        self.state.session.definition = self.definition
+        self.state.to(.definitionDetail)
+    }
+}
+
 
 extension WidgetLibrary.UI.Blocks.GenericBlock {
     /// Onload handler. Sets view state
