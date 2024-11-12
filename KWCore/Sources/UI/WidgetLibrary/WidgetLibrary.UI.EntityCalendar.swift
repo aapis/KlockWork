@@ -789,8 +789,19 @@ extension WidgetLibrary.UI.EntityCalendar.Day {
             let jobs = CoreDataTasks(moc: self.state.moc)
                 .jobsForTasksDueToday(self.date)
                 .sorted(by: {$0.created ?? Date() < $1.created ?? Date()})
-            for job in jobs {
-                self.colourData.insert(job.backgroundColor)
+            if !jobs.isEmpty {
+                for job in jobs {
+                    self.colourData.insert(job.backgroundColor)
+                }
+            } else {
+                let records = CoreDataRecords(moc: self.state.moc).forDate(self.date)
+                if !records.isEmpty {
+                    for record in records {
+                        if let colour = record.job?.backgroundColor {
+                            self.colourData.insert(colour)
+                        }
+                    }
+                }
             }
         }
     }
@@ -830,8 +841,20 @@ extension WidgetLibrary.UI.EntityCalendar.DayBlock {
             let jobs = CoreDataTasks(moc: self.state.moc)
                 .jobsForTasksDueToday(self.date)
                 .sorted(by: {$0.created ?? Date() < $1.created ?? Date()})
-            for job in jobs {
-                self.colourData.insert(job.backgroundColor)
+
+            if !jobs.isEmpty {
+                for job in jobs {
+                    self.colourData.insert(job.backgroundColor)
+                }
+            } else {
+                let records = CoreDataRecords(moc: self.state.moc).forDate(self.date)
+                if !records.isEmpty {
+                    for record in records {
+                        if let colour = record.job?.backgroundColor {
+                            self.colourData.insert(colour)
+                        }
+                    }
+                }
             }
         }
     }
@@ -890,8 +913,10 @@ extension WidgetLibrary.UI.EntityCalendar.Year {
             let jobs = CoreDataTasks(moc: self.state.moc)
                 .jobsForTasksDueToday(self.date)
                 .sorted(by: {$0.created ?? Date() < $1.created ?? Date()})
-            for job in jobs {
-                self.colourData.insert(job.backgroundColor)
+            if !jobs.isEmpty {
+                for job in jobs {
+                    self.colourData.insert(job.backgroundColor)
+                }
             }
         }
     }
