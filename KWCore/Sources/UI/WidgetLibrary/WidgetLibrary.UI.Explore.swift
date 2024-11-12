@@ -223,10 +223,14 @@ extension WidgetLibrary.UI {
                                 GridRow {
                                     UI.SuggestedLinksInRange(
                                         period: .month,
+                                        start: self.state.session.date.startOfMonth,
+                                        end: self.state.session.date.endOfMonth,
                                         format: "MMMM"
                                     )
                                     UI.SavedSearchTermsInRange(
                                         period: .month,
+                                        start: self.state.session.date.startOfMonth,
+                                        end: self.state.session.date.endOfMonth,
                                         format: "MMMM"
                                     )
                                 }
@@ -234,6 +238,8 @@ extension WidgetLibrary.UI {
                             FancyDivider()
                             UI.InteractionsInRange(
                                 period: .month,
+                                start: self.state.session.date.startOfMonth,
+                                end: self.state.session.date.endOfMonth,
                                 format: "MMMM"
                             )
                         }
@@ -261,10 +267,14 @@ extension WidgetLibrary.UI {
                                 GridRow {
                                     UI.SuggestedLinksInRange(
                                         period: .year,
+                                        start: self.state.session.date.startOfYear,
+                                        end: self.state.session.date.endOfYear,
                                         format: "yyyy"
                                     )
                                     UI.SavedSearchTermsInRange(
                                         period: .year,
+                                        start: self.state.session.date.startOfYear,
+                                        end: self.state.session.date.endOfYear,
                                         format: "yyyy"
                                     )
                                 }
@@ -272,6 +282,8 @@ extension WidgetLibrary.UI {
                             FancyDivider()
                             UI.InteractionsInRange(
                                 period: .year,
+                                start: self.state.session.date.startOfYear,
+                                end: self.state.session.date.endOfYear,
                                 format: "yyyy"
                             )
                         }

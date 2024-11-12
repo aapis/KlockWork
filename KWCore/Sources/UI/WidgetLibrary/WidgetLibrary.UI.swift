@@ -1019,7 +1019,6 @@ extension WidgetLibrary {
                         page: .explore,
                         alwaysShowTab: true
                     )
-                    .frame(height: 200)
                     Spacer()
                 }
                 .id(self.vid)
