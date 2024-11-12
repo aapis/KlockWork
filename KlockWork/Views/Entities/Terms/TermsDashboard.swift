@@ -8,11 +8,9 @@
 
 import SwiftUI
 import KWCore
-import KWCore
 
 struct TermsDashboard: View {
     typealias Widget = WidgetLibrary.UI.Buttons
-    typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var state: Navigation
     @AppStorage("general.columns") private var numColumns: Int = 3
     private let page: PageConfiguration.AppPage = .explore
@@ -21,7 +19,7 @@ struct TermsDashboard: View {
         return Array(repeating: .init(.flexible(minimum: 100)), count: numColumns)
     }
     @State public var job: Job?
-    @State private var definitions: [TaxonomyTermDefinitions] = []
+    @State private var terms: [TaxonomyTerm] = []
     @State private var searchText: String = ""
 
     var body: some View {
@@ -32,17 +30,18 @@ struct TermsDashboard: View {
                     title: self.eType.label
                 )
 
-                if self.definitions.count > 0 {
+                if self.terms.count > 0 {
                     UI.BoundSearchBar(
                         text: $searchText,
                         disabled: false,
-                        placeholder: self.definitions.count > 1 ? "Filter \(self.definitions.count) terms & definitions" : "Filter terms & definitions"
+                        placeholder: self.terms.count > 1 ? "Filter \(self.terms.count) terms" : "Filter terms"
                     )
+                    .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
 
                     ScrollView(showsIndicators: false) {
                         LazyVGrid(columns: columns, alignment: .leading) {
-                            ForEach(self.filter(self.definitions), id: \TaxonomyTermDefinitions.objectID) { def in
-                                TermBlock(definition: def)
+                            ForEach(self.filter(self.terms), id: \TaxonomyTerm.objectID) { term in
+                                UI.Blocks.Term(term: term)
                             }
                         }
                     }
@@ -71,89 +70,23 @@ extension TermsDashboard {
         self.job = self.state.session.job
 
         if let job = self.job {
-            self.definitions = CoreDataTaxonomyTermDefinitions(moc: self.state.moc).definitions(for: job)
+            let definitions = CoreDataTaxonomyTermDefinitions(moc: self.state.moc).definitions(for: job)
+            let grouped = Dictionary(grouping: definitions, by: {$0.term!})
+            var tSet: Set<TaxonomyTerm> = []
+            for item in grouped {
+                tSet.insert(item.key)
+            }
+
+            self.terms = Array(tSet).sorted(by: {$0.name ?? "" < $1.name ?? ""})
         } else {
-            self.definitions = []
+            self.terms = []
         }
     }
 
     /// Filter terms by input text
     /// - Parameter terms: TaxonomyTerm
     /// - Returns: [TaxonomyTermDefinitions]
-    private func filter(_ terms: [TaxonomyTermDefinitions]) -> [TaxonomyTermDefinitions] {
-        return SearchHelper(bucket: terms).findInDefinitions($searchText)
-    }
-
-    /// Fires when a term block is clicked/tapped
-    /// - Returns: Void
-    private func actionOnTap() -> Void {
-        self.state.setView(AnyView(DefinitionDetail()))
-        self.state.setId()
-    }
-}
-
-struct TermBlock: View {
-    typealias UI = WidgetLibrary.UI
-    @EnvironmentObject public var state: Navigation
-    public let definition: TaxonomyTermDefinitions
-    @State private var highlighted: Bool = false
-
-    var body: some View {
-        Button {
-            self.actionOnTap()
-        } label: {
-            VStack(spacing: 0) {
-                ZStack(alignment: .topLeading) {
-                    Color.white
-                        .shadow(color: .black.opacity(1), radius: 3)
-                        .opacity(highlighted ? 0.2 : 0.1)
-
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text(self.definition.term?.name ?? "_TERM_NAME")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .padding([.leading, .trailing, .top])
-                        Text(self.definitionBody())
-                            .foregroundStyle(.white.opacity(0.55))
-                            .padding([.leading, .trailing, .bottom])
-                        Spacer()
-                        UI.ResourcePath(
-                            company: self.state.session.job?.project?.company,
-                            project: self.state.session.job?.project,
-                            job: self.state.session.job
-                        )
-                    }
-                }
-            }
-        }
-        .frame(height: 150)
-        .clipShape(.rect(cornerRadius: 5))
-        .useDefaultHover({ inside in highlighted = inside})
-        .buttonStyle(.plain)
-    }
-}
-
-extension TermBlock {
-    /// Trucate term answer
-    /// - Returns: String
-    private func definitionBody() -> String {
-        if let body = self.definition.definition {
-            if body.count > 100 {
-                let i = body.index(body.startIndex, offsetBy: 100)
-                let description = String(body[...i]).trimmingCharacters(in: .whitespacesAndNewlines)
-
-                return description + "..."
-            }
-        }
-
-        return "No preview available"
-    }
-    
-    /// Fires when a term block is clicked/tapped
-    /// - Returns: Void
-    private func actionOnTap() -> Void {
-        self.state.setView(AnyView(DefinitionDetail(definition: self.definition)))
-        self.state.setSidebar(AnyView(DefinitionSidebar()))
-        self.state.setId()
+    private func filter(_ terms: [TaxonomyTerm]) -> [TaxonomyTerm] {
+        return SearchHelper(bucket: terms).findInTerms($searchText)
     }
 }

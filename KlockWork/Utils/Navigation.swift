@@ -626,8 +626,7 @@ extension Navigation {
             HistoryPage(page: .terms, view: AnyView(TermsDashboard()), sidebar: AnyView(TermsDashboardSidebar()), title: "Terms", navButtons: [.sidebarToggle, .resetUserChoices, .createDefinition]),
             // @TODO: UPDATE
             HistoryPage(page: .definitions, view: AnyView(DefinitionDashboard()), sidebar: AnyView(TermsDashboardSidebar()), title: "Terms", navButtons: [.sidebarToggle, .resetUserChoices, .createDefinition]),
-            // @TODO: UPDATE
-            HistoryPage(page: .termDetail, view: AnyView(TermsDashboard()), sidebar: AnyView(TermsDashboardSidebar()), title: "Terms", navButtons: [.sidebarToggle, .resetUserChoices, .createDefinition]),
+            HistoryPage(page: .termDetail, view: AnyView(TermDetail()), sidebar: AnyView(TermsDashboardSidebar()), title: "Terms", navButtons: [.sidebarToggle, .resetUserChoices, .createTerm]),
             HistoryPage(page: .definitionDetail, view: AnyView(DefinitionDetail()), sidebar: AnyView(TermsDashboardSidebar()), title: "Definition detail"),
             HistoryPage(page: .taskDetail, view: AnyView(TaskDetail()), sidebar: AnyView(TermsDashboardSidebar()), title: "Task detail"),
             HistoryPage(page: .people, view: AnyView(PeopleDashboard()), sidebar: AnyView(PeopleDashboardSidebar()), title: "People", navButtons: [.sidebarToggle, .resetUserChoices, .createPerson]),

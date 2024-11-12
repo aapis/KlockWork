@@ -60,6 +60,7 @@
 		5335A5B7296D2089000051B1 /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5335A5B6296D2089000051B1 /* TaskListView.swift */; };
 		533E40652970DA640007785A /* ViewUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533E40642970DA640007785A /* ViewUpdater.swift */; };
 		533F9B1D2CE4078400B3F972 /* DefinitionDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533F9B1C2CE4078400B3F972 /* DefinitionDashboard.swift */; };
+		533F9B1F2CE411A900B3F972 /* TermDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 533F9B1E2CE411A700B3F972 /* TermDetail.swift */; };
 		53450CEC2BF46ECF007F45FB /* CommandLineInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53450CEB2BF46ECF007F45FB /* CommandLineInterface.swift */; };
 		5345C9CD2B31315F004A4188 /* SearchLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5345C9CC2B31315F004A4188 /* SearchLanguage.swift */; };
 		5347DAA92CB3519C003DA2B9 /* KWCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5347DA9F2CB3519C003DA2B9 /* KWCore.framework */; };
@@ -353,6 +354,7 @@
 		5335A5B6296D2089000051B1 /* TaskListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListView.swift; sourceTree = "<group>"; };
 		533E40642970DA640007785A /* ViewUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewUpdater.swift; sourceTree = "<group>"; };
 		533F9B1C2CE4078400B3F972 /* DefinitionDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefinitionDashboard.swift; sourceTree = "<group>"; };
+		533F9B1E2CE411A700B3F972 /* TermDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermDetail.swift; sourceTree = "<group>"; };
 		53450CEB2BF46ECF007F45FB /* CommandLineInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandLineInterface.swift; sourceTree = "<group>"; };
 		5345C9CC2B31315F004A4188 /* SearchLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchLanguage.swift; sourceTree = "<group>"; };
 		5347DA9F2CB3519C003DA2B9 /* KWCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = KWCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1062,6 +1064,7 @@
 		538A53572C704E1800711639 /* Terms */ = {
 			isa = PBXGroup;
 			children = (
+				533F9B1E2CE411A700B3F972 /* TermDetail.swift */,
 				533F9B1C2CE4078400B3F972 /* DefinitionDashboard.swift */,
 				53013A992CAC8C510024BA30 /* DefinitionDetail.swift */,
 				538A535D2C704E4400711639 /* TermsDashboard.swift */,
@@ -1631,6 +1634,7 @@
 				53152CD6296A2DA300A14E43 /* FancyPicker.swift in Sources */,
 				53E202762A81F2E100B4DF70 /* FancyStar.swift in Sources */,
 				53E2026A2A80389500B4DF70 /* JobPickerWidget.swift in Sources */,
+				533F9B1F2CE411A900B3F972 /* TermDetail.swift in Sources */,
 				53152CE4296BC8A100A14E43 /* NoteDashboard.swift in Sources */,
 				536FBF6E2A68F77100F00CE4 /* NoteBlock.swift in Sources */,
 				5334F2662B28FA520079D2E7 /* OutlineWidget.swift in Sources */,

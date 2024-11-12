@@ -27,7 +27,6 @@ struct DefinitionDetail: View {
             HStack(alignment: .center, spacing: 8) {
                 Title(text: "Definition", image: "list.bullet.rectangle")
                 Spacer()
-
                 if self.definition != nil {
                     FancyButtonv2(
                         text: "Delete",

@@ -82,12 +82,5 @@ extension DefinitionDashboard {
     private func filter(_ terms: [TaxonomyTermDefinitions]) -> [TaxonomyTermDefinitions] {
         return SearchHelper(bucket: terms).findInDefinitions($searchText)
     }
-
-    /// Fires when a term block is clicked/tapped
-    /// - Returns: Void
-    private func actionOnTap() -> Void {
-        self.state.setView(AnyView(DefinitionDetail()))
-        self.state.setId()
-    }
 }
 
