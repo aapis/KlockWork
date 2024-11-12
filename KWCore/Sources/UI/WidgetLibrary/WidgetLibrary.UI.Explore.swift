@@ -15,7 +15,7 @@ extension WidgetLibrary.UI {
             // MARK: Explore.Visualization.Timeline
             struct Timeline {
                 enum TimelineTab: CaseIterable {
-                    case day, week, month, year, custom
+                    case day, week, month, year, entity, custom
 
                     var icon: String {
                         switch self {
@@ -23,6 +23,7 @@ extension WidgetLibrary.UI {
                         case .week: "w.square.fill"
                         case .month: "m.square.fill"
                         case .year: "y.square.fill"
+                        case .entity: "e.square.fill"
                         case .custom: "c.square.fill"
                         }
                     }
@@ -33,7 +34,8 @@ extension WidgetLibrary.UI {
                         case .week: 1
                         case .month: 2
                         case .year: 3
-                        case .custom: 4
+                        case .entity: 4
+                        case .custom: 5
                         }
                     }
 
@@ -43,6 +45,7 @@ extension WidgetLibrary.UI {
                         case .week: "Show 1 week"
                         case .month: "Show 1 month"
                         case .year: "Show 1 year"
+                        case .entity: "Show timeline(s) for the selected entities"
                         case .custom: "Custom range"
                         }
                     }
@@ -53,6 +56,7 @@ extension WidgetLibrary.UI {
                         case .week: "Week"
                         case .month: "Month"
                         case .year: "Year"
+                        case .entity: "Entity"
                         case .custom: "Custom Range"
                         }
                     }
@@ -63,6 +67,7 @@ extension WidgetLibrary.UI {
                         case .week: AnyView(ByWeek())
                         case .month: AnyView(ByMonth())
                         case .year: AnyView(ByYear())
+                        case .entity: AnyView(ByEntity())
                         case .custom: AnyView(ByCustomRange())
                         }
                     }
@@ -78,6 +83,7 @@ extension WidgetLibrary.UI {
                     }
                 }
 
+                // MARK: Timeline.Widget
                 struct Widget: View {
                     @EnvironmentObject public var nav: Navigation
                     private var tabs: [ToolbarButton] = []
@@ -104,7 +110,7 @@ extension WidgetLibrary.UI {
                     }
                 }
 
-                // MARK: ByDay
+                // MARK: Timeline.ByDay
                 struct ByDay: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
@@ -156,7 +162,7 @@ extension WidgetLibrary.UI {
                     }
                 }
 
-                // MARK: ByWeek
+                // MARK: Timeline.ByWeek
                 struct ByWeek: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
@@ -190,14 +196,13 @@ extension WidgetLibrary.UI {
                                         period: .week,
                                         format: "w"
                                     )
-                                    .frame(maxHeight: 200)
                                 }
                             }
                         }
                     }
                 }
 
-                // MARK: ByMonth
+                // MARK: Timeline.ByMonth
                 struct ByMonth: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
@@ -218,10 +223,14 @@ extension WidgetLibrary.UI {
                                 GridRow {
                                     UI.SuggestedLinksInRange(
                                         period: .month,
+                                        start: self.state.session.date.startOfMonth,
+                                        end: self.state.session.date.endOfMonth,
                                         format: "MMMM"
                                     )
                                     UI.SavedSearchTermsInRange(
                                         period: .month,
+                                        start: self.state.session.date.startOfMonth,
+                                        end: self.state.session.date.endOfMonth,
                                         format: "MMMM"
                                     )
                                 }
@@ -229,13 +238,15 @@ extension WidgetLibrary.UI {
                             FancyDivider()
                             UI.InteractionsInRange(
                                 period: .month,
+                                start: self.state.session.date.startOfMonth,
+                                end: self.state.session.date.endOfMonth,
                                 format: "MMMM"
                             )
                         }
                     }
                 }
 
-                // MARK: ByYear
+                // MARK: Timeline.ByYear
                 struct ByYear: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
@@ -279,7 +290,7 @@ extension WidgetLibrary.UI {
                     }
                 }
 
-                // MARK: ByCustomRange
+                // MARK: Timeline.ByCustomRange
                 struct ByCustomRange: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
@@ -326,6 +337,43 @@ extension WidgetLibrary.UI {
                                 start: self.start,
                                 end: self.end
                             )
+                        }
+                    }
+                }
+
+                // MARK: Timeline.ByEntity
+                struct ByEntity: View {
+                    @EnvironmentObject public var state: Navigation
+                    @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+                    @State private var start: Date = Date()
+                    @State private var end: Date = Date() + 86400
+                    private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
+
+                    var body: some View {
+                        VStack(alignment: .leading, spacing: 0) {
+                            VStack(alignment: .leading) {
+                                UI.SearchTypeFilter()
+                            }
+                            .background(self.state.session.appPage.primaryColour)
+                            .clipShape(.rect(topTrailingRadius: 5))
+                            .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                            FancyHelpText(
+                                text: "Show dates and times for the selected entities",
+                                page: self.state.session.appPage
+                            )
+                            FancyDivider()
+                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                                GridRow {
+                                    UI.DaysWhereMentioned()
+                                    UI.SuggestedLinksInRange(
+                                        period: .custom,
+                                        start: self.state.session.date.startOfDay,
+                                        end: self.state.session.date.endOfDay
+                                    )
+                                }
+                            }
+                            FancyDivider()
+                            ActivityFeed()
                         }
                     }
                 }

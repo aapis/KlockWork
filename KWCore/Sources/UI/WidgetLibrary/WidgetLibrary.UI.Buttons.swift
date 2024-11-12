@@ -24,23 +24,21 @@ extension WidgetLibrary.UI {
             public var isAlteredForReadability: Bool = false
 
             var body: some View {
-                if self.state.session.job != nil || self.state.session.project != nil || self.state.session.company != nil {
-                    FancyButtonv2(
-                        text: "Reset interface to default state",
-                        action: self.onActionClear != nil ? self.onActionClear : self.defaultClearAction,
-                        icon: "arrow.clockwise.square.fill",
-                        iconWhenHighlighted: "arrow.clockwise.square",
-                        fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
-                        showLabel: false,
-                        size: .small,
-                        type: .clear,
-                        font: .title
-                    )
-                    .help("Reset interface to default state")
-                    .frame(width: 25)
-                } else {
-                    EmptyView()
-                }
+                FancyButtonv2(
+                    text: "Reset interface to default state",
+                    action: self.onActionClear != nil ? self.onActionClear : self.defaultClearAction,
+                    icon: "arrow.clockwise.square.fill",
+                    iconWhenHighlighted: "arrow.clockwise.square",
+                    fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
+                    showLabel: false,
+                    size: .small,
+                    type: .clear,
+                    font: .title
+                )
+                .disabled(self.state.session.job == nil && self.state.session.project == nil && self.state.session.company == nil)
+                .help("Reset interface to default state")
+                .keyboardShortcut("r", modifiers: [.control, .shift])
+                .frame(width: 25)
             }
         }
 
@@ -440,7 +438,7 @@ extension WidgetLibrary.UI {
                     action: {self.isSidebarPresented.toggle()},
                     icon: "sidebar.left",
                     iconWhenHighlighted: "sidebar.left",
-                    fgColour: self.isSidebarPresented ? .gray : .white,
+                    iconFgColour: self.isSidebarPresented ? self.state.theme.tint : .gray,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -506,7 +504,8 @@ extension WidgetLibrary.UI {
                         Text(savedSearch.term ?? "Invalid term name")
                         Spacer()
                         if let timestamp = savedSearch.created?.formatted(date: .abbreviated, time: .shortened) {
-                            Timestamp(text: timestamp, alignment: .trailing)
+                            Text(timestamp)
+                                .foregroundStyle(.gray)
                         }
                     }
                     .padding(8)
@@ -536,6 +535,28 @@ extension WidgetLibrary.UI {
                         }
                     }
                 }
+            }
+        }
+
+        // MARK: SmallOpen
+        struct SmallOpen: View {
+            var callback: () -> Void
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                Button {
+                    self.callback()
+                } label: {
+                    Text("Open")
+                        .font(.caption)
+                        .foregroundStyle(Theme.base)
+                        .padding(6)
+                        .padding([.leading, .trailing], 8)
+                        .background(.white.opacity(self.isHighlighted ? 1 : 0.8))
+                        .clipShape(.capsule(style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .useDefaultHover({ hover in self.isHighlighted = hover})
             }
         }
     }

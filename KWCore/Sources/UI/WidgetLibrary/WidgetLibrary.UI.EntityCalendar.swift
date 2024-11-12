@@ -216,7 +216,7 @@ extension WidgetLibrary.UI {
                         VStack {
                             HStack {
                                 Spacer()
-                                Text(DateHelper.todayShort(self.date, format: "EEE"))
+                                Text(DateHelper.todayShort(self.date, format: "EEE dd"))
                                     .bold(self.isToday || self.isSelected)
                                     .padding([.top, .bottom], 4)
                                     .opacity(self.isToday ? 1 : 0.8)
@@ -237,9 +237,6 @@ extension WidgetLibrary.UI {
                                             }
                                         }
                                     }
-                                    Text(DateHelper.todayShort(self.date, format: "dd"))
-                                        .bold(self.isToday || self.isSelected)
-                                        .font(.system(size: 25))
                                 }
                             }
                         }
@@ -789,8 +786,19 @@ extension WidgetLibrary.UI.EntityCalendar.Day {
             let jobs = CoreDataTasks(moc: self.state.moc)
                 .jobsForTasksDueToday(self.date)
                 .sorted(by: {$0.created ?? Date() < $1.created ?? Date()})
-            for job in jobs {
-                self.colourData.insert(job.backgroundColor)
+            if !jobs.isEmpty {
+                for job in jobs {
+                    self.colourData.insert(job.backgroundColor)
+                }
+            } else {
+                let records = CoreDataRecords(moc: self.state.moc).forDate(self.date)
+                if !records.isEmpty {
+                    for record in records {
+                        if let colour = record.job?.backgroundColor {
+                            self.colourData.insert(colour)
+                        }
+                    }
+                }
             }
         }
     }
@@ -830,8 +838,20 @@ extension WidgetLibrary.UI.EntityCalendar.DayBlock {
             let jobs = CoreDataTasks(moc: self.state.moc)
                 .jobsForTasksDueToday(self.date)
                 .sorted(by: {$0.created ?? Date() < $1.created ?? Date()})
-            for job in jobs {
-                self.colourData.insert(job.backgroundColor)
+
+            if !jobs.isEmpty {
+                for job in jobs {
+                    self.colourData.insert(job.backgroundColor)
+                }
+            } else {
+                let records = CoreDataRecords(moc: self.state.moc).forDate(self.date)
+                if !records.isEmpty {
+                    for record in records {
+                        if let colour = record.job?.backgroundColor {
+                            self.colourData.insert(colour)
+                        }
+                    }
+                }
             }
         }
     }
@@ -890,8 +910,10 @@ extension WidgetLibrary.UI.EntityCalendar.Year {
             let jobs = CoreDataTasks(moc: self.state.moc)
                 .jobsForTasksDueToday(self.date)
                 .sorted(by: {$0.created ?? Date() < $1.created ?? Date()})
-            for job in jobs {
-                self.colourData.insert(job.backgroundColor)
+            if !jobs.isEmpty {
+                for job in jobs {
+                    self.colourData.insert(job.backgroundColor)
+                }
             }
         }
     }

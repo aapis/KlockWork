@@ -401,7 +401,8 @@ struct LogRow: View, Identifiable {
                 rec.timestamp = newDate()
                 rec.message = message
                 rec.id = entry.id
-                
+                rec.lastUpdate = Date()
+
                 if let jid = Double(job) {
                     if let match = CoreDataJob(moc: self.nav.moc).byId(jid) {
                         rec.job = match

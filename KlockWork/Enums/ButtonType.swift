@@ -21,7 +21,7 @@ public enum ButtonType {
         case .star:
             return [Color.yellow, Color.orange]
         case .standard:
-            return [Theme.headerColour, Theme.base]
+            return [Theme.cPurple, Theme.base]
         case .secondary:
             return [Theme.secondary, Theme.base]
         case .white, .tsWhite:

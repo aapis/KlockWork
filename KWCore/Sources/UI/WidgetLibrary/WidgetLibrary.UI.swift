@@ -309,27 +309,30 @@ extension WidgetLibrary {
                         }
                         if !self.isMinimized {
                             if self.activity.source != nil {
-                                HStack {
+                                HStack(alignment: .top) {
                                     switch self.activity.source {
                                     case is NoteVersion:
                                         Text("Found in note \"\((self.activity.source as? NoteVersion)?.note?.title ?? "Error: Note not found")\"")
                                             .foregroundStyle(.gray)
                                         Spacer()
-                                        Button {
+                                        UI.Buttons.SmallOpen(callback: {
                                             if let entity = self.activity.source as? NoteVersion {
-                                                self.state.session.note = entity.note
                                                 self.state.to(.noteDetail)
+                                                self.state.session.note = entity.note
                                             }
-                                        } label: {
-                                            Text("Open")
-                                                .font(.caption)
-                                                .foregroundStyle(Theme.base)
-                                                .padding(6)
-                                                .padding([.leading, .trailing], 8)
-                                                .background(.white)
-                                                .clipShape(.capsule(style: .continuous))
-                                        }
-                                        .buttonStyle(.plain)
+                                        })
+                                    case is LogRecord:
+                                        Text("Found in record \"\((self.activity.source as? LogRecord)?.message ?? "Error: Record not found")\"")
+                                            .foregroundStyle(.gray)
+                                        Spacer()
+                                        UI.Buttons.SmallOpen(callback: {
+                                            if let entity = self.activity.source as? LogRecord {
+                                                if let created = entity.timestamp {
+                                                    self.state.to(.today)
+                                                    self.state.session.date = created
+                                                }
+                                            }
+                                        })
                                     default:
                                         Text("No source found")
                                     }
@@ -557,9 +560,8 @@ extension WidgetLibrary {
                             .disabled(true)
                         }
                     }
-                    .padding(.top, 8)
                 }
-                .frame(maxHeight: 200)
+                .frame(height: 200)
             }
         }
 
@@ -901,12 +903,9 @@ extension WidgetLibrary {
                     Spacer()
                 }
                 .id(self.vid)
-                .frame(minHeight: 200)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
                 .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
-                .onChange(of: self.start) { self.actionOnAppear() }
-                .onChange(of: self.end) { self.actionOnAppear() }
             }
         }
 
@@ -932,7 +931,6 @@ extension WidgetLibrary {
                     Spacer()
                 }
                 .id(self.vid)
-                .frame(minHeight: 200)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
                 .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
@@ -976,7 +974,7 @@ extension WidgetLibrary {
 
             var body: some View {
                 ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 1) {
+                    VStack(alignment: .leading, spacing: 5) {
                         if self.terms.count > 0 {
                             ForEach(self.terms, id: \.id) { savedSearch in
                                 UI.Buttons.SavedSearchTerm(savedSearch: savedSearch)
@@ -989,47 +987,12 @@ extension WidgetLibrary {
                             .disabled(true)
                         }
                     }
-                    .padding(.top, 8)
                 }
                 .id(self.vid)
-                .frame(minHeight: 200)
+                .frame(height: 200)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
                 .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
-            }
-        }
-
-        // MARK: EntityInteractionsForDate
-        struct EntityInteractionsForDate: View {
-            @EnvironmentObject private var state: Navigation
-            @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
-            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
-            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
-            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
-            @State private var activities: [Activity] = []
-            @State private var tabs: [ToolbarButton] = []
-            @State private var vid: UUID = UUID()
-
-            var body: some View {
-                VStack {
-                    UI.ListLinkTitle(text: "Interactions from \(self.state.session.timeline.formatted())")
-                    FancyGenericToolbar(
-                        buttons: self.tabs,
-                        standalone: true,
-                        location: .content,
-                        mode: .compact,
-                        page: .explore,
-                        alwaysShowTab: true
-                    )
-                    .frame(height: 200)
-                }
-                .id(self.vid)
-                .onAppear(perform: self.actionOnAppear)
-                .onChange(of: self.state.session.date) { self.vid = UUID() }
-                .onChange(of: self.state.session.timeline.date) { self.vid = UUID() ; self.actionOnAppear() }
-                .onChange(of: self.showCompanies) { self.actionOnAppear() }
-                .onChange(of: self.showProjects) { self.actionOnAppear() }
-                .onChange(of: self.showJobs) { self.actionOnAppear() }
             }
         }
 
@@ -1061,7 +1024,6 @@ extension WidgetLibrary {
                     )
                     Spacer()
                 }
-                .frame(minHeight: 200)
                 .id(self.vid)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.vid = UUID() }
@@ -1069,8 +1031,6 @@ extension WidgetLibrary {
                 .onChange(of: self.showCompanies) { self.actionOnAppear() }
                 .onChange(of: self.showProjects) { self.actionOnAppear() }
                 .onChange(of: self.showJobs) { self.actionOnAppear() }
-                .onChange(of: self.start) { self.actionOnAppear() }
-                .onChange(of: self.end) { self.actionOnAppear() }
             }
         }
 
@@ -1954,6 +1914,122 @@ extension WidgetLibrary {
                 .padding()
             }
         }
+
+        // MARK: DaysWhereMentioned
+        struct DaysWhereMentioned: View {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showRecords") public var showRecords: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showTasks") public var showTasks: Bool = true
+            @State private var vid: UUID = UUID()
+            @State private var days: [Day] = []
+
+            var body: some View {
+                VStack {
+                    UI.ListLinkTitle(text: "Interactions with \(self.state.session.job?.title ?? self.state.session.job?.jid.string ?? "job")")
+                    if self.state.session.job != nil || self.state.session.project != nil || self.state.session.company != nil {
+                        if !self.days.isEmpty {
+                            ScrollView(showsIndicators: false) {
+                                VStack(alignment: .leading, spacing: 5) {
+                                    ForEach(self.days, id: \.id) { entity in
+                                        UI.ListButtonItem(
+                                            callback: { _ in
+                                                self.state.session.date = entity.date
+                                            },
+                                            name: DateHelper.todayShort(entity.date, format: "MMMM dd, yyyy"),
+                                            iconAsImage: entity.type.icon,
+                                            actionIcon: "chevron.right"
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            UI.ListButtonItem(
+                                callback: {_ in},
+                                name: "None found for \(DateHelper.todayShort(self.state.session.date, format: "yyyy"))"
+                            )
+                            .disabled(true)
+                        }
+                    } else {
+                        UI.ListButtonItem(
+                            callback: {_ in},
+                            name: "Select an entity from the sidebar"
+                        )
+                        .disabled(true)
+                    }
+                    Spacer()
+                }
+                .id(self.vid)
+                .frame(height: 250)
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.job) { self.actionOnAppear() }
+                .onChange(of: self.state.session.project) { self.actionOnAppear() }
+                .onChange(of: self.state.session.company) { self.actionOnAppear() }
+                .onChange(of: self.showRecords) { self.actionOnAppear() }
+            }
+
+            struct Day: Identifiable {
+                var id: UUID = UUID()
+                var type: EType
+                var date: Date
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.DaysWhereMentioned {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.days = []
+
+        Task {
+            await self.findInteractions()
+            self.vid = UUID()
+        }
+    }
+
+    /// Finds all interactions for the start/end or selected date
+    /// - Returns: Void
+    private func findInteractions() async -> Void {
+        let calendar = Calendar.autoupdatingCurrent
+
+        if self.showRecords {
+            if let records = self.state.session.job?.records?.allObjects as? [LogRecord] {
+                for record in records {
+                    if let timestamp = record.timestamp {
+                        let components = calendar.dateComponents([.day], from: timestamp)
+                        if !self.days.contains(where: {
+                            let co = calendar.dateComponents([.day], from: $0.date)
+                            return co.day == components.day
+                        }) {
+                            self.days.append(
+                                Day(type: .records, date: timestamp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        if self.showTasks {
+            if let tasks = self.state.session.job?.tasks?.allObjects as? [LogTask] {
+                for task in tasks {
+                    if let date = task.completedDate {
+                        let components = calendar.dateComponents([.day], from: date)
+                        if !self.days.contains(where: {
+                            let co = calendar.dateComponents([.day], from: $0.date)
+                            return co.day == components.day
+                        }) {
+                            self.days.append(
+                                Day(type: .tasks, date: date)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        self.days = self.days.sorted(by: {$0.date > $1.date})
     }
 }
 
@@ -2021,51 +2097,6 @@ extension WidgetLibrary.UI.SimpleEntityList {
     }
 }
 
-extension WidgetLibrary.UI.EntityInteractionsForDate {
-    /// Onload handler. Sets view state
-    /// - Returns: Void
-    private func actionOnAppear() -> Void {
-        self.tabs = []
-        self.tabs.append(
-            ToolbarButton(
-                id: 0,
-                helpText: "Jobs interacted with on this day in \(self.state.session.timeline.formatted())",
-                icon: "hammer",
-                labelText: "Jobs",
-                contents: AnyView(
-                    UI.SimpleEntityList(type: .jobs)
-                )
-            )
-        )
-        if self.showProjects {
-            self.tabs.append(
-                ToolbarButton(
-                    id: 1,
-                    helpText: "Projects interacted with on this day in \(self.state.session.timeline.formatted())",
-                    icon: "folder",
-                    labelText: "Projects",
-                    contents: AnyView(
-                        UI.SimpleEntityList(type: .projects)
-                    )
-                )
-            )
-        }
-        if self.showCompanies {
-            self.tabs.append(
-                ToolbarButton(
-                    id: 2,
-                    helpText: "Companies interacted with on this day in \(self.state.session.timeline.formatted())",
-                    icon: "building.2",
-                    labelText: "Companies",
-                    contents: AnyView(
-                        UI.SimpleEntityList(type: .companies)
-                    )
-                )
-            )
-        }
-    }
-}
-
 extension WidgetLibrary.UI.InteractionsInRange {
     /// Onload handler. Sets view state
     /// - Returns: Void
@@ -2121,7 +2152,52 @@ extension WidgetLibrary.UI.SuggestedLinksInRange {
         Task {
             await self.getLinksFromJobs()
             await self.getLinksFromNotes()
+            await self.getLinksFromRecords()
             self.vid = UUID()
+        }
+    }
+
+    /// Get links from records created or updated on a given day
+    /// @TODO: move to LogRecord
+    /// - Returns: Void
+    private func getLinksFromRecords() async -> Void {
+        if let start = self.start {
+            if let end = self.end {
+                let linkLength = 40
+                let records = CoreDataRecords(moc: self.state.moc).inRange(
+                    start: start,
+                    end: end
+                )
+
+                for record in records {
+                    if let message = record.message {
+                        if message.contains("https://") {
+                            let linkRegex = /https:\/\/([^ \n]+)/
+                            if let match = message.firstMatch(of: linkRegex) {
+                                let sMatch = String(match.0)
+                                var label: String = sMatch
+
+                                if sMatch.count > linkLength {
+                                    label = label.prefix(linkLength) + "..."
+                                }
+                                if !self.activities.contains(where: {$0.name == label}) {
+                                    self.activities.append(
+                                        Activity(
+                                            name: label,
+                                            help: sMatch,
+                                            page: self.state.parent ?? .dashboard,
+                                            type: .activity,
+                                            job: record.job,
+                                            source: record,
+                                            url: URL(string: sMatch) ?? nil
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -2245,7 +2321,7 @@ extension WidgetLibrary.UI.SavedSearchTermLinks {
                 await self.findSavedTermsForPeriod(self.state.session.date.startOfMonth, self.state.session.date.endOfMonth)
             case .year:
                 await self.findSavedTermsForPeriod(self.state.session.date.startOfYear, self.state.session.date.endOfYear)
-            case .custom:
+            default:
                 await self.findSavedTermsForPeriod(self.start, self.end)
             }
             self.vid = UUID()
