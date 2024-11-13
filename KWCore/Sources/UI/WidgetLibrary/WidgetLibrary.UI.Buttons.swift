@@ -289,6 +289,7 @@ extension WidgetLibrary.UI {
         struct Minimize: View {
             @EnvironmentObject public var state: Navigation
             public var onAction: (() -> Void)? = {}
+            public var font: Font = .title2
             @Binding public var isMinimized: Bool
             @State private var isHighlighted: Bool = false
 
@@ -305,7 +306,7 @@ extension WidgetLibrary.UI {
                     showLabel: false,
                     size: .tiny,
                     type: .clear,
-                    font: .title2
+                    font: self.font
                 )
                 .padding([.top, .bottom], 10)
                 .help("Create a new record")
@@ -557,6 +558,39 @@ extension WidgetLibrary.UI {
                 }
                 .buttonStyle(.plain)
                 .useDefaultHover({ hover in self.isHighlighted = hover})
+            }
+        }
+
+        // MARK: Buttons.FooterActivity
+        struct FooterActivity: View {
+            @EnvironmentObject private var state: Navigation
+            var count: Int
+            var label: String
+            var icon: String
+            @AppStorage("widgetlibrary.ui.appfooter.isMinimized") private var isMinimized: Bool = false
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                Button {
+                    self.isMinimized.toggle()
+                } label: {
+                    HStack(spacing: 0) {
+                        Image(systemName: self.icon)
+                            .foregroundStyle(.white)
+                            .padding(8)
+                        Text("\(self.count) \(self.label)")
+                            .bold(self.count > 0)
+                            .padding(8)
+                            .background(Theme.lightWhite)
+                            .foregroundStyle(Theme.base)
+                            .underline(self.isHighlighted)
+                    }
+                    .background(Theme.cPurple)
+                    .clipShape(.capsule(style: .circular))
+                }
+                .buttonStyle(.plain)
+                .useDefaultHover({ hover in self.isHighlighted = hover })
+                .help("\(self.count) \(self.label) on \(self.state.session.dateFormatted("MMMM dd, yyyy"))")
             }
         }
     }

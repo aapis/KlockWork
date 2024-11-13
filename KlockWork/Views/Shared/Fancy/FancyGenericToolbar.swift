@@ -150,7 +150,6 @@ struct FancyGenericToolbar: View {
                             }
                             .padding(standalone ? 0 : 20)
                         }
-
                     }
                 }
             }
@@ -208,7 +207,7 @@ struct FancyGenericToolbar: View {
                             if self.button.showIcon {
                                 button.icon
                                     .padding(0)
-                                    .foregroundStyle(self.selected == self.button.id ? self.nav.session.job?.backgroundColor ?? .white : .white.opacity(0.5))
+                                    .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
                             }
                         } else {
                             if self.showTabTitles && self.button.showLabel {
@@ -222,7 +221,7 @@ struct FancyGenericToolbar: View {
                             HStack(alignment: .center, spacing: 8) {
                                 if self.button.showIcon {
                                     self.button.icon
-                                        .foregroundStyle(self.selected == self.button.id ? self.nav.session.job?.backgroundColor ?? .white : .white.opacity(0.5))
+                                        .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
                                         .font(.title3)
                                 }
 
@@ -241,7 +240,7 @@ struct FancyGenericToolbar: View {
                             } else {
                                 if self.button.showIcon {
                                     self.button.icon
-                                        .foregroundStyle(self.selected == self.button.id ? self.nav.session.job?.backgroundColor ?? .white : .white.opacity(0.5))
+                                        .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
                                         .font(.title3)
                                         .padding([.top, .bottom], 10)
                                         .padding([.leading, .trailing])
