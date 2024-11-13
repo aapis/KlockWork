@@ -172,6 +172,53 @@ extension WidgetLibrary {
             }
         }
 
+        struct AppFooter: View {
+            @EnvironmentObject private var state: Navigation
+//            @State private var isMinimized: Bool = false
+            @AppStorage("widgetlibrary.ui.appfooter.isMinimized") private var isMinimized: Bool = false
+            private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
+
+            var body: some View {
+                VStack(alignment: .leading, spacing: 0) {
+                    FancyDivider()
+                    Divider()
+                    ZStack(alignment: .topTrailing) {
+                        if !self.isMinimized {
+                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                .blendMode(.softLight)
+                            LazyVGrid(columns: self.twoCol, alignment: .leading, spacing: 0) {
+                                GridRow {
+                                    UI.SuggestedStack(
+                                        period: .day,
+                                        start: self.state.session.date.startOfDay,
+                                        end: self.state.session.date.endOfDay,
+                                        format: "MMMM dd"
+                                    )
+                                    UI.InteractionsInRange(
+                                        period: .day,
+                                        start: self.state.session.date.startOfDay,
+                                        end: self.state.session.date.endOfDay,
+                                        format: "MMMM dd"
+                                    )
+                                }
+                            }
+                            .padding()
+                        } else {
+                            Theme.base.blendMode(.softLight)
+                        }
+
+                        HStack {
+                            Spacer()
+                            UI.Buttons.Minimize(isMinimized: $isMinimized)
+                                .padding(.trailing, 8)
+                                .padding(.top, 5)
+                        }
+                    }
+                }
+                .frame(height: self.isMinimized ? 60 : 200)
+            }
+        }
+
         struct SimpleDateSelector: View {
             @EnvironmentObject private var state: Navigation
             @AppStorage("today.numPastDates") public var numPastDates: Int = 20
@@ -384,10 +431,10 @@ extension WidgetLibrary {
                     HStack(alignment: .center) {
                         if let image = self.iconAsImage {
                             image
-                                .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
+                                .foregroundStyle(self.state.theme.tint)
                         } else if let icon = self.icon {
                             Image(systemName: icon)
-                                .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
+                                .foregroundStyle(self.state.theme.tint)
                         }
                         Text(self.name)
                         Spacer()
@@ -898,7 +945,7 @@ extension WidgetLibrary {
                         standalone: true,
                         location: .content,
                         mode: .compact,
-                        page: .explore,
+                        page: self.state.session.appPage,
                         alwaysShowTab: true
                     )
                     Spacer()
@@ -1020,7 +1067,7 @@ extension WidgetLibrary {
                         standalone: true,
                         location: .content,
                         mode: .compact,
-                        page: .explore,
+                        page: self.state.session.appPage,
                         alwaysShowTab: true
                     )
                     Spacer()
@@ -1052,7 +1099,7 @@ extension WidgetLibrary {
                         standalone: true,
                         location: .content,
                         mode: .full,
-                        page: .explore
+                        page: self.state.session.appPage
                     )
                     Spacer()
                 }
@@ -2125,11 +2172,11 @@ extension WidgetLibrary.UI.InteractionsInRange {
         self.tabs.append(
             ToolbarButton(
                 id: 0,
-                helpText: "Jobs interacted with in \(self.format == nil ? "period" : self.state.session.timeline.formatted(self.format!))",
+                helpText: "Jobs interacted with in \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))",
                 icon: "hammer",
                 labelText: "Jobs",
                 contents: AnyView(
-                    UI.SimpleEntityList(type: .jobs, start: self.state.session.timeline.custom.rangeStart, end: self.state.session.timeline.custom.rangeEnd)
+                    UI.SimpleEntityList(type: .jobs, start: self.start, end: self.end)
                 )
             )
         )
@@ -2137,11 +2184,11 @@ extension WidgetLibrary.UI.InteractionsInRange {
             self.tabs.append(
                 ToolbarButton(
                     id: 1,
-                    helpText: "Projects interacted with in \(self.format == nil ? "period" : self.state.session.timeline.formatted(self.format!))",
+                    helpText: "Projects interacted with in \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))",
                     icon: "folder",
                     labelText: "Projects",
                     contents: AnyView(
-                        UI.SimpleEntityList(type: .projects, start: self.state.session.timeline.custom.rangeStart, end: self.state.session.timeline.custom.rangeEnd)
+                        UI.SimpleEntityList(type: .projects, start: self.start, end: self.end)
                     )
                 )
             )
@@ -2150,11 +2197,11 @@ extension WidgetLibrary.UI.InteractionsInRange {
             self.tabs.append(
                 ToolbarButton(
                     id: 2,
-                    helpText: "Companies interacted with in \(self.format == nil ? "period" : self.state.session.timeline.formatted(self.format!))",
+                    helpText: "Companies interacted with in \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))",
                     icon: "building.2",
                     labelText: "Companies",
                     contents: AnyView(
-                        UI.SimpleEntityList(type: .companies, start: self.state.session.timeline.custom.rangeStart, end: self.state.session.timeline.custom.rangeEnd)
+                        UI.SimpleEntityList(type: .companies, start: self.start, end: self.end)
                     )
                 )
             )

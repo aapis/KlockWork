@@ -11,6 +11,7 @@ import KWCore
 struct Today: View {
     public var defaultSelectedDate: Date? = nil
     private let page: PageConfiguration.AppPage = .today
+    private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
 
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
 
@@ -22,10 +23,13 @@ struct Today: View {
                 CommandLineInterface()
             } else {
                 VStack(alignment: .leading, spacing: 0) {
-                    PostingInterface()
-                    LogTable()
+                    VStack(alignment: .leading, spacing: 0) {
+                        PostingInterface()
+                        LogTable()
+                    }
+                    .padding()
+                    UI.AppFooter()
                 }
-                .padding()
             }
         }
         .background(Theme.toolbarColour)
