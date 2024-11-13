@@ -75,7 +75,12 @@ struct ProjectView: View {
             .padding()
         }
         .id(updater.get("project.view"))
-        .background(self.nav.session.appPage.primaryColour)
+        .background(
+            ZStack {
+                self.nav.session.appPage.primaryColour
+                Theme.base.opacity(0.6)
+            }
+        )
         .onAppear(perform: onAppear)
         .onChange(of: selectAllToggleAssociated) {
             if self.selectAllToggleAssociated {
@@ -105,11 +110,7 @@ struct ProjectView: View {
     // MARK: form view
     @ViewBuilder
     var form: some View {
-        HStack {
-            Image(systemName: "folder").font(Theme.fontTitle)
-            Title(text: "Editing: \($name.wrappedValue)")
-            Spacer()
-        }
+        Title(text: "Editing: \($name.wrappedValue)", image: "folder")
         FancyTextField(placeholder: "Name", lineLimit: 1, onSubmit: update, showLabel: true, text: $name)
         FancyTextField(placeholder: "Abbreviation", lineLimit: 1, onSubmit: {}, showLabel: true, text: $abbreviation)
         CompanyPicker(onChange: {company,_ in selectedCompany = company}, selected: project?.company != nil ? Int(project?.company?.pid ?? 0) : 0)
@@ -129,6 +130,7 @@ struct ProjectView: View {
                 }
                 .background(Theme.textBackground)
             }
+            .disabled(true)
         }
 
         if let updated = lastUpdate {
@@ -142,6 +144,7 @@ struct ProjectView: View {
                 }
                 .background(Theme.textBackground)
             }
+            .disabled(true)
         }
 
         FancyDivider()
@@ -156,6 +159,7 @@ struct ProjectView: View {
             VStack(alignment: .leading, spacing: 1) {
                 VStack(alignment: .leading, spacing: 20) {
                     FancySubTitle(text: "Associated jobs", image: "checkmark")
+                        .padding([.leading, .top])
                     Divider()
                     HStack(spacing: 1) {
                         Text("\(selectedJobs.count)/\(all.count) selected")
@@ -169,13 +173,12 @@ struct ProjectView: View {
                 if selectedJobs.count > 0 {
                     associatedJobs
                 }
-                
-                Spacer()
             }
         
             VStack(alignment: .leading, spacing: 1) {
                 VStack(alignment: .leading, spacing: 20) {
                     FancySubTitle(text: "Unowned jobs", image: "questionmark")
+                        .padding([.leading, .top])
                     Divider()
                     HStack(spacing: 1) {
                         Text("\(allUnOwned.count)/\(all.count) selected")
@@ -189,17 +192,23 @@ struct ProjectView: View {
                 if allUnOwned.count > 0 {
                     unOwnedJobs
                 }
-                
-                Spacer()
             }
         }
+        .background(self.nav.session.appPage.primaryColour)
     }
     
     // MARK: toolbar view
     @ViewBuilder
     var toolbar: some View {
-        FancyGenericToolbar(buttons: buttons)
-            .onAppear(perform: createToolbar)
+        FancyGenericToolbar(
+            buttons: self.buttons,
+            standalone: true,
+            location: .content,
+            mode: .compact,
+            page: .explore,
+            alwaysShowTab: true
+        )
+        .onAppear(perform: self.createToolbar)
     }
     
     // MARK: associated jobs view
@@ -407,29 +416,19 @@ extension ProjectView {
 //    }
 
     private func createToolbar() -> Void {
-        buttons = [
+        self.buttons = [
             ToolbarButton(
                 id: 0,
                 helpText: "Assign jobs to the project",
-                label: AnyView(
-                    HStack {
-                        Image(systemName: "square.grid.3x1.fill.below.line.grid.1x2")
-                            .font(.title2)
-                        Text("Jobs")
-                    }
-                ),
+                icon: "square.grid.3x1.fill.below.line.grid.1x2",
+                labelText: "Jobs",
                 contents: AnyView(jobAssignment)
             ),
             ToolbarButton(
                 id: 1,
                 helpText: "Create/assign configurations to the project",
-                label: AnyView(
-                    HStack {
-                        Image(systemName: "circles.hexagongrid.fill")
-                            .font(.title2)
-                        Text("Configurations")
-                    }
-                ),
+                icon: "circles.hexagongrid.fill",
+                labelText: "Configuration",
                 contents: AnyView(ProjectConfig(project: project))
             )
         ]

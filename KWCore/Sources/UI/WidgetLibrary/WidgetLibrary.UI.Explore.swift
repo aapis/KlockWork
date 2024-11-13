@@ -85,7 +85,7 @@ extension WidgetLibrary.UI {
 
                 // MARK: Timeline.Widget
                 struct Widget: View {
-                    @EnvironmentObject public var nav: Navigation
+                    @EnvironmentObject public var state: Navigation
                     private var tabs: [ToolbarButton] = []
 
                     var body: some View {
@@ -100,7 +100,12 @@ extension WidgetLibrary.UI {
                             )
                         }
                         .padding()
-                        .background(Theme.toolbarColour)
+                        .background(
+                            ZStack {
+                                self.state.session.appPage.primaryColour
+                                Theme.base.opacity(0.6)
+                            }
+                        )
                     }
 
                     init() {

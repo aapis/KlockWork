@@ -83,7 +83,12 @@ struct Planning: View {
             )
         }
         .padding()
-        .background(Theme.toolbarColour)
+        .background(
+            ZStack {
+                self.nav.session.appPage.primaryColour
+                Theme.base.opacity(0.6)
+            }
+        )
         .onAppear(perform: actionOnAppear)
         .onChange(of: nav.planning.jobs) { self.actionOnChangeJobs()}
     }
