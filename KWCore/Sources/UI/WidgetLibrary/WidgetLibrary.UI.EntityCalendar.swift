@@ -65,19 +65,19 @@ extension WidgetLibrary.UI {
                 HStack {
                     Selector(
                         mode: .months,
-                        label: Text(Calendar.autoupdatingCurrent.monthSymbols[self.month]),
+                        label: Calendar.autoupdatingCurrent.monthSymbols[self.month],
                         isStartRangeMember: self.isRangeStart,
                         value: $month
                     )
                     Selector(
                         mode: .days,
-                        label: Text(String(self.day)),
+                        label: String(self.day),
                         isStartRangeMember: self.isRangeStart,
                         value: $day
                     )
                     Selector(
                         mode: .years,
-                        label: Text(String(self.year)),
+                        label: String(self.year),
                         isStartRangeMember: self.isRangeStart,
                         value: $year
                     )
@@ -93,55 +93,43 @@ extension WidgetLibrary.UI {
                 @EnvironmentObject private var state: Navigation
                 @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
                 public var mode: CalendarViewMode
-                public var label: Text
+                public var label: String
                 public var isStartRangeMember: Bool
                 @Binding public var value: Int
                 @State private var isHighlighted: Bool = false
-                @State private var isPresented: Bool = false
                 @State private var years: [MenuOption] = []
                 @State private var days: [MenuOption] = []
 
                 var body: some View {
-                    VStack {
-                        Button {
-                            self.actionOnTap()
-                        } label: {
-                            self.label
-                                .foregroundStyle(self.isHighlighted ? self.state.theme.tint : .white)
-                            if self.isPresented {
-                                Menu("Select") {
-                                    switch self.mode {
-                                    case .months:
-                                        // @TODO: refactor to use loop and Calendar.current.monthSymbols
-                                        Button("January") { self.actionOnChangeMonth() }
-                                        Button("February") { self.actionOnChangeMonth(with: 1) }
-                                        Button("March") { self.actionOnChangeMonth(with: 2) }
-                                        Button("April") { self.actionOnChangeMonth(with: 3) }
-                                        Button("May") { self.actionOnChangeMonth(with: 4) }
-                                        Button("June") { self.actionOnChangeMonth(with: 5) }
-                                        Button("July") { self.actionOnChangeMonth(with: 6) }
-                                        Button("August") { self.actionOnChangeMonth(with: 7) }
-                                        Button("September") { self.actionOnChangeMonth(with: 8) }
-                                        Button("October") { self.actionOnChangeMonth(with: 9) }
-                                        Button("November") { self.actionOnChangeMonth(with: 10) }
-                                        Button("December") { self.actionOnChangeMonth(with: 11) }
-                                    case .days:
-                                        ForEach(self.days) { option in
-                                            Button(String(option.value)) { option.callback(option.value) }
-                                        }
-                                    case .years:
-                                        ForEach(self.years) { option in
-                                            Button(String(option.value)) { option.callback(option.value) }
-                                        }
-                                    }
-                                }
-                                .foregroundStyle(.gray)
-                                .onChange(of: self.value) { self.isPresented = false }
+                    Menu(self.label) {
+                        switch self.mode {
+                        case .months:
+                            // @TODO: refactor to use loop and Calendar.current.monthSymbols
+                            Button("January") { self.actionOnChangeMonth() }
+                            Button("February") { self.actionOnChangeMonth(with: 1) }
+                            Button("March") { self.actionOnChangeMonth(with: 2) }
+                            Button("April") { self.actionOnChangeMonth(with: 3) }
+                            Button("May") { self.actionOnChangeMonth(with: 4) }
+                            Button("June") { self.actionOnChangeMonth(with: 5) }
+                            Button("July") { self.actionOnChangeMonth(with: 6) }
+                            Button("August") { self.actionOnChangeMonth(with: 7) }
+                            Button("September") { self.actionOnChangeMonth(with: 8) }
+                            Button("October") { self.actionOnChangeMonth(with: 9) }
+                            Button("November") { self.actionOnChangeMonth(with: 10) }
+                            Button("December") { self.actionOnChangeMonth(with: 11) }
+                        case .days:
+                            ForEach(self.days) { option in
+                                Button(String(option.value)) { option.callback(option.value) }
+                            }
+                        case .years:
+                            ForEach(self.years) { option in
+                                Button(String(option.value)) { option.callback(option.value) }
                             }
                         }
-                        .buttonStyle(.plain)
-                        .useDefaultHover({ hover in self.isHighlighted = hover})
                     }
+                    .foregroundStyle(self.isHighlighted ? self.state.theme.tint : .white)
+                    .buttonStyle(.plain)
+                    .useDefaultHover({ hover in self.isHighlighted = hover})
                     .onAppear(perform: self.actionOnAppear)
                 }
 
@@ -621,7 +609,6 @@ extension WidgetLibrary.UI.EntityCalendar.BoundInlineRangeSelector.Selector {
             }
         }
 
-
         var daysInMonth = 30
         if [1,2,3,5,7,10,12].contains(self.value) {
             daysInMonth = 31
@@ -635,12 +622,6 @@ extension WidgetLibrary.UI.EntityCalendar.BoundInlineRangeSelector.Selector {
                 )
             )
         }
-    }
-
-    /// Fires when select menu is interacted with
-    /// - Returns: Void
-    private func actionOnTap() -> Void {
-        self.isPresented.toggle()
     }
 
     /// Fires when selector value changes. Sets view state.
