@@ -21,7 +21,7 @@ extension WidgetLibrary.UI {
             @AppStorage("widgetlibrary.ui.entitycalendar.isWeekAtAGlanceMinimized") private var isWeekAtAGlanceMinimized: Bool = false
             @AppStorage("today.endOfDay") public var endOfDay: Int = 18
             public var start: Date?
-            @State private var days: [DayBlock] = []
+            @State private var days: [UI.Blocks.Day] = []
 
             var body: some View {
                 VStack {
@@ -43,6 +43,101 @@ extension WidgetLibrary.UI {
                 }
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
+            }
+        }
+
+        // @TODO: build this widget
+        // MARK: CalendarSelectorWidget
+        struct CalendarSelectorWidget {
+
+        }
+
+        // MARK: BoundInlineSelector
+        struct BoundInlineRangeSelector: View {
+            @EnvironmentObject public var state: Navigation
+            public var isRangeStart: Bool = true
+            @State private var month: Int = 0
+            @State private var day: Int = 1
+            @State private var year: Int = 0
+            @State private var yearString: String = ""
+
+            var body: some View {
+                HStack {
+                    Selector(
+                        mode: .months,
+                        label: Calendar.autoupdatingCurrent.monthSymbols[self.month],
+                        isStartRangeMember: self.isRangeStart,
+                        value: $month
+                    )
+                    Selector(
+                        mode: .days,
+                        label: String(self.day),
+                        isStartRangeMember: self.isRangeStart,
+                        value: $day
+                    )
+                    Selector(
+                        mode: .years,
+                        label: String(self.year),
+                        isStartRangeMember: self.isRangeStart,
+                        value: $year
+                    )
+                }
+                .bold(true)
+                .font(.title)
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.timeline.custom.rangeStart) { self.actionOnAppear() }
+                .onChange(of: self.state.session.timeline.custom.rangeEnd) { self.actionOnAppear() }
+            }
+
+            struct Selector: View {
+                @EnvironmentObject private var state: Navigation
+                @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
+                public var mode: CalendarViewMode
+                public var label: String
+                public var isStartRangeMember: Bool
+                @Binding public var value: Int
+                @State private var isHighlighted: Bool = false
+                @State private var years: [MenuOption] = []
+                @State private var days: [MenuOption] = []
+
+                var body: some View {
+                    Menu(self.label) {
+                        switch self.mode {
+                        case .months:
+                            // @TODO: refactor to use loop and Calendar.current.monthSymbols
+                            Button("January") { self.actionOnChangeMonth() }
+                            Button("February") { self.actionOnChangeMonth(with: 1) }
+                            Button("March") { self.actionOnChangeMonth(with: 2) }
+                            Button("April") { self.actionOnChangeMonth(with: 3) }
+                            Button("May") { self.actionOnChangeMonth(with: 4) }
+                            Button("June") { self.actionOnChangeMonth(with: 5) }
+                            Button("July") { self.actionOnChangeMonth(with: 6) }
+                            Button("August") { self.actionOnChangeMonth(with: 7) }
+                            Button("September") { self.actionOnChangeMonth(with: 8) }
+                            Button("October") { self.actionOnChangeMonth(with: 9) }
+                            Button("November") { self.actionOnChangeMonth(with: 10) }
+                            Button("December") { self.actionOnChangeMonth(with: 11) }
+                        case .days:
+                            ForEach(self.days) { option in
+                                Button(String(option.value)) { option.callback(option.value) }
+                            }
+                        case .years:
+                            ForEach(self.years) { option in
+                                Button(String(option.value)) { option.callback(option.value) }
+                            }
+                        }
+                    }
+                    .foregroundStyle(self.isHighlighted ? self.state.theme.tint : .white)
+                    .buttonStyle(.plain)
+                    .useDefaultHover({ hover in self.isHighlighted = hover})
+                    .onAppear(perform: self.actionOnAppear)
+                }
+
+                struct MenuOption: Identifiable {
+                    var id: UUID = UUID()
+                    var value: Int
+                    var callback: (Int?) -> Void
+                }
             }
         }
 
@@ -104,7 +199,7 @@ extension WidgetLibrary.UI {
             }
         }
 
-        struct ListOfDays: View {
+        internal struct ListOfDays: View {
             @EnvironmentObject private var state: Navigation
             @Binding public var month: String
             @State private var days: [Day] = []
@@ -144,7 +239,7 @@ extension WidgetLibrary.UI {
             }
         }
 
-        struct ListOfMonths: View {
+        internal struct ListOfMonths: View {
             @EnvironmentObject private var state: Navigation
             private var months: [Month] = [
                 Month(label: "January", index: 0),
@@ -174,7 +269,7 @@ extension WidgetLibrary.UI {
             }
         }
 
-        struct ListOfYears: View {
+        internal struct ListOfYears: View {
             @EnvironmentObject private var state: Navigation
             @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
             @State private var years: [UI.EntityCalendar.Year] = []
@@ -189,91 +284,6 @@ extension WidgetLibrary.UI {
                 .padding()
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
-            }
-        }
-
-        /// An individual calendar day "tile" as a block
-        struct DayBlock: View, Identifiable {
-            @EnvironmentObject private var state: Navigation
-            public let id: UUID = UUID()
-            public var date: Date
-            public var dayNumber: Int = 0
-            public var isSelected: Bool = false
-            public var isWeekend: Bool = false
-            @State private var bgColour: Color = .clear
-            @State private var fgColour: Color = .white
-//            @State private var isPresented: Bool = false
-            @State private var isHighlighted: Bool = false
-            @State private var colourData: Set<Color> = []
-            private let gridSize: CGFloat = 35
-            private var isToday: Bool {Calendar.autoupdatingCurrent.isDateInToday(self.date)}
-
-            var body: some View {
-                Button {
-                    self.state.session.date = DateHelper.startOfDay(self.date)
-                } label: {
-                    VStack(spacing: 0) {
-                        VStack {
-                            HStack {
-                                Spacer()
-                                Text(DateHelper.todayShort(self.date, format: "EEE dd"))
-                                    .bold(self.isToday || self.isSelected)
-                                    .padding([.top, .bottom], 4)
-                                    .opacity(self.isToday ? 1 : 0.8)
-                                Spacer()
-                            }
-                        }
-                        .background(self.isSelected ? self.state.theme.tint : self.isToday ? .blue : Theme.textBackground)
-                        ZStack {
-                            (self.dayNumber > 0 ? self.bgColour.opacity(0.8) : .clear)
-                            if self.dayNumber > 0 {
-                                ZStack {
-                                    // Jobs associated with tasks due on a given date provide
-                                    VStack(alignment: .center, spacing: 0) {
-                                        if self.colourData.count > 0 {
-                                            ForEach(Array(self.colourData), id: \.self) { colour in
-                                                Rectangle()
-                                                    .foregroundStyle(self.isHighlighted ? colour.opacity(1) : colour.opacity(0.8))
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        VStack {
-                            HStack {
-                                Spacer()
-                                Text(DateHelper.todayShort(self.date, format: "MMMM"))
-                                    .bold(self.isToday || self.isSelected)
-                                    .padding([.top, .bottom], 4)
-                                    .opacity(self.isToday ? 1 : 0.8)
-                                Spacer()
-                            }
-                        }
-                        .background(self.isSelected ? self.state.theme.tint : self.isToday ? .blue : .clear)
-                    }
-                    .background(Theme.textBackground)
-                    .useDefaultHover({ hover in self.isHighlighted = hover })
-                }
-                .help("\(self.colourData.count) Tasks due on \(self.state.session.date.formatted(date: .abbreviated, time: .omitted))")
-                .buttonStyle(.plain)
-                .foregroundColor(self.fgColour)
-                .clipShape(.rect(cornerRadius: 6))
-                .onAppear(perform: self.actionOnAppear)
-                .contextMenu {
-                    Button {
-                        self.state.to(.timeline)
-                        self.state.session.date = self.date
-                    } label: {
-                        Text("Show Timeline...")
-                    }
-                    Button {
-                        self.state.to(.today)
-                        self.state.session.date = self.date
-                    } label: {
-                        Text("Show Today...")
-                    }
-                }
             }
         }
 
@@ -455,7 +465,7 @@ extension WidgetLibrary.UI {
             }
         }
 
-        struct MonthNav: View {
+        internal struct MonthNav: View {
             @EnvironmentObject private var state: Navigation
             @Binding public var date: Date
             @AppStorage("widgetlibrary.ui.entitycalendar.isMinimized") private var isMinimized: Bool = false
@@ -539,7 +549,7 @@ extension WidgetLibrary.UI {
             }
         }
 
-        struct MonthNavButton: View {
+        internal struct MonthNavButton: View {
             @EnvironmentObject private var state: Navigation
             public var orientation: UnitPoint
             @Binding public var date: Date
@@ -570,6 +580,108 @@ extension WidgetLibrary.UI {
     }
 }
 
+extension WidgetLibrary.UI.EntityCalendar.BoundInlineRangeSelector {
+    /// Onload handler. Sets view state.
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        let components = Calendar.autoupdatingCurrent.dateComponents([.day, .month, .year], from: self.isRangeStart ? self.state.session.timeline.custom.rangeStart : self.state.session.timeline.custom.rangeEnd)
+        self.month = (components.month ?? 1) - 1
+        self.day = components.day ?? 1
+        self.year = components.year ?? 0
+    }
+}
+
+extension WidgetLibrary.UI.EntityCalendar.BoundInlineRangeSelector.Selector {
+    /// Onload handler. Sets view state.
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.years = []
+        self.days = []
+
+        if let cYear = Int(DateHelper.todayShort(self.state.session.date, format: "yyyy")) {
+            for i in 0...self.maxYearsPastInHistory {
+                self.years.append(
+                    MenuOption(
+                        value: cYear - i,
+                        callback: self.actionOnChangeYear
+                    )
+                )
+            }
+        }
+
+        var daysInMonth = 30
+        if [1,2,3,5,7,10,12].contains(self.value) {
+            daysInMonth = 31
+        }
+
+        for i in 0..<daysInMonth {
+            self.days.append(
+                MenuOption(
+                    value: i + 1,
+                    callback: self.actionOnChangeDay
+                )
+            )
+        }
+    }
+
+    /// Fires when selector value changes. Sets view state.
+    /// - Returns: Void
+    private func actionOnChangeMonth(with value: Int? = 0) -> Void {
+        self.value = value!
+        if self.isStartRangeMember {
+            let sYear = DateHelper.todayShort(self.state.session.timeline.custom.rangeStart, format: "yyyy")
+            let sDay = DateHelper.todayShort(self.state.session.timeline.custom.rangeStart, format: "d")
+            if let date = DateHelper.date(from: "\(sYear)/\(String(value!))/\(sDay) 00:01") {
+                self.state.session.timeline.custom.rangeStart = date
+            }
+        } else {
+            let sYear = DateHelper.todayShort(self.state.session.timeline.custom.rangeEnd, format: "yyyy")
+            let sDay = DateHelper.todayShort(self.state.session.timeline.custom.rangeEnd, format: "d")
+            if let date = DateHelper.date(from: "\(sYear)/\(String(value!))/\(sDay) 00:01") {
+                self.state.session.timeline.custom.rangeEnd = date
+            }
+        }
+    }
+
+    /// Fires when selector value changes. Sets view state.
+    /// - Returns: Void
+    private func actionOnChangeDay(with value: Int? = 0) -> Void {
+        self.value = value!
+        if self.isStartRangeMember {
+            let sYear = DateHelper.todayShort(self.state.session.timeline.custom.rangeStart, format: "yyyy")
+            let sMonth = DateHelper.todayShort(self.state.session.timeline.custom.rangeStart, format: "M")
+            if let date = DateHelper.date(from: "\(sYear)/\(sMonth)/\(String(value!)) 00:01") {
+                self.state.session.timeline.custom.rangeStart = date
+            }
+        } else {
+            let sYear = DateHelper.todayShort(self.state.session.timeline.custom.rangeEnd, format: "yyyy")
+            let sMonth = DateHelper.todayShort(self.state.session.timeline.custom.rangeEnd, format: "M")
+            if let date = DateHelper.date(from: "\(sYear)/\(sMonth)/\(String(value!)) 00:01") {
+                self.state.session.timeline.custom.rangeEnd = date
+            }
+        }
+    }
+
+    /// Fires when selector value changes. Sets view state.
+    /// - Returns: Void
+    private func actionOnChangeYear(with value: Int? = 0) -> Void {
+        self.value = value!
+        if self.isStartRangeMember {
+            let sMonth = DateHelper.todayShort(self.state.session.timeline.custom.rangeStart, format: "M")
+            let sDay = DateHelper.todayShort(self.state.session.timeline.custom.rangeStart, format: "d")
+            if let date = DateHelper.date(from: "\(String(value!))/\(sMonth)/\(sDay) 00:01") {
+                self.state.session.timeline.custom.rangeStart = date
+            }
+        } else {
+            let sMonth = DateHelper.todayShort(self.state.session.timeline.custom.rangeEnd, format: "M")
+            let sDay = DateHelper.todayShort(self.state.session.timeline.custom.rangeEnd, format: "d")
+            if let date = DateHelper.date(from: "\(String(value!))/\(sMonth)/\(sDay) 00:01") {
+                self.state.session.timeline.custom.rangeEnd = date
+            }
+        }
+    }
+}
+
 extension WidgetLibrary.UI.EntityCalendar.WeekWidget {
     /// Onload handler. Sets view state
     /// - Returns: Void
@@ -583,7 +695,7 @@ extension WidgetLibrary.UI.EntityCalendar.WeekWidget {
                         let date = startDate + Double((i - 1) * 86400)
 
                         self.days.append(
-                            UI.EntityCalendar.DayBlock(
+                            UI.Blocks.Day(
                                 date: date,
                                 dayNumber: i + 1,
                                 isSelected: date >= sod && date < eod
@@ -786,59 +898,6 @@ extension WidgetLibrary.UI.EntityCalendar.Day {
             let jobs = CoreDataTasks(moc: self.state.moc)
                 .jobsForTasksDueToday(self.date)
                 .sorted(by: {$0.created ?? Date() < $1.created ?? Date()})
-            if !jobs.isEmpty {
-                for job in jobs {
-                    self.colourData.insert(job.backgroundColor)
-                }
-            } else {
-                let records = CoreDataRecords(moc: self.state.moc).forDate(self.date)
-                if !records.isEmpty {
-                    for record in records {
-                        if let colour = record.job?.backgroundColor {
-                            self.colourData.insert(colour)
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-extension WidgetLibrary.UI.EntityCalendar.DayBlock {
-    /// Onload handler, determines tile back/foreground colours
-    /// - Returns: Void
-    private func actionOnAppear() -> Void {
-        self.bgColour = .clear
-        self.fgColour = .white
-        self.prepareColourData()
-
-        if self.isToday && self.isSelected || self.isSelected {
-            self.bgColour = self.state.theme.tint
-            self.fgColour = Theme.base
-        } else if self.isToday {
-            self.bgColour = .blue
-            self.fgColour = .white
-        } else if self.date < Date() {
-            self.fgColour = .gray
-        }
-    }
-
-    /// Called in onload handler. Determines colour values for calendar Day border
-    /// - Returns: Void
-    private func prepareColourData() -> Void {
-        self.colourData = []
-
-        if let plan = CoreDataPlan(moc: self.state.moc).forDate(self.date).first {
-            if let jobs = plan.jobs?.allObjects as? [Job] {
-                for job in jobs.sorted(by: {$0.created ?? Date() < $1.created ?? Date()}) {
-                    self.colourData.insert(job.backgroundColor)
-                }
-            }
-        } else {
-            let jobs = CoreDataTasks(moc: self.state.moc)
-                .jobsForTasksDueToday(self.date)
-                .sorted(by: {$0.created ?? Date() < $1.created ?? Date()})
-
             if !jobs.isEmpty {
                 for job in jobs {
                     self.colourData.insert(job.backgroundColor)

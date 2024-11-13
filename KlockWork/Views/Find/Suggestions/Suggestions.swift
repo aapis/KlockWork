@@ -925,14 +925,12 @@ extension FindDashboard.Suggestions.SuggestedJobs {
     /// - Returns: Void
     private func setContext(_ item: Job) -> Void {
         switch nav.parent {
-        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today, .terms:
-            nav.session.job = item
         case .planning:
-            nav.planning.jobs.insert(item)
+            self.nav.planning.jobs.insert(item)
             // @TODO: this throws "Can't do a substring operation with something that isn't a string (lhs = 870732407166554 rhs = 55)"
 //            nav.planning.projects.insert(item.project!)
         default:
-            print("no op")
+            self.nav.session.job = item
         }
     }
 
@@ -976,18 +974,16 @@ extension FindDashboard.Suggestions.SuggestedNotes {
     /// - Returns: Void
     private func setContext(_ item: Note) -> Void {
         switch nav.parent {
-        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today, .terms:
-            nav.session.job = item.mJob
         case .planning:
             if let job = item.mJob {
                 nav.planning.jobs.insert(job)
             }
-            
+
             nav.planning.notes.insert(item)
             // @TODO: this throws "Can't do a substring operation with something that isn't a string (lhs = 870732407166554 rhs = 55)"
 //            nav.planning.projects.insert(item.project!)
         default:
-            print("no op")
+            self.nav.session.job = item.mJob
         }
     }
 
@@ -1022,10 +1018,6 @@ extension FindDashboard.Suggestions.SuggestedTasks {
     /// - Returns: Void
     private func setContext(_ item: LogTask) -> Void {
         switch nav.parent {
-        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today, .terms:
-            self.nav.session.job = item.owner
-            self.nav.session.project = self.nav.session.job?.project
-            self.nav.session.company = self.nav.session.project?.company
         case .planning:
             if let job = item.owner {
                 self.nav.planning.jobs.insert(job)
@@ -1037,7 +1029,9 @@ extension FindDashboard.Suggestions.SuggestedTasks {
                 }
             }
         default:
-            print("no op")
+            self.nav.session.job = item.owner
+            self.nav.session.project = self.nav.session.job?.project
+            self.nav.session.company = self.nav.session.project?.company
         }
     }
 }
@@ -1062,12 +1056,10 @@ extension FindDashboard.Suggestions.SuggestedCompanies {
     /// - Returns: Void
     private func setContext(_ item: Company) -> Void {
         switch nav.parent {
-        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today, .terms:
-            nav.session.company = item
         case .planning:
-            nav.planning.companies.insert(item)
+            self.nav.planning.companies.insert(item)
         default:
-            print("no op")
+            self.nav.session.company = item
         }
     }
 }
@@ -1108,14 +1100,12 @@ extension FindDashboard.Suggestions.SuggestedRecords {
     /// - Returns: Void
     private func setContext(_ item: LogRecord) -> Void {
         switch nav.parent {
-        case .dashboard, .companies, .jobs, .notes, .projects, .tasks, .today, .terms:
-            nav.session.job = item.job
         case .planning:
             if let job = item.job {
                 nav.planning.jobs.insert(job)
             }
         default:
-            print("no op")
+            self.nav.session.job = item.job
         }
     }
 }

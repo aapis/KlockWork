@@ -1029,6 +1029,8 @@ extension WidgetLibrary {
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.vid = UUID() }
                 .onChange(of: self.state.session.timeline.date) { self.vid = UUID() ; self.actionOnAppear() }
+                .onChange(of: self.state.session.timeline.custom.rangeStart) { self.vid = UUID() ; self.actionOnAppear() }
+                .onChange(of: self.state.session.timeline.custom.rangeEnd) { self.vid = UUID() ; self.actionOnAppear() }
                 .onChange(of: self.showCompanies) { self.actionOnAppear() }
                 .onChange(of: self.showProjects) { self.actionOnAppear() }
                 .onChange(of: self.showJobs) { self.actionOnAppear() }
@@ -2127,7 +2129,7 @@ extension WidgetLibrary.UI.InteractionsInRange {
                 icon: "hammer",
                 labelText: "Jobs",
                 contents: AnyView(
-                    UI.SimpleEntityList(type: .jobs, start: self.start, end: self.end)
+                    UI.SimpleEntityList(type: .jobs, start: self.state.session.timeline.custom.rangeStart, end: self.state.session.timeline.custom.rangeEnd)
                 )
             )
         )
@@ -2139,7 +2141,7 @@ extension WidgetLibrary.UI.InteractionsInRange {
                     icon: "folder",
                     labelText: "Projects",
                     contents: AnyView(
-                        UI.SimpleEntityList(type: .projects, start: self.start, end: self.end)
+                        UI.SimpleEntityList(type: .projects, start: self.state.session.timeline.custom.rangeStart, end: self.state.session.timeline.custom.rangeEnd)
                     )
                 )
             )
@@ -2152,7 +2154,7 @@ extension WidgetLibrary.UI.InteractionsInRange {
                     icon: "building.2",
                     labelText: "Companies",
                     contents: AnyView(
-                        UI.SimpleEntityList(type: .companies, start: self.start, end: self.end)
+                        UI.SimpleEntityList(type: .companies, start: self.state.session.timeline.custom.rangeStart, end: self.state.session.timeline.custom.rangeEnd)
                     )
                 )
             )
