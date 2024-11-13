@@ -174,7 +174,6 @@ extension WidgetLibrary {
 
         struct AppFooter: View {
             @EnvironmentObject private var state: Navigation
-//            @State private var isMinimized: Bool = false
             @AppStorage("widgetlibrary.ui.appfooter.isMinimized") private var isMinimized: Bool = false
             private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
 
@@ -1074,7 +1073,7 @@ extension WidgetLibrary {
                 }
                 .id(self.vid)
                 .onAppear(perform: self.actionOnAppear)
-                .onChange(of: self.state.session.date) { self.vid = UUID() }
+                .onChange(of: self.state.session.date) { self.vid = UUID() ; self.actionOnAppear() }
                 .onChange(of: self.state.session.timeline.date) { self.vid = UUID() ; self.actionOnAppear() }
                 .onChange(of: self.state.session.timeline.custom.rangeStart) { self.vid = UUID() ; self.actionOnAppear() }
                 .onChange(of: self.state.session.timeline.custom.rangeEnd) { self.vid = UUID() ; self.actionOnAppear() }
