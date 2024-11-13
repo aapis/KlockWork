@@ -99,6 +99,7 @@ extension WidgetLibrary.UI {
                 @State private var isHighlighted: Bool = false
                 @State private var isPresented: Bool = false
                 @State private var years: [MenuOption] = []
+                @State private var days: [MenuOption] = []
 
                 var body: some View {
                     VStack {
@@ -125,8 +126,8 @@ extension WidgetLibrary.UI {
                                         Button("November") { self.actionOnChangeMonth(with: 10) }
                                         Button("December") { self.actionOnChangeMonth(with: 11) }
                                     case .days:
-                                        ForEach(1..<32) { i in
-                                            Button("\(i)") { self.actionOnChangeDay(with: i) }
+                                        ForEach(self.days) { option in
+                                            Button(String(option.value)) { option.callback(option.value) }
                                         }
                                     case .years:
                                         ForEach(self.years) { option in
@@ -607,9 +608,10 @@ extension WidgetLibrary.UI.EntityCalendar.BoundInlineRangeSelector.Selector {
     /// - Returns: Void
     private func actionOnAppear() -> Void {
         self.years = []
+        self.days = []
 
         if let cYear = Int(DateHelper.todayShort(self.state.session.date, format: "yyyy")) {
-            for i in 1..<self.maxYearsPastInHistory {
+            for i in 0...self.maxYearsPastInHistory {
                 self.years.append(
                     MenuOption(
                         value: cYear - i,
@@ -617,6 +619,21 @@ extension WidgetLibrary.UI.EntityCalendar.BoundInlineRangeSelector.Selector {
                     )
                 )
             }
+        }
+
+
+        var daysInMonth = 30
+        if [1,2,3,5,7,10,12].contains(self.value) {
+            daysInMonth = 31
+        }
+
+        for i in 0..<daysInMonth {
+            self.days.append(
+                MenuOption(
+                    value: i + 1,
+                    callback: self.actionOnChangeDay
+                )
+            )
         }
     }
 
