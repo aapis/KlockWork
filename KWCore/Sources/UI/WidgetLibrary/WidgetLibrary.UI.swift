@@ -214,7 +214,7 @@ extension WidgetLibrary {
                         }
                     }
                 }
-                .frame(height: self.isMinimized ? 60 : 200)
+                .frame(height: self.isMinimized ? 60 : 250)
             }
         }
 
