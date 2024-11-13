@@ -205,6 +205,144 @@ extension WidgetLibrary.UI {
                 .buttonStyle(.plain)
             }
         }
+
+        // MARK: Blocks.Day
+        struct Day: View, Identifiable {
+            @EnvironmentObject private var state: Navigation
+            public let id: UUID = UUID()
+            public var date: Date
+            public var dayNumber: Int = 0
+            public var isSelected: Bool = false
+            public var isWeekend: Bool = false
+            @State private var bgColour: Color = .clear
+            @State private var fgColour: Color = .white
+//            @State private var isPresented: Bool = false
+            @State private var isHighlighted: Bool = false
+            @State private var colourData: Set<Color> = []
+            private let gridSize: CGFloat = 35
+            private var isToday: Bool {Calendar.autoupdatingCurrent.isDateInToday(self.date)}
+
+            var body: some View {
+                Button {
+                    self.state.session.date = DateHelper.startOfDay(self.date)
+                } label: {
+                    VStack(spacing: 0) {
+                        VStack {
+                            HStack {
+                                Spacer()
+                                Text(DateHelper.todayShort(self.date, format: "EEE dd"))
+                                    .bold(self.isToday || self.isSelected)
+                                    .padding([.top, .bottom], 4)
+                                    .opacity(self.isToday ? 1 : 0.8)
+                                Spacer()
+                            }
+                        }
+                        .background(self.isSelected ? self.state.theme.tint : self.isToday ? .blue : Theme.textBackground)
+                        ZStack {
+                            (self.dayNumber > 0 ? self.bgColour.opacity(0.8) : .clear)
+                            if self.dayNumber > 0 {
+                                ZStack {
+                                    // Jobs associated with tasks due on a given date provide
+                                    VStack(alignment: .center, spacing: 0) {
+                                        if self.colourData.count > 0 {
+                                            ForEach(Array(self.colourData), id: \.self) { colour in
+                                                Rectangle()
+                                                    .foregroundStyle(self.isHighlighted ? colour.opacity(1) : colour.opacity(0.8))
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        VStack {
+                            HStack {
+                                Spacer()
+                                Text(DateHelper.todayShort(self.date, format: "MMMM"))
+                                    .bold(self.isToday || self.isSelected)
+                                    .padding([.top, .bottom], 4)
+                                    .opacity(self.isToday ? 1 : 0.8)
+                                Spacer()
+                            }
+                        }
+                        .background(self.isSelected ? self.state.theme.tint : self.isToday ? .blue : .clear)
+                    }
+                    .background(Theme.textBackground)
+                    .useDefaultHover({ hover in self.isHighlighted = hover })
+                }
+                .help("\(self.colourData.count) Tasks due on \(self.state.session.date.formatted(date: .abbreviated, time: .omitted))")
+                .buttonStyle(.plain)
+                .foregroundColor(self.fgColour)
+                .clipShape(.rect(cornerRadius: 6))
+                .onAppear(perform: self.actionOnAppear)
+                .contextMenu {
+                    Button {
+                        self.state.to(.timeline)
+                        self.state.session.date = self.date
+                    } label: {
+                        Text("Show Timeline...")
+                    }
+                    Button {
+                        self.state.to(.today)
+                        self.state.session.date = self.date
+                    } label: {
+                        Text("Show Today...")
+                    }
+                }
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.Blocks.Day {
+    /// Onload handler, determines tile back/foreground colours
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.bgColour = .clear
+        self.fgColour = .white
+        self.prepareColourData()
+
+        if self.isToday && self.isSelected || self.isSelected {
+            self.bgColour = self.state.theme.tint
+            self.fgColour = Theme.base
+        } else if self.isToday {
+            self.bgColour = .blue
+            self.fgColour = .white
+        } else if self.date < Date() {
+            self.fgColour = .gray
+        }
+    }
+
+    /// Called in onload handler. Determines colour values for calendar Day border
+    /// - Returns: Void
+    private func prepareColourData() -> Void {
+        self.colourData = []
+
+        if let plan = CoreDataPlan(moc: self.state.moc).forDate(self.date).first {
+            if let jobs = plan.jobs?.allObjects as? [Job] {
+                for job in jobs.sorted(by: {$0.created ?? Date() < $1.created ?? Date()}) {
+                    self.colourData.insert(job.backgroundColor)
+                }
+            }
+        } else {
+            let jobs = CoreDataTasks(moc: self.state.moc)
+                .jobsForTasksDueToday(self.date)
+                .sorted(by: {$0.created ?? Date() < $1.created ?? Date()})
+
+            if !jobs.isEmpty {
+                for job in jobs {
+                    self.colourData.insert(job.backgroundColor)
+                }
+            } else {
+                let records = CoreDataRecords(moc: self.state.moc).forDate(self.date)
+                if !records.isEmpty {
+                    for record in records {
+                        if let colour = record.job?.backgroundColor {
+                            self.colourData.insert(colour)
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
