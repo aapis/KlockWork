@@ -630,12 +630,14 @@ extension WidgetLibrary.UI.EntityCalendar.BoundInlineRangeSelector.Selector {
         self.value = value!
         if self.isStartRangeMember {
             let sYear = DateHelper.todayShort(self.state.session.timeline.custom.rangeStart, format: "yyyy")
-            if let date = DateHelper.date(from: "\(sYear)/\(String(value!))/01 00:01") {
+            let sDay = DateHelper.todayShort(self.state.session.timeline.custom.rangeStart, format: "d")
+            if let date = DateHelper.date(from: "\(sYear)/\(String(value!))/\(sDay) 00:01") {
                 self.state.session.timeline.custom.rangeStart = date
             }
         } else {
             let sYear = DateHelper.todayShort(self.state.session.timeline.custom.rangeEnd, format: "yyyy")
-            if let date = DateHelper.date(from: "\(sYear)/\(String(value!))/01 00:01") {
+            let sDay = DateHelper.todayShort(self.state.session.timeline.custom.rangeEnd, format: "d")
+            if let date = DateHelper.date(from: "\(sYear)/\(String(value!))/\(sDay) 00:01") {
                 self.state.session.timeline.custom.rangeEnd = date
             }
         }
