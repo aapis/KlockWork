@@ -320,7 +320,7 @@ final public class DateHelper {
     ///   - asString: String
     ///   - format: String
     /// - Returns: Optional(Date)
-    static public func date(from asString: String, format: String = "yyyy/M/dd HH:mm") -> Date? {
+    static public func date(from asString: String, format: String = "yyyy/M/d HH:mm") -> Date? {
         let formatter = DateFormatter()
         formatter.dateFormat = format
         if let date = formatter.date(from: asString) {
