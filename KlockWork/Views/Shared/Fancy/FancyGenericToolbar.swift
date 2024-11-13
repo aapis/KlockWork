@@ -150,7 +150,6 @@ struct FancyGenericToolbar: View {
                             }
                             .padding(standalone ? 0 : 20)
                         }
-
                     }
                 }
             }

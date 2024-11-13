@@ -559,6 +559,37 @@ extension WidgetLibrary.UI {
                 .useDefaultHover({ hover in self.isHighlighted = hover})
             }
         }
+
+        // MARK: Buttons.FooterActivity
+        struct FooterActivity: View {
+            var count: Int
+            var label: String
+            var icon: String
+            @AppStorage("widgetlibrary.ui.appfooter.isMinimized") private var isMinimized: Bool = false
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                Button {
+                    self.isMinimized.toggle()
+                } label: {
+                    HStack(spacing: 0) {
+                        Image(systemName: self.icon)
+                            .foregroundStyle(.white)
+                            .padding(8)
+                        Text("\(self.count) \(self.label)")
+                            .bold(self.count > 0)
+                            .padding(8)
+                            .background(Theme.lightWhite)
+                            .foregroundStyle(Theme.base)
+                            .underline(self.isHighlighted)
+                    }
+                    .background(Theme.cPurple)
+                    .clipShape(.capsule(style: .circular))
+                }
+                .buttonStyle(.plain)
+                .useDefaultHover({ hover in self.isHighlighted = hover })
+            }
+        }
     }
 }
 

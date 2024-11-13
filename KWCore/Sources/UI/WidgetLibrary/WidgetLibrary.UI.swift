@@ -179,42 +179,42 @@ extension WidgetLibrary {
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
-                    FancyDivider()
                     Divider()
                     ZStack(alignment: .topTrailing) {
                         if !self.isMinimized {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                                 .blendMode(.softLight)
-                            LazyVGrid(columns: self.twoCol, alignment: .leading, spacing: 0) {
-                                GridRow {
-                                    UI.SuggestedStack(
-                                        period: .day,
-                                        start: self.state.session.date.startOfDay,
-                                        end: self.state.session.date.endOfDay,
-                                        format: "MMMM dd"
-                                    )
-                                    UI.InteractionsInRange(
-                                        period: .day,
-                                        start: self.state.session.date.startOfDay,
-                                        end: self.state.session.date.endOfDay,
-                                        format: "MMMM dd"
-                                    )
-                                }
-                            }
-                            .padding()
                         } else {
                             Theme.base.blendMode(.softLight)
                         }
-
+                        LazyVGrid(columns: self.twoCol, alignment: .leading, spacing: 10) {
+                            GridRow {
+                                UI.SuggestedLinksInRange(
+                                    period: .day,
+                                    start: self.state.session.date.startOfDay,
+                                    end: self.state.session.date.endOfDay,
+                                    format: "MMMM dd",
+                                    useMiniMode: self.isMinimized
+                                )
+                                UI.InteractionsInRange(
+                                    period: .day,
+                                    start: self.state.session.date.startOfDay,
+                                    end: self.state.session.date.endOfDay,
+                                    format: "MMMM dd",
+                                    useMiniMode: self.isMinimized
+                                )
+                            }
+                        }
+                        .padding()
                         HStack {
                             Spacer()
                             UI.Buttons.Minimize(isMinimized: $isMinimized)
-                                .padding(.trailing, 8)
-                                .padding(.top, 5)
+                                .padding(.trailing, 12)
+                                .padding(.top, 12)
                         }
                     }
                 }
-                .frame(height: self.isMinimized ? 60 : 250)
+                .frame(height: self.isMinimized ? 60 : 270)
             }
         }
 
@@ -967,22 +967,29 @@ extension WidgetLibrary {
             public var start: Date?
             public var end: Date?
             public var format: String?
+            public var useMiniMode: Bool = false
             @State private var activities: [Activity] = []
             @State private var tabs: [ToolbarButton] = []
             @State private var vid: UUID = UUID()
 
             var body: some View {
                 VStack {
-                    UI.ListLinkTitle(text: "Suggested links from \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))")
-                    UI.ActivityLinks(activities: self.activities)
-                    Spacer()
+                    if !self.useMiniMode {
+                        UI.ListLinkTitle(text: "Suggested links from \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))")
+                        UI.ActivityLinks(activities: self.activities)
+                    } else {
+                        UI.Buttons.FooterActivity(count: self.activities.count, label: "Links", icon: "link")
+                    }
                 }
                 .id(self.vid)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
                 .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
-                .onChange(of: self.start) { self.actionOnAppear() }
-                .onChange(of: self.end) { self.actionOnAppear() }
+                .onChange(of: self.state.saved) {
+                    if self.state.saved {
+                        self.actionOnAppear()
+                    }
+                }
             }
         }
 
@@ -1054,21 +1061,23 @@ extension WidgetLibrary {
             public var start: Date?
             public var end: Date?
             public var format: String?
-            @State private var activities: [Activity] = []
+            public var useMiniMode: Bool = false
             @State private var tabs: [ToolbarButton] = []
             @State private var vid: UUID = UUID()
 
             var body: some View {
                 VStack {
-                    UI.ListLinkTitle(text: "Interactions from \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))")
-                    FancyGenericToolbar(
-                        buttons: self.tabs,
-                        standalone: true,
-                        location: .content,
-                        mode: .compact,
-                        page: self.state.session.appPage,
-                        alwaysShowTab: true
-                    )
+                    if !self.useMiniMode {
+                        UI.ListLinkTitle(text: "Interactions from \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))")
+                        FancyGenericToolbar(
+                            buttons: self.tabs,
+                            standalone: true,
+                            location: .content,
+                            mode: .compact,
+                            page: self.state.session.appPage,
+                            alwaysShowTab: true
+                        )
+                    }
                     Spacer()
                 }
                 .id(self.vid)

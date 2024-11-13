@@ -23,7 +23,7 @@ extension Today {
                     standalone: true,
                     location: .content,
                     mode: .compact,
-                    page: .today
+                    page: self.nav.session.appPage
                 )
             }
         }
@@ -100,13 +100,11 @@ extension Today.LogTable {
         @EnvironmentObject public var nav: Navigation
 
         var body: some View {
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 1) {
-                    if records.count > 0 {
-                        FancyTextField(placeholder: "Records...", lineLimit: 10, text: $plain)
-                    } else {
-                        LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: Theme.rowColour)
-                    }
+            VStack(spacing: 1) {
+                if records.count > 0 {
+                    FancyTextField(placeholder: "Records...", lineLimit: 10, text: $plain)
+                } else {
+                    LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: Theme.rowColour)
                 }
             }
             .onAppear(perform: actionOnAppear)
@@ -124,28 +122,26 @@ extension Today.LogTable {
         @State private var offset: Int = 0
 
         var body: some View {
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    if records.count > 0 {
-                        ForEach(self.records, id: \.objectID) { record in
-                            if record.job != nil {
-                                let entry = Entry(
-                                    timestamp: DateHelper.longDate(record.timestamp!),
-                                    job: record.job!,
-                                    message: record.message!
-                                )
+            VStack(spacing: 0) {
+                if records.count > 0 {
+                    ForEach(self.records, id: \.objectID) { record in
+                        if record.job != nil {
+                            let entry = Entry(
+                                timestamp: DateHelper.longDate(record.timestamp!),
+                                job: record.job!,
+                                message: record.message!
+                            )
 
-                                LogRow(
-                                    entry: entry,
-                                    index: records.firstIndex(of: record),
-                                    colour: record.job?.backgroundColor ?? Theme.rowColour,
-                                    record: record
-                                )
-                            }
+                            LogRow(
+                                entry: entry,
+                                index: records.firstIndex(of: record),
+                                colour: record.job?.backgroundColor ?? Theme.rowColour,
+                                record: record
+                            )
                         }
-                    } else {
-                        LogRowEmpty(message: "No records found for \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: Theme.rowColour)
                     }
+                } else {
+                    LogRowEmpty(message: "No records found for \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: Theme.rowColour)
                 }
             }
         }
