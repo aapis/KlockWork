@@ -299,18 +299,27 @@ extension WidgetLibrary.UI {
                 struct ByCustomRange: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
-                    @State private var start: Date = Date()
-                    @State private var end: Date = Date() + 86400
                     private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
 
                     var body: some View {
                         VStack(alignment: .leading, spacing: 0) {
                             VStack(alignment: .leading) {
                                 UI.SearchTypeFilter()
-                                HStack {
-                                    DatePicker("Start", selection: $start).labelsHidden()
-                                    Text("To")
-                                    DatePicker("End", selection: $end).labelsHidden()
+                                LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                                    HStack {
+                                        Text("From:")
+                                            .font(.title)
+                                            .foregroundStyle(.gray)
+
+                                        EntityCalendar.BoundInlineRangeSelector()
+                                    }
+                                    HStack {
+                                        Text("To:")
+                                            .font(.title)
+                                            .foregroundStyle(.gray)
+
+                                        EntityCalendar.BoundInlineRangeSelector(isRangeStart: false)
+                                    }
                                 }
                                 .padding(8)
                             }
@@ -318,7 +327,7 @@ extension WidgetLibrary.UI {
                             .clipShape(.rect(topTrailingRadius: 5))
                             .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
                             FancyHelpText(
-                                text: "Browse through historical records period \(DateHelper.todayShort(self.start, format: "MM/dd/yyyy HH:mm")) to \(DateHelper.todayShort(self.end, format: "MM/dd/yyyy HH:mm"))",
+                                text: "Browse through historical records period \(DateHelper.todayShort(self.state.session.timeline.custom.rangeStart, format: "MM/dd/yyyy HH:mm")) to \(DateHelper.todayShort(self.state.session.timeline.custom.rangeEnd, format: "MM/dd/yyyy HH:mm"))",
                                 page: self.state.session.appPage
                             )
                             FancyDivider()
@@ -326,21 +335,21 @@ extension WidgetLibrary.UI {
                                 GridRow {
                                     UI.SuggestedLinksInRange(
                                         period: .custom,
-                                        start: self.start,
-                                        end: self.end
+                                        start: self.state.session.timeline.custom.rangeStart,
+                                        end: self.state.session.timeline.custom.rangeEnd
                                     )
                                     UI.SavedSearchTermsInRange(
                                         period: .custom,
-                                        start: self.start,
-                                        end: self.end
+                                        start: self.state.session.timeline.custom.rangeStart,
+                                        end: self.state.session.timeline.custom.rangeEnd
                                     )
                                 }
                             }
                             FancyDivider()
                             UI.InteractionsInRange(
                                 period: .custom,
-                                start: self.start,
-                                end: self.end
+                                start: self.state.session.timeline.custom.rangeStart,
+                                end: self.state.session.timeline.custom.rangeEnd
                             )
                         }
                     }
