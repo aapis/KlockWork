@@ -289,6 +289,7 @@ extension WidgetLibrary.UI {
         struct Minimize: View {
             @EnvironmentObject public var state: Navigation
             public var onAction: (() -> Void)? = {}
+            public var font: Font = .title2
             @Binding public var isMinimized: Bool
             @State private var isHighlighted: Bool = false
 
@@ -305,7 +306,7 @@ extension WidgetLibrary.UI {
                     showLabel: false,
                     size: .tiny,
                     type: .clear,
-                    font: .title2
+                    font: self.font
                 )
                 .padding([.top, .bottom], 10)
                 .help("Create a new record")
