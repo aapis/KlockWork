@@ -562,6 +562,7 @@ extension WidgetLibrary.UI {
 
         // MARK: Buttons.FooterActivity
         struct FooterActivity: View {
+            @EnvironmentObject private var state: Navigation
             var count: Int
             var label: String
             var icon: String
@@ -588,6 +589,7 @@ extension WidgetLibrary.UI {
                 }
                 .buttonStyle(.plain)
                 .useDefaultHover({ hover in self.isHighlighted = hover })
+                .help("\(self.count) \(self.label) on \(self.state.session.dateFormatted("MMMM dd, yyyy"))")
             }
         }
     }
