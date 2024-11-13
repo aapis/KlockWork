@@ -937,8 +937,12 @@ extension FindDashboard.Suggestions.SuggestedJobs {
     }
 
     private func appear() -> Void {
-        if items.count <= 5 {
-            showChildren = true
+        if self.items.count <= 5 {
+            if self.items.count > 1  {
+                self.showChildren = true
+            } else {
+                self.showChildren = false
+            }
         }
     }
 }
@@ -949,8 +953,12 @@ extension FindDashboard.Suggestions.SuggestedProjects {
     }
 
     private func appear() -> Void {
-        if items.count <= 5 {
-            showChildren = true
+        if self.items.count <= 5 {
+            if self.items.count > 1  {
+                self.showChildren = true
+            } else {
+                self.showChildren = false
+            }
         }
     }
 }
@@ -984,8 +992,12 @@ extension FindDashboard.Suggestions.SuggestedNotes {
     }
 
     private func appear() -> Void {
-        if items.count <= 5 {
-            showChildren = true
+        if self.items.count <= 5 {
+            if self.items.count > 1  {
+                self.showChildren = true
+            } else {
+                self.showChildren = false
+            }
         }
     }
 }
@@ -996,8 +1008,12 @@ extension FindDashboard.Suggestions.SuggestedTasks {
     }
 
     private func appear() -> Void {
-        if items.count <= 5 {
-            showChildren = true
+        if self.items.count <= 5 {
+            if self.items.count > 1  {
+                self.showChildren = true
+            } else {
+                self.showChildren = false
+            }
         }
     }
 
@@ -1032,8 +1048,12 @@ extension FindDashboard.Suggestions.SuggestedCompanies {
     }
 
     private func appear() -> Void {
-        if items.count <= 5 {
-            showChildren = true
+        if self.items.count <= 5 {
+            if self.items.count > 1  {
+                self.showChildren = true
+            } else {
+                self.showChildren = false
+            }
         }
     }
 
@@ -1058,8 +1078,12 @@ extension FindDashboard.Suggestions.SuggestedPeople {
     }
 
     private func appear() -> Void {
-        if items.count <= 5 {
-            showChildren = true
+        if self.items.count <= 5 {
+            if self.items.count > 1  {
+                self.showChildren = true
+            } else {
+                self.showChildren = false
+            }
         }
     }
 }
@@ -1070,8 +1094,12 @@ extension FindDashboard.Suggestions.SuggestedRecords {
     }
 
     private func appear() -> Void {
-        if items.count <= 5 {
-            showChildren = true
+        if self.items.count <= 5 {
+            if self.items.count > 1  {
+                self.showChildren = true
+            } else {
+                self.showChildren = false
+            }
         }
     }
 
@@ -1098,8 +1126,12 @@ extension FindDashboard.Suggestions.SuggestedTerms {
     }
 
     private func appear() -> Void {
-        if items.count <= 5 {
-            showChildren = true
+        if self.items.count <= 5 {
+            if self.items.count > 1  {
+                self.showChildren = true
+            } else {
+                self.showChildren = false
+            }
         }
     }
 }
@@ -1110,8 +1142,12 @@ extension FindDashboard.Suggestions.SuggestedDefinitions {
     }
 
     private func appear() -> Void {
-        if items.count <= 5 {
-            showChildren = true
+        if self.items.count <= 5 {
+            if self.items.count > 1  {
+                self.showChildren = true
+            } else {
+                self.showChildren = false
+            }
         }
     }
 }

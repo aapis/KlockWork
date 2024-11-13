@@ -110,11 +110,7 @@ struct ProjectView: View {
     // MARK: form view
     @ViewBuilder
     var form: some View {
-        HStack {
-            Image(systemName: "folder").font(Theme.fontTitle)
-            Title(text: "Editing: \($name.wrappedValue)")
-            Spacer()
-        }
+        Title(text: "Editing: \($name.wrappedValue)", image: "folder")
         FancyTextField(placeholder: "Name", lineLimit: 1, onSubmit: update, showLabel: true, text: $name)
         FancyTextField(placeholder: "Abbreviation", lineLimit: 1, onSubmit: {}, showLabel: true, text: $abbreviation)
         CompanyPicker(onChange: {company,_ in selectedCompany = company}, selected: project?.company != nil ? Int(project?.company?.pid ?? 0) : 0)
@@ -134,6 +130,7 @@ struct ProjectView: View {
                 }
                 .background(Theme.textBackground)
             }
+            .disabled(true)
         }
 
         if let updated = lastUpdate {
@@ -147,6 +144,7 @@ struct ProjectView: View {
                 }
                 .background(Theme.textBackground)
             }
+            .disabled(true)
         }
 
         FancyDivider()
