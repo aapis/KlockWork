@@ -262,8 +262,14 @@ extension Navigation {
         }
     }
 
+    public struct CustomTabConfiguration {
+        var rangeStart: Date = Date.now.startOfDay ?? Date()
+        var rangeEnd: Date = Date.now.endOfDay ?? Date()
+    }
+
     public struct Timeline {
         var date: Date? = nil
+        var custom: CustomTabConfiguration = CustomTabConfiguration()
 
         /// Format self.date
         /// - Parameter format: String
