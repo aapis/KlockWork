@@ -21,7 +21,7 @@ struct Dashboard: View {
         .background(
             ZStack {
                 self.state.session.appPage.primaryColour
-                Theme.base.opacity(0.6)
+                Theme.base.blendMode(.softLight).opacity(0.4)
             }
         )
     }
