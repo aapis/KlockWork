@@ -258,20 +258,22 @@ struct LogRow: View, Identifiable {
                 Button(action: self.actionInspectJob, label: {
                     Text(PageConfiguration.EntityType.jobs.enSingular)
                 })
-                Divider()
-                Menu("Linked Terms") {
-                    ForEach(self.words, id: \.id) { word in
-                        Button {
-                            self.actionInspectTerm(word)
-                        } label: {
-                            word.view
-                        }
-//                        Button(action: self.actionInspectJob, label: {
-//                            //                            Text(word)
+
+                // @TODO: re-enable and finish this feature
+//                Divider()
+//                Menu("Linked Terms") {
+//                    ForEach(self.words, id: \.id) { word in
+//                        Button {
+//                            self.actionInspectTerm(word)
+//                        } label: {
 //                            word.view
-//                        })
-                    }
-                }
+//                        }
+////                        Button(action: self.actionInspectJob, label: {
+////                            //                            Text(word)
+////                            word.view
+////                        })
+//                    }
+//                }
                 Divider()
                 Text("SR&ED Eligible: " + (entry.jobObject!.shredable ? "Yes" : "No"))
             }

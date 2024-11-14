@@ -93,6 +93,8 @@ struct FancyGenericToolbar: View {
                         ZStack(alignment: .bottom) {
                             (self.location == .content ? UIGradient() : nil)
                             (self.nav.session.job?.backgroundColor ?? .white).opacity(self.standalone ? 0 : 1).blendMode(.softLight)
+                            // @TODO: this "works" but needs finessing
+//                            TypedListRowBackground(colour: .clear, type: .jobs)
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 1) {
                                     ForEach(self.buttons.sorted(by: {$0.id < $1.id}), id: \ToolbarButton.id) { button in

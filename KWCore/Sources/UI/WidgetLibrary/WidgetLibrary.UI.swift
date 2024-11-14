@@ -220,7 +220,8 @@ extension WidgetLibrary {
                         }
                     }
                 }
-                .frame(height: self.isMinimized ? 50 : 250)
+                .frame(height: self.isMinimized ? 50 : 200)
+                .padding(.bottom, 8)
             }
         }
 
@@ -471,17 +472,17 @@ extension WidgetLibrary {
                     HStack(alignment: .center) {
                         if let image = self.iconAsImage {
                             image
-                                .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
+                                .foregroundStyle(self.state.theme.tint)
                         } else if let icon = self.icon {
                             Image(systemName: icon)
-                                .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
+                                .foregroundStyle(self.state.theme.tint)
                         }
                         Text(self.name)
                             .foregroundStyle(self.isHighlighted ? .white : Theme.lightWhite)
                         Spacer()
                         if let actionIcon = self.actionIcon {
                             Image(systemName: actionIcon)
-                                .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
+                                .foregroundStyle(self.state.theme.tint)
                         }
                     }
                     .padding(8)
@@ -1355,7 +1356,7 @@ extension WidgetLibrary {
                     HStack(alignment: .center) {
                         Image(systemName: "magnifyingglass")
                             .font(.title2)
-                            .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
+                            .foregroundStyle(self.state.theme.tint)
                         Spacer()
                         if self.text.count > 0 {
                             UI.Buttons.Close(action: self.actionOnReset)
