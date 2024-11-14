@@ -1007,7 +1007,7 @@ extension WidgetLibrary {
                         UI.ListLinkTitle(text: "Suggested links from \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))")
                         UI.ActivityLinks(start: self.start, end: self.end)
                     } else {
-                        UI.Buttons.FooterActivity(count: self.activities.count, label: "Links", icon: "link")
+                        UI.Buttons.FooterActivity(start: self.start, end: self.end, label: "Links", icon: "link")
                     }
                     Spacer()
                 }
