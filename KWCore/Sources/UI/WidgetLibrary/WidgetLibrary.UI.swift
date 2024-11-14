@@ -1970,13 +1970,16 @@ extension WidgetLibrary {
                 switch self.entity {
                 case is Company:
                     Button {
+                        self.state.session.job = nil
+                        self.state.session.project = nil
                         self.state.session.company = self.entity as? Company
-                        self.state.to(.companyDetail)
                     } label: {
                         if let entity = self.entity as? Company {
                             entity.linkRowView
                                 .underline(self.isHighlighted)
                                 .contextMenu {
+                                    Button("Edit...") { self.state.to(.companyDetail) }
+                                    Divider()
                                     Button("Inspect", action: {
                                         let entity = self.entity as? Company
                                         self.state.session.search.inspectingEntity = entity
@@ -1990,14 +1993,16 @@ extension WidgetLibrary {
                     .help("Open")
                 case is Project:
                     Button {
+                        self.state.session.job = nil
                         self.state.session.project = self.entity as? Project
                         self.state.session.company = self.state.session.project?.company
-                        self.state.to(.projectDetail)
                     } label: {
                         if let entity = self.entity as? Project {
                             entity.linkRowView
                                 .underline(self.isHighlighted)
                                 .contextMenu {
+                                    Button("Edit...") { self.state.to(.projectDetail) }
+                                    Divider()
                                     Button("Inspect", action: {
                                         let entity = self.entity as? Project
                                         self.state.session.search.inspectingEntity = entity
@@ -2014,12 +2019,13 @@ extension WidgetLibrary {
                         self.state.session.job = self.entity as? Job
                         self.state.session.project = self.state.session.job?.project
                         self.state.session.company = self.state.session.project?.company
-                        self.state.to(.jobs)
                     } label: {
                         if let entity = self.entity as? Job {
                             entity.linkRowView
                                 .underline(self.isHighlighted)
                                 .contextMenu {
+                                    Button("Edit...") { self.state.to(.jobs) }
+                                    Divider()
                                     Button("Inspect", action: {
                                         let entity = self.entity as? Job
                                         self.state.session.search.inspectingEntity = entity
