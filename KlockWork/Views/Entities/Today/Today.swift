@@ -9,13 +9,8 @@ import SwiftUI
 import KWCore
 
 struct Today: View {
-    public var defaultSelectedDate: Date? = nil
-    private let page: PageConfiguration.AppPage = .today
-    private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
-
+    @EnvironmentObject public var state: Navigation
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
-
-    @EnvironmentObject public var nav: Navigation
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -28,7 +23,10 @@ struct Today: View {
                         LogTable()
                     }
                     .padding()
-                    UI.AppFooter()
+                    UI.AppFooter(
+                        start: self.state.session.date.startOfDay,
+                        end: self.state.session.date.endOfDay
+                    )
                 }
             }
         }
