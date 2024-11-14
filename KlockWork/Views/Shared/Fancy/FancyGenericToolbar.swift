@@ -92,7 +92,9 @@ struct FancyGenericToolbar: View {
                     Group {
                         ZStack(alignment: .bottom) {
                             (self.location == .content ? UIGradient() : nil)
-
+                            (self.nav.session.job?.backgroundColor ?? .white).opacity(self.standalone ? 0 : 1).blendMode(.softLight)
+                            // @TODO: this "works" but needs finessing
+//                            TypedListRowBackground(colour: .clear, type: .jobs)
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 1) {
                                     ForEach(self.buttons.sorted(by: {$0.id < $1.id}), id: \ToolbarButton.id) { button in
@@ -111,7 +113,13 @@ struct FancyGenericToolbar: View {
                                         }
                                     }
                                 }
-                                .clipShape(.rect(topLeadingRadius: self.location == .content ? 5 : 0, topTrailingRadius: self.location == .content ? 5 : 0))
+                                .padding([.top, .leading, .trailing], self.standalone ? 0 : 16)
+                                .clipShape(
+                                    .rect(
+                                        topLeadingRadius: self.location == .content ? 5 : 0,
+                                        topTrailingRadius: self.location == .content ? 5 : 0
+                                    )
+                                )
                             }
                         }
                     }
@@ -131,7 +139,12 @@ struct FancyGenericToolbar: View {
                                 ForEach(buttons, id: \ToolbarButton.id) { button in
                                     if button.id == selected && button.contents != nil {
                                         button.contents
-                                            .clipShape(.rect(bottomLeadingRadius: self.location == .content ? 5 : 0, bottomTrailingRadius: self.location == .content ? 5 : 0))
+                                            .clipShape(
+                                                .rect(
+                                                    bottomLeadingRadius: self.location == .content ? 5 : 0,
+                                                    bottomTrailingRadius: self.location == .content ? 5 : 0
+                                                )
+                                            )
                                     }
                                 }
                             }
@@ -142,19 +155,29 @@ struct FancyGenericToolbar: View {
                                     ForEach(buttons, id: \ToolbarButton.id) { button in
                                         if button.id == selected && button.contents != nil {
                                             button.contents
-                                                .clipShape(.rect(bottomLeadingRadius: self.location == .content ? 5 : 0, bottomTrailingRadius: self.location == .content ? 5 : 0))
+                                                .clipShape(
+                                                    .rect(
+                                                        bottomLeadingRadius: self.location == .content ? 5 : 0,
+                                                        bottomTrailingRadius: self.location == .content ? 5 : 0
+                                                    )
+                                                )
                                         }
                                     }
                                 }
-                                .clipShape(.rect(topLeadingRadius: self.location == .content && self.buttons.count == 0 ? 5 : 0, topTrailingRadius: self.location == .content ? 5 : 0))
+                                .clipShape(
+                                    .rect(
+                                        topLeadingRadius: self.location == .content && self.buttons.count == 0 ? 5 : 0,
+                                        topTrailingRadius: self.location == .content ? 5 : 0
+                                    )
+                                )
                             }
-                            .padding(standalone ? 0 : 20)
+                            .padding(self.standalone ? 0 : 20)
                         }
                     }
                 }
             }
         }
-        .clipShape(.rect(cornerRadius: 5))
+        .clipShape(.rect(cornerRadius: self.standalone ? 5 : 0))
     }
 
     struct TabView: View {

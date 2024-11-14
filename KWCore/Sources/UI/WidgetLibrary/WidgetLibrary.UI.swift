@@ -175,6 +175,10 @@ extension WidgetLibrary {
         struct AppFooter: View {
             @EnvironmentObject private var state: Navigation
             @AppStorage("widgetlibrary.ui.appfooter.isMinimized") private var isMinimized: Bool = false
+            public var period: UI.Explore.Visualization.Timeline.TimelineTab = .day
+            public var start: Date?
+            public var end: Date?
+            public var format: String = "MMMM dd"
             private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
 
             var body: some View {
@@ -189,20 +193,23 @@ extension WidgetLibrary {
                         }
                         LazyVGrid(columns: self.twoCol, alignment: .leading, spacing: 10) {
                             GridRow {
+                                // @TODO: implement UI.SuggestedStack in place of SuggestedLinksInRange when it gets fixed
                                 UI.SuggestedLinksInRange(
-                                    period: .day,
-                                    start: self.state.session.date.startOfDay,
-                                    end: self.state.session.date.endOfDay,
-                                    format: "MMMM dd",
+                                    period: self.period,
+                                    start: self.start ?? self.state.session.date.startOfDay,
+                                    end: self.end ?? self.state.session.date.endOfDay,
+                                    format: self.format,
                                     useMiniMode: self.isMinimized
                                 )
+                                .frame(height: self.isMinimized ? 50 : 200)
                                 UI.InteractionsInRange(
-                                    period: .day,
-                                    start: self.state.session.date.startOfDay,
-                                    end: self.state.session.date.endOfDay,
-                                    format: "MMMM dd",
+                                    period: self.period,
+                                    start: self.start ?? self.state.session.date.startOfDay,
+                                    end: self.end ?? self.state.session.date.endOfDay,
+                                    format: self.format,
                                     useMiniMode: self.isMinimized
                                 )
+                                .frame(height: self.isMinimized ? 50 : 200)
                             }
                         }
                         .padding()
@@ -213,7 +220,8 @@ extension WidgetLibrary {
                         }
                     }
                 }
-                .frame(height: self.isMinimized ? 60 : 270)
+                .frame(height: self.isMinimized ? 50 : 200)
+                .padding(.bottom, 8)
             }
         }
 
@@ -464,17 +472,17 @@ extension WidgetLibrary {
                     HStack(alignment: .center) {
                         if let image = self.iconAsImage {
                             image
-                                .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
+                                .foregroundStyle(self.state.theme.tint)
                         } else if let icon = self.icon {
                             Image(systemName: icon)
-                                .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
+                                .foregroundStyle(self.state.theme.tint)
                         }
                         Text(self.name)
                             .foregroundStyle(self.isHighlighted ? .white : Theme.lightWhite)
                         Spacer()
                         if let actionIcon = self.actionIcon {
                             Image(systemName: actionIcon)
-                                .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
+                                .foregroundStyle(self.state.theme.tint)
                         }
                     }
                     .padding(8)
@@ -607,7 +615,7 @@ extension WidgetLibrary {
                         }
                     }
                 }
-                .frame(height: 200)
+                .frame(maxHeight: 200)
             }
         }
 
@@ -979,6 +987,7 @@ extension WidgetLibrary {
                     } else {
                         UI.Buttons.FooterActivity(count: self.activities.count, label: "Links", icon: "link")
                     }
+                    Spacer()
                 }
                 .id(self.vid)
                 .onAppear(perform: self.actionOnAppear)
@@ -1039,10 +1048,10 @@ extension WidgetLibrary {
                             )
                             .disabled(true)
                         }
+                        Spacer()
                     }
                 }
                 .id(self.vid)
-                .frame(height: 200)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
                 .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
@@ -1347,7 +1356,7 @@ extension WidgetLibrary {
                     HStack(alignment: .center) {
                         Image(systemName: "magnifyingglass")
                             .font(.title2)
-                            .foregroundStyle(self.state.session.job?.backgroundColor ?? .yellow)
+                            .foregroundStyle(self.state.theme.tint)
                         Spacer()
                         if self.text.count > 0 {
                             UI.Buttons.Close(action: self.actionOnReset)

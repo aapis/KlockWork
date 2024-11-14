@@ -92,14 +92,13 @@ extension WidgetLibrary.UI {
                         VStack {
                             FancyGenericToolbar(
                                 buttons: self.tabs,
-                                standalone: true,
+                                standalone: false,
                                 location: .content,
                                 mode: .compact,
                                 page: .explore,
                                 scrollable: false
                             )
                         }
-                        .padding()
                         .background(
                             ZStack {
                                 self.state.session.appPage.primaryColour
@@ -124,45 +123,36 @@ extension WidgetLibrary.UI {
 
                     var body: some View {
                         VStack(alignment: .leading, spacing: 0) {
-                            UI.SearchTypeFilter()
-                                .background(self.state.session.appPage.primaryColour)
-                                .clipShape(.rect(topTrailingRadius: 5))
-                                .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
-                            FancyHelpText(
-                                text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
-                                page: self.state.session.appPage
-                            )
-                            FancyDivider()
-                            // @TODO: add up to 3 widgets here (plan, tasks, score, ???)
-                            //                    LazyVGrid(columns: self.threeCol, alignment: .center) {
-                            //                        VStack {
-                            //                            UI.ListLinkTitle(text: "Tasks")
-                            //                            Forecast(
-                            //                                date: DateHelper.startOfDay(self.state.session.timeline.date),
-                            //                                type: .button,
-                            //                                page: self.state.session.appPage
-                            //                            )
-                            //                        }
-                            //                        VStack {
-                            //                            UI.ListLinkTitle(text: "Score")
-                            //                            GlobalSidebarWidgets.ScoreButton()
-                            //                        }
-                            //                    }
-                            //                    FancyDivider()
-                            LazyVGrid(columns: self.twoCol, alignment: .leading, spacing: 0) {
-                                GridRow {
-                                    UI.SuggestedStack(
-                                        period: .day,
-                                        format: "MMMM dd"
-                                    )
-                                    UI.InteractionsInRange(
-                                        period: .day,
-                                        format: "MMMM dd"
-                                    )
-                                }
+                            VStack(spacing: 0) {
+                                UI.SearchTypeFilter()
+                                    .background(self.state.session.appPage.primaryColour)
+                                    .clipShape(.rect(topTrailingRadius: 5))
+                                    .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                                FancyHelpText(
+                                    text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "MMMM dd"))",
+                                    page: self.state.session.appPage
+                                )
+                                FancyDivider()
+                                // @TODO: add up to 3 widgets here (plan, tasks, score, ???)
+                                //                    LazyVGrid(columns: self.threeCol, alignment: .center) {
+                                //                        VStack {
+                                //                            UI.ListLinkTitle(text: "Tasks")
+                                //                            Forecast(
+                                //                                date: DateHelper.startOfDay(self.state.session.timeline.date),
+                                //                                type: .button,
+                                //                                page: self.state.session.appPage
+                                //                            )
+                                //                        }
+                                //                        VStack {
+                                //                            UI.ListLinkTitle(text: "Score")
+                                //                            GlobalSidebarWidgets.ScoreButton()
+                                //                        }
+                                //                    }
+                                //                    FancyDivider()
+                                UI.ActivityFeed()
                             }
-                            FancyDivider()
-                            UI.ActivityFeed()
+                            .padding([.leading, .trailing])
+                            UI.AppFooter()
                         }
                     }
                 }
@@ -175,34 +165,29 @@ extension WidgetLibrary.UI {
 
                     var body: some View {
                         VStack(alignment: .leading, spacing: 0) {
-                            UI.SearchTypeFilter()
-                                .background(self.state.session.appPage.primaryColour)
-                                .clipShape(.rect(topTrailingRadius: 5))
-                                .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
-                            FancyHelpText(
-                                text: "Browse through historical records for week \(DateHelper.todayShort(self.state.session.date, format: "w"))",
-                                page: self.state.session.appPage
-                            )
-                            FancyDivider()
-                            UI.EntityCalendar.WeekWidget(
-                                start: self.state.session.date.startOfWeek
-                            )
-                            FancyDivider()
-                            UI.ActivityFeed()
-                            FancyDivider()
-                            Spacer()
-                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
-                                GridRow {
-                                    UI.SuggestedStack(
-                                        period: .week,
-                                        format: "w"
-                                    )
-                                    UI.InteractionsInRange(
-                                        period: .week,
-                                        format: "w"
-                                    )
-                                }
+                            VStack(spacing: 0) {
+                                UI.SearchTypeFilter()
+                                    .background(self.state.session.appPage.primaryColour)
+                                    .clipShape(.rect(topTrailingRadius: 5))
+                                    .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                                FancyHelpText(
+                                    text: "Browse through historical records for week \(DateHelper.todayShort(self.state.session.date, format: "w"))",
+                                    page: self.state.session.appPage
+                                )
+                                FancyDivider()
+                                UI.EntityCalendar.WeekWidget(
+                                    start: self.state.session.date.startOfWeek
+                                )
+                                FancyDivider()
+                                UI.ActivityFeed()
                             }
+                            .padding([.bottom, .leading, .trailing])
+                            UI.AppFooter(
+                                period: .week,
+                                start: self.state.session.date.startOfWeek,
+                                end: self.state.session.date.endOfWeek,
+                                format: "w"
+                            )
                         }
                     }
                 }
@@ -215,38 +200,41 @@ extension WidgetLibrary.UI {
 
                     var body: some View {
                         VStack(alignment: .leading, spacing: 0) {
-                            UI.SearchTypeFilter()
-                                .background(self.state.session.appPage.primaryColour)
-                                .clipShape(.rect(topTrailingRadius: 5))
-                                .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
-                            FancyHelpText(
-                                text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "MMMM"))",
-                                page: self.state.session.appPage
-                            )
-                            FancyDivider()
-                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
-                                GridRow {
-                                    UI.SuggestedLinksInRange(
-                                        period: .month,
-                                        start: self.state.session.date.startOfMonth,
-                                        end: self.state.session.date.endOfMonth,
-                                        format: "MMMM"
-                                    )
-                                    UI.SavedSearchTermsInRange(
-                                        period: .month,
-                                        start: self.state.session.date.startOfMonth,
-                                        end: self.state.session.date.endOfMonth,
-                                        format: "MMMM"
-                                    )
+                            VStack(spacing: 0) {
+                                UI.SearchTypeFilter()
+                                    .background(self.state.session.appPage.primaryColour)
+                                    .clipShape(.rect(topTrailingRadius: 5))
+                                    .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                                FancyHelpText(
+                                    text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "MMMM"))",
+                                    page: self.state.session.appPage
+                                )
+                                FancyDivider()
+                                LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                                    GridRow {
+                                        UI.SuggestedLinksInRange(
+                                            period: .month,
+                                            start: self.state.session.date.startOfMonth,
+                                            end: self.state.session.date.endOfMonth,
+                                            format: "MMMM"
+                                        )
+                                        UI.SavedSearchTermsInRange(
+                                            period: .month,
+                                            start: self.state.session.date.startOfMonth,
+                                            end: self.state.session.date.endOfMonth,
+                                            format: "MMMM"
+                                        )
+                                    }
                                 }
+                                FancyDivider()
+                                UI.InteractionsInRange(
+                                    period: .month,
+                                    start: self.state.session.date.startOfMonth,
+                                    end: self.state.session.date.endOfMonth,
+                                    format: "MMMM"
+                                )
                             }
-                            FancyDivider()
-                            UI.InteractionsInRange(
-                                period: .month,
-                                start: self.state.session.date.startOfMonth,
-                                end: self.state.session.date.endOfMonth,
-                                format: "MMMM"
-                            )
+                            .padding([.bottom, .leading, .trailing])
                         }
                     }
                 }
@@ -259,38 +247,41 @@ extension WidgetLibrary.UI {
 
                     var body: some View {
                         VStack(alignment: .leading, spacing: 0) {
-                            UI.SearchTypeFilter()
-                                .background(self.state.session.appPage.primaryColour)
-                                .clipShape(.rect(topTrailingRadius: 5))
-                                .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
-                            FancyHelpText(
-                                text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "yyyy"))",
-                                page: self.state.session.appPage
-                            )
-                            FancyDivider()
-                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
-                                GridRow {
-                                    UI.SuggestedLinksInRange(
-                                        period: .year,
-                                        start: self.state.session.date.startOfYear,
-                                        end: self.state.session.date.endOfYear,
-                                        format: "yyyy"
-                                    )
-                                    UI.SavedSearchTermsInRange(
-                                        period: .year,
-                                        start: self.state.session.date.startOfYear,
-                                        end: self.state.session.date.endOfYear,
-                                        format: "yyyy"
-                                    )
+                            VStack(spacing: 0) {
+                                UI.SearchTypeFilter()
+                                    .background(self.state.session.appPage.primaryColour)
+                                    .clipShape(.rect(topTrailingRadius: 5))
+                                    .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                                FancyHelpText(
+                                    text: "Browse through historical records for \(DateHelper.todayShort(self.state.session.date, format: "yyyy"))",
+                                    page: self.state.session.appPage
+                                )
+                                FancyDivider()
+                                LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                                    GridRow {
+                                        UI.SuggestedLinksInRange(
+                                            period: .year,
+                                            start: self.state.session.date.startOfYear,
+                                            end: self.state.session.date.endOfYear,
+                                            format: "yyyy"
+                                        )
+                                        UI.SavedSearchTermsInRange(
+                                            period: .year,
+                                            start: self.state.session.date.startOfYear,
+                                            end: self.state.session.date.endOfYear,
+                                            format: "yyyy"
+                                        )
+                                    }
                                 }
+                                FancyDivider()
+                                UI.InteractionsInRange(
+                                    period: .year,
+                                    start: self.state.session.date.startOfYear,
+                                    end: self.state.session.date.endOfYear,
+                                    format: "yyyy"
+                                )
                             }
-                            FancyDivider()
-                            UI.InteractionsInRange(
-                                period: .year,
-                                start: self.state.session.date.startOfYear,
-                                end: self.state.session.date.endOfYear,
-                                format: "yyyy"
-                            )
+                            .padding([.bottom, .leading, .trailing])
                         }
                     }
                 }
@@ -303,54 +294,63 @@ extension WidgetLibrary.UI {
 
                     var body: some View {
                         VStack(alignment: .leading, spacing: 0) {
-                            VStack(alignment: .leading) {
-                                UI.SearchTypeFilter()
+                            VStack(spacing: 0) {
+                                VStack(alignment: .leading) {
+                                    UI.SearchTypeFilter()
+                                    LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                                        HStack {
+                                            Text("From:")
+                                                .font(.title)
+                                                .foregroundStyle(.gray)
+                                            
+                                            EntityCalendar.BoundInlineRangeSelector()
+                                        }
+                                        HStack {
+                                            Text("To:")
+                                                .font(.title)
+                                                .foregroundStyle(.gray)
+                                            
+                                            EntityCalendar.BoundInlineRangeSelector(isRangeStart: false)
+                                        }
+                                    }
+                                    .padding(8)
+                                }
+                                .background(self.state.session.appPage.primaryColour)
+                                .clipShape(.rect(topTrailingRadius: 5))
+                                .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                                FancyHelpText(
+                                    text: "Browse through historical records period \(DateHelper.todayShort(self.state.session.timeline.custom.rangeStart, format: "MM/dd/yyyy HH:mm")) to \(DateHelper.todayShort(self.state.session.timeline.custom.rangeEnd, format: "MM/dd/yyyy HH:mm"))",
+                                    page: self.state.session.appPage
+                                )
+                                FancyDivider()
                                 LazyVGrid(columns: self.twoCol, alignment: .leading) {
-                                    HStack {
-                                        Text("From:")
-                                            .font(.title)
-                                            .foregroundStyle(.gray)
-
-                                        EntityCalendar.BoundInlineRangeSelector()
-                                    }
-                                    HStack {
-                                        Text("To:")
-                                            .font(.title)
-                                            .foregroundStyle(.gray)
-
-                                        EntityCalendar.BoundInlineRangeSelector(isRangeStart: false)
+                                    GridRow {
+                                        UI.SuggestedLinksInRange(
+                                            period: .custom,
+                                            start: self.state.session.timeline.custom.rangeStart,
+                                            end: self.state.session.timeline.custom.rangeEnd
+                                        )
+                                        UI.SavedSearchTermsInRange(
+                                            period: .custom,
+                                            start: self.state.session.timeline.custom.rangeStart,
+                                            end: self.state.session.timeline.custom.rangeEnd
+                                        )
                                     }
                                 }
-                                .padding(8)
+                                FancyDivider()
+                                UI.InteractionsInRange(
+                                    period: .custom,
+                                    start: self.state.session.timeline.custom.rangeStart,
+                                    end: self.state.session.timeline.custom.rangeEnd
+                                )
                             }
-                            .background(self.state.session.appPage.primaryColour)
-                            .clipShape(.rect(topTrailingRadius: 5))
-                            .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
-                            FancyHelpText(
-                                text: "Browse through historical records period \(DateHelper.todayShort(self.state.session.timeline.custom.rangeStart, format: "MM/dd/yyyy HH:mm")) to \(DateHelper.todayShort(self.state.session.timeline.custom.rangeEnd, format: "MM/dd/yyyy HH:mm"))",
-                                page: self.state.session.appPage
-                            )
-                            FancyDivider()
-                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
-                                GridRow {
-                                    UI.SuggestedLinksInRange(
-                                        period: .custom,
-                                        start: self.state.session.timeline.custom.rangeStart,
-                                        end: self.state.session.timeline.custom.rangeEnd
-                                    )
-                                    UI.SavedSearchTermsInRange(
-                                        period: .custom,
-                                        start: self.state.session.timeline.custom.rangeStart,
-                                        end: self.state.session.timeline.custom.rangeEnd
-                                    )
-                                }
-                            }
-                            FancyDivider()
-                            UI.InteractionsInRange(
-                                period: .custom,
-                                start: self.state.session.timeline.custom.rangeStart,
-                                end: self.state.session.timeline.custom.rangeEnd
-                            )
+                            .padding([.leading, .trailing])
+                            // @TODO: fix?
+//                            UI.AppFooter(
+//                                period: .year,
+//                                start: self.state.session.timeline.custom.rangeStart,
+//                                end: self.state.session.timeline.custom.rangeEnd,
+//                            )
                         }
                     }
                 }
@@ -365,29 +365,32 @@ extension WidgetLibrary.UI {
 
                     var body: some View {
                         VStack(alignment: .leading, spacing: 0) {
-                            VStack(alignment: .leading) {
-                                UI.SearchTypeFilter()
-                            }
-                            .background(self.state.session.appPage.primaryColour)
-                            .clipShape(.rect(topTrailingRadius: 5))
-                            .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
-                            FancyHelpText(
-                                text: "Show dates and times for the selected entities",
-                                page: self.state.session.appPage
-                            )
-                            FancyDivider()
-                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
-                                GridRow {
-                                    UI.DaysWhereMentioned()
-                                    UI.SuggestedLinksInRange(
-                                        period: .custom,
-                                        start: self.state.session.date.startOfDay,
-                                        end: self.state.session.date.endOfDay
-                                    )
+                            VStack(spacing: 0) {
+                                VStack(alignment: .leading) {
+                                    UI.SearchTypeFilter()
                                 }
+                                .background(self.state.session.appPage.primaryColour)
+                                .clipShape(.rect(topTrailingRadius: 5))
+                                .clipShape(.rect(bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5))
+                                FancyHelpText(
+                                    text: "Show dates and times for the selected entities",
+                                    page: self.state.session.appPage
+                                )
+                                FancyDivider()
+                                LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                                    GridRow {
+                                        UI.DaysWhereMentioned()
+                                        UI.SuggestedLinksInRange(
+                                            period: .custom,
+                                            start: self.state.session.date.startOfDay,
+                                            end: self.state.session.date.endOfDay
+                                        )
+                                    }
+                                }
+                                FancyDivider()
+                                ActivityFeed()
                             }
-                            FancyDivider()
-                            ActivityFeed()
+                            .padding([.leading, .trailing])
                         }
                     }
                 }
