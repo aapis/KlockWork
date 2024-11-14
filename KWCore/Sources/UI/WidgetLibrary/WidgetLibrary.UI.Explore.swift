@@ -181,7 +181,7 @@ extension WidgetLibrary.UI {
                                 FancyDivider()
                                 UI.ActivityFeed()
                             }
-                            .padding([.leading, .trailing])
+                            .padding([.bottom, .leading, .trailing])
                             UI.AppFooter(
                                 period: .week,
                                 start: self.state.session.date.startOfWeek,
@@ -234,13 +234,7 @@ extension WidgetLibrary.UI {
                                     format: "MMMM"
                                 )
                             }
-                            .padding([.leading, .trailing])
-                            UI.AppFooter(
-                                period: .month,
-                                start: self.state.session.date.startOfMonth,
-                                end: self.state.session.date.endOfMonth,
-                                format: "MMMM"
-                            )
+                            .padding([.bottom, .leading, .trailing])
                         }
                     }
                 }
@@ -287,13 +281,7 @@ extension WidgetLibrary.UI {
                                     format: "yyyy"
                                 )
                             }
-                            .padding([.leading, .trailing])
-                            UI.AppFooter(
-                                period: .year,
-                                start: self.state.session.date.startOfYear,
-                                end: self.state.session.date.endOfYear,
-                                format: "yyyy"
-                            )
+                            .padding([.bottom, .leading, .trailing])
                         }
                     }
                 }

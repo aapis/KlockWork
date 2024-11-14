@@ -197,17 +197,19 @@ extension WidgetLibrary {
                                 UI.SuggestedLinksInRange(
                                     period: self.period,
                                     start: self.start ?? self.state.session.date.startOfDay,
-                                    end: self.start ?? self.state.session.date.endOfDay,
-                                    format: self.format,
-                                    useMiniMode: self.isMinimized
-                                )
-                                UI.InteractionsInRange(
-                                    period: self.period,
-                                    start: self.end ?? self.state.session.date.startOfDay,
                                     end: self.end ?? self.state.session.date.endOfDay,
                                     format: self.format,
                                     useMiniMode: self.isMinimized
                                 )
+                                .frame(height: self.isMinimized ? 50 : 200)
+                                UI.InteractionsInRange(
+                                    period: self.period,
+                                    start: self.start ?? self.state.session.date.startOfDay,
+                                    end: self.end ?? self.state.session.date.endOfDay,
+                                    format: self.format,
+                                    useMiniMode: self.isMinimized
+                                )
+                                .frame(height: self.isMinimized ? 50 : 200)
                             }
                         }
                         .padding()
@@ -218,7 +220,7 @@ extension WidgetLibrary {
                         }
                     }
                 }
-                .frame(height: self.isMinimized ? 60 : 270)
+                .frame(height: self.isMinimized ? 50 : 250)
             }
         }
 
@@ -612,7 +614,7 @@ extension WidgetLibrary {
                         }
                     }
                 }
-                .frame(height: 200)
+                .frame(maxHeight: 200)
             }
         }
 
@@ -984,6 +986,7 @@ extension WidgetLibrary {
                     } else {
                         UI.Buttons.FooterActivity(count: self.activities.count, label: "Links", icon: "link")
                     }
+                    Spacer()
                 }
                 .id(self.vid)
                 .onAppear(perform: self.actionOnAppear)
@@ -1044,10 +1047,10 @@ extension WidgetLibrary {
                             )
                             .disabled(true)
                         }
+                        Spacer()
                     }
                 }
                 .id(self.vid)
-                .frame(height: 200)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
                 .onChange(of: self.state.session.timeline.date) { self.actionOnAppear() }
