@@ -381,7 +381,7 @@ extension WidgetLibrary.UI {
                     action: {self.commandLineMode.toggle() ; self.onAction?()},
                     icon: self.commandLineMode ? "apple.terminal.fill" : "apple.terminal",
                     iconWhenHighlighted: self.commandLineMode ? "apple.terminal" : "apple.terminal.fill",
-                    iconFgColour: self.commandLineMode ? self.state.theme.tint : .white,
+                    iconFgColour: self.commandLineMode ? self.state.theme.tint : .gray,
                     showLabel: false,
                     size: .small,
                     type: .clear,
