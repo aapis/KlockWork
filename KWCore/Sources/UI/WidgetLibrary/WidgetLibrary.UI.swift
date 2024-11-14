@@ -421,7 +421,7 @@ extension WidgetLibrary {
                     .contextMenu { ContextMenu(activity: self.activity) }
                     .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
-                    .help(self.isLinkOnline ? self.activity.help : "Error: The website appears to be down.")
+                    .help(self.isLinkOnline ? self.activity.help : "Error: \(self.name) is down")
                 }
             }
 
