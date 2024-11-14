@@ -377,7 +377,8 @@ extension WidgetLibrary {
                                 HStack(alignment: .top) {
                                     switch self.activity.source {
                                     case is NoteVersion:
-                                        Text("Found in note \"\((self.activity.source as? NoteVersion)?.note?.title ?? "Error: Note not found")\"")
+                                        let entity = self.activity.source as? NoteVersion
+                                        Text("Found in note \"\(entity?.note?.title ?? "Error: Note not found")\" at \(DateHelper.todayShort(entity?.created ?? Date.now, format: "HH:mm"))")
                                             .foregroundStyle(.gray)
                                         Spacer()
                                         UI.Buttons.SmallOpen(callback: {
@@ -387,7 +388,8 @@ extension WidgetLibrary {
                                             }
                                         })
                                     case is LogRecord:
-                                        Text("Found in record \"\((self.activity.source as? LogRecord)?.message ?? "Error: Record not found")\"")
+                                        let entity = self.activity.source as? LogRecord
+                                        Text("Found in record \"\(entity?.message ?? "Error: Record not found")\" at \(DateHelper.todayShort(entity?.timestamp ?? Date.now, format: "HH:mm"))")
                                             .foregroundStyle(.gray)
                                         Spacer()
                                         UI.Buttons.SmallOpen(callback: {
