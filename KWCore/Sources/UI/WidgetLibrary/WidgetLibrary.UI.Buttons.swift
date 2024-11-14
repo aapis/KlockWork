@@ -381,6 +381,7 @@ extension WidgetLibrary.UI {
                     action: {self.commandLineMode.toggle() ; self.onAction?()},
                     icon: self.commandLineMode ? "apple.terminal.fill" : "apple.terminal",
                     iconWhenHighlighted: self.commandLineMode ? "apple.terminal" : "apple.terminal.fill",
+                    iconFgColour: self.commandLineMode ? self.state.theme.tint : .white,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -585,7 +586,7 @@ extension WidgetLibrary.UI {
                             .foregroundStyle(Theme.base)
                             .underline(self.isHighlighted)
                     }
-                    .background(Theme.cPurple)
+                    .background(self.state.session.appPage.primaryColour)
                     .clipShape(.capsule(style: .circular))
                 }
                 .buttonStyle(.plain)
