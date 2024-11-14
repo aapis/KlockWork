@@ -194,6 +194,12 @@ extension WidgetLibrary {
                         LazyVGrid(columns: self.twoCol, alignment: .leading, spacing: 10) {
                             GridRow {
                                 // @TODO: implement UI.SuggestedStack in place of SuggestedLinksInRange when it gets fixed
+//                                UI.SuggestedStack(
+//                                    period: self.period,
+//                                    start: self.start ?? self.state.session.date.startOfDay,
+//                                    end: self.end ?? self.state.session.date.endOfDay,
+//                                    format: self.format
+//                                )
                                 UI.SuggestedLinksInRange(
                                     period: self.period,
                                     start: self.start ?? self.state.session.date.startOfDay,
@@ -330,6 +336,7 @@ extension WidgetLibrary {
             public var activity: Activity
             @State private var isHighlighted: Bool = false
             @State private var isMinimized: Bool = true
+            @State private var isLinkOnline: Bool = false
 
             var body: some View {
                 HStack(alignment: .top) {
@@ -342,15 +349,18 @@ extension WidgetLibrary {
                                     HStack(alignment: .center) {
                                         if let image = self.iconAsImage {
                                             image
+                                                .symbolRenderingMode(.hierarchical)
                                                 .foregroundStyle(self.state.session.job?.backgroundColor ?? self.state.theme.tint)
                                         } else if let icon = self.icon {
                                             Image(systemName: icon)
+                                                .symbolRenderingMode(.hierarchical)
                                                 .foregroundStyle(self.state.session.job?.backgroundColor ?? self.state.theme.tint)
                                         }
                                         Text(self.name)
                                             .multilineTextAlignment(.leading)
                                         Spacer()
-                                        Image(systemName: "link")
+                                        Image(systemName: self.isLinkOnline ? "link" : "questionmark.square.fill")
+                                            .symbolRenderingMode(.hierarchical)
                                             .foregroundStyle(.gray)
                                     }
                                     .padding(8)
@@ -359,6 +369,7 @@ extension WidgetLibrary {
                                 .useDefaultHover({ hover in self.isHighlighted = hover })
                             })
                             .foregroundStyle(.white)
+                            .background(self.isLinkOnline ? .clear : Color.red.opacity(0.3))
                         }
                         if !self.isMinimized {
                             if self.activity.source != nil {
@@ -402,6 +413,7 @@ extension WidgetLibrary {
                             }
                         }
                     }
+                    .onAppear(perform: self.actionOnAppear)
                     .contextMenu { ContextMenu(activity: self.activity) }
                     .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
@@ -592,7 +604,10 @@ extension WidgetLibrary {
         // MARK: ActivityLinks
         struct ActivityLinks: View {
             @EnvironmentObject private var state: Navigation
-            public var activities: [Activity]
+            public var start: Date?
+            public var end: Date?
+            @State private var activities: [Activity] = []
+            @State private var vid: UUID = UUID()
 
             var body: some View {
                 ScrollView(showsIndicators: false) {
@@ -615,7 +630,10 @@ extension WidgetLibrary {
                         }
                     }
                 }
+                .id(self.vid)
                 .frame(maxHeight: 200)
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.date) { self.actionOnAppear() }
             }
         }
 
@@ -935,7 +953,7 @@ extension WidgetLibrary {
         // MARK: SuggestedStack
         struct SuggestedStack: View {
             @EnvironmentObject private var state: Navigation
-            public var period: UI.Explore.Visualization.Timeline.TimelineTab
+            public var period: UI.Explore.Visualization.Timeline.TimelineTab? = nil
             public var start: Date?
             public var end: Date?
             public var format: String?
@@ -945,7 +963,7 @@ extension WidgetLibrary {
 
             var body: some View {
                 VStack {
-                    UI.ListLinkTitle(text: "Suggested items for \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))")
+                    UI.ListLinkTitle(text: "Suggested items from \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))")
                     FancyGenericToolbar(
                         buttons: self.tabs,
                         standalone: true,
@@ -983,7 +1001,7 @@ extension WidgetLibrary {
                 VStack {
                     if !self.useMiniMode {
                         UI.ListLinkTitle(text: "Suggested links from \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))")
-                        UI.ActivityLinks(activities: self.activities)
+                        UI.ActivityLinks(start: self.start, end: self.end)
                     } else {
                         UI.Buttons.FooterActivity(count: self.activities.count, label: "Links", icon: "link")
                     }
@@ -1027,7 +1045,7 @@ extension WidgetLibrary {
         // MARK: SavedSearchTermLinks
         struct SavedSearchTermLinks: View {
             @EnvironmentObject private var state: Navigation
-            public var period: UI.Explore.Visualization.Timeline.TimelineTab
+            public var period: UI.Explore.Visualization.Timeline.TimelineTab? = nil
             public var start: Date?
             public var end: Date?
             public var format: String?
@@ -2121,6 +2139,184 @@ extension WidgetLibrary {
     }
 }
 
+extension WidgetLibrary.UI.ActivityLinks {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.activities = []
+
+        Task {
+            await self.getLinksFromJobs()
+            await self.getLinksFromNotes()
+            await self.getLinksFromRecords()
+            self.vid = UUID()
+        }
+//        print("DERPO start=\(self.start?.formatted()) end=\(self.end?.formatted())")
+//        print("DERPO ActivityLinks.activities.count=\(self.activities.count)")
+    }
+
+    /// Get links from records created or updated on a given day
+    /// @TODO: move to LogRecord
+    /// - Returns: Void
+    private func getLinksFromRecords() async -> Void {
+        if let start = self.start {
+            if let end = self.end {
+                let linkLength = 40
+                let records = CoreDataRecords(moc: self.state.moc).inRange(
+                    start: start,
+                    end: end
+                )
+
+                for record in records {
+                    if let message = record.message {
+                        if message.contains("https://") {
+                            let linkRegex = /https:\/\/([^ \n]+)/
+                            if let match = message.firstMatch(of: linkRegex) {
+                                let sMatch = String(match.0)
+                                var label: String = sMatch
+
+                                if sMatch.count > linkLength {
+                                    label = label.prefix(linkLength) + "..."
+                                }
+                                if !self.activities.contains(where: {$0.name == label}) {
+                                    await self.activities.append(
+                                        Activity(
+                                            name: label,
+                                            help: sMatch,
+                                            page: self.state.parent ?? .dashboard,
+                                            type: .activity,
+                                            job: record.job,
+                                            source: record,
+                                            url: URL(string: sMatch) ?? nil
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// Get links from jobs created or updated on a given day
+    /// @TODO: move to Job
+    /// - Returns: Void
+    private func getLinksFromJobs() async -> Void {
+        let jobs = CoreDataJob(moc: self.state.moc).inRange(
+            start: self.start,
+            end: self.end
+        )
+
+        for job in jobs {
+            if let uri = job.uri {
+                if uri.absoluteString != "https://" {
+                    self.activities.append(
+                        Activity(
+                            name: uri.absoluteString,
+                            page: self.state.parent ?? .dashboard,
+                            type: .activity,
+                            job: job,
+                            url: uri.absoluteURL
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    /// Find links in notes created on a given day
+    /// @TODO: Move to Note
+    /// - Returns: Void
+    private func getLinksFromNotes() async -> Void {
+        if self.start != nil && self.end != nil {
+            let notes = CoreDataNotes(moc: self.state.moc).inRange(
+                start: self.start,
+                end: self.end
+            )
+            let linkLength = 40
+
+            for note in notes {
+                if let versions = note.versions?.allObjects as? [NoteVersion] {
+                    for version in versions {
+                        if let createdOn = version.created {
+                            if createdOn > self.start! && createdOn < self.end! {
+                                if let content = version.content {
+                                    let linkRegex = /https:\/\/([^ \n]+)/
+                                    if let match = content.firstMatch(of: linkRegex) {
+                                        let sMatch = String(match.0)
+                                        var label: String = sMatch
+
+                                        if sMatch.count > linkLength {
+                                            label = label.prefix(linkLength) + "..."
+                                        }
+                                        if !self.activities.contains(where: {$0.name == label}) {
+                                            self.activities.append(
+                                                Activity(
+                                                    name: label,
+                                                    help: sMatch,
+                                                    page: self.state.parent ?? .dashboard,
+                                                    type: .activity,
+                                                    job: note.mJob,
+                                                    source: version,
+                                                    url: URL(string: sMatch) ?? nil
+                                                )
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.ListExternalLinkItem {
+    /// Onload handler. Sets view state.
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        Task {
+            await self.checkLinkStatus(link: self.name)
+        }
+    }
+
+    /// Determine if a link is active.
+    /// Danke: https://stackoverflow.com/a/52518310
+    /// - Parameter link: String
+    /// - Returns: Void
+    private func checkLinkStatus(link: String) async -> Bool {
+        var isOnline = false
+        if let url = URL(string: link) {
+            var request = URLRequest(url: url)
+            request.httpMethod = "HEAD"
+            print("DERPO url=\(link)")
+
+            URLSession(configuration: .default).dataTask(with: request) { (_, response, error) -> Void in
+                guard error == nil else {
+                        print("DERPO Error:", error ?? "")
+                    return
+                }
+
+                guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+                  print("DERPO down")
+                  return
+                }
+
+//                isOnline = true
+                self.isLinkOnline = true
+                print("DERPO up")
+            }
+            .resume()
+        }
+
+        print("DERPO isOnline=\(isOnline)")
+        return isOnline
+    }
+}
+
 extension WidgetLibrary.UI.DaysWhereMentioned {
     /// Onload handler. Sets view state
     /// - Returns: Void
@@ -2309,132 +2505,7 @@ extension WidgetLibrary.UI.SuggestedLinksInRange {
     /// Onload handler. Sets view state
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        self.activities = []
-
-        Task {
-            await self.getLinksFromJobs()
-            await self.getLinksFromNotes()
-            await self.getLinksFromRecords()
-            self.vid = UUID()
-        }
-    }
-
-    /// Get links from records created or updated on a given day
-    /// @TODO: move to LogRecord
-    /// - Returns: Void
-    private func getLinksFromRecords() async -> Void {
-        if let start = self.start {
-            if let end = self.end {
-                let linkLength = 40
-                let records = CoreDataRecords(moc: self.state.moc).inRange(
-                    start: start,
-                    end: end
-                )
-
-                for record in records {
-                    if let message = record.message {
-                        if message.contains("https://") {
-                            let linkRegex = /https:\/\/([^ \n]+)/
-                            if let match = message.firstMatch(of: linkRegex) {
-                                let sMatch = String(match.0)
-                                var label: String = sMatch
-
-                                if sMatch.count > linkLength {
-                                    label = label.prefix(linkLength) + "..."
-                                }
-                                if !self.activities.contains(where: {$0.name == label}) {
-                                    self.activities.append(
-                                        Activity(
-                                            name: label,
-                                            help: sMatch,
-                                            page: self.state.parent ?? .dashboard,
-                                            type: .activity,
-                                            job: record.job,
-                                            source: record,
-                                            url: URL(string: sMatch) ?? nil
-                                        )
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /// Get links from jobs created or updated on a given day
-    /// @TODO: move to Job
-    /// - Returns: Void
-    private func getLinksFromJobs() async -> Void {
-        let jobs = CoreDataJob(moc: self.state.moc).inRange(
-            start: self.start,
-            end: self.end
-        )
-
-        for job in jobs {
-            if let uri = job.uri {
-                if uri.absoluteString != "https://" {
-                    self.activities.append(
-                        Activity(
-                            name: uri.absoluteString,
-                            page: self.state.parent ?? .dashboard,
-                            type: .activity,
-                            job: job,
-                            url: uri.absoluteURL
-                        )
-                    )
-                }
-            }
-        }
-    }
-
-    /// Find links in notes created on a given day
-    /// @TODO: Move to Note
-    /// - Returns: Void
-    private func getLinksFromNotes() async -> Void {
-        if self.start != nil && self.end != nil {
-            let notes = CoreDataNotes(moc: self.state.moc).inRange(
-                start: self.start,
-                end: self.end
-            )
-            let linkLength = 40
-
-            for note in notes {
-                if let versions = note.versions?.allObjects as? [NoteVersion] {
-                    for version in versions {
-                        if let createdOn = version.created {
-                            if createdOn > self.start! && createdOn < self.end! {
-                                if let content = version.content {
-                                    let linkRegex = /https:\/\/([^ \n]+)/
-                                    if let match = content.firstMatch(of: linkRegex) {
-                                        let sMatch = String(match.0)
-                                        var label: String = sMatch
-
-                                        if sMatch.count > linkLength {
-                                            label = label.prefix(linkLength) + "..."
-                                        }
-                                        if !self.activities.contains(where: {$0.name == label}) {
-                                            self.activities.append(
-                                                Activity(
-                                                    name: label,
-                                                    help: sMatch,
-                                                    page: self.state.parent ?? .dashboard,
-                                                    type: .activity,
-                                                    job: note.mJob,
-                                                    source: version,
-                                                    url: URL(string: sMatch) ?? nil
-                                                )
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        self.vid = UUID()
     }
 }
 
@@ -2449,7 +2520,7 @@ extension WidgetLibrary.UI.SuggestedStack {
                 icon: "link",
                 labelText: "Links",
                 contents: AnyView(
-                    UI.ActivityLinks(activities: self.activities)
+                    UI.ActivityLinks(start: self.start, end: self.end)
                 )
             ),
             ToolbarButton(
