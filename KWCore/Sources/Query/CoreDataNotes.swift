@@ -333,6 +333,61 @@ public class CoreDataNotes {
         )
     }
 
+    /// Find links in notes created on a given day
+    /// - Parameter start: Optional(Date)
+    /// - Parameter end: Optional(Date)
+    /// - Returns: Array<Activity>
+    public func getLinksFromNotes(start: Date?, end: Date?) async -> [Activity] {
+        var activities: [Activity] = []
+
+        if start != nil && end != nil {
+            let notes = CoreDataNotes(moc: self.moc!).inRange(
+                start: start,
+                end: end
+            )
+            let linkLength = 40
+
+            for note in notes {
+                if note.versions != nil {
+                    if let versions = note.versions!.allObjects as? [NoteVersion] {
+                        for version in versions {
+                            if let createdOn = version.created {
+                                if createdOn > start! && createdOn < end! {
+                                    if let content = version.content {
+                                        let linkRegex = /https:\/\/([^ \n]+)/
+                                        if let match = content.firstMatch(of: linkRegex) {
+                                            let sMatch = String(match.0)
+                                            var label: String = sMatch
+
+                                            if sMatch.count > linkLength {
+                                                label = label.prefix(linkLength) + "..."
+                                            }
+                                            if !activities.contains(where: {$0.name == label}) {
+                                                activities.append(
+                                                    Activity(
+                                                        name: label,
+                                                        help: sMatch,
+                                                        page: .dashboard, //self.state.parent ??
+                                                        type: .activity,
+                                                        job: note.mJob,
+                                                        source: version,
+                                                        url: URL(string: sMatch) ?? nil
+                                                    )
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return activities
+    }
+
     /// Updates a single NSManagedObject
     /// - Parameters:
     ///   - entity: Note, the target to modify
