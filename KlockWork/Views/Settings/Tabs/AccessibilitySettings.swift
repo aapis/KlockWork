@@ -13,6 +13,7 @@ struct AccessibilitySettings: View {
     @EnvironmentObject public var state: Navigation
     @AppStorage("settings.accessibility.showTabTitles") private var showTabTitles: Bool = true
     @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
+    @AppStorage("settings.accessibility.showSelectorLabels") private var showSelectorLabels: Bool = true
 
     var body: some View {
         HStack {
@@ -21,6 +22,7 @@ struct AccessibilitySettings: View {
                 Section("User interface") {
                     Toggle("Show tab titles", isOn: $showTabTitles)
                     Toggle("Show hints & tutorials", isOn: $showUIHints)
+                    Toggle("Show labels on buttons & dropdown menus", isOn: $showSelectorLabels)
                 }
             }
             Spacer()

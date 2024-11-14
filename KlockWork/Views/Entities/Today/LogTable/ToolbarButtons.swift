@@ -14,8 +14,9 @@ struct ToolbarButtons: View {
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var nav: Navigation
     @AppStorage("today.numPastDates") public var numPastDates: Int = 20
+    @AppStorage("settings.accessibility.showSelectorLabels") private var showSelectorLabels: Bool = true
     public var records: [LogRecord]?
-//    public var activities: [UI.GenericTimelineActivity]?
+    public var tab: TodayViewTab = .chronologic
     @State private var datePickerItems: [CustomPickerItem] = []
     @State private var pickerSelection: Int = 0
     @State private var highlighted: Bool = false
@@ -27,31 +28,41 @@ struct ToolbarButtons: View {
                 .opacity(0.3)
                 .blendMode(.softLight)
                 .frame(height: 20)
-
             HStack(alignment: .center) {
-                UI.ViewModeSelector()
-                    .padding(6)
-                    .background(Theme.textBackground)
-                    .foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 5))
-                UI.SortSelector()
-                UI.Pagination.Widget()
-                Button(action: export, label: {
-                    HStack(spacing: 5) {
-                        Image(systemName: "document.on.document.fill")
-                            .foregroundStyle(self.nav.session.job != nil ? self.nav.session.job?.backgroundColor ?? .white : self.nav.theme.tint)
-                        Text("Copy")
-                    }
-                    .padding(6)
-                    .background(Theme.textBackground)
-                    .foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 5))
-                })
-                .buttonStyle(.plain)
-                .keyboardShortcut("c", modifiers: [.control, .shift])
-                .help("Copy view data to clipboard")
-                .useDefaultHover({ hover in self.highlighted = hover})
+                if self.tab == .chronologic {
+                    UI.ViewModeSelector()
+                    UI.SortSelector()
+                    UI.Pagination.Widget()
+                } else if self.tab == .grouped {
+                    Text(self.tab.title)
+                        .padding(6)
+                        .background(Theme.textBackground)
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                        .help(self.tab.help)
+                }
                 Spacer()
+                if self.tab == .chronologic {
+                    if self.records != nil {
+                        Button(action: export, label: {
+                            HStack(spacing: 5) {
+                                Image(systemName: "document.on.document.fill")
+                                    .foregroundStyle(self.nav.theme.tint)
+                                if self.showSelectorLabels {
+                                    Text("Copy")
+                                }
+                            }
+                            .padding(6)
+                            .background(Theme.textBackground)
+                            .foregroundStyle(Theme.lightWhite)
+                            .clipShape(RoundedRectangle(cornerRadius: 5))
+                        })
+                        .buttonStyle(.plain)
+                        .keyboardShortcut("c", modifiers: [.control, .shift])
+                        .help("Copy view data to clipboard")
+                        //                .useDefaultHover({ hover in self.highlighted = hover})
+                    }
+                }
             }
             .padding(8)
         }

@@ -215,13 +215,13 @@ extension WidgetLibrary {
                         .padding()
                         HStack {
                             Spacer()
-                            UI.Buttons.Minimize(font: .title, isMinimized: $isMinimized)
-                                .padding([.trailing, .top], 16)
+                            UI.Buttons.Minimize(isMinimized: $isMinimized)
+                                .padding([.trailing, .top], 8)
                         }
                     }
                 }
                 .frame(height: self.isMinimized ? 50 : 200)
-                .padding(.bottom, 8)
+                .padding(.bottom, self.isMinimized ? 0 : 8)
             }
         }
 
@@ -1655,32 +1655,60 @@ extension WidgetLibrary {
                 @EnvironmentObject public var state: Navigation
                 @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
                 @State private var isHighlighted: Bool = false
-                private var pickerItems: [CustomPickerItem] {
-                    return [
-                        CustomPickerItem(title: "Pagination", tag: 0),
-                        CustomPickerItem(title: "5 per page", tag: 5),
-                        CustomPickerItem(title: "10 per page", tag: 10),
-                        CustomPickerItem(title: "20 per page", tag: 20),
-                        CustomPickerItem(title: "30 per page", tag: 30),
-                        CustomPickerItem(title: "50 per page", tag: 50),
-                        CustomPickerItem(title: "100 per page", tag: 100),
+                @State private var menuLabel: String = ""
+                @State private var selected: MenuOption? = nil
+                private var options: [MenuOption] {
+                    [
+                        MenuOption(label: "5 per page", tag: 5, icon: "circle.grid.2x1.fill"),
+                        MenuOption(label: "10 per page", tag: 10, icon: "circle.grid.2x1.fill"),
+                        MenuOption(label: "20 per page", tag: 20, icon: "circle.grid.2x1.fill"),
+                        MenuOption(label: "30 per page", tag: 30, icon: "circle.grid.2x2.fill"),
+                        MenuOption(label: "50 per page", tag: 50, icon: "circle.grid.2x2.fill"),
+                        MenuOption(label: "100 per page", tag: 100, icon: "circle.grid.3x3.fill"),
                     ]
                 }
 
                 var body: some View {
-                    HStack(spacing: 5) {
-                        FancyPicker(onChange: change, items: self.pickerItems, defaultSelected: self.perPage, icon: self.perPage < 30 ? "circle.grid.2x1.fill" : self.perPage < 100 ? "circle.grid.2x2.fill" : "circle.grid.3x3.fill")
-                            .onAppear(perform: {self.change(selected: self.perPage, sender: "")})
-                            .onChange(of: self.perPage) {
-                                change(selected: self.perPage, sender: "")
+                    HStack(spacing: 8) {
+                        HStack(alignment: .center) {
+                            Image(systemName: self.options.filter({$0.tag == self.perPage}).first?.icon ?? "")
+                                .foregroundStyle(self.state.theme.tint)
+                            Menu(self.selected?.label ?? self.options.filter({$0.tag == self.perPage}).first?.label ?? "Pagination") {
+                                ForEach(self.options) { option in
+                                    Button {
+                                        self.perPage = option.tag
+                                        self.selected = option
+                                    } label: {
+                                        HStack {
+                                            Image(systemName: option.icon)
+                                            Text(option.label)
+                                        }
+                                    }
+                                }
                             }
-                            .help("Number of records per page. 10, 30 or 50.")
+                            .buttonStyle(.plain)
+                            .useDefaultHover({ hover in self.isHighlighted = hover })
+                            Image(systemName: "chevron.up.chevron.down")
+                                .font(.caption)
+                        }
+                        .foregroundStyle(self.isHighlighted ? .white : Theme.lightWhite)
                     }
-                    .padding(6)
+                    .padding(8)
                     .background(self.isHighlighted ? Theme.textBackground.opacity(1) : Theme.textBackground.opacity(0.8))
-                    .foregroundStyle(.white)
                     .clipShape(RoundedRectangle(cornerRadius: 5))
-                    .useDefaultHover({ hover in self.isHighlighted = hover})
+                    .onAppear(perform: {self.change(selected: self.perPage, sender: "")})
+                    .onChange(of: self.perPage) {
+                        change(selected: self.perPage, sender: "")
+                    }
+                    .help("Number of records per page. 10, 30, 50, or 100.")
+                }
+
+                // MARK: Pagination.Widget.MenuOption
+                internal struct MenuOption: Identifiable {
+                    var id: UUID = UUID()
+                    var label: String
+                    var tag: Int
+                    var icon: String
                 }
             }
 
@@ -1724,22 +1752,41 @@ extension WidgetLibrary {
             @EnvironmentObject public var state: Navigation
             @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
             @State private var isHighlighted: Bool = false
-            private var pickerItems: [CustomPickerItem] {
-                return [
-                    CustomPickerItem(title: "Sort", tag: -1),
-                    CustomPickerItem(title: "Newest first", tag: 0),
-                    CustomPickerItem(title: "Oldest first", tag: 1)
-                ]
-            }
 
             var body: some View {
                 HStack(spacing: 5) {
-                    FancyPicker(onChange: change, items: self.pickerItems, defaultSelected: self.tableSortOrder, icon: self.tableSortOrder == 0 ? "text.line.first.and.arrowtriangle.forward" : "text.line.last.and.arrowtriangle.forward")
-                        .onAppear(perform: {self.change(selected: self.tableSortOrder, sender: "")})
-                        .onChange(of: self.tableSortOrder) {
-                            change(selected: self.tableSortOrder, sender: "")
+                    HStack(alignment: .center) {
+                        Image(systemName: self.tableSortOrder == 1 ? "text.line.last.and.arrowtriangle.forward" : "text.line.first.and.arrowtriangle.forward")
+                            .foregroundStyle(self.state.theme.tint)
+                        Menu(self.tableSortOrder == 0 ? "Newest first" : "Oldest first") {
+                            Button {
+                                self.tableSortOrder = 0
+                            } label: {
+                                HStack {
+                                    Image(systemName: "text.line.first.and.arrowtriangle.forward")
+                                    Text("Newest first")
+                                }
+                            }
+                            Button {
+                                self.tableSortOrder = 1
+                            } label: {
+                                HStack {
+                                    Image(systemName: "text.line.last.and.arrowtriangle.forward")
+                                    Text("Oldest first")
+                                }
+                            }
                         }
-                        .help("Change table sort order (newest or oldest first)")
+                        .buttonStyle(.plain)
+                        .useDefaultHover({ hover in self.isHighlighted = hover })
+                        Image(systemName: "chevron.up.chevron.down")
+                            .font(.caption)
+                    }
+                    .foregroundStyle(self.isHighlighted ? .white : Theme.lightWhite)
+                    .onAppear(perform: {self.change(selected: self.tableSortOrder, sender: "")})
+                    .onChange(of: self.tableSortOrder) {
+                        change(selected: self.tableSortOrder, sender: "")
+                    }
+                    .help("Change table sort order (newest or oldest first)")
                 }
                 .padding(6)
                 .background(self.isHighlighted ? Theme.textBackground.opacity(1) : Theme.textBackground.opacity(0.8))
@@ -1753,21 +1800,47 @@ extension WidgetLibrary {
         public struct ViewModeSelector: View {
             @EnvironmentObject public var state: Navigation
             @AppStorage("today.viewMode") public var index: Int = 0
-            private var items: [CustomPickerItem] {
-                return [
-                    CustomPickerItem(title: "View mode", tag: 0),
-                    CustomPickerItem(title: "Full", tag: 1),
-                    CustomPickerItem(title: "Plain", tag: 2)
-                ]
-            }
+            @State private var isHighlighted: Bool = false
 
             public var body: some View {
-                FancyPicker(onChange: change, items: items, defaultSelected: index, icon: self.index == 1 ? "rectangle.pattern.checkered" : "rectangle")
-                    .onAppear(perform: {self.change(selected: index, sender: "")})
-                    .onChange(of: self.index) {
-                        change(selected: self.index, sender: "")
+                HStack(alignment: .center) {
+                    Image(systemName: self.state.session.toolbar.mode == .full ? "rectangle.pattern.checkered" : "rectangle")
+                        .foregroundStyle(self.state.theme.tint)
+                    Menu(self.state.session.toolbar.mode == .full ? "Full" : "Plain") {
+                        Button {
+                            self.index = 1
+                            self.state.session.toolbar.mode = .full
+                        } label: {
+                            HStack {
+                                Image(systemName: "rectangle.pattern.checkered")
+                                Text("Full")
+                            }
+                        }
+                        Button {
+                            self.index = 2
+                            self.state.session.toolbar.mode = .plain
+                        } label: {
+                            HStack {
+                                Image(systemName: "rectangle")
+                                Text("Plain")
+                            }
+                        }
                     }
-                    .help("Change view mode. Tap to see options.")
+                    .buttonStyle(.plain)
+                    .useDefaultHover({ hover in self.isHighlighted = hover })
+                    Image(systemName: "chevron.up.chevron.down")
+                        .font(.caption)
+                }
+                .padding(6)
+                .background(Theme.textBackground)
+                .clipShape(RoundedRectangle(cornerRadius: 5))
+                .foregroundStyle(self.isHighlighted ? .white : Theme.lightWhite)
+                .onAppear(perform: {self.change(selected: index, sender: "")})
+                .onChange(of: self.index) {
+                    change(selected: self.index, sender: "")
+                }
+                .help("Change view mode. Tap to see options.")
+
             }
 
             private func change(selected: Int, sender: String?) -> Void {
