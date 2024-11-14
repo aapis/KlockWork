@@ -20,6 +20,7 @@ struct GeneralSettings: View {
     @AppStorage("general.showSessionInspector") public var showSessionInspector: Bool = false
     @AppStorage("general.spotlightIndex") public var spotlightIndex: Bool = false
     @AppStorage("general.columns") private var columns: Int = 3
+    @AppStorage("general.shouldCheckLinkStatus") private var shouldCheckLinkStatus: Bool = false
 
     var body: some View {
         Form {
@@ -58,6 +59,8 @@ struct GeneralSettings: View {
                     Text("5").tag(5)
                 }
             }
+
+            Toggle("Check if links are online", isOn: $shouldCheckLinkStatus)
 
             Group {
                 Text("Defaults")

@@ -330,6 +330,7 @@ extension WidgetLibrary {
 
         struct ListExternalLinkItem: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("general.shouldCheckLinkStatus") private var shouldCheckLinkStatus: Bool = false
             public var name: String
             public var icon: String?
             public var iconAsImage: Image?
@@ -359,7 +360,7 @@ extension WidgetLibrary {
                                         Text(self.name)
                                             .multilineTextAlignment(.leading)
                                         Spacer()
-                                        Image(systemName: self.isLinkOnline ? "link" : "questionmark.square.fill")
+                                        Image(systemName: self.shouldCheckLinkStatus ? self.isLinkOnline ? "link" : "questionmark.square.fill" : "link")
                                             .symbolRenderingMode(.hierarchical)
                                             .foregroundStyle(.gray)
                                     }
@@ -369,7 +370,7 @@ extension WidgetLibrary {
                                 .useDefaultHover({ hover in self.isHighlighted = hover })
                             })
                             .foregroundStyle(.white)
-                            .background(self.isLinkOnline ? .clear : Color.red.opacity(0.3))
+                            .background(self.shouldCheckLinkStatus ? self.isLinkOnline ? .clear : Color.red.opacity(0.3) : .clear)
                         }
                         if !self.isMinimized {
                             if self.activity.source != nil {
@@ -414,9 +415,11 @@ extension WidgetLibrary {
                         }
                     }
                     .onAppear(perform: self.actionOnAppear)
+                    .onChange(of: self.shouldCheckLinkStatus) { self.actionOnAppear() }
                     .contextMenu { ContextMenu(activity: self.activity) }
                     .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
+                    .help(self.isLinkOnline ? self.activity.help : "Error: The website appears to be down.")
                 }
             }
 
@@ -619,7 +622,6 @@ extension WidgetLibrary {
                                     icon: activity.icon,
                                     activity: activity
                                 )
-                                .help(activity.help)
                             }
                         } else {
                             UI.ListButtonItem(
@@ -2151,8 +2153,6 @@ extension WidgetLibrary.UI.ActivityLinks {
             await self.getLinksFromRecords()
             self.vid = UUID()
         }
-//        print("DERPO start=\(self.start?.formatted()) end=\(self.end?.formatted())")
-//        print("DERPO ActivityLinks.activities.count=\(self.activities.count)")
     }
 
     /// Get links from records created or updated on a given day
@@ -2179,7 +2179,7 @@ extension WidgetLibrary.UI.ActivityLinks {
                                     label = label.prefix(linkLength) + "..."
                                 }
                                 if !self.activities.contains(where: {$0.name == label}) {
-                                    await self.activities.append(
+                                    self.activities.append(
                                         Activity(
                                             name: label,
                                             help: sMatch,
@@ -2278,8 +2278,8 @@ extension WidgetLibrary.UI.ListExternalLinkItem {
     /// Onload handler. Sets view state.
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        Task {
-            await self.checkLinkStatus(link: self.name)
+        if self.shouldCheckLinkStatus {
+            self.checkLinkStatus(link: self.name)
         }
     }
 
@@ -2287,33 +2287,18 @@ extension WidgetLibrary.UI.ListExternalLinkItem {
     /// Danke: https://stackoverflow.com/a/52518310
     /// - Parameter link: String
     /// - Returns: Void
-    private func checkLinkStatus(link: String) async -> Bool {
-        var isOnline = false
+    private func checkLinkStatus(link: String) -> Void {
         if let url = URL(string: link) {
             var request = URLRequest(url: url)
             request.httpMethod = "HEAD"
-            print("DERPO url=\(link)")
 
             URLSession(configuration: .default).dataTask(with: request) { (_, response, error) -> Void in
-                guard error == nil else {
-                        print("DERPO Error:", error ?? "")
-                    return
-                }
-
-                guard (response as? HTTPURLResponse)?.statusCode == 200 else {
-                  print("DERPO down")
-                  return
-                }
-
-//                isOnline = true
+                guard error == nil else { return }
+                guard (response as? HTTPURLResponse)?.statusCode == 200 else { return }
                 self.isLinkOnline = true
-                print("DERPO up")
             }
             .resume()
         }
-
-        print("DERPO isOnline=\(isOnline)")
-        return isOnline
     }
 }
 
