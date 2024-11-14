@@ -30,7 +30,10 @@ struct ToolbarButtons: View {
                 .frame(height: 20)
             HStack(alignment: .center) {
                 if self.tab == .chronologic {
-                    UI.ViewModeSelector()
+                    // @TODO: find a better way to exclude this button from activity feeds, this feels hacky
+                    if self.nav.parent == .today {
+                        UI.ViewModeSelector()
+                    }
                     UI.SortSelector()
                     UI.Pagination.Widget()
                 } else if self.tab == .grouped {
