@@ -175,6 +175,10 @@ extension WidgetLibrary {
         struct AppFooter: View {
             @EnvironmentObject private var state: Navigation
             @AppStorage("widgetlibrary.ui.appfooter.isMinimized") private var isMinimized: Bool = false
+            public var period: UI.Explore.Visualization.Timeline.TimelineTab = .day
+            public var start: Date?
+            public var end: Date?
+            public var format: String = "MMMM dd"
             private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
 
             var body: some View {
@@ -189,18 +193,19 @@ extension WidgetLibrary {
                         }
                         LazyVGrid(columns: self.twoCol, alignment: .leading, spacing: 10) {
                             GridRow {
+                                // @TODO: implement UI.SuggestedStack in place of SuggestedLinksInRange when it gets fixed
                                 UI.SuggestedLinksInRange(
-                                    period: .day,
-                                    start: self.state.session.date.startOfDay,
-                                    end: self.state.session.date.endOfDay,
-                                    format: "MMMM dd",
+                                    period: self.period,
+                                    start: self.start ?? self.state.session.date.startOfDay,
+                                    end: self.start ?? self.state.session.date.endOfDay,
+                                    format: self.format,
                                     useMiniMode: self.isMinimized
                                 )
                                 UI.InteractionsInRange(
-                                    period: .day,
-                                    start: self.state.session.date.startOfDay,
-                                    end: self.state.session.date.endOfDay,
-                                    format: "MMMM dd",
+                                    period: self.period,
+                                    start: self.end ?? self.state.session.date.startOfDay,
+                                    end: self.end ?? self.state.session.date.endOfDay,
+                                    format: self.format,
                                     useMiniMode: self.isMinimized
                                 )
                             }
