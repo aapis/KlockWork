@@ -54,7 +54,7 @@ public enum TodayViewTab: CaseIterable {
     var title: String {
         switch self {
         case .chronologic: return "Chronologic"
-        case .grouped: return "Grouped"
+        case .grouped: return "Organized"
         case .summarized: return "Summarized"
         case .calendar: return "Events"
         }

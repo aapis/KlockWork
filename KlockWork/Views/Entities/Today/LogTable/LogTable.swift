@@ -150,26 +150,36 @@ extension Today.LogTable {
     public struct TabContent {
         /// A list of rows in reverse-chronologic order for a given day
         public struct Chronologic: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
+            @AppStorage("today.viewMode") public var index: Int = 0
             @AppStorage("widgetlibrary.ui.pagination.perpage") public var perPage: Int = 10
             public var date: Date? = Date()
             private let page: PageConfiguration.AppPage = .today
             @State private var searchText: String = ""
-//            @State private var loading: Bool = false
             @State private var records: [LogRecord] = []
             @State private var recordsOnCurrentPage: [LogRecord] = []
             @State private var id: UUID = UUID()
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
-                    // @TODO: implement loading view
-//                    if loading {
-//                        FancyLoader()
-//                    } else {
-                        Content
-//                    }
+                    VStack(spacing: 0) {
+                        ToolbarButtons(records: self.recordsOnCurrentPage)
+                        Divider().foregroundStyle(.white)
+                        // @TODO: fix search
+                        //                if nav.session.toolbar.showSearch {
+                        //                    UI.BoundSearchBar(text: $searchText, disabled: (records.count == 0))
+                        //                }
+
+                        if nav.session.toolbar.mode == .plain {
+                            Plain(records: self.recordsOnCurrentPage)
+                        } else {
+                            Headers(page: self.page)
+                            Full(records: self.recordsOnCurrentPage)
+                        }
+                        UI.Pagination(entityCount: records.count)
+                    }
+                    .id(self.id)
                 }
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.recordsOnCurrentPage) { self.refreshView() }
@@ -183,32 +193,13 @@ extension Today.LogTable {
                     }
                 }
             }
-            
-            var Content: some View {
-                VStack(spacing: 0) {
-                    ToolbarButtons(records: self.recordsOnCurrentPage)
-                    Divider().foregroundStyle(.white)
-                    // @TODO: fix search
-                    //                if nav.session.toolbar.showSearch {
-                    //                    UI.BoundSearchBar(text: $searchText, disabled: (records.count == 0))
-                    //                }
-
-                    if nav.session.toolbar.mode == .plain {
-                        Plain(records: self.recordsOnCurrentPage)
-                    } else {
-                        Headers(page: self.page)
-                        Full(records: self.recordsOnCurrentPage)
-                    }
-                    UI.Pagination(entityCount: records.count)
-                }
-                .id(self.id)
-            }
         }
         
         /// A list of rows that are grouped by Job
         public struct Grouped: View {
             @EnvironmentObject public var nav: Navigation
             @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
+            @AppStorage("today.viewMode") public var index: Int = 0
             private let page: PageConfiguration.AppPage = .today
             @State private var grouped: [FancyStaticTextField] = []
             @State private var records: [LogRecord] = []
@@ -216,10 +207,9 @@ extension Today.LogTable {
             var body: some View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 1) {
-                        ToolbarButtons(records: self.records)
+                        ToolbarButtons(records: self.records, tab: .grouped)
                             .background(self.page.primaryColour)
                         Divider().foregroundStyle(.white)
-
                         if records.count > 0 {
                             ForEach(grouped) {group in group}
                         } else {
@@ -236,9 +226,9 @@ extension Today.LogTable {
         // TODO: do some kind of ML/AI summarization here. Initially it will just ignore records that are likely too short to be useful
         // TODO: i.e. ignore records whose ML tokens are LUNCH|MEETING|HEALTH (and similar)
         public struct Summarized: View {
-            typealias UI = WidgetLibrary.UI
             @EnvironmentObject public var nav: Navigation
             @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
+            @AppStorage("today.viewMode") public var index: Int = 0
             public var date: Date? = nil
             private let page: PageConfiguration.AppPage = .today
             // @TODO: needed?
@@ -247,10 +237,8 @@ extension Today.LogTable {
 
             var body: some View {
                 VStack(spacing: 0) {
-                    ToolbarButtons(records: self.records)
-                        .background(self.page.primaryColour)
+                    ToolbarButtons(records: self.records, tab: .summarized)
                     Divider().foregroundStyle(.white)
-
                     // TODO: fix search
                     //                if nav.session.toolbar.showSearch {
                     //                    UI.BoundSearchBar(text: $searchText, disabled: (records.count == 0))
@@ -309,6 +297,7 @@ extension Today.LogTable.TabContent.Chronologic {
     /// Find today's records
     /// - Returns: Void
     private func findRecords() -> Void {
+        self.nav.session.toolbar.mode = .full
         DispatchQueue.with(background: {
             return CoreDataRecords(moc: self.nav.moc).forDate(self.nav.session.date, sort: NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: self.tableSortOrder == 1 ? true : false))
         }, completion: { recordsForToday in
@@ -329,7 +318,10 @@ extension Today.LogTable.TabContent.Chronologic {
 }
 
 extension Today.LogTable.TabContent.Grouped {
+    /// Find records and set the current view index to "plain text" as this view is plain text only
+    /// - Returns: Void
     private func findRecords() -> Void {
+        self.nav.session.toolbar.mode = .plain
         DispatchQueue.with(background: {
             return CoreDataRecords(moc: self.nav.moc).forDate(nav.session.date, sort: NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: self.tableSortOrder == 1 ? true : false))
         }, completion: { recordsForToday in
@@ -343,6 +335,7 @@ extension Today.LogTable.TabContent.Grouped {
 
 extension Today.LogTable.TabContent.Summarized {
     private func findRecords() -> Void {
+        self.nav.session.toolbar.mode = .full
         DispatchQueue.with(background: {
             return CoreDataRecords(moc: self.nav.moc).forDate(nav.session.date, sort: NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: self.tableSortOrder == 1 ? true : false))
         }, completion: { recordsForToday in
