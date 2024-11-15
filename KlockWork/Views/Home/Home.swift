@@ -20,6 +20,7 @@ struct Home: View {
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
     @AppStorage("notifications.interval") private var notificationInterval: Int = 0
     @AppStorage("widgetlibrary.ui.isSidebarPresented") private var isSidebarPresented: Bool = false
+    @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
     @State public var selectedSidebarButton: Page = .dashboard
     @State private var timer: Timer? = nil
 
@@ -82,11 +83,24 @@ struct Home: View {
                     }
                 }
             }
+            .background(self.PageBackground)
         }
         .onAppear(perform: self.actionOnAppear)
         .onChange(of: self.nav.session.company) { self.actionOnChangeCompany() }
         .onChange(of: self.nav.session.project) { self.createToolbarButtons() }
         .onChange(of: self.nav.session.job) { self.createToolbarButtons() }
+    }
+
+    @ViewBuilder private var PageBackground: some View {
+        if self.usingBackgroundImage {
+            ZStack {
+                self.nav.session.appPage.primaryColour.saturation(0.7)
+                Image("wallpaper-03")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                Theme.base.blendMode(.softLight).opacity(0.5)
+            }
+        }
     }
 
     @ViewBuilder var Sidebar: some View {

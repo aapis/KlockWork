@@ -86,6 +86,7 @@ extension WidgetLibrary.UI {
                 // MARK: Timeline.Widget
                 struct Widget: View {
                     @EnvironmentObject public var state: Navigation
+                    @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
                     private var tabs: [ToolbarButton] = []
 
                     var body: some View {
@@ -99,12 +100,16 @@ extension WidgetLibrary.UI {
                                 scrollable: false
                             )
                         }
-                        .background(
+                        .background(self.PageBackground)
+                    }
+
+                    @ViewBuilder private var PageBackground: some View {
+                        if !self.usingBackgroundImage {
                             ZStack {
-                                self.state.session.appPage.primaryColour
-                                Theme.base.opacity(0.6)
+                                self.state.session.appPage.primaryColour.saturation(0.7)
+                                Theme.base.blendMode(.softLight).opacity(0.5)
                             }
-                        )
+                        }
                     }
 
                     init() {

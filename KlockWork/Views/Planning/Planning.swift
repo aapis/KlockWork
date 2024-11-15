@@ -11,6 +11,7 @@ import KWCore
 
 struct Planning: View {
     @EnvironmentObject public var nav: Navigation
+    @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
     private let maxItems: Int = 6
     private let title: String = "Planning"
     private let page: PageConfiguration.AppPage = .planning
@@ -83,14 +84,18 @@ struct Planning: View {
             )
         }
         .padding()
-        .background(
-            ZStack {
-                self.nav.session.appPage.primaryColour
-                Theme.base.opacity(0.6)
-            }
-        )
+        .background(self.PageBackground)
         .onAppear(perform: actionOnAppear)
         .onChange(of: nav.planning.jobs) { self.actionOnChangeJobs()}
+    }
+
+    @ViewBuilder private var PageBackground: some View {
+        if !self.usingBackgroundImage {
+            ZStack {
+                self.nav.session.appPage.primaryColour.saturation(0.7)
+                Theme.base.blendMode(.softLight).opacity(0.5)
+            }
+        }
     }
 }
 

@@ -23,6 +23,7 @@ struct GeneralSettings: View {
     @AppStorage("general.columns") private var columns: Int = 3
     @AppStorage("general.shouldCheckLinkStatus") private var shouldCheckLinkStatus: Bool = false
     @AppStorage("general.appTintChoice") private var appTintChoice: Int = 0
+    @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
 
     var body: some View {
         Form {
@@ -76,6 +77,8 @@ struct GeneralSettings: View {
                         self.state.theme.tint = Color.yellow
                     }
                 }
+
+                Toggle("Use background image", isOn: $usingBackgroundImage)
             }
 
             Group {
