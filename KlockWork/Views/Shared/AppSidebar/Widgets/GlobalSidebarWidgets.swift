@@ -426,7 +426,7 @@ struct GlobalSidebarWidgets: View {
                             HStack {
                                 FancyButtonv2(
                                     text: "Term",
-                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false ; self.nav.to(.taskDetail)},
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false ; self.nav.to(.termDetail)},
                                     iconAsImage: PageConfiguration.EntityType.terms.icon,
                                     iconFgColour: self.nav.session.job?.backgroundColor,
                                     fgColour: .white,
@@ -445,7 +445,7 @@ struct GlobalSidebarWidgets: View {
                             HStack {
                                 FancyButtonv2(
                                     text: "Definition",
-                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false ; self.nav.to(.taskDetail)},
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false ; self.nav.to(.definitionDetail)},
                                     iconAsImage: PageConfiguration.EntityType.definitions.icon,
                                     iconFgColour: self.nav.session.job?.backgroundColor,
                                     fgColour: .white,
