@@ -151,7 +151,7 @@ extension WidgetLibrary.UI {
                                 //                    FancyDivider()
                                 UI.ActivityFeed()
                             }
-                            .padding([.leading, .trailing])
+                            .padding([.bottom, .leading, .trailing])
                             UI.AppFooter()
                         }
                     }

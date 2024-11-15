@@ -481,7 +481,7 @@ public class CoreDataTasks {
         }
 
         let predicate = NSPredicate(
-            format: "(completedDate != nil && cancelledDate != nil && (created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@))",
+            format: "completedDate == nil && cancelledDate == nil && ((created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@))",
             start! as CVarArg,
             end! as CVarArg,
             start! as CVarArg,
