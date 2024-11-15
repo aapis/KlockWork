@@ -337,9 +337,8 @@ public class CoreDataNotes {
     /// - Parameter start: Optional(Date)
     /// - Parameter end: Optional(Date)
     /// - Returns: Array<Activity>
-    public func getLinksFromNotes(start: Date?, end: Date?) async -> [Activity] {
+    public func links(start: Date?, end: Date?) async -> [Activity] {
         var activities: [Activity] = []
-
         if start != nil && end != nil {
             let notes = CoreDataNotes(moc: self.moc!).inRange(
                 start: start,
@@ -367,7 +366,7 @@ public class CoreDataNotes {
                                                     Activity(
                                                         name: label,
                                                         help: sMatch,
-                                                        page: .dashboard, //self.state.parent ??
+                                                        page: .notes,
                                                         type: .activity,
                                                         job: note.mJob,
                                                         source: version,

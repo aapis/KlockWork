@@ -491,6 +491,48 @@ public class CoreDataTasks {
         return query(predicate)
     }
 
+    /// Find links added to tasks created on this day
+    /// - Parameter start: Optional(Date)
+    /// - Parameter end: Optional(Date)
+    /// - Returns: Array<Activity>
+    public func links(start: Date?, end: Date?) async -> [Activity] {
+        var activities: [Activity] = []
+        if start != nil && end != nil {
+            let tasks = CoreDataTasks(moc: self.moc!).inRange(
+                start: start,
+                end: end
+            )
+            let linkLength = 40
+
+            for task in tasks {
+                if task.uri != nil {
+                    if let content = task.uri {
+                        var label: String = content.absoluteString
+                        if label.count > linkLength {
+                            label = label.prefix(linkLength) + "..."
+                        }
+
+                        if !activities.contains(where: {$0.name == label}) {
+                            activities.append(
+                                Activity(
+                                    name: label,
+                                    help: content.absoluteString,
+                                    page: .tasks,
+                                    type: .activity,
+                                    job: task.owner,
+                                    source: task,
+                                    url: content
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        return activities
+    }
+
     /// Public method to create new LogTask objects
     /// - Parameters:
     ///   - cancelledDate: Date

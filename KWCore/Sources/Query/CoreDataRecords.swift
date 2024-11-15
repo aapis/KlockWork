@@ -152,7 +152,7 @@ public class CoreDataRecords: ObservableObject {
     /// - Parameter start: Optional(Date)
     /// - Parameter end: Optional(Date)
     /// - Returns: Array<Activity>
-    public func getLinksFromRecords(start: Date?, end: Date?) async -> [Activity] {
+    public func links(start: Date?, end: Date?) async -> [Activity] {
         var activities: [Activity] = []
         if let start = start {
             if let end = end {
@@ -178,7 +178,7 @@ public class CoreDataRecords: ObservableObject {
                                         Activity(
                                             name: label,
                                             help: sMatch,
-                                            page: .dashboard, //self.state.parent ?? 
+                                            page: .today,
                                             type: .activity,
                                             job: record.job,
                                             source: record,

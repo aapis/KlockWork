@@ -532,7 +532,7 @@ public class CoreDataJob: ObservableObject {
     /// - Parameter start: Optional(Date)
     /// - Parameter end: Optional(Date)
     /// - Returns: Array<Activity>
-    public func getLinksFromJobs(start: Date?, end: Date?) async -> [Activity] {
+    public func links(start: Date?, end: Date?) async -> [Activity] {
         let jobs = self.inRange(
             start: start,
             end: end
@@ -545,7 +545,7 @@ public class CoreDataJob: ObservableObject {
                     activities.append(
                         Activity(
                             name: uri.absoluteString,
-                            page: .dashboard, //self.state.parent ??
+                            page: .jobs,
                             type: .activity,
                             job: job,
                             url: uri.absoluteURL
