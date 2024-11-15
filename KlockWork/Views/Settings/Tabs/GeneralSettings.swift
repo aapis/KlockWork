@@ -72,7 +72,6 @@ struct GeneralSettings: View {
                     case 4: self.state.theme.tint = Color.red
                     case 5: self.state.theme.tint = Color.orange
                     case 7: self.state.theme.tint = Color.green
-                    case 8: self.state.theme.tint = Color.gray
                     default:
                         self.state.theme.tint = Color.yellow
                     }

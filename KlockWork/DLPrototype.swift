@@ -106,7 +106,6 @@ struct DLPrototype: App {
         case 4: self.nav.theme.tint = .red
         case 5: self.nav.theme.tint = .orange
         case 7: self.nav.theme.tint = .green
-        case 8: self.nav.theme.tint = .gray
         default:
             self.nav.theme.tint = .yellow
         }
