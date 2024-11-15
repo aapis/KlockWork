@@ -89,7 +89,7 @@ struct SidebarButton: View, Identifiable {
                                 }
                             }
                         //                        .foregroundStyle(nav.session.job != nil ? nav.session.job!.backgroundColor : isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
-                            .foregroundStyle(isDatePickerPresented && nav.parent == pageType ? Theme.base : highlighted ? .white : .white.opacity(0.8))
+                            .foregroundStyle(self.highlighted ? .white : .white.opacity(0.8))
                     }
                 case .companies:
                     HStack(alignment: .top, spacing: 0) {
@@ -98,7 +98,7 @@ struct SidebarButton: View, Identifiable {
                         }
                         button.frame(width: 50, height: 50)
                         //                        .foregroundStyle(nav.session.job != nil ? nav.session.job!.backgroundColor : isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
-                            .foregroundStyle(isDatePickerPresented && nav.parent == pageType ? Theme.base : highlighted ? .white : .white.opacity(0.8))
+                            .foregroundStyle(self.highlighted ? self.nav.theme.tint : .white.opacity(0.8))
                     }
                 case .projects:
                     HStack(alignment: .top, spacing: 0) {
@@ -107,7 +107,7 @@ struct SidebarButton: View, Identifiable {
                         }
                         button.frame(width: 50, height: 50)
                         //                        .foregroundStyle(nav.session.job != nil ? nav.session.job!.backgroundColor : isDatePickerPresented && nav.parent == pageType ? .black : highlighted ? .white : .white.opacity(0.8))
-                            .foregroundStyle(isDatePickerPresented && nav.parent == pageType ? Theme.base : highlighted ? .white : .white.opacity(0.8))
+                            .foregroundStyle(self.highlighted ? self.nav.theme.tint : .white.opacity(0.8))
                     }
                 default: button.frame(width: 50, height: 50)
                 }
@@ -147,11 +147,15 @@ struct SidebarButton: View, Identifiable {
                 }
 
                 if let img = self.iconAsImage {
-                    img.font(.title).symbolRenderingMode(.hierarchical)
+                    img
+                        .font(.title)
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(self.nav.parent == self.pageType ? self.nav.theme.tint : .white)
                 } else {
                     Image(systemName: isDatePickerPresented && nav.parent == pageType ? "xmark" : (altMode != nil ? (altMode!.condition ? altMode!.icon : icon!) : icon!))
                         .font(.title)
                         .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(self.nav.parent == self.pageType ? self.nav.theme.tint : .white)
                 }
 
             }
@@ -201,11 +205,15 @@ struct SidebarButton: View, Identifiable {
                 }
 
                 if let img = self.iconAsImage {
-                    img.font(.title).symbolRenderingMode(.hierarchical)
-                } else {
-                    Image(systemName: isDatePickerPresented && nav.parent == pageType ? "xmark" : (altMode != nil ? (altMode!.condition ? altMode!.icon : icon!) : icon!))
+                    img
                         .font(.title)
                         .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(self.nav.parent == self.pageType ? self.nav.theme.tint : .white)
+                } else {
+                    Image(systemName: altMode != nil ? (altMode!.condition ? altMode!.icon : icon!) : icon!)
+                        .font(.title)
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(self.nav.parent == self.pageType ? self.nav.theme.tint : .white)
                 }
             }
         })
