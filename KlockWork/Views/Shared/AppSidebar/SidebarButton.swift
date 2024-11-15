@@ -175,11 +175,8 @@ struct SidebarButton: View, Identifiable {
         }, label: {
             ZStack {
                 highlighted ? backgroundColour.opacity(0.9) : backgroundColour.opacity(1)
-                Color.white
-                    .opacity(0.4)
-                    .blendMode(.softLight)
 
-                if nav.parent != pageType {
+                if nav.parent != pageType && self.nav.parent?.parentView != self.pageType {
                     HStack {
                         Spacer()
                         LinearGradient(gradient: Gradient(colors: [.clear, Theme.base]), startPoint: .leading, endPoint: .trailing)
@@ -217,8 +214,6 @@ struct SidebarButton: View, Identifiable {
 
     @ViewBuilder private var backgroundColour: some View {
         Theme.toolbarColour
-//        Theme.cPurple
-
         if nav.parent == pageType || self.nav.parent?.parentView == self.pageType {
             if let parent = nav.parent {
                 parent.colour
@@ -228,7 +223,6 @@ struct SidebarButton: View, Identifiable {
         } else {
             Theme.tabColour
         }
-
         if self.highlighted {
             self.pageType.colour
         }
