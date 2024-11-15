@@ -179,6 +179,7 @@ extension WidgetLibrary {
             public var start: Date?
             public var end: Date?
             public var format: String = "MMMM dd"
+            public var view: AnyView?
             private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
 
             var body: some View {
@@ -191,34 +192,40 @@ extension WidgetLibrary {
                         } else {
                             Theme.base.blendMode(.softLight)
                         }
-                        LazyVGrid(columns: self.twoCol, alignment: .leading, spacing: 10) {
-                            GridRow {
-                                // @TODO: implement UI.SuggestedStack in place of SuggestedLinksInRange when it gets fixed
-//                                UI.SuggestedStack(
-//                                    period: self.period,
-//                                    start: self.start ?? self.state.session.date.startOfDay,
-//                                    end: self.end ?? self.state.session.date.endOfDay,
-//                                    format: self.format
-//                                )
-                                UI.SuggestedLinksInRange(
-                                    period: self.period,
-                                    start: self.start ?? self.state.session.date.startOfDay,
-                                    end: self.end ?? self.state.session.date.endOfDay,
-                                    format: self.format,
-                                    useMiniMode: self.isMinimized
-                                )
-                                .frame(height: self.isMinimized ? 50 : 200)
-                                UI.InteractionsInRange(
-                                    period: self.period,
-                                    start: self.start ?? self.state.session.date.startOfDay,
-                                    end: self.end ?? self.state.session.date.endOfDay,
-                                    format: self.format,
-                                    useMiniMode: self.isMinimized
-                                )
-                                .frame(height: self.isMinimized ? 50 : 200)
+                        if let view = self.view {
+                            if !self.isMinimized {
+                                view.padding(.top, 40)
                             }
+                        } else {
+                            LazyVGrid(columns: self.twoCol, alignment: .leading, spacing: 10) {
+                                GridRow {
+                                    // @TODO: implement UI.SuggestedStack in place of SuggestedLinksInRange when it gets fixed
+//                                    UI.SuggestedStack(
+//                                        period: self.period,
+//                                        start: self.start ?? self.state.session.date.startOfDay,
+//                                        end: self.end ?? self.state.session.date.endOfDay,
+//                                        format: self.format
+//                                    )
+                                    UI.SuggestedLinksInRange(
+                                        period: self.period,
+                                        start: self.start ?? self.state.session.date.startOfDay,
+                                        end: self.end ?? self.state.session.date.endOfDay,
+                                        format: self.format,
+                                        useMiniMode: self.isMinimized
+                                    )
+                                    .frame(height: self.isMinimized ? 50 : 240)
+                                    UI.InteractionsInRange(
+                                        period: self.period,
+                                        start: self.start ?? self.state.session.date.startOfDay,
+                                        end: self.end ?? self.state.session.date.endOfDay,
+                                        format: self.format,
+                                        useMiniMode: self.isMinimized
+                                    )
+                                    .frame(height: self.isMinimized ? 50 : 240)
+                                }
+                            }
+                            .padding()
                         }
-                        .padding()
                         HStack {
                             Spacer()
                             UI.Buttons.Minimize(isMinimized: $isMinimized)
@@ -226,7 +233,7 @@ extension WidgetLibrary {
                         }
                     }
                 }
-                .frame(height: self.isMinimized ? 50 : 200)
+                .frame(height: self.isMinimized ? 50 : 240)
                 .padding(.bottom, self.isMinimized ? 0 : 8)
             }
         }

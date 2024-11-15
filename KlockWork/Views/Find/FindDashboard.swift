@@ -11,12 +11,12 @@ import KWCore
 
 struct FindDashboard: View {
     typealias Entity = PageConfiguration.EntityType
-    typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var nav: Navigation
     @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
     @AppStorage("GlobalSidebarWidgets.isSearching") private var isSearching: Bool = false
     @AppStorage("dashboard.showWelcomeHeader") private var showWelcomeHeader: Bool = true
     @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
+    @AppStorage("dashboard.showRecentSearchesAboveResults") private var showRecentSearchesAboveResults: Bool = true
     @State public var searching: Bool = false
     public var location: WidgetLocation = .content
     @State private var searchText: String = ""
@@ -37,7 +37,7 @@ struct FindDashboard: View {
     private var columns: [GridItem] {
         Array(repeating: .init(.flexible(minimum: 100)), count: 2)
     }
-    private let eType: PageConfiguration.EntityType = .BruceWillis
+    private let eType: Entity = .BruceWillis
 
     var body: some View {
         Grid(alignment: .topLeading, horizontalSpacing: 0, verticalSpacing: 0) {
@@ -79,17 +79,19 @@ struct FindDashboard: View {
 
             /// When installed in content areas, display above suggestions
             if showingTypes && self.location == .content {
-                GridRow {
-                    ZStack(alignment: .topLeading) {
-                        LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
-                            .blendMode(.softLight)
-                            .opacity(0.3)
-                        UI.LinkList(location: self.location, isSearching: !searching && activeSearchText.count >= 2)
+                if self.showRecentSearchesAboveResults {
+                    GridRow {
+                        ZStack(alignment: .topLeading) {
+                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                .blendMode(.softLight)
+                                .opacity(0.3)
+                            UI.LinkList(location: self.location, isSearching: !searching && activeSearchText.count >= 2)
+                        }
+                        .frame(height: 250)
                     }
-                    .frame(height: 250)
+                    .background(self.location == .content ? Theme.rowColour : .clear)
+                    .foregroundStyle(.gray)
                 }
-                .background(self.location == .content ? Theme.rowColour : .clear)
-                .foregroundStyle(.gray)
             }
 
             if !searching && activeSearchText.count >= 2 {
