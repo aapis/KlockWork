@@ -11,6 +11,7 @@ import KWCore
 import CoreSpotlight
 
 struct GeneralSettings: View {
+    @EnvironmentObject private var state: Navigation
     @AppStorage("tigerStriped") private var tigerStriped: Bool = false
     @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures: Bool = false
     @AppStorage("enableAutoCorrection") public var enableAutoCorrection: Bool = false
@@ -21,6 +22,7 @@ struct GeneralSettings: View {
     @AppStorage("general.spotlightIndex") public var spotlightIndex: Bool = false
     @AppStorage("general.columns") private var columns: Int = 3
     @AppStorage("general.shouldCheckLinkStatus") private var shouldCheckLinkStatus: Bool = false
+    @AppStorage("general.appTintChoice") private var appTintChoice: Int = 0
 
     var body: some View {
         Form {
@@ -50,6 +52,32 @@ struct GeneralSettings: View {
 //                Text("External services")
 //                Toggle("Spotlight (data is NOT shared with Apple)", isOn: $spotlightIndex)
 //            }
+
+            Group {
+                Picker("App tint colour", selection: $appTintChoice) {
+                    Text("Blue").tag(1)
+                    Text("Purple").tag(2)
+                    Text("Pink").tag(3)
+                    Text("Red").tag(4)
+                    Text("Orange").tag(5)
+                    Text("Yellow").tag(6)
+                    Text("Green").tag(7)
+                    Text("Graphite").tag(8)
+                }
+                .onChange(of: self.appTintChoice) {
+                    switch self.appTintChoice {
+                    case 1: self.state.theme.tint = Color.blue
+                    case 2: self.state.theme.tint = Color.purple
+                    case 3: self.state.theme.tint = Color.pink
+                    case 4: self.state.theme.tint = Color.red
+                    case 5: self.state.theme.tint = Color.orange
+                    case 7: self.state.theme.tint = Color.green
+                    case 8: self.state.theme.tint = Color.gray
+                    default:
+                        self.state.theme.tint = Color.yellow
+                    }
+                }
+            }
 
             Group {
                 Picker("Number of columns to display", selection: $columns) {
