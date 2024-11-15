@@ -389,10 +389,8 @@ extension WidgetLibrary {
                                             .foregroundStyle(.gray)
                                         Spacer()
                                         UI.Buttons.SmallOpen(callback: {
-                                            if let entity = self.activity.source as? NoteVersion {
-                                                self.state.to(.noteDetail)
-                                                self.state.session.note = entity.note
-                                            }
+                                            self.state.to(.noteDetail)
+                                            self.state.session.note = entity?.note
                                         })
                                     case is LogRecord:
                                         let entity = self.activity.source as? LogRecord
@@ -400,12 +398,19 @@ extension WidgetLibrary {
                                             .foregroundStyle(.gray)
                                         Spacer()
                                         UI.Buttons.SmallOpen(callback: {
-                                            if let entity = self.activity.source as? LogRecord {
-                                                if let created = entity.timestamp {
-                                                    self.state.to(.today)
-                                                    self.state.session.date = created
-                                                }
+                                            if let created = entity?.timestamp {
+                                                self.state.to(.today)
+                                                self.state.session.date = created
                                             }
+                                        })
+                                    case is LogTask:
+                                        let entity = self.activity.source as? LogTask
+                                        Text("Found with task \"\(entity?.content ?? "Error: Task not found")\", created on \(DateHelper.todayShort(entity?.created ?? Date.now, format: "MMMM dd, yyyy HH:mm"))")
+                                            .foregroundStyle(.gray)
+                                        Spacer()
+                                        UI.Buttons.SmallOpen(callback: {
+                                            self.state.session.task = entity
+                                            self.state.to(.taskDetail)
                                         })
                                     default:
                                         Text("No source found")
@@ -2161,6 +2166,7 @@ extension WidgetLibrary.UI.ActivityLinks {
             await self.getLinksFromJobs()
             await self.getLinksFromNotes()
             await self.getLinksFromRecords()
+            await self.getLinksFromTasks()
             self.vid = UUID()
         }
     }
@@ -2276,6 +2282,43 @@ extension WidgetLibrary.UI.ActivityLinks {
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    /// Find links added to tasks created on this day
+    /// @TODO: move to CoreDataTasks
+    /// - Returns: Void
+    private func getLinksFromTasks() async -> Void {
+        if self.start != nil && self.end != nil {
+            let tasks = CoreDataTasks(moc: self.state.moc).inRange(
+                start: self.start,
+                end: self.end
+            )
+            let linkLength = 40
+
+            for task in tasks {
+                if task.uri != nil {
+                    if let content = task.uri {
+                        var label: String = content.absoluteString
+                        if label.count > linkLength {
+                            label = label.prefix(linkLength) + "..."
+                        }
+                        if !self.activities.contains(where: {$0.name == label}) {
+                            self.activities.append(
+                                Activity(
+                                    name: label,
+                                    help: content.absoluteString,
+                                    page: self.state.parent ?? .dashboard,
+                                    type: .activity,
+                                    job: task.owner,
+                                    source: task,
+                                    url: content
+                                )
+                            )
                         }
                     }
                 }

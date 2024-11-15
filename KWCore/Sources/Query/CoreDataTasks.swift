@@ -470,19 +470,25 @@ public class CoreDataTasks {
         return self.find(for: date).count
     }
 
-    /// Public method to create new LogTask objects
+    /// Find all entities created within a date range
     /// - Parameters:
-    ///   - cancelledDate: Date
-    ///   - completedDate: Date
-    ///   - content: String
-    ///   - created: Date
-    ///   - due: Date
-    ///   - lastUpdate: Date
-    ///   - job: Job
-    ///   - saveByDefault: Bool
-    /// - Returns: LogTask
-    public func create(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job? = nil, saveByDefault: Bool = true) -> Void {
-        let _ = self.make(cancelledDate: cancelledDate, completedDate: completedDate, content: content, created: created, due: due, lastUpdate: lastUpdate, job: job, saveByDefault: saveByDefault)
+    ///   - start: Date
+    ///   - end: Date
+    /// - Returns: Array<NSManagedObjedct>
+    public func inRange(start: Date?, end: Date?) -> [LogTask] {
+        if (start == nil || end == nil) || end! < start! {
+            return []
+        }
+
+        let predicate = NSPredicate(
+            format: "(completedDate != nil && cancelledDate != nil && (created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@))",
+            start! as CVarArg,
+            end! as CVarArg,
+            start! as CVarArg,
+            end! as CVarArg
+        )
+
+        return query(predicate)
     }
 
     /// Public method to create new LogTask objects
@@ -494,10 +500,27 @@ public class CoreDataTasks {
     ///   - due: Date
     ///   - lastUpdate: Date
     ///   - job: Job
+    ///   - url: Optional(String)
     ///   - saveByDefault: Bool
     /// - Returns: LogTask
-    public func createAndReturn(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job? = nil, saveByDefault: Bool = true) -> LogTask {
-        return self.make(cancelledDate: cancelledDate, completedDate: completedDate, content: content, created: created, due: due, lastUpdate: lastUpdate, job: job, saveByDefault: saveByDefault)
+    public func create(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job? = nil, url: String? = nil, saveByDefault: Bool = true) -> Void {
+        let _ = self.make(cancelledDate: cancelledDate, completedDate: completedDate, content: content, created: created, due: due, lastUpdate: lastUpdate, job: job, url: url, saveByDefault: saveByDefault)
+    }
+
+    /// Public method to create new LogTask objects
+    /// - Parameters:
+    ///   - cancelledDate: Date
+    ///   - completedDate: Date
+    ///   - content: String
+    ///   - created: Date
+    ///   - due: Date
+    ///   - lastUpdate: Date
+    ///   - job: Job
+    ///   - url: Optional(String)
+    ///   - saveByDefault: Bool
+    /// - Returns: LogTask
+    public func createAndReturn(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job? = nil, url: String? = nil, saveByDefault: Bool = true) -> LogTask {
+        return self.make(cancelledDate: cancelledDate, completedDate: completedDate, content: content, created: created, due: due, lastUpdate: lastUpdate, job: job, url: url, saveByDefault: saveByDefault)
     }
 
     /// Internal method to create new LogTask objects
@@ -509,9 +532,10 @@ public class CoreDataTasks {
     ///   - lastUpdate: Date
     ///   - due: Date
     ///   - job: Job
+    ///   - url: Optional(String)
     ///   - saveByDefault: Bool
     /// - Returns: LogTask
-    private func make(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job?, saveByDefault: Bool = true) -> LogTask {
+    private func make(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job?, url: String? = nil, saveByDefault: Bool = true) -> LogTask {
         let newTask = LogTask(context: self.moc!)
         newTask.cancelledDate = cancelledDate
         newTask.completedDate = completedDate
@@ -523,6 +547,12 @@ public class CoreDataTasks {
 
         if job != nil {
             newTask.owner = job!
+        }
+
+        if url != nil {
+            if let uri = URL(string: url!) {
+                newTask.uri = uri
+            }
         }
 
         if saveByDefault {
