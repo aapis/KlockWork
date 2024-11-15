@@ -2223,17 +2223,23 @@ extension WidgetLibrary.UI.ActivityLinks {
             start: self.start,
             end: self.end
         )
+        let linkLength = 40
 
         for job in jobs {
             if let uri = job.uri {
                 if uri.absoluteString != "https://" {
+                    var label: String = uri.absoluteString
+                    if label.count > linkLength {
+                        label = label.prefix(linkLength) + "..."
+                    }
                     self.activities.append(
                         Activity(
-                            name: uri.absoluteString,
-                            page: self.state.parent ?? .dashboard,
+                            name: label,
+                            help: uri.absoluteString,
+                            page: .jobs,
                             type: .activity,
                             job: job,
-                            url: uri.absoluteURL
+                            url: uri
                         )
                     )
                 }
@@ -2301,25 +2307,23 @@ extension WidgetLibrary.UI.ActivityLinks {
             let linkLength = 40
 
             for task in tasks {
-                if task.uri != nil {
-                    if let content = task.uri {
-                        var label: String = content.absoluteString
-                        if label.count > linkLength {
-                            label = label.prefix(linkLength) + "..."
-                        }
-                        if !self.activities.contains(where: {$0.name == label}) {
-                            self.activities.append(
-                                Activity(
-                                    name: label,
-                                    help: content.absoluteString,
-                                    page: self.state.parent ?? .dashboard,
-                                    type: .activity,
-                                    job: task.owner,
-                                    source: task,
-                                    url: content
-                                )
+                if let content = task.uri {
+                    var label: String = content.absoluteString
+                    if label.count > linkLength {
+                        label = label.prefix(linkLength) + "..."
+                    }
+                    if !self.activities.contains(where: {$0.name == label}) {
+                        self.activities.append(
+                            Activity(
+                                name: label,
+                                help: content.absoluteString,
+                                page: self.state.parent ?? .dashboard,
+                                type: .activity,
+                                job: task.owner,
+                                source: task,
+                                url: content
                             )
-                        }
+                        )
                     }
                 }
             }
