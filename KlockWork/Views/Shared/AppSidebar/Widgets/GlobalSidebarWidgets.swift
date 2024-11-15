@@ -287,15 +287,12 @@ struct GlobalSidebarWidgets: View {
                 HStack(alignment: .top, spacing: 5) {
                     FancyButtonv2(
                         text: "Company",
-                        action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
-                        icon: "building.2",
+                        action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false ; self.nav.to(.companyDetail)},
+                        iconAsImage: PageConfiguration.EntityType.companies.icon,
                         iconFgColour: self.nav.session.company?.backgroundColor,
                         fgColour: .white,
                         size: .link,
-                        type: nav.parent == .notes ? .secondary : .standard,
-                        redirect: AnyView(CompanyCreate()),
-                        pageType: .companies,
-                        sidebar: AnyView(DefaultCompanySidebar())
+                        type: nav.parent == .notes ? .secondary : .standard
                     )
                     Spacer()
                     UI.KeyboardShortcutIndicator(character: "C", requireShift: true)
@@ -303,7 +300,7 @@ struct GlobalSidebarWidgets: View {
 
                 ZStack(alignment: .topLeading) {
                     HStack(alignment: .center) {
-                        Divider().frame(height: 177)
+                        Divider().frame(height: 205)
                     }
                     VStack(alignment: .leading) {
                         HStack(alignment: .center, spacing: 0) {
@@ -314,15 +311,12 @@ struct GlobalSidebarWidgets: View {
                             HStack {
                                 FancyButtonv2(
                                     text: "Person",
-                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
-                                    icon: "person",
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false ; self.nav.to(.peopleDetail)},
+                                    iconAsImage: PageConfiguration.EntityType.people.icon,
                                     iconFgColour: self.nav.session.company?.backgroundColor,
                                     fgColour: .white,
                                     size: .link,
-                                    type: nav.parent == .people ? .secondary : .standard,
-                                    redirect: AnyView(PeopleDetail()),
-                                    pageType: .people,
-                                    sidebar: AnyView(PeopleDashboardSidebar())
+                                    type: nav.parent == .people ? .secondary : .standard
                                 )
                             }
                             Spacer()
@@ -337,15 +331,12 @@ struct GlobalSidebarWidgets: View {
                             HStack {
                                 FancyButtonv2(
                                     text: "Project",
-                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
-                                    icon: "folder",
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false ; self.nav.to(.projectDetail)},
+                                    iconAsImage: PageConfiguration.EntityType.projects.icon,
                                     iconFgColour: self.nav.session.project?.backgroundColor,
                                     fgColour: .white,
                                     size: .link,
-                                    type: nav.parent == .projects ? .secondary : .standard,
-                                    redirect: AnyView(ProjectCreate()),
-                                    pageType: .companies,
-                                    sidebar: AnyView(ProjectsDashboardSidebar())
+                                    type: nav.parent == .projects ? .secondary : .standard
                                 )
                             }
                             Spacer()
@@ -359,15 +350,12 @@ struct GlobalSidebarWidgets: View {
                             HStack {
                                 FancyButtonv2(
                                     text: "Job",
-                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
-                                    icon: "hammer",
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false ; self.nav.to(.jobs)},
+                                    iconAsImage: PageConfiguration.EntityType.jobs.icon,
                                     iconFgColour: self.nav.session.job?.backgroundColor,
                                     fgColour: .white,
                                     size: .link,
-                                    type: nav.parent == .jobs ? .secondary : .standard,
-                                    redirect: AnyView(JobCreate()),
-                                    pageType: .jobs,
-                                    sidebar: AnyView(JobDashboardSidebar())
+                                    type: nav.parent == .jobs ? .secondary : .standard
                                 )
                             }
                             Spacer()
@@ -381,15 +369,12 @@ struct GlobalSidebarWidgets: View {
                             HStack {
                                 FancyButtonv2(
                                     text: "Note",
-                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
-                                    icon: "note.text",
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false ; self.nav.to(.noteDetail)},
+                                    iconAsImage: PageConfiguration.EntityType.notes.icon,
                                     iconFgColour: self.nav.session.job?.backgroundColor,
                                     fgColour: .white,
                                     size: .link,
-                                    type: nav.parent == .notes ? .secondary : .standard,
-                                    redirect: AnyView(NoteCreate()),
-                                    pageType: .notes,
-                                    sidebar: AnyView(NoteCreateSidebar())
+                                    type: nav.parent == .notes ? .secondary : .standard
                                 )
                             }
                             Spacer()
@@ -403,15 +388,12 @@ struct GlobalSidebarWidgets: View {
                             HStack {
                                 FancyButtonv2(
                                     text: "Task",
-                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
-                                    icon: "checklist.checked",
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false ; self.nav.to(.taskDetail)},
+                                    iconAsImage: PageConfiguration.EntityType.tasks.icon,
                                     iconFgColour: self.nav.session.job?.backgroundColor,
                                     fgColour: .white,
                                     size: .link,
-                                    type: nav.parent == .tasks ? .secondary : .standard,
-                                    redirect: AnyView(TaskDetail()),
-                                    pageType: .tasks,
-                                    sidebar: AnyView(TaskDashboardSidebar())
+                                    type: nav.parent == .tasks ? .secondary : .standard
                                 )
                             }
                             Spacer()
@@ -425,15 +407,12 @@ struct GlobalSidebarWidgets: View {
                             HStack {
                                 FancyButtonv2(
                                     text: "Record",
-                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
-                                    icon: "tray",
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false ; self.nav.to(.today)},
+                                    iconAsImage: PageConfiguration.EntityType.records.icon,
                                     iconFgColour: self.nav.session.job?.backgroundColor,
                                     fgColour: .white,
                                     size: .link,
-                                    type: nav.parent == .tasks ? .secondary : .standard,
-                                    redirect: AnyView(Today()),
-                                    pageType: .today,
-                                    sidebar: AnyView(TodaySidebar())
+                                    type: nav.parent == .tasks ? .secondary : .standard
                                 )
                             }
                             Spacer()
@@ -446,16 +425,32 @@ struct GlobalSidebarWidgets: View {
                             }
                             HStack {
                                 FancyButtonv2(
-                                    text: "Definition",
-                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false},
-                                    icon: "list.bullet.rectangle",
+                                    text: "Term",
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false ; self.nav.to(.taskDetail)},
+                                    iconAsImage: PageConfiguration.EntityType.terms.icon,
                                     iconFgColour: self.nav.session.job?.backgroundColor,
                                     fgColour: .white,
                                     size: .link,
-                                    type: nav.parent == .tasks ? .secondary : .standard,
-                                    redirect: AnyView(DefinitionDetail()),
-                                    pageType: .terms,
-                                    sidebar: AnyView(TermsDashboardSidebar())
+                                    type: nav.parent == .tasks ? .secondary : .standard
+                                )
+                            }
+                            Spacer()
+                            UI.KeyboardShortcutIndicator(character: "D", requireShift: true)
+                        }
+
+                        HStack(alignment: .center, spacing: 0) {
+                            VStack(alignment: .center) {
+                                Divider().frame(width: 60)
+                            }
+                            HStack {
+                                FancyButtonv2(
+                                    text: "Definition",
+                                    action: {isCreateStackShowing = false; isSearchStackShowing = false; isUpcomingTaskStackShowing = false ; self.nav.to(.taskDetail)},
+                                    iconAsImage: PageConfiguration.EntityType.definitions.icon,
+                                    iconFgColour: self.nav.session.job?.backgroundColor,
+                                    fgColour: .white,
+                                    size: .link,
+                                    type: nav.parent == .tasks ? .secondary : .standard
                                 )
                             }
                             Spacer()
