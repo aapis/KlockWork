@@ -562,7 +562,7 @@ extension WidgetLibrary.UI {
                             ZStack(alignment: .center) {
                                 Theme.base.opacity(0.6).blendMode(.softLight)
                                 Image(systemName: self.active ? "star.fill" : self.isPresented ? "minus" : "plus")
-                                    .foregroundStyle(self.active ? self.state.theme.tint : .white)
+                                    .foregroundStyle(self.active ? .yellow : .white)
                             }
                             .frame(width: 30, height: 30)
                             .cornerRadius(5)
