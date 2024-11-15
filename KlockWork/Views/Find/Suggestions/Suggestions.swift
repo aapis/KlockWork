@@ -44,7 +44,8 @@ extension FindDashboard {
                                     showLabel: false,
                                     showIcon: true,
                                     size: .tinyLink,
-                                    type: .clear
+                                    type: .clear,
+                                    font: .title2
                                 )
                                 .help("Minimize suggestions")
                             }

@@ -33,14 +33,12 @@ public struct Inspector: View, Identifiable {
             HStack {
                 FancySubTitle(text: "Inspector")
                 Spacer()
-                FancyButtonv2(
-                    text: "Close",
-                    action: {nav.session.search.cancel() ; nav.setInspector() ; self.isSearchStackShowing = false},
-                    icon: "xmark.square.fill",
-                    iconWhenHighlighted: "xmark.square",
-                    showLabel: false,
-                    size: .tiny,
-                    type: .clear
+                UI.Buttons.Close(
+                    action: {
+                        self.nav.session.search.cancel()
+                        self.nav.setInspector()
+                        self.isSearchStackShowing = false
+                    }
                 )
             }
             Divider()

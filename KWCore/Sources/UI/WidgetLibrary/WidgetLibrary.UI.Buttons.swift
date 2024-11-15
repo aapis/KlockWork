@@ -423,6 +423,7 @@ extension WidgetLibrary.UI {
                     icon: "xmark.square.fill",
                     iconWhenHighlighted: "xmark.square",
                     showLabel: false,
+                    size: .tiny,
                     type: .clear,
                     font: .title2
                 )
