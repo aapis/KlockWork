@@ -102,6 +102,7 @@ extension TaskDetail {
         self.due = self.task?.due ?? DateHelper.endOfDay() ?? Date()
         self.shouldCreateNotification = !(self.task?.hasScheduledNotification ?? false)
         self.isDisabled = self.state.session.job == nil && self.task == nil
+        self.uri = self.task?.uri?.absoluteString ?? ""
     }
 
     /// Fires when enter/return hit while entering text in field or when add button tapped
