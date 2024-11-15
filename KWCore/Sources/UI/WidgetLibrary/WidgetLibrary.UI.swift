@@ -2332,7 +2332,11 @@ extension WidgetLibrary.UI.ListExternalLinkItem {
     /// - Returns: Void
     private func actionOnAppear() -> Void {
         if self.shouldCheckLinkStatus {
-            self.checkLinkStatus(link: self.name)
+            if let url = self.activity.url {
+                self.checkLinkStatus(link: url.absoluteString)
+            } else {
+                self.checkLinkStatus(link: self.name)
+            }
         }
     }
 
