@@ -400,7 +400,7 @@ extension WidgetLibrary.UI.Navigator {
                         }
                         Image(systemName: self.isPresented ? "star.fill" : self.isHighlighted ? "folder.fill" : "folder")
                             // @TODO: create a ShapeStyle for this
-                            .foregroundStyle(self.isPresented ? .yellow : self.viewModeIndex == 1 ? self.colour.isBright() ? Theme.base : .white : self.colour)
+                            .foregroundStyle(self.isPresented ? self.state.theme.tint : self.viewModeIndex == 1 ? self.colour.isBright() ? Theme.base : .white : self.colour)
                     }
                     .frame(width: 30, height: 30)
                     .cornerRadius(5)

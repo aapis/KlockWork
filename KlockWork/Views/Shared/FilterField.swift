@@ -32,6 +32,7 @@ struct FilterOptionPair: Identifiable {
 }
 
 struct FilterFieldView: View {
+    @EnvironmentObject private var state: Navigation
     var filter: FilterField
     var callback: ((FilterField) -> Void)?
 
@@ -43,7 +44,7 @@ struct FilterFieldView: View {
                 Text(filter.name)
                 Image(systemName: "xmark.square.fill")
             }
-            .foregroundStyle(.yellow)
+            .foregroundStyle(self.state.theme.tint)
             .padding(3)
             .background(.white.opacity(0.7).blendMode(.softLight))
             .clipShape(RoundedRectangle(cornerRadius: 3))

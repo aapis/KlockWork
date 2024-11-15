@@ -274,8 +274,8 @@ extension WidgetLibrary {
                         HStack(alignment: .center) {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 20)
-                                    .strokeBorder(self.isToday ? .yellow.opacity(0.6) : .gray, lineWidth: 1)
-                                    .fill(self.isToday ? .yellow.opacity(self.isHighlighted ? 0.8 : 0.7) : .gray.opacity(self.isHighlighted ? 0.8 : 0.7))
+                                    .strokeBorder(self.isToday ? self.state.theme.tint.opacity(0.6) : .gray, lineWidth: 1)
+                                    .fill(self.isToday ? self.state.theme.tint.opacity(self.isHighlighted ? 0.8 : 0.7) : .gray.opacity(self.isHighlighted ? 0.8 : 0.7))
                                 if !self.showDateOverlay {
                                     HStack {
                                         Image(systemName: "calendar")
@@ -586,7 +586,7 @@ extension WidgetLibrary {
                             .frame(height: 65)
 
                             ZStack(alignment: .center) {
-                                (self.isHighlighted ? Color.yellow : Theme.textBackground)
+                                (self.isHighlighted ? self.state.theme.tint : Theme.textBackground)
                                 VStack(alignment: .center, spacing: 0) {
                                     Text(String(self.count))
                                         .font(.system(.title3, design: .monospaced))
@@ -1480,6 +1480,7 @@ extension WidgetLibrary {
 
         // MARK: Toggle
         struct Toggle: View {
+            @EnvironmentObject private var state: Navigation
             public var title: String? = nil
             @Binding public var isOn: Bool
             public var eType: PageConfiguration.EntityType? = .BruceWillis
@@ -1502,7 +1503,7 @@ extension WidgetLibrary {
                             (self.isOn ? self.eType?.selectedIcon : self.eType?.icon)
                         }
                     }
-                    .foregroundStyle(self.isOn ? .yellow : .gray)
+                    .foregroundStyle(self.isOn ? self.state.theme.tint : .gray)
                     .padding(3)
                 }
                 .help(self.title ?? self.eType?.label ?? "")

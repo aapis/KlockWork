@@ -10,7 +10,6 @@ import SwiftUI
 import KWCore
 
 struct ProjectBlock: View {
-    typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var state: Navigation
     public var project: Project
     @State private var highlighted: Bool = false
@@ -30,7 +29,7 @@ struct ProjectBlock: View {
                     VStack(alignment: .leading, spacing: 10) {
                         HStack(alignment: .top) {
                             Image(systemName: self.highlighted ? "folder.fill" : "folder")
-                                .foregroundStyle(self.project.company?.isDefault ?? false ? .yellow : self.highlighted ? project.backgroundColor.opacity(1) : project.backgroundColor.opacity(0.5))
+                                .foregroundStyle(self.project.company?.isDefault ?? false ? self.state.theme.tint : self.highlighted ? project.backgroundColor.opacity(1) : project.backgroundColor.opacity(0.5))
                                 .font(.system(size: 60))
                             VStack(alignment: .leading) {
                                 Text(project.name ?? "_COMPANY_NAME")
