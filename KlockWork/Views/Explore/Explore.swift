@@ -35,8 +35,8 @@ struct Explore: View {
     }
 }
 
-struct Activity: Identifiable, Equatable {
-    var id: UUID = UUID()
+public struct Activity: Identifiable, Equatable {
+    public var id: UUID = UUID()
     var name: String
     var help: String = ""
     var page: Page

@@ -290,6 +290,7 @@ extension WidgetLibrary.UI {
         /// An individual calendar day "tile"
         struct Day: View, Identifiable {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("general.appTintChoice") private var appTintChoice: Int = 0
             public let id: UUID = UUID()
             public var date: Date
             public var dayNumber: Int = 0
@@ -338,6 +339,7 @@ extension WidgetLibrary.UI {
                 .foregroundColor(self.fgColour)
                 .clipShape(.rect(cornerRadius: 6))
                 .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.appTintChoice) { self.actionOnAppear() }
                 .contextMenu {
                     Button {
                         self.state.session.date = self.date

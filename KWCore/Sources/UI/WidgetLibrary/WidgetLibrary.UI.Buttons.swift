@@ -381,7 +381,7 @@ extension WidgetLibrary.UI {
                     action: {self.commandLineMode.toggle() ; self.onAction?()},
                     icon: self.commandLineMode ? "apple.terminal.fill" : "apple.terminal",
                     iconWhenHighlighted: self.commandLineMode ? "apple.terminal" : "apple.terminal.fill",
-                    iconFgColour: self.commandLineMode ? self.state.theme.tint : .white,
+                    iconFgColour: self.commandLineMode ? self.state.theme.tint : .gray,
                     showLabel: false,
                     size: .small,
                     type: .clear,
@@ -565,11 +565,14 @@ extension WidgetLibrary.UI {
         // MARK: Buttons.FooterActivity
         struct FooterActivity: View {
             @EnvironmentObject private var state: Navigation
-            var count: Int
+
+            var start: Date?
+            var end: Date?
             var label: String
             var icon: String
             @AppStorage("widgetlibrary.ui.appfooter.isMinimized") private var isMinimized: Bool = false
             @State private var isHighlighted: Bool = false
+            @State private var count: Int = 0
 
             var body: some View {
                 Button {
@@ -592,6 +595,22 @@ extension WidgetLibrary.UI {
                 .buttonStyle(.plain)
                 .useDefaultHover({ hover in self.isHighlighted = hover })
                 .help("\(self.count) \(self.label) on \(self.state.session.dateFormatted("MMMM dd, yyyy"))")
+                .onAppear(perform: self.actionOnAppear)
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.Buttons.FooterActivity {
+    /// Onload handler. Sets view state.
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        Task {
+            if let start = self.start {
+                if let end = self.end {
+                    let fromRecords = await CoreDataRecords(moc: self.state.moc).getLinksFromRecords(start: start, end: end)
+                    self.count += fromRecords.count
+                }
             }
         }
     }

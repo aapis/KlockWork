@@ -18,6 +18,7 @@ typealias EType = PageConfiguration.EntityType
 struct DLPrototype: App {
     private let persistenceController = PersistenceController.shared
     @AppStorage("notifications.interval") private var notificationInterval: Int = 0
+    @AppStorage("general.appTintChoice") private var appTintChoice: Int = 0
     @StateObject public var updater: ViewUpdater = ViewUpdater()
     @StateObject public var nav: Navigation = Navigation()
     @State private var searching: Bool = false
@@ -97,6 +98,17 @@ struct DLPrototype: App {
         let appName = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
         nav.title = "\(appName ?? "KlockWork")"
         nav.session.plan = CoreDataPlan(moc: persistenceController.container.viewContext).forDate(nav.session.date).first
+
+        switch self.appTintChoice {
+        case 1: self.nav.theme.tint = .blue
+        case 2: self.nav.theme.tint = .purple
+        case 3: self.nav.theme.tint = .pink
+        case 4: self.nav.theme.tint = .red
+        case 5: self.nav.theme.tint = .orange
+        case 7: self.nav.theme.tint = .green
+        default:
+            self.nav.theme.tint = .yellow
+        }
 
         if let plan = nav.session.plan {
             nav.planning.jobs = plan.jobs as! Set<Job>

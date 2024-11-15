@@ -148,6 +148,54 @@ public class CoreDataRecords: ObservableObject {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
 
+    /// Get links from records created or updated on a given day
+    /// - Parameter start: Optional(Date)
+    /// - Parameter end: Optional(Date)
+    /// - Returns: Array<Activity>
+    public func getLinksFromRecords(start: Date?, end: Date?) async -> [Activity] {
+        var activities: [Activity] = []
+        if let start = start {
+            if let end = end {
+                let linkLength = 40
+                let records = CoreDataRecords(moc: self.moc!).inRange(
+                    start: start,
+                    end: end
+                )
+
+                for record in records {
+                    if let message = record.message {
+                        if message.contains("https://") {
+                            let linkRegex = /https:\/\/([^ \n]+)/
+                            if let match = message.firstMatch(of: linkRegex) {
+                                let sMatch = String(match.0)
+                                var label: String = sMatch
+
+                                if sMatch.count > linkLength {
+                                    label = label.prefix(linkLength) + "..."
+                                }
+                                if !activities.contains(where: {$0.name == label}) {
+                                    activities.append(
+                                        Activity(
+                                            name: label,
+                                            help: sMatch,
+                                            page: .dashboard, //self.state.parent ?? 
+                                            type: .activity,
+                                            job: record.job,
+                                            source: record,
+                                            url: URL(string: sMatch) ?? nil
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return activities
+    }
+
     /// Create a new record using a known job, date and message
     /// - Parameters:
     ///   - job: Job

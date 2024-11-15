@@ -65,7 +65,7 @@ extension WidgetLibrary.UI {
                     .frame(height: 65)
 
                     ZStack(alignment: .center) {
-                        (self.isHighlighted ? Color.yellow : Theme.textBackground)
+                        (self.isHighlighted ? self.state.theme.tint : Theme.textBackground)
                         VStack(alignment: .center, spacing: 0) {
                             Text(self.text)
                                 .font(.system(.title3, design: .monospaced))

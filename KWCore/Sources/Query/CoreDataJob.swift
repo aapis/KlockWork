@@ -527,7 +527,37 @@ public class CoreDataJob: ObservableObject {
 
         return count(predicate)
     }
-    
+
+    /// Get links from jobs created or updated on a given day
+    /// - Parameter start: Optional(Date)
+    /// - Parameter end: Optional(Date)
+    /// - Returns: Array<Activity>
+    public func getLinksFromJobs(start: Date?, end: Date?) async -> [Activity] {
+        let jobs = self.inRange(
+            start: start,
+            end: end
+        )
+        var activities: [Activity] = []
+
+        for job in jobs {
+            if let uri = job.uri {
+                if uri.absoluteString != "https://" {
+                    activities.append(
+                        Activity(
+                            name: uri.absoluteString,
+                            page: .dashboard, //self.state.parent ??
+                            type: .activity,
+                            job: job,
+                            url: uri.absoluteURL
+                        )
+                    )
+                }
+            }
+        }
+
+        return activities
+    }
+
     /// Create a new Job
     /// - Parameters:
     ///   - alive: Bool

@@ -133,7 +133,7 @@ struct Column: View {
     @ViewBuilder private var Index: some View {
         ZStack(alignment: .center) {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(self.job == self.nav.session.job ? .yellow : Theme.cPurple.opacity(0.8))
+                .fill(self.job == self.nav.session.job ? self.nav.theme.tint : Theme.cPurple.opacity(0.8))
                 .frame(height: 23)
             Text(self.text)
                 .opacity(0.5)

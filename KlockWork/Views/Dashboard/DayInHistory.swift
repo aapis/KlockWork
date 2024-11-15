@@ -50,7 +50,7 @@ struct DayInHistory: View {
                 }
             )
         )
-        .background(self.isToday ? .yellow.opacity(0.5) : self.highlight ? Theme.base.opacity(0.3) : Theme.cPurple)
+        .background(self.isToday ? self.state.theme.tint.opacity(0.5) : self.highlight ? Theme.base.opacity(0.3) : Theme.cPurple)
         .foregroundStyle(self.highlight ? Theme.lightWhite : .white)
     }
 }

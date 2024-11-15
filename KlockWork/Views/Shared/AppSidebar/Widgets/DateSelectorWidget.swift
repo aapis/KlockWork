@@ -74,7 +74,7 @@ struct DateSelectorWidget: View {
                 .padding(.top, 15)
             }
             .padding(10)
-            .background(areSameDate(nav.session.date, Date()) ? .yellow.opacity(0.8) : .white.opacity(0.4))
+            .background(areSameDate(nav.session.date, Date()) ? self.nav.theme.tint.opacity(0.8) : .white.opacity(0.4))
             .frame(height: 40)
 
             if isDatePickerPresented {
@@ -155,7 +155,7 @@ extension DateSelectorWidget {
         private var RecordCountBadge: some View {
             ZStack(alignment: .center) {
                 if current {
-                    Color.yellow
+                    self.nav.theme.tint
                 } else {
                     (highlighted ? (active ? Color.white.opacity(0.5) : Theme.secondary) : Color.lightGray())
                 }
