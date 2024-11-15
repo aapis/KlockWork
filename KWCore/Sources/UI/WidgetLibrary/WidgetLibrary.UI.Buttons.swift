@@ -609,8 +609,11 @@ extension WidgetLibrary.UI.Buttons.FooterActivity {
         Task {
             if let start = self.start {
                 if let end = self.end {
-                    let fromRecords = await CoreDataRecords(moc: self.state.moc).getLinksFromRecords(start: start, end: end)
-                    self.count += fromRecords.count
+                    let fromRecords = await CoreDataRecords(moc: self.state.moc).links(start: start, end: end)
+                    let fromTasks = await CoreDataTasks(moc: self.state.moc).links(start: start, end: end)
+                    let fromNotes = await CoreDataNotes(moc: self.state.moc).links(start: start, end: end)
+                    let fromJobs = await CoreDataJob(moc: self.state.moc).links(start: start, end: end)
+                    self.count += (fromRecords.count + fromTasks.count + fromNotes.count + fromJobs.count)
                 }
             }
         }
