@@ -109,6 +109,7 @@
 		5363B67A2A6BB75F00C2FBB8 /* CompanyBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B6792A6BB75F00C2FBB8 /* CompanyBlock.swift */; };
 		5363B67C2A6BB78900C2FBB8 /* CompanyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B67B2A6BB78900C2FBB8 /* CompanyView.swift */; };
 		5363B6802A6DE87000C2FBB8 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B67F2A6DE87000C2FBB8 /* View.swift */; };
+		536B64502CE93961002BF09E /* GlobalSettingsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536B644F2CE93961002BF09E /* GlobalSettingsPanel.swift */; };
 		536FBF6E2A68F77100F00CE4 /* NoteBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536FBF6D2A68F77100F00CE4 /* NoteBlock.swift */; };
 		5371BA222A7B1C9D00DEEC21 /* RecentNotesWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA212A7B1C9D00DEEC21 /* RecentNotesWidget.swift */; };
 		5371BA282A7B264900DEEC21 /* NoteRowPlain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA272A7B264900DEEC21 /* NoteRowPlain.swift */; };
@@ -402,6 +403,7 @@
 		5363B6792A6BB75F00C2FBB8 /* CompanyBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyBlock.swift; sourceTree = "<group>"; };
 		5363B67B2A6BB78900C2FBB8 /* CompanyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyView.swift; sourceTree = "<group>"; };
 		5363B67F2A6DE87000C2FBB8 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
+		536B644F2CE93961002BF09E /* GlobalSettingsPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalSettingsPanel.swift; sourceTree = "<group>"; };
 		536FBF6D2A68F77100F00CE4 /* NoteBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteBlock.swift; sourceTree = "<group>"; };
 		5371BA212A7B1C9D00DEEC21 /* RecentNotesWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentNotesWidget.swift; sourceTree = "<group>"; };
 		5371BA272A7B264900DEEC21 /* NoteRowPlain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteRowPlain.swift; sourceTree = "<group>"; };
@@ -1038,6 +1040,7 @@
 		53790C012A72F15200D3FFD4 /* AppSidebar */ = {
 			isa = PBXGroup;
 			children = (
+				536B644F2CE93961002BF09E /* GlobalSettingsPanel.swift */,
 				53B0DC102A79D7E200DA1679 /* Widgets */,
 				53790C022A72F18200D3FFD4 /* SidebarButton.swift */,
 				535DDE5D2A7982F3008350D4 /* SidebarItem.swift */,
@@ -1771,6 +1774,7 @@
 				5326AE982B27FA02009F1349 /* DefaultCompanySidebar.swift in Sources */,
 				537AEB9F29627DCC00385787 /* LogTable.swift in Sources */,
 				53E918832B4A6D9600912C6F /* SessionInspector.swift in Sources */,
+				536B64502CE93961002BF09E /* GlobalSettingsPanel.swift in Sources */,
 				533544802CB19C430067A944 /* Planning.Upcoming.swift in Sources */,
 				53E202612A7EC96D00B4DF70 /* DashboardSidebar.swift in Sources */,
 				532A722F299037AC0038C18B /* RecordResult.swift in Sources */,
