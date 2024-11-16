@@ -25,6 +25,7 @@ extension Today {
                     mode: .compact,
                     page: self.nav.session.appPage
                 )
+                .padding(.bottom)
             }
         }
         
@@ -200,22 +201,23 @@ extension Today.LogTable {
             @EnvironmentObject public var nav: Navigation
             @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
             @AppStorage("today.viewMode") public var index: Int = 0
+            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
             private let page: PageConfiguration.AppPage = .today
             @State private var grouped: [FancyStaticTextField] = []
             @State private var records: [LogRecord] = []
 
             var body: some View {
                 ScrollView(showsIndicators: false) {
-                    VStack(spacing: 1) {
+                    VStack(spacing: 0) {
                         ToolbarButtons(records: self.records, tab: .grouped)
                             .background(self.page.primaryColour)
-                        Divider().foregroundStyle(.white)
                         if records.count > 0 {
                             ForEach(grouped) {group in group}
                         } else {
                             LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: Theme.rowColour)
                         }
                     }
+                    .background(self.usingBackgroundImage ? self.nav.session.appPage.primaryColour : .clear)
                 }
                 .onAppear(perform: self.findRecords)
                 .onChange(of: nav.session.date) { self.findRecords() }
