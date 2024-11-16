@@ -114,6 +114,7 @@ extension WidgetLibrary.UI {
                 .foregroundStyle(self.fgColour)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.company) { self.actionOnChangeEntity() }
+                .onChange(of: self.state.session.job) { self.actionOnChangeEntity() }
                 .onChange(of: self.state.session.gif) { self.actionOnAppear() }
                 .onChange(of: self.isPresented) {
                     // Group is minimized
@@ -684,18 +685,24 @@ extension WidgetLibrary.UI.UnifiedSidebar.SingleCompany {
     /// - Returns: Void
     private func actionOnChangeEntity() -> Void {
         if self.state.session.company != nil {
-            if self.state.session.company != self.entity {
-                self.isPresented = false
+//            if self.state.session.company != self.entity {
+//                self.isPresented = false
                 // @TODO: decide whether to attempt to finish this "focus on current open group" functionality
                 //                self.bgColour = .gray
                 //                self.fgColour = Theme.base
-            } else {
+//            } else {
                 self.bgColour = self.entity.backgroundColor
                 self.fgColour = self.bgColour.isBright() ? Theme.base : .white
-            }
+//            }
         } else {
             self.bgColour = self.entity.backgroundColor
             self.fgColour = self.bgColour.isBright() ? Theme.base : .white
+        }
+
+        if let company = self.state.session.company {
+            self.isPresented = company == self.entity
+        } else if let job = self.state.session.job {
+            self.isPresented = job.project?.company == self.entity
         }
     }
 
