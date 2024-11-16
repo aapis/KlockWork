@@ -667,6 +667,7 @@ extension WidgetLibrary {
         // MARK: ExploreLinks
         struct ExploreLinks: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
             private var activities: [Activity] {
                 [
                     Activity(name: "Activity Calendar", page: .activityCalendar, type: .visualize, icon: "calendar"),
@@ -694,7 +695,7 @@ extension WidgetLibrary {
                             .padding()
                             .background(
                                 ZStack {
-                                    self.state.session.appPage.primaryColour
+                                    self.usingBackgroundImage ? Theme.textBackground: self.state.session.appPage.primaryColour
                                     Theme.textBackground
                                 }
                             )

@@ -240,14 +240,14 @@ struct FancyGenericToolbar: View {
                             if self.button.showIcon {
                                 button.icon
                                     .padding(0)
-                                    .foregroundStyle(self.selected == self.button.id ? self.nav.session.appPage.primaryColour : .white)
+                                    .foregroundStyle(self.selected == self.button.id ? self.nav.session.appPage.primaryColour : Theme.lightWhite)
                                     .symbolRenderingMode(.hierarchical)
                             }
                         } else {
                             if self.showTabTitles && self.button.showLabel {
                                 button.label
                                     .padding(0)
-                                    .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
+                                    .foregroundStyle(self.selected == self.button.id ? .white : Theme.lightWhite)
                             }
                         }
                     } else {
@@ -262,7 +262,7 @@ struct FancyGenericToolbar: View {
 
                                 if self.selected == self.button.id && self.button.labelText != nil && self.showTabTitles {
                                     Text(self.button.labelText!)
-                                        .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
+                                        .foregroundStyle(self.selected == self.button.id ? .white : Theme.lightWhite)
                                         .font(.headline)
                                 }
                             }
@@ -271,7 +271,7 @@ struct FancyGenericToolbar: View {
                         } else {
                             if self.showTabTitles && self.button.showLabel {
                                 self.button.label.padding(16)
-                                    .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
+                                    .foregroundStyle(self.selected == self.button.id ? .white : Theme.lightWhite)
                             } else {
                                 if self.button.showIcon {
                                     self.button.icon

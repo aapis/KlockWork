@@ -38,6 +38,7 @@ struct GlobalSettingsPanel: View {
             private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
             private var wallpapers: [Wallpaper] {
                 [
+                    Wallpaper(asset: "", label: "None", choice: 0),
                     Wallpaper(asset: "wallpaper-01", label: "Square Heaven", choice: 1),
                     Wallpaper(asset: "wallpaper-02", label: "Hotel Rave", choice: 2),
                     Wallpaper(asset: "wallpaper-03", label: "Goldschläger", choice: 3),
@@ -107,6 +108,7 @@ struct GlobalSettingsPanel: View {
             internal struct Wallpaper: View, Identifiable {
                 @EnvironmentObject private var state: Navigation
                 @AppStorage("general.wallpaperChoice") private var wallpaperChoice: Int = 0
+                @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
                 var id: UUID = UUID()
                 var asset: String
                 var label: String
@@ -117,6 +119,11 @@ struct GlobalSettingsPanel: View {
                     Button {
                         self.state.theme.wallpaperChoice = self.choice
                         self.wallpaperChoice = self.choice
+                        if self.choice == 0 {
+                            self.usingBackgroundImage = false
+                        } else {
+                            self.usingBackgroundImage = true
+                        }
                     } label: {
                         ZStack {
                             Image(self.asset)
