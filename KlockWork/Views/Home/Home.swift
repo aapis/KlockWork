@@ -23,6 +23,8 @@ struct Home: View {
     @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
     @State public var selectedSidebarButton: Page = .dashboard
     @State private var timer: Timer? = nil
+    @State private var buttons: [PageGroup: [SidebarButton]] = [:]
+    @State private var sidebarTabs: [ToolbarButton] = []
 
     /// Sidebar widgets that live in every sidebar
     static public let standardSidebarWidgets: [ToolbarButton] = [
@@ -56,9 +58,7 @@ struct Home: View {
 //            contents: AnyView(WidgetLibrary.UI.Navigator(location: .sidebar))
 //        ),
     ]
-
     private let page: APage = .find
-    @State private var buttons: [PageGroup: [SidebarButton]] = [:]
 
     var body: some View {
         NavigationStack {
@@ -123,19 +123,16 @@ struct Home: View {
             }
 
             VStack(alignment: .leading, spacing: 0) {
-                ZStack(alignment: .bottomLeading) {
-                    VStack(spacing: 0) {
-                        GlobalSidebarWidgets()
-                        if !self.isSearchStackShowing && !self.isUpcomingTaskStackShowing {
-                            nav.sidebar
-                        }
-                    }
-                    Divider()
-                    LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
-                        .opacity(0.2)
-                        .blendMode(.softLight)
-                        .frame(height: 20)
-                }
+                FancyGenericToolbar(
+                    buttons: self.sidebarTabs,
+                    standalone: true,
+                    location: .sidebar,
+                    mode: .compact,
+                    page: .find,
+                    scrollable: false
+                )
+                .padding(.top, 2)
+                Spacer()
                 UI.EntityCalendar.Widget()
             }
         }
@@ -210,6 +207,39 @@ extension Home {
             self.nav.session.search.inspectingEntity = nil
             self.nav.setInspector()
         })
+
+        self.sidebarTabs = [
+            ToolbarButton(
+                id: 0,
+                helpText: "",
+                icon: "sun.min.fill",
+                labelText: "Cryptic message.",
+                contents: AnyView(
+                    ZStack(alignment: .bottomLeading) {
+                        VStack(spacing: 0) {
+                            GlobalSidebarWidgets()
+                            if !self.isSearchStackShowing && !self.isUpcomingTaskStackShowing {
+                                nav.sidebar
+                            }
+                        }
+                        Divider()
+                        LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
+                            .opacity(0.2)
+                            .blendMode(.softLight)
+                            .frame(height: 20)
+                    }
+                )
+            ),
+            ToolbarButton(
+                id: 1,
+                helpText: "",
+                icon: "gearshape",
+                labelText: "App settings",
+                contents: AnyView(
+                    GlobalSettingsPanel()
+                )
+            )
+        ]
     }
     
     /// Creates all toolbar buttons
