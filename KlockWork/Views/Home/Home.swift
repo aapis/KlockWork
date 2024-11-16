@@ -99,6 +99,7 @@ struct Home: View {
                 case 1: Image("wallpaper-01").resizable().aspectRatio(contentMode: .fill)
                 case 2: Image("wallpaper-02").resizable().aspectRatio(contentMode: .fill)
                 case 3: Image("wallpaper-03").resizable().aspectRatio(contentMode: .fill)
+                case 4: Image("wallpaper-04").resizable().aspectRatio(contentMode: .fill)
                 default:
                     EmptyView()
                 }
