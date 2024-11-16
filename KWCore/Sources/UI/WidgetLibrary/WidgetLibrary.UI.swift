@@ -525,6 +525,7 @@ extension WidgetLibrary {
 
         struct ListLinkTitle: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
             public var type: ExploreActivityType?
             public var text: String?
 
@@ -532,14 +533,25 @@ extension WidgetLibrary {
                 HStack(alignment: .center) {
                     if let type = self.type {
                         Text(type.title.uppercased())
+                            .padding(5)
+                            .foregroundStyle(self.usingBackgroundImage ? .white : .gray)
+                            .background(self.usingBackgroundImage ? self.state.session.appPage.primaryColour : .clear)
+                            .clipShape(.rect(cornerRadius: 5))
                     } else if let text = self.text {
                         Text(text.uppercased())
+                            .padding(5)
+                            .foregroundStyle(self.usingBackgroundImage ? .white : .gray)
+                            .background(self.usingBackgroundImage ? self.state.session.appPage.primaryColour : .clear)
+                            .clipShape(.rect(cornerRadius: 5))
                     } else {
                         Text("Title")
+                            .padding(5)
+                            .foregroundStyle(self.usingBackgroundImage ? .white : .gray)
+                            .background(self.usingBackgroundImage ? self.state.session.appPage.primaryColour : .clear)
+                            .clipShape(.rect(cornerRadius: 5))
                     }
                     Spacer()
                 }
-                .foregroundStyle(.gray)
                 .font(.caption)
             }
         }
