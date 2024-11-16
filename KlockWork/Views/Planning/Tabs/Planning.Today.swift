@@ -12,6 +12,7 @@ import KWCore
 extension Planning {
     struct Today: View {
         @EnvironmentObject public var nav: Navigation
+        @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
         @State private var jobs: Set<Job> = []
         @State private var jobsArray: [Job] = []
 

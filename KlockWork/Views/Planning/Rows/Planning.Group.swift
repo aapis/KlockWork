@@ -20,7 +20,7 @@ extension Planning {
         @EnvironmentObject public var nav: Navigation
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     FancyButtonv2(
                         text: "\(self.job.title ?? self.job.jid.string)",

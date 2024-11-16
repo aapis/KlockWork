@@ -226,11 +226,8 @@ extension WidgetLibrary {
                             }
                             .padding()
                         }
-                        HStack {
-                            Spacer()
-                            UI.Buttons.Minimize(isMinimized: $isMinimized)
-                                .padding([.trailing, .top], 8)
-                        }
+                        UI.Buttons.Minimize(font: .title, isMinimized: $isMinimized)
+                            .padding([.trailing, .top], 8)
                     }
                 }
                 .frame(height: self.isMinimized ? 50 : 240)

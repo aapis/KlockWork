@@ -12,6 +12,7 @@ import KWCore
 extension Planning {
     struct Row: View {
         @EnvironmentObject public var state: Navigation
+        @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
         var job: Job
         var index: Array<Job>.Index?
         var type: PlanningObjectType
@@ -21,7 +22,7 @@ extension Planning {
         @FetchRequest public var notes: FetchedResults<Note>
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 1) {
+            VStack(alignment: .leading, spacing: 0) {
                 if let idx = index {
                     Header(job: job, index: idx, type: type)
                         .opacity((type == .tasks && tasks.count > 0) || (type == .notes && notes.count > 0) ? 1 : 0.7)
@@ -37,7 +38,7 @@ extension Planning {
                     }
                 }
             }
-            .background(Theme.rowColour)
+            .background(self.usingBackgroundImage ? self.state.session.appPage.primaryColour : Theme.rowColour)
         }
     }
 }
@@ -47,7 +48,7 @@ extension Planning.Row {
         self.job = job
         self.index = index
         self.type = type
-        self.colour = Color.fromStored(self.job.colour ?? Theme.rowColourAsDouble)
+        self.colour = self.job.backgroundColor
 
         _tasks = FetchRequest(
             entity: LogTask.entity(),
