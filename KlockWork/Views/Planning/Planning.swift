@@ -72,10 +72,6 @@ struct Planning: View {
             )
             FancyHelpText(text: self.description, page: self.page)
             FancyDivider()
-            UI.EntityCalendar.WeekWidget(
-                start: self.nav.session.date.startOfWeek
-            )
-            FancyDivider()
             FancyGenericToolbar(
                 buttons: self.buttons,
                 standalone: true,
