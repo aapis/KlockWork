@@ -10,7 +10,6 @@ import SwiftUI
 import KWCore
 
 struct GlobalSidebarWidgets: View {
-    typealias UI = WidgetLibrary.UI
     @EnvironmentObject public var nav: Navigation
     @AppStorage("GlobalSidebarWidgets.isCreateStackShowing") private var isCreateStackShowing: Bool = false
     @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
@@ -24,6 +23,7 @@ struct GlobalSidebarWidgets: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Buttons
+                .padding(.top)
                 .padding(.bottom, isSearchStackShowing || isCreateStackShowing || isUpcomingTaskStackShowing ? 16 : 0)
 
             if isSearchStackShowing || isCreateStackShowing || isUpcomingTaskStackShowing {
@@ -44,7 +44,7 @@ struct GlobalSidebarWidgets: View {
                 .background(self.isUpcomingTaskStackShowing || self.isCreateStackShowing ? Theme.base.opacity(0.6) : .clear)
             }
         }
-        .padding(self.isCreateStackShowing ? .top : [.top, .bottom])
+        .padding(.bottom)
         .border(width: 1, edges: [.bottom], color: Theme.rowColour)
         .background(Theme.base.blendMode(.softLight).opacity(0.3))
         .onAppear(perform: actionOnAppear)

@@ -349,6 +349,8 @@ extension WidgetLibrary.UI {
         struct Settings: View {
             @EnvironmentObject public var state: Navigation
             public var onAction: (() -> Void)? = {}
+            public var padding: CGFloat? = nil
+            public var font: Font? = nil
             @State private var isHighlighted: Bool = false
             @State private var selectedPage: Page = .dashboard
 
@@ -357,10 +359,10 @@ extension WidgetLibrary.UI {
                     self.onAction?()
                 } label: {
                     Image(systemName: "gear")
-                        .font(.title)
+                        .font(self.font ?? .title)
                         .foregroundStyle(self.isHighlighted ? .white : Theme.lightWhite)
-                        .padding([.leading, .trailing])
-                        .padding([.top, .bottom], 10)
+                        .padding([.leading, .trailing], self.padding ?? 20)
+                        .padding([.top, .bottom], self.padding ?? 10)
                 }
                 .keyboardShortcut(KeyEquivalent.leftArrow, modifiers: [.command])
                 .buttonStyle(.plain)

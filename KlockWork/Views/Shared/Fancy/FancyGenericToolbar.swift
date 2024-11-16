@@ -132,6 +132,7 @@ struct FancyGenericToolbar: View {
                     }
                 }
                 .frame(height: self.location == .content ? 50 : 32)
+                .border(width: self.location == .sidebar ? 1 : 0, edges: [.bottom], color: self.nav.theme.tint.opacity(0.8))
             }
 
             GridRow {
@@ -216,7 +217,9 @@ struct FancyGenericToolbar: View {
                         (
                             selected == button.id ?
                             (
-                                location == .sidebar ? Theme.base.opacity(0.2) : self.page != nil ? self.page!.primaryColour : self.nav.theme.tint.opacity(0.8)
+                                location == .sidebar ?
+                                self.nav.theme.tint.opacity(0.8)
+                                : self.page != nil ? self.page!.primaryColour : self.nav.theme.tint.opacity(0.8)
                             )
                             :
                             (
