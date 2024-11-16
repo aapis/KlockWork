@@ -338,6 +338,7 @@ extension WidgetLibrary {
         struct ListExternalLinkItem: View {
             @EnvironmentObject private var state: Navigation
             @AppStorage("general.shouldCheckLinkStatus") private var shouldCheckLinkStatus: Bool = false
+            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
             public var name: String
             public var icon: String?
             public var iconAsImage: Image?
@@ -431,7 +432,7 @@ extension WidgetLibrary {
                     .onAppear(perform: self.actionOnAppear)
                     .onChange(of: self.shouldCheckLinkStatus) { self.actionOnAppear() }
                     .contextMenu { ContextMenu(activity: self.activity) }
-                    .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background(self.usingBackgroundImage ? Theme.base.opacity(self.isHighlighted ? 0.4 : 0.3) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
                     .help(self.isLinkOnline ? self.activity.help : "Error: \(self.name) is down")
                 }
@@ -487,6 +488,7 @@ extension WidgetLibrary {
 
         struct ListButtonItem: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
             public var callback: (String) -> Void
             public var name: String
             public var icon: String?
@@ -515,7 +517,7 @@ extension WidgetLibrary {
                         }
                     }
                     .padding(8)
-                    .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background(self.usingBackgroundImage ? Theme.base.opacity(self.isHighlighted ? 0.4 : 0.3) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
                 }
                 .buttonStyle(.plain)
@@ -1163,6 +1165,7 @@ extension WidgetLibrary {
                         mode: .full,
                         page: self.state.session.appPage
                     )
+                    .padding(.bottom)
                     Spacer()
                 }
                 .id(self.vid)
@@ -1188,6 +1191,7 @@ extension WidgetLibrary {
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showPeople") public var showPeople: Bool = true
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showTerms") public var showTerms: Bool = true
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showDefinitions") public var showDefinitions: Bool = true
+            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
             public var id: UUID = UUID()
             public var historicalDate: Date
             public var view: AnyView?
@@ -1210,7 +1214,7 @@ extension WidgetLibrary {
                             LogRowEmpty(
                                 message: "No activities found for \(DateHelper.todayShort(self.historicalDate, format: "MMMM dd, YYYY"))",
                                 index: 0,
-                                colour: Theme.rowColour
+                                colour: self.usingBackgroundImage ? Theme.base : Theme.rowColour
                             )
                         }
                     }

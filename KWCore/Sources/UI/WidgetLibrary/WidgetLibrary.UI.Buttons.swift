@@ -493,6 +493,7 @@ extension WidgetLibrary.UI {
         // MARK: SavedSearchTerm
         struct SavedSearchTerm: View {
             @EnvironmentObject public var state: Navigation
+            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
             public var savedSearch: SavedSearch
             @State private var isHighlighted: Bool = false
 
@@ -512,7 +513,7 @@ extension WidgetLibrary.UI {
                         }
                     }
                     .padding(8)
-                    .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background(self.usingBackgroundImage ? Theme.base.opacity(self.isHighlighted ? 0.4 : 0.3) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .useDefaultHover({ hover in self.isHighlighted = hover })
                     .clipShape(.rect(cornerRadius: 5))
                 }

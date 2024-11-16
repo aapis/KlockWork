@@ -93,6 +93,7 @@ extension Today.LogTable {
 
     /// Plaintext conversion of the standard display
     struct Plain: View {
+        @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
         public var records: [LogRecord]
 
         @State private var plain: String = ""
@@ -106,7 +107,7 @@ extension Today.LogTable {
                 if records.count > 0 {
                     FancyTextField(placeholder: "Records...", lineLimit: 10, text: $plain)
                 } else {
-                    LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: Theme.rowColour)
+                    LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: self.usingBackgroundImage ? Theme.base : Theme.rowColour)
                 }
             }
             .onAppear(perform: actionOnAppear)
@@ -120,6 +121,7 @@ extension Today.LogTable {
         @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
         @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
         @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
+        @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
         public var records: [LogRecord]
         @State private var offset: Int = 0
 
@@ -143,7 +145,7 @@ extension Today.LogTable {
                         }
                     }
                 } else {
-                    LogRowEmpty(message: "No records found for \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: Theme.rowColour)
+                    LogRowEmpty(message: "No records found for \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: self.usingBackgroundImage ? Theme.base : Theme.rowColour)
                 }
             }
         }
@@ -214,7 +216,7 @@ extension Today.LogTable {
                         if records.count > 0 {
                             ForEach(grouped) {group in group}
                         } else {
-                            LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: Theme.rowColour)
+                            LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: self.usingBackgroundImage ? Theme.base : Theme.rowColour)
                         }
                     }
                     .background(self.usingBackgroundImage ? self.nav.session.appPage.primaryColour : .clear)

@@ -76,6 +76,7 @@ enum ToolbarMode {
 
 struct FancyGenericToolbar: View {
     @EnvironmentObject public var nav: Navigation
+    @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
     public var buttons: [ToolbarButton]
     public var standalone: Bool = false
     public var location: WidgetLocation = .content
@@ -92,7 +93,13 @@ struct FancyGenericToolbar: View {
                     Group {
                         ZStack(alignment: .bottom) {
                             (self.location == .content ? UIGradient() : nil)
-                            (self.nav.session.job?.backgroundColor ?? .white).opacity(self.standalone ? 0 : 1).blendMode(.softLight)
+                            // I'm sorry
+                            (
+                                self.usingBackgroundImage ?
+                                    !self.standalone ? Theme.darkBtnColour.blendMode(.normal) : Color.clear.blendMode(.normal)
+                                :
+                                    (self.nav.session.job?.backgroundColor ?? .white).opacity(self.standalone ? 0 : 1).blendMode(.softLight)
+                             )
                             // @TODO: this "works" but needs finessing
 //                            TypedListRowBackground(colour: .clear, type: .jobs)
                             ScrollView(.horizontal, showsIndicators: false) {
