@@ -429,7 +429,7 @@ extension WidgetLibrary {
                     .onAppear(perform: self.actionOnAppear)
                     .onChange(of: self.shouldCheckLinkStatus) { self.actionOnAppear() }
                     .contextMenu { ContextMenu(activity: self.activity) }
-                    .background(self.usingBackgroundImage ? Theme.base.opacity(self.isHighlighted ? 0.4 : 0.3) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background(self.usingBackgroundImage ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
                     .help(self.isLinkOnline ? self.activity.help : "Error: \(self.name) is down")
                 }
@@ -451,6 +451,7 @@ extension WidgetLibrary {
 
         struct ListLinkItem: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
             public var page: Page
             public var name: String
             public var icon: String?
@@ -475,7 +476,7 @@ extension WidgetLibrary {
                             .foregroundStyle(.gray)
                     }
                     .padding(8)
-                    .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background(self.usingBackgroundImage ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
                 }
                 .buttonStyle(.plain)
@@ -514,7 +515,7 @@ extension WidgetLibrary {
                         }
                     }
                     .padding(8)
-                    .background(self.usingBackgroundImage ? Theme.base.opacity(self.isHighlighted ? 0.4 : 0.3) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background(self.usingBackgroundImage ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
                 }
                 .buttonStyle(.plain)
