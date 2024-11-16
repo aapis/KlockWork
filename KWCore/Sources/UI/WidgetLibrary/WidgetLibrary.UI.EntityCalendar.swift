@@ -467,6 +467,67 @@ extension WidgetLibrary.UI {
             }
         }
 
+        internal struct MonthNavSelector: View {
+            @EnvironmentObject private var state: Navigation
+            public var onTap: () -> Void
+            public var cvm: Int
+            public var format: String
+            @State private var isHighlighted: Bool = false
+            @AppStorage("widgetlibrary.ui.entitycalendar.isMinimized") private var isMinimized: Bool = false
+            @AppStorage("widgetlibrary.ui.entitycalendar.calendarviewmode.index") private var storedCVM: Int = 0
+
+            var body: some View {
+                Button {
+                    self.onTap()
+                } label: {
+                    ZStack(alignment: .leading) {
+                        (self.storedCVM == self.cvm ? self.state.theme.tint.opacity(0.8) : .clear)
+                        HStack(alignment: .center, spacing: 0) {
+                            Text(
+                                DateHelper.todayShort(
+                                    self.state.session.date,
+                                    format: self.format
+                                )
+                            )
+                            .multilineTextAlignment(.leading)
+                            Spacer()
+                            Image(systemName: "chevron.up.chevron.down")
+                                .foregroundStyle(self.storedCVM == self.cvm || self.isHighlighted ? self.state.session.appPage.primaryColour : .gray)
+                        }
+                        .padding([.leading, .trailing], 4)
+                        .foregroundStyle(self.storedCVM == self.cvm || self.isHighlighted ? self.state.session.appPage.primaryColour : .white)
+                    }
+                    .useDefaultHover({ hover in self.isHighlighted = hover})
+                }
+                .background(self.isHighlighted ? self.state.theme.tint : .clear)
+                .buttonStyle(.plain)
+            }
+        }
+
+        internal struct MonthNavMinimize: View {
+            @EnvironmentObject private var state: Navigation
+            public var onTap: () -> Void
+            @State private var isHighlighted: Bool = false
+            @AppStorage("widgetlibrary.ui.entitycalendar.isMinimized") private var isMinimized: Bool = false
+
+            var body: some View {
+                Button {
+                    self.onTap()
+                } label: {
+                    ZStack {
+                        (self.isHighlighted ? self.state.theme.tint : .clear)
+                        Image(systemName: self.isMinimized ? "plus.square.fill" : "minus.square")
+                            .symbolRenderingMode(.hierarchical)
+                            .font(.title3)
+                    }
+                    .frame(width: 40)
+                }
+                .useDefaultHover({ hover in self.isHighlighted = hover})
+                .foregroundStyle(self.isHighlighted ? self.state.session.appPage.primaryColour : .white)
+                .buttonStyle(.plain)
+            }
+        }
+
         internal struct MonthNav: View {
             @EnvironmentObject private var state: Navigation
             @Binding public var date: Date
@@ -475,74 +536,39 @@ extension WidgetLibrary.UI {
 
             var body: some View {
                 GridRow {
-                    HStack {
+                    HStack(spacing: 0) {
                         MonthNavButton(orientation: .leading, date: $date)
                         Spacer()
-                        Button {
-                            self.isMinimized.toggle()
-                            self.cvm = 0
-                        } label: {
-                            Image(systemName: self.isMinimized ? "plus.square.fill" : "minus.square")
-                                .symbolRenderingMode(.hierarchical)
-                                .font(.title3)
-                        }
-                        .buttonStyle(.plain)
-                        .useDefaultHover({_ in})
-                        Button {
-                            self.isMinimized = false
-                            if self.cvm == 1 {
+                        MonthNavMinimize(
+                            onTap: {
+                                self.isMinimized.toggle()
                                 self.cvm = 0
-                            } else {
-                                self.cvm = 1
                             }
-                        } label: {
-                            ZStack(alignment: .leading) {
-                                (self.cvm == 1 ? self.state.theme.tint.opacity(0.8) : .clear)
-                                HStack(alignment: .center, spacing: 0) {
-                                    Text(
-                                        DateHelper.todayShort(
-                                            self.state.session.date,
-                                            format: "MMMM"
-                                        )
-                                    )
-                                    .multilineTextAlignment(.leading)
-                                    Spacer()
-                                    Image(systemName: "chevron.up.chevron.down")
-                                        .foregroundStyle(self.cvm == 1 ? Theme.base : .gray)
+                        )
+                        MonthNavSelector(
+                            onTap: {
+                                self.isMinimized = false
+                                if self.cvm == 1 {
+                                    self.cvm = 0
+                                } else {
+                                    self.cvm = 1
                                 }
-                                .padding([.leading, .trailing], 4)
-                                .foregroundStyle(self.cvm == 1 ? Theme.base : .white)
-                            }
-                            .useDefaultHover({_ in})
-                        }
-                        .buttonStyle(.plain)
-                        Button {
-                            self.isMinimized = false
-                            if self.cvm == 2 {
-                                self.cvm = 0
-                            } else {
-                                self.cvm = 2
-                            }
-                        } label: {
-                            ZStack(alignment: .leading) {
-                                (self.cvm == 2 ? self.state.theme.tint.opacity(0.8) : .clear)
-                                HStack(alignment: .center, spacing: 0) {
-                                    Text(
-                                        DateHelper.todayShort(
-                                            self.state.session.date,
-                                            format: "yyyy"
-                                        )
-                                    )
-                                    Spacer()
-                                    Image(systemName: "chevron.up.chevron.down")
-                                        .foregroundStyle(self.cvm == 2 ? Theme.base : .gray)
+                            },
+                            cvm: 1,
+                            format: "MMMM"
+                        )
+                        MonthNavSelector(
+                            onTap: {
+                                self.isMinimized = false
+                                if self.cvm == 2 {
+                                    self.cvm = 0
+                                } else {
+                                    self.cvm = 2
                                 }
-                                .padding([.leading, .trailing], 4)
-                                .foregroundStyle(self.cvm == 2 ? Theme.base : .white)
-                            }
-                            .useDefaultHover({_ in})
-                        }
-                        .buttonStyle(.plain)
+                            },
+                            cvm: 2,
+                            format: "yyyy"
+                        )
                         Spacer()
                         MonthNavButton(orientation: .trailing, date: $date)
                     }
