@@ -37,7 +37,7 @@ extension Today {
                 )
                 .background(self.usingBackgroundImage ? self.nav.session.appPage.primaryColour : self.nav.session.job?.backgroundColor.opacity(0.6) ?? .clear)
                 .focused($primaryTextFieldInFocus)
-                .alert("Please select a job from the sidebar", isPresented: $errorNoJob) {
+                .alert("Choose a job first", isPresented: $errorNoJob) {
                     Button("Ok", role: .cancel) {}
                 }
                 .alert("You need to write a message too. What are you working on?", isPresented: $errorNoContent) {
