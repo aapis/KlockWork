@@ -54,7 +54,7 @@ struct FancyTextField: View {
             }
         }
     }
-    
+
     private var oneLine: some View {
         TextField(placeholder, text: $text)
             .font(font)
@@ -66,7 +66,7 @@ struct FancyTextField: View {
             .background(fieldStatus == .standard ? (transparent ? Color.clear : bgColour) : fieldStatus == .unsaved ? Color.yellow : Theme.cGreen) // sorry
             .lineLimit(1)
             .disabled(disabled ?? false)
-            .foregroundColor(disabled ?? false ? Color.gray : fieldStatus == .unsaved ? .black : fgColour)
+            .foregroundStyle((disabled ?? false ? Color.gray : fieldStatus == .unsaved ? .black : fgColour) ?? .white)
             .textSelection(.enabled)
             .focused($hasFocus)
     }
@@ -82,7 +82,7 @@ struct FancyTextField: View {
             .background(fieldStatus == .standard ? (transparent ? Color.clear : bgColour) : fieldStatus == .unsaved ? Color.yellow : Theme.cGreen) // sorry
             .lineLimit(lineLimit...)
             .disabled(disabled ?? false)
-            .foregroundColor(disabled ?? false ? Color.gray : fieldStatus == .unsaved ? .black : fgColour)
+            .foregroundStyle((disabled ?? false ? Color.gray : fieldStatus == .unsaved ? .black : fgColour) ?? .white)
             .textSelection(.enabled)
             .focused($hasFocus)
     }
@@ -99,7 +99,7 @@ struct FancyTextField: View {
             .scrollContentBackground(.hidden)
             .lineLimit(lineLimit...)
             .disabled(disabled ?? false)
-            .foregroundColor(disabled ?? false ? Color.gray : fieldStatus == .unsaved ? .black : fgColour)
+            .foregroundStyle((disabled ?? false ? Color.gray : fieldStatus == .unsaved ? .black : fgColour) ?? .white)
             .textSelection(.enabled)
             .focused($hasFocus)
     }

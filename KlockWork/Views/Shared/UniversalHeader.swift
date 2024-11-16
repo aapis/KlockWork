@@ -86,6 +86,8 @@ struct UniversalHeader: View {
 
     struct StandaloneWidget: View {
         @EnvironmentObject public var state: Navigation
+        @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+        @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
         public var type: PageConfiguration.EntityType
         public var buttons: AnyView?
         public var title: String?
@@ -95,10 +97,8 @@ struct UniversalHeader: View {
             // @TODO: merge these two cases
             if self.additionalDetails != nil {
                 ZStack(alignment: .topLeading) {
-                    TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
+                    TypedListRowBackground(colour: self.usingBackgroundImage ? self.state.session.appPage.primaryColour : self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
                         .frame(height: 120)
-                        .clipShape(.rect(cornerRadius: 5))
-
                     VStack(alignment: .leading) {
                         HStack(alignment: .top) {
                             UniversalHeader(title: self.title, entityType: self.type)
@@ -114,11 +114,11 @@ struct UniversalHeader: View {
                     }
                     .padding()
                 }
+                .clipShape(.rect(cornerRadius: 5))
             } else {
                 ZStack(alignment: .leading) {
-                    TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
+                    TypedListRowBackground(colour: self.usingBackgroundImage ? self.state.session.appPage.primaryColour : self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
                         .frame(height: 60)
-                        .clipShape(.rect(cornerRadius: 5))
                     UniversalHeader(title: self.title, entityType: self.type)
                         .padding(.leading)
                     HStack(alignment: .center) {
@@ -129,12 +129,15 @@ struct UniversalHeader: View {
                     }
                     .padding(.trailing)
                 }
+                .clipShape(.rect(cornerRadius: 5))
             }
         }
     }
 
     struct Widget: View {
         @EnvironmentObject public var state: Navigation
+        @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+        @AppStorage("settings.accessibility.showUIHints") private var showUIHints: Bool = true
         public var type: PageConfiguration.EntityType
         public var buttons: AnyView?
         public var title: String?
@@ -144,14 +147,11 @@ struct UniversalHeader: View {
             // @TODO: merge these two cases
             if self.additionalDetails != nil {
                 ZStack(alignment: .topLeading) {
-                    TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
+                    TypedListRowBackground(colour: self.usingBackgroundImage ? self.state.session.appPage.primaryColour : self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
                         .frame(height: 120)
-                        .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
-
                     VStack(alignment: .leading) {
                         HStack(alignment: .top) {
                             UniversalHeader(title: self.title, entityType: self.type)
-
                             if let buttons = self.buttons {
                                 HStack(alignment: .center) {
                                     Spacer()
@@ -163,11 +163,11 @@ struct UniversalHeader: View {
                     }
                     .padding()
                 }
+                .clipShape(.rect(topLeadingRadius: 5, bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5, topTrailingRadius: 5))
             } else {
                 ZStack(alignment: .leading) {
-                    TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
+                    TypedListRowBackground(colour: self.usingBackgroundImage ? self.state.session.appPage.primaryColour : self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
                         .frame(height: 60)
-                        .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
                     UniversalHeader(title: self.title, entityType: self.type)
                         .padding(.leading)
                     HStack(alignment: .center) {
@@ -178,6 +178,7 @@ struct UniversalHeader: View {
                     }
                     .padding(.trailing)
                 }
+                .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
             }
         }
     }

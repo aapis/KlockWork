@@ -24,37 +24,13 @@ struct GeneralSettings: View {
     @AppStorage("general.shouldCheckLinkStatus") private var shouldCheckLinkStatus: Bool = false
     @AppStorage("general.appTintChoice") private var appTintChoice: Int = 0
     @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+    @AppStorage("general.wallpaperChoice") private var wallpaperChoice: Int = 0
 
     var body: some View {
         Form {
-            Group {
-                Text("Visual appearance")
+            Section("Visual appearance") {
                 Toggle("Tiger stripe table rows", isOn: $tigerStriped)
                 Toggle("Auto-correct text in text boxes", isOn: $enableAutoCorrection)
-            }
-
-            Group {
-                Toggle("Enable experimental features (EXERCISE CAUTION)", isOn: $showExperimentalFeatures)
-
-                if showExperimentalFeatures {
-                    Toggle("Enable SessionInspector panel", isOn: $showSessionInspector)
-                    Toggle("Spotlight (data is NOT shared with Apple)", isOn: $spotlightIndex)
-                }
-            }
-
-            Group {
-                Text("Export options")
-                Toggle("Synchronize display and export columns", isOn: $syncColumns)
-                    .help("Both table display and data exports will use the same columns set under 'Today > Display columns'")
-            }
-
-//          @TODO: uncomment when Spotlight search is fixed
-//            Group {
-//                Text("External services")
-//                Toggle("Spotlight (data is NOT shared with Apple)", isOn: $spotlightIndex)
-//            }
-
-            Group {
                 Picker("App tint colour", selection: $appTintChoice) {
                     Text("Blue").tag(1)
                     Text("Purple").tag(2)
@@ -77,9 +53,40 @@ struct GeneralSettings: View {
                         self.state.theme.tint = Color.yellow
                     }
                 }
-
                 Toggle("Use background image", isOn: $usingBackgroundImage)
+                if self.usingBackgroundImage {
+                    Picker("Wallpaper", selection: $wallpaperChoice) {
+                        Text("Choose...").tag(0)
+                        Text("Square heaven").tag(1)
+                        Text("Hotel rave").tag(2)
+                        Text("Goldschlager").tag(3)
+                    }
+                    .onChange(of: self.wallpaperChoice) {
+                        self.state.theme.wallpaperChoice = self.wallpaperChoice
+                    }
+                }
             }
+
+            Group {
+                Toggle("Enable experimental features (EXERCISE CAUTION)", isOn: $showExperimentalFeatures)
+
+                if showExperimentalFeatures {
+                    Toggle("Enable SessionInspector panel", isOn: $showSessionInspector)
+                    Toggle("Spotlight (data is NOT shared with Apple)", isOn: $spotlightIndex)
+                }
+            }
+
+            Group {
+                Text("Export options")
+                Toggle("Synchronize display and export columns", isOn: $syncColumns)
+                    .help("Both table display and data exports will use the same columns set under 'Today > Display columns'")
+            }
+
+//          @TODO: uncomment when Spotlight search is fixed
+//            Group {
+//                Text("External services")
+//                Toggle("Spotlight (data is NOT shared with Apple)", isOn: $spotlightIndex)
+//            }
 
             Group {
                 Picker("Number of columns to display", selection: $columns) {

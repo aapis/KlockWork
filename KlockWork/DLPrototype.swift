@@ -19,6 +19,7 @@ struct DLPrototype: App {
     private let persistenceController = PersistenceController.shared
     @AppStorage("notifications.interval") private var notificationInterval: Int = 0
     @AppStorage("general.appTintChoice") private var appTintChoice: Int = 0
+    @AppStorage("general.wallpaperChoice") private var wallpaperChoice: Int = 0
     @StateObject public var updater: ViewUpdater = ViewUpdater()
     @StateObject public var nav: Navigation = Navigation()
     @State private var searching: Bool = false
@@ -109,6 +110,9 @@ struct DLPrototype: App {
         default:
             self.nav.theme.tint = .yellow
         }
+
+        // Set theme wallpaper
+        self.nav.theme.wallpaperChoice = self.wallpaperChoice
 
         if let plan = nav.session.plan {
             nav.planning.jobs = plan.jobs as! Set<Job>

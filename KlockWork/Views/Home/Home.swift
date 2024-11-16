@@ -95,23 +95,31 @@ struct Home: View {
         if self.usingBackgroundImage {
             ZStack {
                 self.nav.session.appPage.primaryColour.saturation(0.7)
-                Image("wallpaper-03")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
+                switch self.nav.theme.wallpaperChoice {
+                case 1: Image("wallpaper-01").resizable().aspectRatio(contentMode: .fill)
+                case 2: Image("wallpaper-02").resizable().aspectRatio(contentMode: .fill)
+                case 3: Image("wallpaper-03").resizable().aspectRatio(contentMode: .fill)
+                default:
+                    EmptyView()
+                }
                 Theme.base.blendMode(.softLight).opacity(0.5)
             }
         }
     }
 
     @ViewBuilder var Sidebar: some View {
-        ZStack(alignment: .trailing) {
-            Color.white
-                .opacity(0.4)
-                .blendMode(.softLight)
-            LinearGradient(colors: [.white, .clear], startPoint: .trailing, endPoint: .leading)
-                .opacity(0.1)
-                .blendMode(.softLight)
-                .frame(width: 40)
+        ZStack(alignment: .leading) {
+            HStack {
+                LinearGradient(colors: [Theme.lightWhite, .clear], startPoint: .leading, endPoint: .trailing)
+                    .opacity(0.2)
+                    .blendMode(.softLight)
+                    .frame(width: 80)
+                Spacer()
+                LinearGradient(colors: [Theme.lightWhite, .clear], startPoint: .trailing, endPoint: .leading)
+                    .opacity(0.2)
+                    .blendMode(.softLight)
+                    .frame(width: 40)
+            }
 
             VStack(alignment: .leading, spacing: 0) {
                 ZStack(alignment: .bottomLeading) {
@@ -137,7 +145,9 @@ struct Home: View {
     @ViewBuilder var TabBackground: some View {
         VStack(alignment: .leading) {
             ZStack(alignment: .topTrailing) {
-                Theme.toolbarColour
+                if !self.usingBackgroundImage {
+                    Theme.toolbarColour
+                }
                 LinearGradient(gradient: Gradient(colors: [Theme.base, Theme.toolbarColour]), startPoint: .topTrailing, endPoint: .topLeading)
                     .opacity(0.25)
 

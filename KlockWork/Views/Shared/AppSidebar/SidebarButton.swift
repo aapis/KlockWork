@@ -22,6 +22,7 @@ struct SidebarButton: View, Identifiable {
     @EnvironmentObject public var nav: Navigation
     @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
     @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearching: Bool = false
+    @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
     public let id: UUID = UUID()
     public var destination: AnyView
     public let pageType: Page
@@ -225,6 +226,9 @@ struct SidebarButton: View, Identifiable {
         }
         if self.highlighted {
             self.pageType.colour
+        }
+        if self.usingBackgroundImage {
+            Theme.darkBtnColour
         }
     }
 }

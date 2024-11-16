@@ -11,6 +11,7 @@ import KWCore
 struct Today: View {
     @EnvironmentObject public var state: Navigation
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
+    @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -30,6 +31,14 @@ struct Today: View {
                 }
             }
         }
-        .background(Theme.toolbarColour)
+        .background(self.PageBackground)
+    }
+
+    @ViewBuilder private var PageBackground: some View {
+        ZStack {
+            if !self.usingBackgroundImage {
+                Theme.toolbarColour
+            }
+        }
     }
 }

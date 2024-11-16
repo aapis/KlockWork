@@ -1,5 +1,5 @@
 //
-//  LinkDashboard.swift
+//  FindDashboard.swift
 //  DLPrototype
 //
 //  Created by Ryan Priebe on 2023-02-04.
@@ -17,6 +17,7 @@ struct FindDashboard: View {
     @AppStorage("dashboard.showWelcomeHeader") private var showWelcomeHeader: Bool = true
     @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
     @AppStorage("dashboard.showRecentSearchesAboveResults") private var showRecentSearchesAboveResults: Bool = true
+    @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
     @State public var searching: Bool = false
     public var location: WidgetLocation = .content
     @State private var searchText: String = ""
@@ -61,8 +62,6 @@ struct FindDashboard: View {
                 )
                 .clipShape(.rect(topLeadingRadius: self.showWelcomeHeader || self.location == .sidebar ? 0 : 5, topTrailingRadius: self.showWelcomeHeader || self.location == .sidebar ? 0 : 5))
             }
-            Divider()
-
             if self.location == .sidebar {
                 UI.BoundSearchTypeFilter(
                     showRecords: $showRecords,
@@ -89,7 +88,7 @@ struct FindDashboard: View {
                         }
                         .frame(height: 250)
                     }
-                    .background(self.location == .content ? Theme.rowColour : .clear)
+                    .background(self.PageBackground)
                     .foregroundStyle(.gray)
                 }
             }
@@ -199,6 +198,15 @@ struct FindDashboard: View {
                 } else {
                     nav.setInspector()
                 }
+            }
+        }
+    }
+
+    @ViewBuilder private var PageBackground: some View {
+        ZStack {
+            self.location == .content ? Theme.rowColour : .clear
+            if self.usingBackgroundImage {
+                self.nav.session.appPage.primaryColour
             }
         }
     }

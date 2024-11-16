@@ -48,6 +48,7 @@ extension Today.LogTable {
         @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
         @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
         @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
+        @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
 
         var body: some View {
             GridRow {
@@ -57,7 +58,7 @@ extension Today.LogTable {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                                 .opacity(0.6)
                                 .blendMode(.softLight)
-                            self.page.primaryColour.opacity(0.4)
+                            self.page.primaryColour.opacity(self.usingBackgroundImage ? 1 : 0.4)
                         }
                     }
                     .frame(width: 15)
@@ -69,7 +70,7 @@ extension Today.LogTable {
                                     LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                                         .opacity(0.6)
                                         .blendMode(.softLight)
-                                    self.page.primaryColour.opacity(0.4)
+                                    self.page.primaryColour.opacity(self.usingBackgroundImage ? 1 : 0.4)
                                     Text(column.name)
                                         .padding(8)
                                 }
@@ -165,7 +166,6 @@ extension Today.LogTable {
                 VStack(alignment: .leading, spacing: 0) {
                     VStack(spacing: 0) {
                         ToolbarButtons(records: self.recordsOnCurrentPage)
-                        Divider().foregroundStyle(.white)
                         // @TODO: fix search
                         //                if nav.session.toolbar.showSearch {
                         //                    UI.BoundSearchBar(text: $searchText, disabled: (records.count == 0))

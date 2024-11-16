@@ -1237,7 +1237,7 @@ extension WidgetLibrary {
             var body: some View {
                 GridRow {
                     ZStack(alignment: .topLeading) {
-                        self.state.parent?.appPage.primaryColour.opacity(0.6) ?? Theme.subHeaderColour
+                        self.state.parent?.appPage.primaryColour ?? Theme.subHeaderColour
                         LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                             .blendMode(.softLight)
                             .opacity(0.4)
@@ -1356,7 +1356,7 @@ extension WidgetLibrary {
                     .padding([.leading, .trailing])
                 }
                 .frame(height: 57)
-                .background(self.state.session.job?.backgroundColor.opacity(0.6) ?? Theme.textBackground)
+                .background(Theme.textBackground)
                 .onAppear(perform: self.actionOnAppear)
             }
         }
@@ -1367,7 +1367,8 @@ extension WidgetLibrary {
             @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
             @AppStorage("searchbar.shared") private var searchText: String = ""
             @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
-            @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
+            @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false // @TODO: remove
+            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
             @Binding public var text: String
             public var disabled: Bool = false
             public var placeholder: String? = "Search..."
@@ -1386,7 +1387,6 @@ extension WidgetLibrary {
                                 self.primaryTextFieldInFocus = true
                             }
                         }
-
                     HStack(alignment: .center) {
                         Image(systemName: "magnifyingglass")
                             .font(.title2)
@@ -1410,7 +1410,7 @@ extension WidgetLibrary {
                     .padding([.leading, .trailing])
                 }
                 .frame(height: 57)
-                .background(Theme.textBackground)
+                .background(self.usingBackgroundImage ? self.state.session.appPage.primaryColour : Theme.textBackground)
                 .onAppear(perform: self.actionOnAppear)
             }
         }

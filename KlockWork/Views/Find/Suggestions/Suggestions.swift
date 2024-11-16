@@ -13,6 +13,7 @@ extension FindDashboard {
     struct Suggestions: View {
         @EnvironmentObject public var nav: Navigation
         @AppStorage("GlobalSidebarWidgets.isSearching") private var isSearching: Bool = false
+        @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
         @Binding public var searchText: String
         @Binding public var publishedOnly: Bool
         @Binding public var showRecords: Bool
@@ -78,7 +79,7 @@ extension FindDashboard {
                     .padding(.top, self.location == .content ? 16 : 8)
                 }
             }
-            .background(location == .content ? Theme.rowColour : Color.clear)
+            .background(self.PageBackground)
             .onChange(of: isSearching) {
                 nav.session.search.cancel()
                 nav.setInspector()
@@ -98,7 +99,19 @@ extension FindDashboard {
                 }
             }
         }
-        
+
+        @ViewBuilder private var PageBackground: some View {
+            if !self.usingBackgroundImage {
+                ZStack {
+                    location == .content ? Theme.rowColour : Color.clear
+                }
+            } else {
+                ZStack {
+                    self.nav.session.appPage.primaryColour
+                }
+            }
+        }
+
         struct SuggestedJobs: View {
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String
