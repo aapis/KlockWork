@@ -185,7 +185,7 @@ struct FancyGenericToolbar: View {
                 }
             }
         }
-        .clipShape(.rect(cornerRadius: self.standalone ? 5 : 0))
+        .clipShape(.rect(cornerRadius: self.standalone && self.location == .content ? 5 : 0))
     }
 
     struct TabView: View {
@@ -288,8 +288,8 @@ struct FancyGenericToolbar: View {
             }
             .clipShape(
                 .rect(
-                    topLeadingRadius: 5,
-                    topTrailingRadius: 5
+                    topLeadingRadius: self.location == .content ? 5 : 0,
+                    topTrailingRadius: self.location == .content ? 5 : 0
                 )
             )
             .buttonStyle(.plain)
