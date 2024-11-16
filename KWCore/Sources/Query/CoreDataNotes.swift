@@ -264,7 +264,7 @@ public class CoreDataNotes {
         }
 
         let predicate = NSPredicate(
-            format: "((postedDate > %@ && postedDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@))",
+            format: "mJob != nil && ((postedDate > %@ && postedDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@))",
             start! as CVarArg,
             end! as CVarArg,
             start! as CVarArg,
@@ -286,7 +286,7 @@ public class CoreDataNotes {
             )
         } else {
             predicate = NSPredicate(
-                format: "alive == true && ANY mJob == %@",
+                format: "alive == true && mJob == %@",
                 job
             )
         }
@@ -483,7 +483,7 @@ public class CoreDataNotes {
     /// - Parameter predicate: A predicate to modify the results
     /// - Returns: Array<Note>
     private func query(_ predicate: NSPredicate? = nil) -> [Note] {
-        lock.lock()
+//        lock.lock()
 
         var results: [Note] = []
         let fetch: NSFetchRequest<Note> = Note.fetchRequest()
@@ -492,6 +492,7 @@ public class CoreDataNotes {
         if predicate != nil {
             fetch.predicate = predicate
         }
+        fetch.returnsObjectsAsFaults = false
 
         do {
             results = try moc!.fetch(fetch)
@@ -505,7 +506,7 @@ public class CoreDataNotes {
             print("[error] \(error)")
         }
 
-        lock.unlock()
+//        lock.unlock()
 
         return results
     }
@@ -514,21 +515,18 @@ public class CoreDataNotes {
     /// - Parameter predicate: A predicate to modify the results
     /// - Returns: Int
     private func count(_ predicate: NSPredicate) -> Int {
-        lock.lock()
-
         var count = 0
         let fetch: NSFetchRequest<Note> = Note.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Note.postedDate?, ascending: true)]
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
+        fetch.returnsObjectsAsFaults = false
 
         do {
             count = try moc!.fetch(fetch).count
         } catch {
             print("[error] CoreDataNotes.query Unable to find records for predicate \(predicate.predicateFormat)")
         }
-
-        lock.unlock()
 
         return count
     }

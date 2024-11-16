@@ -481,7 +481,7 @@ public class CoreDataTasks {
         }
 
         let predicate = NSPredicate(
-            format: "completedDate == nil && cancelledDate == nil && ((due > %@ && due <= %@) || (created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@))",
+            format: "owner != nil && completedDate == nil && cancelledDate == nil && ((due > %@ && due <= %@) || (created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@))",
             start! as CVarArg,
             end! as CVarArg,
             start! as CVarArg,
@@ -607,13 +607,12 @@ public class CoreDataTasks {
     }
 
     private func query(_ predicate: NSPredicate, _ sort: [NSSortDescriptor] = [NSSortDescriptor(keyPath: \LogTask.created?, ascending: false)]) -> [LogTask] {
-        lock.lock()
-
         var results: [LogTask] = []
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
         fetch.sortDescriptors = sort
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
+        fetch.returnsObjectsAsFaults = false
 
         do {
             results = try moc!.fetch(fetch)
@@ -621,27 +620,22 @@ public class CoreDataTasks {
             print("[error] CoreDataTasks.query Unable to find records for predicate \(predicate.predicateFormat)")
         }
 
-        lock.unlock()
-
         return results
     }
 
     private func count(_ predicate: NSPredicate) -> Int {
-        lock.lock()
-
         var count = 0
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogTask.created?, ascending: true)]
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
+        fetch.returnsObjectsAsFaults = false
 
         do {
             count = try moc!.fetch(fetch).count
         } catch {
             print("[error] CoreDataTasks.query Unable to find records for predicate \(predicate.predicateFormat)")
         }
-
-        lock.unlock()
 
         return count
     }

@@ -157,7 +157,7 @@ public class CoreDataRecords: ObservableObject {
         if let start = start {
             if let end = end {
                 let linkLength = 40
-                let records = CoreDataRecords(moc: self.moc!).inRange(
+                let records = self.inRange(
                     start: start,
                     end: end
                 )
@@ -174,17 +174,19 @@ public class CoreDataRecords: ObservableObject {
                                     label = label.prefix(linkLength) + "..."
                                 }
                                 if !activities.contains(where: {$0.name == label}) {
-                                    activities.append(
-                                        Activity(
-                                            name: label,
-                                            help: sMatch,
-                                            page: .today,
-                                            type: .activity,
-                                            job: record.job,
-                                            source: record,
-                                            url: URL(string: sMatch) ?? nil
+                                    if let job = record.job {
+                                        activities.append(
+                                            Activity(
+                                                name: label,
+                                                help: sMatch,
+                                                page: .today,
+                                                type: .activity,
+                                                job: job,
+                                                source: record,
+                                                url: URL(string: sMatch) ?? nil
+                                            )
                                         )
-                                    )
+                                    }
                                 }
                             }
                         }
@@ -640,7 +642,7 @@ public class CoreDataRecords: ObservableObject {
     /// - Returns: Array<LogRecord>
     public func inRange(start: Date, end: Date) -> [LogRecord] {
         let predicate = NSPredicate(
-            format: "timestamp > %@ && timestamp <= %@ || lastUpdate > %@ && lastUpdate <= %@",
+            format: "job != nil && (timestamp > %@ && timestamp <= %@ || lastUpdate > %@ && lastUpdate <= %@)",
             start as CVarArg,
             end as CVarArg,
             start as CVarArg,
@@ -766,14 +768,13 @@ public class CoreDataRecords: ObservableObject {
     }
 
     private func query(_ predicate: NSPredicate, sort: [NSSortDescriptor] = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)]) -> [LogRecord] {
-        lock.lock()
-
         var results: [LogRecord] = []
         let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
         fetch.sortDescriptors = sort
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
-        
+        fetch.returnsObjectsAsFaults = false
+
         do {
             if let model = self.moc {
                 results = try model.fetch(fetch)
@@ -781,29 +782,24 @@ public class CoreDataRecords: ObservableObject {
         } catch {
             print("[error] CoreDataRecords.query Unable to find records for predicate \(predicate.predicateFormat)")
         }
-        
-        lock.unlock()
-        
+
         return results
     }
     
     private func count(_ predicate: NSPredicate) -> Int {
-        lock.lock()
-        
         var count = 0
         let fetch: NSFetchRequest<LogRecord> = LogRecord.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogRecord.timestamp, ascending: false)]
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
-        
+        fetch.returnsObjectsAsFaults = false
+
         do {
             count = try moc!.fetch(fetch).count
         } catch {
             print("[error] CoreDataRecords.query Unable to find records for predicate \(predicate.predicateFormat)")
         }
-        
-        lock.unlock()
-        
+
         return count
     }
 }

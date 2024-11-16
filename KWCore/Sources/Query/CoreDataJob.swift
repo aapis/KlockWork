@@ -650,13 +650,12 @@ public class CoreDataJob: ObservableObject {
     }
 
     private func query(_ predicate: NSPredicate, sort: [NSSortDescriptor] = [NSSortDescriptor(keyPath: \Job.created?, ascending: true)]) -> [Job] {
-        lock.lock()
-
         var results: [Job] = []
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.sortDescriptors = sort
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
+        fetch.returnsObjectsAsFaults = false
 
         do {
             results = try moc!.fetch(fetch)
@@ -664,27 +663,22 @@ public class CoreDataJob: ObservableObject {
             print("[error] CoreDataJob.query Unable to find records for predicate \(predicate.predicateFormat)")
         }
 
-        lock.unlock()
-
         return results
     }
 
     private func count(_ predicate: NSPredicate) -> Int {
-        lock.lock()
-
         var count = 0
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.created?, ascending: true)]
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
+        fetch.returnsObjectsAsFaults = false
 
         do {
             count = try moc!.fetch(fetch).count
         } catch {
             print("[error] CoreDataJob.query Unable to find records for predicate \(predicate.predicateFormat)")
         }
-
-        lock.unlock()
 
         return count
     }
