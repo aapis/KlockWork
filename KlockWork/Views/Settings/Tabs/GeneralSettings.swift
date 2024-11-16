@@ -56,10 +56,10 @@ struct GeneralSettings: View {
                 Toggle("Use background image", isOn: $usingBackgroundImage)
                 if self.usingBackgroundImage {
                     Picker("Wallpaper", selection: $wallpaperChoice) {
-                        Text("Choose...").tag(0)
-                        Text("Square heaven").tag(1)
-                        Text("Hotel rave").tag(2)
-                        Text("Goldschlager").tag(3)
+                        Text("Square Heaven").tag(1)
+                        Text("Hotel Rave").tag(2)
+                        Text("Goldschläger").tag(3)
+                        Text("Moon Landing").tag(4)
                     }
                     .onChange(of: self.wallpaperChoice) {
                         self.state.theme.wallpaperChoice = self.wallpaperChoice
