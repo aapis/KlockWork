@@ -232,9 +232,9 @@ extension Home {
             ),
             ToolbarButton(
                 id: 1,
-                helpText: "",
+                helpText: "Global app settings",
                 icon: "gearshape",
-                labelText: "App settings",
+                labelText: "Global app settings",
                 contents: AnyView(
                     GlobalSettingsPanel()
                 )

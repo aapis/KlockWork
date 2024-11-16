@@ -240,7 +240,7 @@ struct FancyGenericToolbar: View {
                             if self.button.showIcon {
                                 button.icon
                                     .padding(0)
-                                    .foregroundStyle(.white)
+                                    .foregroundStyle(self.selected == self.button.id ? self.nav.session.appPage.primaryColour : .white)
                                     .symbolRenderingMode(.hierarchical)
                             }
                         } else {
