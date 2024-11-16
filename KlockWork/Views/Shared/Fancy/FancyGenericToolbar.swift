@@ -220,7 +220,7 @@ struct FancyGenericToolbar: View {
                             )
                             :
                             (
-                                highlighted ? Theme.tabColour.opacity(0.6) : Theme.base.opacity(0.1)
+                                highlighted ? Theme.darkBtnColour.opacity(1) : Theme.darkBtnColour.opacity(0.8)
                             )
                         )
                     }
@@ -237,7 +237,8 @@ struct FancyGenericToolbar: View {
                             if self.button.showIcon {
                                 button.icon
                                     .padding(0)
-                                    .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
+                                    .foregroundStyle(.white)
+                                    .symbolRenderingMode(.hierarchical)
                             }
                         } else {
                             if self.showTabTitles && self.button.showLabel {
@@ -251,8 +252,9 @@ struct FancyGenericToolbar: View {
                             HStack(alignment: .center, spacing: 8) {
                                 if self.button.showIcon {
                                     self.button.icon
-                                        .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
+                                        .foregroundStyle(.white)
                                         .font(.title3)
+                                        .symbolRenderingMode(.hierarchical)
                                 }
 
                                 if self.selected == self.button.id && self.button.labelText != nil && self.showTabTitles {
@@ -270,7 +272,8 @@ struct FancyGenericToolbar: View {
                             } else {
                                 if self.button.showIcon {
                                     self.button.icon
-                                        .foregroundStyle(self.selected == self.button.id ? .white : .white.opacity(0.5))
+                                        .symbolRenderingMode(.hierarchical)
+                                        .foregroundStyle(.white)
                                         .font(.title3)
                                         .padding([.top, .bottom], 10)
                                         .padding([.leading, .trailing])
@@ -282,8 +285,8 @@ struct FancyGenericToolbar: View {
             }
             .clipShape(
                 .rect(
-                    topLeadingRadius: self.selected == self.button.id || self.highlighted ? 5 : 0,
-                    topTrailingRadius: self.selected == self.button.id || self.highlighted ? 5 : 0
+                    topLeadingRadius: 5,
+                    topTrailingRadius: 5
                 )
             )
             .buttonStyle(.plain)

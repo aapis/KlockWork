@@ -609,6 +609,7 @@ extension WidgetLibrary.UI.Buttons.FooterActivity {
     /// - Returns: Void
     private func actionOnAppear() -> Void {
         // @TODO: still fucked after rewrite, investigate
+        // https://www.avanderlee.com/concurrency/tasks/
 //        if self.start != nil && self.end != nil {
 //            let fromRecords = Task { return await CoreDataRecords(moc: self.state.moc).links(start: self.start!, end: self.end!) }
 //            let fromTasks = Task { return await CoreDataTasks(moc: self.state.moc).links(start: self.start!, end: self.end!) }
