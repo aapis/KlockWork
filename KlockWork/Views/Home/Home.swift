@@ -25,6 +25,7 @@ struct Home: View {
     @State private var timer: Timer? = nil
     @State private var buttons: [PageGroup: [SidebarButton]] = [:]
     @State private var sidebarTabs: [ToolbarButton] = []
+    @State private var customImage: Image? = nil
 
     /// Sidebar widgets that live in every sidebar
     static public let standardSidebarWidgets: [ToolbarButton] = [
@@ -89,19 +90,30 @@ struct Home: View {
         .onChange(of: self.nav.session.company) { self.actionOnChangeCompany() }
         .onChange(of: self.nav.session.project) { self.createToolbarButtons() }
         .onChange(of: self.nav.session.job) { self.createToolbarButtons() }
+        .onChange(of: self.nav.theme.wallpaperChoice) {
+            if self.nav.theme.wallpaperChoice == 1 {
+                self.actionOnChangeCustomBackgroundImage()
+            }
+        }
+        .onChange(of: self.nav.theme.customWallpaperUrl) { self.actionOnChangeCustomBackgroundImage() }
     }
 
     @ViewBuilder private var PageBackground: some View {
         if self.usingBackgroundImage {
             ZStack {
                 self.nav.session.appPage.primaryColour.saturation(0.7)
-                switch self.nav.theme.wallpaperChoice {
-                case 1: Image("wallpaper-01").resizable().aspectRatio(contentMode: .fill)
-                case 2: Image("wallpaper-02").resizable().aspectRatio(contentMode: .fill)
-                case 3: Image("wallpaper-03").resizable().aspectRatio(contentMode: .fill)
-                case 4: Image("wallpaper-04").resizable().aspectRatio(contentMode: .fill)
-                default:
-                    EmptyView()
+                if self.nav.theme.wallpaperChoice == 1 {
+                    if let customImage = self.customImage {
+                        customImage.resizable().aspectRatio(contentMode: .fill)
+                    }
+                } else if self.nav.theme.wallpaperChoice == 2 {
+                    Image("wallpaper-01").resizable().aspectRatio(contentMode: .fill)
+                } else if self.nav.theme.wallpaperChoice == 3 {
+                    Image("wallpaper-02").resizable().aspectRatio(contentMode: .fill)
+                } else if self.nav.theme.wallpaperChoice == 4 {
+                    Image("wallpaper-03").resizable().aspectRatio(contentMode: .fill)
+                } else if self.nav.theme.wallpaperChoice == 5 {
+                    Image("wallpaper-04").resizable().aspectRatio(contentMode: .fill)
                 }
                 Theme.base.blendMode(.softLight).opacity(0.5)
             }
@@ -198,6 +210,7 @@ extension Home {
         self.nav.parent = self.selectedSidebarButton
         self.checkForEvents()
         self.createToolbarButtons()
+        self.actionOnChangeCustomBackgroundImage()
 
         KeyboardHelper.monitor(key: .keyDown, callback: {
             self.isSearchStackShowing = false
@@ -248,6 +261,20 @@ extension Home {
         ]
     }
     
+    /// Find user-selected background image and use it, if available. Fires in onChange callback
+    /// - Returns: Void
+    private func actionOnChangeCustomBackgroundImage() -> Void {
+        print("DERPO bg changed")
+        if let stored = self.nav.theme.customWallpaperUrl {
+//            self.nav.theme.customWallpaperUrl = stored
+            if let imageData = try? Data(contentsOf: stored) {
+                if let image = NSImage(data: imageData) {
+                    self.customImage = Image(nsImage: image)
+                }
+            }
+        }
+    }
+
     /// Creates all toolbar buttons
     /// - Returns: Void
     private func createToolbarButtons() -> Void {

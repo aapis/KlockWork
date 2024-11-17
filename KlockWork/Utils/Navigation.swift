@@ -87,6 +87,7 @@ public struct AppTheme {
     var tint: Color = .yellow
     var page: PageConfiguration.AppPage = .planning
     var wallpaperChoice: Int = 0
+    var customWallpaperUrl: URL?
 }
 
 public enum PageGroup: Hashable {

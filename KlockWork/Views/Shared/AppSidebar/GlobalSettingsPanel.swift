@@ -40,10 +40,11 @@ struct GlobalSettingsPanel: View {
             private var wallpapers: [Wallpaper] {
                 [
                     Wallpaper(asset: "", label: "None", choice: 0),
-                    Wallpaper(asset: "wallpaper-01", label: "Square Heaven", choice: 1),
-                    Wallpaper(asset: "wallpaper-02", label: "Hotel Rave", choice: 2),
-                    Wallpaper(asset: "wallpaper-03", label: "Goldschläger", choice: 3),
-                    Wallpaper(asset: "wallpaper-04", label: "Moon Landing", choice: 4)
+                    Wallpaper(asset: "", label: "Custom", choice: 1),
+                    Wallpaper(asset: "wallpaper-01", label: "Square Heaven", choice: 2),
+                    Wallpaper(asset: "wallpaper-02", label: "Hotel Rave", choice: 3),
+                    Wallpaper(asset: "wallpaper-03", label: "Goldschläger", choice: 4),
+                    Wallpaper(asset: "wallpaper-04", label: "Moon Landing", choice: 5)
                 ]
             }
             private var colours: [AccentColour] {
@@ -70,11 +71,6 @@ struct GlobalSettingsPanel: View {
                 VStack(alignment: .leading, spacing: 0) {
                     HStack {
                         Text("Wallpaper")
-                        Spacer()
-                    }
-                    .padding(8)
-                    HStack {
-                        Text("Use background image")
                         Spacer()
                         Toggle("", isOn: $usingBackgroundImage)
                     }
@@ -114,11 +110,14 @@ struct GlobalSettingsPanel: View {
                 @EnvironmentObject private var state: Navigation
                 @AppStorage("general.wallpaperChoice") private var wallpaperChoice: Int = 0
                 @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+                @AppStorage("general.theme.isFilePickerPresented") private var isFilePickerPresented: Bool = false
+                @AppStorage("general.theme.customBackground") private var customBackground: URL?
                 var id: UUID = UUID()
                 var asset: String
                 var label: String
                 var choice: Int = 0
                 @State private var isHighlighted: Bool = false
+                @State private var customImage: Image? = nil
 
                 var body: some View {
                     Button {
@@ -126,15 +125,25 @@ struct GlobalSettingsPanel: View {
                         self.wallpaperChoice = self.choice
                         if self.choice == 0 {
                             self.usingBackgroundImage = false
+                        } else if self.choice == 1 {
+                            self.isFilePickerPresented = true
                         } else {
                             self.usingBackgroundImage = true
                         }
                     } label: {
                         ZStack {
-                            Image(self.asset)
-                                .resizable()
-                                .frame(height: 100)
-                                .border(width: 8, edges: [.top, .bottom, .leading, .trailing], color: self.choice == self.wallpaperChoice ? self.state.theme.tint.opacity(1) : .white.opacity(0.5))
+                            if self.choice == 1, let image = self.customImage {
+                                image
+                                    .resizable()
+                                    .frame(height: 100)
+                                    .border(width: 8, edges: [.top, .bottom, .leading, .trailing], color: self.choice == self.wallpaperChoice ? self.state.theme.tint.opacity(1) : .white.opacity(0.5))
+
+                            } else {
+                                Image(self.asset)
+                                    .resizable()
+                                    .frame(height: 100)
+                                    .border(width: 8, edges: [.top, .bottom, .leading, .trailing], color: self.choice == self.wallpaperChoice ? self.state.theme.tint.opacity(1) : .white.opacity(0.5))
+                            }
                             if self.isHighlighted {
                                 Text(self.choice == self.wallpaperChoice ? "Current" : "Set \(self.label)")
                                     .padding(6)
@@ -151,9 +160,29 @@ struct GlobalSettingsPanel: View {
                         }
                         .useDefaultHover({ hover in self.isHighlighted = hover})
                     }
+                    .onAppear(perform: {
+                        if let stored = self.state.theme.customWallpaperUrl {
+                            if let imageData = try? Data(contentsOf: stored) {
+                                if let image = NSImage(data: imageData) {
+                                    self.customImage = Image(nsImage: image)
+                                }
+                            }
+                        }
+                    })
                     .clipShape(.rect(cornerRadius: 5))
                     .help(self.label)
                     .buttonStyle(.plain)
+                    .fileImporter(isPresented: $isFilePickerPresented, allowedContentTypes: [.image]) { result in
+                        switch result {
+                        case .success(let url):
+                            guard url.startAccessingSecurityScopedResource() else { return }
+                            UserDefaults.standard.set(url, forKey: "customBackgroundUrl")
+                            self.state.theme.customWallpaperUrl = url
+                        case .failure(let error):
+                            print("[error] TSP.Pages.Themes.Wallpaper Error selecting wallpaper: \(error)")
+                        }
+                    }
+
                 }
             }
 

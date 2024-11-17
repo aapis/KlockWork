@@ -113,6 +113,10 @@ struct DLPrototype: App {
 
         // Set theme wallpaper
         self.nav.theme.wallpaperChoice = self.wallpaperChoice
+        // Prepare for custom wallpaper
+        if let stored = UserDefaults.standard.url(forKey: "customBackgroundUrl") {
+            self.nav.theme.customWallpaperUrl = stored
+        }
 
         if let plan = nav.session.plan {
             nav.planning.jobs = plan.jobs as! Set<Job>
