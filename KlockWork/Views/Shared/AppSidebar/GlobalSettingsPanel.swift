@@ -35,6 +35,7 @@ struct GlobalSettingsPanel: View {
         // MARK: GlobalSettingsPanel.Pages.Themes
         internal struct Themes: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
             private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
             private var wallpapers: [Wallpaper] {
                 [
@@ -72,18 +73,22 @@ struct GlobalSettingsPanel: View {
                         Spacer()
                     }
                     .padding(8)
-                    ZStack(alignment: .bottom) {
+                    HStack {
+                        Text("Use background image")
+                        Spacer()
+                        Toggle("", isOn: $usingBackgroundImage)
+                    }
+                    .foregroundStyle(self.usingBackgroundImage ? .white : .gray)
+                    .padding(8)
+                    if self.usingBackgroundImage {
                         ScrollView(showsIndicators: false) {
                             LazyVGrid(columns: self.twoCol, alignment: .leading) {
                                 ForEach(self.wallpapers) { wallpaper in wallpaper }
                             }
                         }
                         .padding(8)
-                        LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
-                            .blendMode(.softLight)
-                            .frame(height: 30)
+                        .frame(height: 140)
                     }
-                    .frame(height: 140)
                 }
                 .background(Theme.textBackground)
             }

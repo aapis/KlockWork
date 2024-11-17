@@ -132,7 +132,6 @@ struct Home: View {
                     scrollable: false
                 )
                 .padding(.top, 2)
-                Spacer()
                 UI.EntityCalendar.Widget()
             }
         }
@@ -236,7 +235,14 @@ extension Home {
                 icon: "gearshape",
                 labelText: "Global app settings",
                 contents: AnyView(
-                    GlobalSettingsPanel()
+                    ZStack(alignment: .bottomLeading) {
+                        GlobalSettingsPanel()
+                        Divider()
+                        LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
+                            .opacity(0.2)
+                            .blendMode(.softLight)
+                            .frame(height: 20)
+                    }
                 )
             )
         ]

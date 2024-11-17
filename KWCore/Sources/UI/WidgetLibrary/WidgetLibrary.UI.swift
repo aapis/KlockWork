@@ -696,8 +696,12 @@ extension WidgetLibrary {
                             .padding()
                             .background(
                                 ZStack {
-                                    self.usingBackgroundImage ? Theme.textBackground: self.state.session.appPage.primaryColour
-                                    Theme.textBackground
+                                    if self.usingBackgroundImage {
+                                        Theme.textBackground
+                                    } else {
+                                        self.state.session.appPage.primaryColour
+                                        Theme.textBackground
+                                    }
                                 }
                             )
                             .clipShape(.rect(cornerRadius: 5))
@@ -1161,7 +1165,7 @@ extension WidgetLibrary {
                         buttons: self.tabs,
                         standalone: true,
                         location: .content,
-                        mode: .full,
+                        mode: .compact,
                         page: self.state.session.appPage
                     )
                     .padding(.bottom)
