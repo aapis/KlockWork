@@ -18,6 +18,7 @@ struct FindDashboard: View {
     @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
     @AppStorage("dashboard.showRecentSearchesAboveResults") private var showRecentSearchesAboveResults: Bool = true
     @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+    @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
     @State public var searching: Bool = false
     public var location: WidgetLocation = .content
     @State private var searchText: String = ""
@@ -205,7 +206,7 @@ struct FindDashboard: View {
     @ViewBuilder private var PageBackground: some View {
         ZStack {
             self.location == .content ? Theme.rowColour : .clear
-            if self.usingBackgroundImage {
+            if self.usingBackgroundImage || self.usingBackgroundColour {
                 self.nav.session.appPage.primaryColour
             }
         }

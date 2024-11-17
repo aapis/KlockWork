@@ -21,6 +21,7 @@ struct Home: View {
     @AppStorage("notifications.interval") private var notificationInterval: Int = 0
     @AppStorage("widgetlibrary.ui.isSidebarPresented") private var isSidebarPresented: Bool = false
     @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+    @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
     @State public var selectedSidebarButton: Page = .dashboard
     @State private var timer: Timer? = nil
     @State private var buttons: [PageGroup: [SidebarButton]] = [:]
@@ -33,6 +34,7 @@ struct Home: View {
             id: 0,
             helpText: "Resources",
             icon: "globe",
+            selectedIcon: "globe",
             labelText: "Resources",
             contents: AnyView(UI.UnifiedSidebar.Widget())
         ),
@@ -40,6 +42,7 @@ struct Home: View {
             id: 1,
             helpText: "Outline",
             icon: "menucard",
+            selectedIcon: "menucard.fill",
             labelText: "Outline",
             contents: AnyView(OutlineWidget())
         ),
@@ -47,6 +50,7 @@ struct Home: View {
             id: 2,
             helpText: "Calendar events",
             icon: "calendar",
+            selectedIcon: "calendar",
             labelText: "Calendar events",
             contents: AnyView(WidgetLibrary.UI.Sidebar.EventsWidget())
         ),
@@ -116,6 +120,10 @@ struct Home: View {
                     Image("wallpaper-04").resizable().aspectRatio(contentMode: .fill)
                 }
                 Theme.base.blendMode(.softLight).opacity(0.5)
+            }
+        } else if self.usingBackgroundColour, let colour = self.nav.theme.customBackgroundColour {
+            ZStack {
+                colour
             }
         }
     }
@@ -224,7 +232,8 @@ extension Home {
             ToolbarButton(
                 id: 0,
                 helpText: "",
-                icon: "sun.min.fill",
+                icon: "sun.min",
+                selectedIcon: "sun.min.fill",
                 labelText: "Cryptic message.",
                 contents: AnyView(
                     ZStack(alignment: .bottomLeading) {
@@ -246,6 +255,7 @@ extension Home {
                 id: 1,
                 helpText: "Global app settings",
                 icon: "gearshape",
+                selectedIcon: "gearshape.fill",
                 labelText: "Global app settings",
                 contents: AnyView(
                     ZStack(alignment: .bottomLeading) {

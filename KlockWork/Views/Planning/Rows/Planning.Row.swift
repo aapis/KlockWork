@@ -13,6 +13,7 @@ extension Planning {
     struct Row: View {
         @EnvironmentObject public var state: Navigation
         @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+        @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
         var job: Job
         var index: Array<Job>.Index?
         var type: PlanningObjectType
@@ -38,7 +39,7 @@ extension Planning {
                     }
                 }
             }
-            .background(self.usingBackgroundImage ? self.state.session.appPage.primaryColour : Theme.rowColour)
+            .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.state.session.appPage.primaryColour : Theme.rowColour)
         }
     }
 }

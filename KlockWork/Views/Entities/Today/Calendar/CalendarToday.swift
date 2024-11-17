@@ -17,6 +17,7 @@ struct CalendarToday: View {
     @AppStorage("today.startOfDay") public var startOfDay: Int = 9
     @AppStorage("today.endOfDay") public var endOfDay: Int = 18
     @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+    @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
     public var page: PageConfiguration.AppPage = .today
     @State private var inProgress: [EKEvent] = []
     @State private var upcoming: [EKEvent] = []
@@ -118,7 +119,7 @@ struct CalendarToday: View {
             Spacer()
         }
         .onAppear(perform: createEventChips)
-        .background(self.usingBackgroundImage ? self.state.session.appPage.primaryColour : Theme.darkBtnColour)
+        .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.state.session.appPage.primaryColour : Theme.darkBtnColour)
     }
 
     private func updateChips() -> Void {

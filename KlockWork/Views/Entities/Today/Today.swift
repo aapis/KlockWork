@@ -12,6 +12,7 @@ struct Today: View {
     @EnvironmentObject public var state: Navigation
     @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
     @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+    @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -36,7 +37,7 @@ struct Today: View {
 
     @ViewBuilder private var PageBackground: some View {
         ZStack {
-            if !self.usingBackgroundImage {
+            if !self.usingBackgroundImage && !self.usingBackgroundColour {
                 Theme.toolbarColour
             }
         }

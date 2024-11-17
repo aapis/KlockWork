@@ -14,6 +14,7 @@ extension FindDashboard {
         @EnvironmentObject public var nav: Navigation
         @AppStorage("GlobalSidebarWidgets.isSearching") private var isSearching: Bool = false
         @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+        @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
         @Binding public var searchText: String
         @Binding public var publishedOnly: Bool
         @Binding public var showRecords: Bool
@@ -101,7 +102,7 @@ extension FindDashboard {
         }
 
         @ViewBuilder private var PageBackground: some View {
-            if !self.usingBackgroundImage {
+            if !self.usingBackgroundImage && !self.usingBackgroundColour {
                 ZStack {
                     location == .content ? Theme.rowColour : Color.clear
                 }

@@ -87,6 +87,7 @@ extension WidgetLibrary.UI {
                 struct Widget: View {
                     @EnvironmentObject public var state: Navigation
                     @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+                    @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
                     private var tabs: [ToolbarButton] = []
 
                     var body: some View {
@@ -104,7 +105,7 @@ extension WidgetLibrary.UI {
                     }
 
                     @ViewBuilder private var PageBackground: some View {
-                        if !self.usingBackgroundImage {
+                        if !self.usingBackgroundImage && !self.usingBackgroundColour {
                             ZStack {
                                 self.state.session.appPage.primaryColour.saturation(0.7)
                                 Theme.base.blendMode(.softLight).opacity(0.5)

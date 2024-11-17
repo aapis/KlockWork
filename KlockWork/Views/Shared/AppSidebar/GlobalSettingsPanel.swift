@@ -36,6 +36,9 @@ struct GlobalSettingsPanel: View {
         internal struct Themes: View {
             @EnvironmentObject private var state: Navigation
             @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+            @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
+//            @AppStorage("general.theme.solidBgColour") private var solidBgColour: [Double] = [0.0]
+            @State private var backgroundColour: Color = .yellow
             private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
             private var wallpapers: [Wallpaper] {
                 [
@@ -62,9 +65,42 @@ struct GlobalSettingsPanel: View {
 
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
+                    UI.Sidebar.Title(text: "Appearance", transparent: true)
+                    self.PrimaryColourSelector
                     self.SelectorWallpaper
                     self.SelectorAccentColour
                 }
+            }
+
+            var PrimaryColourSelector: some View {
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack {
+                        Text("Background Colour")
+                        Spacer()
+                        Toggle("", isOn: $usingBackgroundColour)
+                            .onChange(of: self.usingBackgroundColour) {
+                                self.usingBackgroundImage = false
+                            }
+                    }
+                    .foregroundStyle(self.usingBackgroundColour ? .white : .gray)
+                    .padding(8)
+                    if self.usingBackgroundColour {
+                        VStack {
+                            ColorPicker("Solid", selection: self.$backgroundColour)
+                                .onChange(of: self.backgroundColour) {
+//                                    self.solidBgColour = self.backgroundColour.toStored()
+                                    self.state.theme.customBackgroundColour = self.backgroundColour
+                                    UserDefaults.standard.set(self.backgroundColour.toStored(), forKey: "customBackgroundColour")
+//                                    UserDefaults.standard.set(url, forKey: "customBackgroundUrl")
+                                }
+
+                            Spacer()
+
+                        }
+                        .frame(height: 140)
+                    }
+                }
+                .background(Theme.textBackground)
             }
 
             var SelectorWallpaper: some View {
@@ -145,10 +181,17 @@ struct GlobalSettingsPanel: View {
                                     .border(width: 8, edges: [.top, .bottom, .leading, .trailing], color: self.choice == self.wallpaperChoice ? self.state.theme.tint.opacity(1) : .white.opacity(0.5))
                             }
                             if self.isHighlighted {
-                                Text(self.choice == self.wallpaperChoice ? "Current" : "Set \(self.label)")
-                                    .padding(6)
-                                    .background(Theme.base.opacity(0.7))
-                                    .clipShape(.rect(cornerRadius: 5))
+//                                if self.choice == 1 {
+//                                    Text("")
+//                                        .padding(6)
+//                                        .background(Theme.base.opacity(0.7))
+//                                        .clipShape(.rect(cornerRadius: 5))
+//                                } else {
+                                    Text(self.choice == self.wallpaperChoice ? "Current" : "Set \(self.label)")
+                                        .padding(6)
+                                        .background(Theme.base.opacity(0.7))
+                                        .clipShape(.rect(cornerRadius: 5))
+//                                }
                             } else {
                                 if self.choice == self.wallpaperChoice {
                                     Text(self.label)
@@ -218,8 +261,32 @@ struct GlobalSettingsPanel: View {
 
         // MARK: GlobalSettingsPanel.Pages.General
         internal struct General: View {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures: Bool = false
+            @AppStorage("general.theme.kioskMode") private var inKioskMode: Bool = false
+//            private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
+
             var body: some View {
-                Text("General settings")
+                VStack(alignment: .leading, spacing: 0) {
+                    UI.Sidebar.Title(text: "General", transparent: true)
+                    if self.showExperimentalFeatures {
+                        self.KioskModeSelector
+                    }
+                }
+            }
+
+            var KioskModeSelector: some View {
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(alignment: .top) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                        Text("Kiosk Mode")
+                        Spacer()
+                        Toggle("", isOn: self.$inKioskMode)
+                    }
+                    .help("Experimental feature: Kiosk mode")
+                    .padding(8)
+                }
+                .background(Theme.textBackground)
             }
         }
     }
@@ -234,6 +301,7 @@ extension GlobalSettingsPanel {
                 id: 0,
                 helpText: "",
                 icon: "paintbrush",
+                selectedIcon: "paintbrush.fill",
                 labelText: "Appearance",
                 contents: AnyView(
                     GlobalSettingsPanel.Pages.Themes()
@@ -242,7 +310,8 @@ extension GlobalSettingsPanel {
             ToolbarButton(
                 id: 1,
                 helpText: "",
-                icon: "xmark",
+                icon: "circle.grid.3x3",
+                selectedIcon: "circle.grid.3x3.fill",
                 labelText: "App settings",
                 contents: AnyView(
                     GlobalSettingsPanel.Pages.General()

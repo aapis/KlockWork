@@ -12,6 +12,7 @@ import KWCore
 struct Planning: View {
     @EnvironmentObject public var nav: Navigation
     @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+    @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
     private let maxItems: Int = 6
     private let title: String = "Planning"
     private let page: PageConfiguration.AppPage = .planning
@@ -86,7 +87,7 @@ struct Planning: View {
     }
 
     @ViewBuilder private var PageBackground: some View {
-        if !self.usingBackgroundImage {
+        if !self.usingBackgroundImage && !self.usingBackgroundColour {
             ZStack {
                 self.nav.session.appPage.primaryColour.saturation(0.7)
                 Theme.base.blendMode(.softLight).opacity(0.5)

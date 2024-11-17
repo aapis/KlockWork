@@ -14,6 +14,7 @@ public struct Inspector: View, Identifiable {
     @EnvironmentObject public var nav: Navigation
     @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
     @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+    @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
     public let id: UUID = UUID()
     public var entity: NSManagedObject? = nil
     public var event: EKEvent? = nil
@@ -57,7 +58,7 @@ public struct Inspector: View, Identifiable {
         .padding([.trailing, .top, .bottom])
         .padding(.leading, self.location == .content ? 0 : 20)
         .frame(maxWidth: panelWidth)
-        .background(self.location == .content ? self.usingBackgroundImage ? self.nav.session.appPage.primaryColour : Theme.rowColour : .clear)
+        .background(self.location == .content ? self.usingBackgroundImage || self.usingBackgroundColour ? self.nav.session.appPage.primaryColour : Theme.rowColour : .clear)
     }
     public var EntityInspectorBody: some View {
         VStack(alignment: .leading) {

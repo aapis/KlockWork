@@ -10,7 +10,6 @@ import SwiftUI
 import KWCore
 
 struct DashboardSidebar: View {
-    typealias UI = WidgetLibrary.UI
     @State private var tabs: [ToolbarButton] = []
 
     var body: some View {
@@ -25,7 +24,8 @@ extension DashboardSidebar {
             ToolbarButton(
                 id: 0,
                 helpText: "Today in history",
-                icon: "clock.badge.questionmark.fill",
+                icon: "clock.badge.questionmark",
+                selectedIcon: "clock.badge.questionmark.fill",
                 labelText: "History",
                 contents: AnyView(TodayInHistoryWidget())
             ),
@@ -33,6 +33,7 @@ extension DashboardSidebar {
                 id: 1,
                 helpText: "Resources",
                 icon: "globe",
+                selectedIcon: "globe",
                 labelText: "Resources",
                 contents: AnyView(UI.UnifiedSidebar.Widget())
             ),
@@ -40,6 +41,7 @@ extension DashboardSidebar {
                 id: 2,
                 helpText: "Companies & Projects",
                 icon: "menucard",
+                selectedIcon: "menucard.fill",
                 labelText: "Outline",
                 contents: AnyView(OutlineWidget())
             ),
@@ -47,6 +49,7 @@ extension DashboardSidebar {
                 id: 3,
                 helpText: "Calendar events",
                 icon: "calendar",
+                selectedIcon: "calendar",
                 labelText: "Calendar events",
                 contents: AnyView(WidgetLibrary.UI.Sidebar.EventsWidget())
             )

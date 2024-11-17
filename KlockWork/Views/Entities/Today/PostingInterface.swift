@@ -15,6 +15,7 @@ extension Today {
         @AppStorage("today.commandLineMode") private var commandLineMode: Bool = false
         @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
         @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+        @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
         @FocusState private var primaryTextFieldInFocus: Bool
         @State private var text: String = ""
         @State private var errorNoJob: Bool = false
@@ -35,7 +36,7 @@ extension Today {
                     fgColour: self.nav.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
                     text: $text
                 )
-                .background(self.usingBackgroundImage ? self.nav.session.appPage.primaryColour : self.nav.session.job?.backgroundColor.opacity(0.6) ?? .clear)
+                .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.nav.session.appPage.primaryColour : self.nav.session.job?.backgroundColor.opacity(0.6) ?? .clear)
                 .focused($primaryTextFieldInFocus)
                 .alert("Choose a job first", isPresented: $errorNoJob) {
                     Button("Ok", role: .cancel) {}

@@ -22,6 +22,7 @@ struct ToolbarButton: Hashable, Equatable {
     public var id: Int
     public var helpText: String
     public var icon: AnyView?
+    public var selectedIcon: AnyView?
     public var label: AnyView?
     public var labelText: String?
     public var contents: AnyView?
@@ -37,7 +38,7 @@ struct ToolbarButton: Hashable, Equatable {
         self.showLabel = showLabel
     }
 
-    init(id: Int, helpText: String, icon: String, labelText: String, contents: AnyView?, showIcon: Bool = true, showLabel: Bool = true) {
+    init(id: Int, helpText: String, icon: String, selectedIcon: String? = "", labelText: String, contents: AnyView?, showIcon: Bool = true, showLabel: Bool = true) {
         self.id = id
         self.helpText = helpText
         self.icon = AnyView(Image(systemName: icon).symbolRenderingMode(.hierarchical).font(.title3))
@@ -47,13 +48,16 @@ struct ToolbarButton: Hashable, Equatable {
                 Text(labelText)
             }
         )
+        if selectedIcon != nil {
+            self.selectedIcon = AnyView(Image(systemName: selectedIcon!).symbolRenderingMode(.hierarchical).font(.title3))
+        }
         self.labelText = labelText
         self.contents = contents
         self.showIcon = showIcon
         self.showLabel = showLabel
     }
 
-    init(id: Int, helpText: String, icon: Image, labelText: String, contents: AnyView?, showIcon: Bool = true, showLabel: Bool = true) {
+    init(id: Int, helpText: String, icon: Image, selectedIcon: Image? = nil, labelText: String, contents: AnyView?, showIcon: Bool = true, showLabel: Bool = true) {
         self.id = id
         self.helpText = helpText
         self.icon = AnyView(icon.symbolRenderingMode(.hierarchical).font(.title3))
@@ -63,6 +67,9 @@ struct ToolbarButton: Hashable, Equatable {
                 Text(labelText)
             }
         )
+        if selectedIcon != nil {
+            self.selectedIcon = AnyView(selectedIcon!.symbolRenderingMode(.hierarchical).font(.title3))
+        }
         self.labelText = labelText
         self.contents = contents
         self.showIcon = showIcon
@@ -240,7 +247,7 @@ struct FancyGenericToolbar: View {
                     if location == .sidebar {
                         if mode == .compact {
                             if self.button.showIcon {
-                                button.icon
+                                (self.selected == self.button.id ? self.button.selectedIcon : self.button.icon)
                                     .padding(0)
                                     .foregroundStyle(self.selected == self.button.id ? self.nav.session.appPage.primaryColour : Theme.lightWhite)
                                     .symbolRenderingMode(.hierarchical)

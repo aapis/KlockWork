@@ -50,6 +50,7 @@ extension Today.LogTable {
         @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
         @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
         @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+        @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
 
         var body: some View {
             GridRow {
@@ -59,7 +60,7 @@ extension Today.LogTable {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                                 .opacity(0.6)
                                 .blendMode(.softLight)
-                            self.page.primaryColour.opacity(self.usingBackgroundImage ? 1 : 0.4)
+                            self.page.primaryColour.opacity(self.usingBackgroundImage || self.usingBackgroundColour ? 1 : 0.4)
                         }
                     }
                     .frame(width: 15)
@@ -71,7 +72,7 @@ extension Today.LogTable {
                                     LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                                         .opacity(0.6)
                                         .blendMode(.softLight)
-                                    self.page.primaryColour.opacity(self.usingBackgroundImage ? 1 : 0.4)
+                                    self.page.primaryColour.opacity(self.usingBackgroundImage || self.usingBackgroundColour ? 1 : 0.4)
                                     Text(column.name)
                                         .padding(8)
                                 }
@@ -94,6 +95,7 @@ extension Today.LogTable {
     /// Plaintext conversion of the standard display
     struct Plain: View {
         @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+        @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
         public var records: [LogRecord]
 
         @State private var plain: String = ""
@@ -107,7 +109,7 @@ extension Today.LogTable {
                 if records.count > 0 {
                     FancyTextField(placeholder: "Records...", lineLimit: 10, text: $plain)
                 } else {
-                    LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: self.usingBackgroundImage ? Theme.base : Theme.rowColour)
+                    LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: self.usingBackgroundImage || self.usingBackgroundColour ? Theme.base : Theme.rowColour)
                 }
             }
             .onAppear(perform: actionOnAppear)
@@ -122,6 +124,7 @@ extension Today.LogTable {
         @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
         @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
         @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+        @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
         public var records: [LogRecord]
         @State private var offset: Int = 0
 
@@ -145,7 +148,7 @@ extension Today.LogTable {
                         }
                     }
                 } else {
-                    LogRowEmpty(message: "No records found for \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: self.usingBackgroundImage ? Theme.base : Theme.rowColour)
+                    LogRowEmpty(message: "No records found for \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: self.usingBackgroundImage || self.usingBackgroundColour ? Theme.base : Theme.rowColour)
                 }
             }
         }
@@ -204,6 +207,7 @@ extension Today.LogTable {
             @AppStorage("today.tableSortOrder") private var tableSortOrder: Int = 0
             @AppStorage("today.viewMode") public var index: Int = 0
             @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+            @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
             private let page: PageConfiguration.AppPage = .today
             @State private var grouped: [FancyStaticTextField] = []
             @State private var records: [LogRecord] = []
@@ -216,10 +220,10 @@ extension Today.LogTable {
                         if records.count > 0 {
                             ForEach(grouped) {group in group}
                         } else {
-                            LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: self.usingBackgroundImage ? Theme.base : Theme.rowColour)
+                            LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: self.usingBackgroundImage || self.usingBackgroundColour ? Theme.base : Theme.rowColour)
                         }
                     }
-                    .background(self.usingBackgroundImage ? self.nav.session.appPage.primaryColour : .clear)
+                    .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.nav.session.appPage.primaryColour : .clear)
                 }
                 .onAppear(perform: self.findRecords)
                 .onChange(of: nav.session.date) { self.findRecords() }
