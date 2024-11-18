@@ -160,7 +160,7 @@ struct Home: View {
     @ViewBuilder var TabBackground: some View {
         VStack(alignment: .leading) {
             ZStack(alignment: .topTrailing) {
-                if !self.usingBackgroundImage && !self.usingBackgroundColour {
+                if !(self.usingBackgroundImage || self.usingBackgroundColour) {
                     Theme.toolbarColour
                 }
                 LinearGradient(gradient: Gradient(colors: [Theme.base, Theme.toolbarColour]), startPoint: .topTrailing, endPoint: .topLeading)
