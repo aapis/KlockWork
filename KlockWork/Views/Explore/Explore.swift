@@ -11,8 +11,6 @@ import KWCore
 
 struct Explore: View {
     @EnvironmentObject public var state: Navigation
-    @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
-    @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -32,7 +30,7 @@ struct Explore: View {
     }
 
     @ViewBuilder private var PageBackground: some View {
-        if !self.usingBackgroundImage && !self.usingBackgroundColour {
+        if [.opaque, .classic].contains(self.state.theme.style) {
             ZStack {
                 self.state.session.appPage.primaryColour.saturation(0.7)
                 Theme.base.blendMode(.softLight).opacity(0.5)

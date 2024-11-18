@@ -16,10 +16,12 @@ typealias EType = PageConfiguration.EntityType
 
 @main
 struct DLPrototype: App {
+    typealias Style = GlobalSettingsPanel.Pages.Themes.Style
     private let persistenceController = PersistenceController.shared
     @AppStorage("notifications.interval") private var notificationInterval: Int = 0
     @AppStorage("general.appTintChoice") private var appTintChoice: Int = 0
     @AppStorage("general.wallpaperChoice") private var wallpaperChoice: Int = 0
+    @AppStorage("general.theme.style") private var interfaceStyle: Int = 0
     @StateObject public var updater: ViewUpdater = ViewUpdater()
     @StateObject public var nav: Navigation = Navigation()
     @State private var searching: Bool = false
@@ -120,6 +122,11 @@ struct DLPrototype: App {
         if let stored = UserDefaults.standard.object(forKey: "customBackgroundColour") {
             self.nav.theme.customWallpaperUrl = nil
             self.nav.theme.customBackgroundColour = Color.fromStored(stored as? [Double] ?? self.nav.theme.tint.toStored())
+        }
+        // Set UI style
+        self.interfaceStyle = UserDefaults.standard.integer(forKey: "interfaceStyle")
+        if let stored = Style.byIndex(self.interfaceStyle) {
+            self.nav.theme.style = stored
         }
 
         if let plan = nav.session.plan {

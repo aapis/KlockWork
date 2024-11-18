@@ -17,8 +17,6 @@ struct FindDashboard: View {
     @AppStorage("dashboard.showWelcomeHeader") private var showWelcomeHeader: Bool = true
     @AppStorage("widget.jobs.showPublished") private var allowAlive: Bool = true
     @AppStorage("dashboard.showRecentSearchesAboveResults") private var showRecentSearchesAboveResults: Bool = true
-    @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
-    @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
     @State public var searching: Bool = false
     public var location: WidgetLocation = .content
     @State private var searchText: String = ""
@@ -86,8 +84,9 @@ struct FindDashboard: View {
                                 .blendMode(.softLight)
                                 .opacity(0.3)
                             UI.LinkList(location: self.location, isSearching: !searching && activeSearchText.count >= 2)
+                                .padding(.bottom, 8)
                         }
-                        .frame(height: 250)
+                        .frame(height: 240)
                     }
                     .background(self.PageBackground)
                     .foregroundStyle(.gray)
@@ -205,8 +204,8 @@ struct FindDashboard: View {
 
     @ViewBuilder private var PageBackground: some View {
         ZStack {
-            self.location == .content ? Theme.rowColour : .clear
-            if self.usingBackgroundImage || self.usingBackgroundColour {
+            self.location == .content ? self.nav.session.appPage.primaryColour.opacity(0.3) : .clear
+            if [.opaque, .classic, .hybrid].contains(self.nav.theme.style) {
                 self.nav.session.appPage.primaryColour
             }
         }
@@ -391,6 +390,7 @@ extension FindDashboard {
     }
 
     struct RecordsMatchingString: View {
+        @EnvironmentObject private var state: Navigation
         @State private var text: String = ""
         @State private var loaded: Bool = false
         @FetchRequest private var entities: FetchedResults<LogRecord>
@@ -428,7 +428,7 @@ extension FindDashboard {
                             .padding()
                         Spacer()
                     }
-                    .background(Theme.subHeaderColour)
+                    .background([.opaque, .classic].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : Theme.subHeaderColour)
                 }
             }
             .onAppear(perform: actionOnAppear)

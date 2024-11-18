@@ -38,7 +38,9 @@ struct GlobalSettingsPanel: View {
             @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
             @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
             @State private var backgroundColour: Color = .yellow
+            @State private var style: Style = .opaque
             private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
+//            private var threeCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 3) }
             private var wallpapers: [Wallpaper] {
                 [
                     Wallpaper(asset: "", label: "None", choice: 0),
@@ -65,11 +67,40 @@ struct GlobalSettingsPanel: View {
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
                     UI.Sidebar.Title(text: "Appearance", transparent: true)
+                    self.StyleSelector
                     self.PrimaryColourSelector
                     self.SelectorWallpaper
                     self.SelectorAccentColour
                 }
                 .onAppear(perform: self.actionOnAppear)
+            }
+
+            var StyleSelector: some View {
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack {
+                        Text("Style")
+                        Spacer()
+                    }
+                    .padding(8)
+                    ScrollView(showsIndicators: false) {
+                        LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                            ForEach(Style.allCases.sorted(by: {$0.index < $1.index}), id: \.self) { style in
+                                Button {
+                                    self.state.theme.style = style
+                                    UserDefaults.standard.set(style.index, forKey: "interfaceStyle")
+                                } label: {
+                                    style.view
+                                }
+                                .help(style.label)
+                                .buttonStyle(.plain)
+                                .useDefaultHover({_ in})
+                            }
+                        }
+                    }
+                    .padding(8)
+                    .frame(height: 140)
+                }
+                .background(Theme.textBackground)
             }
 
             var PrimaryColourSelector: some View {
@@ -264,6 +295,94 @@ struct GlobalSettingsPanel: View {
                     }
                     .help(self.label)
                     .buttonStyle(.plain)
+                }
+            }
+
+            // MARK: GlobalSettingsPanel.Pages.Themes.Style
+            enum Style: CaseIterable {
+                case classic, opaque, glass, hybrid
+
+                var index: Int {
+                    switch self {
+                    case .classic: 0
+                    case .opaque: 1
+                    case .hybrid: 2
+                    case .glass: 3
+                    }
+                }
+
+                var view: some View {
+                    switch self {
+                    case .glass:
+                        VStack(alignment: .center) {
+                            Image("theme-style-glass")
+                                .mask(
+                                    Rectangle()
+                                        .frame(width: 150, height: 100)
+                                )
+                            Text(self.label)
+                        }
+                        .frame(width: 150, height: 130)
+                    case .hybrid:
+                        VStack(alignment: .center) {
+                            Image("theme-style-hybrid")
+                                .mask(
+                                    Rectangle()
+                                        .frame(width: 150, height: 100)
+                                )
+                            Text(self.label)
+                        }
+                        .frame(width: 150, height: 130)
+                    case .classic:
+                        VStack(alignment: .center) {
+                            Image("theme-style-classic")
+                                .mask(
+                                    Rectangle()
+                                        .frame(width: 150, height: 100)
+                                )
+                            Text(self.label)
+                        }
+                        .frame(width: 150, height: 130)
+                    default:
+                        VStack(alignment: .center) {
+                            Image("theme-style-opaque")
+                                .mask(
+                                    Rectangle()
+                                        .frame(width: 150, height: 100)
+                                )
+                            Text(self.label)
+                        }
+                        .frame(width: 150, height: 130)
+                    }
+                }
+
+                var label: String {
+                    switch self {
+                    case .glass: "Glass"
+                    case .hybrid: "Hybrid"
+                    case .classic: "Classic"
+                    default: "Opaque"
+                    }
+                }
+                
+                /// Find case by index value
+                /// - Parameter index: Int
+                /// - Returns: Optional(self)
+                static func byIndex(_ index: Int) -> Self? {
+                    for w in Self.allCases {
+                        if w.index == index {
+                            return w
+                        }
+                    }
+
+                    return nil
+                }
+
+                static func backgroundColourFrom(page: Page) -> Self? {
+//                    switch page {
+//                    case .
+//                    }
+                    return nil
                 }
             }
         }

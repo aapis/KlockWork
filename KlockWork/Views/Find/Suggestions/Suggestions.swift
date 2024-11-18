@@ -13,8 +13,6 @@ extension FindDashboard {
     struct Suggestions: View {
         @EnvironmentObject public var nav: Navigation
         @AppStorage("GlobalSidebarWidgets.isSearching") private var isSearching: Bool = false
-        @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
-        @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
         @Binding public var searchText: String
         @Binding public var publishedOnly: Bool
         @Binding public var showRecords: Bool
@@ -51,7 +49,6 @@ extension FindDashboard {
                                 )
                                 .help("Minimize suggestions")
                             }
-                            .padding([.leading, .trailing], 8)
                         }
 
                         if searchText.count >= 2 || isSearching {
@@ -68,8 +65,8 @@ extension FindDashboard {
                                     if showTerms {SuggestedTerms(searchText: $searchText, publishedOnly: $publishedOnly)}
                                     if showDefinitions {SuggestedDefinitions(searchText: $searchText, publishedOnly: $publishedOnly)}
                                 }
-                                .padding(self.location == .content ? 16 : 8)
-                                .background(Theme.textBackground)
+                                .padding(self.location == .content ? 0 : 8)
+//                                .background([.glass, .hybrid].contains(self.nav.theme.style) ? self.nav.session.appPage.primaryColour : Theme.textBackground)
                                 .clipShape(.rect(cornerRadius: 5))
                             }
                         }
@@ -102,9 +99,9 @@ extension FindDashboard {
         }
 
         @ViewBuilder private var PageBackground: some View {
-            if !self.usingBackgroundImage && !self.usingBackgroundColour {
+            if [.glass].contains(self.nav.theme.style) {
                 ZStack {
-                    location == .content ? Theme.rowColour : Color.clear
+                    location == .content ? self.nav.session.appPage.primaryColour.opacity(0.3) : Color.clear
                 }
             } else {
                 ZStack {

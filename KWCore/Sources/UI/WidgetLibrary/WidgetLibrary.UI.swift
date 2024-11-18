@@ -335,8 +335,6 @@ extension WidgetLibrary {
         struct ListExternalLinkItem: View {
             @EnvironmentObject private var state: Navigation
             @AppStorage("general.shouldCheckLinkStatus") private var shouldCheckLinkStatus: Bool = false
-            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
-            @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
             public var name: String
             public var icon: String?
             public var iconAsImage: Image?
@@ -430,7 +428,7 @@ extension WidgetLibrary {
                     .onAppear(perform: self.actionOnAppear)
                     .onChange(of: self.shouldCheckLinkStatus) { self.actionOnAppear() }
                     .contextMenu { ContextMenu(activity: self.activity) }
-                    .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background(self.state.theme.style == .opaque ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
                     .help(self.isLinkOnline ? self.activity.help : "Error: \(self.name) is down")
                 }
@@ -452,8 +450,6 @@ extension WidgetLibrary {
 
         struct ListLinkItem: View {
             @EnvironmentObject private var state: Navigation
-            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
-            @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
             public var page: Page
             public var name: String
             public var icon: String?
@@ -478,7 +474,7 @@ extension WidgetLibrary {
                             .foregroundStyle(.gray)
                     }
                     .padding(8)
-                    .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background(self.state.theme.style == .opaque ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
                 }
                 .buttonStyle(.plain)
@@ -488,8 +484,6 @@ extension WidgetLibrary {
 
         struct ListButtonItem: View {
             @EnvironmentObject private var state: Navigation
-            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
-            @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
             public var callback: (String) -> Void
             public var name: String
             public var icon: String?
@@ -518,7 +512,7 @@ extension WidgetLibrary {
                         }
                     }
                     .padding(8)
-                    .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background([.opaque, .classic, .hybrid].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
                 }
                 .buttonStyle(.plain)
@@ -528,30 +522,29 @@ extension WidgetLibrary {
 
         struct ListLinkTitle: View {
             @EnvironmentObject private var state: Navigation
-            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
-            @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
             public var type: ExploreActivityType?
             public var text: String?
+            private let styleConditions: [GlobalSettingsPanel.Pages.Themes.Style] = [.glass, .opaque, .hybrid]
 
             var body: some View {
                 HStack(alignment: .center) {
                     if let type = self.type {
                         Text(type.title.uppercased())
                             .padding(5)
-                            .foregroundStyle(self.usingBackgroundImage || self.usingBackgroundColour ? .white : .gray)
-                            .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.state.session.appPage.primaryColour : .clear)
+                            .foregroundStyle(self.styleConditions.contains(self.state.theme.style) ? .white : .gray)
+                            .background(self.styleConditions.contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : .clear)
                             .clipShape(.rect(cornerRadius: 5))
                     } else if let text = self.text {
                         Text(text.uppercased())
                             .padding(5)
-                            .foregroundStyle(self.usingBackgroundImage || self.usingBackgroundColour ? .white : .gray)
-                            .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.state.session.appPage.primaryColour : .clear)
+                            .foregroundStyle(self.styleConditions.contains(self.state.theme.style) ? .white : .gray)
+                            .background(self.styleConditions.contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : .clear)
                             .clipShape(.rect(cornerRadius: 5))
                     } else {
                         Text("Title")
                             .padding(5)
-                            .foregroundStyle(self.usingBackgroundImage || self.usingBackgroundColour ? .white : .gray)
-                            .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.state.session.appPage.primaryColour : .clear)
+                            .foregroundStyle(self.styleConditions.contains(self.state.theme.style) ? .white : .gray)
+                            .background(self.styleConditions.contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : .clear)
                             .clipShape(.rect(cornerRadius: 5))
                     }
                     Spacer()
@@ -700,7 +693,7 @@ extension WidgetLibrary {
                             .padding()
                             .background(
                                 ZStack {
-                                    if self.usingBackgroundImage {
+                                    if self.state.theme.style == .opaque {
                                         Theme.textBackground
                                     } else {
                                         self.state.session.appPage.primaryColour
@@ -745,10 +738,10 @@ extension WidgetLibrary {
                 VStack(alignment: .leading, spacing: 0) {
                     if self.location == .content {
                         HStack(alignment: .top) {
-                            LinkList
+                            self.LinkList
                         }
                     } else if self.location == .sidebar {
-                        LinkList
+                        self.LinkList
                     }
                 }
                 .padding(.top, 8)
@@ -780,7 +773,7 @@ extension WidgetLibrary {
                             .buttonStyle(.plain)
                             .useDefaultHover({_ in})
                         }
-                        .padding(8)
+                        .padding([.top, .bottom], 8)
 
                         ZStack(alignment: .bottom) {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
@@ -831,7 +824,7 @@ extension WidgetLibrary {
                                 .padding(self.location == .content ? 16 : 8)
                             }
                         }
-                        .background(Theme.textBackground)
+                        .background([.opaque, .classic, .hybrid].contains(self.state.theme.style) ? Theme.darkBtnColour : self.state.session.appPage.primaryColour)
                         .clipShape(.rect(cornerRadius: 5))
                     }
                 }
@@ -1198,8 +1191,6 @@ extension WidgetLibrary {
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showPeople") public var showPeople: Bool = true
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showTerms") public var showTerms: Bool = true
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showDefinitions") public var showDefinitions: Bool = true
-            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
-            @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
             public var id: UUID = UUID()
             public var historicalDate: Date
             public var view: AnyView?
@@ -1222,7 +1213,7 @@ extension WidgetLibrary {
                             LogRowEmpty(
                                 message: "No activities found for \(DateHelper.todayShort(self.historicalDate, format: "MMMM dd, YYYY"))",
                                 index: 0,
-                                colour: self.usingBackgroundImage || self.usingBackgroundColour ? Theme.base : Theme.rowColour
+                                colour: self.state.theme.style == .opaque ? Theme.base : Theme.rowColour
                             )
                         }
                     }
@@ -1261,11 +1252,15 @@ extension WidgetLibrary {
             var body: some View {
                 GridRow {
                     ZStack(alignment: .topLeading) {
-                        self.state.parent?.appPage.primaryColour ?? Theme.subHeaderColour
-                        LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
-                            .blendMode(.softLight)
-                            .opacity(0.4)
-                            .frame(height: 15)
+                        if [.opaque, .classic].contains(self.state.theme.style) {
+                            self.state.session.appPage.primaryColour
+                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                .blendMode(.softLight)
+                                .opacity(0.4)
+                                .frame(height: 15)
+                        } else {
+                            self.state.session.appPage.primaryColour.opacity(0.3)
+                        }
 
                         HStack(alignment: .center) {
                             UI.Toggle(isOn: $showRecords, eType: .records)
@@ -1391,9 +1386,6 @@ extension WidgetLibrary {
             @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
             @AppStorage("searchbar.shared") private var searchText: String = ""
             @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
-            @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false // @TODO: remove
-            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
-            @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
             @Binding public var text: String
             public var disabled: Bool = false
             public var placeholder: String? = "Search..."
@@ -1435,7 +1427,7 @@ extension WidgetLibrary {
                     .padding([.leading, .trailing])
                 }
                 .frame(height: 57)
-                .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.state.session.appPage.primaryColour : Theme.textBackground)
+                .background([.opaque, .classic].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : Theme.textBackground)
                 .onAppear(perform: self.actionOnAppear)
             }
         }

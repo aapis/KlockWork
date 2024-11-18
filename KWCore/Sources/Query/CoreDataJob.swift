@@ -208,7 +208,8 @@ public class CoreDataJob: ObservableObject {
 
         return jobs.sorted {$0.project!.pid > $1.project!.pid}
     }
-    
+
+    // @TODO: this is wrong
     public func getDefault() -> Job? {
         if let job = byId(11.0) {
             return job

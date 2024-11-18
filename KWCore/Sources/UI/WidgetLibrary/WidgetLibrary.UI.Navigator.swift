@@ -251,8 +251,6 @@ extension WidgetLibrary.UI.Navigator {
             @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateProject") private var shouldCreateProject: Bool = false
             @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateJob") private var shouldCreateJob: Bool = false
             @AppStorage("widget.navigator.depth") private var depth: Int = 0
-            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
-            @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
             public let entity: NSManagedObject
             public let location: WidgetLocation
             @State private var label: String = ""
@@ -430,7 +428,7 @@ extension WidgetLibrary.UI.Navigator {
                 }
                 .padding(8)
                 .background(
-                    self.viewModeIndex == 1 ? self.isHighlighted ? self.colour.opacity(0.9) : self.colour : self.usingBackgroundImage || self.usingBackgroundColour ? Theme.base.opacity(self.isHighlighted ? 0.4 : 0.3) : Color.white.opacity(self.isPresented ? 0.07 : self.isHighlighted ? 0.07 : 0.03)
+                    self.viewModeIndex == 1 ? self.isHighlighted ? self.colour.opacity(0.9) : self.colour : self.state.theme.style == .opaque ? Theme.base.opacity(self.isHighlighted ? 0.4 : 0.3) : Color.white.opacity(self.isPresented ? 0.07 : self.isHighlighted ? 0.07 : 0.03)
                 )
                 .useDefaultHover({ hover in self.isHighlighted = hover })
             }
