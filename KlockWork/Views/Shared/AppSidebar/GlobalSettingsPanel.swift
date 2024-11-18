@@ -37,7 +37,6 @@ struct GlobalSettingsPanel: View {
             @EnvironmentObject private var state: Navigation
             @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
             @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
-//            @AppStorage("general.theme.solidBgColour") private var solidBgColour: [Double] = [0.0]
             @State private var backgroundColour: Color = .yellow
             private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
             private var wallpapers: [Wallpaper] {
@@ -70,33 +69,36 @@ struct GlobalSettingsPanel: View {
                     self.SelectorWallpaper
                     self.SelectorAccentColour
                 }
+                .onAppear(perform: self.actionOnAppear)
             }
 
             var PrimaryColourSelector: some View {
                 VStack(alignment: .leading, spacing: 0) {
                     HStack {
-                        Text("Background Colour")
+                        Button("Solid colour", action: { self.usingBackgroundColour.toggle() })
+                            .buttonStyle(.plain)
+                            .useDefaultHover({ _ in})
                         Spacer()
-                        Toggle("", isOn: $usingBackgroundColour)
+                        Toggle("", isOn: self.$usingBackgroundColour)
                             .onChange(of: self.usingBackgroundColour) {
-                                self.usingBackgroundImage = false
+                                if self.usingBackgroundColour {
+                                    self.usingBackgroundImage = false
+
+                                }
                             }
                     }
                     .foregroundStyle(self.usingBackgroundColour ? .white : .gray)
                     .padding(8)
                     if self.usingBackgroundColour {
                         VStack {
-                            ColorPicker("Solid", selection: self.$backgroundColour)
+                            ColorPicker("Choose", selection: self.$backgroundColour)
                                 .onChange(of: self.backgroundColour) {
-//                                    self.solidBgColour = self.backgroundColour.toStored()
-                                    self.state.theme.customBackgroundColour = self.backgroundColour
                                     UserDefaults.standard.set(self.backgroundColour.toStored(), forKey: "customBackgroundColour")
-//                                    UserDefaults.standard.set(url, forKey: "customBackgroundUrl")
+                                    self.state.theme.customBackgroundColour = self.backgroundColour
                                 }
-
                             Spacer()
-
                         }
+                        .padding(8)
                         .frame(height: 140)
                     }
                 }
@@ -106,9 +108,16 @@ struct GlobalSettingsPanel: View {
             var SelectorWallpaper: some View {
                 VStack(alignment: .leading, spacing: 0) {
                     HStack {
-                        Text("Wallpaper")
+                        Button("Wallpaper", action: { self.usingBackgroundImage.toggle() })
+                            .buttonStyle(.plain)
+                            .useDefaultHover({ _ in})
                         Spacer()
-                        Toggle("", isOn: $usingBackgroundImage)
+                        Toggle("", isOn: self.$usingBackgroundImage)
+                            .onChange(of: self.usingBackgroundImage) {
+                                if self.usingBackgroundImage {
+                                    self.usingBackgroundColour = false
+                                }
+                            }
                     }
                     .foregroundStyle(self.usingBackgroundImage ? .white : .gray)
                     .padding(8)
@@ -128,7 +137,7 @@ struct GlobalSettingsPanel: View {
             var SelectorAccentColour: some View {
                 VStack(alignment: .leading, spacing: 0) {
                     HStack {
-                        Text("Accent Colour")
+                        Text("Accent colour")
                         Spacer()
                     }
                     .padding(8)
@@ -288,6 +297,16 @@ struct GlobalSettingsPanel: View {
                 }
                 .background(Theme.textBackground)
             }
+        }
+    }
+}
+
+extension GlobalSettingsPanel.Pages.Themes {
+    /// Onload handler. Sets view state.
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        if let colour = self.state.theme.customBackgroundColour {
+            self.backgroundColour = colour
         }
     }
 }

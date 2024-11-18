@@ -336,6 +336,7 @@ extension WidgetLibrary {
             @EnvironmentObject private var state: Navigation
             @AppStorage("general.shouldCheckLinkStatus") private var shouldCheckLinkStatus: Bool = false
             @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+            @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
             public var name: String
             public var icon: String?
             public var iconAsImage: Image?
@@ -429,7 +430,7 @@ extension WidgetLibrary {
                     .onAppear(perform: self.actionOnAppear)
                     .onChange(of: self.shouldCheckLinkStatus) { self.actionOnAppear() }
                     .contextMenu { ContextMenu(activity: self.activity) }
-                    .background(self.usingBackgroundImage ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
                     .help(self.isLinkOnline ? self.activity.help : "Error: \(self.name) is down")
                 }
@@ -452,6 +453,7 @@ extension WidgetLibrary {
         struct ListLinkItem: View {
             @EnvironmentObject private var state: Navigation
             @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+            @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
             public var page: Page
             public var name: String
             public var icon: String?
@@ -476,7 +478,7 @@ extension WidgetLibrary {
                             .foregroundStyle(.gray)
                     }
                     .padding(8)
-                    .background(self.usingBackgroundImage ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
                 }
                 .buttonStyle(.plain)
@@ -487,6 +489,7 @@ extension WidgetLibrary {
         struct ListButtonItem: View {
             @EnvironmentObject private var state: Navigation
             @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+            @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
             public var callback: (String) -> Void
             public var name: String
             public var icon: String?
@@ -515,7 +518,7 @@ extension WidgetLibrary {
                         }
                     }
                     .padding(8)
-                    .background(self.usingBackgroundImage ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
                 }
                 .buttonStyle(.plain)
@@ -526,6 +529,7 @@ extension WidgetLibrary {
         struct ListLinkTitle: View {
             @EnvironmentObject private var state: Navigation
             @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+            @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
             public var type: ExploreActivityType?
             public var text: String?
 
@@ -534,20 +538,20 @@ extension WidgetLibrary {
                     if let type = self.type {
                         Text(type.title.uppercased())
                             .padding(5)
-                            .foregroundStyle(self.usingBackgroundImage ? .white : .gray)
-                            .background(self.usingBackgroundImage ? self.state.session.appPage.primaryColour : .clear)
+                            .foregroundStyle(self.usingBackgroundImage || self.usingBackgroundColour ? .white : .gray)
+                            .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.state.session.appPage.primaryColour : .clear)
                             .clipShape(.rect(cornerRadius: 5))
                     } else if let text = self.text {
                         Text(text.uppercased())
                             .padding(5)
-                            .foregroundStyle(self.usingBackgroundImage ? .white : .gray)
-                            .background(self.usingBackgroundImage ? self.state.session.appPage.primaryColour : .clear)
+                            .foregroundStyle(self.usingBackgroundImage || self.usingBackgroundColour ? .white : .gray)
+                            .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.state.session.appPage.primaryColour : .clear)
                             .clipShape(.rect(cornerRadius: 5))
                     } else {
                         Text("Title")
                             .padding(5)
-                            .foregroundStyle(self.usingBackgroundImage ? .white : .gray)
-                            .background(self.usingBackgroundImage ? self.state.session.appPage.primaryColour : .clear)
+                            .foregroundStyle(self.usingBackgroundImage || self.usingBackgroundColour ? .white : .gray)
+                            .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.state.session.appPage.primaryColour : .clear)
                             .clipShape(.rect(cornerRadius: 5))
                     }
                     Spacer()
@@ -1195,6 +1199,7 @@ extension WidgetLibrary {
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showTerms") public var showTerms: Bool = true
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showDefinitions") public var showDefinitions: Bool = true
             @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+            @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
             public var id: UUID = UUID()
             public var historicalDate: Date
             public var view: AnyView?
@@ -1217,7 +1222,7 @@ extension WidgetLibrary {
                             LogRowEmpty(
                                 message: "No activities found for \(DateHelper.todayShort(self.historicalDate, format: "MMMM dd, YYYY"))",
                                 index: 0,
-                                colour: self.usingBackgroundImage ? Theme.base : Theme.rowColour
+                                colour: self.usingBackgroundImage || self.usingBackgroundColour ? Theme.base : Theme.rowColour
                             )
                         }
                     }
@@ -1388,6 +1393,7 @@ extension WidgetLibrary {
             @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
             @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false // @TODO: remove
             @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+            @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
             @Binding public var text: String
             public var disabled: Bool = false
             public var placeholder: String? = "Search..."
@@ -1429,7 +1435,7 @@ extension WidgetLibrary {
                     .padding([.leading, .trailing])
                 }
                 .frame(height: 57)
-                .background(self.usingBackgroundImage ? self.state.session.appPage.primaryColour : Theme.textBackground)
+                .background(self.usingBackgroundImage || self.usingBackgroundColour ? self.state.session.appPage.primaryColour : Theme.textBackground)
                 .onAppear(perform: self.actionOnAppear)
             }
         }

@@ -122,9 +122,7 @@ struct Home: View {
                 Theme.base.blendMode(.softLight).opacity(0.5)
             }
         } else if self.usingBackgroundColour, let colour = self.nav.theme.customBackgroundColour {
-            ZStack {
-                colour
-            }
+            ZStack { colour }
         }
     }
 
@@ -162,7 +160,7 @@ struct Home: View {
     @ViewBuilder var TabBackground: some View {
         VStack(alignment: .leading) {
             ZStack(alignment: .topTrailing) {
-                if !self.usingBackgroundImage {
+                if !self.usingBackgroundImage && !self.usingBackgroundColour {
                     Theme.toolbarColour
                 }
                 LinearGradient(gradient: Gradient(colors: [Theme.base, Theme.toolbarColour]), startPoint: .topTrailing, endPoint: .topLeading)
@@ -274,9 +272,7 @@ extension Home {
     /// Find user-selected background image and use it, if available. Fires in onChange callback
     /// - Returns: Void
     private func actionOnChangeCustomBackgroundImage() -> Void {
-        print("DERPO bg changed")
         if let stored = self.nav.theme.customWallpaperUrl {
-//            self.nav.theme.customWallpaperUrl = stored
             if let imageData = try? Data(contentsOf: stored) {
                 if let image = NSImage(data: imageData) {
                     self.customImage = Image(nsImage: image)

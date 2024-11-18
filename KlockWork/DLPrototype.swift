@@ -116,9 +116,10 @@ struct DLPrototype: App {
         // Prepare for custom wallpaper
         if let stored = UserDefaults.standard.url(forKey: "customBackgroundUrl") {
             self.nav.theme.customWallpaperUrl = stored
-        } else if let stored = UserDefaults.standard.object(forKey: "customBackgroundColour") {
+        }
+        if let stored = UserDefaults.standard.object(forKey: "customBackgroundColour") {
             self.nav.theme.customWallpaperUrl = nil
-            self.nav.theme.customBackgroundColour = Color.fromStored(stored as? [Double] ?? Theme.rowColourAsDouble)
+            self.nav.theme.customBackgroundColour = Color.fromStored(stored as? [Double] ?? self.nav.theme.tint.toStored())
         }
 
         if let plan = nav.session.plan {

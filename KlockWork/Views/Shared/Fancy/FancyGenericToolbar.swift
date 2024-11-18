@@ -84,6 +84,7 @@ enum ToolbarMode {
 struct FancyGenericToolbar: View {
     @EnvironmentObject public var nav: Navigation
     @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+    @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
     public var buttons: [ToolbarButton]
     public var standalone: Bool = false
     public var location: WidgetLocation = .content
@@ -102,7 +103,7 @@ struct FancyGenericToolbar: View {
                             (self.location == .content ? UIGradient() : nil)
                             // I'm sorry
                             (
-                                self.usingBackgroundImage ?
+                                self.usingBackgroundImage || self.usingBackgroundColour ?
                                     !self.standalone ? Theme.darkBtnColour.blendMode(.normal) : Color.clear.blendMode(.normal)
                                 :
                                     (self.nav.session.job?.backgroundColor ?? .white).opacity(self.standalone ? 0 : 1).blendMode(.softLight)
@@ -200,6 +201,7 @@ struct FancyGenericToolbar: View {
         @EnvironmentObject public var nav: Navigation
         @AppStorage("settings.accessibility.showTabTitles") private var showTabTitles: Bool = true
         @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+        @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
         public var button: ToolbarButton
         public var location: WidgetLocation
         @Binding public var selected: Int
@@ -264,7 +266,7 @@ struct FancyGenericToolbar: View {
                             HStack(alignment: .center, spacing: 8) {
                                 if self.button.showIcon {
                                     self.button.icon
-                                        .foregroundStyle(self.selected == self.button.id ? .white : self.usingBackgroundImage ? Theme.lightBase : Theme.lightWhite)
+                                        .foregroundStyle(self.selected == self.button.id ? .white : self.usingBackgroundImage || self.usingBackgroundColour ? Theme.lightBase : Theme.lightWhite)
                                         .font(.title3)
                                         .symbolRenderingMode(.hierarchical)
                                 }
@@ -285,7 +287,7 @@ struct FancyGenericToolbar: View {
                                 if self.button.showIcon {
                                     self.button.icon
                                         .symbolRenderingMode(.hierarchical)
-                                        .foregroundStyle(self.selected == self.button.id ? .white : self.usingBackgroundImage ? Theme.lightBase : Theme.lightWhite)
+                                        .foregroundStyle(self.selected == self.button.id ? .white : self.usingBackgroundImage || self.usingBackgroundColour ? Theme.lightBase : Theme.lightWhite)
                                         .font(.title3)
                                         .padding([.top, .bottom], 10)
                                         .padding([.leading, .trailing])
