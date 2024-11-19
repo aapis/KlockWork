@@ -93,7 +93,7 @@ struct FancyGenericToolbar: View {
     public var alwaysShowTab: Bool = false
     public var scrollable: Bool = true
     @State public var selected: Int = 0
-    private let styleConditions: [GlobalSettingsPanel.Pages.Themes.Style] = [.opaque, .hybrid, .glass]
+    private let styleConditions: [GlobalSettingsPanel.Pages.Themes.Style] = []
 
     var body: some View {
         VStack(spacing: 0) {

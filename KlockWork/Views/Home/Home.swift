@@ -103,8 +103,8 @@ struct Home: View {
     }
 
     @ViewBuilder private var PageBackground: some View {
-        if self.usingBackgroundImage {
-            ZStack {
+        ZStack(alignment: .topLeading) {
+            if self.usingBackgroundImage {
                 self.nav.session.appPage.primaryColour.saturation(0.7)
                 if self.nav.theme.wallpaperChoice == 1 {
                     if let customImage = self.customImage {
@@ -120,9 +120,9 @@ struct Home: View {
                     Image("wallpaper-04").resizable().aspectRatio(contentMode: .fill)
                 }
                 Theme.base.blendMode(.softLight).opacity(0.5)
+            } else if self.usingBackgroundColour, let colour = self.nav.theme.customBackgroundColour {
+                colour
             }
-        } else if self.usingBackgroundColour, let colour = self.nav.theme.customBackgroundColour {
-            ZStack { colour }
         }
     }
 
@@ -154,7 +154,20 @@ struct Home: View {
             }
         }
         .frame(width: 320)
-        .background(nav.parent != nil ? nav.parent!.colour : Theme.tabActiveColour)
+        .background(self.SidebarBackground)
+    }
+
+    @ViewBuilder var SidebarBackground: some View {
+        if let parent = self.nav.parent {
+            switch self.nav.theme.style {
+            case .glass:
+                self.nav.session.appPage.primaryColour.opacity(0.3)
+            default:
+                parent.colour
+            }
+        } else {
+            Theme.tabActiveColour
+        }
     }
 
     @ViewBuilder var TabBackground: some View {
