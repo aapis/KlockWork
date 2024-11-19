@@ -211,11 +211,6 @@ extension WidgetLibrary.UI.Navigator {
             HStack {
                 UI.Toggle(isOn: $showPublished, icon: "heart", selectedIcon: "heart.fill")
                     .help("Show or hide unpublished items")
-                UI.Toggle("Full Colour", isOn: $altViewModeEnabled, icon: "checkmark.square", selectedIcon: "checkmark.square.fill")
-                    .help("Navigator becomes colourful")
-                    .padding(3)
-                    .background(Theme.textBackground)
-                    .clipShape(.rect(cornerRadius: 5))
                 Spacer()
                 FancyGenericToolbar.ActionButton(icon: "arrow.up", callback: self.actionOnUp, helpText: "Up a directory")
                     .keyboardShortcut(.upArrow, modifiers: [.command])
@@ -267,6 +262,7 @@ extension WidgetLibrary.UI.Navigator {
             @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateProject") private var shouldCreateProject: Bool = false
             @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateJob") private var shouldCreateJob: Bool = false
             @AppStorage("widget.navigator.depth") private var depth: Int = 0
+            @AppStorage("general.theme.kioskMode") private var inKioskMode: Bool = false
             public let entity: NSManagedObject
             public let location: WidgetLocation
             @State private var label: String = ""
@@ -421,7 +417,7 @@ extension WidgetLibrary.UI.Navigator {
                     .frame(width: 30, height: 30)
                     .cornerRadius(5)
 
-                    Text(self.label)
+                    Text(self.inKioskMode ? "Lorem ipsum dolor sit amet" : self.label)
                         .multilineTextAlignment(.leading)
                         // @TODO: create a ShapeStyle for this
                         .foregroundStyle(

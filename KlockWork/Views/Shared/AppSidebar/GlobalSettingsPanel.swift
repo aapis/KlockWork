@@ -36,6 +36,7 @@ struct GlobalSettingsPanel: View {
             @EnvironmentObject private var state: Navigation
             @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
             @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
+            @AppStorage("widget.navigator.altViewModeEnabled") private var altViewModeEnabled: Bool = true
             @State private var backgroundColour: Color = .yellow
             @State private var style: Style = .opaque
             private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
@@ -63,32 +64,55 @@ struct GlobalSettingsPanel: View {
             }
 
             var body: some View {
-                VStack(alignment: .leading, spacing: 0) {
-                    UI.Sidebar.Title(text: "Appearance", transparent: true)
-                    self.StyleSelector
-                    self.PrimaryColourSelector
-                    self.SelectorWallpaper
-                    self.SelectorAccentColour
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        UI.Sidebar.Title(text: "Appearance", transparent: true)
+                        self.StyleSelector
+                        self.PrimaryColourSelector
+                        self.SelectorWallpaper
+                        self.SelectorAccentColour
+                        self.ColourLevelSelector
+                    }
                 }
                 .onAppear(perform: self.actionOnAppear)
+            }
+
+            var ColourLevelSelector: some View {
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack {
+                        Text("Colour Mode")
+                            .multilineTextAlignment(.leading)
+                        Spacer()
+                        Text(self.altViewModeEnabled ? "Full" : "Reduced")
+                            .foregroundStyle(.gray)
+                    }
+                    .padding(8)
+                    ScrollView(showsIndicators: false) {
+                        LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                            ColourLevelBlock(isFullColour: false, image: Image("theme-colourLevel-low"))
+                            ColourLevelBlock(isFullColour: true, image: Image("theme-colourLevel-high"))
+                        }
+                    }
+                    .padding(8)
+                }
+                .background(Theme.textBackground)
             }
 
             var StyleSelector: some View {
                 VStack(alignment: .leading, spacing: 0) {
                     HStack {
-                        Text("Style")
+                        Text("Theme")
                         Spacer()
+                        Text(self.state.theme.style.label)
+                            .foregroundStyle(.gray)
                     }
                     .padding(8)
-                    ScrollView(showsIndicators: false) {
-                        LazyVGrid(columns: self.twoCol, alignment: .leading) {
-                            ForEach(Style.allCases.sorted(by: {$0.index < $1.index}), id: \.self) { style in
-                                StyleBlock(style: style)
-                            }
+                    LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                        ForEach(Style.allCases.sorted(by: {$0.index < $1.index}), id: \.self) { style in
+                            StyleBlock(style: style)
                         }
                     }
                     .padding(8)
-                    .frame(height: 140)
                 }
                 .background(Theme.textBackground)
             }
@@ -120,10 +144,8 @@ struct GlobalSettingsPanel: View {
                                     UserDefaults.standard.set(self.backgroundColour.toStored(), forKey: "customBackgroundColour")
                                     self.state.theme.customBackgroundColour = self.backgroundColour
                                 }
-                            Spacer()
                         }
                         .padding(8)
-                        .frame(height: 140)
                     }
                 }
                 .background(Theme.textBackground)
@@ -150,13 +172,10 @@ struct GlobalSettingsPanel: View {
                     .foregroundStyle(self.usingBackgroundImage ? .white : .gray)
                     .padding(8)
                     if self.usingBackgroundImage {
-                        ScrollView(showsIndicators: false) {
-                            LazyVGrid(columns: self.twoCol, alignment: .leading) {
-                                ForEach(self.wallpapers) { wallpaper in wallpaper }
-                            }
+                        LazyVGrid(columns: self.twoCol, alignment: .leading) {
+                            ForEach(self.wallpapers) { wallpaper in wallpaper }
                         }
                         .padding(8)
-                        .frame(height: 140)
                     }
                 }
                 .background(Theme.textBackground)
@@ -167,6 +186,8 @@ struct GlobalSettingsPanel: View {
                     HStack {
                         Text("Accent colour")
                         Spacer()
+                        Text(self.state.theme.tint.description.capitalized)
+                            .foregroundStyle(.gray)
                     }
                     .padding(8)
 
@@ -176,6 +197,32 @@ struct GlobalSettingsPanel: View {
                     .padding(8)
                 }
                 .background(Theme.textBackground)
+            }
+
+            // MARK: GlobalSettingsPanel.Pages.Themes.ColourLevelBlock
+            internal struct ColourLevelBlock: View, Identifiable {
+                @EnvironmentObject private var state: Navigation
+                @AppStorage("widget.navigator.altViewModeEnabled") private var altViewModeEnabled: Bool = true
+                var id: UUID = UUID()
+                var isFullColour: Bool = false
+                var image: Image
+                @State private var isHighlighted: Bool = false
+
+                var body: some View {
+                    Button {
+                        self.altViewModeEnabled = self.isFullColour
+                    } label: {
+                        ZStack {
+                            image
+                                .resizable()
+                                .border(width: 4, edges: [.top, .bottom, .leading, .trailing], color: self.isFullColour == self.altViewModeEnabled ? self.state.theme.tint.opacity(1) : .white.opacity(0.5))
+                        }
+                    }
+                    .clipShape(.rect(cornerRadius: 5))
+                    .help(self.isFullColour ? "Full colour" : "Reduced colour")
+                    .buttonStyle(.plain)
+                    .useDefaultHover({ hover in self.isHighlighted = hover })
+                }
             }
 
             // MARK: GlobalSettingsPanel.Pages.Themes.StyleBlock
@@ -194,10 +241,11 @@ struct GlobalSettingsPanel: View {
                     } label: {
                         ZStack {
                             self.style.view
-                                .border(width: 8, edges: [.top, .bottom, .leading, .trailing], color: self.state.theme.style == self.style ? self.state.theme.tint.opacity(1) : .white.opacity(0.5))
+                                .border(width: 4, edges: [.top, .bottom, .leading, .trailing], color: self.state.theme.style == self.style ? self.state.theme.tint.opacity(1) : .white.opacity(0.5))
                             Text(self.style.label)
                                 .padding(6)
                                 .background(Theme.base.opacity(0.7))
+                                .foregroundStyle(self.state.theme.style == self.style ? self.state.theme.tint : .white)
                                 .clipShape(.rect(cornerRadius: 5))
                         }
                     }
@@ -240,17 +288,18 @@ struct GlobalSettingsPanel: View {
                                 image
                                     .resizable()
                                     .frame(height: 100)
-                                    .border(width: 8, edges: [.top, .bottom, .leading, .trailing], color: self.choice == self.wallpaperChoice ? self.state.theme.tint.opacity(1) : .white.opacity(0.5))
+                                    .border(width: 4, edges: [.top, .bottom, .leading, .trailing], color: self.choice == self.wallpaperChoice ? self.state.theme.tint.opacity(1) : .white.opacity(0.5))
 
                             } else {
                                 Image(self.asset)
                                     .resizable()
                                     .frame(height: 100)
-                                    .border(width: 8, edges: [.top, .bottom, .leading, .trailing], color: self.choice == self.wallpaperChoice ? self.state.theme.tint.opacity(1) : .white.opacity(0.5))
+                                    .border(width: 4, edges: [.top, .bottom, .leading, .trailing], color: self.choice == self.wallpaperChoice ? self.state.theme.tint.opacity(1) : .white.opacity(0.5))
                             }
                             Text(self.label)
                                 .padding(6)
                                 .background(Theme.base.opacity(0.7))
+                                .foregroundStyle(self.choice == self.wallpaperChoice ? self.state.theme.tint : .white)
                                 .clipShape(.rect(cornerRadius: 5))
                         }
                         .useDefaultHover({ hover in self.isHighlighted = hover})
@@ -353,7 +402,7 @@ struct GlobalSettingsPanel: View {
                             Image("theme-style-hybrid")
                                 .mask(
                                     Rectangle()
-                                        .frame(width: 100, height: 100)
+                                        .frame(width: 150, height: 100)
                                 )
                             Text(self.label)
                         }

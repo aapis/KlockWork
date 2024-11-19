@@ -133,10 +133,14 @@ extension WidgetLibrary {
 
             var body: some View {
                 ZStack {
-                    self.state.session.appPage.primaryColour
-                    LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
-                        .opacity(0.6)
-                        .blendMode(.softLight)
+                    if [.classic, .opaque, .hybrid].contains(self.state.theme.style) {
+                        self.state.session.appPage.primaryColour
+                        LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
+                            .opacity(0.6)
+                            .blendMode(.softLight)
+                    } else {
+                        self.state.session.appPage.primaryColour.opacity(0.3)
+                    }
 
                     VStack(alignment: .leading, spacing: 0) {
                         HStack {
