@@ -93,7 +93,6 @@ struct FancyGenericToolbar: View {
     public var alwaysShowTab: Bool = false
     public var scrollable: Bool = true
     @State public var selected: Int = 0
-    private let styleConditions: [GlobalSettingsPanel.Pages.Themes.Style] = []
 
     var body: some View {
         VStack(spacing: 0) {
@@ -104,11 +103,10 @@ struct FancyGenericToolbar: View {
                             (self.location == .content ? UIGradient() : nil)
                             // I'm sorry
                             (
-                                self.styleConditions.contains(self.nav.theme.style) ?
-                                    !self.standalone ? Theme.darkBtnColour.blendMode(.normal) : Color.clear.blendMode(.normal)
-                                :
-                                    (self.nav.session.job?.backgroundColor ?? .white).opacity(self.standalone ? 0 : 1).blendMode(.softLight)
-                             )
+                                [.classic, .opaque, .hybrid].contains(self.nav.theme.style) ?
+                                (self.nav.session.job?.backgroundColor ?? Theme.darkBtnColour).opacity(self.standalone ? 0 : 1).blendMode(.softLight)
+                                : Color.clear.opacity(1).blendMode(.normal)
+                            )
                             // @TODO: this "works" but needs finessing
 //                            TypedListRowBackground(colour: .clear, type: .jobs)
                             ScrollView(.horizontal, showsIndicators: false) {
@@ -119,8 +117,7 @@ struct FancyGenericToolbar: View {
                                             location: location,
                                             selected: $selected,
                                             mode: mode,
-                                            page: self.page,
-                                            styleConditions: self.styleConditions
+                                            page: self.page
                                         )
 
                                         if buttons.count == 1 {
@@ -207,7 +204,7 @@ struct FancyGenericToolbar: View {
         @Binding public var selected: Int
         public var mode: ToolbarMode
         public var page: PageConfiguration.AppPage?
-        public var styleConditions: [GlobalSettingsPanel.Pages.Themes.Style]
+        public var styleConditions: [GlobalSettingsPanel.Pages.Themes.Style] = [.opaque, .hybrid, .glass]
         @State private var highlighted: Bool = false
 
         var body: some View {
