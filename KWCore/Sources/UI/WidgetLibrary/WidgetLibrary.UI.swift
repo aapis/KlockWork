@@ -98,7 +98,7 @@ extension WidgetLibrary {
                         }
                     }
                 }
-                .foregroundStyle((self.state.session.job?.backgroundColor ?? .clear).isBright() ? Theme.lightBase : Theme.lightWhite)
+                .foregroundStyle((self.state.session.job?.backgroundColor ?? .clear).isBright() ? Theme.lightBase : ([.hybrid, .glass].contains(self.state.theme.style) ? Theme.lightBase : Theme.lightWhite))
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.calendar) { self.actionOnChangeCalendar() }
                 .onChange(of: self.state.session.search.inspectingEvent) {

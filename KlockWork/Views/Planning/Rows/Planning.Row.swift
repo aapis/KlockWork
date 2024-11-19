@@ -37,7 +37,7 @@ extension Planning {
                     }
                 }
             }
-            .background([.classic, .opaque].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : Theme.rowColour)
+            .background([.classic, .opaque, .hybrid].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : Theme.rowColour)
         }
     }
 }

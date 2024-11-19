@@ -174,7 +174,13 @@ struct FindDashboard: View {
                     Loading()
                 } else {
                     FancyDivider()
-                    FancyGenericToolbar(buttons: buttons, standalone: true, location: location, mode: .compact)
+                    FancyGenericToolbar(
+                        buttons: self.buttons,
+                        standalone: true,
+                        location: self.location,
+                        mode: .compact,
+                        page: self.nav.session.appPage
+                    )
                 }
             }
         }
