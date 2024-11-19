@@ -221,13 +221,13 @@ struct SidebarButton: View, Identifiable {
                 Theme.tabActiveColour
             }
         } else {
-            Theme.tabColour
+            switch self.nav.theme.style {
+            case .classic: Theme.cPurple
+            default: Theme.darkBtnColour
+            }
         }
         if self.highlighted {
             self.pageType.colour
-        }
-        if self.nav.theme.style == .opaque {
-            Theme.darkBtnColour
         }
     }
 }
