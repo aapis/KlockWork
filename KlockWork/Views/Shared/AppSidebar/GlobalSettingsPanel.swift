@@ -60,7 +60,7 @@ struct GlobalSettingsPanel: View {
                     AccentColour(colour: .orange, label: "Orange"),
                     AccentColour(colour: .yellow, label: "Yellow"),
                     AccentColour(colour: .green, label: "Green"),
-                    AccentColour(colour: .gray, label: "Graphite"),
+                    AccentColour(colour: .clear, label: "Custom"),
                 ]
             }
 
@@ -411,10 +411,25 @@ struct GlobalSettingsPanel: View {
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
                     UI.Sidebar.Title(text: "General", transparent: true)
+                    self.ExperimentalToggle
                     if self.showExperimentalFeatures {
                         self.KioskModeSelector
                     }
                 }
+            }
+
+            var ExperimentalToggle: some View {
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(alignment: .top) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                        Text("Experimental Features")
+                        Spacer()
+                        Toggle("", isOn: self.$showExperimentalFeatures)
+                    }
+                    .help("Enable or disable specific experimental features. Subject to change without warning.")
+                    .padding(8)
+                }
+                .background(Theme.textBackground)
             }
 
             var KioskModeSelector: some View {
