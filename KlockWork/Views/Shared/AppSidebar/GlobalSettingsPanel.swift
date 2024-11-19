@@ -85,15 +85,7 @@ struct GlobalSettingsPanel: View {
                     ScrollView(showsIndicators: false) {
                         LazyVGrid(columns: self.twoCol, alignment: .leading) {
                             ForEach(Style.allCases.sorted(by: {$0.index < $1.index}), id: \.self) { style in
-                                Button {
-                                    self.state.theme.style = style
-                                    UserDefaults.standard.set(style.index, forKey: "interfaceStyle")
-                                } label: {
-                                    style.view
-                                }
-                                .help(style.label)
-                                .buttonStyle(.plain)
-                                .useDefaultHover({_ in})
+                                StyleBlock(style: style)
                             }
                         }
                     }
@@ -114,7 +106,10 @@ struct GlobalSettingsPanel: View {
                             .onChange(of: self.usingBackgroundColour) {
                                 if self.usingBackgroundColour {
                                     self.usingBackgroundImage = false
-
+                                } else {
+                                    if !self.usingBackgroundImage {
+                                        self.state.theme.style = .classic
+                                    }
                                 }
                             }
                     }
@@ -147,6 +142,10 @@ struct GlobalSettingsPanel: View {
                             .onChange(of: self.usingBackgroundImage) {
                                 if self.usingBackgroundImage {
                                     self.usingBackgroundColour = false
+                                } else {
+                                    if !self.usingBackgroundColour {
+                                        self.state.theme.style = .classic
+                                    }
                                 }
                             }
                     }
@@ -179,6 +178,37 @@ struct GlobalSettingsPanel: View {
                     .padding(8)
                 }
                 .background(Theme.textBackground)
+            }
+
+            // MARK: GlobalSettingsPanel.Pages.Themes.StyleBlock
+            internal struct StyleBlock: View, Identifiable {
+                @EnvironmentObject private var state: Navigation
+                @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+                @AppStorage("general.usingBackgroundColour") private var usingBackgroundColour: Bool = false
+                var id: UUID = UUID()
+                var style: Style
+                @State private var isHighlighted: Bool = false
+
+                var body: some View {
+                    Button {
+                        self.state.theme.style = self.style
+                        UserDefaults.standard.set(self.style.index, forKey: "interfaceStyle")
+                    } label: {
+                        ZStack {
+                            self.style.view
+                                .border(width: 8, edges: [.top, .bottom, .leading, .trailing], color: self.state.theme.style == self.style ? self.state.theme.tint.opacity(1) : .white.opacity(0.5))
+                            Text(self.style.label)
+                                .padding(6)
+                                .background(Theme.base.opacity(0.7))
+                                .clipShape(.rect(cornerRadius: 5))
+                        }
+                    }
+                    .disabled([.opaque, .hybrid, .glass].contains(self.style) && (!self.usingBackgroundImage && !self.usingBackgroundColour))
+                    .clipShape(.rect(cornerRadius: 5))
+                    .help(style.label)
+                    .buttonStyle(.plain)
+                    .useDefaultHover({ hover in self.isHighlighted = hover })
+                }
             }
 
             // MARK: GlobalSettingsPanel.Pages.Themes.Wallpaper
@@ -220,26 +250,10 @@ struct GlobalSettingsPanel: View {
                                     .frame(height: 100)
                                     .border(width: 8, edges: [.top, .bottom, .leading, .trailing], color: self.choice == self.wallpaperChoice ? self.state.theme.tint.opacity(1) : .white.opacity(0.5))
                             }
-                            if self.isHighlighted {
-//                                if self.choice == 1 {
-//                                    Text("")
-//                                        .padding(6)
-//                                        .background(Theme.base.opacity(0.7))
-//                                        .clipShape(.rect(cornerRadius: 5))
-//                                } else {
-                                    Text(self.choice == self.wallpaperChoice ? "Current" : "Set \(self.label)")
-                                        .padding(6)
-                                        .background(Theme.base.opacity(0.7))
-                                        .clipShape(.rect(cornerRadius: 5))
-//                                }
-                            } else {
-                                if self.choice == self.wallpaperChoice {
-                                    Text(self.label)
-                                        .padding(6)
-                                        .background(Theme.base.opacity(0.7))
-                                        .clipShape(.rect(cornerRadius: 5))
-                                }
-                            }
+                            Text(self.label)
+                                .padding(6)
+                                .background(Theme.base.opacity(0.7))
+                                .clipShape(.rect(cornerRadius: 5))
                         }
                         .useDefaultHover({ hover in self.isHighlighted = hover})
                     }
@@ -322,17 +336,17 @@ struct GlobalSettingsPanel: View {
                                 )
                             Text(self.label)
                         }
-                        .frame(width: 150, height: 130)
+                        .frame(width: 150, height: 100)
                     case .hybrid:
                         VStack(alignment: .center) {
                             Image("theme-style-hybrid")
                                 .mask(
                                     Rectangle()
-                                        .frame(width: 150, height: 100)
+                                        .frame(width: 100, height: 100)
                                 )
                             Text(self.label)
                         }
-                        .frame(width: 150, height: 130)
+                        .frame(width: 150, height: 100)
                     case .classic:
                         VStack(alignment: .center) {
                             Image("theme-style-classic")
@@ -342,7 +356,7 @@ struct GlobalSettingsPanel: View {
                                 )
                             Text(self.label)
                         }
-                        .frame(width: 150, height: 130)
+                        .frame(width: 150, height: 100)
                     default:
                         VStack(alignment: .center) {
                             Image("theme-style-opaque")
@@ -352,7 +366,7 @@ struct GlobalSettingsPanel: View {
                                 )
                             Text(self.label)
                         }
-                        .frame(width: 150, height: 130)
+                        .frame(width: 150, height: 100)
                     }
                 }
 
