@@ -428,7 +428,7 @@ extension WidgetLibrary {
                     .onAppear(perform: self.actionOnAppear)
                     .onChange(of: self.shouldCheckLinkStatus) { self.actionOnAppear() }
                     .contextMenu { ContextMenu(activity: self.activity) }
-                    .background(self.state.theme.style == .opaque ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background([.opaque, .hybrid, .glass].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
                     .help(self.isLinkOnline ? self.activity.help : "Error: \(self.name) is down")
                 }
@@ -448,7 +448,7 @@ extension WidgetLibrary {
             }
         }
 
-        struct ListLinkItem: View {
+        struct ExploreLink: View {
             @EnvironmentObject private var state: Navigation
             public var page: Page
             public var name: String
@@ -512,7 +512,7 @@ extension WidgetLibrary {
                         }
                     }
                     .padding(8)
-                    .background([.opaque, .classic, .hybrid].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background([.opaque, .hybrid, .glass].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
                 }
                 .buttonStyle(.plain)
@@ -686,7 +686,7 @@ extension WidgetLibrary {
                                 UI.ListLinkTitle(type: type)
 
                                 ForEach(self.activities.filter({$0.type == type}), id: \.id) { activity in
-                                    UI.ListLinkItem(
+                                    UI.ExploreLink(
                                         page: activity.page,
                                         name: activity.name,
                                         icon: activity.icon
@@ -1458,7 +1458,6 @@ extension WidgetLibrary {
                                         Image(systemName: "house.fill")
                                             .padding([.top, .bottom], 7)
                                             .padding([.leading, .trailing], 4)
-                                            .background(Theme.lightBase)
                                             .foregroundStyle(self.company == nil ? Theme.lightWhite : self.state.theme.tint)
                                     }
                                     .buttonStyle(.plain)
@@ -1468,7 +1467,6 @@ extension WidgetLibrary {
                                     Image(systemName: "chevron.right")
                                         .padding([.top, .bottom], 8)
                                         .padding([.leading, .trailing], 4)
-                                        .background(Theme.lightBase)
                                         .foregroundStyle(Theme.lightWhite)
                                         .opacity(self.company == nil ? 0.5 : 1)
                                 }

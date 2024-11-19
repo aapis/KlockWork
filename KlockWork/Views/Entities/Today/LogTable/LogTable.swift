@@ -58,7 +58,7 @@ extension Today.LogTable {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                                 .opacity(0.6)
                                 .blendMode(.softLight)
-                            self.page.primaryColour.opacity(self.state.theme.style == .opaque ? 1 : 0.4)
+                            self.page.primaryColour
                         }
                     }
                     .frame(width: 15)
@@ -70,7 +70,7 @@ extension Today.LogTable {
                                     LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
                                         .opacity(0.6)
                                         .blendMode(.softLight)
-                                    self.page.primaryColour.opacity(self.state.theme.style == .opaque ? 1 : 0.4)
+                                    self.page.primaryColour
                                     Text(column.name)
                                         .padding(8)
                                 }
@@ -105,7 +105,7 @@ extension Today.LogTable {
                 if records.count > 0 {
                     FancyTextField(placeholder: "Records...", lineLimit: 10, text: $plain)
                 } else {
-                    LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: self.nav.theme.style == .opaque ? Theme.base : Theme.rowColour)
+                    LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: [.classic, .opaque].contains(self.nav.theme.style) ? Theme.base : Theme.rowColour)
                 }
             }
             .onAppear(perform: actionOnAppear)
@@ -142,7 +142,7 @@ extension Today.LogTable {
                         }
                     }
                 } else {
-                    LogRowEmpty(message: "No records found for \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: self.nav.theme.style == .opaque ? Theme.base : Theme.rowColour)
+                    LogRowEmpty(message: "No records found for \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: [.classic, .opaque].contains(self.nav.theme.style) ? Theme.base : Theme.rowColour)
                 }
             }
         }
@@ -212,10 +212,10 @@ extension Today.LogTable {
                         if records.count > 0 {
                             ForEach(grouped) {group in group}
                         } else {
-                            LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: self.nav.theme.style == .opaque ? Theme.base : Theme.rowColour)
+                            LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: [.classic, .opaque].contains(self.nav.theme.style) ? Theme.base : Theme.rowColour)
                         }
                     }
-                    .background(self.nav.theme.style == .opaque ? self.nav.session.appPage.primaryColour : .clear)
+                    .background([.classic, .opaque].contains(self.nav.theme.style) ? self.nav.session.appPage.primaryColour : .clear)
                 }
                 .onAppear(perform: self.findRecords)
                 .onChange(of: nav.session.date) { self.findRecords() }

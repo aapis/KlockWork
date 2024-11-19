@@ -103,7 +103,7 @@ extension WidgetLibrary.UI {
                     }
 
                     @ViewBuilder private var PageBackground: some View {
-                        if ![.hybrid, .opaque].contains(self.state.theme.style) {
+                        if [.classic].contains(self.state.theme.style) {
                             ZStack {
                                 self.state.session.appPage.primaryColour.saturation(0.7)
                                 Theme.base.blendMode(.softLight).opacity(0.5)
@@ -392,7 +392,7 @@ extension WidgetLibrary.UI {
                                     }
                                 }
                                 FancyDivider()
-                                ActivityFeed()
+                                UI.ActivityFeed()
                             }
                             .padding([.leading, .trailing])
                         }

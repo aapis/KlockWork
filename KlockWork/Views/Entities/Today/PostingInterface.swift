@@ -34,7 +34,7 @@ extension Today {
                     fgColour: self.nav.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
                     text: $text
                 )
-                .background(self.nav.theme.style == .opaque ? self.nav.session.appPage.primaryColour : self.nav.session.job?.backgroundColor.opacity(0.6) ?? .clear)
+                .background([.classic, .opaque].contains(self.nav.theme.style) ? self.nav.session.appPage.primaryColour : self.nav.session.job?.backgroundColor.opacity(0.6) ?? .clear)
                 .focused($primaryTextFieldInFocus)
                 .alert("Choose a job first", isPresented: $errorNoJob) {
                     Button("Ok", role: .cancel) {}

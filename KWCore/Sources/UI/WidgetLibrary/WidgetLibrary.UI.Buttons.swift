@@ -515,7 +515,7 @@ extension WidgetLibrary.UI {
                         }
                     }
                     .padding(8)
-                    .background(self.state.theme.style == .opaque ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background([.opaque, .hybrid, .glass].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .useDefaultHover({ hover in self.isHighlighted = hover })
                     .clipShape(.rect(cornerRadius: 5))
                 }

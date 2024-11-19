@@ -35,7 +35,8 @@ struct Today: View {
 
     @ViewBuilder private var PageBackground: some View {
         ZStack {
-            if self.state.theme.style == .opaque {
+            if [.classic].contains(self.state.theme.style) {
+                Theme.base
                 Theme.toolbarColour
             }
         }

@@ -117,7 +117,7 @@ struct CalendarToday: View {
             Spacer()
         }
         .onAppear(perform: createEventChips)
-        .background(self.state.theme.style == .opaque ? self.state.session.appPage.primaryColour : Theme.darkBtnColour)
+        .background([.classic, .opaque].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : Theme.darkBtnColour)
     }
 
     private func updateChips() -> Void {
