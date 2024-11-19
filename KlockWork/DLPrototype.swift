@@ -120,7 +120,6 @@ struct DLPrototype: App {
             self.nav.theme.customWallpaperUrl = stored
         }
         if let stored = UserDefaults.standard.object(forKey: "customBackgroundColour") {
-            self.nav.theme.customWallpaperUrl = nil
             self.nav.theme.customBackgroundColour = Color.fromStored(stored as? [Double] ?? Theme.rowColourAsDouble)
         }
         // Set UI style
