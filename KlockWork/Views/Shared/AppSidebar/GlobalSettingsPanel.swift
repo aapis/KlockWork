@@ -307,7 +307,7 @@ struct GlobalSettingsPanel: View {
                                     .clipShape(.rect(cornerRadius: 5))
                             }
                             Text(self.label)
-                                .foregroundStyle(self.colour == self.state.theme.tint || self.customAccentColour == self.state.theme.tint ? self.state.theme.tint : .white)
+                                .foregroundStyle(self.colour == self.state.theme.tint ? self.state.theme.tint : .white)
                         }
                         .useDefaultHover({ hover in self.isHighlighted = hover})
                     }
@@ -400,13 +400,6 @@ struct GlobalSettingsPanel: View {
                         }
                     }
 
-                    return nil
-                }
-
-                static func backgroundColourFrom(page: Page) -> Self? {
-//                    switch page {
-//                    case .
-//                    }
                     return nil
                 }
             }
