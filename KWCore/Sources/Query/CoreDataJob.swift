@@ -208,7 +208,8 @@ public class CoreDataJob: ObservableObject {
 
         return jobs.sorted {$0.project!.pid > $1.project!.pid}
     }
-    
+
+    // @TODO: this is wrong
     public func getDefault() -> Job? {
         if let job = byId(11.0) {
             return job
@@ -532,7 +533,7 @@ public class CoreDataJob: ObservableObject {
     /// - Parameter start: Optional(Date)
     /// - Parameter end: Optional(Date)
     /// - Returns: Array<Activity>
-    public func getLinksFromJobs(start: Date?, end: Date?) async -> [Activity] {
+    public func links(start: Date?, end: Date?) async -> [Activity] {
         let jobs = self.inRange(
             start: start,
             end: end
@@ -545,7 +546,7 @@ public class CoreDataJob: ObservableObject {
                     activities.append(
                         Activity(
                             name: uri.absoluteString,
-                            page: .dashboard, //self.state.parent ??
+                            page: .jobs,
                             type: .activity,
                             job: job,
                             url: uri.absoluteURL
@@ -650,13 +651,12 @@ public class CoreDataJob: ObservableObject {
     }
 
     private func query(_ predicate: NSPredicate, sort: [NSSortDescriptor] = [NSSortDescriptor(keyPath: \Job.created?, ascending: true)]) -> [Job] {
-        lock.lock()
-
         var results: [Job] = []
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.sortDescriptors = sort
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
+        fetch.returnsObjectsAsFaults = false
 
         do {
             results = try moc!.fetch(fetch)
@@ -664,27 +664,22 @@ public class CoreDataJob: ObservableObject {
             print("[error] CoreDataJob.query Unable to find records for predicate \(predicate.predicateFormat)")
         }
 
-        lock.unlock()
-
         return results
     }
 
     private func count(_ predicate: NSPredicate) -> Int {
-        lock.lock()
-
         var count = 0
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \Job.created?, ascending: true)]
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
+        fetch.returnsObjectsAsFaults = false
 
         do {
             count = try moc!.fetch(fetch).count
         } catch {
             print("[error] CoreDataJob.query Unable to find records for predicate \(predicate.predicateFormat)")
         }
-
-        lock.unlock()
 
         return count
     }

@@ -26,12 +26,16 @@ struct Explore: View {
             Spacer()
         }
         .padding()
-        .background(
+        .background(self.PageBackground)
+    }
+
+    @ViewBuilder private var PageBackground: some View {
+        if [.classic].contains(self.state.theme.style) {
             ZStack {
-                self.state.session.appPage.primaryColour
-                Theme.base.opacity(0.6)
+                self.state.session.appPage.primaryColour.saturation(0.7)
+                Theme.base.blendMode(.softLight).opacity(0.5)
             }
-        )
+        }
     }
 }
 

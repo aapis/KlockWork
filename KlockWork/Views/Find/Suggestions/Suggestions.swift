@@ -44,11 +44,11 @@ extension FindDashboard {
                                     showLabel: false,
                                     showIcon: true,
                                     size: .tinyLink,
-                                    type: .clear
+                                    type: .clear,
+                                    font: .title2
                                 )
                                 .help("Minimize suggestions")
                             }
-                            .padding([.leading, .trailing], 8)
                         }
 
                         if searchText.count >= 2 || isSearching {
@@ -65,8 +65,8 @@ extension FindDashboard {
                                     if showTerms {SuggestedTerms(searchText: $searchText, publishedOnly: $publishedOnly)}
                                     if showDefinitions {SuggestedDefinitions(searchText: $searchText, publishedOnly: $publishedOnly)}
                                 }
-                                .padding(self.location == .content ? 16 : 8)
-                                .background(Theme.textBackground)
+                                .padding(self.location == .content ? 0 : 8)
+//                                .background([.glass, .hybrid].contains(self.nav.theme.style) ? self.nav.session.appPage.primaryColour : Theme.textBackground)
                                 .clipShape(.rect(cornerRadius: 5))
                             }
                         }
@@ -77,7 +77,7 @@ extension FindDashboard {
                     .padding(.top, self.location == .content ? 16 : 8)
                 }
             }
-            .background(location == .content ? Theme.rowColour : Color.clear)
+            .background(self.PageBackground)
             .onChange(of: isSearching) {
                 nav.session.search.cancel()
                 nav.setInspector()
@@ -97,7 +97,19 @@ extension FindDashboard {
                 }
             }
         }
-        
+
+        @ViewBuilder private var PageBackground: some View {
+            if [.glass].contains(self.nav.theme.style) {
+                ZStack {
+                    location == .content ? self.nav.session.appPage.primaryColour.opacity(0.3) : Color.clear
+                }
+            } else {
+                ZStack {
+                    self.nav.session.appPage.primaryColour
+                }
+            }
+        }
+
         struct SuggestedJobs: View {
             @EnvironmentObject public var nav: Navigation
             @Binding public var searchText: String

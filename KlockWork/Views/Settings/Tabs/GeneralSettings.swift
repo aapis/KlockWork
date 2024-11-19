@@ -23,15 +23,11 @@ struct GeneralSettings: View {
     @AppStorage("general.columns") private var columns: Int = 3
     @AppStorage("general.shouldCheckLinkStatus") private var shouldCheckLinkStatus: Bool = false
     @AppStorage("general.appTintChoice") private var appTintChoice: Int = 0
+    @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
+    @AppStorage("general.wallpaperChoice") private var wallpaperChoice: Int = 0
 
     var body: some View {
         Form {
-            Group {
-                Text("Visual appearance")
-                Toggle("Tiger stripe table rows", isOn: $tigerStriped)
-                Toggle("Auto-correct text in text boxes", isOn: $enableAutoCorrection)
-            }
-
             Group {
                 Toggle("Enable experimental features (EXERCISE CAUTION)", isOn: $showExperimentalFeatures)
 
@@ -52,31 +48,6 @@ struct GeneralSettings: View {
 //                Text("External services")
 //                Toggle("Spotlight (data is NOT shared with Apple)", isOn: $spotlightIndex)
 //            }
-
-            Group {
-                Picker("App tint colour", selection: $appTintChoice) {
-                    Text("Blue").tag(1)
-                    Text("Purple").tag(2)
-                    Text("Pink").tag(3)
-                    Text("Red").tag(4)
-                    Text("Orange").tag(5)
-                    Text("Yellow").tag(6)
-                    Text("Green").tag(7)
-                    Text("Graphite").tag(8)
-                }
-                .onChange(of: self.appTintChoice) {
-                    switch self.appTintChoice {
-                    case 1: self.state.theme.tint = Color.blue
-                    case 2: self.state.theme.tint = Color.purple
-                    case 3: self.state.theme.tint = Color.pink
-                    case 4: self.state.theme.tint = Color.red
-                    case 5: self.state.theme.tint = Color.orange
-                    case 7: self.state.theme.tint = Color.green
-                    default:
-                        self.state.theme.tint = Color.yellow
-                    }
-                }
-            }
 
             Group {
                 Picker("Number of columns to display", selection: $columns) {

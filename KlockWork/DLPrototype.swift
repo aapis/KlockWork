@@ -16,9 +16,12 @@ typealias EType = PageConfiguration.EntityType
 
 @main
 struct DLPrototype: App {
+    typealias Style = GlobalSettingsPanel.Pages.Themes.Style
     private let persistenceController = PersistenceController.shared
     @AppStorage("notifications.interval") private var notificationInterval: Int = 0
     @AppStorage("general.appTintChoice") private var appTintChoice: Int = 0
+    @AppStorage("general.wallpaperChoice") private var wallpaperChoice: Int = 0
+    @AppStorage("general.theme.style") private var interfaceStyle: Int = 0
     @StateObject public var updater: ViewUpdater = ViewUpdater()
     @StateObject public var nav: Navigation = Navigation()
     @State private var searching: Bool = false
@@ -60,6 +63,7 @@ struct DLPrototype: App {
                         persistenceController.save()
                     }
                 }
+                .frame(minWidth: 800, minHeight: 800)
         }
         .commands {
             MainMenu(state: self.nav)
@@ -109,6 +113,26 @@ struct DLPrototype: App {
         default:
             self.nav.theme.tint = .yellow
         }
+
+        // Set theme wallpaper
+        self.nav.theme.wallpaperChoice = self.wallpaperChoice
+        // Prepare for custom wallpaper
+        if let stored = UserDefaults.standard.url(forKey: "customBackgroundUrl") {
+            self.nav.theme.customWallpaperUrl = stored
+        }
+        if let stored = UserDefaults.standard.object(forKey: "customBackgroundColour") {
+            self.nav.theme.customBackgroundColour = Color.fromStored(stored as? [Double] ?? Theme.rowColourAsDouble)
+        }
+        // Set UI style
+        self.interfaceStyle = UserDefaults.standard.integer(forKey: "interfaceStyle")
+        if let stored = Style.byIndex(self.interfaceStyle) {
+            self.nav.theme.style = stored
+        }
+        // Set accent colour
+        // @TODO: works, but commented out until custom colour picker is fixed
+//        if let stored = UserDefaults.standard.object(forKey: "customAccentColour") {
+//            self.nav.theme.tint = Color.fromStored(stored as? [Double] ?? Theme.rowColourAsDouble)
+//        }
 
         if let plan = nav.session.plan {
             nav.planning.jobs = plan.jobs as! Set<Job>

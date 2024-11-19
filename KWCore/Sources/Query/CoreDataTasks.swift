@@ -470,19 +470,69 @@ public class CoreDataTasks {
         return self.find(for: date).count
     }
 
-    /// Public method to create new LogTask objects
+    /// Find all entities created within a date range
     /// - Parameters:
-    ///   - cancelledDate: Date
-    ///   - completedDate: Date
-    ///   - content: String
-    ///   - created: Date
-    ///   - due: Date
-    ///   - lastUpdate: Date
-    ///   - job: Job
-    ///   - saveByDefault: Bool
-    /// - Returns: LogTask
-    public func create(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job? = nil, saveByDefault: Bool = true) -> Void {
-        let _ = self.make(cancelledDate: cancelledDate, completedDate: completedDate, content: content, created: created, due: due, lastUpdate: lastUpdate, job: job, saveByDefault: saveByDefault)
+    ///   - start: Date
+    ///   - end: Date
+    /// - Returns: Array<NSManagedObjedct>
+    public func inRange(start: Date?, end: Date?) -> [LogTask] {
+        if (start == nil || end == nil) || end! < start! {
+            return []
+        }
+
+        let predicate = NSPredicate(
+            format: "owner != nil && completedDate == nil && cancelledDate == nil && ((due > %@ && due <= %@) || (created > %@ && created <= %@) || (lastUpdate > %@ && lastUpdate <= %@))",
+            start! as CVarArg,
+            end! as CVarArg,
+            start! as CVarArg,
+            end! as CVarArg,
+            start! as CVarArg,
+            end! as CVarArg
+        )
+
+        return query(predicate)
+    }
+
+    /// Find links added to tasks created on this day
+    /// - Parameter start: Optional(Date)
+    /// - Parameter end: Optional(Date)
+    /// - Returns: Array<Activity>
+    public func links(start: Date?, end: Date?) async -> [Activity] {
+        var activities: [Activity] = []
+        if start != nil && end != nil {
+            let tasks = CoreDataTasks(moc: self.moc!).inRange(
+                start: start,
+                end: end
+            )
+            let linkLength = 40
+
+            for task in tasks {
+                if task.uri != nil {
+                    if let content = task.uri {
+                        var label: String = content.absoluteString
+                        if label.count > linkLength {
+                            label = label.prefix(linkLength) + "..."
+                        }
+
+                        if !activities.contains(where: {$0.name == label}) {
+                            activities.append(
+                                Activity(
+                                    name: label,
+                                    help: content.absoluteString,
+                                    page: .tasks,
+                                    type: .activity,
+                                    job: task.owner,
+                                    source: task,
+                                    url: content
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        return activities
     }
 
     /// Public method to create new LogTask objects
@@ -494,10 +544,27 @@ public class CoreDataTasks {
     ///   - due: Date
     ///   - lastUpdate: Date
     ///   - job: Job
+    ///   - url: Optional(String)
     ///   - saveByDefault: Bool
     /// - Returns: LogTask
-    public func createAndReturn(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job? = nil, saveByDefault: Bool = true) -> LogTask {
-        return self.make(cancelledDate: cancelledDate, completedDate: completedDate, content: content, created: created, due: due, lastUpdate: lastUpdate, job: job, saveByDefault: saveByDefault)
+    public func create(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job? = nil, url: String? = nil, saveByDefault: Bool = true) -> Void {
+        let _ = self.make(cancelledDate: cancelledDate, completedDate: completedDate, content: content, created: created, due: due, lastUpdate: lastUpdate, job: job, url: url, saveByDefault: saveByDefault)
+    }
+
+    /// Public method to create new LogTask objects
+    /// - Parameters:
+    ///   - cancelledDate: Date
+    ///   - completedDate: Date
+    ///   - content: String
+    ///   - created: Date
+    ///   - due: Date
+    ///   - lastUpdate: Date
+    ///   - job: Job
+    ///   - url: Optional(String)
+    ///   - saveByDefault: Bool
+    /// - Returns: LogTask
+    public func createAndReturn(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job? = nil, url: String? = nil, saveByDefault: Bool = true) -> LogTask {
+        return self.make(cancelledDate: cancelledDate, completedDate: completedDate, content: content, created: created, due: due, lastUpdate: lastUpdate, job: job, url: url, saveByDefault: saveByDefault)
     }
 
     /// Internal method to create new LogTask objects
@@ -509,9 +576,10 @@ public class CoreDataTasks {
     ///   - lastUpdate: Date
     ///   - due: Date
     ///   - job: Job
+    ///   - url: Optional(String)
     ///   - saveByDefault: Bool
     /// - Returns: LogTask
-    private func make(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job?, saveByDefault: Bool = true) -> LogTask {
+    private func make(cancelledDate: Date? = nil, completedDate: Date? = nil, content: String, created: Date, due: Date, lastUpdate: Date? = Date(), job: Job?, url: String? = nil, saveByDefault: Bool = true) -> LogTask {
         let newTask = LogTask(context: self.moc!)
         newTask.cancelledDate = cancelledDate
         newTask.completedDate = completedDate
@@ -525,6 +593,12 @@ public class CoreDataTasks {
             newTask.owner = job!
         }
 
+        if url != nil {
+            if let uri = URL(string: url!) {
+                newTask.uri = uri
+            }
+        }
+
         if saveByDefault {
             PersistenceController.shared.save()
         }
@@ -533,13 +607,12 @@ public class CoreDataTasks {
     }
 
     private func query(_ predicate: NSPredicate, _ sort: [NSSortDescriptor] = [NSSortDescriptor(keyPath: \LogTask.created?, ascending: false)]) -> [LogTask] {
-        lock.lock()
-
         var results: [LogTask] = []
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
         fetch.sortDescriptors = sort
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
+        fetch.returnsObjectsAsFaults = false
 
         do {
             results = try moc!.fetch(fetch)
@@ -547,27 +620,22 @@ public class CoreDataTasks {
             print("[error] CoreDataTasks.query Unable to find records for predicate \(predicate.predicateFormat)")
         }
 
-        lock.unlock()
-
         return results
     }
 
     private func count(_ predicate: NSPredicate) -> Int {
-        lock.lock()
-
         var count = 0
         let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
         fetch.sortDescriptors = [NSSortDescriptor(keyPath: \LogTask.created?, ascending: true)]
         fetch.predicate = predicate
         fetch.returnsDistinctResults = true
+        fetch.returnsObjectsAsFaults = false
 
         do {
             count = try moc!.fetch(fetch).count
         } catch {
             print("[error] CoreDataTasks.query Unable to find records for predicate \(predicate.predicateFormat)")
         }
-
-        lock.unlock()
 
         return count
     }

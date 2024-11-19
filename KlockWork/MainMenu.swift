@@ -31,6 +31,8 @@ struct MainMenu: Commands {
                     .keyboardShortcut("t", modifiers: [.command, .shift])
                 Button("Record") { self.state.to(.today) }
                     .keyboardShortcut("r", modifiers: [.command, .shift])
+                Button("Terms") { self.state.to(.termDetail) }
+                    .keyboardShortcut("r", modifiers: [.command, .shift])
                 Button("Definition") { self.state.to(.definitionDetail) }
                     .keyboardShortcut("d", modifiers: [.command, .shift])
             }

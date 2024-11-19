@@ -6,13 +6,12 @@
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
 import KWCore
 
 public struct FancyStaticTextField: View, Identifiable {
+    @EnvironmentObject private var state: Navigation
     public var id: UUID = UUID()
-
     public var placeholder: String
     public var lineLimit: Int
     public var onSubmit: (() -> Void)? = nil
@@ -55,8 +54,6 @@ public struct FancyStaticTextField: View, Identifiable {
 
                 actions
             }
-
-            Divider()
             HStack {
                 ProgressView(value: intersection.rate, total: 100)
                     .padding([.leading], 8)
@@ -68,7 +65,6 @@ public struct FancyStaticTextField: View, Identifiable {
         .background(backgroundColour)
         .onAppear(perform: {
             internalText = text
-
             backgroundColour = setBackground()
         })
         .onChange(of: copied) {
@@ -104,19 +100,13 @@ public struct FancyStaticTextField: View, Identifiable {
             if copied {
                 Button(action: copy) {
                     Image(systemName: "doc.on.clipboard")
-                        .symbolRenderingMode(.palette)
+                        .symbolRenderingMode(.hierarchical)
                         .foregroundStyle(.white, Color.accentColor)
                 }
                 .buttonStyle(.plain)
                 .help("Copied group to clipboard!")
 #if os(macOS)
-                .onHover { inside in
-                    if inside {
-                        NSCursor.pointingHand.push()
-                    } else {
-                        NSCursor.pop()
-                    }
-                }
+                .useDefaultHover({_ in})
 #endif
             } else {
                 Button(action: copy) {
@@ -125,13 +115,7 @@ public struct FancyStaticTextField: View, Identifiable {
                 .buttonStyle(.plain)
                 .help("Copy this group")
 #if os(macOS)
-                .onHover { inside in
-                    if inside {
-                        NSCursor.pointingHand.push()
-                    } else {
-                        NSCursor.pop()
-                    }
-                }
+                .useDefaultHover({_ in})
 #endif
             }
 
@@ -141,7 +125,7 @@ public struct FancyStaticTextField: View, Identifiable {
                 Image(systemName: "exclamationmark.triangle.fill")
                     .help("Too many characters, prune or split into multiple time tracker entries")
                     .symbolRenderingMode(.multicolor)
-                    .foregroundColor(Color.yellow)
+                    .foregroundColor(self.state.theme.tint)
                 Spacer()
             }
 

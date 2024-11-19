@@ -71,10 +71,6 @@ struct Planning: View {
             )
             FancyHelpText(text: self.description, page: self.page)
             FancyDivider()
-            UI.EntityCalendar.WeekWidget(
-                start: self.nav.session.date.startOfWeek
-            )
-            FancyDivider()
             FancyGenericToolbar(
                 buttons: self.buttons,
                 standalone: true,
@@ -83,14 +79,18 @@ struct Planning: View {
             )
         }
         .padding()
-        .background(
-            ZStack {
-                self.nav.session.appPage.primaryColour
-                Theme.base.opacity(0.6)
-            }
-        )
+        .background(self.PageBackground)
         .onAppear(perform: actionOnAppear)
         .onChange(of: nav.planning.jobs) { self.actionOnChangeJobs()}
+    }
+
+    @ViewBuilder private var PageBackground: some View {
+        if [.classic].contains(self.nav.theme.style) {
+            ZStack {
+                self.nav.session.appPage.primaryColour.saturation(0.7)
+                Theme.base.blendMode(.softLight).opacity(0.5)
+            }
+        }
     }
 }
 

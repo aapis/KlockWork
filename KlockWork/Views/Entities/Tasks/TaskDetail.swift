@@ -19,6 +19,7 @@ struct TaskDetail: View {
     @State private var isPresented: Bool = false
     @State private var shouldCreateNotification: Bool = true
     @State private var due: Date = DateHelper.endOfDay() ?? Date()
+    @State private var uri: String = ""
     private let page: PageConfiguration.AppPage = .explore
     private let eType: PageConfiguration.EntityType = .tasks
     @State private var isDisabled: Bool = false
@@ -41,6 +42,14 @@ struct TaskDetail: View {
                             .frame(width: 80)
                 }
                 .frame(height: 30)
+                FancyDivider()
+                FancyTextField(
+                    placeholder: "https://...",
+                    lineLimit: 1,
+                    onSubmit: self.actionOnSave,
+                    disabled: self.isDisabled,
+                    text: $uri
+                )
                 FancyDivider()
                 ZStack(alignment: .topTrailing) {
                     FancyTextField(
@@ -74,6 +83,7 @@ struct TaskDetail: View {
         .background(self.page.primaryColour)
         .onAppear(perform: self.actionOnAppear)
         .onChange(of: self.state.session.task) { self.actionOnAppear() }
+        .onChange(of: self.state.session.job) { self.actionOnAppear() }
         .onChange(of: self.published) { self.actionChangePublishStatus() }
     }
 }
@@ -92,6 +102,7 @@ extension TaskDetail {
         self.due = self.task?.due ?? DateHelper.endOfDay() ?? Date()
         self.shouldCreateNotification = !(self.task?.hasScheduledNotification ?? false)
         self.isDisabled = self.state.session.job == nil && self.task == nil
+        self.uri = self.task?.uri?.absoluteString ?? ""
     }
 
     /// Fires when enter/return hit while entering text in field or when add button tapped
@@ -104,12 +115,14 @@ extension TaskDetail {
                 self.task?.cancelledDate = Date()
             }
             self.task?.lastUpdate = Date()
+            self.task?.uri = URL(string: self.uri)
         } else {
             self.task = CoreDataTasks(moc: self.state.moc).createAndReturn(
                 content: self.content,
                 created: Date(),
                 due: DateHelper.endOfDay(Date()) ?? Date(),
-                job: self.state.session.job
+                job: self.state.session.job,
+                url: self.uri
             )
         }
 

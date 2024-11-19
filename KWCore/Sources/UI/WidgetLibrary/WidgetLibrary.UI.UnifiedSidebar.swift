@@ -114,6 +114,7 @@ extension WidgetLibrary.UI {
                 .foregroundStyle(self.fgColour)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.company) { self.actionOnChangeEntity() }
+                .onChange(of: self.state.session.job) { self.actionOnChangeEntity() }
                 .onChange(of: self.state.session.gif) { self.actionOnAppear() }
                 .onChange(of: self.isPresented) {
                     // Group is minimized
@@ -585,9 +586,10 @@ extension WidgetLibrary.UI {
         }
 
         struct EntityRowButton: View {
+            @EnvironmentObject private var state: Navigation
             public let text: String
             public var callback: (() -> Void)?
-            public var colour: Color? = Theme.base
+            public var colour: Color? = Theme.lightWhite
             public var showToggle: Bool = true
             @Binding public var isPresented: Bool
 
@@ -597,7 +599,11 @@ extension WidgetLibrary.UI {
                     self.callback?()
                 } label: {
                     ZStack(alignment: .topLeading) {
-                        self.colour!.opacity(0.6).blendMode(.softLight)
+                        if [.opaque, .classic, .hybrid].contains(self.state.theme.style) {
+                            self.colour!.opacity(0.6).blendMode(.softLight)
+                        } else {
+                            self.state.session.appPage.primaryColour
+                        }
                         HStack(alignment: .center, spacing: 8) {
                             if self.showToggle {
                                 ZStack(alignment: .center) {
@@ -684,18 +690,24 @@ extension WidgetLibrary.UI.UnifiedSidebar.SingleCompany {
     /// - Returns: Void
     private func actionOnChangeEntity() -> Void {
         if self.state.session.company != nil {
-            if self.state.session.company != self.entity {
-                self.isPresented = false
+//            if self.state.session.company != self.entity {
+//                self.isPresented = false
                 // @TODO: decide whether to attempt to finish this "focus on current open group" functionality
                 //                self.bgColour = .gray
                 //                self.fgColour = Theme.base
-            } else {
+//            } else {
                 self.bgColour = self.entity.backgroundColor
                 self.fgColour = self.bgColour.isBright() ? Theme.base : .white
-            }
+//            }
         } else {
             self.bgColour = self.entity.backgroundColor
             self.fgColour = self.bgColour.isBright() ? Theme.base : .white
+        }
+
+        if let company = self.state.session.company {
+            self.isPresented = company == self.entity
+        } else if let job = self.state.session.job {
+            self.isPresented = job.project?.company == self.entity
         }
     }
 

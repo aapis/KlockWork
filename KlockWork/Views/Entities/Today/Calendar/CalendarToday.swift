@@ -14,13 +14,13 @@ import EventKit
 struct CalendarToday: View {
     @EnvironmentObject public var ce: CoreDataCalendarEvent
     @EnvironmentObject public var state: Navigation
+    @AppStorage("today.startOfDay") public var startOfDay: Int = 9
+    @AppStorage("today.endOfDay") public var endOfDay: Int = 18
     public var page: PageConfiguration.AppPage = .today
     @State private var inProgress: [EKEvent] = []
     @State private var upcoming: [EKEvent] = []
     @State private var currentBlock: Int = 0
     @State private var timer: Timer? = nil
-    @AppStorage("today.startOfDay") public var startOfDay: Int = 9
-    @AppStorage("today.endOfDay") public var endOfDay: Int = 18
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -117,7 +117,7 @@ struct CalendarToday: View {
             Spacer()
         }
         .onAppear(perform: createEventChips)
-        .background(Theme.darkBtnColour)
+        .background([.classic, .opaque].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : Theme.darkBtnColour)
     }
 
     private func updateChips() -> Void {

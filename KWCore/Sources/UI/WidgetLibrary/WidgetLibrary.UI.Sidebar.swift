@@ -58,20 +58,33 @@ extension WidgetLibrary.UI {
 
         struct Title: View {
             public var text: String
+            public var transparent: Bool = false
 
             var body: some View {
-                ZStack(alignment: .topLeading) {
-                    Theme.base.opacity(0.2)
-                    VStack(alignment: .leading, spacing: 0) {
-                        HStack(alignment: .center, spacing:  0) {
-                            Text(self.text)
-                                .padding(6)
-                                .background(Theme.textBackground)
-                                .foregroundStyle(.white)
-                                .clipShape(RoundedRectangle(cornerRadius: 5))
-                            Spacer()
+                if self.transparent {
+                    HStack {
+                        Text(self.text)
+                            .padding(6)
+                            .background(Theme.textBackground)
+                            .foregroundStyle(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 5))
+                        Spacer()
+                    }
+                    .padding(8)
+                } else {
+                    ZStack(alignment: .topLeading) {
+                        Theme.base.opacity(0.2)
+                        VStack(alignment: .leading, spacing: 0) {
+                            HStack(alignment: .center, spacing:  0) {
+                                Text(self.text)
+                                    .padding(6)
+                                    .background(Theme.textBackground)
+                                    .foregroundStyle(.white)
+                                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                                Spacer()
+                            }
+                            .padding(8)
                         }
-                        .padding(8)
                     }
                 }
             }

@@ -126,55 +126,55 @@ extension WidgetLibrary.UI.Navigator {
                         job: self.state.session.job,
                         showRoot: true
                     )
+                    .background(self.state.session.appPage.primaryColour)
+                    // @TODO: implement column sorting
                     self.ListLegend
                 }
+                .background(self.HeaderBackground)
 
-                if self.companies.count(where: {$0.alive == true}) > 0 {
-                    if self.type == .folders {
-                        LazyVGrid(columns: self.columns, alignment: .leading) {
-                            ForEach(self.companies, id: \.objectID) { company in
-                                Folder(entity: company)
+                VStack(spacing: 0) {
+                    if self.companies.count(where: {$0.alive == true}) > 0 {
+                        if self.type == .folders {
+                            LazyVGrid(columns: self.columns, alignment: .leading) {
+                                ForEach(self.companies, id: \.objectID) { company in
+                                    Folder(entity: company)
+                                }
+                                //                            switch self.depth {
+                                //                            case 0:
+                                //                                if self.companies.count  > 0 {
+                                //                                    ForEach(self.companies, id: \.objectID) { company in
+                                //                                        Folder(entity: company)
+                                //                                    }
+                                //                                }
+                                //                            case 1:
+                                //                                if self.projects.count > 0 {
+                                //                                    ForEach(self.projects, id: \.objectID) { project in
+                                //                                        Folder(entity: project)
+                                //                                    }
+                                //                                }
+                                //                            case 2:
+                                //                                if self.jobs.count > 0 {
+                                //                                    ForEach(self.jobs, id: \.objectID) { job in
+                                //                                        Folder(entity: job)
+                                //                                    }
+                                //                                }
+                                //                            default: EmptyView()
+                                //                            }
                             }
-//                            switch self.depth {
-//                            case 0:
-//                                if self.companies.count  > 0 {
-//                                    ForEach(self.companies, id: \.objectID) { company in
-//                                        Folder(entity: company)
-//                                    }
-//                                }
-//                            case 1:
-//                                if self.projects.count > 0 {
-//                                    ForEach(self.projects, id: \.objectID) { project in
-//                                        Folder(entity: project)
-//                                    }
-//                                }
-//                            case 2:
-//                                if self.jobs.count > 0 {
-//                                    ForEach(self.jobs, id: \.objectID) { job in
-//                                        Folder(entity: job)
-//                                    }
-//                                }
-//                            default: EmptyView()
-//                            }
+                            .frame(maxWidth: 800)
+                            .padding()
+                        } else {
+                            ForEach(self.companies, id: \.objectID) { company in
+                                Row(entity: company, location: self.location)
+                            }
                         }
-                        .frame(maxWidth: 800)
-                        .padding()
                     } else {
-                        ForEach(self.companies, id: \.objectID) { company in
-                            Row(entity: company, location: self.location)
-                        }
+                        FancyHelpText(text: "Create a company first.")
                     }
-                } else {
-                    FancyHelpText(text: "Create a company first.")
                 }
+                .background(self.PageBackground)
             }
             .id(self.id)
-            .background(
-                ZStack {
-                    self.state.session.appPage.primaryColour
-                    Theme.textBackground
-                }
-            )
             .onAppear(perform: self.actionOnAppear)
             .onChange(of: self.showPublished) { self.actionOnAppear() }
             .onChange(of: self.state.session.gif) { self.actionOnAppear() }
@@ -190,22 +190,34 @@ extension WidgetLibrary.UI.Navigator {
             }
         }
 
+        @ViewBuilder private var PageBackground: some View {
+            ZStack {
+                self.state.session.appPage.primaryColour
+                Theme.textBackground
+            }
+        }
+
+        @ViewBuilder private var HeaderBackground: some View {
+            if [.classic, .opaque].contains(self.state.theme.style) {
+                self.PageBackground
+            } else {
+                ZStack {
+                    self.state.session.appPage.primaryColour.opacity(0.3)
+                }
+            }
+        }
+
         var ListHeader: some View {
             HStack {
                 UI.Toggle(isOn: $showPublished, icon: "heart", selectedIcon: "heart.fill")
                     .help("Show or hide unpublished items")
-                UI.Toggle("Full Colour", isOn: $altViewModeEnabled, icon: "checkmark.square", selectedIcon: "checkmark.square.fill")
-                    .help("Navigator becomes colourful")
-                    .padding(3)
-                    .background(Theme.textBackground)
-                    .clipShape(.rect(cornerRadius: 5))
                 Spacer()
                 FancyGenericToolbar.ActionButton(icon: "arrow.up", callback: self.actionOnUp, helpText: "Up a directory")
                     .keyboardShortcut(.upArrow, modifiers: [.command])
                     .disabled(self.depth == 0)
             }
             .padding(8)
-            .background(self.state.session.appPage.primaryColour)
+            .border(width: 1, edges: [.bottom], color: Theme.textBackground)
         }
 
         @ViewBuilder var ListLegend: some View {
@@ -229,8 +241,7 @@ extension WidgetLibrary.UI.Navigator {
             }
             .font(.caption)
             .padding(4)
-            .background(self.state.session.appPage.primaryColour)
-            Divider()
+            .background(self.PageBackground)
         }
 
         var ListFooter: some View {
@@ -251,6 +262,7 @@ extension WidgetLibrary.UI.Navigator {
             @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateProject") private var shouldCreateProject: Bool = false
             @AppStorage("widgetlibrary.ui.unifiedsidebar.shouldCreateJob") private var shouldCreateJob: Bool = false
             @AppStorage("widget.navigator.depth") private var depth: Int = 0
+            @AppStorage("general.theme.kioskMode") private var inKioskMode: Bool = false
             public let entity: NSManagedObject
             public let location: WidgetLocation
             @State private var label: String = ""
@@ -405,7 +417,7 @@ extension WidgetLibrary.UI.Navigator {
                     .frame(width: 30, height: 30)
                     .cornerRadius(5)
 
-                    Text(self.label)
+                    Text(self.inKioskMode ? "Lorem ipsum dolor sit amet" : self.label)
                         .multilineTextAlignment(.leading)
                         // @TODO: create a ShapeStyle for this
                         .foregroundStyle(
@@ -428,7 +440,7 @@ extension WidgetLibrary.UI.Navigator {
                 }
                 .padding(8)
                 .background(
-                    self.viewModeIndex == 1 ? self.isHighlighted ? self.colour.opacity(0.9) : self.colour : Color.white.opacity(self.isPresented ? 0.07 : self.isHighlighted ? 0.07 : 0.03)
+                    self.viewModeIndex == 1 ? self.isHighlighted ? self.colour.opacity(0.9) : self.colour : [.opaque, .hybrid, .glass].contains(self.state.theme.style) ? Theme.base.opacity(self.isHighlighted ? 0.4 : 0.3) : Color.white.opacity(self.isPresented ? 0.07 : self.isHighlighted ? 0.07 : 0.03)
                 )
                 .useDefaultHover({ hover in self.isHighlighted = hover })
             }
@@ -484,9 +496,7 @@ extension WidgetLibrary.UI.Navigator {
                         self.actionOnTap()
                         self.isPresented.toggle()
                     } label: {
-//                        if !self.isPresented {
                         UI.Blocks.Icon(type: .projects, text: self.label, colour: self.colour)
-//                        }
                     }
                     .help(self.label)
                     .buttonStyle(.plain)

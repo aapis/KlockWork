@@ -349,6 +349,8 @@ extension WidgetLibrary.UI {
         struct Settings: View {
             @EnvironmentObject public var state: Navigation
             public var onAction: (() -> Void)? = {}
+            public var padding: CGFloat? = nil
+            public var font: Font? = nil
             @State private var isHighlighted: Bool = false
             @State private var selectedPage: Page = .dashboard
 
@@ -357,10 +359,10 @@ extension WidgetLibrary.UI {
                     self.onAction?()
                 } label: {
                     Image(systemName: "gear")
-                        .font(.title)
+                        .font(self.font ?? .title)
                         .foregroundStyle(self.isHighlighted ? .white : Theme.lightWhite)
-                        .padding([.leading, .trailing])
-                        .padding([.top, .bottom], 10)
+                        .padding([.leading, .trailing], self.padding ?? 20)
+                        .padding([.top, .bottom], self.padding ?? 10)
                 }
                 .keyboardShortcut(KeyEquivalent.leftArrow, modifiers: [.command])
                 .buttonStyle(.plain)
@@ -415,6 +417,7 @@ extension WidgetLibrary.UI {
 
         struct Close: View {
             public var action: () -> Void
+            public var font: Font = .title2
 
             var body: some View {
                 FancyButtonv2(
@@ -423,8 +426,9 @@ extension WidgetLibrary.UI {
                     icon: "xmark.square.fill",
                     iconWhenHighlighted: "xmark.square",
                     showLabel: false,
+                    size: .tiny,
                     type: .clear,
-                    font: .title2
+                    font: self.font
                 )
                 .frame(width: 18)
             }
@@ -511,7 +515,7 @@ extension WidgetLibrary.UI {
                         }
                     }
                     .padding(8)
-                    .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background([.opaque, .hybrid].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .useDefaultHover({ hover in self.isHighlighted = hover })
                     .clipShape(.rect(cornerRadius: 5))
                 }
@@ -605,14 +609,21 @@ extension WidgetLibrary.UI.Buttons.FooterActivity {
     /// Onload handler. Sets view state.
     /// - Returns: Void
     private func actionOnAppear() -> Void {
-        Task {
-            if let start = self.start {
-                if let end = self.end {
-                    let fromRecords = await CoreDataRecords(moc: self.state.moc).getLinksFromRecords(start: start, end: end)
-                    self.count += fromRecords.count
-                }
-            }
-        }
+        // @TODO: still fucked after rewrite, investigate
+        // https://www.avanderlee.com/concurrency/tasks/
+//        if self.start != nil && self.end != nil {
+//            let fromRecords = Task { return await CoreDataRecords(moc: self.state.moc).links(start: self.start!, end: self.end!) }
+//            let fromTasks = Task { return await CoreDataTasks(moc: self.state.moc).links(start: self.start!, end: self.end!) }
+//            let fromNotes = Task { return await CoreDataNotes(moc: self.state.moc).links(start: self.start!, end: self.end!) }
+//            let fromJobs = Task { return await CoreDataJob(moc: self.state.moc).links(start: self.start!, end: self.end!) }
+//
+//            Task {
+//                self.count += (await fromRecords.value).count
+//                self.count += (await fromTasks.value).count
+//                self.count += (await fromNotes.value).count
+//                self.count += (await fromJobs.value).count
+//            }
+//        }
     }
 }
 

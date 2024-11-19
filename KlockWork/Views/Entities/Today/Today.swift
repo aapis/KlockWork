@@ -30,6 +30,15 @@ struct Today: View {
                 }
             }
         }
-        .background(Theme.toolbarColour)
+        .background(self.PageBackground)
+    }
+
+    @ViewBuilder private var PageBackground: some View {
+        ZStack {
+            if [.classic].contains(self.state.theme.style) {
+                Theme.base
+                Theme.toolbarColour
+            }
+        }
     }
 }

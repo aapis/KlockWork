@@ -98,7 +98,7 @@ extension WidgetLibrary {
                         }
                     }
                 }
-                .foregroundStyle((self.state.session.job?.backgroundColor ?? .clear).isBright() ? Theme.lightBase : Theme.lightWhite)
+                .foregroundStyle((self.state.session.job?.backgroundColor ?? .clear).isBright() ? Theme.lightBase : ([.hybrid, .glass].contains(self.state.theme.style) ? Theme.lightBase : Theme.lightWhite))
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.calendar) { self.actionOnChangeCalendar() }
                 .onChange(of: self.state.session.search.inspectingEvent) {
@@ -133,10 +133,14 @@ extension WidgetLibrary {
 
             var body: some View {
                 ZStack {
-                    self.state.session.appPage.primaryColour
-                    LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
-                        .opacity(0.6)
-                        .blendMode(.softLight)
+                    if [.classic, .opaque, .hybrid].contains(self.state.theme.style) {
+                        self.state.session.appPage.primaryColour
+                        LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
+                            .opacity(0.6)
+                            .blendMode(.softLight)
+                    } else {
+                        self.state.session.appPage.primaryColour.opacity(0.3)
+                    }
 
                     VStack(alignment: .leading, spacing: 0) {
                         HStack {
@@ -179,6 +183,7 @@ extension WidgetLibrary {
             public var start: Date?
             public var end: Date?
             public var format: String = "MMMM dd"
+            public var view: AnyView?
             private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
 
             var body: some View {
@@ -191,42 +196,45 @@ extension WidgetLibrary {
                         } else {
                             Theme.base.blendMode(.softLight)
                         }
-                        LazyVGrid(columns: self.twoCol, alignment: .leading, spacing: 10) {
-                            GridRow {
-                                // @TODO: implement UI.SuggestedStack in place of SuggestedLinksInRange when it gets fixed
-//                                UI.SuggestedStack(
-//                                    period: self.period,
-//                                    start: self.start ?? self.state.session.date.startOfDay,
-//                                    end: self.end ?? self.state.session.date.endOfDay,
-//                                    format: self.format
-//                                )
-                                UI.SuggestedLinksInRange(
-                                    period: self.period,
-                                    start: self.start ?? self.state.session.date.startOfDay,
-                                    end: self.end ?? self.state.session.date.endOfDay,
-                                    format: self.format,
-                                    useMiniMode: self.isMinimized
-                                )
-                                .frame(height: self.isMinimized ? 50 : 200)
-                                UI.InteractionsInRange(
-                                    period: self.period,
-                                    start: self.start ?? self.state.session.date.startOfDay,
-                                    end: self.end ?? self.state.session.date.endOfDay,
-                                    format: self.format,
-                                    useMiniMode: self.isMinimized
-                                )
-                                .frame(height: self.isMinimized ? 50 : 200)
+                        if let view = self.view {
+                            if !self.isMinimized {
+                                view.padding(.top, 40)
                             }
+                        } else {
+                            LazyVGrid(columns: self.twoCol, alignment: .leading, spacing: 10) {
+                                GridRow {
+                                    // @TODO: implement UI.SuggestedStack in place of SuggestedLinksInRange when it gets fixed
+//                                    UI.SuggestedStack(
+//                                        period: self.period,
+//                                        start: self.start ?? self.state.session.date.startOfDay,
+//                                        end: self.end ?? self.state.session.date.endOfDay,
+//                                        format: self.format
+//                                    )
+                                    UI.SuggestedLinksInRange(
+                                        period: self.period,
+                                        start: self.start ?? self.state.session.date.startOfDay,
+                                        end: self.end ?? self.state.session.date.endOfDay,
+                                        format: self.format,
+                                        useMiniMode: self.isMinimized
+                                    )
+                                    .frame(height: self.isMinimized ? 50 : 240)
+                                    UI.InteractionsInRange(
+                                        period: self.period,
+                                        start: self.start ?? self.state.session.date.startOfDay,
+                                        end: self.end ?? self.state.session.date.endOfDay,
+                                        format: self.format,
+                                        useMiniMode: self.isMinimized
+                                    )
+                                    .frame(height: self.isMinimized ? 50 : 240)
+                                }
+                            }
+                            .padding()
                         }
-                        .padding()
-                        HStack {
-                            Spacer()
-                            UI.Buttons.Minimize(isMinimized: $isMinimized)
-                                .padding([.trailing, .top], 8)
-                        }
+                        UI.Buttons.Minimize(font: .title, isMinimized: $isMinimized)
+                            .padding([.trailing, .top], 8)
                     }
                 }
-                .frame(height: self.isMinimized ? 50 : 200)
+                .frame(height: self.isMinimized ? 50 : 240)
                 .padding(.bottom, self.isMinimized ? 0 : 8)
             }
         }
@@ -382,10 +390,8 @@ extension WidgetLibrary {
                                             .foregroundStyle(.gray)
                                         Spacer()
                                         UI.Buttons.SmallOpen(callback: {
-                                            if let entity = self.activity.source as? NoteVersion {
-                                                self.state.to(.noteDetail)
-                                                self.state.session.note = entity.note
-                                            }
+                                            self.state.to(.noteDetail)
+                                            self.state.session.note = entity?.note
                                         })
                                     case is LogRecord:
                                         let entity = self.activity.source as? LogRecord
@@ -393,12 +399,19 @@ extension WidgetLibrary {
                                             .foregroundStyle(.gray)
                                         Spacer()
                                         UI.Buttons.SmallOpen(callback: {
-                                            if let entity = self.activity.source as? LogRecord {
-                                                if let created = entity.timestamp {
-                                                    self.state.to(.today)
-                                                    self.state.session.date = created
-                                                }
+                                            if let created = entity?.timestamp {
+                                                self.state.to(.today)
+                                                self.state.session.date = created
                                             }
+                                        })
+                                    case is LogTask:
+                                        let entity = self.activity.source as? LogTask
+                                        Text("Found with task \"\(entity?.content ?? "Error: Task not found")\", created on \(DateHelper.todayShort(entity?.created ?? Date.now, format: "MMMM dd, yyyy HH:mm"))")
+                                            .foregroundStyle(.gray)
+                                        Spacer()
+                                        UI.Buttons.SmallOpen(callback: {
+                                            self.state.session.task = entity
+                                            self.state.to(.taskDetail)
                                         })
                                     default:
                                         Text("No source found")
@@ -419,7 +432,7 @@ extension WidgetLibrary {
                     .onAppear(perform: self.actionOnAppear)
                     .onChange(of: self.shouldCheckLinkStatus) { self.actionOnAppear() }
                     .contextMenu { ContextMenu(activity: self.activity) }
-                    .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background([.opaque, .hybrid].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
                     .help(self.isLinkOnline ? self.activity.help : "Error: \(self.name) is down")
                 }
@@ -439,7 +452,7 @@ extension WidgetLibrary {
             }
         }
 
-        struct ListLinkItem: View {
+        struct ExploreLink: View {
             @EnvironmentObject private var state: Navigation
             public var page: Page
             public var name: String
@@ -465,7 +478,7 @@ extension WidgetLibrary {
                             .foregroundStyle(.gray)
                     }
                     .padding(8)
-                    .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background([.hybrid, .glass].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
                 }
                 .buttonStyle(.plain)
@@ -503,7 +516,7 @@ extension WidgetLibrary {
                         }
                     }
                     .padding(8)
-                    .background(.white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background([.opaque, .hybrid].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
                 }
                 .buttonStyle(.plain)
@@ -515,19 +528,31 @@ extension WidgetLibrary {
             @EnvironmentObject private var state: Navigation
             public var type: ExploreActivityType?
             public var text: String?
+            private let styleConditions: [GlobalSettingsPanel.Pages.Themes.Style] = [.glass, .opaque, .hybrid]
 
             var body: some View {
                 HStack(alignment: .center) {
                     if let type = self.type {
                         Text(type.title.uppercased())
+                            .padding(5)
+                            .foregroundStyle(self.styleConditions.contains(self.state.theme.style) ? .white : .gray)
+                            .background(self.styleConditions.contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : .clear)
+                            .clipShape(.rect(cornerRadius: 5))
                     } else if let text = self.text {
                         Text(text.uppercased())
+                            .padding(5)
+                            .foregroundStyle(self.styleConditions.contains(self.state.theme.style) ? .white : .gray)
+                            .background(self.styleConditions.contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : .clear)
+                            .clipShape(.rect(cornerRadius: 5))
                     } else {
                         Text("Title")
+                            .padding(5)
+                            .foregroundStyle(self.styleConditions.contains(self.state.theme.style) ? .white : .gray)
+                            .background(self.styleConditions.contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : .clear)
+                            .clipShape(.rect(cornerRadius: 5))
                     }
                     Spacer()
                 }
-                .foregroundStyle(.gray)
                 .font(.caption)
             }
         }
@@ -547,14 +572,18 @@ extension WidgetLibrary {
                     }
                 }
                 .padding()
-                .background(
-                    ZStack {
-                        self.state.session.appPage.primaryColour
-                        Theme.textBackground
-                    }
-                )
+                .background(self.PageBackground)
                 .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
                 .onAppear(perform: self.actionOnAppear)
+            }
+
+            @ViewBuilder private var PageBackground: some View {
+                ZStack {
+                    if [.opaque, .classic, .hybrid].contains(self.state.theme.style) {
+                        self.state.session.appPage.primaryColour
+                    }
+                    Theme.textBackground
+                }
             }
 
             struct Statistic: View, Identifiable {
@@ -571,7 +600,7 @@ extension WidgetLibrary {
                     } label: {
                         VStack(alignment: .center, spacing: 0) {
                             ZStack(alignment: .center) {
-                                Color.gray.opacity(self.isHighlighted ? 1 : 0.7)
+                                ([.glass].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : Color.gray.opacity(self.isHighlighted ? 1 : 0.7))
                                 VStack(alignment: .center, spacing: 0) {
                                     if self.isLoading {
                                         ProgressView()
@@ -590,7 +619,7 @@ extension WidgetLibrary {
                                 VStack(alignment: .center, spacing: 0) {
                                     Text(String(self.count))
                                         .font(.system(.title3, design: .monospaced))
-                                        .foregroundStyle(self.isHighlighted ? Theme.base : .gray)
+                                        .foregroundStyle(self.isHighlighted ? Theme.base : [.glass].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : .gray)
                                 }
                             }
                             .frame(height: 25)
@@ -644,6 +673,7 @@ extension WidgetLibrary {
         // MARK: ExploreLinks
         struct ExploreLinks: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("general.usingBackgroundImage") private var usingBackgroundImage: Bool = false
             private var activities: [Activity] {
                 [
                     Activity(name: "Activity Calendar", page: .activityCalendar, type: .visualize, icon: "calendar"),
@@ -660,7 +690,7 @@ extension WidgetLibrary {
                                 UI.ListLinkTitle(type: type)
 
                                 ForEach(self.activities.filter({$0.type == type}), id: \.id) { activity in
-                                    UI.ListLinkItem(
+                                    UI.ExploreLink(
                                         page: activity.page,
                                         name: activity.name,
                                         icon: activity.icon
@@ -671,8 +701,12 @@ extension WidgetLibrary {
                             .padding()
                             .background(
                                 ZStack {
-                                    self.state.session.appPage.primaryColour
-                                    Theme.textBackground
+                                    if [.hybrid, .glass].contains(self.state.theme.style) {
+                                        Theme.textBackground
+                                    } else {
+                                        self.state.session.appPage.primaryColour
+                                        Theme.textBackground
+                                    }
                                 }
                             )
                             .clipShape(.rect(cornerRadius: 5))
@@ -712,10 +746,10 @@ extension WidgetLibrary {
                 VStack(alignment: .leading, spacing: 0) {
                     if self.location == .content {
                         HStack(alignment: .top) {
-                            LinkList
+                            self.LinkList
                         }
                     } else if self.location == .sidebar {
-                        LinkList
+                        self.LinkList
                     }
                 }
                 .padding(.top, 8)
@@ -747,7 +781,7 @@ extension WidgetLibrary {
                             .buttonStyle(.plain)
                             .useDefaultHover({_ in})
                         }
-                        .padding(8)
+                        .padding([.top, .bottom], 8)
 
                         ZStack(alignment: .bottom) {
                             LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
@@ -798,7 +832,7 @@ extension WidgetLibrary {
                                 .padding(self.location == .content ? 16 : 8)
                             }
                         }
-                        .background(Theme.textBackground)
+                        .background([.opaque, .classic, .hybrid].contains(self.state.theme.style) ? Theme.darkBtnColour : self.state.session.appPage.primaryColour)
                         .clipShape(.rect(cornerRadius: 5))
                     }
                 }
@@ -1136,9 +1170,10 @@ extension WidgetLibrary {
                         buttons: self.tabs,
                         standalone: true,
                         location: .content,
-                        mode: .full,
+                        mode: .compact,
                         page: self.state.session.appPage
                     )
+                    .padding(.bottom)
                     Spacer()
                 }
                 .id(self.vid)
@@ -1186,7 +1221,7 @@ extension WidgetLibrary {
                             LogRowEmpty(
                                 message: "No activities found for \(DateHelper.todayShort(self.historicalDate, format: "MMMM dd, YYYY"))",
                                 index: 0,
-                                colour: Theme.rowColour
+                                colour: [.opaque, .classic, .hybrid].contains(self.state.theme.style) ? Theme.base : Theme.rowColour
                             )
                         }
                     }
@@ -1225,11 +1260,15 @@ extension WidgetLibrary {
             var body: some View {
                 GridRow {
                     ZStack(alignment: .topLeading) {
-                        self.state.parent?.appPage.primaryColour.opacity(0.6) ?? Theme.subHeaderColour
-                        LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
-                            .blendMode(.softLight)
-                            .opacity(0.4)
-                            .frame(height: 15)
+                        if [.opaque, .classic].contains(self.state.theme.style) {
+                            self.state.session.appPage.primaryColour
+                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                .blendMode(.softLight)
+                                .opacity(0.4)
+                                .frame(height: 15)
+                        } else {
+                            self.state.session.appPage.primaryColour.opacity(0.3)
+                        }
 
                         HStack(alignment: .center) {
                             UI.Toggle(isOn: $showRecords, eType: .records)
@@ -1344,7 +1383,7 @@ extension WidgetLibrary {
                     .padding([.leading, .trailing])
                 }
                 .frame(height: 57)
-                .background(self.state.session.job?.backgroundColor.opacity(0.6) ?? Theme.textBackground)
+                .background(Theme.textBackground)
                 .onAppear(perform: self.actionOnAppear)
             }
         }
@@ -1355,7 +1394,6 @@ extension WidgetLibrary {
             @AppStorage("searchbar.showTypes") private var showingTypes: Bool = false
             @AppStorage("searchbar.shared") private var searchText: String = ""
             @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
-            @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
             @Binding public var text: String
             public var disabled: Bool = false
             public var placeholder: String? = "Search..."
@@ -1374,7 +1412,6 @@ extension WidgetLibrary {
                                 self.primaryTextFieldInFocus = true
                             }
                         }
-
                     HStack(alignment: .center) {
                         Image(systemName: "magnifyingglass")
                             .font(.title2)
@@ -1398,7 +1435,7 @@ extension WidgetLibrary {
                     .padding([.leading, .trailing])
                 }
                 .frame(height: 57)
-                .background(Theme.textBackground)
+                .background([.opaque, .classic].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : Theme.textBackground)
                 .onAppear(perform: self.actionOnAppear)
             }
         }
@@ -1425,7 +1462,6 @@ extension WidgetLibrary {
                                         Image(systemName: "house.fill")
                                             .padding([.top, .bottom], 7)
                                             .padding([.leading, .trailing], 4)
-                                            .background(Theme.lightBase)
                                             .foregroundStyle(self.company == nil ? Theme.lightWhite : self.state.theme.tint)
                                     }
                                     .buttonStyle(.plain)
@@ -1435,7 +1471,6 @@ extension WidgetLibrary {
                                     Image(systemName: "chevron.right")
                                         .padding([.top, .bottom], 8)
                                         .padding([.leading, .trailing], 4)
-                                        .background(Theme.lightBase)
                                         .foregroundStyle(Theme.lightWhite)
                                         .opacity(self.company == nil ? 0.5 : 1)
                                 }
@@ -2154,6 +2189,7 @@ extension WidgetLibrary.UI.ActivityLinks {
             await self.getLinksFromJobs()
             await self.getLinksFromNotes()
             await self.getLinksFromRecords()
+            await self.getLinksFromTasks()
             self.vid = UUID()
         }
     }
@@ -2210,17 +2246,23 @@ extension WidgetLibrary.UI.ActivityLinks {
             start: self.start,
             end: self.end
         )
+        let linkLength = 40
 
         for job in jobs {
             if let uri = job.uri {
                 if uri.absoluteString != "https://" {
+                    var label: String = uri.absoluteString
+                    if label.count > linkLength {
+                        label = label.prefix(linkLength) + "..."
+                    }
                     self.activities.append(
                         Activity(
-                            name: uri.absoluteString,
-                            page: self.state.parent ?? .dashboard,
+                            name: label,
+                            help: uri.absoluteString,
+                            page: .jobs,
                             type: .activity,
                             job: job,
-                            url: uri.absoluteURL
+                            url: uri
                         )
                     )
                 }
@@ -2275,6 +2317,41 @@ extension WidgetLibrary.UI.ActivityLinks {
             }
         }
     }
+    
+    /// Find links added to tasks created on this day
+    /// @TODO: move to CoreDataTasks
+    /// - Returns: Void
+    private func getLinksFromTasks() async -> Void {
+        if self.start != nil && self.end != nil {
+            let tasks = CoreDataTasks(moc: self.state.moc).inRange(
+                start: self.start,
+                end: self.end
+            )
+            let linkLength = 40
+
+            for task in tasks {
+                if let content = task.uri {
+                    var label: String = content.absoluteString
+                    if label.count > linkLength {
+                        label = label.prefix(linkLength) + "..."
+                    }
+                    if !self.activities.contains(where: {$0.name == label}) {
+                        self.activities.append(
+                            Activity(
+                                name: label,
+                                help: content.absoluteString,
+                                page: self.state.parent ?? .dashboard,
+                                type: .activity,
+                                job: task.owner,
+                                source: task,
+                                url: content
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
 extension WidgetLibrary.UI.ListExternalLinkItem {
@@ -2282,7 +2359,11 @@ extension WidgetLibrary.UI.ListExternalLinkItem {
     /// - Returns: Void
     private func actionOnAppear() -> Void {
         if self.shouldCheckLinkStatus {
-            self.checkLinkStatus(link: self.name)
+            if let url = self.activity.url {
+                self.checkLinkStatus(link: url.absoluteString)
+            } else {
+                self.checkLinkStatus(link: self.name)
+            }
         }
     }
 

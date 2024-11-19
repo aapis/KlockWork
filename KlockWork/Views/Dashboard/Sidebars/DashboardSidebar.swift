@@ -10,22 +10,28 @@ import SwiftUI
 import KWCore
 
 struct DashboardSidebar: View {
-    typealias UI = WidgetLibrary.UI
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
     @State private var tabs: [ToolbarButton] = []
 
     var body: some View {
-        FancyGenericToolbar(buttons: tabs, standalone: true, location: .sidebar, mode: .compact)
-            .onAppear(perform: createToolbar)
+        if !self.isSearchStackShowing && !self.isUpcomingTaskStackShowing {
+            FancyGenericToolbar(buttons: tabs, standalone: true, location: .sidebar, mode: .compact)
+                .onAppear(perform: self.actionOnAppear)
+        }
     }
 }
 
 extension DashboardSidebar {
-    private func createToolbar() -> Void {
+    /// Onload handler. Sets view state.
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
         tabs = [
             ToolbarButton(
                 id: 0,
                 helpText: "Today in history",
-                icon: "clock.badge.questionmark.fill",
+                icon: "clock.badge.questionmark",
+                selectedIcon: "clock.badge.questionmark.fill",
                 labelText: "History",
                 contents: AnyView(TodayInHistoryWidget())
             ),
@@ -33,6 +39,7 @@ extension DashboardSidebar {
                 id: 1,
                 helpText: "Resources",
                 icon: "globe",
+                selectedIcon: "globe",
                 labelText: "Resources",
                 contents: AnyView(UI.UnifiedSidebar.Widget())
             ),
@@ -40,6 +47,7 @@ extension DashboardSidebar {
                 id: 2,
                 helpText: "Companies & Projects",
                 icon: "menucard",
+                selectedIcon: "menucard.fill",
                 labelText: "Outline",
                 contents: AnyView(OutlineWidget())
             ),
@@ -47,8 +55,9 @@ extension DashboardSidebar {
                 id: 3,
                 helpText: "Calendar events",
                 icon: "calendar",
+                selectedIcon: "calendar",
                 labelText: "Calendar events",
-                contents: AnyView(WidgetLibrary.UI.Sidebar.EventsWidget())
+                contents: AnyView(UI.Sidebar.EventsWidget())
             )
         ]
     }

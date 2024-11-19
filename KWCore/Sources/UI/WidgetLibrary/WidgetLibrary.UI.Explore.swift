@@ -99,12 +99,16 @@ extension WidgetLibrary.UI {
                                 scrollable: false
                             )
                         }
-                        .background(
+                        .background(self.PageBackground)
+                    }
+
+                    @ViewBuilder private var PageBackground: some View {
+                        if [.classic].contains(self.state.theme.style) {
                             ZStack {
-                                self.state.session.appPage.primaryColour
-                                Theme.base.opacity(0.6)
+                                self.state.session.appPage.primaryColour.saturation(0.7)
+                                Theme.base.blendMode(.softLight).opacity(0.5)
                             }
-                        )
+                        }
                     }
 
                     init() {
@@ -151,7 +155,7 @@ extension WidgetLibrary.UI {
                                 //                    FancyDivider()
                                 UI.ActivityFeed()
                             }
-                            .padding([.leading, .trailing])
+                            .padding([.bottom, .leading, .trailing])
                             UI.AppFooter()
                         }
                     }
@@ -388,7 +392,7 @@ extension WidgetLibrary.UI {
                                     }
                                 }
                                 FancyDivider()
-                                ActivityFeed()
+                                UI.ActivityFeed()
                             }
                             .padding([.leading, .trailing])
                         }

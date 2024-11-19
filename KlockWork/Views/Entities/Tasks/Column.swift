@@ -67,6 +67,7 @@ struct Column: View {
     @StateObject public var jm: CoreDataJob = CoreDataJob(moc: PersistenceController.shared.container.viewContext)
 
     @AppStorage("tigerStriped") private var tigerStriped = false
+    @AppStorage("general.theme.kioskMode") private var inKioskMode: Bool = false
 
     var body: some View {
         if self.show {
@@ -157,10 +158,17 @@ struct Column: View {
     }
 
     @ViewBuilder private var Message: some View {
-        Text(text)
-            .padding(10)
-            .foregroundStyle(textColour)
-            .help(text)
+        if self.inKioskMode {
+            Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
+                .padding(10)
+                .foregroundStyle(textColour)
+                .help("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
+        } else {
+            Text(text)
+                .padding(10)
+                .foregroundStyle(textColour)
+                .help(text)
+        }
     }
 }
 

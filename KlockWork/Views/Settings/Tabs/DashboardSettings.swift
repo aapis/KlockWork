@@ -20,6 +20,7 @@ struct DashboardSettings: View {
     @AppStorage("dashboard.widget.upcomingWork") public var showWidgetUpcomingWork: Bool = true
     @AppStorage("dashboard.widget.recentSearches") public var showRecentSearches: Bool = true
     @AppStorage("dashboard.showWelcomeHeader") private var showWelcomeHeader: Bool = true
+    @AppStorage("dashboard.showRecentSearchesAboveResults") private var showRecentSearchesAboveResults: Bool = true
 
     var body: some View {
         Form {
@@ -34,6 +35,7 @@ struct DashboardSettings: View {
 
             Section("Display Settings") {
                 Toggle("Show \"Welcome\" header", isOn: $showWelcomeHeader)
+                Toggle("Show recent/saved searches above (or below) results", isOn: $showRecentSearchesAboveResults)
             }
 
             if self.showWidgetUpcomingWork {

@@ -31,16 +31,14 @@ public struct Inspector: View, Identifiable {
     public var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                FancySubTitle(text: "Inspector")
+                UI.ListLinkTitle(text: "Inspector")
                 Spacer()
-                FancyButtonv2(
-                    text: "Close",
-                    action: {nav.session.search.cancel() ; nav.setInspector() ; self.isSearchStackShowing = false},
-                    icon: "xmark.square.fill",
-                    iconWhenHighlighted: "xmark.square",
-                    showLabel: false,
-                    size: .tiny,
-                    type: .clear
+                UI.Buttons.Close(
+                    action: {
+                        self.nav.session.search.cancel()
+                        self.nav.setInspector()
+                        self.isSearchStackShowing = false
+                    }
                 )
             }
             Divider()
@@ -58,7 +56,7 @@ public struct Inspector: View, Identifiable {
         .padding([.trailing, .top, .bottom])
         .padding(.leading, self.location == .content ? 0 : 20)
         .frame(maxWidth: panelWidth)
-        .background(self.location == .content ? Theme.rowColour : .clear)
+        .background(self.location == .content ? [.opaque, .classic, .hybrid].contains(self.nav.theme.style) ? self.nav.session.appPage.primaryColour : self.nav.session.appPage.primaryColour.opacity(0.3) : .clear)
     }
     public var EntityInspectorBody: some View {
         VStack(alignment: .leading) {

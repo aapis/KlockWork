@@ -19,6 +19,9 @@ struct PageAltMode: Identifiable {
 
 struct SidebarButton: View, Identifiable {
     typealias ActiveIndicator = WidgetLibrary.UI.ActiveIndicator
+    @EnvironmentObject public var nav: Navigation
+    @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearching: Bool = false
     public let id: UUID = UUID()
     public var destination: AnyView
     public let pageType: Page
@@ -31,13 +34,7 @@ struct SidebarButton: View, Identifiable {
     public var showLabel: Bool = true
     public var size: ButtonSize? = .large
     public var altMode: PageAltMode? = nil
-
     @State private var highlighted: Bool = false
-
-    @EnvironmentObject public var nav: Navigation
-    @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
-    @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
-    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearching: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -152,7 +149,7 @@ struct SidebarButton: View, Identifiable {
                         .symbolRenderingMode(.hierarchical)
                         .foregroundStyle(self.nav.parent == self.pageType ? self.nav.theme.tint : .white)
                 } else {
-                    Image(systemName: isDatePickerPresented && nav.parent == pageType ? "xmark" : (altMode != nil ? (altMode!.condition ? altMode!.icon : icon!) : icon!))
+                    Image(systemName: (altMode != nil ? (altMode!.condition ? altMode!.icon : icon!) : icon!))
                         .font(.title)
                         .symbolRenderingMode(.hierarchical)
                         .foregroundStyle(self.nav.parent == self.pageType ? self.nav.theme.tint : .white)
@@ -167,27 +164,19 @@ struct SidebarButton: View, Identifiable {
 
     private var FancyButton: some View {
         Button(action: {
-            self.isDatePickerPresented = false
-
-
             if self.pageType == .planning {
                 self.isUpcomingTaskStackShowing = false
             }
-
             if self.pageType == .dashboard {
                 self.isSearching = false
             }
-
             self.nav.session.appPage = pageType.appPage
             self.nav.to(pageType)
         }, label: {
             ZStack {
                 highlighted ? backgroundColour.opacity(0.9) : backgroundColour.opacity(1)
-                Color.white
-                    .opacity(0.4)
-                    .blendMode(.softLight)
 
-                if nav.parent != pageType {
+                if nav.parent != pageType && self.nav.parent?.parentView != self.pageType {
                     HStack {
                         Spacer()
                         LinearGradient(gradient: Gradient(colors: [.clear, Theme.base]), startPoint: .leading, endPoint: .trailing)
@@ -201,19 +190,20 @@ struct SidebarButton: View, Identifiable {
                         startPoint: .bottomLeading,
                         endPoint: .topTrailing
                     )
-                    .opacity(0.1)
+                    .blendMode(.softLight)
+                    .opacity(0.3)
                 }
 
                 if let img = self.iconAsImage {
                     img
                         .font(.title)
                         .symbolRenderingMode(.hierarchical)
-                        .foregroundStyle(self.nav.parent == self.pageType ? self.nav.theme.tint : .white)
+                        .foregroundStyle(self.nav.parent == self.pageType || self.nav.parent?.parentView == self.pageType ? self.nav.theme.tint : .white)
                 } else {
                     Image(systemName: altMode != nil ? (altMode!.condition ? altMode!.icon : icon!) : icon!)
                         .font(.title)
                         .symbolRenderingMode(.hierarchical)
-                        .foregroundStyle(self.nav.parent == self.pageType ? self.nav.theme.tint : .white)
+                        .foregroundStyle(self.nav.parent == self.pageType || self.nav.parent?.parentView == self.pageType ? self.nav.theme.tint : .white)
                 }
             }
         })
@@ -224,21 +214,18 @@ struct SidebarButton: View, Identifiable {
 
     @ViewBuilder private var backgroundColour: some View {
         Theme.toolbarColour
-
         if nav.parent == pageType || self.nav.parent?.parentView == self.pageType {
             if let parent = nav.parent {
-                if isDatePickerPresented {
-                    Color.white
-                } else {
-                    parent.colour
-                }
+                parent.colour
             } else {
                 Theme.tabActiveColour
             }
         } else {
-            Theme.tabColour
+            switch self.nav.theme.style {
+            case .classic: Theme.cPurple
+            default: Theme.darkBtnColour
+            }
         }
-
         if self.highlighted {
             self.pageType.colour
         }
