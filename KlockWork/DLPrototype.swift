@@ -63,6 +63,7 @@ struct DLPrototype: App {
                         persistenceController.save()
                     }
                 }
+                .frame(minWidth: 800, minHeight: 800)
         }
         .commands {
             MainMenu(state: self.nav)
