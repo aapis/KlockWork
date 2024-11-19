@@ -158,6 +158,8 @@ struct GlobalSettingsPanel: View {
                             .buttonStyle(.plain)
                             .useDefaultHover({ _ in})
                         Spacer()
+                        Text(self.wallpapers[self.state.theme.wallpaperChoice].label)
+                            .foregroundStyle(.gray)
                         Toggle("", isOn: self.$usingBackgroundImage)
                             .onChange(of: self.usingBackgroundImage) {
                                 if self.usingBackgroundImage {
@@ -215,6 +217,7 @@ struct GlobalSettingsPanel: View {
                         ZStack {
                             image
                                 .resizable()
+                                .opacity(self.isHighlighted || self.altViewModeEnabled == self.isFullColour ? 1 : 0.5)
                                 .border(width: 4, edges: [.top, .bottom, .leading, .trailing], color: self.isFullColour == self.altViewModeEnabled ? self.state.theme.tint.opacity(1) : .white.opacity(0.5))
                         }
                     }
@@ -241,6 +244,7 @@ struct GlobalSettingsPanel: View {
                     } label: {
                         ZStack {
                             self.style.view
+                                .opacity(self.isHighlighted || self.state.theme.style == self.style ? 1 : 0.5)
                                 .border(width: 4, edges: [.top, .bottom, .leading, .trailing], color: self.state.theme.style == self.style ? self.state.theme.tint.opacity(1) : .white.opacity(0.5))
                             Text(self.style.label)
                                 .padding(6)
@@ -288,12 +292,14 @@ struct GlobalSettingsPanel: View {
                                 image
                                     .resizable()
                                     .frame(height: 100)
+                                    .opacity(self.isHighlighted || self.choice == self.wallpaperChoice ? 1 : 0.5)
                                     .border(width: 4, edges: [.top, .bottom, .leading, .trailing], color: self.choice == self.wallpaperChoice ? self.state.theme.tint.opacity(1) : .white.opacity(0.5))
 
                             } else {
                                 Image(self.asset)
                                     .resizable()
                                     .frame(height: 100)
+                                    .opacity(self.isHighlighted || self.choice == self.wallpaperChoice ? 1 : 0.5)
                                     .border(width: 4, edges: [.top, .bottom, .leading, .trailing], color: self.choice == self.wallpaperChoice ? self.state.theme.tint.opacity(1) : .white.opacity(0.5))
                             }
                             Text(self.label)
