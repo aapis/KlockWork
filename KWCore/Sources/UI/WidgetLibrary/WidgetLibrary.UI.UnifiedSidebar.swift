@@ -586,9 +586,10 @@ extension WidgetLibrary.UI {
         }
 
         struct EntityRowButton: View {
+            @EnvironmentObject private var state: Navigation
             public let text: String
             public var callback: (() -> Void)?
-            public var colour: Color? = Theme.base
+            public var colour: Color? = Theme.lightWhite
             public var showToggle: Bool = true
             @Binding public var isPresented: Bool
 
@@ -598,7 +599,11 @@ extension WidgetLibrary.UI {
                     self.callback?()
                 } label: {
                     ZStack(alignment: .topLeading) {
-                        self.colour!.opacity(0.6).blendMode(.softLight)
+                        if [.opaque, .classic, .hybrid].contains(self.state.theme.style) {
+                            self.colour!.opacity(0.6).blendMode(.softLight)
+                        } else {
+                            self.state.session.appPage.primaryColour
+                        }
                         HStack(alignment: .center, spacing: 8) {
                             if self.showToggle {
                                 ZStack(alignment: .center) {

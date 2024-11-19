@@ -93,6 +93,7 @@ struct FancyGenericToolbar: View {
     public var alwaysShowTab: Bool = false
     public var scrollable: Bool = true
     @State public var selected: Int = 0
+    private let styleConditions: [GlobalSettingsPanel.Pages.Themes.Style] = [.opaque, .hybrid, .glass]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -103,7 +104,7 @@ struct FancyGenericToolbar: View {
                             (self.location == .content ? UIGradient() : nil)
                             // I'm sorry
                             (
-                                self.nav.theme.style == .opaque ?
+                                self.styleConditions.contains(self.nav.theme.style) ?
                                     !self.standalone ? Theme.darkBtnColour.blendMode(.normal) : Color.clear.blendMode(.normal)
                                 :
                                     (self.nav.session.job?.backgroundColor ?? .white).opacity(self.standalone ? 0 : 1).blendMode(.softLight)
@@ -118,7 +119,8 @@ struct FancyGenericToolbar: View {
                                             location: location,
                                             selected: $selected,
                                             mode: mode,
-                                            page: self.page
+                                            page: self.page,
+                                            styleConditions: self.styleConditions
                                         )
 
                                         if buttons.count == 1 {
@@ -205,6 +207,7 @@ struct FancyGenericToolbar: View {
         @Binding public var selected: Int
         public var mode: ToolbarMode
         public var page: PageConfiguration.AppPage?
+        public var styleConditions: [GlobalSettingsPanel.Pages.Themes.Style]
         @State private var highlighted: Bool = false
 
         var body: some View {
@@ -264,7 +267,7 @@ struct FancyGenericToolbar: View {
                             HStack(alignment: .center, spacing: 8) {
                                 if self.button.showIcon {
                                     self.button.icon
-                                        .foregroundStyle(self.selected == self.button.id ? .white : self.nav.theme.style == .opaque ? Theme.lightBase : Theme.lightWhite)
+                                        .foregroundStyle(self.selected == self.button.id ? .white : self.styleConditions.contains(self.nav.theme.style) ? Theme.lightBase : Theme.lightWhite)
                                         .font(.title3)
                                         .symbolRenderingMode(.hierarchical)
                                 }
@@ -285,7 +288,7 @@ struct FancyGenericToolbar: View {
                                 if self.button.showIcon {
                                     self.button.icon
                                         .symbolRenderingMode(.hierarchical)
-                                        .foregroundStyle(self.selected == self.button.id ? .white : self.nav.theme.style == .opaque ? Theme.lightBase : Theme.lightWhite)
+                                        .foregroundStyle(self.selected == self.button.id ? .white : self.styleConditions.contains(self.nav.theme.style) ? Theme.lightBase : Theme.lightWhite)
                                         .font(.title3)
                                         .padding([.top, .bottom], 10)
                                         .padding([.leading, .trailing])

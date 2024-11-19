@@ -56,7 +56,7 @@ public struct Inspector: View, Identifiable {
         .padding([.trailing, .top, .bottom])
         .padding(.leading, self.location == .content ? 0 : 20)
         .frame(maxWidth: panelWidth)
-        .background(self.location == .content ? self.nav.theme.style == .opaque ? self.nav.session.appPage.primaryColour : self.nav.session.appPage.primaryColour.opacity(0.3) : .clear)
+        .background(self.location == .content ? [.opaque, .classic, .hybrid, .glass].contains(self.nav.theme.style) ? self.nav.session.appPage.primaryColour : self.nav.session.appPage.primaryColour.opacity(0.3) : .clear)
     }
     public var EntityInspectorBody: some View {
         VStack(alignment: .leading) {

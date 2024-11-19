@@ -237,9 +237,7 @@ extension Home {
                     ZStack(alignment: .bottomLeading) {
                         VStack(spacing: 0) {
                             GlobalSidebarWidgets()
-                            if !self.isSearchStackShowing && !self.isUpcomingTaskStackShowing {
-                                nav.sidebar
-                            }
+                            nav.sidebar
                         }
                         Divider()
                         LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)

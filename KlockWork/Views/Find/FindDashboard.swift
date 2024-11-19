@@ -139,31 +139,34 @@ struct FindDashboard: View {
             }
 
             if showingTypes {
-                if self.location == .content {
-                    UI.BoundSearchTypeFilter(
-                        showRecords: $showRecords,
-                        showNotes: $showNotes,
-                        showTasks: $showTasks,
-                        showProjects: $showProjects,
-                        showJobs: $showJobs,
-                        showCompanies: $showCompanies,
-                        showPeople: $showPeople,
-                        showTerms: $showTerms,
-                        showDefinitions: $showDefinitions
-                    )
-                } else if self.location == .sidebar {
-                    GridRow {
-                        ZStack(alignment: .topLeading) {
-                            LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
-                                .blendMode(.softLight)
-                                .opacity(0.3)
-                            UI.LinkList(location: self.location, isSearching: !searching && activeSearchText.count >= 2)
+                VStack {
+                    if self.location == .content {
+                        UI.BoundSearchTypeFilter(
+                            showRecords: $showRecords,
+                            showNotes: $showNotes,
+                            showTasks: $showTasks,
+                            showProjects: $showProjects,
+                            showJobs: $showJobs,
+                            showCompanies: $showCompanies,
+                            showPeople: $showPeople,
+                            showTerms: $showTerms,
+                            showDefinitions: $showDefinitions
+                        )
+                    } else if self.location == .sidebar {
+                        GridRow {
+                            ZStack(alignment: .topLeading) {
+                                LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
+                                    .blendMode(.softLight)
+                                    .opacity(0.3)
+                                UI.LinkList(location: self.location, isSearching: !searching && activeSearchText.count >= 2)
+                            }
+                            .frame(minHeight: 300, maxHeight: 400)
                         }
-                        .frame(minHeight: 300, maxHeight: 400)
+                        .background(.clear)
+                        .foregroundStyle(.gray)
                     }
-                    .background(.clear)
-                    .foregroundStyle(.gray)
                 }
+                .clipShape(.rect(bottomLeadingRadius: location == .sidebar ? 0 : 5, bottomTrailingRadius: location == .sidebar ? 0 : 5))
             }
 
             if searching {
@@ -403,22 +406,24 @@ extension FindDashboard {
                             .padding()
                         Spacer()
                     }
-                    .background(Theme.subHeaderColour)
-                    
+                    .background(self.state.session.appPage.primaryColour)
+
                     ScrollView(showsIndicators: false) {
-                        VStack(spacing: 1) {
+                        VStack(spacing: 0) {
                             ForEach(entities, id: \.objectID) { item in
-                                let entry = Entry(
-                                    timestamp: item.timestamp!,
-                                    job: item.job!,
-                                    message: item.message!
-                                )
-                                
-                                LogRow(
-                                    entry: entry,
-                                    index: entities.firstIndex(of: item),
-                                    colour: Color.fromStored(item.job!.colour ?? Theme.rowColourAsDouble)
-                                )
+                                if let job = item.job {
+                                    let entry = Entry(
+                                        timestamp: item.timestamp!,
+                                        job: job,
+                                        message: item.message!
+                                    )
+
+                                    LogRow(
+                                        entry: entry,
+                                        index: entities.firstIndex(of: item),
+                                        colour: job.backgroundColor
+                                    )
+                                }
                             }
                         }
                     }
@@ -428,7 +433,7 @@ extension FindDashboard {
                             .padding()
                         Spacer()
                     }
-                    .background([.opaque, .classic].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : Theme.subHeaderColour)
+                    .background(self.state.session.appPage.primaryColour)
                 }
             }
             .onAppear(perform: actionOnAppear)
@@ -445,6 +450,7 @@ extension FindDashboard {
     }
     
     struct NotesMatchingString: View {
+        @EnvironmentObject private var state: Navigation
         @FetchRequest private var entities: FetchedResults<Note>
 
         var body: some View {
@@ -455,8 +461,8 @@ extension FindDashboard {
                             .padding()
                         Spacer()
                     }
-                    .background(Theme.subHeaderColour)
-                    
+                    .background(self.state.session.appPage.primaryColour)
+
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 1) {
                             ForEach(entities, id: \.objectID) { item in
@@ -470,7 +476,7 @@ extension FindDashboard {
                             .padding()
                         Spacer()
                     }
-                    .background(Theme.subHeaderColour)
+                    .background(self.state.session.appPage.primaryColour)
                 }
             }
         }
@@ -486,6 +492,7 @@ extension FindDashboard {
     }
     
     struct TasksMatchingString: View {
+        @EnvironmentObject private var state: Navigation
         @FetchRequest private var entities: FetchedResults<LogTask>
 
         var body: some View {
@@ -496,7 +503,7 @@ extension FindDashboard {
                             .padding()
                         Spacer()
                     }
-                    .background(Theme.subHeaderColour)
+                    .background(self.state.session.appPage.primaryColour)
                     
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 1) {
@@ -511,7 +518,7 @@ extension FindDashboard {
                             .padding()
                         Spacer()
                     }
-                    .background(Theme.subHeaderColour)
+                    .background(self.state.session.appPage.primaryColour)
                 }
             }
         }
@@ -527,6 +534,7 @@ extension FindDashboard {
     }
     
     struct ProjectsMatchingString: View {
+        @EnvironmentObject private var state: Navigation
         @FetchRequest private var entities: FetchedResults<Project>
 
         var body: some View {
@@ -537,7 +545,7 @@ extension FindDashboard {
                             .padding()
                         Spacer()
                     }
-                    .background(Theme.subHeaderColour)
+                    .background(self.state.session.appPage.primaryColour)
                     
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 1) {
@@ -552,7 +560,7 @@ extension FindDashboard {
                             .padding()
                         Spacer()
                     }
-                    .background(Theme.subHeaderColour)
+                    .background(self.state.session.appPage.primaryColour)
                 }
             }
         }
@@ -568,6 +576,7 @@ extension FindDashboard {
     }
     
     struct JobsMatchingString: View {
+        @EnvironmentObject private var state: Navigation
         @FetchRequest private var entities: FetchedResults<Job>
 
         var body: some View {
@@ -578,7 +587,7 @@ extension FindDashboard {
                             .padding()
                         Spacer()
                     }
-                    .background(Theme.subHeaderColour)
+                    .background(self.state.session.appPage.primaryColour)
                     
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 1) {
@@ -593,7 +602,7 @@ extension FindDashboard {
                             .padding()
                         Spacer()
                     }
-                    .background(Theme.subHeaderColour)
+                    .background(self.state.session.appPage.primaryColour)
                 }
             }
         }
@@ -609,6 +618,7 @@ extension FindDashboard {
     }
 
     struct CompaniesMatchingString: View {
+        @EnvironmentObject private var state: Navigation
         @FetchRequest private var entities: FetchedResults<Company>
 
         var body: some View {
@@ -619,7 +629,7 @@ extension FindDashboard {
                             .padding()
                         Spacer()
                     }
-                    .background(Theme.subHeaderColour)
+                    .background(self.state.session.appPage.primaryColour)
 
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 1) {
@@ -635,7 +645,7 @@ extension FindDashboard {
                             .padding()
                         Spacer()
                     }
-                    .background(Theme.subHeaderColour)
+                    .background(self.state.session.appPage.primaryColour)
                 }
             }
         }
@@ -651,6 +661,7 @@ extension FindDashboard {
     }
 
     struct PeopleMatchingString: View {
+        @EnvironmentObject private var state: Navigation
         @FetchRequest private var entities: FetchedResults<Person>
 
         var body: some View {
@@ -661,7 +672,7 @@ extension FindDashboard {
                             .padding()
                         Spacer()
                     }
-                    .background(Theme.subHeaderColour)
+                    .background(self.state.session.appPage.primaryColour)
 
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 1) {
@@ -677,7 +688,7 @@ extension FindDashboard {
                             .padding()
                         Spacer()
                     }
-                    .background(Theme.subHeaderColour)
+                    .background(self.state.session.appPage.primaryColour)
                 }
             }
         }
@@ -693,6 +704,7 @@ extension FindDashboard {
     }
 
     struct TermsMatchingString: View {
+        @EnvironmentObject private var state: Navigation
         @FetchRequest private var entities: FetchedResults<TaxonomyTerm>
 
         var body: some View {
@@ -703,7 +715,7 @@ extension FindDashboard {
                             .padding()
                         Spacer()
                     }
-                    .background(Theme.subHeaderColour)
+                    .background(self.state.session.appPage.primaryColour)
 
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 1) {
@@ -719,7 +731,7 @@ extension FindDashboard {
                             .padding()
                         Spacer()
                     }
-                    .background(Theme.subHeaderColour)
+                    .background(self.state.session.appPage.primaryColour)
                 }
             }
         }
