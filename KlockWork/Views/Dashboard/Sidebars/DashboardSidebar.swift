@@ -10,16 +10,22 @@ import SwiftUI
 import KWCore
 
 struct DashboardSidebar: View {
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
+    @AppStorage("GlobalSidebarWidgets.isUpcomingTaskStackShowing") private var isUpcomingTaskStackShowing: Bool = false
     @State private var tabs: [ToolbarButton] = []
 
     var body: some View {
-        FancyGenericToolbar(buttons: tabs, standalone: true, location: .sidebar, mode: .compact)
-            .onAppear(perform: createToolbar)
+        if !self.isSearchStackShowing && !self.isUpcomingTaskStackShowing {
+            FancyGenericToolbar(buttons: tabs, standalone: true, location: .sidebar, mode: .compact)
+                .onAppear(perform: self.actionOnAppear)
+        }
     }
 }
 
 extension DashboardSidebar {
-    private func createToolbar() -> Void {
+    /// Onload handler. Sets view state.
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
         tabs = [
             ToolbarButton(
                 id: 0,
@@ -51,7 +57,7 @@ extension DashboardSidebar {
                 icon: "calendar",
                 selectedIcon: "calendar",
                 labelText: "Calendar events",
-                contents: AnyView(WidgetLibrary.UI.Sidebar.EventsWidget())
+                contents: AnyView(UI.Sidebar.EventsWidget())
             )
         ]
     }
