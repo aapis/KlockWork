@@ -31,6 +31,7 @@ struct UniversalHeader: View {
                     } else {
                         Text(self.title!)
                             .multilineTextAlignment(.leading)
+                            .foregroundStyle([.hybrid, .glass].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : .white)
                     }
                 }
                 Spacer()
@@ -96,7 +97,7 @@ struct UniversalHeader: View {
             // @TODO: merge these two cases
             if self.additionalDetails != nil {
                 ZStack(alignment: .topLeading) {
-                    TypedListRowBackground(colour: self.state.theme.style == .opaque ? self.state.session.appPage.primaryColour : self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
+                    TypedListRowBackground(colour: [.opaque, .classic].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
                         .frame(height: 120)
                     VStack(alignment: .leading) {
                         HStack(alignment: .top) {
@@ -116,7 +117,7 @@ struct UniversalHeader: View {
                 .clipShape(.rect(cornerRadius: 5))
             } else {
                 ZStack(alignment: .leading) {
-                    TypedListRowBackground(colour: self.state.theme.style == .opaque ? self.state.session.appPage.primaryColour : self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
+                    TypedListRowBackground(colour: [.opaque, .classic].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : self.state.session.job?.backgroundColor ?? Theme.rowColour, type: self.type)
                         .frame(height: 60)
                     UniversalHeader(title: self.title, entityType: self.type)
                         .padding(.leading)
@@ -145,7 +146,7 @@ struct UniversalHeader: View {
             // @TODO: merge these two cases
             if self.additionalDetails != nil {
                 ZStack(alignment: .topLeading) {
-                    TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? (self.state.theme.style == .opaque ? self.state.session.appPage.primaryColour : Theme.rowColour), type: self.type)
+                    TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? ([.opaque, .classic].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : Theme.rowColour), type: self.type)
                         .frame(height: 120)
                     VStack(alignment: .leading) {
                         HStack(alignment: .top) {
@@ -164,7 +165,7 @@ struct UniversalHeader: View {
                 .clipShape(.rect(topLeadingRadius: 5, bottomLeadingRadius: self.showUIHints ? 0 : 5, bottomTrailingRadius: self.showUIHints ? 0 : 5, topTrailingRadius: 5))
             } else {
                 ZStack(alignment: .leading) {
-                    TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? (self.state.theme.style == .opaque ? self.state.session.appPage.primaryColour : Theme.rowColour), type: self.type)
+                    TypedListRowBackground(colour: self.state.session.job?.backgroundColor ?? ([.opaque, .classic].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : Theme.rowColour), type: self.type)
                         .frame(height: 60)
                     UniversalHeader(title: self.title, entityType: self.type)
                         .padding(.leading)

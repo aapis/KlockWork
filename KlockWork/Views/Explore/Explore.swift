@@ -30,7 +30,7 @@ struct Explore: View {
     }
 
     @ViewBuilder private var PageBackground: some View {
-        if [.opaque, .classic].contains(self.state.theme.style) {
+        if [.classic].contains(self.state.theme.style) {
             ZStack {
                 self.state.session.appPage.primaryColour.saturation(0.7)
                 Theme.base.blendMode(.softLight).opacity(0.5)

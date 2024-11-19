@@ -474,7 +474,7 @@ extension WidgetLibrary {
                             .foregroundStyle(.gray)
                     }
                     .padding(8)
-                    .background(self.state.theme.style == .opaque ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
+                    .background([.hybrid, .glass].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour.opacity(self.isHighlighted ? 1 : 0.9) : .white.opacity(self.isHighlighted ? 0.07 : 0.03))
                     .clipShape(.rect(cornerRadius: 5))
                 }
                 .buttonStyle(.plain)
@@ -568,14 +568,18 @@ extension WidgetLibrary {
                     }
                 }
                 .padding()
-                .background(
-                    ZStack {
-                        self.state.session.appPage.primaryColour
-                        Theme.textBackground
-                    }
-                )
+                .background(self.PageBackground)
                 .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
                 .onAppear(perform: self.actionOnAppear)
+            }
+
+            @ViewBuilder private var PageBackground: some View {
+                ZStack {
+                    if [.opaque, .classic, .hybrid].contains(self.state.theme.style) {
+                        self.state.session.appPage.primaryColour
+                    }
+                    Theme.textBackground
+                }
             }
 
             struct Statistic: View, Identifiable {
@@ -592,7 +596,7 @@ extension WidgetLibrary {
                     } label: {
                         VStack(alignment: .center, spacing: 0) {
                             ZStack(alignment: .center) {
-                                Color.gray.opacity(self.isHighlighted ? 1 : 0.7)
+                                ([.glass].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : Color.gray.opacity(self.isHighlighted ? 1 : 0.7))
                                 VStack(alignment: .center, spacing: 0) {
                                     if self.isLoading {
                                         ProgressView()
@@ -611,7 +615,7 @@ extension WidgetLibrary {
                                 VStack(alignment: .center, spacing: 0) {
                                     Text(String(self.count))
                                         .font(.system(.title3, design: .monospaced))
-                                        .foregroundStyle(self.isHighlighted ? Theme.base : .gray)
+                                        .foregroundStyle(self.isHighlighted ? Theme.base : [.glass].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : .gray)
                                 }
                             }
                             .frame(height: 25)
@@ -693,7 +697,7 @@ extension WidgetLibrary {
                             .padding()
                             .background(
                                 ZStack {
-                                    if self.state.theme.style == .opaque {
+                                    if [.hybrid, .glass].contains(self.state.theme.style) {
                                         Theme.textBackground
                                     } else {
                                         self.state.session.appPage.primaryColour
@@ -1213,7 +1217,7 @@ extension WidgetLibrary {
                             LogRowEmpty(
                                 message: "No activities found for \(DateHelper.todayShort(self.historicalDate, format: "MMMM dd, YYYY"))",
                                 index: 0,
-                                colour: self.state.theme.style == .opaque ? Theme.base : Theme.rowColour
+                                colour: [.opaque, .classic, .hybrid].contains(self.state.theme.style) ? Theme.base : Theme.rowColour
                             )
                         }
                     }
