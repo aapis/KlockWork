@@ -26,7 +26,6 @@ struct GlobalSettingsPanel: View {
             )
             Spacer()
         }
-        .padding(.top, 1)
         .onAppear(perform: self.actionOnAppear)
     }
 
@@ -40,7 +39,6 @@ struct GlobalSettingsPanel: View {
             @State private var backgroundColour: Color = .yellow
             @State private var style: Style = .opaque
             private var twoCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 2) }
-//            private var threeCol: [GridItem] { Array(repeating: .init(.flexible(minimum: 100)), count: 3) }
             private var wallpapers: [Wallpaper] {
                 [
                     Wallpaper(asset: "", label: "None", choice: 0),
@@ -60,7 +58,7 @@ struct GlobalSettingsPanel: View {
                     AccentColour(colour: .orange, label: "Orange"),
                     AccentColour(colour: .yellow, label: "Yellow"),
                     AccentColour(colour: .green, label: "Green"),
-                    AccentColour(colour: .clear, label: "Custom"),
+//                    AccentColour(colour: .clear, label: "Custom"), // @TODO: uncomment and fix colour picker
                 ]
             }
 
@@ -291,24 +289,37 @@ struct GlobalSettingsPanel: View {
                 var colour: Color
                 var label: String
                 @State private var isHighlighted: Bool = false
+                @State private var customAccentColour: Color = .clear
 
                 var body: some View {
                     Button {
                         self.state.theme.tint = self.colour
                     } label: {
                         HStack {
-                            Rectangle()
-                                .fill(self.isHighlighted ? self.colour.opacity(1) : self.colour.opacity(0.8))
-                                .frame(width: 40, height: 20)
-                                .clipShape(.rect(cornerRadius: 5))
+                            if self.label == "Custom" { // @TODO: don't use string comparison...
+                                ColorPicker(self.label, selection: self.$customAccentColour)
+                                    .buttonStyle(.plain)
+                                    .labelsHidden()
+                            } else {
+                                Rectangle()
+                                    .fill(self.isHighlighted ? self.colour.opacity(1) : self.colour.opacity(0.8))
+                                    .frame(width: 40, height: 20)
+                                    .clipShape(.rect(cornerRadius: 5))
+                            }
                             Text(self.label)
-                                .foregroundStyle(self.colour == self.state.theme.tint ? self.state.theme.tint : .white)
+                                .foregroundStyle(self.colour == self.state.theme.tint || self.customAccentColour == self.state.theme.tint ? self.state.theme.tint : .white)
                         }
-//                        .border(width: 4, edges: [.top, .leading, .bottom, .trailing], color: self.colour == self.state.theme.tint ? self.state.theme.tint : .white)
                         .useDefaultHover({ hover in self.isHighlighted = hover})
                     }
                     .help(self.label)
                     .buttonStyle(.plain)
+                    .onAppear(perform: self.actionOnAppear)
+                    .onChange(of: self.customAccentColour) {
+                        if self.customAccentColour != self.state.theme.tint {
+                            self.state.theme.tint = self.customAccentColour
+                            UserDefaults.standard.set(self.customAccentColour.toStored(), forKey: "customAccentColour")
+                        }
+                    }
                 }
             }
 
@@ -446,6 +457,14 @@ struct GlobalSettingsPanel: View {
                 .background(Theme.textBackground)
             }
         }
+    }
+}
+
+extension GlobalSettingsPanel.Pages.Themes.AccentColour {
+    /// Onload handler. Sets view state.
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.customAccentColour = self.state.theme.tint
     }
 }
 

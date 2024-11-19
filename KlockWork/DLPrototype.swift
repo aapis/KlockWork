@@ -121,13 +121,18 @@ struct DLPrototype: App {
         }
         if let stored = UserDefaults.standard.object(forKey: "customBackgroundColour") {
             self.nav.theme.customWallpaperUrl = nil
-            self.nav.theme.customBackgroundColour = Color.fromStored(stored as? [Double] ?? self.nav.theme.tint.toStored())
+            self.nav.theme.customBackgroundColour = Color.fromStored(stored as? [Double] ?? Theme.rowColourAsDouble)
         }
         // Set UI style
         self.interfaceStyle = UserDefaults.standard.integer(forKey: "interfaceStyle")
         if let stored = Style.byIndex(self.interfaceStyle) {
             self.nav.theme.style = stored
         }
+        // Set accent colour
+        // @TODO: works, but commented out until custom colour picker is fixed
+//        if let stored = UserDefaults.standard.object(forKey: "customAccentColour") {
+//            self.nav.theme.tint = Color.fromStored(stored as? [Double] ?? Theme.rowColourAsDouble)
+//        }
 
         if let plan = nav.session.plan {
             nav.planning.jobs = plan.jobs as! Set<Job>
