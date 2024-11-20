@@ -1,19 +1,17 @@
 //
-//  ActionButtons.swift
+//  ToolbarButtons.swift
 //  DLPrototype
 //
 //  Created by Ryan Priebe on 2023-01-04.
 //  Copyright © 2023 YegCollective. All rights reserved.
 //
 
-import Foundation
 import SwiftUI
 import KWCore
 
 struct ToolbarButtons: View {
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var nav: Navigation
-    @AppStorage("today.numPastDates") public var numPastDates: Int = 20
     @AppStorage("settings.accessibility.showSelectorLabels") private var showSelectorLabels: Bool = true
     public var records: [LogRecord]?
     public var tab: TodayViewTab = .chronologic

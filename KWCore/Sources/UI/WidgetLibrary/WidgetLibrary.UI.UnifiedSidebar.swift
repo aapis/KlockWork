@@ -587,6 +587,7 @@ extension WidgetLibrary.UI {
 
         struct EntityRowButton: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("general.theme.kioskMode") private var inKioskMode: Bool = false
             public let text: String
             public var callback: (() -> Void)?
             public var colour: Color? = Theme.lightWhite
@@ -595,7 +596,7 @@ extension WidgetLibrary.UI {
 
             var body: some View {
                 Button {
-                    isPresented.toggle()
+                    self.isPresented.toggle()
                     self.callback?()
                 } label: {
                     ZStack(alignment: .topLeading) {
@@ -613,7 +614,7 @@ extension WidgetLibrary.UI {
                                 .frame(width: 30, height: 30)
                                 .cornerRadius(5)
                             }
-                            Text(self.text)
+                            Text(self.inKioskMode ? "Lorem Ipsum Dolor" : self.text)
                                 .multilineTextAlignment(.leading)
                             Spacer()
                         }

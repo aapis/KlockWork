@@ -149,7 +149,6 @@ struct Home: View {
                     page: .find,
                     scrollable: false
                 )
-                .padding(.top, 2)
                 UI.EntityCalendar.Widget()
             }
         }

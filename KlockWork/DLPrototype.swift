@@ -70,11 +70,12 @@ struct DLPrototype: App {
         }
 
 #if os(macOS)
-        Settings {
-            SettingsView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                .environmentObject(nav)
-        }
+        // @TODO: restore Settings view by hooking into cmd-, action to change tab to Settings
+//        Settings {
+//            SettingsView() // @TODO: NOTE: this doesn't exist anymore
+//                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+//                .environmentObject(nav)
+//        }
 
         MenuBarExtra("name", systemImage: "clock.fill") {
             let appName = Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String
@@ -94,7 +95,6 @@ struct DLPrototype: App {
                 NSApplication.shared.terminate(nil)
             }.keyboardShortcut("q")
         }
-        //        .menuBarExtraStyle(.window)
 #endif
     }
 
