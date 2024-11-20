@@ -241,8 +241,6 @@ extension WidgetLibrary {
 
         struct SimpleDateSelector: View {
             @EnvironmentObject private var state: Navigation
-            @AppStorage("today.numPastDates") public var numPastDates: Int = 20
-            @AppStorage("isDatePickerPresented") public var isDatePickerPresented: Bool = false
             @State private var isToday: Bool = false
             @State private var isHighlighted: Bool = false
             @State private var date: String = ""
@@ -339,6 +337,7 @@ extension WidgetLibrary {
         struct ListExternalLinkItem: View {
             @EnvironmentObject private var state: Navigation
             @AppStorage("general.shouldCheckLinkStatus") private var shouldCheckLinkStatus: Bool = false
+            @AppStorage("general.theme.kioskMode") private var inKioskMode: Bool = false
             public var name: String
             public var icon: String?
             public var iconAsImage: Image?
@@ -365,7 +364,7 @@ extension WidgetLibrary {
                                                 .symbolRenderingMode(.hierarchical)
                                                 .foregroundStyle(self.state.session.job?.backgroundColor ?? self.state.theme.tint)
                                         }
-                                        Text(self.name)
+                                        Text(self.inKioskMode ? "https://example.com" : self.name)
                                             .multilineTextAlignment(.leading)
                                         Spacer()
                                         Image(systemName: self.shouldCheckLinkStatus ? self.isLinkOnline ? "link" : "questionmark.square.fill" : "link")
@@ -454,6 +453,7 @@ extension WidgetLibrary {
 
         struct ExploreLink: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("general.theme.kioskMode") private var inKioskMode: Bool = false
             public var page: Page
             public var name: String
             public var icon: String?
@@ -488,6 +488,7 @@ extension WidgetLibrary {
 
         struct ListButtonItem: View {
             @EnvironmentObject private var state: Navigation
+            @AppStorage("general.theme.kioskMode") private var inKioskMode: Bool = false
             public var callback: (String) -> Void
             public var name: String
             public var icon: String?
@@ -507,7 +508,7 @@ extension WidgetLibrary {
                             Image(systemName: icon)
                                 .foregroundStyle(self.state.theme.tint)
                         }
-                        Text(self.name)
+                        Text(self.inKioskMode ? "Lorem Ipsum Dolor" : self.name)
                             .foregroundStyle(self.isHighlighted ? .white : Theme.lightWhite)
                         Spacer()
                         if let actionIcon = self.actionIcon {
