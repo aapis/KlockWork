@@ -15,17 +15,10 @@ struct NotificationSettings: View {
 
     var body: some View {
         Form {
-            Picker("Notification intervals", selection: $notificationInterval) {
-                Text("1 hour prior").tag(1)
-                Text("1 hour & 15 minutes prior").tag(2)
-                Text("1 hour, 15 minutes, and 5 minutes prior").tag(3)
-                Text("15 minutes prior").tag(4)
-                Text("5 minutes prior").tag(5)
-                Text("15 minutes & 5 minutes prior").tag(6)
-            }
+            Text("All migrated")
         }
+        .frame(width: 900)
         .padding(20)
-        .onAppear(perform: self.actionOnAppear)
     }
 }
 

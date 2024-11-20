@@ -17,18 +17,10 @@ struct AccessibilitySettings: View {
 
     var body: some View {
         HStack {
-            Spacer()
-            Form {
-                Section("User interface") {
-                    Toggle("Show tab titles", isOn: $showTabTitles)
-                    Toggle("Show hints & tutorials", isOn: $showUIHints)
-                    Toggle("Show labels on buttons & dropdown menus", isOn: $showSelectorLabels)
-                }
-            }
-            Spacer()
+            Text("All migrated")
         }
+        .frame(width: 900)
         .padding(20)
-        .onAppear(perform: self.actionOnAppear)
     }
 }
 

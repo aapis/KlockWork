@@ -111,7 +111,6 @@
 		5363B6802A6DE87000C2FBB8 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5363B67F2A6DE87000C2FBB8 /* View.swift */; };
 		536B64502CE93961002BF09E /* GlobalSettingsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536B644F2CE93961002BF09E /* GlobalSettingsPanel.swift */; };
 		536FBF6E2A68F77100F00CE4 /* NoteBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536FBF6D2A68F77100F00CE4 /* NoteBlock.swift */; };
-		5371BA222A7B1C9D00DEEC21 /* RecentNotesWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA212A7B1C9D00DEEC21 /* RecentNotesWidget.swift */; };
 		5371BA282A7B264900DEEC21 /* NoteRowPlain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA272A7B264900DEEC21 /* NoteRowPlain.swift */; };
 		5371BA2B2A7B279800DEEC21 /* NoteViewSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA2A2A7B279800DEEC21 /* NoteViewSidebar.swift */; };
 		5371BA2D2A7B27BB00DEEC21 /* NoteDashboardSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371BA2C2A7B27BB00DEEC21 /* NoteDashboardSidebar.swift */; };
@@ -202,7 +201,6 @@
 		53E2026A2A80389500B4DF70 /* JobPickerWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202692A80389500B4DF70 /* JobPickerWidget.swift */; };
 		53E2026C2A80457400B4DF70 /* JobProjectGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E2026B2A80457400B4DF70 /* JobProjectGroup.swift */; };
 		53E2026E2A8051AD00B4DF70 /* JobRowPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E2026D2A8051AD00B4DF70 /* JobRowPicker.swift */; };
-		53E202702A80984400B4DF70 /* DateSelectorWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E2026F2A80984400B4DF70 /* DateSelectorWidget.swift */; };
 		53E202722A80BAD500B4DF70 /* ButtonType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202712A80BAD500B4DF70 /* ButtonType.swift */; };
 		53E202762A81F2E100B4DF70 /* FancyStar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E202752A81F2E100B4DF70 /* FancyStar.swift */; };
 		53E24C412A844BC800EB21FD /* EKEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E24C402A844BC800EB21FD /* EKEvent.swift */; };
@@ -405,7 +403,6 @@
 		5363B67F2A6DE87000C2FBB8 /* View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = View.swift; sourceTree = "<group>"; };
 		536B644F2CE93961002BF09E /* GlobalSettingsPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalSettingsPanel.swift; sourceTree = "<group>"; };
 		536FBF6D2A68F77100F00CE4 /* NoteBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteBlock.swift; sourceTree = "<group>"; };
-		5371BA212A7B1C9D00DEEC21 /* RecentNotesWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentNotesWidget.swift; sourceTree = "<group>"; };
 		5371BA272A7B264900DEEC21 /* NoteRowPlain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteRowPlain.swift; sourceTree = "<group>"; };
 		5371BA2A2A7B279800DEEC21 /* NoteViewSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteViewSidebar.swift; sourceTree = "<group>"; };
 		5371BA2C2A7B27BB00DEEC21 /* NoteDashboardSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDashboardSidebar.swift; sourceTree = "<group>"; };
@@ -498,7 +495,6 @@
 		53E202692A80389500B4DF70 /* JobPickerWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobPickerWidget.swift; sourceTree = "<group>"; };
 		53E2026B2A80457400B4DF70 /* JobProjectGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobProjectGroup.swift; sourceTree = "<group>"; };
 		53E2026D2A8051AD00B4DF70 /* JobRowPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobRowPicker.swift; sourceTree = "<group>"; };
-		53E2026F2A80984400B4DF70 /* DateSelectorWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateSelectorWidget.swift; sourceTree = "<group>"; };
 		53E202712A80BAD500B4DF70 /* ButtonType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonType.swift; sourceTree = "<group>"; };
 		53E202752A81F2E100B4DF70 /* FancyStar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyStar.swift; sourceTree = "<group>"; };
 		53E24C402A844BC800EB21FD /* EKEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EKEvent.swift; sourceTree = "<group>"; };
@@ -1041,6 +1037,7 @@
 			isa = PBXGroup;
 			children = (
 				536B644F2CE93961002BF09E /* GlobalSettingsPanel.swift */,
+				532C5FE42A83024900F2AAD4 /* GlobalSidebarWidgets.swift */,
 				53B0DC102A79D7E200DA1679 /* Widgets */,
 				53790C022A72F18200D3FFD4 /* SidebarButton.swift */,
 				535DDE5D2A7982F3008350D4 /* SidebarItem.swift */,
@@ -1135,13 +1132,10 @@
 			isa = PBXGroup;
 			children = (
 				53B0DC112A79D7FC00DA1679 /* NoteVersionNavigationWidget.swift */,
-				5371BA212A7B1C9D00DEEC21 /* RecentNotesWidget.swift */,
 				53E202572A7E19B900B4DF70 /* NotesWidget.swift */,
 				53E202592A7EAE5B00B4DF70 /* ProjectsWidget.swift */,
 				53E202622A7ECC6500B4DF70 /* TodayInHistoryWidget.swift */,
 				53E202692A80389500B4DF70 /* JobPickerWidget.swift */,
-				53E2026F2A80984400B4DF70 /* DateSelectorWidget.swift */,
-				532C5FE42A83024900F2AAD4 /* GlobalSidebarWidgets.swift */,
 				5334F2652B28FA520079D2E7 /* OutlineWidget.swift */,
 			);
 			path = Widgets;
@@ -1628,7 +1622,6 @@
 				536040A62CB9F50F0030D72D /* Assessables.swift in Sources */,
 				5354C8EA2AA03C77001C1779 /* Tasks.swift in Sources */,
 				539F68DD2BF70A260086F89A /* IntroToKlockWork.swift in Sources */,
-				5371BA222A7B1C9D00DEEC21 /* RecentNotesWidget.swift in Sources */,
 				53C000AA2B41447600D5EC04 /* NoteFormWidget.swift in Sources */,
 				5335A5B5296D1FA7000051B1 /* TaskView.swift in Sources */,
 				53E202652A7ECE7A00B4DF70 /* DayInHistory.swift in Sources */,
@@ -1727,7 +1720,6 @@
 				53F589682998437D00843B32 /* JobResult.swift in Sources */,
 				53C000922B38E34C00D5EC04 /* FancyLoader.swift in Sources */,
 				535DDE5E2A7982F3008350D4 /* SidebarItem.swift in Sources */,
-				53E202702A80984400B4DF70 /* DateSelectorWidget.swift in Sources */,
 				5394D9992CD3203C0069E230 /* PageConfiguration.swift in Sources */,
 				53EDDFA02963487A008D34C7 /* CustomPickerItem.swift in Sources */,
 				536044332CBE1B1F0030D72D /* Planning.NoDueDate.swift in Sources */,

@@ -33,23 +33,13 @@ struct TodaySettings: View {
     var body: some View {
         Form {
             Section("All tabs") {
-                Picker("Max number of days", selection: $numPastDates) {
-                    Text("7").tag(7)
-                    Text("10").tag(10)
-                    Text("20").tag(20)
-                    Text("30").tag(30)
-                    Text("40").tag(40)
-                }
+
                 
                 Picker("Default view mode", selection: $viewMode) {
                     Text("Full").tag(1)
                     Text("Plain").tag(2)
                 }
-                Picker("Default tab", selection: $recordGrouping) {
-                    Text("Chronologic").tag(0)
-                    Text("Grouped").tag(1)
-                    Text("Summarized").tag(2)
-                }
+
 
                 Section("Display columns") {
                     Toggle("Index", isOn: $showColumnIndex)
@@ -75,7 +65,7 @@ struct TodaySettings: View {
 
             Section("Calendar and Date Settings") {
                 Picker("Start of your work day", selection: $startOfDay) {
-                    ForEach(3..<12) { start in
+                    ForEach(0..<12) { start in
                         Text("\(start) AM").tag(start)
                     }
                 }
