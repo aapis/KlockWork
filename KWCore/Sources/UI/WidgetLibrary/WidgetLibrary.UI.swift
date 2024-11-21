@@ -1220,9 +1220,7 @@ extension WidgetLibrary {
                             UI.Pagination(entityCount: self.activities.count)
                         } else {
                             LogRowEmpty(
-                                message: "No activities found for \(DateHelper.todayShort(self.historicalDate, format: "MMMM dd, YYYY"))",
-                                index: 0,
-                                colour: [.opaque, .classic, .hybrid].contains(self.state.theme.style) ? Theme.base : Theme.rowColour
+                                message: "No activities found for \(DateHelper.todayShort(self.historicalDate, format: "MMMM dd, YYYY"))"
                             )
                         }
                     }
