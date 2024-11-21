@@ -105,7 +105,7 @@ extension Today.LogTable {
                 if records.count > 0 {
                     FancyTextField(placeholder: "Records...", lineLimit: 10, text: $plain)
                 } else {
-                    LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: [.classic, .opaque].contains(self.nav.theme.style) ? Theme.base : Theme.rowColour)
+                    LogRowEmpty(message: "No records found for date \(self.nav.session.date.formatted(date: .abbreviated, time: .omitted))")
                 }
             }
             .onAppear(perform: actionOnAppear)
@@ -142,7 +142,7 @@ extension Today.LogTable {
                         }
                     }
                 } else {
-                    LogRowEmpty(message: "No records found for \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: [.classic, .opaque].contains(self.nav.theme.style) ? Theme.base : Theme.rowColour)
+                    LogRowEmpty(message: "No records found for \(self.nav.session.date.formatted(date: .abbreviated, time: .omitted))")
                 }
             }
         }
@@ -212,7 +212,7 @@ extension Today.LogTable {
                         if records.count > 0 {
                             ForEach(grouped) {group in group}
                         } else {
-                            LogRowEmpty(message: "No records found for date \(nav.session.date.formatted(date: .abbreviated, time: .omitted))", index: 0, colour: [.classic, .opaque].contains(self.nav.theme.style) ? Theme.base : Theme.rowColour)
+                            LogRowEmpty(message: "No records found for date \(self.nav.session.date.formatted(date: .abbreviated, time: .omitted))")
                         }
                     }
                     .background([.classic, .opaque].contains(self.nav.theme.style) ? self.nav.session.appPage.primaryColour : .clear)
