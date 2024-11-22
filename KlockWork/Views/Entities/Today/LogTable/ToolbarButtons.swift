@@ -13,11 +13,24 @@ struct ToolbarButtons: View {
     @EnvironmentObject public var updater: ViewUpdater
     @EnvironmentObject public var nav: Navigation
     @AppStorage("settings.accessibility.showSelectorLabels") private var showSelectorLabels: Bool = true
-    public var records: [LogRecord]?
+    public var records: [LogRecord]
+    public var timelineActivities: [UI.GenericTimelineActivity]
     public var tab: TodayViewTab = .chronologic
     @State private var datePickerItems: [CustomPickerItem] = []
     @State private var pickerSelection: Int = 0
     @State private var highlighted: Bool = false
+
+    init(records: [LogRecord], tab: TodayViewTab = .chronologic) {
+        self.records = records
+        self.tab = tab
+        self.timelineActivities = []
+    }
+
+    init(timelineActivities: [UI.GenericTimelineActivity], tab: TodayViewTab = .chronologic) {
+        self.timelineActivities = timelineActivities
+        self.tab = tab
+        self.records = []
+    }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -43,32 +56,19 @@ struct ToolbarButtons: View {
                         .help(self.tab.help)
                 }
                 Spacer()
+                UI.Buttons.ExportToCSV(
+                    records: self.records,
+                    timelineActivities: self.timelineActivities,
+                    tab: "\(self.tab)"
+                )
                 if self.tab == .chronologic {
-                    if self.records != nil {
-                        Button(action: export, label: {
-                            HStack(spacing: 5) {
-                                Image(systemName: "document.on.document.fill")
-                                    .foregroundStyle(self.nav.theme.tint)
-                                if self.showSelectorLabels {
-                                    Text("Copy")
-                                }
-                            }
-                            .padding(6)
-                            .background(Theme.textBackground)
-                            .foregroundStyle(Theme.lightWhite)
-                            .clipShape(RoundedRectangle(cornerRadius: 5))
-                        })
-                        .buttonStyle(.plain)
-                        .keyboardShortcut("c", modifiers: [.control, .shift])
-                        .help("Copy view data to clipboard")
-                        //                .useDefaultHover({ hover in self.highlighted = hover})
-                    }
+                    UI.Buttons.CopyRecordsToClipboard(records: self.records)
                 }
             }
             .padding(8)
         }
     }
-    
+
     private func change(selected: Int, sender: String?) -> Void {
         let item = datePickerItems[selected].title
         
@@ -79,17 +79,7 @@ struct ToolbarButtons: View {
     private func toggleSearch() -> Void {
         nav.session.toolbar.showSearch.toggle()
     }
-    
-    /// Copy data to clipboard
-    /// - Returns: Void
-    private func export() -> Void {
-        if let records = self.records {
-            ClipboardHelper.copy(
-                CoreDataRecords(moc: self.nav.moc).createExportableRecordsFrom(records)
-            )
-        }
-    }
-    
+
     private func viewAsPlain() -> Void {
         nav.session.toolbar.mode = .plain
     }

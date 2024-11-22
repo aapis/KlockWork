@@ -41,7 +41,7 @@ extension Job {
     }
 
     var foregroundColor: Color { self.backgroundColor.isBright() ? .black : .white }
-
+    var asCSV: String { "" }
     var pageType: Page { .jobs }
     var pageDetailType: Page { .jobs }
 
