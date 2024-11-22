@@ -602,6 +602,250 @@ extension WidgetLibrary.UI {
                 .onAppear(perform: self.actionOnAppear)
             }
         }
+
+        // MARK: Buttons.CopyRecordsToClipboard
+        struct CopyRecordsToClipboard: View {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("settings.accessibility.showSelectorLabels") private var showSelectorLabels: Bool = true
+            public var records: [LogRecord]?
+            @State private var isPresented: Bool = false
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                Button(action: self.actionOnCopy, label: {
+                    HStack(spacing: 5) {
+                        Image(systemName: "document.on.document.fill")
+                            .foregroundStyle(self.state.theme.tint)
+                        if self.showSelectorLabels {
+                            Text("Copy")
+                        }
+                    }
+                    .padding(6)
+                    .background(Theme.textBackground)
+                    .foregroundStyle(Theme.lightWhite)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                })
+                .buttonStyle(.plain)
+                .keyboardShortcut("c", modifiers: [.control, .shift])
+                .help("Copy view data to clipboard")
+                .useDefaultHover({ hover in self.isHighlighted = hover})
+            }
+        }
+
+        // MARK: Buttons.ExportToCSV
+        struct ExportToCSV: View {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("settings.accessibility.showSelectorLabels") private var showSelectorLabels: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showRecords") public var showRecords: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showNotes") public var showNotes: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showTasks") public var showTasks: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showPeople") public var showPeople: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showTerms") public var showTerms: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showDefinitions") public var showDefinitions: Bool = true
+            @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
+            @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
+            @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
+            public var records: [LogRecord]
+            public var timelineActivities: [GenericTimelineActivity]
+            public var tab: String
+            @State private var isPresented: Bool = false
+            @State private var isHighlighted: Bool = false
+            @State private var csv: CSVFileDocument = CSVFileDocument(initialText: "")
+            @State private var csvFileName: String = ""
+
+            var body: some View {
+                Button(action: self.actionOnExportToCSV, label: {
+                    HStack(spacing: 5) {
+                        Image(systemName: "arrow.down.document.fill")
+                            .foregroundStyle(self.state.theme.tint)
+                        if self.showSelectorLabels {
+                            Text("CSV")
+                        }
+                    }
+                    .padding(6)
+                    .background(Theme.textBackground)
+                    .foregroundStyle(Theme.lightWhite)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                })
+                .disabled(self.records.isEmpty && self.timelineActivities.isEmpty)
+                .buttonStyle(.plain)
+                .keyboardShortcut("c", modifiers: [.control, .shift])
+                .help("Export table as CSV")
+                .useDefaultHover({ hover in self.isHighlighted = hover})
+                .fileExporter(isPresented: self.$isPresented, document: self.csv, contentType: .commaSeparatedText, defaultFilename: self.csvFileName) { result in
+                    switch result {
+                    case .success(let url):
+                        print("DERPO Saved to \(url)")
+                    case .failure(let error):
+                        print("DERPO \(error.localizedDescription)")
+                    }
+                }
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.date) { self.actionOnAppear() }
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.Buttons.CopyRecordsToClipboard {
+    /// Copy data to clipboard
+    /// - Returns: Void
+    private func actionOnCopy() -> Void {
+        if let records = self.records {
+            ClipboardHelper.copy(
+                CoreDataRecords(moc: self.state.moc).createExportableRecordsFrom(records)
+            )
+        }
+    }
+}
+
+extension WidgetLibrary.UI.Buttons.ExportToCSV {
+    struct Column: Identifiable {
+        var id: UUID = UUID()
+        var text: String
+    }
+
+    struct Line: Identifiable {
+        var id: UUID = UUID()
+        var columns: [Column]
+        var toString: String {
+            var out: String = ""
+            for column in self.columns {
+                out += "\(column.text),"
+            }
+            return out
+        }
+    }
+
+    class CSVFile: Identifiable {
+        var id: UUID = UUID()
+        var toString: String {
+            var out: String = ""
+            for line in self.lines {
+                out += "\(line.toString)\n"
+            }
+            return out
+        }
+        private var lines: [Line] = []
+
+        public func addLine(columns: [Column]) -> Void {
+            self.lines.append(
+                Line(columns: columns)
+            )
+        }
+
+        public func addLine(line: Line) -> Void {
+            self.lines.append(line)
+        }
+
+        public func document() -> CSVFileDocument {
+            return CSVFileDocument(initialText: self.toString)
+        }
+    }
+
+    struct CSVFileHelper {
+        
+    }
+
+    /// Onload handler. Sets view state.
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.csvFileName = "\(self.state.session.appPage)-\(self.tab)-\(DateHelper.todayShort(self.state.session.timeline.date ?? self.state.session.date, format: "d/M/yyyy.HHmm"))"
+    }
+
+    /// Creates a CSV representation of the current list of records
+    /// - Returns: Void
+    private func actionOnExportToCSV() -> Void {
+        self.isPresented = true
+        let file: CSVFile = CSVFile()
+
+        if self.records.count > 0 {
+            if self.showRecords {
+                for record in records {
+                    file.addLine(line: self.lineForRecord(record))
+                }
+            }
+        } else if self.timelineActivities.count > 0 {
+            for activity in self.timelineActivities {
+                if let entity = activity.entity as? LogRecord {
+                    if self.showRecords {
+                        file.addLine(line: self.lineForRecord(entity))
+                    }
+                } else if let entity = activity.entity as? LogTask {
+                    if self.showTasks {
+                        file.addLine(line: self.lineForTask(entity))
+                    }
+                }
+            }
+        }
+
+        self.csv = file.document()
+    }
+    
+    /// Creates a Line representation of a LogRecord object
+    /// - Parameter record: LogRecord
+    /// - Returns: Line
+    private func lineForRecord(_ record: LogRecord) -> Line {
+        var columns: [Column] = []
+        if self.showColumnTimestamp {
+            columns.append(Column(text: (record.timestamp ?? Date.now).formatted()))
+        }
+        if self.showColumnJobId {
+            columns.append(Column(text: record.job?.title ?? record.job?.jid.string ?? "Invalid job"))
+        }
+        if record.message != nil {
+            let ignoredJobs = record.job?.project?.configuration?.ignoredJobs
+            let cleaned = CoreDataProjectConfiguration.applyBannedWordsTo(record)
+
+            if let ignored = ignoredJobs {
+                if !ignored.contains(cleaned.job?.jid.string ?? "") {
+                    // @TODO: find a better method for generating this string that doesn't involve string replace, if possible
+                    columns.append(Column(text: "\(cleaned.message?.replacingOccurrences(of: ",", with: "") ?? "Invalid record content")"))
+                }
+            }
+        }
+
+        return Line(columns: columns)
+    }
+
+    /// Creates a Line representation of a LogTask object
+    /// - Parameter task: LogTask
+    /// - Returns: Line
+    private func lineForTask(_ task: LogTask) -> Line {
+        var columns: [Column] = []
+        var taskStatusPrefix: String = ""
+
+        // Task is unmodified since posting
+        if task.created == task.lastUpdate {
+            if self.showColumnTimestamp {
+                taskStatusPrefix = "Updated task"
+                columns.append(Column(text: (task.lastUpdate ?? Date.now).formatted()))
+            }
+        } else if task.completedDate != nil {
+            // Task was completed
+            if self.showColumnTimestamp {
+                taskStatusPrefix = "Complete task"
+                columns.append(Column(text: (task.completedDate ?? Date.now).formatted()))
+            }
+        } else if task.cancelledDate != nil {
+            // Task was cancelled
+            if self.showColumnTimestamp {
+                taskStatusPrefix = "Cancelled task"
+                columns.append(Column(text: (task.cancelledDate ?? Date.now).formatted()))
+            }
+        } else {
+            taskStatusPrefix = "Created task"
+            columns.append(Column(text: (task.created ?? Date.now).formatted()))
+        }
+        if self.showColumnJobId {
+            columns.append(Column(text: task.owner?.title ?? task.owner?.jid.string ?? "Invalid job"))
+        }
+        columns.append(Column(text: "\(taskStatusPrefix): \(task.content ?? "Invalid task content")"))
+
+        return Line(columns: columns)
     }
 }
 
