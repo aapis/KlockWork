@@ -79,8 +79,6 @@ struct Column: View {
                         Index
                     case .timestamp:
                         Timestamp
-                    case .extendedTimestamp:
-                        ExtendedTimestamp
                     case .job:
                         Job
                     case .message:
@@ -94,12 +92,6 @@ struct Column: View {
 
     @ViewBuilder private var Timestamp: some View {
         Text(formatted())
-            .padding(10)
-            .foregroundColor(textColour)
-    }
-
-    @ViewBuilder private var ExtendedTimestamp: some View {
-        Text(text)
             .padding(10)
             .foregroundColor(textColour)
     }

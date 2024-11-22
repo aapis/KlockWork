@@ -10,13 +10,12 @@ import SwiftUI
 import KWCore
 
 public enum RecordTableColumn: CaseIterable {
-    case index, timestamp, extendedTimestamp, job, message
+    case index, timestamp, job, message
     
     var width: CGFloat? {
         switch self {
         case .index: return 45
         case .timestamp: return 70
-        case .extendedTimestamp: return 101
         case .job: return 80
         case .message: return nil
         }
@@ -26,7 +25,6 @@ public enum RecordTableColumn: CaseIterable {
         switch self {
         case .index: return ""
         case .timestamp: return "Time"
-        case .extendedTimestamp: return "Timestamp"
         case .job: return "Job"
         case .message: return "Message"
         }

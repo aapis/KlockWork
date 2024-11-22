@@ -738,7 +738,6 @@ struct GlobalSettingsPanel: View {
             @AppStorage("today.endOfDay") public var endOfDay: Int = 18
             @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
             @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
-            @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
             @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
             @AppStorage("showExperimentalFeatures") private var showExperimentalFeatures: Bool = false
             @AppStorage("today.maxCharsPerGroup") public var maxCharsPerGroup: Int = 2000
@@ -760,11 +759,6 @@ struct GlobalSettingsPanel: View {
                                 label: "Show timestamp column",
                                 helpText: "Show/hide timestamp column",
                                 isOn: self.$showColumnTimestamp
-                            ),
-                            Setting(
-                                label: "Show extended timestamp column",
-                                helpText: "Show/hide extended timestamp column",
-                                isOn: self.$showColumnExtendedTimestamp
                             ),
                             Setting(
                                 label: "Show job column",
