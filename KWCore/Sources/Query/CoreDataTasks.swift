@@ -311,7 +311,7 @@ public class CoreDataTasks {
             CoreDataRecords(moc: moc).createWithJob(
                 job: task.owner!,
                 date: Date(),
-                text: "Delayed task: \(task.content ?? "Invalid task") to \(date.formatted())"
+                text: "Delayed task: \(task.content ?? "Invalid task") to \(date.formatted(date: .abbreviated, time: .omitted))"
             )
         } catch {
             PersistenceController.shared.save()
