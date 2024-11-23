@@ -16,7 +16,6 @@ struct LogRow: View, Identifiable {
     @AppStorage("tigerStriped") private var tigerStriped = false
     @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
     @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
-    @AppStorage("today.showColumnExtendedTimestamp") public var showColumnExtendedTimestamp: Bool = true
     @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
     public var id = UUID()
     public var entry: Entry
@@ -78,18 +77,6 @@ struct LogRow: View, Identifiable {
                 .help(entry.timestamp)
 
                 Column(
-                    type: .extendedTimestamp,
-                    colour: applyColour(),
-                    textColour: self.colour.isBright() ? Theme.base : .white,
-                    index: index,
-                    alignment: .center,
-                    show: required.contains(.extendedTimestamp),
-                    text: $timestamp
-                )
-                .frame(maxWidth: 101)
-                .help(entry.timestamp)
-
-                Column(
                     type: .job,
                     colour: applyColour(),
                     textColour: self.colour.isBright() ? Theme.base : .white,
@@ -123,7 +110,6 @@ struct LogRow: View, Identifiable {
         }
         .onChange(of: self.showColumnIndex) { self.actionOnAppear() }
         .onChange(of: self.showColumnTimestamp) { self.actionOnAppear() }
-        .onChange(of: self.showColumnExtendedTimestamp) { self.actionOnAppear() }
         .onChange(of: self.showColumnJobId) { self.actionOnAppear() }
     }
 
@@ -372,7 +358,6 @@ struct LogRow: View, Identifiable {
 
         if self.showColumnIndex { self.required.insert(.index) } else { self.required.remove(.index)}
         if self.showColumnTimestamp { self.required.insert(.timestamp) } else { self.required.remove(.timestamp)}
-        if self.showColumnExtendedTimestamp { self.required.insert(.extendedTimestamp) } else { self.required.remove(.extendedTimestamp)}
         if self.showColumnJobId { self.required.insert(.job) } else { self.required.remove(.job)}
     }
 

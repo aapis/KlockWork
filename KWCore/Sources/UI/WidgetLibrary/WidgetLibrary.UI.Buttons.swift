@@ -602,6 +602,275 @@ extension WidgetLibrary.UI {
                 .onAppear(perform: self.actionOnAppear)
             }
         }
+
+        // MARK: Buttons.CopyRecordsToClipboard
+        struct CopyRecordsToClipboard: View {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("settings.accessibility.showSelectorLabels") private var showSelectorLabels: Bool = true
+            public var records: [LogRecord]?
+            @State private var isPresented: Bool = false
+            @State private var isHighlighted: Bool = false
+
+            var body: some View {
+                Button(action: self.actionOnCopy, label: {
+                    HStack(spacing: 5) {
+                        Image(systemName: "document.on.document.fill")
+                            .foregroundStyle(self.state.theme.tint)
+                        if self.showSelectorLabels {
+                            Text("Copy")
+                        }
+                    }
+                    .padding(6)
+                    .background(Theme.textBackground)
+                    .foregroundStyle(Theme.lightWhite)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                })
+                .buttonStyle(.plain)
+                .keyboardShortcut("c", modifiers: [.control, .shift])
+                .help("Copy view data to clipboard")
+                .useDefaultHover({ hover in self.isHighlighted = hover})
+            }
+        }
+
+        // MARK: Buttons.ExportToCSV
+        struct ExportToCSV: View {
+            @EnvironmentObject private var state: Navigation
+            @AppStorage("settings.accessibility.showSelectorLabels") private var showSelectorLabels: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showRecords") public var showRecords: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showNotes") public var showNotes: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showTasks") public var showTasks: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showProjects") public var showProjects: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showJobs") public var showJobs: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showCompanies") public var showCompanies: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showPeople") public var showPeople: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showTerms") public var showTerms: Bool = true
+            @AppStorage("widgetlibrary.ui.searchTypeFilter.showDefinitions") public var showDefinitions: Bool = true
+            @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
+            @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
+            @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
+            public var records: [LogRecord]
+            public var timelineActivities: [GenericTimelineActivity]
+            public var tab: String
+            @State private var isPresented: Bool = false
+            @State private var isHighlighted: Bool = false
+            @State private var csv: CSVFileDocument = CSVFileDocument(initialText: "")
+            @State private var csvFileName: String = ""
+
+            var body: some View {
+                Button(action: self.actionOnExportToCSV, label: {
+                    HStack(spacing: 5) {
+                        Image(systemName: "arrow.down.document.fill")
+                            .foregroundStyle(self.state.theme.tint)
+                        if self.showSelectorLabels {
+                            Text("CSV")
+                        }
+                    }
+                    .padding(6)
+                    .background(Theme.textBackground)
+                    .foregroundStyle(Theme.lightWhite)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                })
+                .disabled(self.records.isEmpty && self.timelineActivities.isEmpty)
+                .buttonStyle(.plain)
+                .keyboardShortcut("c", modifiers: [.control, .shift])
+                .help("Export table as CSV")
+                .useDefaultHover({ hover in self.isHighlighted = hover})
+                .fileExporter(isPresented: self.$isPresented, document: self.csv, contentType: .commaSeparatedText, defaultFilename: self.csvFileName) { result in
+                    switch result {
+                    case .success(let url):
+                        print("DERPO Saved to \(url)")
+                    case .failure(let error):
+                        print("DERPO \(error.localizedDescription)")
+                    }
+                }
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.date) { self.actionOnAppear() }
+            }
+
+            // MARK: Buttons.ExportToCSV.Column
+            struct Column: Identifiable, Equatable {
+                var id: UUID = UUID()
+                var text: String
+            }
+
+            // MARK: Buttons.ExportToCSV.Line
+            struct Line: Identifiable {
+                var id: UUID = UUID()
+                var columns: [Column]
+                var toString: String {
+                    var out: String = ""
+                    for column in self.columns {
+                        out += "\(column.text)"
+
+                        if column != self.columns.last {
+                            out += ","
+                        }
+                    }
+                    return out
+                }
+            }
+
+            // MARK: Buttons.ExportToCSV.CSVFile
+            class CSVFile: Identifiable {
+                var id: UUID = UUID()
+                var toString: String {
+                    var out: String = ""
+                    for line in self.lines {
+                        out += "\(line.toString)\n"
+                    }
+                    return out
+                }
+                private var lines: [Line] = []
+                
+                /// Add a line by passing a bunch of columns
+                /// - Parameter columns: Array<Column>
+                /// - Returns: Void
+                public func addLine(columns: [Column]) -> Void {
+                    self.lines.append(
+                        Line(columns: columns)
+                    )
+                }
+                
+                /// Add a pre-constructed Line
+                /// - Parameter line: Line
+                /// - Returns: Void
+                public func addLine(line: Line) -> Void {
+                    self.lines.append(line)
+                }
+                
+                /// Create a CSVFileDocument for the fileExporter API
+                /// - Returns: CSVFileDocument
+                public func document() -> CSVFileDocument {
+                    return CSVFileDocument(initialText: self.toString)
+                }
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.Buttons.CopyRecordsToClipboard {
+    /// Copy data to clipboard
+    /// - Returns: Void
+    private func actionOnCopy() -> Void {
+        if let records = self.records {
+            ClipboardHelper.copy(
+                CoreDataRecords(moc: self.state.moc).createExportableRecordsFrom(records)
+            )
+        }
+    }
+}
+
+extension WidgetLibrary.UI.Buttons.ExportToCSV {
+    /// Onload handler. Sets view state.
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.csvFileName = "\(self.state.session.appPage)-\(self.tab)-\(DateHelper.todayShort(self.state.session.timeline.date ?? self.state.session.date, format: "d/M/yyyy.HHmm"))"
+    }
+
+    /// Creates a CSV representation of the current list of records
+    /// - Returns: Void
+    private func actionOnExportToCSV() -> Void {
+        self.isPresented = true
+        let file: CSVFile = CSVFile()
+
+        if self.records.count > 0 {
+            if self.showRecords {
+                for record in records {
+                    file.addLine(line: self.lineForRecord(record))
+                }
+            }
+        } else if self.timelineActivities.count > 0 {
+            for activity in self.timelineActivities {
+                if let entity = activity.entity as? LogRecord {
+                    if self.showRecords {
+                        file.addLine(line: self.lineForRecord(entity))
+                    }
+                } else if let entity = activity.entity as? LogTask {
+                    if self.showTasks {
+                        file.addLine(line: self.lineForTask(entity))
+                    }
+                } else if let entity = activity.entity as? Note {
+                    if self.showNotes {
+                        file.addLine(line: self.lineForNote(entity))
+                    }
+                }
+            }
+        }
+
+        self.csv = file.document()
+    }
+
+    /// Creates a Line representation of a Note object
+    /// - Parameter record: LogRecord
+    /// - Returns: Line
+    private func lineForNote(_ entity: Note) -> Line {
+        var columns: [Column] = []
+        if self.showColumnTimestamp {
+            columns.append(Column(text: (entity.postedDate ?? Date.now).formatted()))
+        }
+        if self.showColumnJobId {
+            columns.append(Column(text: entity.mJob?.title ?? entity.mJob?.jid.string ?? "Invalid job"))
+        }
+        columns.append(Column(text: entity.title ?? "Invalid note title"))
+        return Line(columns: columns)
+    }
+
+    /// Creates a Line representation of a LogRecord object
+    /// - Parameter record: LogRecord
+    /// - Returns: Line
+    private func lineForRecord(_ entity: LogRecord) -> Line {
+        var columns: [Column] = []
+        if self.showColumnTimestamp {
+            columns.append(Column(text: (entity.timestamp ?? Date.now).formatted()))
+        }
+        if self.showColumnJobId {
+            columns.append(Column(text: entity.job?.title ?? entity.job?.jid.string ?? "Invalid job"))
+        }
+        if entity.message != nil {
+            // Apply banned word filter to LogRecord
+            let cleaned = CoreDataProjectConfiguration.applyBannedWordsTo(entity)
+            // @TODO: find a better method for generating this string that doesn't involve string replace, if possible
+            columns.append(Column(text: "\(cleaned.message?.replacingOccurrences(of: ",", with: "") ?? "Invalid record content")"))
+        }
+
+        return Line(columns: columns)
+    }
+
+    /// Creates a Line representation of a LogTask object
+    /// - Parameter task: LogTask
+    /// - Returns: Line
+    private func lineForTask(_ entity: LogTask) -> Line {
+        var columns: [Column] = []
+        var taskStatusPrefix: String = ""
+
+        // Task is unmodified since posting
+        if entity.created == entity.lastUpdate {
+            if self.showColumnTimestamp {
+                taskStatusPrefix = "Updated task"
+                columns.append(Column(text: (entity.lastUpdate ?? Date.now).formatted()))
+            }
+        } else if entity.completedDate != nil {
+            // Task was completed
+            if self.showColumnTimestamp {
+                taskStatusPrefix = "Complete task"
+                columns.append(Column(text: (entity.completedDate ?? Date.now).formatted()))
+            }
+        } else if entity.cancelledDate != nil {
+            // Task was cancelled
+            if self.showColumnTimestamp {
+                taskStatusPrefix = "Cancelled task"
+                columns.append(Column(text: (entity.cancelledDate ?? Date.now).formatted()))
+            }
+        } else {
+            taskStatusPrefix = "Created task"
+            columns.append(Column(text: (entity.created ?? Date.now).formatted()))
+        }
+        if self.showColumnJobId {
+            columns.append(Column(text: entity.owner?.title ?? entity.owner?.jid.string ?? "Invalid job"))
+        }
+        columns.append(Column(text: "\(taskStatusPrefix): \(entity.content ?? "Invalid task content")"))
+
+        return Line(columns: columns)
     }
 }
 

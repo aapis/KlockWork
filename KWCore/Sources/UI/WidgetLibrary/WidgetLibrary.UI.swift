@@ -1202,7 +1202,8 @@ extension WidgetLibrary {
             @AppStorage("widgetlibrary.ui.searchTypeFilter.showDefinitions") public var showDefinitions: Bool = true
             public var id: UUID = UUID()
             public var historicalDate: Date
-            public var view: AnyView?
+            public var view: AnyView? = nil
+            public var entity: NSManagedObject? = nil
             @State private var activities: [GenericTimelineActivity] = []
             @State private var currentActivities: [GenericTimelineActivity] = []
             @State private var vid: UUID = UUID()
@@ -1210,7 +1211,7 @@ extension WidgetLibrary {
             var body: some View {
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 0) {
-                        ToolbarButtons()
+                        ToolbarButtons(timelineActivities: self.activities)
                         if self.activities.count > 0 {
                             ForEach(self.currentActivities) { activity in
                                 if let view = activity.view {
@@ -2674,7 +2675,8 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                             self.activities.append(
                                 UI.GenericTimelineActivity(
                                     historicalDate: date,
-                                    view: AnyView(record.rowView)
+                                    view: AnyView(record.rowView),
+                                    entity: record
                                 )
                             )
                         }
@@ -2691,7 +2693,8 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                     self.activities.append(
                         UI.GenericTimelineActivity(
                             historicalDate: self.historicalDate,
-                            view: AnyView(task.rowView)
+                            view: AnyView(task.rowView),
+                            entity: task
                         )
                     )
                 }
@@ -2706,7 +2709,8 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                     self.activities.append(
                         UI.GenericTimelineActivity(
                             historicalDate: date,
-                            view: AnyView(note.rowView)
+                            view: AnyView(note.rowView),
+                            entity: note
                         )
                     )
                 } else
@@ -2715,7 +2719,8 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                     self.activities.append(
                         UI.GenericTimelineActivity(
                             historicalDate: note.lastUpdate!,
-                            view: AnyView(note.rowView)
+                            view: AnyView(note.rowView),
+                            entity: note
                         )
                     )
                 }
@@ -2730,7 +2735,8 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                     self.activities.append(
                         UI.GenericTimelineActivity(
                             historicalDate: date,
-                            view: AnyView(job.rowView)
+                            view: AnyView(job.rowView),
+                            entity: job
                         )
                     )
                 } else
@@ -2739,7 +2745,8 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                     self.activities.append(
                         UI.GenericTimelineActivity(
                             historicalDate: date,
-                            view: AnyView(job.rowView)
+                            view: AnyView(job.rowView),
+                            entity: job
                         )
                     )
                 }
@@ -2754,7 +2761,8 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                     self.activities.append(
                         UI.GenericTimelineActivity(
                             historicalDate: date,
-                            view: AnyView(company.rowView)
+                            view: AnyView(company.rowView),
+                            entity: company
                         )
                     )
                 } else
@@ -2763,7 +2771,8 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                     self.activities.append(
                         UI.GenericTimelineActivity(
                             historicalDate: date,
-                            view: AnyView(company.rowView)
+                            view: AnyView(company.rowView),
+                            entity: company
                         )
                     )
                 }
@@ -2781,7 +2790,8 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                         self.activities.append(
                             UI.GenericTimelineActivity(
                                 historicalDate: date,
-                                view: AnyView(definition.rowView)
+                                view: AnyView(definition.rowView),
+                                entity: definition
                             )
                         )
                     }
@@ -2791,7 +2801,8 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
                     self.activities.append(
                         UI.GenericTimelineActivity(
                             historicalDate: date,
-                            view: AnyView(definition.rowView)
+                            view: AnyView(definition.rowView),
+                            entity: definition
                         )
                     )
                 }

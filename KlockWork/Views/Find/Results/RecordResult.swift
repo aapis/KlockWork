@@ -19,7 +19,7 @@ struct RecordResult: View {
     public let pType: String = "Records"
     public let sType: String = "Record"
 
-    private let viewRequiresColumns: Set<RecordTableColumn> = [.extendedTimestamp, .job]
+    private let viewRequiresColumns: Set<RecordTableColumn> = [.job]
     
     @State private var page: Int = 1
     @State private var numPages: Int = 1
