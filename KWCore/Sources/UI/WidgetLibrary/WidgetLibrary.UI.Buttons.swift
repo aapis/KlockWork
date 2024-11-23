@@ -686,6 +686,64 @@ extension WidgetLibrary.UI {
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
             }
+
+            // MARK: Buttons.ExportToCSV.Column
+            struct Column: Identifiable, Equatable {
+                var id: UUID = UUID()
+                var text: String
+            }
+
+            // MARK: Buttons.ExportToCSV.Line
+            struct Line: Identifiable {
+                var id: UUID = UUID()
+                var columns: [Column]
+                var toString: String {
+                    var out: String = ""
+                    for column in self.columns {
+                        out += "\(column.text)"
+
+                        if column != self.columns.last {
+                            out += ","
+                        }
+                    }
+                    return out
+                }
+            }
+
+            // MARK: Buttons.ExportToCSV.CSVFile
+            class CSVFile: Identifiable {
+                var id: UUID = UUID()
+                var toString: String {
+                    var out: String = ""
+                    for line in self.lines {
+                        out += "\(line.toString)\n"
+                    }
+                    return out
+                }
+                private var lines: [Line] = []
+                
+                /// Add a line by passing a bunch of columns
+                /// - Parameter columns: Array<Column>
+                /// - Returns: Void
+                public func addLine(columns: [Column]) -> Void {
+                    self.lines.append(
+                        Line(columns: columns)
+                    )
+                }
+                
+                /// Add a pre-constructed Line
+                /// - Parameter line: Line
+                /// - Returns: Void
+                public func addLine(line: Line) -> Void {
+                    self.lines.append(line)
+                }
+                
+                /// Create a CSVFileDocument for the fileExporter API
+                /// - Returns: CSVFileDocument
+                public func document() -> CSVFileDocument {
+                    return CSVFileDocument(initialText: self.toString)
+                }
+            }
         }
     }
 }
@@ -703,53 +761,6 @@ extension WidgetLibrary.UI.Buttons.CopyRecordsToClipboard {
 }
 
 extension WidgetLibrary.UI.Buttons.ExportToCSV {
-    struct Column: Identifiable {
-        var id: UUID = UUID()
-        var text: String
-    }
-
-    struct Line: Identifiable {
-        var id: UUID = UUID()
-        var columns: [Column]
-        var toString: String {
-            var out: String = ""
-            for column in self.columns {
-                out += "\(column.text),"
-            }
-            return out
-        }
-    }
-
-    class CSVFile: Identifiable {
-        var id: UUID = UUID()
-        var toString: String {
-            var out: String = ""
-            for line in self.lines {
-                out += "\(line.toString)\n"
-            }
-            return out
-        }
-        private var lines: [Line] = []
-
-        public func addLine(columns: [Column]) -> Void {
-            self.lines.append(
-                Line(columns: columns)
-            )
-        }
-
-        public func addLine(line: Line) -> Void {
-            self.lines.append(line)
-        }
-
-        public func document() -> CSVFileDocument {
-            return CSVFileDocument(initialText: self.toString)
-        }
-    }
-
-    struct CSVFileHelper {
-        
-    }
-
     /// Onload handler. Sets view state.
     /// - Returns: Void
     private func actionOnAppear() -> Void {
@@ -778,34 +789,48 @@ extension WidgetLibrary.UI.Buttons.ExportToCSV {
                     if self.showTasks {
                         file.addLine(line: self.lineForTask(entity))
                     }
+                } else if let entity = activity.entity as? Note {
+                    if self.showNotes {
+                        file.addLine(line: self.lineForNote(entity))
+                    }
                 }
             }
         }
 
         self.csv = file.document()
     }
-    
+
+    /// Creates a Line representation of a Note object
+    /// - Parameter record: LogRecord
+    /// - Returns: Line
+    private func lineForNote(_ entity: Note) -> Line {
+        var columns: [Column] = []
+        if self.showColumnTimestamp {
+            columns.append(Column(text: (entity.postedDate ?? Date.now).formatted()))
+        }
+        if self.showColumnJobId {
+            columns.append(Column(text: entity.mJob?.title ?? entity.mJob?.jid.string ?? "Invalid job"))
+        }
+        columns.append(Column(text: entity.title ?? "Invalid note title"))
+        return Line(columns: columns)
+    }
+
     /// Creates a Line representation of a LogRecord object
     /// - Parameter record: LogRecord
     /// - Returns: Line
-    private func lineForRecord(_ record: LogRecord) -> Line {
+    private func lineForRecord(_ entity: LogRecord) -> Line {
         var columns: [Column] = []
         if self.showColumnTimestamp {
-            columns.append(Column(text: (record.timestamp ?? Date.now).formatted()))
+            columns.append(Column(text: (entity.timestamp ?? Date.now).formatted()))
         }
         if self.showColumnJobId {
-            columns.append(Column(text: record.job?.title ?? record.job?.jid.string ?? "Invalid job"))
+            columns.append(Column(text: entity.job?.title ?? entity.job?.jid.string ?? "Invalid job"))
         }
-        if record.message != nil {
-            let ignoredJobs = record.job?.project?.configuration?.ignoredJobs
-            let cleaned = CoreDataProjectConfiguration.applyBannedWordsTo(record)
-
-            if let ignored = ignoredJobs {
-                if !ignored.contains(cleaned.job?.jid.string ?? "") {
-                    // @TODO: find a better method for generating this string that doesn't involve string replace, if possible
-                    columns.append(Column(text: "\(cleaned.message?.replacingOccurrences(of: ",", with: "") ?? "Invalid record content")"))
-                }
-            }
+        if entity.message != nil {
+            // Apply banned word filter to LogRecord
+            let cleaned = CoreDataProjectConfiguration.applyBannedWordsTo(entity)
+            // @TODO: find a better method for generating this string that doesn't involve string replace, if possible
+            columns.append(Column(text: "\(cleaned.message?.replacingOccurrences(of: ",", with: "") ?? "Invalid record content")"))
         }
 
         return Line(columns: columns)
@@ -814,36 +839,36 @@ extension WidgetLibrary.UI.Buttons.ExportToCSV {
     /// Creates a Line representation of a LogTask object
     /// - Parameter task: LogTask
     /// - Returns: Line
-    private func lineForTask(_ task: LogTask) -> Line {
+    private func lineForTask(_ entity: LogTask) -> Line {
         var columns: [Column] = []
         var taskStatusPrefix: String = ""
 
         // Task is unmodified since posting
-        if task.created == task.lastUpdate {
+        if entity.created == entity.lastUpdate {
             if self.showColumnTimestamp {
                 taskStatusPrefix = "Updated task"
-                columns.append(Column(text: (task.lastUpdate ?? Date.now).formatted()))
+                columns.append(Column(text: (entity.lastUpdate ?? Date.now).formatted()))
             }
-        } else if task.completedDate != nil {
+        } else if entity.completedDate != nil {
             // Task was completed
             if self.showColumnTimestamp {
                 taskStatusPrefix = "Complete task"
-                columns.append(Column(text: (task.completedDate ?? Date.now).formatted()))
+                columns.append(Column(text: (entity.completedDate ?? Date.now).formatted()))
             }
-        } else if task.cancelledDate != nil {
+        } else if entity.cancelledDate != nil {
             // Task was cancelled
             if self.showColumnTimestamp {
                 taskStatusPrefix = "Cancelled task"
-                columns.append(Column(text: (task.cancelledDate ?? Date.now).formatted()))
+                columns.append(Column(text: (entity.cancelledDate ?? Date.now).formatted()))
             }
         } else {
             taskStatusPrefix = "Created task"
-            columns.append(Column(text: (task.created ?? Date.now).formatted()))
+            columns.append(Column(text: (entity.created ?? Date.now).formatted()))
         }
         if self.showColumnJobId {
-            columns.append(Column(text: task.owner?.title ?? task.owner?.jid.string ?? "Invalid job"))
+            columns.append(Column(text: entity.owner?.title ?? entity.owner?.jid.string ?? "Invalid job"))
         }
-        columns.append(Column(text: "\(taskStatusPrefix): \(task.content ?? "Invalid task content")"))
+        columns.append(Column(text: "\(taskStatusPrefix): \(entity.content ?? "Invalid task content")"))
 
         return Line(columns: columns)
     }
