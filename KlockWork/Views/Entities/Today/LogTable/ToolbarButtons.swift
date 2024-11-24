@@ -15,6 +15,7 @@ struct ToolbarButtons: View {
     @AppStorage("settings.accessibility.showSelectorLabels") private var showSelectorLabels: Bool = true
     public var records: [LogRecord]
     public var timelineActivities: [UI.GenericTimelineActivity]
+    public var activities: [Activity]
     public var tab: TodayViewTab = .chronologic
     @State private var datePickerItems: [CustomPickerItem] = []
     @State private var pickerSelection: Int = 0
@@ -24,12 +25,21 @@ struct ToolbarButtons: View {
         self.records = records
         self.tab = tab
         self.timelineActivities = []
+        self.activities = []
     }
 
     init(timelineActivities: [UI.GenericTimelineActivity], tab: TodayViewTab = .chronologic) {
         self.timelineActivities = timelineActivities
         self.tab = tab
         self.records = []
+        self.activities = []
+    }
+
+    init(activities: [Activity], tab: TodayViewTab = .chronologic) {
+        self.activities = activities
+        self.tab = tab
+        self.records = []
+        self.timelineActivities = []
     }
 
     var body: some View {
@@ -59,6 +69,7 @@ struct ToolbarButtons: View {
                 UI.Buttons.ExportToCSV(
                     records: self.records,
                     timelineActivities: self.timelineActivities,
+                    activities: self.activities,
                     tab: "\(self.tab)"
                 )
                 if self.tab == .chronologic {
