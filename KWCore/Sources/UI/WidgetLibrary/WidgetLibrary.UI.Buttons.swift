@@ -650,6 +650,7 @@ extension WidgetLibrary.UI {
             @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
             public var records: [LogRecord]
             public var timelineActivities: [GenericTimelineActivity]
+            public var activities: [Activity]
             public var tab: String
             @State private var isPresented: Bool = false
             @State private var isHighlighted: Bool = false
@@ -670,7 +671,7 @@ extension WidgetLibrary.UI {
                     .foregroundStyle(Theme.lightWhite)
                     .clipShape(RoundedRectangle(cornerRadius: 5))
                 })
-                .disabled(self.records.isEmpty && self.timelineActivities.isEmpty)
+                .disabled(self.records.isEmpty && self.timelineActivities.isEmpty && self.activities.isEmpty)
                 .buttonStyle(.plain)
                 .keyboardShortcut("c", modifiers: [.control, .shift])
                 .help("Export table as CSV")
@@ -773,13 +774,13 @@ extension WidgetLibrary.UI.Buttons.ExportToCSV {
         self.isPresented = true
         let file: CSVFile = CSVFile()
 
-        if self.records.count > 0 {
+        if !self.records.isEmpty {
             if self.showRecords {
                 for record in records {
                     file.addLine(line: self.lineForRecord(record))
                 }
             }
-        } else if self.timelineActivities.count > 0 {
+        } else if !self.timelineActivities.isEmpty {
             for activity in self.timelineActivities {
                 if let entity = activity.entity as? LogRecord {
                     if self.showRecords {
@@ -790,6 +791,22 @@ extension WidgetLibrary.UI.Buttons.ExportToCSV {
                         file.addLine(line: self.lineForTask(entity))
                     }
                 } else if let entity = activity.entity as? Note {
+                    if self.showNotes {
+                        file.addLine(line: self.lineForNote(entity))
+                    }
+                }
+            }
+        } else if !self.activities.isEmpty {
+            for activity in self.activities {
+                if let entity = activity.source as? LogRecord {
+                    if self.showRecords {
+                        file.addLine(line: self.lineForRecord(entity))
+                    }
+                } else if let entity = activity.source as? LogTask {
+                    if self.showTasks {
+                        file.addLine(line: self.lineForTask(entity))
+                    }
+                } else if let entity = activity.source as? Note {
                     if self.showNotes {
                         file.addLine(line: self.lineForNote(entity))
                     }
