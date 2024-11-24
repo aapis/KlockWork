@@ -26,6 +26,7 @@ struct LogRow: View, Identifiable {
     @State public var message: String = ""
     @State public var job: String = ""
     @State public var timestamp: String = ""
+    @State public var extendedTimestamp: String = ""
     @State public var aIndex: String = "0"
     @State public var activeColour: Color = Theme.rowColour
     @State public var projectColHelpText: String = ""
@@ -33,6 +34,7 @@ struct LogRow: View, Identifiable {
     @State private var isDeleteAlertShowing: Bool = false
     @State private var words: [CustomMessage] = []
     @State private var isHighlighted: Bool = false
+    @State private var showExtendedDate: Bool = false
 
     var body: some View {
         if isEditing {
@@ -43,7 +45,6 @@ struct LogRow: View, Identifiable {
                         .opacity(0.5)
                 }
             }
-//            .onAppear(perform: self.actionOnAppear)
             ViewModeEdit
         } else {
             ViewModeNormal
@@ -64,15 +65,34 @@ struct LogRow: View, Identifiable {
                 )
                 .frame(minWidth: 23, maxWidth: 45)
 
-                Column(
-                    type: .timestamp,
-                    colour: applyColour(),
-                    textColour: self.colour.isBright() ? Theme.base : .white,
-                    index: index,
-                    alignment: .leading,
-                    show: required.contains(.timestamp),
-                    text: $timestamp
-                )
+                Button {
+                    self.showExtendedDate.toggle()
+                } label: {
+                    if self.showExtendedDate {
+                        Column(
+                            type: .timestamp,
+                            colour: applyColour(),
+                            textColour: self.colour.isBright() ? Theme.base : .white,
+                            index: index,
+                            alignment: .leading,
+                            show: required.contains(.timestamp),
+                            shouldFormatDate: false,
+                            text: self.$extendedTimestamp
+                        )
+                    } else {
+                        Column(
+                            type: .timestamp,
+                            colour: applyColour(),
+                            textColour: self.colour.isBright() ? Theme.base : .white,
+                            index: index,
+                            alignment: .leading,
+                            show: required.contains(.timestamp),
+                            text: $timestamp
+                        )
+                    }
+                }
+                .buttonStyle(.plain)
+                .useDefaultHover({_ in})
                 .frame(maxWidth: 65)
                 .help(entry.timestamp)
 
@@ -338,6 +358,7 @@ struct LogRow: View, Identifiable {
         message = entry.message
         job = entry.job
         timestamp = entry.timestamp
+        self.extendedTimestamp = DateHelper.todayShort(self.record?.timestamp ?? self.nav.session.date, format: "d/M/yyyy @ HH:mm")
         aIndex = adjustedIndexAsString()
 
         self.words = []

@@ -59,6 +59,7 @@ struct Column: View {
     public var url: URL?
     public var job: Job?
     public var show: Bool = true
+    public var shouldFormatDate: Bool = true
     @State private var words: [CustomMessage] = []
 
     @Binding public var text: String
@@ -187,21 +188,25 @@ extension Column {
     /// Formats date for UI
     /// - Returns: String
     private func formatted() -> String {
-        let inputDateFormatter = DateFormatter()
-        inputDateFormatter.timeZone = TimeZone.autoupdatingCurrent
-        inputDateFormatter.locale = NSLocale.current
-        inputDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        let inputDate = inputDateFormatter.date(from: text)
+        if self.shouldFormatDate {
+            let inputDateFormatter = DateFormatter()
+            inputDateFormatter.timeZone = TimeZone.autoupdatingCurrent
+            inputDateFormatter.locale = NSLocale.current
+            inputDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            let inputDate = inputDateFormatter.date(from: text)
 
-        if inputDate == nil {
-            return "Invalid date"
+            if inputDate == nil {
+                return "Invalid date"
+            }
+
+            let dateFormatter = DateFormatter()
+            dateFormatter.timeZone = inputDateFormatter.timeZone
+            dateFormatter.locale = NSLocale.current
+            dateFormatter.dateFormat = "h:mm a"
+
+            return dateFormatter.string(from: inputDate!)
         }
 
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = inputDateFormatter.timeZone
-        dateFormatter.locale = NSLocale.current
-        dateFormatter.dateFormat = "h:mm a"
-
-        return dateFormatter.string(from: inputDate!)
+        return self.text
     }
 }
