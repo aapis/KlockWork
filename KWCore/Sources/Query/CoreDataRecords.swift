@@ -636,6 +636,38 @@ public class CoreDataRecords: ObservableObject {
         return query(predicate)
     }
 
+    /// Finds records associated with a given Job and Date
+    /// - Parameter job: Job
+    /// - Parameter date: Date
+    /// - Returns: Array<LogRecord>
+    public func find(for job: Job, on date: Date) -> [LogRecord] {
+        let window = DateHelper.startAndEndOf(date)
+        let predicate = NSPredicate(
+            format: "job == %@ && (timestamp > %@ && timestamp <= %@)",
+            job as CVarArg,
+            window.0 as CVarArg,
+            window.1 as CVarArg
+        )
+
+        return query(predicate)
+    }
+
+    /// Finds records associated with a given Job between two dates
+    /// - Parameter job: Job
+    /// - Parameter start: Date
+    /// - Parameter end: Date
+    /// - Returns: Array<LogRecord>
+    public func find(for job: Job, start: Date, end: Date) -> [LogRecord] {
+        let predicate = NSPredicate(
+            format: "job == %@ && (timestamp > %@ && timestamp <= %@)",
+            job as CVarArg,
+            start as CVarArg,
+            end as CVarArg
+        )
+
+        return query(predicate)
+    }
+
     /// Finds records created on a specific date that aren't hidden by their parent
     /// - Parameter start: Date
     /// - Parameter end: Date
