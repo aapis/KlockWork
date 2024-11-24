@@ -1158,11 +1158,6 @@ extension WidgetLibrary {
             }
         }
 
-        struct SActivity: Identifiable {
-            var id: UUID = UUID()
-            var view: AnyView
-        }
-
         // MARK: WidgetLibrary.UI.Feed
         struct Feed: View {
             @EnvironmentObject public var state: Navigation
@@ -1172,37 +1167,49 @@ extension WidgetLibrary {
             @State private var vid: UUID = UUID()
 
             var body: some View {
-                ScrollView {
-                    VStack(spacing: 0) {
-                        if let job = self.state.session.job {
-                            UI.ListLinkTitle(text: "Interactions for \"\(job.title ?? job.jid.string)\" in \(DateHelper.todayShort(self.state.session.date, format: "MMMM yyyy"))")
+                VStack(spacing: 0) {
+                    if let job = self.state.session.job {
+                        VStack(spacing: 0) {
+                            UI.ListLinkTitle(text: "Interactions for \"\(job.title ?? job.jid.string)\" in \(DateHelper.todayShort(self.state.session.date, format: "MMMM"))")
                                 .padding(.bottom, 5)
                             ToolbarButtons(activities: self.activities)
                                 .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
-                            if !self.activities.isEmpty {
-                                ForEach(self.activities, id: \.id) { activity in
-                                    switch activity.source {
-                                    case is LogRecord:
-                                        if let entity = activity.source as? LogRecord {
-                                            entity.rowView
+                        }
+                        .frame(height: 70)
+                        ScrollView {
+                            VStack(spacing: 0) {
+                                if !self.activities.isEmpty {
+                                    ForEach(self.activities, id: \.id) { activity in
+                                        switch activity.source {
+                                        case is LogRecord:
+                                            if let entity = activity.source as? LogRecord {
+                                                entity.rowView
+                                            }
+                                        default:
+                                            Text("Not implemented")
                                         }
-                                    default:
-                                        Text("Not implemented")
                                     }
+                                } else {
+                                    LogRowEmpty(message: "No interactions for \(DateHelper.todayShort(self.state.session.date, format: "MMMM yyyy"))")
                                 }
-                            } else {
-                                LogRowEmpty(message: "No interactions for \(DateHelper.todayShort(self.state.session.date, format: "MMMM yyyy"))")
                             }
-                        } else {
+                            .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
+                        }
+                        .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
+                    } else {
+                        VStack(spacing: 0) {
                             UI.ListLinkTitle(text: "Select a Job to view Interactions")
                                 .padding(.bottom, 5)
                             ToolbarButtons(records: [])
                                 .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
                             LogRowEmpty(message: "No interactions for \(DateHelper.todayShort(self.state.session.date, format: "MMMM yyyy"))")
+                                .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
                         }
+                        .frame(height: 100)
                     }
-                    .clipShape(.rect(cornerRadius: 5))
+                    Spacer()
                 }
+                .clipShape(.rect(cornerRadius: 5))
                 .id(self.vid)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
