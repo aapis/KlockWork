@@ -30,7 +30,6 @@ extension WidgetLibrary.UI {
                         Spacer()
                         UI.Buttons.Minimize(isMinimized: $isWeekAtAGlanceMinimized)
                     }
-                    .padding(8)
                     .background(self.isWeekAtAGlanceMinimized ? self.state.session.appPage.primaryColour : .clear)
                     .clipShape(.rect(cornerRadius: 5))
                     
@@ -307,7 +306,7 @@ extension WidgetLibrary.UI {
             var body: some View {
                 Button {
                     self.state.session.date = DateHelper.startOfDay(self.date)
-                    isPresented.toggle()
+                    self.isPresented.toggle()
                 } label: {
                     ZStack {
                         // Soooo sorry
