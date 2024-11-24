@@ -244,9 +244,22 @@ extension WidgetLibrary.UI {
                                         end: self.state.session.date.endOfMonth
                                     )
                                 }
+                                .padding()
+                                .background(self.MonthlyInteractionsBackground)
+                                .clipShape(.rect(cornerRadius: 5))
                                 Spacer()
                             }
                             .padding([.bottom, .leading, .trailing])
+                        }
+                    }
+
+                    @ViewBuilder private var MonthlyInteractionsBackground: some View {
+                        ZStack {
+                            if [.classic, .opaque].contains(self.state.theme.style) {
+                                Theme.textBackground
+                            } else {
+                                self.state.session.appPage.primaryColour.opacity(0.3)
+                            }
                         }
                     }
                 }
