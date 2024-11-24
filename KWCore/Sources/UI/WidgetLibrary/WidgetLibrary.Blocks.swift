@@ -237,7 +237,7 @@ extension WidgetLibrary.UI {
                                 Spacer()
                             }
                         }
-                        .background(self.isSelected ? self.state.theme.tint : self.isToday ? .blue : Theme.textBackground)
+                        .background(self.isSelected ? self.state.theme.tint : self.isToday ? .blue : [.classic, .opaque].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : self.state.session.appPage.primaryColour.opacity(0.3))
                         ZStack {
                             (self.dayNumber > 0 ? self.bgColour.opacity(0.8) : .clear)
                             if self.dayNumber > 0 {
@@ -264,14 +264,13 @@ extension WidgetLibrary.UI {
                                 Spacer()
                             }
                         }
-                        .background(self.isSelected ? self.state.theme.tint : self.isToday ? .blue : .clear)
+                        .background(self.isSelected ? self.state.theme.tint : self.isToday ? .blue : [.classic, .opaque].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : self.state.session.appPage.primaryColour.opacity(0.3))
                     }
-                    .background(Theme.textBackground)
                     .useDefaultHover({ hover in self.isHighlighted = hover })
                 }
-                .help("\(self.colourData.count) Tasks due on \(self.state.session.date.formatted(date: .abbreviated, time: .omitted))")
+                .help("\(self.colourData.count) interactions on \(self.state.session.date.formatted(date: .abbreviated, time: .omitted))")
                 .buttonStyle(.plain)
-                .foregroundColor(self.fgColour)
+                .foregroundColor([.classic, .opaque].contains(self.state.theme.style) ? self.fgColour : Theme.base)
                 .clipShape(.rect(cornerRadius: 6))
                 .onAppear(perform: self.actionOnAppear)
                 .contextMenu {
