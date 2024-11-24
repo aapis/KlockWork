@@ -231,12 +231,20 @@ extension WidgetLibrary.UI {
                                     }
                                 }
                                 FancyDivider()
-                                UI.InteractionsInRange(
-                                    period: .month,
-                                    start: self.state.session.date.startOfMonth,
-                                    end: self.state.session.date.endOfMonth,
-                                    format: "MMMM"
-                                )
+                                VStack(spacing: 0) {
+                                    UI.InteractionsInRange(
+                                        period: .month,
+                                        start: self.state.session.date.startOfMonth,
+                                        end: self.state.session.date.endOfMonth,
+                                        format: "MMMM"
+                                    )
+                                    FancyDivider()
+                                    UI.Feed(
+                                        start: self.state.session.date.startOfMonth,
+                                        end: self.state.session.date.endOfMonth
+                                    )
+                                }
+                                Spacer()
                             }
                             .padding([.bottom, .leading, .trailing])
                         }
@@ -284,6 +292,7 @@ extension WidgetLibrary.UI {
                                     end: self.state.session.date.endOfYear,
                                     format: "yyyy"
                                 )
+                                Spacer()
                             }
                             .padding([.bottom, .leading, .trailing])
                         }
@@ -347,6 +356,7 @@ extension WidgetLibrary.UI {
                                     start: self.state.session.timeline.custom.rangeStart,
                                     end: self.state.session.timeline.custom.rangeEnd
                                 )
+                                Spacer()
                             }
                             .padding([.leading, .trailing])
                             // @TODO: fix?
@@ -393,6 +403,7 @@ extension WidgetLibrary.UI {
                                 }
                                 FancyDivider()
                                 UI.ActivityFeed()
+                                Spacer()
                             }
                             .padding([.leading, .trailing])
                         }
