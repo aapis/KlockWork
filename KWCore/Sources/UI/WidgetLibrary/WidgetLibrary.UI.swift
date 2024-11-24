@@ -1145,6 +1145,7 @@ extension WidgetLibrary {
                     }
                     Spacer()
                 }
+                .frame(maxHeight: 300)
                 .id(self.vid)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.vid = UUID() ; self.actionOnAppear() }
@@ -1157,10 +1158,65 @@ extension WidgetLibrary {
             }
         }
 
+        struct SActivity: Identifiable {
+            var id: UUID = UUID()
+            var view: AnyView
+        }
+
+        // MARK: WidgetLibrary.UI.Feed
+        struct Feed: View {
+            @EnvironmentObject public var state: Navigation
+            public var start: Date? = nil
+            public var end: Date? = nil
+            @State private var activities: [Activity] = []
+            @State private var vid: UUID = UUID()
+
+            var body: some View {
+                ScrollView {
+                    VStack(spacing: 0) {
+                        if let job = self.state.session.job {
+                            UI.ListLinkTitle(text: "Interactions for \"\(job.title ?? job.jid.string)\" in \(DateHelper.todayShort(self.state.session.date, format: "MMMM yyyy"))")
+                                .padding(.bottom, 5)
+                            ToolbarButtons(activities: self.activities)
+                                .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
+                            if !self.activities.isEmpty {
+                                ForEach(self.activities, id: \.id) { activity in
+                                    switch activity.source {
+                                    case is LogRecord:
+                                        if let entity = activity.source as? LogRecord {
+                                            entity.rowView
+                                        }
+                                    default:
+                                        Text("Not implemented")
+                                    }
+                                }
+                            } else {
+                                LogRowEmpty(message: "No interactions for \(DateHelper.todayShort(self.state.session.date, format: "MMMM yyyy"))")
+                            }
+                        } else {
+                            UI.ListLinkTitle(text: "Select a Job to view Interactions")
+                                .padding(.bottom, 5)
+                            ToolbarButtons(records: [])
+                                .clipShape(.rect(topLeadingRadius: 5, topTrailingRadius: 5))
+                            LogRowEmpty(message: "No interactions for \(DateHelper.todayShort(self.state.session.date, format: "MMMM yyyy"))")
+                        }
+                    }
+                    .clipShape(.rect(cornerRadius: 5))
+                }
+                .id(self.vid)
+                .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.state.session.date) { self.actionOnAppear() }
+                .onChange(of: self.state.session.job) { self.actionOnAppear() }
+                .onChange(of: self.state.session.pagination.currentPageOffset) { self.actionOnAppear() }
+            }
+        }
+
         // MARK: ActivityFeed
         struct ActivityFeed: View {
             @EnvironmentObject public var state: Navigation
             @AppStorage("dashboard.maxYearsPastInHistory") public var maxYearsPastInHistory: Int = 5
+            public var start: Date? = nil
+            public var end: Date? = nil
             @State private var tabs: [ToolbarButton] = []
             @State private var vid: UUID = UUID()
 
@@ -1180,6 +1236,7 @@ extension WidgetLibrary {
                 .id(self.vid)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.actionOnAppear() }
+                .onChange(of: self.state.session.job) { self.actionOnAppear() }
                 .onChange(of: self.maxYearsPastInHistory) { self.actionOnAppear() }
                 .onChange(of: self.state.session.pagination.currentPageOffset) { self.actionOnAppear() }
             }
@@ -2844,6 +2901,30 @@ extension WidgetLibrary.UI.GenericTimelineActivity {
         }
     }
 }
+extension WidgetLibrary.UI.Feed {
+    /// Onload handler. Sets view state
+    /// - Returns: Void
+    private func actionOnAppear() -> Void {
+        self.activities = []
+
+        if self.start != nil && self.end != nil {
+            if let job = self.state.session.job {
+                for record in CoreDataRecords(moc: self.state.moc).find(for: job, start: self.start!, end: self.end!) {
+                    self.activities.append(
+                        Activity(
+                            name: "ACT_NAME",
+                            help: "ACT_HELP",
+                            page: self.state.parent ?? .dashboard,
+                            type: .activity,
+                            job: record.job,
+                            source: record
+                        )
+                    )
+                }
+            }
+        }
+    }
+}
 
 extension WidgetLibrary.UI.ActivityFeed {
     /// Onload handler. Sets view state
@@ -2851,28 +2932,30 @@ extension WidgetLibrary.UI.ActivityFeed {
     private func actionOnAppear() -> Void {
         self.tabs = []
         var tabSet: Set<ToolbarButton> = []
-
         let calendar = Calendar.autoupdatingCurrent
         let current = calendar.dateComponents([.year, .month, .day], from: self.state.session.date)
 
-        if current.isValidDate == false {
-            for offset in 0...self.maxYearsPastInHistory {
-                let offsetYear = ((offset * -1) + current.year!)
-                let components = DateComponents(year: offsetYear, month: current.month!, day: current.day!)
-                if let day = calendar.date(from: components) {
-                    tabSet.insert(
-                        ToolbarButton(
-                            id: offset,
-                            helpText: "Show feed this day in \(DateHelper.todayShort(day, format: "yyyy"))",
-                            icon: "\(DateHelper.todayShort(day, format: "yy")).square.fill",
-                            labelText: DateHelper.todayShort(day, format: "yyyy"),
-                            contents: AnyView(
-                                UI.GenericTimelineActivity(
-                                    historicalDate: day
+        if self.start != nil && self.end != nil {
+        } else {
+            if current.isValidDate == false {
+                for offset in 0...self.maxYearsPastInHistory {
+                    let offsetYear = ((offset * -1) + current.year!)
+                    let components = DateComponents(year: offsetYear, month: current.month!, day: current.day!)
+                    if let day = calendar.date(from: components) {
+                        tabSet.insert(
+                            ToolbarButton(
+                                id: offset,
+                                helpText: "Show feed this day in \(DateHelper.todayShort(day, format: "yyyy"))",
+                                icon: "\(DateHelper.todayShort(day, format: "yy")).square.fill",
+                                labelText: DateHelper.todayShort(day, format: "yyyy"),
+                                contents: AnyView(
+                                    UI.GenericTimelineActivity(
+                                        historicalDate: day
+                                    )
                                 )
                             )
                         )
-                    )
+                    }
                 }
             }
         }
