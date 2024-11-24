@@ -104,7 +104,7 @@ struct FancyGenericToolbar: View {
                             // I'm sorry
                             (
                                 [.classic, .opaque, .hybrid].contains(self.nav.theme.style) ?
-                                (self.nav.session.job?.backgroundColor ?? Theme.darkBtnColour).opacity(self.standalone ? 0 : 1).blendMode(.softLight)
+                                Theme.darkBtnColour.opacity(self.standalone ? 0 : 1).blendMode(.softLight)
                                 : Color.clear.opacity(1).blendMode(.normal)
                             )
                             // @TODO: this "works" but needs finessing
