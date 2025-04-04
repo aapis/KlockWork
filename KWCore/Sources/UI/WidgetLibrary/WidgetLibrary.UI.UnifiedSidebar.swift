@@ -622,6 +622,7 @@ extension WidgetLibrary.UI {
                     }
                 }
                 .buttonStyle(.plain)
+                .foregroundStyle(self.colour?.isBright() ?? false ? Theme.base : .white)
             }
         }
 
