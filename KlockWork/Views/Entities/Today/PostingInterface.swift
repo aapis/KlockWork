@@ -31,7 +31,7 @@ extension Today {
                     placeholder: "What are you working on?",
                     lineLimit: 8,
                     onSubmit: submitAction,
-                    fgColour: self.nav.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white,
+                    fgColour: [.classic, .opaque, .hybrid].contains(self.nav.theme.style) ? .white : Theme.base,
                     text: $text
                 )
                 .background([.classic, .opaque, .hybrid].contains(self.nav.theme.style) ? self.nav.session.appPage.primaryColour : self.nav.session.job?.backgroundColor.opacity(0.6) ?? .clear)
