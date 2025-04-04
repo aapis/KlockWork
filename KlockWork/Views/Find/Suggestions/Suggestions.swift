@@ -55,6 +55,7 @@ extension FindDashboard {
                             if !self.isMinimized {
                                 VStack {
                                     // @TODO: reduce this with a loop, each view is basically identical...
+                                    if showTerms {SuggestedTerms(searchText: $searchText, publishedOnly: $publishedOnly)}
                                     if showRecords {SuggestedRecords(searchText: $searchText, publishedOnly: $publishedOnly)}
                                     if showNotes {SuggestedNotes(searchText: $searchText, publishedOnly: $publishedOnly)}
                                     if showTasks {SuggestedTasks(searchText: $searchText, publishedOnly: $publishedOnly)}
@@ -62,7 +63,6 @@ extension FindDashboard {
                                     if showJobs {SuggestedJobs(searchText: $searchText, publishedOnly: $publishedOnly)}
                                     if showCompanies {SuggestedCompanies(searchText: $searchText, publishedOnly: $publishedOnly)}
                                     if showPeople {SuggestedPeople(searchText: $searchText)}
-                                    if showTerms {SuggestedTerms(searchText: $searchText, publishedOnly: $publishedOnly)}
                                     if showDefinitions {SuggestedDefinitions(searchText: $searchText, publishedOnly: $publishedOnly)}
                                 }
                                 .padding(self.location == .content ? 0 : 8)
