@@ -2281,16 +2281,24 @@ extension WidgetLibrary.UI.RecentTermsHList {
     /// - Returns: Void
     private func actionOnChangeJob() -> Void {
         self.recentTerms = []
+        var terms: Set<TaxonomyTerm> = []
+        let max = 15 // @TODO: move to something out of this scope
+
         if let job = self.state.session.job {
-            if let terms = CoreDataTaxonomyTerms(moc: self.state.moc).byJob(
-                job,
+            let definitions = CoreDataTaxonomyTermDefinitions(moc: self.state.moc).definitions(
+                for: job,
                 sort: [
-                    NSSortDescriptor(keyPath: \TaxonomyTerm.lastUpdate, ascending: true)
+                    NSSortDescriptor(keyPath: \TaxonomyTermDefinitions.lastUpdate, ascending: true)
                 ]
-            ) {
-                let max = 9 // @TODO: move to something out of this scope
-                self.recentTerms = Array(terms.prefix(max))
+            )
+
+            for def in definitions {
+                if let term = def.term {
+                    terms.insert(term)
+                }
             }
+
+            self.recentTerms = Array(terms.prefix(max))
         }
     }
 }

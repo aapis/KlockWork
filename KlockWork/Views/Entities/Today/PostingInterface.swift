@@ -142,7 +142,8 @@ extension Today.PostingInterface {
                     )
                 }
 
-                text = ""
+                self.text = ""
+                self.nav.session.inputText = ""
             } catch {
                 print("[error] Save error \(error)")
             }
@@ -156,6 +157,7 @@ extension Today.PostingInterface {
         self.nav.session.job = nil
         self.nav.session.company = nil
         self.nav.session.project = nil
+        self.nav.session.inputText = ""
     }
     
     /// Onload handler. Sets whether field is focused or not.

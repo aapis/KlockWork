@@ -41,8 +41,8 @@ open class CoreDataTaxonomyTermDefinitions {
     /// Find taxonomy definitions by Job
     /// - Parameter job: Job
     /// - Returns: Optional(TaxonomyTermDefinition)
-    public func byJob(_ job: Job) -> TaxonomyTermDefinitions? {
-        let results = self.query(NSPredicate(format: "job == %@", job))
+    public func byJob(_ job: Job, sort: [NSSortDescriptor] = []) -> TaxonomyTermDefinitions? {
+        let results = self.query(NSPredicate(format: "job == %@", job), sort: sort)
 
         if results.isEmpty {
             return nil
@@ -60,12 +60,13 @@ open class CoreDataTaxonomyTermDefinitions {
     /// Find definitions for a given job
     /// - Parameter job: Job
     /// - Returns: [TaxonomyTermDefinitions]
-    public func definitions(for job: Job) -> [TaxonomyTermDefinitions] {
+    public func definitions(for job: Job, sort: [NSSortDescriptor] = []) -> [TaxonomyTermDefinitions] {
         return self.query(
             NSPredicate(
                 format: "alive == true && job == %@",
                 job
-            )
+            ),
+            sort: sort
         )
     }
     
@@ -152,12 +153,12 @@ open class CoreDataTaxonomyTermDefinitions {
     /// Query function, finds and filters notes
     /// - Parameter predicate: A predicate to modify the results
     /// - Returns: Array<NoteVersion>
-    private func query(_ predicate: NSPredicate? = nil) -> [TaxonomyTermDefinitions] {
+    private func query(_ predicate: NSPredicate? = nil, sort: [NSSortDescriptor] = [NSSortDescriptor(keyPath: \TaxonomyTermDefinitions.created?, ascending: false)]) -> [TaxonomyTermDefinitions] {
         lock.lock()
 
         var results: [TaxonomyTermDefinitions] = []
         let fetch: NSFetchRequest<TaxonomyTermDefinitions> = TaxonomyTermDefinitions.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \TaxonomyTermDefinitions.created?, ascending: true)]
+        fetch.sortDescriptors = sort
 
         if predicate != nil {
             fetch.predicate = predicate
