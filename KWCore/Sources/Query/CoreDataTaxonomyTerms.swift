@@ -108,12 +108,13 @@ public class CoreDataTaxonomyTerms {
     /// Find taxonomy terms by job
     /// - Parameter job: Job
     /// - Returns: Optional(TaxonomyTerm)
-    public func byJob(_ job: Job) -> [TaxonomyTerm]? {
+    public func byJob(_ job: Job, sort: [NSSortDescriptor]? = nil) -> [TaxonomyTerm]? {
         let results = self.query(
             NSPredicate(
                 format: "ANY definitions.job == %@",
                 job
-            )
+            ),
+            sort: sort
         )
 
         if results.isEmpty {
@@ -201,13 +202,16 @@ public class CoreDataTaxonomyTerms {
 
     /// Query function, finds and filters notes
     /// - Parameter predicate: A predicate to modify the results
+    /// - Parameter sort: [NSSortDescriptor]
     /// - Returns: Array<NoteVersion>
-    private func query(_ predicate: NSPredicate? = nil) -> [TaxonomyTerm] {
+    private func query(_ predicate: NSPredicate? = nil, sort: [NSSortDescriptor]? = [
+        NSSortDescriptor(keyPath: \TaxonomyTerm.created?, ascending: true)
+    ]) -> [TaxonomyTerm] {
         lock.lock()
 
         var results: [TaxonomyTerm] = []
         let fetch: NSFetchRequest<TaxonomyTerm> = TaxonomyTerm.fetchRequest()
-        fetch.sortDescriptors = [NSSortDescriptor(keyPath: \TaxonomyTerm.created?, ascending: true)]
+        fetch.sortDescriptors = sort
 
         if predicate != nil {
             fetch.predicate = predicate

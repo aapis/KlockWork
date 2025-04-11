@@ -257,6 +257,7 @@ extension Navigation {
         var cli: CommandLineSession = CommandLineSession()
         var pagination: TablePagination = TablePagination()
         var timeline: Timeline = Timeline()
+        var inputText: String? = nil
 
         /// Format Navigation.session.date
         /// - Parameter format: String

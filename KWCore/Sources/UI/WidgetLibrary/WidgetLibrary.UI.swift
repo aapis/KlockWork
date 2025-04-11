@@ -204,12 +204,12 @@ extension WidgetLibrary {
                             LazyVGrid(columns: self.twoCol, alignment: .leading, spacing: 10) {
                                 GridRow {
                                     // @TODO: implement UI.SuggestedStack in place of SuggestedLinksInRange when it gets fixed
-//                                    UI.SuggestedStack(
-//                                        period: self.period,
-//                                        start: self.start ?? self.state.session.date.startOfDay,
-//                                        end: self.end ?? self.state.session.date.endOfDay,
-//                                        format: self.format
-//                                    )
+                                    //                                    UI.SuggestedStack(
+                                    //                                        period: self.period,
+                                    //                                        start: self.start ?? self.state.session.date.startOfDay,
+                                    //                                        end: self.end ?? self.state.session.date.endOfDay,
+                                    //                                        format: self.format
+                                    //                                    )
                                     UI.SuggestedLinksInRange(
                                         period: self.period,
                                         start: self.start ?? self.state.session.date.startOfDay,
@@ -2238,6 +2238,58 @@ extension WidgetLibrary {
                 var id: UUID = UUID()
                 var type: EType
                 var date: Date
+            }
+        }
+
+        // MARK: RecentTermsHList
+        struct RecentTermsHList: View {
+            @EnvironmentObject private var state: Navigation
+            public var job: Job
+            public var page: PageConfiguration.AppPage = .create
+            @State private var recentTerms: [TaxonomyTerm] = []
+
+            var body: some View {
+                HStack {
+                    if !self.recentTerms.isEmpty {
+                        Text("Recent Terms:")
+                            .padding(.leading, 8)
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(alignment: .center, spacing: 4) {
+                                ForEach(self.recentTerms) { term in
+                                    WidgetLibrary.UI.Buttons.RecentTermButton(term: term)
+                                }
+                                Spacer()
+                            }
+                        }
+                    }
+                }
+                .foregroundColor(.gray)
+                .font(.callout)
+                .background(self.page.primaryColour.opacity(0.5))
+                .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
+                .onChange(of: self.state.session.job) {
+                    self.actionOnChangeJob()
+                }
+                .onAppear(perform: self.actionOnChangeJob)
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.RecentTermsHList {
+    /// On change job
+    /// - Returns: Void
+    private func actionOnChangeJob() -> Void {
+        self.recentTerms = []
+        if let job = self.state.session.job {
+            if let terms = CoreDataTaxonomyTerms(moc: self.state.moc).byJob(
+                job,
+                sort: [
+                    NSSortDescriptor(keyPath: \TaxonomyTerm.lastUpdate, ascending: true)
+                ]
+            ) {
+                let max = 9 // @TODO: move to something out of this scope
+                self.recentTerms = Array(terms.prefix(max))
             }
         }
     }

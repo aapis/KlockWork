@@ -746,6 +746,41 @@ extension WidgetLibrary.UI {
                 }
             }
         }
+
+        // MARK: RecentTermButton
+        struct RecentTermButton: View {
+            @EnvironmentObject private var state: Navigation
+            public var term: TaxonomyTerm
+            @State public var isHighlighted: Bool = false
+
+            var body: some View {
+                Button {
+                    self.actionOnTapTerm(term: term)
+                } label: {
+                    HStack {
+                        PageConfiguration.EntityType.terms.icon
+                            .symbolRenderingMode(.hierarchical)
+                        Text(term.name ?? "Term")
+                            .multilineTextAlignment(.leading)
+                    }
+                    .padding(8)
+                    .useDefaultHover({ inside in self.isHighlighted = inside})
+                    .background(self.isHighlighted ? Theme.darkBtnColour : .clear)
+                }
+                .buttonStyle(.plain)
+                .help("Add definition to term")
+            }
+        }
+    }
+}
+
+extension WidgetLibrary.UI.Buttons.RecentTermButton {
+    /// On tap a term in the recent terms list
+    /// - Returns: Void
+    private func actionOnTapTerm(term: TaxonomyTerm) -> Void {
+        if let name = term.name {
+            self.state.session.inputText = "\(name) == "
+        }
     }
 }
 

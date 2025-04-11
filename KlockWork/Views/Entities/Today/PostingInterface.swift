@@ -26,7 +26,6 @@ extension Today {
                 UniversalHeader.Widget(
                     type: self.eType
                 )
-
                 FancyTextField(
                     placeholder: "What are you working on?",
                     lineLimit: 8,
@@ -42,11 +41,13 @@ extension Today {
                 .alert("You need to write a message too. What are you working on?", isPresented: $errorNoContent) {
                     Button("Ok", role: .cancel) {}
                 }
-
                 FancyHelpText(
                     text: "Choose a job from the sidebar, type into the field below. Enter/Return/+ to create records.",
                     page: self.page
                 )
+                if let job = self.nav.session.job {
+                    WidgetLibrary.UI.RecentTermsHList(job: job)
+                }
             }
             .clipShape(.rect(cornerRadius: 5))
             .onAppear(perform: self.setFieldFocus)
@@ -59,6 +60,14 @@ extension Today {
 //                    })
 //                    let _ = nav.state.advance()
 //                    nav.save()
+                }
+
+                // Stores input text in state
+                self.nav.session.inputText = self.text
+            }
+            .onChange(of: self.nav.session.inputText) {
+                if let input = self.nav.session.inputText {
+                    self.text = input
                 }
             }
         }
