@@ -752,23 +752,35 @@ extension WidgetLibrary.UI {
             @EnvironmentObject private var state: Navigation
             public var term: TaxonomyTerm
             @State public var isHighlighted: Bool = false
+            @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
 
             var body: some View {
                 Button {
                     self.actionOnTapTerm(term: term)
                 } label: {
                     HStack {
-                        PageConfiguration.EntityType.terms.icon
+                        (self.isHighlighted ? Image(systemName: "plus") : PageConfiguration.EntityType.terms.icon)
                             .symbolRenderingMode(.hierarchical)
                         Text(term.name ?? "Term")
                             .multilineTextAlignment(.leading)
                     }
                     .padding(8)
-                    .useDefaultHover({ inside in self.isHighlighted = inside})
                     .background(self.isHighlighted ? Theme.darkBtnColour : .clear)
+                    .useDefaultHover({ inside in self.isHighlighted = inside})
                 }
                 .buttonStyle(.plain)
-                .help("Add definition to term")
+                .help("Add definition")
+                .contextMenu {
+                    Button(action: {
+                        if let name = self.term.name {
+                            self.isSearchStackShowing = true
+                            self.state.setInspector(AnyView(Inspector(entity: self.term)), searchTerm: name)
+                            self.state.session.search.history.insert(name)
+                        }
+                    }, label: {
+                        Text("Inspect")
+                    })
+                }
             }
         }
     }
