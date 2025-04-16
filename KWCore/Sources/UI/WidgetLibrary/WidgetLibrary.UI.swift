@@ -2253,12 +2253,20 @@ extension WidgetLibrary {
                     if !self.recentTerms.isEmpty {
                         Text("Recent Terms:")
                             .padding(.leading, 8)
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(alignment: .center, spacing: 4) {
-                                ForEach(self.recentTerms) { term in
-                                    WidgetLibrary.UI.Buttons.RecentTermButton(term: term)
+                        HStack(alignment: .center, spacing: 4) {
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(alignment: .center, spacing: 4) {
+                                    ForEach(self.recentTerms) { term in
+                                        WidgetLibrary.UI.Buttons.RecentTermButton(term: term)
+                                    }
+                                    Spacer()
                                 }
-                                Spacer()
+                            }
+                            HStack(alignment: .center, spacing: 4) {
+                                if self.recentTerms.count > 5 {
+                                    Image(systemName: "chevron.left.chevron.right")
+                                        .padding(8)
+                                }
                             }
                         }
                     }
@@ -2269,6 +2277,11 @@ extension WidgetLibrary {
                 .clipShape(.rect(bottomLeadingRadius: 5, bottomTrailingRadius: 5))
                 .onChange(of: self.state.session.job) {
                     self.actionOnChangeJob()
+                }
+                .onChange(of: self.state.session.inputText) {
+                    if self.state.session.inputText == nil {
+                        self.actionOnChangeJob()
+                    }
                 }
                 .onAppear(perform: self.actionOnChangeJob)
             }
@@ -2291,14 +2304,14 @@ extension WidgetLibrary.UI.RecentTermsHList {
                     NSSortDescriptor(keyPath: \TaxonomyTermDefinitions.lastUpdate, ascending: true)
                 ]
             )
-
+            
             for def in definitions {
                 if let term = def.term {
                     terms.insert(term)
                 }
             }
-
-            self.recentTerms = Array(terms.prefix(max))
+            
+            self.recentTerms = Array(terms.sorted(by: {$0.lastUpdate! > $1.lastUpdate!}).prefix(max))
         }
     }
 }
