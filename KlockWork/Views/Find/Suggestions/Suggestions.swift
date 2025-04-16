@@ -167,14 +167,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    UI.UnifiedSidebar.EntityRowButton(
-                        text: "No \(PageConfiguration.EntityType.jobs.label) matched",
-                        isPresented: $showChildren
-                    )
-                    .disabled(true)
-                    .opacity(0.5)
-                    .clipShape(.rect(cornerRadius: 5))
                 }
             }
             
@@ -257,14 +249,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    UI.UnifiedSidebar.EntityRowButton(
-                        text: "No \(PageConfiguration.EntityType.projects.label) matched",
-                        isPresented: $showChildren
-                    )
-                    .disabled(true)
-                    .opacity(0.5)
-                    .clipShape(.rect(cornerRadius: 5))
                 }
             }
             
@@ -353,14 +337,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    UI.UnifiedSidebar.EntityRowButton(
-                        text: "No \(PageConfiguration.EntityType.notes.label) matched",
-                        isPresented: $showChildren
-                    )
-                    .disabled(true)
-                    .opacity(0.5)
-                    .clipShape(.rect(cornerRadius: 5))
                 }
             }
             
@@ -449,14 +425,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    UI.UnifiedSidebar.EntityRowButton(
-                        text: "No \(PageConfiguration.EntityType.tasks.label) matched",
-                        isPresented: $showChildren
-                    )
-                    .disabled(true)
-                    .opacity(0.5)
-                    .clipShape(.rect(cornerRadius: 5))
                 }
             }
             
@@ -543,14 +511,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    UI.UnifiedSidebar.EntityRowButton(
-                        text: "No \(PageConfiguration.EntityType.records.label) matched",
-                        isPresented: $showChildren
-                    )
-                    .disabled(true)
-                    .opacity(0.5)
-                    .clipShape(.rect(cornerRadius: 5))
                 }
             }
             
@@ -637,14 +597,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    UI.UnifiedSidebar.EntityRowButton(
-                        text: "No \(PageConfiguration.EntityType.companies.label) matched",
-                        isPresented: $showChildren
-                    )
-                    .disabled(true)
-                    .opacity(0.5)
-                    .clipShape(.rect(cornerRadius: 5))
                 }
             }
             
@@ -720,14 +672,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    UI.UnifiedSidebar.EntityRowButton(
-                        text: "No \(PageConfiguration.EntityType.people.label) matched",
-                        isPresented: $showChildren
-                    )
-                    .disabled(true)
-                    .opacity(0.5)
-                    .clipShape(.rect(cornerRadius: 5))
                 }
             }
             
@@ -795,14 +739,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    UI.UnifiedSidebar.EntityRowButton(
-                        text: "No \(PageConfiguration.EntityType.terms.label) matched",
-                        isPresented: $showChildren
-                    )
-                    .disabled(true)
-                    .opacity(0.5)
-                    .clipShape(.rect(cornerRadius: 5))
                 }
             }
 
@@ -879,14 +815,6 @@ extension FindDashboard {
                         }
                     }
                     .onAppear(perform: appear)
-                } else {
-                    UI.UnifiedSidebar.EntityRowButton(
-                        text: "No \(PageConfiguration.EntityType.definitions.label) matched",
-                        isPresented: $showChildren
-                    )
-                    .disabled(true)
-                    .opacity(0.5)
-                    .clipShape(.rect(cornerRadius: 5))
                 }
             }
 
