@@ -165,8 +165,12 @@ public class Navigation: Identifiable, ObservableObject {
         pageId = UUID()
     }
     
-    public func setInspector(_ newInspector: AnyView? = nil) -> Void {
+    public func setInspector(_ newInspector: AnyView? = nil, searchTerm: String? = nil) -> Void {
         inspector = newInspector
+
+        if let term = searchTerm {
+            self.session.search.text = term
+        }
     }
 
     public func save(callback: (() -> Void)? = nil) -> Void {

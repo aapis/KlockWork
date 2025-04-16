@@ -17,6 +17,7 @@ struct LogRow: View, Identifiable {
     @AppStorage("today.showColumnIndex") public var showColumnIndex: Bool = true
     @AppStorage("today.showColumnTimestamp") public var showColumnTimestamp: Bool = true
     @AppStorage("today.showColumnJobId") public var showColumnJobId: Bool = true
+    @AppStorage("GlobalSidebarWidgets.isSearchStackShowing") private var isSearchStackShowing: Bool = false
     public var id = UUID()
     public var entry: Entry
     public var index: Array<Entry>.Index?
@@ -299,6 +300,12 @@ struct LogRow: View, Identifiable {
     private func actionInspectRecord() -> Void {
         if let inspectable = self.record {
             self.actionInspect(inspectable)
+
+            if let term = inspectable.message {
+                self.isSearchStackShowing = true
+                self.nav.setInspector(AnyView(Inspector(entity: inspectable)), searchTerm: term)
+                self.nav.session.search.history.insert(term)
+            }
         }
     }
 
@@ -306,7 +313,13 @@ struct LogRow: View, Identifiable {
     /// - Returns: Void
     private func actionInspectCompany() -> Void {
         if let inspectable = self.entry.jobObject?.project?.company {
-            self.actionInspect(inspectable)
+            if let term = inspectable.name {
+                self.isSearchStackShowing = true
+                self.nav.setInspector(AnyView(Inspector(entity: inspectable)), searchTerm: term)
+                self.nav.session.search.history.insert(term)
+            } else {
+                self.actionInspect(inspectable)
+            }
         }
     }
 
@@ -314,7 +327,13 @@ struct LogRow: View, Identifiable {
     /// - Returns: Void
     private func actionInspectProject() -> Void {
         if let inspectable = self.entry.jobObject?.project {
-            self.actionInspect(inspectable)
+            if let term = inspectable.name {
+                self.isSearchStackShowing = true
+                self.nav.setInspector(AnyView(Inspector(entity: inspectable)), searchTerm: term)
+                self.nav.session.search.history.insert(term)
+            } else {
+                self.actionInspect(inspectable)
+            }
         }
     }
 
@@ -322,7 +341,13 @@ struct LogRow: View, Identifiable {
     /// - Returns: Void
     private func actionInspectJob() -> Void {
         if let inspectable = self.entry.jobObject {
-            self.actionInspect(inspectable)
+            if let term = inspectable.title {
+                self.isSearchStackShowing = true
+                self.nav.setInspector(AnyView(Inspector(entity: inspectable)), searchTerm: term)
+                self.nav.session.search.history.insert(term)
+            } else {
+                self.actionInspect(inspectable)
+            }
         }
     }
 
