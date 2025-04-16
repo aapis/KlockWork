@@ -205,6 +205,9 @@ struct Home: View {
 
             if nav.inspector != nil {
                 Theme.base.opacity(0.7)
+                    .onTapGesture {
+                        self.nav.setInspector()
+                    }
                 ZStack(alignment: .topLeading) {
                     LinearGradient(gradient: Gradient(colors: [Color.clear, Theme.base]), startPoint: .topTrailing, endPoint: .topLeading)
                         .opacity(0.25)
