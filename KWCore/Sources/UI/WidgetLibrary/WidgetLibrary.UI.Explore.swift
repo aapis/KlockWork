@@ -464,7 +464,7 @@ extension WidgetLibrary.UI {
                     @State private var clue: String = ""
                     @State private var viewed: Set<TaxonomyTerm> = []
                     @State private var definitions: [TaxonomyTermDefinitions] = []
-                    @State private var isMenuShowing: Bool = true // @TODO: false
+                    @State private var isMenuShowing: Bool = false
 
                     var body: some View {
                         VStack(alignment: .center, spacing: 0) {
