@@ -482,13 +482,18 @@ extension WidgetLibrary.UI {
                                 if self.job != nil {
                                     if let project = self.job?.project {
                                         if let company = project.company {
-                                            Text("\(company.name ?? "N/A")")
+                                            Text("\(company.name ?? "Company")")
                                             Image(systemName: "chevron.right")
                                         }
-                                        Text("\(project.name ?? "N/A")")
+                                        Text("\(project.name ?? "Project")")
                                         Image(systemName: "chevron.right")
                                     }
-                                    Text("\(self.job!.title ?? "None selected")")
+                                    Text("\(self.job!.title ?? "Job")")
+
+                                    if self.current != nil {
+                                        Image(systemName: "chevron.right")
+                                        Text("\(self.current!.name ?? "Current")")
+                                    }
                                 } else {
                                     Text("None selected")
                                 }
@@ -501,6 +506,7 @@ extension WidgetLibrary.UI {
                             if self.isMenuShowing {
                                 Menu(
                                     isMenuShowing: $isMenuShowing,
+                                    isAnswerCardShowing: $isAnswerCardShowing,
                                     terms: $terms,
                                     current: $current
                                 )
@@ -540,6 +546,7 @@ extension WidgetLibrary.UI {
                     struct Menu: View {
                         @EnvironmentObject private var state: Navigation
                         @Binding public var isMenuShowing: Bool
+                        @Binding public var isAnswerCardShowing: Bool
                         @Binding public var terms: [TaxonomyTerm]
                         @Binding public var current: TaxonomyTerm?
 
@@ -559,6 +566,7 @@ extension WidgetLibrary.UI {
                                         Button {
                                             self.current = term
                                             self.isMenuShowing = false
+                                            self.isAnswerCardShowing = true
                                         } label: {
                                             HStack {
                                                 if self.current == term {
@@ -681,7 +689,7 @@ extension WidgetLibrary.UI {
                                 if self.isAnswerCardShowing {
                                     // Definitions
                                     HStack(alignment: .center, spacing: 0) {
-                                        Text("\(self.definitions.count) definitions")
+                                        Text("\(self.definitions.count) definitions for \(self.clue)")
                                             .textCase(.uppercase)
                                             .font(.caption)
                                             .padding(5)
