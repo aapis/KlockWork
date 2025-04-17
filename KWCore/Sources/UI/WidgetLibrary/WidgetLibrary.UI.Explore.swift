@@ -464,26 +464,107 @@ extension WidgetLibrary.UI {
                     @State private var clue: String = ""
                     @State private var viewed: Set<TaxonomyTerm> = []
                     @State private var definitions: [TaxonomyTermDefinitions] = []
+                    @State private var isMenuShowing: Bool = true // @TODO: false
 
                     var body: some View {
                         VStack(alignment: .center, spacing: 0) {
-                            Card(
-                                isAnswerCardShowing: $isAnswerCardShowing,
-                                definitions: $definitions,
-                                current: $current,
-                                job: $job
-                            )
-                            Actions(
-                                isAnswerCardShowing: $isAnswerCardShowing,
-                                definitions: $definitions,
-                                current: $current,
-                                terms: $terms,
-                                viewed: $viewed
-                            )
+                            HStack {
+                                Button {
+                                    self.isMenuShowing.toggle()
+                                } label: {
+                                    Image(systemName: "line.3.horizontal")
+                                        .font(.title)
+                                        .padding()
+                                }
+                                .useDefaultHover({ _ in})
+                                .buttonStyle(.plain)
+
+                                if self.job != nil {
+                                    if let project = self.job?.project {
+                                        if let company = project.company {
+                                            Text("\(company.name ?? "N/A")")
+                                            Image(systemName: "chevron.right")
+                                        }
+                                        Text("\(project.name ?? "N/A")")
+                                        Image(systemName: "chevron.right")
+                                    }
+                                    Text("\(self.job!.title ?? "None selected")")
+                                } else {
+                                    Text("None selected")
+                                }
+
+                                Spacer()
+                            }
+                            .background(self.state.session.job?.backgroundColor ?? .clear)
+                            .foregroundStyle(self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white)
+
+                            if self.isMenuShowing {
+                                Menu(
+                                    isMenuShowing: $isMenuShowing,
+                                    terms: $terms,
+                                    current: $current
+                                )
+                            } else {
+                                Card(
+                                    isAnswerCardShowing: $isAnswerCardShowing,
+                                    definitions: $definitions,
+                                    current: $current,
+                                    job: $job,
+                                    clue: $clue
+                                )
+                                Actions(
+                                    isAnswerCardShowing: $isAnswerCardShowing,
+                                    definitions: $definitions,
+                                    current: $current,
+                                    terms: $terms,
+                                    viewed: $viewed
+                                )
+                            }
                         }
                         .onAppear(perform: self.actionOnAppear)
-                        .onChange(of: job) {
+                        .onChange(of: self.job) {
                             self.actionOnAppear()
+                        }
+                        .onChange(of: self.current) {
+                            self.clue = self.current?.name ?? "_TERM_NAME"
+                            self.viewed.insert(self.current!)
+
+                            if let defs = self.current!.definitions {
+                                if let ttds = defs.allObjects as? [TaxonomyTermDefinitions] {
+                                    self.definitions = ttds
+                                }
+                            }
+                        }
+                    }
+
+                    struct Menu: View {
+                        @EnvironmentObject private var state: Navigation
+                        @Binding public var isMenuShowing: Bool
+                        @Binding public var terms: [TaxonomyTerm]
+                        @Binding public var current: TaxonomyTerm?
+
+                        var body: some View {
+                            ScrollView(showsIndicators: false) {
+                                VStack(alignment: .leading, spacing: 1) {
+                                    ForEach(self.terms) { term in
+                                        Button {
+                                            self.current = term
+                                            self.isMenuShowing = false
+                                        } label: {
+                                            HStack {
+                                                Text(term.name ?? "Term")
+                                                Spacer()
+                                            }
+                                            .padding()
+                                            .background(self.state.session.job?.backgroundColor)
+                                            .foregroundStyle(self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white)
+                                            .useDefaultHover({ _ in})
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                    Spacer()
+                                }
+                            }
                         }
                     }
 
@@ -580,14 +661,14 @@ extension WidgetLibrary.UI {
                         @Binding public var definitions: [TaxonomyTermDefinitions] // @TODO: convert this to dict grouped by job
                         @Binding public var current: TaxonomyTerm?
                         @Binding public var job: Job?
-                        @State private var clue: String = ""
+                        @Binding public var clue: String
 
                         var body: some View {
                             VStack(alignment: .leading, spacing: 0) {
                                 if self.isAnswerCardShowing {
                                     // Definitions
                                     HStack(alignment: .center, spacing: 0) {
-                                        Text("\(self.definitions.count) Jobs define \"\(self.clue)\"")
+                                        Text("\(self.definitions.count) definitions for \"\(self.clue)\"")
                                             .textCase(.uppercase)
                                             .font(.caption)
                                             .padding(5)
@@ -600,14 +681,13 @@ extension WidgetLibrary.UI {
                                             VStack(alignment: .leading, spacing: 1) {
                                                 ForEach(Array(definitions.enumerated()), id: \.element) { idx, term in
                                                     VStack(alignment: .leading, spacing: 0) {
-                                                        HStack(alignment: .top) {
-                                                            Text((term.job?.title ?? term.job?.jid.string) ?? "_JOB_NAME")
-                                                                .multilineTextAlignment(.leading)
-                                                                .padding(14)
-                                                                .foregroundStyle((term.job?.backgroundColor ?? Theme.rowColour).isBright() ? .white.opacity(0.75) : .gray)
-                                                            Spacer()
-                                                        }
-
+//                                                        HStack(alignment: .top) {
+//                                                            Text((term.job?.title ?? term.job?.jid.string) ?? "_JOB_NAME")
+//                                                                .multilineTextAlignment(.leading)
+//                                                                .padding(14)
+//                                                                .foregroundStyle((term.job?.backgroundColor ?? Theme.rowColour).isBright() ? .white.opacity(0.75) : .gray)
+//                                                            Spacer()
+//                                                        }
 
                                                         ZStack(alignment: .topLeading) {
                                                             LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom)
@@ -697,7 +777,6 @@ extension WidgetLibrary.UI.Explore.Activity.FlashcardActivity.FlashcardDeck {
             self.current = self.terms.randomElement()
             self.clue = self.current?.name ?? "_TERM_NAME"
             self.viewed.insert(self.current!)
-//            self.definitions = []
 
             if let defs = self.current!.definitions {
                 if let ttds = defs.allObjects as? [TaxonomyTermDefinitions] {
