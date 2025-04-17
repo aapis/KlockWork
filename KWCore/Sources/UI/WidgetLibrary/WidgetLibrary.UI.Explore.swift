@@ -546,12 +546,25 @@ extension WidgetLibrary.UI {
                         var body: some View {
                             ScrollView(showsIndicators: false) {
                                 VStack(alignment: .leading, spacing: 1) {
+                                    HStack(alignment: .center, spacing: 0) {
+                                        Text("\(self.terms.count) terms")
+                                            .textCase(.uppercase)
+                                            .font(.caption)
+                                            .padding(5)
+                                        Spacer()
+                                    }
+                                    .background(self.state.session.job?.backgroundColor ?? Theme.rowColour)
+
                                     ForEach(self.terms) { term in
                                         Button {
                                             self.current = term
                                             self.isMenuShowing = false
                                         } label: {
                                             HStack {
+                                                if self.current == term {
+                                                    Image(systemName: "star.fill")
+                                                        .foregroundStyle(.yellow)
+                                                }
                                                 Text(term.name ?? "Term")
                                                 Spacer()
                                             }
@@ -668,7 +681,7 @@ extension WidgetLibrary.UI {
                                 if self.isAnswerCardShowing {
                                     // Definitions
                                     HStack(alignment: .center, spacing: 0) {
-                                        Text("\(self.definitions.count) definitions for \"\(self.clue)\"")
+                                        Text("\(self.definitions.count) definitions")
                                             .textCase(.uppercase)
                                             .font(.caption)
                                             .padding(5)
@@ -769,7 +782,7 @@ extension WidgetLibrary.UI.Explore.Activity.FlashcardActivity.FlashcardDeck {
 
         if self.job != nil {
             if let termsForJob = CoreDataTaxonomyTerms(moc: self.state.moc).byJob(self.job!) {
-                self.terms = termsForJob
+                self.terms = termsForJob.sorted(by: {$0.name ?? "" < $1.name ?? ""})
             }
         }
 
@@ -780,7 +793,7 @@ extension WidgetLibrary.UI.Explore.Activity.FlashcardActivity.FlashcardDeck {
 
             if let defs = self.current!.definitions {
                 if let ttds = defs.allObjects as? [TaxonomyTermDefinitions] {
-                    self.definitions = ttds
+                    self.definitions = ttds.sorted(by: {$0.definition ?? "" < $1.definition ?? ""})
                 }
             }
         }
