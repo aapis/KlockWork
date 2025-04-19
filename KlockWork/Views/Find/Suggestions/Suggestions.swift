@@ -95,6 +95,11 @@ extension FindDashboard {
                         }
                     }
                 }
+
+                // fix bug that causes app to hang if you cmd-delete/select-delete and enter text immediately
+                if self.searchText.count == 0 {
+                    self.nav.session.search.cancel()
+                }
             }
         }
 
