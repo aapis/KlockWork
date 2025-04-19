@@ -730,6 +730,15 @@ extension FindDashboard {
                                                 type: .clear
                                             )
                                             .help("Inspect")
+                                            .contextMenu {
+                                                Button {
+                                                    if let name = item.name {
+                                                        self.nav.session.inputText = "\(name) == "
+                                                    }
+                                                } label: {
+                                                    Text("Add definition")
+                                                }
+                                            }
                                             Spacer()
                                         }
                                     }
