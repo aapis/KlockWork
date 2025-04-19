@@ -490,10 +490,11 @@ extension WidgetLibrary.UI {
                                     }
                                     Text("\(self.job!.title ?? "Job")")
 
-                                    if self.current != nil {
-                                        Image(systemName: "chevron.right")
-                                        Text("\(self.current!.name ?? "Current")")
-                                    }
+                                    // @TODO: maybe add this back? when final styling is in place?
+//                                    if self.current != nil {
+//                                        Image(systemName: "chevron.right")
+//                                        Text("\(self.current!.name ?? "Current")")
+//                                    }
                                 } else {
                                     Text("None selected")
                                 }
@@ -568,15 +569,21 @@ extension WidgetLibrary.UI {
                                             self.isMenuShowing = false
                                             self.isAnswerCardShowing = true
                                         } label: {
-                                            HStack {
-                                                if self.current == term {
-                                                    Image(systemName: "star.fill")
-                                                        .foregroundStyle(.yellow)
+                                            ZStack(alignment: .topLeading) {
+                                                LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom)
+                                                    .frame(height: 50)
+                                                    .opacity(0.1)
+
+                                                HStack {
+                                                    if self.current == term {
+                                                        Image(systemName: "star.fill")
+                                                            .foregroundStyle(.yellow)
+                                                    }
+                                                    Text(term.name ?? "Term")
+                                                    Spacer()
                                                 }
-                                                Text(term.name ?? "Term")
-                                                Spacer()
+                                                .padding()
                                             }
-                                            .padding()
                                             .background(self.state.session.job?.backgroundColor)
                                             .foregroundStyle(self.state.session.job?.backgroundColor.isBright() ?? false ? Theme.base : .white)
                                             .useDefaultHover({ _ in})
@@ -687,54 +694,34 @@ extension WidgetLibrary.UI {
                         var body: some View {
                             VStack(alignment: .leading, spacing: 0) {
                                 if self.isAnswerCardShowing {
-                                    // Definitions
-                                    HStack(alignment: .center, spacing: 0) {
-                                        Text("\(self.definitions.count) definitions for \(self.clue)")
-                                            .textCase(.uppercase)
-                                            .font(.caption)
-                                            .padding(5)
-                                        Spacer()
-                                    }
-                                    .background(self.job?.backgroundColor ?? Theme.rowColour)
-
                                     VStack(alignment: .leading, spacing: 0) {
+                                        HStack {
+                                            Text(self.clue)
+                                                .font(.title2)
+                                                .bold()
+                                                .padding()
+                                                .foregroundStyle((self.job?.backgroundColor ?? Theme.rowColour).isBright() ? Theme.base : .white)
+                                                .help("\(self.definitions.count) definitions for \(self.clue)")
+                                            Spacer()
+                                        }
+                                        .background(self.job?.backgroundColor)
+
                                         ScrollView {
-                                            VStack(alignment: .leading, spacing: 1) {
-                                                ForEach(Array(definitions.enumerated()), id: \.element) { idx, term in
-                                                    VStack(alignment: .leading, spacing: 0) {
-//                                                        HStack(alignment: .top) {
-//                                                            Text((term.job?.title ?? term.job?.jid.string) ?? "_JOB_NAME")
-//                                                                .multilineTextAlignment(.leading)
-//                                                                .padding(14)
-//                                                                .foregroundStyle((term.job?.backgroundColor ?? Theme.rowColour).isBright() ? .white.opacity(0.75) : .gray)
-//                                                            Spacer()
-//                                                        }
-
-                                                        ZStack(alignment: .topLeading) {
-                                                            LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom)
-                                                                .frame(height: 50)
-                                                                .opacity(0.1)
-
-                                                            NavigationLink {
-                                                                DefinitionDetail(definition: term)
-                                                            } label: {
-                                                                HStack(alignment: .center) {
-                                                                    Text(term.definition ?? "Definition not found")
-                                                                        .multilineTextAlignment(.leading)
-                                                                    Spacer()
-                                                                    Image(systemName: "chevron.right")
-                                                                }
-                                                                .padding(14)
-                                                            }
-                                                            .buttonStyle(.plain)
-                                                        }
+                                            ZStack(alignment: .topLeading) {
+                                                VStack(alignment: .leading) {
+                                                    ForEach(Array(definitions.enumerated()), id: \.element) { idx, term in
+                                                        CardDefinition(term: term)
                                                     }
-                                                    .background(term.job?.backgroundColor)
-                                                    .foregroundStyle((term.job?.backgroundColor ?? Theme.rowColour).isBright() ? .black : .white)
                                                 }
+                                                .padding()
+
+                                                LinearGradient(colors: [.black, .clear], startPoint: .top, endPoint: .bottom)
+                                                    .frame(height: 50)
+                                                    .opacity(0.1)
                                             }
                                         }
                                     }
+                                    .background(Theme.lightWhite)
                                 } else {
                                     // Answer
                                     if self.current != nil {
@@ -772,6 +759,34 @@ extension WidgetLibrary.UI {
                 // MARK: FlashcardActivity.Flashcard
                 struct Flashcard {
                     var term: TaxonomyTerm
+                }
+
+                // MARK: FlashcardActivity.CardDefinition
+                struct CardDefinition: View {
+                    public let term: TaxonomyTermDefinitions
+                    @State private var isHighlighted: Bool = false
+
+                    var body: some View {
+                        VStack(alignment: .leading, spacing: 2) {
+                            NavigationLink {
+                                DefinitionDetail(definition: self.term)
+                            } label: {
+                                HStack(alignment: .top) {
+                                    Image(systemName: self.isHighlighted ? "pencil.circle.fill" : "circle")
+                                    Text(self.term.definition ?? "Definition not found")
+                                        .multilineTextAlignment(.leading)
+                                    Spacer()
+                                }
+                                .padding(3)
+                                .useDefaultHover({ hover in self.isHighlighted = hover })
+                                .help("Edit definition")
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .background(self.term.job?.backgroundColor.opacity(self.isHighlighted ? 1 : 0.6))
+                        .foregroundStyle((self.term.job?.backgroundColor ?? Theme.rowColour).isBright() ? Theme.base : .white)
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                    }
                 }
             }
         }

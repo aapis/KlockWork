@@ -2279,7 +2279,11 @@ extension WidgetLibrary {
                     self.actionOnChangeJob()
                 }
                 .onChange(of: self.state.session.inputText) {
-                    if self.state.session.inputText == nil {
+                    if let it = self.state.session.inputText {
+                        if it.isEmpty {
+                            self.actionOnChangeJob()
+                        }
+                    } else {
                         self.actionOnChangeJob()
                     }
                 }
