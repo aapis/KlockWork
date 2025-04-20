@@ -738,6 +738,7 @@ extension FindDashboard {
                                             .contextMenu {
                                                 Button {
                                                     if let name = item.name {
+                                                        self.nav.session.search.cancel()
                                                         self.nav.session.inputText = "\(name) == "
                                                     }
                                                 } label: {
