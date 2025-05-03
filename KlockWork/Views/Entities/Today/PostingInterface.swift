@@ -38,7 +38,7 @@ extension Today {
                 .alert("Choose a job first", isPresented: $errorNoJob) {
                     Button("Ok", role: .cancel) {}
                 }
-                .alert("You need to write a message too. What are you working on?", isPresented: $errorNoContent) {
+                .alert("Write a message to create a new record", isPresented: $errorNoContent) {
                     Button("Ok", role: .cancel) {}
                 }
                 FancyHelpText(
