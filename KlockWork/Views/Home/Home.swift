@@ -154,6 +154,7 @@ struct Home: View {
         }
         .frame(width: 320)
         .background(self.SidebarBackground)
+        .border(width: 1, edges: [.leading], color: self.nav.session.appPage.primaryColour)
     }
 
     @ViewBuilder var SidebarBackground: some View {

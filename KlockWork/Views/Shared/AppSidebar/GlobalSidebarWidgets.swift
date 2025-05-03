@@ -115,9 +115,6 @@ struct GlobalSidebarWidgets: View {
                     }
                 }
                 .frame(width: 46, height: 46)
-
-                Text(nav.session.gif == .focus ? "On" : "Off")
-                    .opacity(nav.session.gif == .focus ? 1 : 0.4)
             }
         }
     }
@@ -148,9 +145,6 @@ struct GlobalSidebarWidgets: View {
                     .mask(Circle())
                 }
                 .frame(width: 46, height: 46)
-
-                Text(nav.session.gif == .privacy ? "On" : "Off")
-                    .opacity(nav.session.gif == .privacy ? 1 : 0.4)
             }
         }
     }
@@ -186,9 +180,6 @@ struct GlobalSidebarWidgets: View {
                         .position(x: 38, y: 38)
                 }
                 .frame(width: 46, height: 46)
-
-                Text("Create")
-                    .opacity(active ? 1 : 0.4)
             }
         }
     }
@@ -227,9 +218,6 @@ struct GlobalSidebarWidgets: View {
                     }
                     .mask(Circle())
                 }.frame(width: 46, height: 46)
-
-                Text("Find")
-                    .opacity(active ? 1 : 0.4)
             }
         }
     }
@@ -266,9 +254,6 @@ struct GlobalSidebarWidgets: View {
                     }
                     .mask(Circle())
                 }.frame(width: 46, height: 46)
-
-                Text("Score")
-                    .opacity(0.4)
             }
             .onAppear(perform: self.actionOnAppear)
             .onChange(of: self.state.session.date) { self.actionOnAppear() }

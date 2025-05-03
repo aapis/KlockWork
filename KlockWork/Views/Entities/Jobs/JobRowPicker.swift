@@ -45,7 +45,7 @@ struct JobRowPicker: View {
 extension JobRowPicker {
     private func action() -> Void {
         switch location {
-        case .sidebar, .header, .taskbar, .inspector:
+        case .sidebar, .header, .taskbar, .inspector, .fullSizeSidebar:
             actionOpenJob()
         case .content:
             actionUpdatePlanningStore()

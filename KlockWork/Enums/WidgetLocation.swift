@@ -10,5 +10,5 @@ import SwiftUI
 import KWCore
 
 public enum WidgetLocation {
-    case sidebar, content, header, taskbar, inspector
+    case sidebar, fullSizeSidebar, content, header, taskbar, inspector
 }

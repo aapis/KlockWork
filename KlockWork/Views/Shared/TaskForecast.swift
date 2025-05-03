@@ -212,9 +212,6 @@ struct Forecast: View, Identifiable {
                     }
                     .buttonStyle(.plain)
                 }
-
-                Text("Tasks")
-                    .opacity(0.4)
             }
             .onAppear(perform: self.actionOnAppear)
             .onChange(of: self.state.session.date) {

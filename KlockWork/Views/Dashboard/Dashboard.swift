@@ -16,7 +16,7 @@ struct Dashboard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack {
-                FindDashboard(location: .content)
+                FindDashboard()
             }
             .padding()
             Spacer()

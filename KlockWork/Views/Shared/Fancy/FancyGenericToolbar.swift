@@ -100,7 +100,7 @@ struct FancyGenericToolbar: View {
                 GridRow {
                     Group {
                         ZStack(alignment: .bottom) {
-                            (self.location == .content ? UIGradient() : nil)
+                            ([.content, .fullSizeSidebar].contains(self.location) ? UIGradient() : nil)
                             // I'm sorry
                             (
                                 [.classic, .opaque, .hybrid].contains(self.nav.theme.style) ?
@@ -131,15 +131,15 @@ struct FancyGenericToolbar: View {
                                 .padding([.leading, .trailing], self.standalone ? 0 : 16)
                                 .clipShape(
                                     .rect(
-                                        topLeadingRadius: self.location == .content ? 5 : 0,
-                                        topTrailingRadius: self.location == .content ? 5 : 0
+                                        topLeadingRadius: [.content, .fullSizeSidebar].contains(self.location) ? 5 : 0,
+                                        topTrailingRadius: [.content, .fullSizeSidebar].contains(self.location) ? 5 : 0
                                     )
                                 )
                             }
                         }
                     }
                 }
-                .frame(height: self.location == .content ? 50 : 32)
+                .frame(height: [.content, .fullSizeSidebar].contains(self.location) ? 50 : 32)
                 .border(width: self.location == .sidebar ? 1 : 0, edges: [.bottom], color: self.nav.theme.tint.opacity(0.8))
             }
 
@@ -157,14 +157,14 @@ struct FancyGenericToolbar: View {
                                         button.contents
                                             .clipShape(
                                                 .rect(
-                                                    bottomLeadingRadius: self.location == .content ? 5 : 0,
-                                                    bottomTrailingRadius: self.location == .content ? 5 : 0
+                                                    bottomLeadingRadius: [.content, .fullSizeSidebar].contains(self.location) ? 5 : 0,
+                                                    bottomTrailingRadius: [.content, .fullSizeSidebar].contains(self.location) ? 5 : 0
                                                 )
                                             )
                                     }
                                 }
                             }
-                            .clipShape(.rect(topLeadingRadius: self.location == .content && self.buttons.count == 0 ? 5 : 0, topTrailingRadius: self.location == .content ? 5 : 0))
+                            .clipShape(.rect(topLeadingRadius: [.content, .fullSizeSidebar].contains(self.location) && self.buttons.count == 0 ? 5 : 0, topTrailingRadius: self.location == .content ? 5 : 0))
                         } else {
                             ScrollView(showsIndicators: false) {
                                 VStack(alignment: .leading, spacing: 0) {
@@ -173,8 +173,8 @@ struct FancyGenericToolbar: View {
                                             button.contents
                                                 .clipShape(
                                                     .rect(
-                                                        bottomLeadingRadius: self.location == .content ? 5 : 0,
-                                                        bottomTrailingRadius: self.location == .content ? 5 : 0
+                                                        bottomLeadingRadius: [.content, .fullSizeSidebar].contains(self.location) ? 5 : 0,
+                                                        bottomTrailingRadius: [.content, .fullSizeSidebar].contains(self.location) ? 5 : 0
                                                     )
                                                 )
                                         }
@@ -182,8 +182,8 @@ struct FancyGenericToolbar: View {
                                 }
                                 .clipShape(
                                     .rect(
-                                        topLeadingRadius: self.location == .content && self.buttons.count == 0 ? 5 : 0,
-                                        topTrailingRadius: self.location == .content ? 5 : 0
+                                        topLeadingRadius: [.content, .fullSizeSidebar].contains(self.location) && self.buttons.count == 0 ? 5 : 0,
+                                        topTrailingRadius: [.content, .fullSizeSidebar].contains(self.location) ? 5 : 0
                                     )
                                 )
                             }
@@ -226,9 +226,10 @@ struct FancyGenericToolbar: View {
                         (
                             selected == button.id ?
                             (
-                                location == .sidebar ?
-                                self.nav.theme.tint.opacity(0.8)
-                                : self.page != nil ? self.page!.primaryColour : self.nav.theme.tint.opacity(0.8)
+                                self.location == .sidebar || self.location == .fullSizeSidebar ?
+                                    self.nav.theme.tint.opacity(0.6)
+                                :
+                                    self.page?.primaryColour ?? self.nav.session.appPage.primaryColour
                             )
                             :
                             (
@@ -297,8 +298,8 @@ struct FancyGenericToolbar: View {
             }
             .clipShape(
                 .rect(
-                    topLeadingRadius: self.location == .content ? 5 : 0,
-                    topTrailingRadius: self.location == .content ? 5 : 0
+                    topLeadingRadius: [.content, .fullSizeSidebar].contains(self.location) ? 5 : 0,
+                    topTrailingRadius: [.content, .fullSizeSidebar].contains(self.location) ? 5 : 0
                 )
             )
             .buttonStyle(.plain)

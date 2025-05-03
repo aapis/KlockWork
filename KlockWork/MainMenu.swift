@@ -59,6 +59,8 @@ struct MainMenu: Commands {
                 .keyboardShortcut("b", modifiers: [.control, .shift])
             Button("Show or hide Calendar") { self.isCalendarMinimized.toggle() }
                 .keyboardShortcut("f", modifiers: [.control, .shift])
+            Button("Clear search") { self.state.session.search.reset() } // @TODO: move to another menu entirely
+            .keyboardShortcut("f", modifiers: [.command, .control])
             Divider()
         }
     }

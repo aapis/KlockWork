@@ -262,6 +262,7 @@ extension Navigation {
         var pagination: TablePagination = TablePagination()
         var timeline: Timeline = Timeline()
         var inputText: String? = nil
+        var searchText: String? = nil
 
         /// Format Navigation.session.date
         /// - Parameter format: String

@@ -1032,6 +1032,7 @@ extension WidgetLibrary {
             public var end: Date?
             public var format: String?
             public var useMiniMode: Bool = false
+            public var showWidgetTitle: Bool = true
             @State private var activities: [Activity] = []
             @State private var tabs: [ToolbarButton] = []
             @State private var vid: UUID = UUID()
@@ -1039,7 +1040,9 @@ extension WidgetLibrary {
             var body: some View {
                 VStack {
                     if !self.useMiniMode {
-                        UI.ListLinkTitle(text: "Suggested links from \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))")
+                        if self.showWidgetTitle {
+                            UI.ListLinkTitle(text: "Suggested links from \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))")
+                        }
                         UI.ActivityLinks(start: self.start, end: self.end)
                     } else {
                         UI.Buttons.FooterActivity(start: self.start, end: self.end, label: "Links", icon: "link")
@@ -1127,17 +1130,21 @@ extension WidgetLibrary {
             public var end: Date?
             public var format: String?
             public var useMiniMode: Bool = false
+            public var showWidgetTitle: Bool = true
+            public var location: WidgetLocation = .content
             @State private var tabs: [ToolbarButton] = []
             @State private var vid: UUID = UUID()
 
             var body: some View {
                 VStack {
                     if !self.useMiniMode {
-                        UI.ListLinkTitle(text: "Interactions from \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))")
+                        if self.showWidgetTitle {
+                            UI.ListLinkTitle(text: "Interactions from \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))")
+                        }
                         FancyGenericToolbar(
                             buttons: self.tabs,
                             standalone: true,
-                            location: .content,
+                            location: self.location,
                             mode: .compact,
                             page: self.state.session.appPage,
                             alwaysShowTab: true
@@ -1499,8 +1506,13 @@ extension WidgetLibrary {
                     .padding([.leading, .trailing])
                 }
                 .frame(height: 57)
-                .background([.opaque, .classic].contains(self.state.theme.style) ? self.state.session.appPage.primaryColour : Theme.textBackground)
+                .background(self.primaryTextFieldInFocus ? self.state.theme.tint.opacity(0.6) : Theme.textBackground)
+                .foregroundStyle(self.state.session.appPage.primaryColour)
+                .border(width: 1, edges: [.top], color: self.state.theme.tint)
                 .onAppear(perform: self.actionOnAppear)
+                .onChange(of: self.text) {
+                    self.state.session.searchText = self.text
+                }
             }
         }
 

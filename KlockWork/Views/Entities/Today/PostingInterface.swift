@@ -33,7 +33,7 @@ extension Today {
                     fgColour: [.classic, .opaque, .hybrid].contains(self.nav.theme.style) ? .white : Theme.base,
                     text: $text
                 )
-                .background([.classic, .opaque, .hybrid].contains(self.nav.theme.style) ? self.nav.session.appPage.primaryColour : self.nav.session.job?.backgroundColor.opacity(0.6) ?? .clear)
+                .background([.classic, .opaque, .hybrid].contains(self.nav.theme.style) ? self.primaryTextFieldInFocus ? self.nav.theme.tint.opacity(0.6) : self.nav.session.appPage.primaryColour : self.nav.session.job?.backgroundColor.opacity(0.6) ?? .clear)
                 .focused($primaryTextFieldInFocus)
                 .alert("Choose a job first", isPresented: $errorNoJob) {
                     Button("Ok", role: .cancel) {}
