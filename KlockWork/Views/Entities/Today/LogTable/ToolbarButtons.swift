@@ -50,6 +50,12 @@ struct ToolbarButtons: View {
                 .blendMode(.softLight)
                 .frame(height: 20)
             HStack(alignment: .center) {
+                Text(self.tab.title)
+                    .padding(6)
+                    .background(Theme.textBackground)
+                    .foregroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                    .help(self.tab.help)
                 if self.tab == .chronologic {
                     // @TODO: find a better way to exclude this button from activity feeds, this feels hacky
                     if self.nav.parent == .today {
@@ -57,13 +63,6 @@ struct ToolbarButtons: View {
                     }
                     UI.SortSelector()
                     UI.Pagination.Widget()
-                } else if self.tab == .grouped {
-                    Text(self.tab.title)
-                        .padding(6)
-                        .background(Theme.textBackground)
-                        .foregroundStyle(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
-                        .help(self.tab.help)
                 }
                 Spacer()
                 UI.Buttons.ExportToCSV(

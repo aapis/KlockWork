@@ -25,11 +25,11 @@ struct CalendarToday: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .bottom) {
-                LinearGradient(colors: [Theme.base, .clear], startPoint: .top, endPoint: .bottom)
-                    .opacity(0.6)
+                self.page.primaryColour
+                LinearGradient(colors: [Theme.base, .clear], startPoint: .bottom, endPoint: .top)
+                    .opacity(0.3)
                     .blendMode(.softLight)
                     .frame(height: 20)
-                self.page.primaryColour
                 HStack {
                     Text("Today's Events")
                         .padding(6)
@@ -40,8 +40,6 @@ struct CalendarToday: View {
                 }
                 .padding(8)
             }
-            Divider().foregroundStyle(.white)
-
             ScrollView(showsIndicators: false) {
                 HStack(spacing: 0) {
                     ForEach(startOfDay..<(endOfDay - 1), id: \.self) { time in

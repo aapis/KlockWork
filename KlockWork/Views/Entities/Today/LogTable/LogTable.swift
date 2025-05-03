@@ -103,7 +103,7 @@ extension Today.LogTable {
                 if records.count > 0 {
                     FancyTextField(placeholder: "Records...", lineLimit: 10, text: $plain)
                 } else {
-                    LogRowEmpty(message: "No records found for date \(self.nav.session.date.formatted(date: .abbreviated, time: .omitted))")
+                    LogRowEmpty(message: "No records found for \(self.nav.session.date.formatted(date: .abbreviated, time: .omitted))")
                 }
             }
             .onAppear(perform: actionOnAppear)
@@ -171,7 +171,9 @@ extension Today.LogTable {
                         if nav.session.toolbar.mode == .plain {
                             Plain(records: self.recordsOnCurrentPage)
                         } else {
-                            Headers(page: self.page)
+                            if self.recordsOnCurrentPage.count > 0 {
+                                Headers(page: self.page)
+                            }
                             Full(records: self.recordsOnCurrentPage)
                         }
                         UI.Pagination(entityCount: records.count)
@@ -209,7 +211,7 @@ extension Today.LogTable {
                         if records.count > 0 {
                             ForEach(grouped) {group in group}
                         } else {
-                            LogRowEmpty(message: "No records found for date \(self.nav.session.date.formatted(date: .abbreviated, time: .omitted))")
+                            LogRowEmpty(message: "No records found for \(self.nav.session.date.formatted(date: .abbreviated, time: .omitted))")
                         }
                     }
                     .background([.classic, .opaque].contains(self.nav.theme.style) ? self.nav.session.appPage.primaryColour : .clear)
