@@ -105,6 +105,20 @@ public class CoreDataTaxonomyTerms {
         return results.first
     }
 
+    /// Find taxonomy terms by date
+    /// - Parameter date: Date
+    /// - Returns: Optional(TaxonomyTerm)
+    public func createdOn(_ date: Date) -> [TaxonomyTerm] {
+        let window = DateHelper.startAndEndOf(date)
+        return self.query(
+            NSPredicate(
+                format: "created > %@ && created < %@ + 84600",
+                window.0 as CVarArg,
+                window.1 as CVarArg
+            )
+        )
+    }
+
     /// Find taxonomy terms by job
     /// - Parameter job: Job
     /// - Returns: Optional(TaxonomyTerm)
@@ -174,6 +188,61 @@ public class CoreDataTaxonomyTerms {
             definitions: definitions,
             saveByDefault: saveByDefault
         )
+    }
+
+    /// Find all entities interacted with on a given date
+    /// - Parameter date: Date
+    /// - Returns: Array<NSManagedObject>
+    public func interactionsOn(_ date: Date) -> [TaxonomyTerm] {
+        let records = self.createdOn(date)
+        if records.count == 0 {
+            return []
+        }
+
+        var set: Set<TaxonomyTerm> = []
+
+        for record in records {
+            set.insert(record)
+        }
+
+        return Array(set).sorted(by: {$0.lastUpdate ?? Date() < $1.lastUpdate ?? Date()})
+    }
+
+    /// Finds records created on a specific date that aren't hidden by their parent
+    /// - Parameter start: Date
+    /// - Parameter end: Date
+    /// - Returns: Array<LogRecord>
+    public func inRange(start: Date, end: Date) -> [TaxonomyTerm] {
+        let predicate = NSPredicate(
+            format: "created > %@ && created <= %@",
+            start as CVarArg,
+            end as CVarArg
+        )
+
+        return query(predicate)
+    }
+
+    /// Find all interactions within a certain date range
+    /// - Parameter start: Date
+    /// - Parameter end: Date
+    /// - Returns: Array<NSManagedObject>
+    public func interactionsIn(start: Date?, end: Date?) -> [TaxonomyTerm] {
+        if start != nil && end != nil {
+            let records = CoreDataTaxonomyTerms(moc: self.moc!).inRange(start: start!, end: end!)
+            if records.count == 0 {
+                return []
+            }
+
+            var set: Set<TaxonomyTerm> = []
+
+            for record in records {
+                set.insert(record)
+            }
+
+            return Array(set).sorted(by: {$0.lastUpdate ?? Date() < $1.lastUpdate ?? Date()})
+        }
+
+        return []
     }
 
     /// Create a new TaxonomyTerm

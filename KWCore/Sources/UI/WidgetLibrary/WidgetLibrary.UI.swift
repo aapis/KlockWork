@@ -1045,7 +1045,7 @@ extension WidgetLibrary {
                         }
                         UI.ActivityLinks(start: self.start, end: self.end)
                     } else {
-                        UI.Buttons.FooterActivity(start: self.start, end: self.end, label: "Links", icon: "link")
+                        UI.Buttons.FooterActivity(start: self.start, end: self.end, label: "Link", labelPlural: "Links", icon: "link")
                     }
                     Spacer()
                 }
@@ -1152,7 +1152,7 @@ extension WidgetLibrary {
                     }
                     Spacer()
                 }
-                .frame(maxHeight: 300)
+                .frame(maxHeight: self.location == .content ? 300 : .infinity)
                 .id(self.vid)
                 .onAppear(perform: self.actionOnAppear)
                 .onChange(of: self.state.session.date) { self.vid = UUID() ; self.actionOnAppear() }
@@ -2084,7 +2084,7 @@ extension WidgetLibrary {
                     } else {
                         UI.ListButtonItem(
                             callback: {_ in},
-                            name: "None found for \(self.state.session.timeline.formatted())"
+                            name: "None found"
                         )
                         .disabled(true)
                     }
@@ -2171,6 +2171,26 @@ extension WidgetLibrary {
                     .buttonStyle(.plain)
                     .useDefaultHover({ hover in self.isHighlighted = hover})
                     .help("Open")
+                case is TaxonomyTerm:
+                    if let entity = self.entity as? TaxonomyTerm {
+                        Button {
+                            self.state.session.search.inspectingEntity = entity
+                            self.state.setInspector(AnyView(Inspector(entity: entity)))
+                        } label: {
+                            entity.linkRowView
+                                .underline(self.isHighlighted)
+                                .contextMenu {
+                                    Button("Edit...") {
+                                        self.state.session.term = entity
+                                        self.state.to(.termDetail)
+                                    }
+                                }
+
+                        }
+                        .buttonStyle(.plain)
+                        .useDefaultHover({ hover in self.isHighlighted = hover})
+                        .help("Open")
+                    }
                 default:
                     EmptyView()
                 }
@@ -2671,6 +2691,21 @@ extension WidgetLibrary.UI.SimpleEntityList {
                     )
                 )
             }
+        case .terms:
+            var source: [TaxonomyTerm]
+            if self.start != nil && self.end != nil {
+                source = CoreDataTaxonomyTerms(moc: self.state.moc).interactionsIn(start: self.start, end: self.end)
+            } else {
+                source = CoreDataTaxonomyTerms(moc: self.state.moc).interactionsOn(self.state.session.timeline.date ?? self.state.session.date)
+            }
+
+            for entity in source {
+                self.entities.append(
+                    UI.SimpleEntityRow(
+                        entity: entity
+                    )
+                )
+            }
         default:
             print("noop")
         }
@@ -2719,6 +2754,17 @@ extension WidgetLibrary.UI.InteractionsInRange {
                 )
             )
         }
+        self.tabs.append(
+            ToolbarButton(
+                id: 3,
+                helpText: "Terms created in \(self.format == nil ? "period" : self.state.session.dateFormatted(self.format!))",
+                icon: EType.terms.icon,
+                labelText: EType.terms.label,
+                contents: AnyView(
+                    UI.SimpleEntityList(type: .terms, start: self.start, end: self.end)
+                )
+            )
+        )
         self.vid = UUID()
     }
 }

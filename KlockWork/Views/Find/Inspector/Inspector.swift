@@ -679,6 +679,11 @@ public struct Inspector: View, Identifiable {
                         Image(systemName: "list.bullet").symbolRenderingMode(.hierarchical)
                         Text("\(defs.count(where: {$0.alive == true})) definition(s)")
                         Spacer()
+                        if self.nav.parent == .today {
+                            UI.Buttons.AddDefinition(termName: self.item.name ?? "N/A")
+                        } else {
+                            UI.Buttons.CreateDefinitionWithTerm(term: self.item)
+                        }
                     }
                     Divider()
                     VStack(spacing: 1) {

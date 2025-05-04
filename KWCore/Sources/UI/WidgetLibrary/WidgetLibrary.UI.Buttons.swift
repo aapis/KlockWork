@@ -215,7 +215,10 @@ extension WidgetLibrary.UI {
             var body: some View {
                 FancyButtonv2(
                     text: "Create",
-                    action: { self.onAction?() ; self.state.to(.definitionDetail) },
+                    action: {
+                        self.onAction?()
+                        self.state.to(.definitionDetail)
+                    },
                     icon: "plus.square.fill",
                     iconWhenHighlighted: "plus.square",
                     fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
@@ -225,6 +228,62 @@ extension WidgetLibrary.UI {
                     font: .title
                 )
                 .help("Create a new term definition")
+                .frame(width: 25)
+            }
+        }
+
+        struct CreateDefinitionWithTerm: View {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
+            public var term: TaxonomyTerm
+            public var onAction: (() -> Void)? = {}
+            public var isAlteredForReadability: Bool = false
+
+            var body: some View {
+                FancyButtonv2(
+                    text: "Create",
+                    action: {
+                        self.onAction?()
+                        self.state.session.term = self.term
+                        self.state.to(.definitionDetail)
+                    },
+                    icon: "plus.square.fill",
+                    iconWhenHighlighted: "plus.square",
+                    fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
+                    showLabel: false,
+                    size: .tiny,
+                    type: .clear,
+                    font: .title2
+                )
+                .help("Create a new term definition")
+                .frame(width: 25)
+            }
+        }
+
+        struct AddDefinition: View {
+            @EnvironmentObject public var state: Navigation
+            @AppStorage("widget.navigator.viewModeIndex") private var viewModeIndex: Int = 0
+            public var termName: String
+            public var onAction: (() -> Void)? = {}
+            public var isAlteredForReadability: Bool = false
+
+            var body: some View {
+                FancyButtonv2(
+                    text: "Add Definition",
+                    action: {
+                        self.onAction?()
+                        self.state.session.inputText = "\(self.termName) == "
+                        self.state.to(.today)
+                    },
+                    icon: "plus.square.fill",
+                    iconWhenHighlighted: "plus.square",
+                    fgColour: self.viewModeIndex == 1 ? self.isAlteredForReadability ? Theme.base : .white : .white,
+                    showLabel: false,
+                    size: .tiny,
+                    type: .clear,
+                    font: .title2
+                )
+                .help("Add a new definition to this term")
                 .frame(width: 25)
             }
         }
@@ -573,6 +632,7 @@ extension WidgetLibrary.UI {
             var start: Date?
             var end: Date?
             var label: String
+            var labelPlural: String
             var icon: String
             @AppStorage("widgetlibrary.ui.appfooter.isMinimized") private var isMinimized: Bool = false
             @State private var isHighlighted: Bool = false
@@ -586,9 +646,10 @@ extension WidgetLibrary.UI {
                         Image(systemName: self.icon)
                             .foregroundStyle(.white)
                             .padding(8)
-                        Text("\(self.count) \(self.label)")
+                        Text("\(self.count) \(self.count == 1 ? self.label : self.labelPlural)")
                             .bold(self.count > 0)
                             .padding(8)
+                            .padding(.trailing, 8)
                             .background(Theme.lightWhite)
                             .foregroundStyle(Theme.base)
                             .underline(self.isHighlighted)
@@ -944,19 +1005,19 @@ extension WidgetLibrary.UI.Buttons.FooterActivity {
     private func actionOnAppear() -> Void {
         // @TODO: still fucked after rewrite, investigate
         // https://www.avanderlee.com/concurrency/tasks/
-//        if self.start != nil && self.end != nil {
-//            let fromRecords = Task { return await CoreDataRecords(moc: self.state.moc).links(start: self.start!, end: self.end!) }
-//            let fromTasks = Task { return await CoreDataTasks(moc: self.state.moc).links(start: self.start!, end: self.end!) }
-//            let fromNotes = Task { return await CoreDataNotes(moc: self.state.moc).links(start: self.start!, end: self.end!) }
-//            let fromJobs = Task { return await CoreDataJob(moc: self.state.moc).links(start: self.start!, end: self.end!) }
-//
-//            Task {
-//                self.count += (await fromRecords.value).count
-//                self.count += (await fromTasks.value).count
-//                self.count += (await fromNotes.value).count
-//                self.count += (await fromJobs.value).count
-//            }
-//        }
+        if self.start != nil && self.end != nil {
+            let fromRecords = Task { return await CoreDataRecords(moc: self.state.moc).links(start: self.start!, end: self.end!) }
+            let fromTasks = Task { return await CoreDataTasks(moc: self.state.moc).links(start: self.start!, end: self.end!) }
+            let fromNotes = Task { return await CoreDataNotes(moc: self.state.moc).links(start: self.start!, end: self.end!) }
+            let fromJobs = Task { return await CoreDataJob(moc: self.state.moc).links(start: self.start!, end: self.end!) }
+
+            Task {
+                self.count += (await fromRecords.value).count
+                self.count += (await fromTasks.value).count
+                self.count += (await fromNotes.value).count
+                self.count += (await fromJobs.value).count
+            }
+        }
     }
 }
 

@@ -68,6 +68,7 @@ extension Today {
             .onChange(of: self.nav.session.inputText) {
                 if let input = self.nav.session.inputText {
                     self.text = input
+                    self.primaryTextFieldInFocus = true
                 }
             }
         }

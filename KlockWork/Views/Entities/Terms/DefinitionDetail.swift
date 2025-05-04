@@ -102,7 +102,7 @@ extension DefinitionDetail {
 
         self.definitionString = self.definition?.definition ?? ""
         self.alive = self.definition?.alive ?? true
-        self.term = self.definition?.term
+        self.term = self.state.session.term ?? self.definition?.term
     }
 
     /// Callback that fires when cancel button clicked/tapped
