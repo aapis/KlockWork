@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import KWCore
+// import KWCore
 
 extension Project {
 //    func field() -> Navigation.Forms.Field {

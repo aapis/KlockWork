@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import KWCore
+// import KWCore
 import CoreData
 
 public final class CoreDataPlan {

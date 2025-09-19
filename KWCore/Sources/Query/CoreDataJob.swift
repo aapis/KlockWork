@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import KWCore
+// import KWCore
 import CoreData
 
 public class CoreDataJob: ObservableObject {
@@ -66,13 +66,18 @@ public class CoreDataJob: ObservableObject {
     /// Find a list of active jobs
     /// - Parameter limit: Int
     /// - Returns: FetchRequest<Job>
-    static public func fetchAll(limit: Int? = nil) -> FetchRequest<Job> {
+    static public func fetchAll(limit: Int? = nil, favsOnly: Bool = false) -> FetchRequest<Job> {
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
-        fetch.predicate = NSPredicate(format: "alive == true && project != nil && project.alive == true && project.company.hidden == false")
+        var predicateString: String = "alive == true && project != nil && project.alive == true && project.company.hidden == false"
+
+        if favsOnly {
+            predicateString = "alive == true && starred == true && project != nil && project.alive == true && project.company.hidden == false"
+        }
+
+        fetch.predicate = NSPredicate(format: predicateString)
         fetch.sortDescriptors = [
             NSSortDescriptor(keyPath: \Job.lastUpdate, ascending: false),
-            NSSortDescriptor(keyPath: \Job.title, ascending: false),
-            NSSortDescriptor(keyPath: \Job.jid, ascending: false)
+            NSSortDescriptor(keyPath: \Job.title, ascending: true)
         ]
 
         if let lim = limit {
@@ -166,7 +171,7 @@ public class CoreDataJob: ObservableObject {
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
-    
+
     /// Fetch Jobs belonging to a specific Project
     /// - Parameters:
     ///   - project: Project
@@ -178,7 +183,7 @@ public class CoreDataJob: ObservableObject {
         }
 
         let descriptors = [
-            NSSortDescriptor(keyPath: \Job.created, ascending: true)
+            NSSortDescriptor(keyPath: \Job.title, ascending: true)
         ]
 
         let fetch: NSFetchRequest<Job> = Job.fetchRequest()
@@ -533,6 +538,7 @@ public class CoreDataJob: ObservableObject {
     /// - Parameter start: Optional(Date)
     /// - Parameter end: Optional(Date)
     /// - Returns: Array<Activity>
+    #if os(macOS)
     public func links(start: Date?, end: Date?) async -> [Activity] {
         let jobs = self.inRange(
             start: start,
@@ -558,6 +564,7 @@ public class CoreDataJob: ObservableObject {
 
         return activities
     }
+    #endif
 
     /// Create a new Job
     /// - Parameters:
@@ -570,9 +577,10 @@ public class CoreDataJob: ObservableObject {
     ///   - title: Optional(String)
     ///   - uri: String
     ///   - project: Optional(Project)
+    ///   - starred: Bool
     ///   - saveByDefault: Bool(true) - Save immediately after creating the obejct, or not
     /// - Returns: Void
-    public func create(alive: Bool, colour: [Double], created: Date = Date(), jid: Double, overview: String?, shredable: Bool, title: String?, uri: String, project: Project? = nil, saveByDefault: Bool = true) -> Void {
+    public func create(alive: Bool, colour: [Double], created: Date = Date(), jid: Double, overview: String?, shredable: Bool, title: String?, uri: String, project: Project? = nil, starred: Bool = false, saveByDefault: Bool = true) -> Void {
         let _ = self.make(
             alive: alive,
             colour: colour,
@@ -582,6 +590,7 @@ public class CoreDataJob: ObservableObject {
             title: title,
             uri: uri,
             project: project,
+            starred: starred,
             saveByDefault: saveByDefault
         )
     }
@@ -597,9 +606,10 @@ public class CoreDataJob: ObservableObject {
     ///   - title: Optional(String)
     ///   - uri: String
     ///   - project: Optional(Project)
+    ///   - starred: Bool
     ///   - saveByDefault: Bool(true) - Save immediately after creating the obejct, or not
     /// - Returns: Void
-    public func createAndReturn(alive: Bool, colour: [Double], created: Date = Date(), jid: Double, overview: String?, shredable: Bool, title: String?, uri: String, project: Project? = nil, saveByDefault: Bool = true) -> Job {
+    public func createAndReturn(alive: Bool, colour: [Double], created: Date = Date(), jid: Double, overview: String?, shredable: Bool, title: String?, uri: String, project: Project? = nil, starred: Bool = false, saveByDefault: Bool = true) -> Job {
         return self.make(
             alive: alive,
             colour: colour,
@@ -609,6 +619,7 @@ public class CoreDataJob: ObservableObject {
             title: title,
             uri: uri,
             project: project,
+            starred: starred,
             saveByDefault: saveByDefault
         )
     }
@@ -626,7 +637,7 @@ public class CoreDataJob: ObservableObject {
     ///   - project: Optional(Project)
     ///   - saveByDefault: Bool(true)
     /// - Returns: Void
-    private func make(alive: Bool, colour: [Double], created: Date = Date(), id: UUID = UUID(), jid: Double, lastUpdate: Date = Date(), overview: String?, shredable: Bool, title: String?, uri: String, project: Project? = nil, saveByDefault: Bool = true) -> Job {
+    private func make(alive: Bool, colour: [Double], created: Date = Date(), id: UUID = UUID(), jid: Double, lastUpdate: Date = Date(), overview: String?, shredable: Bool, title: String?, uri: String, project: Project? = nil, starred: Bool, saveByDefault: Bool = true) -> Job {
         let newJob = Job(context: self.moc!)
         newJob.alive = alive
         newJob.colour = colour
@@ -638,6 +649,7 @@ public class CoreDataJob: ObservableObject {
         newJob.shredable = shredable
         newJob.title = title
         newJob.uri = URL(string: uri)
+        newJob.starred = starred
 
         if let proj = project {
             newJob.project = proj

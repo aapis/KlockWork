@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftUI
-import KWCore
+// import KWCore
 
 struct ToolbarButton: Hashable, Equatable {
     static func == (lhs: ToolbarButton, rhs: ToolbarButton) -> Bool {
@@ -320,7 +320,7 @@ struct FancyGenericToolbar: View {
     }
 
     struct ActionButton: View {
-        @EnvironmentObject public var state: Navigation
+        @EnvironmentObject public var state: AppState
         public var icon: String?
         public var iconAsImage: Image?
         public var callback: () -> Void

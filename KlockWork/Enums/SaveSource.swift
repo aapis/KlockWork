@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import KWCore
+// import KWCore
 
 public enum SaveSource {
     case auto, manual

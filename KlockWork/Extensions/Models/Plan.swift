@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import KWCore
+// import KWCore
 
 extension Plan {
     func isEmpty() -> Bool {

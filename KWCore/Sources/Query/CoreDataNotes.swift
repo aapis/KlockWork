@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftUI
-import KWCore
+// import KWCore
 import CoreData
 
 public class CoreDataNotes {
@@ -72,8 +72,8 @@ public class CoreDataNotes {
     /// - Returns: FetchRequest<Note>
     static public func fetchNotes(favouritesOnly: Bool = false) -> FetchRequest<Note> {
         let descriptors = [
-            NSSortDescriptor(keyPath: \Note.mJob?.project?.id, ascending: false),
-            NSSortDescriptor(keyPath: \Note.mJob?.id, ascending: false),
+            NSSortDescriptor(keyPath: \Note.mJob?.project?.id, ascending: true),
+            NSSortDescriptor(keyPath: \Note.mJob?.id, ascending: true),
             NSSortDescriptor(keyPath: \Note.title, ascending: true)
         ]
 
@@ -337,6 +337,7 @@ public class CoreDataNotes {
     /// - Parameter start: Optional(Date)
     /// - Parameter end: Optional(Date)
     /// - Returns: Array<Activity>
+    #if os(macOS)
     public func links(start: Date?, end: Date?) async -> [Activity] {
         var activities: [Activity] = []
         if start != nil && end != nil {
@@ -386,6 +387,7 @@ public class CoreDataNotes {
 
         return activities
     }
+    #endif
 
     /// Updates a single NSManagedObject
     /// - Parameters:

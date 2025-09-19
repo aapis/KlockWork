@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import KWCore
+//// import KWCore
 
 /// Levels representing an amount of work
 enum ActivityWeight: CaseIterable {

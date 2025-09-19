@@ -677,6 +677,21 @@ public struct Inspector: View, Identifiable {
                 if let defs = item.definitions?.allObjects as? [TaxonomyTermDefinitions] {
                     HStack(alignment: .top, spacing: 10) {
                         Image(systemName: "list.bullet").symbolRenderingMode(.hierarchical)
+                        Text("List")
+                        Spacer()
+                    }
+                    Divider()
+                    VStack(spacing: 1) {
+                        ForEach(defs, id: \.objectID) { definition in
+                            UI.Blocks.ListFromDefinition(definition: definition)
+                        }
+                    }
+                    .clipShape(.rect(cornerRadius: 5))
+                }
+
+                if let defs = item.definitions?.allObjects as? [TaxonomyTermDefinitions] {
+                    HStack(alignment: .top, spacing: 10) {
+                        Image(systemName: "list.bullet").symbolRenderingMode(.hierarchical)
                         Text("\(defs.count(where: {$0.alive == true})) definition(s)")
                         Spacer()
                         if self.nav.parent == .today {

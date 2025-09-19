@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import KWCore
+// import KWCore
 import CoreData
 
 public class CoreDataCompanies: ObservableObject {
@@ -54,6 +54,7 @@ public class CoreDataCompanies: ObservableObject {
     /// - Returns: FetchRequest<Company>
     static public func fetch(_ allowKilled: Bool = false) -> FetchRequest<Company> {
         let descriptors = [
+            NSSortDescriptor(keyPath: \Company.isDefault, ascending: false),
             NSSortDescriptor(keyPath: \Company.name, ascending: true),
         ]
 
@@ -357,6 +358,20 @@ public class CoreDataCompanies: ObservableObject {
         }
 
         return []
+    }
+    
+    /// Sets isDefault flag of ALL COMPANIES to false
+    /// - Returns: Void
+    public func unsetDefault() -> Void {
+        let defaults = self.query(NSPredicate(format: "isDefault == true"))
+
+        if !defaults.isEmpty {
+            for company in defaults {
+                company.isDefault = false
+            }
+
+            PersistenceController.shared.save()
+        }
     }
 
     /// Create a new company

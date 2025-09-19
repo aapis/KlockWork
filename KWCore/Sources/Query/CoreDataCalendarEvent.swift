@@ -9,7 +9,7 @@
 import Foundation
 import EventKit
 import SwiftUI
-import KWCore
+// import KWCore
 import CoreData
 
 public enum CalendarEventType: String, CaseIterable {

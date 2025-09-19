@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import KWCore
+//import KWCore
 import CoreData
 
 public class CDSavedSearch: ObservableObject {
@@ -34,6 +34,23 @@ public class CDSavedSearch: ObservableObject {
             (end ?? Date.now) as CVarArg
         )
         fetch.sortDescriptors = [
+            NSSortDescriptor(keyPath: \SavedSearch.term, ascending: true),
+            NSSortDescriptor(keyPath: \SavedSearch.created, ascending: false)
+        ]
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+    
+    /// Fetch matching terms for this query
+    /// - Parameter term: String
+    /// - Returns: FetchRequest<SavedSearch>
+    static public func fetchMatching(term: String) -> FetchRequest<SavedSearch> {
+        let fetch: NSFetchRequest<SavedSearch> = SavedSearch.fetchRequest()
+        fetch.predicate = NSPredicate(
+            format: "term == %@",
+            term
+        )
+        fetch.sortDescriptors = [
             NSSortDescriptor(keyPath: \SavedSearch.term, ascending: false),
             NSSortDescriptor(keyPath: \SavedSearch.created, ascending: false)
         ]
@@ -53,7 +70,7 @@ public class CDSavedSearch: ObservableObject {
     /// - Parameter start: Date
     /// - Parameter end: Date
     /// - Returns: [SavedSearch]
-    public func createdBetween(_ start: Date?, end: Date?) -> [SavedSearch] {
+    public func createdBetweenStartEnd(_ start: Date?, end: Date?) -> [SavedSearch] {
         return self.query(
             NSPredicate(
                 format: "created > %@ && created < %@",

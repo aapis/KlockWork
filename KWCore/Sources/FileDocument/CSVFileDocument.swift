@@ -6,6 +6,7 @@
 //  Copyright © 2024 YegCollective. All rights reserved.
 //
 
+#if os(macOS)
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -29,3 +30,4 @@ public struct CSVFileDocument: FileDocument {
         return FileWrapper(regularFileWithContents: data)
     }
 }
+#endif

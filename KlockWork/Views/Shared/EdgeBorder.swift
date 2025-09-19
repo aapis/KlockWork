@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftUI
-import KWCore
+//// import KWCore
 
 struct EdgeBorder: Shape {
     var width: CGFloat

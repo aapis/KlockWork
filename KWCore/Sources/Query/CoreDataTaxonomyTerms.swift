@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import KWCore
+//// import KWCore
 import CoreData
 
 public class CoreDataTaxonomyTerms {
@@ -55,7 +55,7 @@ public class CoreDataTaxonomyTerms {
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
     
-    /// Find tasks whose content matches a given string
+    /// Find tasks whose content matches a given Job
     /// - Parameter job: Job
     /// - Returns: FetchRequest<TaxonomyTerm>
     static public func fetch(job: Job) -> FetchRequest<TaxonomyTerm> {
@@ -72,7 +72,7 @@ public class CoreDataTaxonomyTerms {
         
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
     }
-    
+
     /// Find all terms owned by a given Job
     /// - Parameters:
     ///   - job: Job

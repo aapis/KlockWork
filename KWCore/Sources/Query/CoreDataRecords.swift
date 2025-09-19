@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import KWCore
+// import KWCore
 import CoreData
 
 // TODO: rename this to something else. Currently meant to represent how many 15 minute periods a task intersected
@@ -152,6 +152,7 @@ public class CoreDataRecords: ObservableObject {
     /// - Parameter start: Optional(Date)
     /// - Parameter end: Optional(Date)
     /// - Returns: Array<Activity>
+#if os(macOS)
     public func links(start: Date?, end: Date?) async -> [Activity] {
         var activities: [Activity] = []
         if let start = start {
@@ -197,6 +198,7 @@ public class CoreDataRecords: ObservableObject {
 
         return activities
     }
+#endif
 
     /// Create a new record using a known job, date and message
     /// - Parameters:
@@ -647,6 +649,20 @@ public class CoreDataRecords: ObservableObject {
             job as CVarArg,
             window.0 as CVarArg,
             window.1 as CVarArg
+        )
+
+        return query(predicate)
+    }
+
+    /// Finds records associated with a given Job
+    /// - Parameter job: Job
+    /// - Returns: Array<LogRecord>
+    public func find(for job: Job) -> [LogRecord] {
+        let date = DateHelper.daysPast(365) // exclude records over a year old
+        let predicate = NSPredicate(
+            format: "job == %@ && timestamp > %@",
+            job as CVarArg,
+            date as CVarArg
         )
 
         return query(predicate)

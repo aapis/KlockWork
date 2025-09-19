@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftUI
-import KWCore
+// import KWCore
 import CoreData
 
 public final class CoreDataProjectConfiguration {

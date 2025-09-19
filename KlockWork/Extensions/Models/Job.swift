@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import KWCore
+// import KWCore
 
 extension Job {
 #if os(macOS)
@@ -50,6 +50,7 @@ extension Job {
 //    ]
 
     @ViewBuilder var rowView: some View {
+#if os(macOS)
         if let date = self.created {
             LogRow(
                 entry: Entry(
@@ -71,6 +72,7 @@ extension Job {
                 colour: self.backgroundColor
             )
         }
+#endif
     }
 
     @ViewBuilder var linkRowView: some View {

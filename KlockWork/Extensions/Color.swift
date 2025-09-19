@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftUI
-import KWCore
+// import KWCore
 
 extension Color {
     static func random() -> Color {

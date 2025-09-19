@@ -82,7 +82,9 @@ final class NotificationHelper {
         let notificationCenter = UNUserNotificationCenter.current()
         let content = UNMutableNotificationContent()
         content.title = title
+#if os(macOS)
         content.body = task.notificationBody
+#endif
         content.sound = UNNotificationSound.default
         content.categoryIdentifier = "TASK"
 

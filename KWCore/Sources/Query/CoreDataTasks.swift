@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftUI
-import KWCore
+// import KWCore
 import CoreData
 
 public class CoreDataTasks {
@@ -141,6 +141,21 @@ public class CoreDataTasks {
             format: "completedDate == nil && cancelledDate == nil && owner == %@ && owner.project.company.hidden == false",
             job
         )
+        fetch.sortDescriptors = descriptors
+
+        return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
+    }
+
+    /// Find all objects associated with the given predicate
+    /// - Parameter predicate: NSPredicate
+    /// - Returns: FetchRequest<NSManagedObject>
+    static public func fetch(with predicate: NSPredicate) -> FetchRequest<LogTask> {
+        let descriptors = [
+            NSSortDescriptor(keyPath: \LogTask.due, ascending: true)
+        ]
+
+        let fetch: NSFetchRequest<LogTask> = LogTask.fetchRequest()
+        fetch.predicate = predicate
         fetch.sortDescriptors = descriptors
 
         return FetchRequest(fetchRequest: fetch, animation: .easeInOut)
@@ -447,20 +462,54 @@ public class CoreDataTasks {
         return count(predicate)
     }
 
-    /// Finds notes created or updated on a specific date, that aren't hidden by their parent
+    /// Finds tasks created or updated on a specific date, that aren't hidden by their parent
     /// - Parameter date: Date
     /// - Returns: Array<LogTask>
-    public func find(for date: Date) -> [LogTask] {
+    public func find(for date: Date, job: Job? = nil) -> [LogTask] {
+        let window = DateHelper.startAndEndOf(date)
+        var predicate: NSPredicate
+
+        if job != nil {
+            predicate = NSPredicate(
+                format: "owner = %@ && (completedDate > %@ && completedDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@)",
+                job!,
+                window.0 as CVarArg,
+                window.1 as CVarArg,
+                window.0 as CVarArg,
+                window.1 as CVarArg
+            )
+        } else {
+            predicate = NSPredicate(
+                format: "(completedDate > %@ && completedDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@)",
+                window.0 as CVarArg,
+                window.1 as CVarArg,
+                window.0 as CVarArg,
+                window.1 as CVarArg
+            )
+        }
+
+        return query(predicate)
+    }
+
+    /// Finds tasks created or updated on a specific date, that aren't hidden by their parent
+    /// - Parameter date: Date
+    /// - Returns: Array<LogTask>
+    public func find(created_on date: Date) -> [LogTask] {
         let window = DateHelper.startAndEndOf(date)
         let predicate = NSPredicate(
-            format: "(completedDate > %@ && completedDate <= %@) || (lastUpdate > %@ && lastUpdate <= %@)",
-            window.0 as CVarArg,
-            window.1 as CVarArg,
+            format: "created > %@ && created <= %@",
             window.0 as CVarArg,
             window.1 as CVarArg
         )
 
         return query(predicate)
+    }
+
+    /// Finds entities matching a given predicate
+    /// - Parameter predicate: NSPredicate
+    /// - Returns: Array<LogTask>
+    public func find(with predicate: NSPredicate) -> [LogTask] {
+        return self.query(predicate)
     }
 
     /// Count up all the jobs referenced for a given day
@@ -497,6 +546,7 @@ public class CoreDataTasks {
     /// - Parameter start: Optional(Date)
     /// - Parameter end: Optional(Date)
     /// - Returns: Array<Activity>
+#if os(macOS)
     public func links(start: Date?, end: Date?) async -> [Activity] {
         var activities: [Activity] = []
         if start != nil && end != nil {
@@ -534,6 +584,7 @@ public class CoreDataTasks {
 
         return activities
     }
+#endif
 
     /// Public method to create new LogTask objects
     /// - Parameters:

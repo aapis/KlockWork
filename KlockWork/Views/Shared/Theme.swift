@@ -7,7 +7,9 @@
 //
 
 import SwiftUI
-import KWCore
+#if os(macOS)
+// import KWCore
+#endif
 
 struct Theme {
     static public var base: Color = Color(red: 0.1863933206, green: 0.1880253851, blue: 0.2143694162)

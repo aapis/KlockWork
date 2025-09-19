@@ -8,7 +8,7 @@
 
 import Foundation
 import SwiftUI
-import KWCore
+//import KWCore
 
 struct LogRowEmpty: View, Identifiable {
     @EnvironmentObject private var state: Navigation

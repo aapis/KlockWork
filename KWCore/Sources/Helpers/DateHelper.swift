@@ -320,10 +320,10 @@ final public class DateHelper {
     ///   - asString: String
     ///   - format: String
     /// - Returns: Optional(Date)
-    static public func date(from asString: String, format: String = "yyyy/M/d HH:mm") -> Date? {
+    static public func date(from string: String, format: String = "yyyy/M/d HH:mm") -> Date? {
         let formatter = DateFormatter()
         formatter.dateFormat = format
-        if let date = formatter.date(from: asString) {
+        if let date = formatter.date(from: string) {
             return date
         }
 
@@ -360,13 +360,45 @@ final public class DateHelper {
         return currDate == compDate
     }
     
+    /// Checks if a given integer is the current day of the month
+    /// - Parameter dayOfMonth: Int
+    /// - Returns: Bool
+    static public func isToday(_ dayOfMonth: Int) -> Bool {
+        let df = DateFormatter()
+        df.dateFormat = "dd"
+        df.timeZone = TimeZone.autoupdatingCurrent
+        df.locale = NSLocale.current
+
+        let currDate = df.string(from: Date())
+
+        return Int(currDate) == dayOfMonth
+    }
+    
+    /// Create a date object for a given day of the month
+    /// - Parameter dayNum: Int
+    /// - Returns: Date
+    static public func dateForDayNumber(_ dayNum: Int) -> Date {
+        let calendar = Calendar.autoupdatingCurrent
+        let currentComponents = calendar.dateComponents([.year, .month], from: Date())
+        var components = DateComponents()
+        components.day = dayNum
+        components.year = currentComponents.year
+        components.month = currentComponents.month
+
+        if let dateForDayNumber = calendar.date(from: components) {
+            return dateForDayNumber
+        }
+
+        return Date()
+    }
+
     /// Get date objects representing 1 calendar week, as a range
     /// - Parameters:
     ///   - weekOfYear: Int
     ///   - date: Date
     /// - Returns: Range<Date>
     static public func datesForWeek(_ weekOfYear: Int, for date: Date = Date()) -> Range<Date> {
-        let calendar = Calendar.current
+        let calendar = Calendar.autoupdatingCurrent
         let year = calendar.component(.yearForWeekOfYear, from: date)
         let startComponents = DateComponents(weekOfYear: weekOfYear, yearForWeekOfYear: year)
         let startDate = calendar.date(from: startComponents)!
